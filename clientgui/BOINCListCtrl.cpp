@@ -265,6 +265,16 @@ void CBOINCListCtrl::DrawBarGraphs()
         ++numVisibleItems;
 
         if (numItems <= (topItem + numVisibleItems)) numVisibleItems = numItems - topItem;
+
+#if ! defined(__WXMSW__)
+        int w = 0, x = 0;
+        if (progressColumn >= 0) {
+            for (i=0; i< progressColumn; i++) {
+                x += GetColumnWidth(i);
+            }
+            w = GetColumnWidth(progressColumn);
+        }
+#endif
        
         for (i=0; i<numVisibleItems; i++) {
             item = topItem + i;
@@ -279,7 +289,12 @@ void CBOINCListCtrl::DrawBarGraphs()
             }
 
             if (progressColumn < 0) continue;
+#if defined(__WXMSW__)
             GetSubItemRect(item, progressColumn, r);
+#else
+ 	        r.x = x;
+            r.width = w;
+#endif
             r.Inflate(-1, -1);
             dc.SetPen(progressColor);
             dc.SetBrush(*wxTRANSPARENT_BRUSH);
