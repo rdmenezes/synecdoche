@@ -1115,7 +1115,6 @@ void CPaintStatistics::DrawAll(wxDC &dc) {
 
 	dc.SetFont(m_font_standart);
 //Start drawing
-	dc.BeginDrawing();
 	dc.Clear();
 	dc.SetBrush(wxBrush(m_brush_MainColour , wxSOLID));
 	dc.SetPen(wxPen(m_pen_MainColour , 1 , wxSOLID));
@@ -1133,7 +1132,6 @@ void CPaintStatistics::DrawAll(wxDC &dc) {
 	int nb_proj = 0;
 	for (std::vector<PROJECT*>::const_iterator i = proj->projects.begin(); i != proj->projects.end(); ++i) { ++nb_proj; }
 	if (0 == nb_proj) {
-		dc.EndDrawing();
 		return;
 	}
 // Check m_NextProjectStatistic
@@ -1396,7 +1394,6 @@ void CPaintStatistics::DrawAll(wxDC &dc) {
 		break;
 		}
 	}
-	dc.EndDrawing();
 }
 //=================================================================
 void CPaintStatistics::OnPaint(wxPaintEvent& WXUNUSED(event)) {
@@ -1428,7 +1425,6 @@ void CPaintStatistics::OnPaint(wxPaintEvent& WXUNUSED(event)) {
 		if (m_bmp_OK){
 			mdc.SelectObject(m_dc_bmp);
 			if (m_GraphZoomStart && (width == m_dc_bmp.GetWidth()) &&(height == m_dc_bmp.GetHeight())){
-				mdc.BeginDrawing();
 
 				mdc.SetPen(wxPen(m_pen_ZoomRectColour , 1 , wxSOLID));
 				mdc.SetBrush(wxBrush(m_brush_ZoomRectColour , wxSOLID));
@@ -1467,7 +1463,6 @@ void CPaintStatistics::OnPaint(wxPaintEvent& WXUNUSED(event)) {
 				m_GraphZoom_Y2_old = m_GraphZoom_Y2;
 
 				mdc.SetLogicalFunction(wxCOPY);
-				mdc.EndDrawing();
 			}
 		}
 	}
