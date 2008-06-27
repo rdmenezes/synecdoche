@@ -50,15 +50,14 @@
 #define ID_TOOLSAMUPDATENOW                     6026
 #define ID_ADVANCEDAMDEFECT                     6027
 #define ID_OPENWEBSITE                          6028
-#define ID_FILESWITCHGUI                        6029
 #define ID_REFRESHMESSAGESTIMER                 6030
 #define ID_ACTIVITYMENUSEPARATOR                6031
 #define ID_FILECLOSEWINDOW                      6032
 #define ID_ADVPREFSDLG							6033
 #define ID_SHUTDOWNCORECLIENT                   6034
 #define ID_HELPBOINC                            6035
-#define ID_VIEWACCESSIBLE                       6036
-#define ID_VIEWGRID                             6037
+#define ID_VIEWADVANCEDGUI                      6036
+#define ID_VIEWSIMPLEGUI                        6037
 #define ID_SIMPLEFRAME                          6100
 #define ID_SIMPLEMESSAGECHECKTIMER              6101
 #define ID_SIMPLE_ATTACHTOPROJECT               6600
