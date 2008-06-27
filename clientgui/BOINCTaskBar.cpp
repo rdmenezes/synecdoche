@@ -298,30 +298,33 @@ void CTaskBarIcon::OnMouseMove(wxTaskBarIconEvent& WXUNUSED(event)) {
         m_dtLastHoverDetected = wxDateTime::Now();
 
         CMainDocument* pDoc                 = wxGetApp().GetDocument();
+        CSkinAdvanced* pSkinAdvanced        = wxGetApp().GetSkinManager()->GetAdvanced();
+        wxString       strTitle             = wxEmptyString;
         wxString       strMachineName       = wxEmptyString;
         wxString       strMessage           = wxEmptyString;
         wxString       strProjectName       = wxEmptyString;
         wxString       strBuffer            = wxEmptyString;
         wxString       strActiveTaskBuffer  = wxEmptyString;
         float          fProgress            = 0;
-        bool           bIsActive            = false;
-        bool           bIsExecuting         = false;
-        bool           bIsDownloaded        = false;
-        wxInt32        iResultCount         = 0;
-        wxInt32        iActiveTaskCount     = 0;
-        wxInt32        iIndex               = 0;
         CC_STATUS      status;
 
         wxASSERT(pDoc);
+        wxASSERT(pSkinAdvanced);
         wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+        wxASSERT(wxDynamicCast(pSkinAdvanced, CSkinAdvanced));
+
+        // Construct tooltip title using branded name.
+        strTitle = pSkinAdvanced->GetApplicationName();
 
         if (pDoc->IsConnected()) {
             pDoc->GetConnectedComputerName(strMachineName);
-
+ 
             // Only show machine name if connected to remote machine.
             if (!pDoc->IsComputerNameLocal(strMachineName)) {
-                strMessage += strMachineName;
+                strTitle = strTitle + wxT(" - (") + strMachineName + wxT(")");
             }
+
+			strMessage += strTitle;
 
             pDoc->GetCoreClientStatus(status);
             if (status.task_suspend_reason && !(status.task_suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT)) {
@@ -340,69 +343,71 @@ void CTaskBarIcon::OnMouseMove(wxTaskBarIconEvent& WXUNUSED(event)) {
                 strMessage += strBuffer;
             }
 
-            iResultCount = pDoc->GetWorkCount();
-            for (iIndex = 0; iIndex < iResultCount; iIndex++) {
-                RESULT* result = pDoc->result(iIndex);
-                RESULT* state_result = NULL;
-                std::string project_name;
+            // Construct a status summary:
+            std::vector<RESULT*> tasks = GetRunningTasks(pDoc);
 
-                bIsDownloaded = (result->state == RESULT_FILES_DOWNLOADED);
-                bIsActive     = result->active_task;
-                bIsExecuting  = (result->scheduler_state == CPU_SCHED_SCHEDULED);
-                if (!(bIsActive) || !(bIsDownloaded) || !(bIsExecuting)) continue;
-
-                // Increment the active task counter
-                iActiveTaskCount++;
-
-                // If we have more then two active tasks then we'll just be displaying
-                //   the total number of active tasks anyway, so just look at the rest
-                //   of the result records.
-                if (iActiveTaskCount > 2) continue;
-
-                if (result) {
-                    state_result = pDoc->state.lookup_result(result->project_url, result->name);
-                    if (state_result) {
-                        state_result->project->get_name(project_name);
-                        strProjectName = wxString(project_name.c_str());
+            if (tasks.size() == 0) {
+                strMessage += _("\nNo running tasks.");
+            } else if (tasks.size() < 3) {
+                // Limit list of running tasks to 2, to avoid overflow.
+                std::vector<RESULT*>::iterator i = tasks.begin();
+                while (i != tasks.end()) {
+                    RESULT* task = *i;
+                    std::string app_name;
+                    if (task) {
+                        RESULT* state_result = pDoc->state.lookup_result(task->project_url, task->name);
+                        if (state_result) {
+                            app_name = state_result->app->user_friendly_name;
+                        }
                     }
-                    fProgress = floor(result->fraction_done*10000)/100;
-                }
-
-                strBuffer.Printf(_("%s: %.2f%% completed."), strProjectName.c_str(), fProgress );
-                if (strActiveTaskBuffer.Length() > 0) strActiveTaskBuffer += wxT("\n");
-                strActiveTaskBuffer += strBuffer;
-            }
-
-            if (iActiveTaskCount <= 2) {
-                if (strMessage.Length() > 0) strMessage += wxT("\n");
-                strMessage += strActiveTaskBuffer;
+                    fProgress = floor(task->fraction_done*10000)/100;
+                
+                    strBuffer.Printf(wxT("\n%s: %.2f%%"), app_name.c_str(), fProgress );
+                    strMessage += strBuffer;
+                    i++;
+                 }
             } else {
                 // More than two active tasks are running on the system, we don't have
                 //   enough room to display them all, so just tell the user how many are
                 //   currently running.
-                strBuffer.Printf(
-                    _("%d tasks running.")
-                );
-                if (strMessage.Length() > 0) strMessage += wxT("\n");
+                strBuffer.Printf(_("\n%d running tasks."), tasks.size());
                 strMessage += strBuffer;
             }
 
         } else if (pDoc->IsReconnecting()) {
-            strBuffer.Printf(
-                _("Reconnecting to client.")
-            );
-            if (strMessage.Length() > 0) strMessage += wxT("\n");
+            strBuffer.Printf(_("\nReconnecting to client."));
             strMessage += strBuffer;
         } else {
-            strBuffer.Printf(
-                _("Not connected to a client.")
-            );
-            if (strMessage.Length() > 0) strMessage += wxT("\n");
+            strBuffer.Printf(_("\nNot connected to a client."));
             strMessage += strBuffer;
         }
 
+        // Update the text without affecting the icon:
         SetTooltip(strMessage);
     }
+}
+
+
+std::vector<RESULT*> CTaskBarIcon::GetRunningTasks(CMainDocument* pDoc) {
+
+    std::vector<RESULT*> results;
+    bool bIsActive, bIsExecuting, bIsDownloaded;
+    
+    int iResultCount = pDoc->GetWorkCount();
+
+    for (int iIndex = 0; iIndex < iResultCount; iIndex++) {
+        RESULT* result = pDoc->result(iIndex);
+
+        if (result) {
+            bIsDownloaded = (result->state == RESULT_FILES_DOWNLOADED);
+            bIsActive     = result->active_task;
+            bIsExecuting  = (result->scheduler_state == CPU_SCHED_SCHEDULED);
+            if (bIsActive && bIsDownloaded && bIsExecuting) {
+                results.push_back(result);
+            }
+        }
+    }
+    return results;
 }
 
 

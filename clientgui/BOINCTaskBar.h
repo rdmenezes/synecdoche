@@ -24,6 +24,7 @@
 #pragma interface "BOINCTaskBar.cpp"
 #endif
 
+#include "MainDocument.h"
 
 #ifdef __WXMSW__
 #include "msw/taskbarex.h"
@@ -89,6 +90,7 @@ private:
     void       ResetTaskBar();
 
     void       DisplayContextMenu();
+    std::vector<RESULT*> GetRunningTasks(CMainDocument* pDoc);
     
     DECLARE_EVENT_TABLE()
 
