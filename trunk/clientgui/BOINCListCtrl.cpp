@@ -240,7 +240,6 @@ void CBOINCListCtrl::DrawBarGraphs()
 {
     long topItem, numItems, numVisibleItems, i, item;
     wxRect r;
-    int w = 0, x = 0;
     int progressColumn = m_pParentView->GetProgressColumn();
 #if USE_NATIVE_LISTCONTROL
     wxClientDC dc(this);
@@ -266,16 +265,7 @@ void CBOINCListCtrl::DrawBarGraphs()
         ++numVisibleItems;
 
         if (numItems <= (topItem + numVisibleItems)) numVisibleItems = numItems - topItem;
-
-        x = 0;
-
-        if (progressColumn >= 0) {
-            for (i=0; i< progressColumn; i++) {
-                x += GetColumnWidth(i);
-            }
-            w = GetColumnWidth(progressColumn);
-        }
-        
+       
         for (i=0; i<numVisibleItems; i++) {
             item = topItem + i;
             GetItemRect(item, r);
