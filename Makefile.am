@@ -6,11 +6,7 @@ AUTOMAKE_OPTIONS = foreign
 ## make sure rebuilding uses the right aclocal-switches
 ACLOCAL_AMFLAGS = -I m4
 
-API_SUBDIRS = api lib zip
-
-if ENABLE_SERVER
-   SERVER_SUBDIRS = db test py sched apps tools
-endif
+API_SUBDIRS = api lib
 
 if ENABLE_CLIENT
    CLIENT_SUBDIRS = client client/scripts
@@ -22,14 +18,13 @@ endif
 
 # ORDER MATTERS below.  One must build dependencies FIRST, then things
 # that depend on them later
-SUBDIRS = m4 $(API_SUBDIRS) $(SERVER_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS) doc
+SUBDIRS = m4 $(API_SUBDIRS) $(SERVER_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS)
 
 # Putting a directory name recursively copies the entire contents - the
 # dist-hook below gets rid of CVS directories.
 
 EXTRA_DIST =                                    \
 	win_build                                   \
-	doc                                         \
 	stripchart                                  \
     INSTALL										
 
