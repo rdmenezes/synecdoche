@@ -344,12 +344,12 @@ AC_CHECK_LIB([Xi], [main], [have_Xi="yes"], [have_Xi="no"])
 AX_CHECK_GLUT
 if test "X${no_x}" != "Xyes" -a "$no_glut" = yes; then
    if test "$have_Xmu" = no; then
-   	AC_MSG_WARN([Test for glut-dev might have failed because of missing libXmu-dev!])
+    AC_MSG_WARN([Test for glut-dev might have failed because of missing libXmu-dev!])
    fi
    if test "$have_Xi" = no; then
-   	AC_MSG_WARN([Test for glut-dev might have failed because of missing libXi-dev!])
+    AC_MSG_WARN([Test for glut-dev might have failed because of missing libXi-dev!])
    fi
-fi	
+fi
 
 if test "$no_gl" = yes -o "$no_glu" = yes -o "$no_glut" = yes; then
    have_glut=no
@@ -379,7 +379,7 @@ else
    AC_CHECK_HEADER([jpeglib.h],[have_jpeg=1],[have_jpeg=0])
 
    if test "$have_jpeg" != 1 ; then
-	AC_MSG_WARN([
+    AC_MSG_WARN([
 ================================================================================
 WARNING: libjpeg.a/jpeglib.h not found.
 
@@ -530,7 +530,7 @@ if ( test "${enable_client}" = yes ) && ( test "$wxWin" != 1 ); then
    AC_MSG_WARN([
 ================================================================================
 WARNING: A suitable installation of wxWidgets could not be found 
-	 ==> building client without clientgui.
+     ==> building client without clientgui.
 
   If you add wxWidgets to your system, then this configure script will also
   configure your system to build the BOINC graphical client (clientgui).  
@@ -663,35 +663,15 @@ dnl ======================================================================
 AC_CONFIG_FILES([
                  ./version.h
                  api/Makefile
-                 apps/Makefile
                  clientgui/Makefile
                  clientgui/res/Makefile
                  client/Makefile
-                 client/win/boinc_path_config.py:py/Boinc/boinc_path_config.py.in
-		 client/scripts/Makefile
-		 client/scripts/boinc-client
-                 db/Makefile
-                 doc/Makefile
-                 doc/manpages/Makefile
+                 client/scripts/Makefile
+                 client/scripts/boinc-client
                  lib/Makefile
-		 locale/client/Makefile
+                 locale/client/Makefile
                  Makefile
-                 py/Boinc/boinc_path_config.py:py/Boinc/boinc_path_config.py.in
-                 py/Boinc/Makefile
-                 py/boinc_path_config.py:py/Boinc/boinc_path_config.py.in
-                 py/Boinc/version.py
-                 py/Makefile
-                 sched/boinc_path_config.py:py/Boinc/boinc_path_config.py.in
-                 sched/Makefile
                  sea/Makefile
-                 test/boinc_path_config.py:py/Boinc/boinc_path_config.py.in
-                 test/Makefile
-                 test/version.inc
-                 tools/boinc_path_config.py:py/Boinc/boinc_path_config.py.in
-                 tools/Makefile
-                 zip/Makefile
-                 zip/zip/Makefile
-                 zip/unzip/Makefile
                  m4/Makefile
                  ])
 
