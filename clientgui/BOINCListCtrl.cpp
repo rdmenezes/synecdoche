@@ -289,8 +289,7 @@ void CBOINCListCtrl::DrawBarGraphs()
             }
 
             if (progressColumn < 0) continue;
-            r.x = x;
-            r.width = w;
+            GetSubItemRect(item, progressColumn, r);
             r.Inflate(-1, -1);
             dc.SetPen(progressColor);
             dc.SetBrush(*wxTRANSPARENT_BRUSH);
