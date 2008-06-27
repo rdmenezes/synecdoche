@@ -1922,7 +1922,12 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
                         strComputerName = wxT("localhost");
                     }
 
-                    strTitle.Printf(_("%s - (%s)"), m_strBaseTitle.c_str(), strComputerName.c_str());
+                    strTitle = m_strBaseTitle;
+
+                    // Only show machine name if connected to remote machine.
+                    if (!pDoc->IsComputerNameLocal(strComputerName)) {
+                        strTitle = strTitle + wxT(" - (") + strComputerName + wxT(")");
+                    }
 
                     if (pDoc->IsReconnecting()) {
                         strStatusText.Printf(_("Connecting to %s"), strComputerName.c_str());
