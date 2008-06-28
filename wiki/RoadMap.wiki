@@ -1,0 +1,18 @@
+#summary The future of Synecdoche
+
+= First Release=
+
+For manageability, the first release will be built for Linux and Win32 only. The server and API code will not be maintained, and the Windows and Mac installers will not be maintained. Support for these will hopefully be replaced in a future release.
+
+In order to get the first release available quickly, Synecdoche will not diverge far from BOINC. Tasks for the first milestone are:
+ * Replacing the BOINC branding, and correcting situations where the BOINC branding is hardcoded.
+ * Fixing known bugs.
+ * Incremental performance improvements for the GUI.
+ * Opportunistic usability improvements. Usability will be addressed properly in the second release.
+
+= Second Release =
+ * New Windows installer.
+
+= Tasks not yet assigned to a milestone =
+
+ * Multi-threaded communications.
