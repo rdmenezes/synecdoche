@@ -1871,7 +1871,6 @@ void CAdvancedFrame::OnRefreshState(wxTimerEvent &event) {
 
 void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
     static bool       bAlreadyRunningLoop = false;
-    static wxString   strCachedStatusText = wxEmptyString;
 
     CMainDocument*    pDoc     = wxGetApp().GetDocument();
     wxMenuBar*        pMenuBar = GetMenuBar();
@@ -1922,8 +1921,6 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
                         strComputerName = wxT("localhost");
                     }
 
-                    strTitle = m_strBaseTitle;
-
                     // Only show machine name if connected to remote machine.
                     if (!pDoc->IsComputerNameLocal(strComputerName)) {
                         strTitle = strTitle + wxT(" - (") + strComputerName + wxT(")");
@@ -1944,9 +1941,9 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
                     if (GetTitle() != strTitle) {
                         SetTitle(strTitle);
                     }
-                        
-                    if (strStatusText != strCachedStatusText) {
-                        strCachedStatusText = strStatusText;
+
+                    if (strStatusText != m_cachedStatusText) {
+                        m_cachedStatusText = strStatusText;
                         m_pStatusbar->m_ptxtConnected->SetLabel(strStatusText);
                     }
                 } else {
