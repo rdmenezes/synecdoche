@@ -274,6 +274,7 @@ void CBOINCListCtrl::DrawBarGraphs()
             }
             w = GetColumnWidth(progressColumn);
         }
+        x -= GetScrollPos(wxHORIZONTAL);
 #endif
        
         for (i=0; i<numVisibleItems; i++) {
