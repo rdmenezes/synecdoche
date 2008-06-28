@@ -106,6 +106,7 @@ private:
     bool            m_bDisplayShutdownClientWarning;
 
     wxString        m_strBaseTitle;
+    wxString        m_cachedStatusText;
 
     bool            CreateMenu();
     bool            DeleteMenu();
