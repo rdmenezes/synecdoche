@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -44,9 +45,9 @@
 #define BTN_COPYSELECTED 1
 
 
-IMPLEMENT_DYNAMIC_CLASS(CViewMessages, CBOINCBaseView)
+IMPLEMENT_DYNAMIC_CLASS(CViewMessages, CTaskViewBase)
 
-BEGIN_EVENT_TABLE (CViewMessages, CBOINCBaseView)
+BEGIN_EVENT_TABLE (CViewMessages, CTaskViewBase)
     EVT_BUTTON(ID_TASK_MESSAGES_COPYALL, CViewMessages::OnMessagesCopyAll)
     EVT_BUTTON(ID_TASK_MESSAGES_COPYSELECTED, CViewMessages::OnMessagesCopySelected)
     EVT_LIST_ITEM_SELECTED(ID_LIST_MESSAGESVIEW, CViewMessages::OnListSelected)
@@ -59,10 +60,38 @@ CViewMessages::CViewMessages()
 
 
 CViewMessages::CViewMessages(wxNotebook* pNotebook) :
-    CBOINCBaseView(pNotebook, ID_TASK_MESSAGESVIEW, DEFAULT_TASK_FLAGS, ID_LIST_MESSAGESVIEW, DEFAULT_LIST_MULTI_SEL_FLAGS)
+    CTaskViewBase(pNotebook)
 {
-	CTaskItemGroup* pGroup = NULL;
-	CTaskItem*      pItem = NULL;
+    m_pMessageInfoAttr = NULL;
+    m_pMessageErrorAttr = NULL;
+}
+
+
+CViewMessages::~CViewMessages() {
+    if (m_pMessageInfoAttr) {
+        delete m_pMessageInfoAttr;
+        m_pMessageInfoAttr = NULL;
+    }
+
+    if (m_pMessageErrorAttr) {
+        delete m_pMessageErrorAttr;
+        m_pMessageErrorAttr = NULL;
+    }
+}
+
+
+void CViewMessages::DemandLoadView() {
+    wxASSERT(!m_bViewLoaded);
+
+    CTaskViewBase::DemandLoadView(
+        ID_TASK_MESSAGESVIEW,
+        DEFAULT_TASK_FLAGS,
+        ID_LIST_MESSAGESVIEW,
+        DEFAULT_LIST_MULTI_SEL_FLAGS
+    );
+
+    CTaskItemGroup* pGroup = NULL;
+    CTaskItem*      pItem = NULL;
 
     wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
@@ -77,17 +106,17 @@ CViewMessages::CViewMessages(wxNotebook* pNotebook) :
     //
     // Setup View
     //
-	pGroup = new CTaskItemGroup( _("Commands") );
-	m_TaskGroups.push_back( pGroup );
+    pGroup = new CTaskItemGroup( _("Commands") );
+    m_TaskGroups.push_back( pGroup );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Copy all messages"),
         _("Copy all the messages to the clipboard."),
         ID_TASK_MESSAGES_COPYALL 
     );
     pGroup->m_Tasks.push_back( pItem );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Copy selected messages"),
 #ifdef __WXMAC__
         _("Copy the selected messages to the clipboard. "
@@ -115,20 +144,6 @@ CViewMessages::CViewMessages(wxNotebook* pNotebook) :
     m_pMessageErrorAttr = new wxListItemAttr(*wxRED, *wxWHITE, wxNullFont);
 
     UpdateSelection();
-}
-
-
-CViewMessages::~CViewMessages() {
-    if (m_pMessageInfoAttr) {
-        delete m_pMessageInfoAttr;
-        m_pMessageInfoAttr = NULL;
-    }
-
-    if (m_pMessageErrorAttr) {
-        delete m_pMessageErrorAttr;
-        m_pMessageErrorAttr = NULL;
-    }
-    EmptyTasks();
 }
 
 
@@ -449,6 +464,3 @@ bool CViewMessages::CloseClipboard() {
 }
 
 #endif
-
-
-const char *BOINC_RCSID_0be7149475 = "$Id: ViewMessages.cpp 15128 2008-05-05 00:51:20Z davea $";

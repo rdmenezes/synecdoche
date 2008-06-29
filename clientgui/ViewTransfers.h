@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -25,15 +26,14 @@
 #endif
 
 
-#include "BOINCBaseView.h"
+#include "TaskViewBase.h"
 
 
 class CTransfer : public wxObject {
 public:
-	CTransfer();
-	~CTransfer();
+    CTransfer() {}
 
-	wxString m_strProjectName;
+    wxString m_strProjectName;
     wxString m_strFileName;
     float m_fProgress;
     double m_fBytesXferred;
@@ -44,7 +44,7 @@ public:
 };
 
 
-class CViewTransfers : public CBOINCBaseView {
+class CViewTransfers : public CTaskViewBase {
     DECLARE_DYNAMIC_CLASS( CViewTransfers )
 
 public:
@@ -75,6 +75,8 @@ protected:
 
     virtual void            UpdateSelection();
 
+    virtual void            DemandLoadView();
+
     void                    GetDocProjectName(wxInt32 item, wxString& strBuffer) const;
     wxInt32                 FormatProjectName( wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocFileName(wxInt32 item, wxString& strBuffer) const;
@@ -98,5 +100,3 @@ protected:
 
 
 #endif
-
-

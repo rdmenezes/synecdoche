@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -56,25 +57,9 @@
 #define BTN_ABORT                   2
 
 
-CWork::CWork() {
-}
+IMPLEMENT_DYNAMIC_CLASS(CViewWork, CTaskViewBase)
 
-
-CWork::~CWork() {
-    m_strProjectName.Clear();
-    m_strApplicationName.Clear();
-    m_strName.Clear();
-    m_fCPUTime = 0.0;
-    m_fProgress = 0.0;
-    m_fTimeToCompletion = 0.0;
-    m_tReportDeadline = (time_t)0;
-    m_strStatus.Clear();
-}
-
-
-IMPLEMENT_DYNAMIC_CLASS(CViewWork, CBOINCBaseView)
-
-BEGIN_EVENT_TABLE (CViewWork, CBOINCBaseView)
+BEGIN_EVENT_TABLE (CViewWork, CTaskViewBase)
     EVT_BUTTON(ID_TASK_WORK_SUSPEND, CViewWork::OnWorkSuspend)
     EVT_BUTTON(ID_TASK_WORK_SHOWGRAPHICS, CViewWork::OnWorkShowGraphics)
     EVT_BUTTON(ID_TASK_WORK_ABORT, CViewWork::OnWorkAbort)
@@ -95,13 +80,13 @@ static int CompareViewWorkItems(int *iRowIndex1, int *iRowIndex2) {
     
     switch (myCViewWork->m_iSortColumn) {
         case COLUMN_PROJECT:
-	result = work1->m_strProjectName.CmpNoCase(work2->m_strProjectName);
+    result = work1->m_strProjectName.CmpNoCase(work2->m_strProjectName);
         break;
     case COLUMN_APPLICATION:
-	result = work1->m_strApplicationName.CmpNoCase(work2->m_strApplicationName);
+    result = work1->m_strApplicationName.CmpNoCase(work2->m_strApplicationName);
         break;
     case COLUMN_NAME:
-	result = work1->m_strName.CmpNoCase(work2->m_strName);
+    result = work1->m_strName.CmpNoCase(work2->m_strName);
         break;
     case COLUMN_CPUTIME:
         if (work1->m_fCPUTime < work2->m_fCPUTime) {
@@ -132,7 +117,7 @@ static int CompareViewWorkItems(int *iRowIndex1, int *iRowIndex2) {
         }
         break;
     case COLUMN_STATUS:
-	result = work1->m_strStatus.CmpNoCase(work2->m_strStatus);
+    result = work1->m_strStatus.CmpNoCase(work2->m_strStatus);
         break;
     }
 
@@ -145,10 +130,26 @@ CViewWork::CViewWork()
 
 
 CViewWork::CViewWork(wxNotebook* pNotebook) :
-    CBOINCBaseView(pNotebook, ID_TASK_WORKVIEW, DEFAULT_TASK_FLAGS, ID_LIST_WORKVIEW, DEFAULT_LIST_MULTI_SEL_FLAGS)
-{
-	CTaskItemGroup* pGroup = NULL;
-	CTaskItem*      pItem = NULL;
+CTaskViewBase(pNotebook) {}
+
+
+CViewWork::~CViewWork() {
+    EmptyCache();
+}
+
+
+void CViewWork::DemandLoadView() {
+    wxASSERT(!m_bViewLoaded);
+
+    CTaskViewBase::DemandLoadView(
+        ID_TASK_WORKVIEW,
+        DEFAULT_TASK_FLAGS,
+        ID_LIST_WORKVIEW,
+        DEFAULT_LIST_MULTI_SEL_FLAGS
+    );
+
+    CTaskItemGroup* pGroup = NULL;
+    CTaskItem*      pItem = NULL;
 
     wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
@@ -157,24 +158,24 @@ CViewWork::CViewWork(wxNotebook* pNotebook) :
     //
     // Setup View
     //
-	pGroup = new CTaskItemGroup( _("Commands") );
-	m_TaskGroups.push_back( pGroup );
+    pGroup = new CTaskItemGroup( _("Commands") );
+    m_TaskGroups.push_back( pGroup );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Show graphics"),
         _("Show application graphics in a window."),
         ID_TASK_WORK_SHOWGRAPHICS 
     );
     pGroup->m_Tasks.push_back( pItem );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Suspend"),
         _("Suspend work for this result."),
         ID_TASK_WORK_SUSPEND 
     );
     pGroup->m_Tasks.push_back( pItem );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Abort"),
         _("Abandon work on the result. "
           "You will get no credit for it."),
@@ -202,12 +203,6 @@ CViewWork::CViewWork(wxNotebook* pNotebook) :
     m_funcSortCompare = CompareViewWorkItems;
 
     UpdateSelection();
-}
-
-
-CViewWork::~CViewWork() {
-    EmptyCache();
-    EmptyTasks();
 }
 
 
@@ -912,7 +907,7 @@ void CViewWork::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
         strBuffer.Clear();
         return;
     }
-	int throttled = status.task_suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT;
+    int throttled = status.task_suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT;
     switch(result->state) {
     case RESULT_NEW:
         strBuffer = _("New"); 
@@ -1036,6 +1031,3 @@ double CViewWork::GetProgressValue(long item) {
 
     return fBuffer;
 }
-
-
-const char *BOINC_RCSID_34f860f736 = "$Id: ViewWork.cpp 15024 2008-04-07 09:31:15Z charlief $";

@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -43,35 +44,42 @@ END_EVENT_TABLE ()
 CViewResources::CViewResources()
 {}
 
-#define COLOR(c) wxColour(c>>16, (c>>8)&0xff, c&0xff)
-CViewResources::CViewResources(wxNotebook* pNotebook) :
-	CBOINCBaseView(pNotebook)
-{
-	m_BOINCwasEmpty=false;
 
-	wxGridSizer* itemGridSizer = new wxGridSizer(2, 0, 3);
+CViewResources::CViewResources(wxNotebook* pNotebook) :
+CBOINCBaseView(pNotebook) {}
+
+
+CViewResources::~CViewResources() {}
+
+
+void CViewResources::DemandLoadView() {
+
+    wxASSERT(!m_bViewLoaded);
+    m_BOINCwasEmpty=false;
+
+    wxGridSizer* itemGridSizer = new wxGridSizer(2, 0, 3);
     wxASSERT(itemGridSizer);
 
-	// create pie chart ctrl for total disk usage
-	m_pieCtrlTotal = new wxPieCtrl(this, ID_LIST_RESOURCEUTILIZATIONVIEWTOTAL, wxDefaultPosition, wxSize(-1,-1));
-	wxASSERT(m_pieCtrlTotal);
-	// setup the legend
-	m_pieCtrlTotal->SetTransparent(true);
-	m_pieCtrlTotal->SetHorLegendBorder(10);
-	m_pieCtrlTotal->SetLabelFont(*wxSWISS_FONT);
-	m_pieCtrlTotal->SetLabelColour(wxColour(0,0,0));
-	m_pieCtrlTotal->SetLabel(_("total disk usage"));
+    // create pie chart ctrl for total disk usage
+    m_pieCtrlTotal = new wxPieCtrl(this, ID_LIST_RESOURCEUTILIZATIONVIEWTOTAL, wxDefaultPosition, wxSize(-1,-1));
+    wxASSERT(m_pieCtrlTotal);
+    // setup the legend
+    m_pieCtrlTotal->SetTransparent(true);
+    m_pieCtrlTotal->SetHorLegendBorder(10);
+    m_pieCtrlTotal->SetLabelFont(*wxSWISS_FONT);
+    m_pieCtrlTotal->SetLabelColour(wxColour(0,0,0));
+    m_pieCtrlTotal->SetLabel(_("total disk usage"));
 
-	// create pie chart ctrl for BOINC disk usage
-	m_pieCtrlBOINC = new wxPieCtrl(this, ID_LIST_RESOURCEUTILIZATIONVIEW, wxDefaultPosition, wxSize(-1,-1));
-	wxASSERT(m_pieCtrlBOINC);
-	//setup the legend
-	m_pieCtrlBOINC->SetTransparent(true);
-	m_pieCtrlBOINC->SetHorLegendBorder(10);
-	m_pieCtrlBOINC->SetLabelFont(*wxSWISS_FONT);
-	m_pieCtrlBOINC->SetLabelColour(wxColour(0,0,0));
-	m_pieCtrlBOINC->SetLabel(_("disk usage by BOINC projects"));
-	//init the flexGrid
+    // create pie chart ctrl for BOINC disk usage
+    m_pieCtrlBOINC = new wxPieCtrl(this, ID_LIST_RESOURCEUTILIZATIONVIEW, wxDefaultPosition, wxSize(-1,-1));
+    wxASSERT(m_pieCtrlBOINC);
+    //setup the legend
+    m_pieCtrlBOINC->SetTransparent(true);
+    m_pieCtrlBOINC->SetHorLegendBorder(10);
+    m_pieCtrlBOINC->SetLabelFont(*wxSWISS_FONT);
+    m_pieCtrlBOINC->SetLabelColour(wxColour(0,0,0));
+    m_pieCtrlBOINC->SetLabel(_("disk usage by BOINC projects"));
+    //init the flexGrid
     itemGridSizer->Add(m_pieCtrlTotal,1,wxGROW|wxALL,1);
     itemGridSizer->Add(m_pieCtrlBOINC,1, wxGROW|wxALL,1);
 
@@ -80,11 +88,6 @@ CViewResources::CViewResources(wxNotebook* pNotebook) :
     Layout();
 
     UpdateSelection();
-}
-
-
-CViewResources::~CViewResources() {
-    EmptyTasks();
 }
 
 
@@ -105,7 +108,7 @@ const char** CViewResources::GetViewIcon() {
 }
 
 void CViewResources::UpdateSelection() {
-	//TODO: is this needed ? no task buttons
+    //TODO: is this needed ? no task buttons
     CBOINCBaseView::PreUpdateSelection();
     //CBOINCBaseView::PostUpdateSelection();
 }
@@ -164,131 +167,131 @@ bool CViewResources::OnRestoreState(wxConfigBase* /*pConfig*/) {
 void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     wxString diskspace;
-	static double project_total=0.0;
-	unsigned int i;
+    static double project_total=0.0;
+    unsigned int i;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
-	//get data for BOINC projects disk usage
+    //get data for BOINC projects disk usage
     pDoc->CachedDiskUsageUpdate();
     pDoc->CachedStateUpdate();
-	bool refreshBOINC=false;
-	if (pDoc->disk_usage.projects.size()>0) {
-		m_BOINCwasEmpty=false;
-		//check for changes worth a refresh
-		if(pDoc->disk_usage.projects.size() != m_pieCtrlBOINC->m_Series.size()) {
-			refreshBOINC=true;
-		} else {
-			for (i=0; i<pDoc->disk_usage.projects.size(); i++) {
-				wxString oldValue;
-				wxString newValue;
-				FormatDiskSpace(pDoc->DiskUsageProject(i)->disk_usage, newValue);
-				FormatDiskSpace(m_pieCtrlBOINC->m_Series.Item(i).GetValue(), oldValue);
-				if(newValue.Cmp(oldValue)!=0) {
-					refreshBOINC=true;
-					break;
-				}
-			}
-		}
-		//only refresh when worthy changes
-		if(refreshBOINC) {
-			m_pieCtrlBOINC->m_Series.Clear();
+    bool refreshBOINC=false;
+    if (pDoc->disk_usage.projects.size()>0) {
+        m_BOINCwasEmpty=false;
+        //check for changes worth a refresh
+        if(pDoc->disk_usage.projects.size() != m_pieCtrlBOINC->m_Series.size()) {
+            refreshBOINC=true;
+        } else {
+            for (i=0; i<pDoc->disk_usage.projects.size(); i++) {
+                wxString oldValue;
+                wxString newValue;
+                FormatDiskSpace(pDoc->DiskUsageProject(i)->disk_usage, newValue);
+                FormatDiskSpace(m_pieCtrlBOINC->m_Series.Item(i).GetValue(), oldValue);
+                if(newValue.Cmp(oldValue)!=0) {
+                    refreshBOINC=true;
+                    break;
+                }
+            }
+        }
+        //only refresh when worthy changes
+        if(refreshBOINC) {
+            m_pieCtrlBOINC->m_Series.Clear();
             project_total = 0;
-			for (i=0; i<pDoc->disk_usage.projects.size(); i++) {
-				//update data for boinc projects pie chart
-				PROJECT* project = pDoc->DiskUsageProject(i);
-				wxString projectname;
-				FormatProjectName(project, projectname);
-				FormatDiskSpace(project->disk_usage, diskspace);
-				double usage = project->disk_usage;
-				project_total += usage;
-				wxPiePart part;
-				part.SetLabel(projectname + wxT(" - ") + diskspace);
-				part.SetValue(usage);
+            for (i=0; i<pDoc->disk_usage.projects.size(); i++) {
+                //update data for boinc projects pie chart
+                PROJECT* project = pDoc->DiskUsageProject(i);
+                wxString projectname;
+                FormatProjectName(project, projectname);
+                FormatDiskSpace(project->disk_usage, diskspace);
+                double usage = project->disk_usage;
+                project_total += usage;
+                wxPiePart part;
+                part.SetLabel(projectname + wxT(" - ") + diskspace);
+                part.SetValue(usage);
                 unsigned char r=128+(rand()&127);
                 unsigned char g=128+(rand()&127);
                 unsigned char b=128+(rand()&127);
                 part.SetColour(wxColour(r, g, b));
-				m_pieCtrlBOINC->m_Series.Add(part);
-			}
-			m_pieCtrlBOINC->Refresh();
-		}
-	} else {
-		if(!m_BOINCwasEmpty) {
-			//paint an empty black pie
-			m_pieCtrlBOINC->m_Series.Clear();
-			wxPiePart part;
-			part.SetLabel(_("not attached to any BOINC project - 0 bytes"));
-			part.SetValue(1);
-			part.SetColour(wxColour(0,0,0));
-			m_pieCtrlBOINC->m_Series.Add(part);
-			m_pieCtrlBOINC->Refresh();
-			m_BOINCwasEmpty=true;
-			refreshBOINC=true;
-		}
-	}
-	//data for pie chart 2 (total disk usage)
-	//
-	// good source of color palettes:
-	// http://www.siteprocentral.com/cgi-bin/feed/feed.cgi
-	//
-	bool refreshTotal=false;
-	double free = pDoc->disk_usage.d_free;
-	double total = pDoc->disk_usage.d_total;
-	if(m_pieCtrlTotal->m_Series.size()>0) {
-		wxString oldFree;
-		wxString newFree;
-		FormatDiskSpace(free, newFree);
-		FormatDiskSpace(m_pieCtrlTotal->m_Series.Item(0).GetValue(), oldFree);
-		if(oldFree.Cmp(newFree)!=0) {
-			refreshTotal=true;
-		}
-	} else {
-		refreshTotal=true;
-	}
-	if(refreshBOINC || refreshTotal) {
-		m_pieCtrlTotal->m_Series.Clear();
-		wxPiePart part;
+                m_pieCtrlBOINC->m_Series.Add(part);
+            }
+            m_pieCtrlBOINC->Refresh();
+        }
+    } else {
+        if(!m_BOINCwasEmpty) {
+            //paint an empty black pie
+            m_pieCtrlBOINC->m_Series.Clear();
+            wxPiePart part;
+            part.SetLabel(_("not attached to any BOINC project - 0 bytes"));
+            part.SetValue(1);
+            part.SetColour(wxColour(0,0,0));
+            m_pieCtrlBOINC->m_Series.Add(part);
+            m_pieCtrlBOINC->Refresh();
+            m_BOINCwasEmpty=true;
+            refreshBOINC=true;
+        }
+    }
+    //data for pie chart 2 (total disk usage)
+    //
+    // good source of color palettes:
+    // http://www.siteprocentral.com/cgi-bin/feed/feed.cgi
+    //
+    bool refreshTotal=false;
+    double free = pDoc->disk_usage.d_free;
+    double total = pDoc->disk_usage.d_total;
+    if(m_pieCtrlTotal->m_Series.size()>0) {
+        wxString oldFree;
+        wxString newFree;
+        FormatDiskSpace(free, newFree);
+        FormatDiskSpace(m_pieCtrlTotal->m_Series.Item(0).GetValue(), oldFree);
+        if(oldFree.Cmp(newFree)!=0) {
+            refreshTotal=true;
+        }
+    } else {
+        refreshTotal=true;
+    }
+    if(refreshBOINC || refreshTotal) {
+        m_pieCtrlTotal->m_Series.Clear();
+        wxPiePart part;
 
-		// used by BOINC
+        // used by BOINC
         double boinc_total = project_total + pDoc->disk_usage.d_boinc;
         FormatDiskSpace(boinc_total, diskspace);
-		part.SetLabel(_("used by BOINC - ") + diskspace);
-		part.SetValue(boinc_total);
-		part.SetColour(wxColour(0,0,0));
-		m_pieCtrlTotal->m_Series.Add(part);
+        part.SetLabel(_("used by BOINC - ") + diskspace);
+        part.SetValue(boinc_total);
+        part.SetColour(wxColour(0,0,0));
+        m_pieCtrlTotal->m_Series.Add(part);
 
         double avail = pDoc->disk_usage.d_allowed - boinc_total;
         if (avail > 0) {
             if (avail > free) avail = free;
-		    FormatDiskSpace(avail, diskspace);
-		    part.SetLabel(_("free, available to BOINC - ") + diskspace);
-		    part.SetValue(avail);
-		    part.SetColour(wxColour(128, 128, 128));
-		    m_pieCtrlTotal->m_Series.Add(part);
+            FormatDiskSpace(avail, diskspace);
+            part.SetLabel(_("free, available to BOINC - ") + diskspace);
+            part.SetValue(avail);
+            part.SetColour(wxColour(128, 128, 128));
+            m_pieCtrlTotal->m_Series.Add(part);
         } else {
             avail = 0;
         }
 
         // free disk space
         double not_avail = free - avail;
-		FormatDiskSpace(not_avail, diskspace);
-		part.SetLabel(_("free, not available to BOINC - ") + diskspace);
-		part.SetValue(not_avail);
-		part.SetColour(wxColour(238,238,238));
-		m_pieCtrlTotal->m_Series.Add(part);
+        FormatDiskSpace(not_avail, diskspace);
+        part.SetLabel(_("free, not available to BOINC - ") + diskspace);
+        part.SetValue(not_avail);
+        part.SetColour(wxColour(238,238,238));
+        m_pieCtrlTotal->m_Series.Add(part);
 
 
-		// used by others
+        // used by others
         double used_by_others = total-boinc_total-free;
-		FormatDiskSpace(used_by_others, diskspace);
-		part.SetLabel(_("used by other programs - ") + diskspace);
-		part.SetValue(used_by_others);
-		part.SetColour(wxColour(192,192,192));
-		m_pieCtrlTotal->m_Series.Add(part);
-		m_pieCtrlTotal->Refresh();
-	}
+        FormatDiskSpace(used_by_others, diskspace);
+        part.SetLabel(_("used by other programs - ") + diskspace);
+        part.SetValue(used_by_others);
+        part.SetColour(wxColour(192,192,192));
+        m_pieCtrlTotal->m_Series.Add(part);
+        m_pieCtrlTotal->Refresh();
+    }
 }
 
 wxInt32 CViewResources::FormatDiskSpace(double bytes, wxString& strBuffer) const {
@@ -311,5 +314,3 @@ wxInt32 CViewResources::FormatDiskSpace(double bytes, wxString& strBuffer) const
 
     return 0;
 }
-
-const char *BOINC_RCSID_5a37b46a6e = "$Id: ViewResources.cpp 15272 2008-05-22 03:57:55Z davea $";

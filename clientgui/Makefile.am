@@ -43,8 +43,6 @@ boinc_gui_SOURCES = \
     BOINCListCtrl.cpp \
     BOINCTaskBar.cpp \
     BOINCTaskCtrl.cpp \
-    BOINCGridCtrl.cpp	\
-    BOINCGridCtrl.h		\
     browser.C \
     CompletionErrorPage.cpp \
     CompletionPage.cpp \
@@ -82,6 +80,7 @@ boinc_gui_SOURCES = \
     sg_ViewTabPage.cpp \
     SkinManager.cpp \
     stdwx.cpp \
+    TaskViewBase.cpp \
     UnavailablePage.cpp \
     ValidateAccountKey.cpp \
     ValidateEmailAddress.cpp \

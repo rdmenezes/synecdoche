@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -29,46 +30,8 @@
 #define DEFAULT_LIST_MULTI_SEL_FLAGS   wxLC_REPORT | wxLC_VIRTUAL
 
 
-class CBOINCTaskCtrl;
 class CBOINCListCtrl;
-class PROJECT;
 
-
-class CTaskItem : wxObject {
-public:
-	CTaskItem();
-	CTaskItem( wxString strName, wxString strDescription, wxInt32 iEventID ) :
-		m_strName(strName), m_strDescription(strDescription), m_iEventID(iEventID),
-        m_pButton(NULL), m_strWebSiteLink(wxT("")) {};
-	CTaskItem( wxString strName, wxString strDescription, wxString strWebSiteLink, wxInt32 iEventID ) :
-		m_strName(strName), m_strDescription(strDescription), m_iEventID(iEventID),  
-        m_pButton(NULL), m_strWebSiteLink(strWebSiteLink) {};
-    ~CTaskItem() {};
-
-    wxString                m_strName;
-    wxString                m_strDescription;
-    wxInt32                 m_iEventID;
-
-	wxButton*				m_pButton;
-    wxString                m_strWebSiteLink;
-};
-
-
-class CTaskItemGroup : wxObject {
-public:
-	CTaskItemGroup();
-	CTaskItemGroup( wxString strName ) :
-		m_strName(strName), m_pStaticBox(NULL), m_pStaticBoxSizer(NULL) { m_Tasks.clear(); };
-    ~CTaskItemGroup() {};
-    wxButton* button(int i) {return m_Tasks[i]->m_pButton;}
-
-    wxString                m_strName;
-
-    wxStaticBox*            m_pStaticBox;
-    wxStaticBoxSizer*       m_pStaticBoxSizer;
-
-	std::vector<CTaskItem*> m_Tasks;
-};
 
 typedef int     (*ListSortCompareFunc)(int*, int*);
 
@@ -81,13 +44,6 @@ public:
     CBOINCBaseView();
     CBOINCBaseView(
         wxNotebook* pNotebook
-    );
-    CBOINCBaseView(
-        wxNotebook* pNotebook,
-        wxWindowID iTaskWindowID,
-        int iTaskWindowFlags,
-        wxWindowID iListWindowID,
-        int iListWindowFlags
     );
 
     ~CBOINCBaseView();
@@ -107,13 +63,13 @@ public:
     wxString                FireOnListGetItemText( long item, long column ) const;
     int                     FireOnListGetItemImage( long item ) const;
     wxListItemAttr*         FireOnListGetItemAttr( long item ) const;
+
+    void                    FireOnShowView();
     
     int                     GetProgressColumn() { return m_iProgressColumn; }
     virtual double          GetProgressValue(long item);
 
     void                    InitSort();
-
-    std::vector<CTaskItemGroup*> m_TaskGroups;
 
     int                     m_iSortColumn;
     bool                    m_bReverseSort;
@@ -148,20 +104,24 @@ protected:
     virtual bool            SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex);
     void                    sortData();
 
-    virtual void            EmptyTasks();
-
     virtual void            PreUpdateSelection();
     virtual void            UpdateSelection();
     virtual void            PostUpdateSelection();
 
-    virtual void            UpdateWebsiteSelection(long lControlGroup, PROJECT* project);
+    virtual void            DemandLoadView();
+    virtual void            DemandLoadView(
+                                wxWindowID iTaskWindowID,
+                                int iTaskWindowFlags,
+                                wxWindowID iListWindowID,
+                                int iListWindowFlags
+                            );
 
     bool                    _EnsureLastItemVisible();
     virtual bool            EnsureLastItemVisible();
 
-    static  void            append_to_status(wxString& existing, const wxChar* additional);
-	static  wxString        HtmlEntityEncode(wxString strRaw);
-	static  wxString        HtmlEntityDecode(wxString strRaw);
+    static  void            AppendToStatus(wxString& existing, const wxChar* additional);
+    static  wxString        HtmlEntityEncode(wxString strRaw);
+    static  wxString        HtmlEntityDecode(wxString strRaw);
 
     bool                    m_bProcessingTaskRenderEvent;
     bool                    m_bProcessingListRenderEvent;
@@ -175,11 +135,10 @@ protected:
     ListSortCompareFunc     m_funcSortCompare;
     wxArrayInt              m_iSortedIndexes;
 
-    CBOINCTaskCtrl*         m_pTaskPane;
     CBOINCListCtrl*         m_pListPane;
+
+    bool                    m_bViewLoaded;
 };
 
 
 #endif
-
-

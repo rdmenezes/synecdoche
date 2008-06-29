@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -34,7 +35,7 @@ WX_DECLARE_OBJARRAY(wxColour, wxArrayColour);
 class CViewResources : public CBOINCBaseView
 {
     DECLARE_DYNAMIC_CLASS( CViewResources )
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
 public:
     CViewResources();
@@ -51,21 +52,22 @@ public:
 
 protected:
 
-	wxPieCtrl*				m_pieCtrlBOINC;
-	wxPieCtrl*				m_pieCtrlTotal;
+    wxPieCtrl*              m_pieCtrlBOINC;
+    wxPieCtrl*              m_pieCtrlTotal;
 
-	bool					m_BOINCwasEmpty;
+    bool                    m_BOINCwasEmpty;
 
     virtual void            UpdateSelection();
 
     wxInt32                 FormatProjectName(PROJECT*, wxString& strBuffer ) const;
-	wxInt32					FormatDiskSpace(double bytes, wxString& strBuffer) const;
+    wxInt32                 FormatDiskSpace(double bytes, wxString& strBuffer) const;
 
     virtual bool            OnSaveState( wxConfigBase* pConfig );
     virtual bool            OnRestoreState( wxConfigBase* pConfig );
-	virtual void            OnListRender( wxTimerEvent& event );
+    virtual void            OnListRender( wxTimerEvent& event );
+
+    virtual void            DemandLoadView();
 };
 
 
 #endif
-
