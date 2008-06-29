@@ -87,7 +87,8 @@ CStatusBar::CStatusBar(wxWindow *parent) :
 {
     wxLogTrace(wxT("Function Start/End"), wxT("CStatusBar::CStatusBar - Function Begin"));
 
-    const int widths[] = {-1, 200, 20};
+    wxPoint conSize = ConvertDialogToPixels(wxPoint(150, 0));
+    const int widths[] = {-1, conSize.x};
     SetFieldsCount(WXSIZEOF(widths), widths);
 
     m_pbmpConnected = new wxStaticBitmap(this, -1, wxIcon(connect_xpm));
