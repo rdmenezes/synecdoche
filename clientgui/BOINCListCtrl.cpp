@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -266,7 +267,7 @@ void CBOINCListCtrl::DrawBarGraphs()
 
         if (numItems <= (topItem + numVisibleItems)) numVisibleItems = numItems - topItem;
 
-#if ! defined(__WXMSW__)
+#if ! USE_NATIVE_LISTCONTROL
         int w = 0, x = 0;
         if (progressColumn >= 0) {
             for (i=0; i< progressColumn; i++) {
@@ -274,9 +275,10 @@ void CBOINCListCtrl::DrawBarGraphs()
             }
             w = GetColumnWidth(progressColumn);
         }
-        x -= GetScrollPos(wxHORIZONTAL);
+        int dummy;
+        CalcScrolledPosition(x, 0, &x, &dummy);
 #endif
-       
+
         for (i=0; i<numVisibleItems; i++) {
             item = topItem + i;
             GetItemRect(item, r);
@@ -290,10 +292,10 @@ void CBOINCListCtrl::DrawBarGraphs()
             }
 
             if (progressColumn < 0) continue;
-#if defined(__WXMSW__)
+#if USE_NATIVE_LISTCONTROL
             GetSubItemRect(item, progressColumn, r);
 #else
- 	        r.x = x;
+            r.x = x;
             r.width = w;
 #endif
             r.Inflate(-1, -1);
