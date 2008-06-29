@@ -26,36 +26,6 @@ AC_ARG_ENABLE(unicode,
     [enable_unicode="$enableval"],
     [])
 
-AC_ARG_ENABLE(server, 
-    AS_HELP_STRING([--disable-server],
-                   [disable building the scheduling server]),
-    [],
-    [enable_server=yes])
-
-AC_ARG_ENABLE(client, 
-    AS_HELP_STRING([--disable-client],
-                   [disable building the client]),
-    [],
-    [enable_client=yes])
-
-m4_divert_once([HELP_ENABLE],
-  AS_HELP_STRING([], [Default: --enable-server --enable-client: 
-                      builds both server and client]))
-
-if test "${enable_server}" = yes ; then
-    if test "${enable_client}" = yes ; then
-        configured_to_build='server & client'
-    else
-        configured_to_build='server only'
-    fi
-else
-    if test "${enable_client}" = yes ; then
-        configured_to_build='client only'
-    else
-        configured_to_build='libraries only'
-    fi
-fi
-
 dnl ======================================================================
 dnl some vodoo required for building portable client-binary (client, clientgui)
 dnl ======================================================================
@@ -77,7 +47,6 @@ else
 fi
 
 echo "--- Configuring BOINC AC_PACKAGE_VERSION (${build_state}) ---"
-echo "--- Build Components: (${configured_to_build}) ---"
 
 AC_CANONICAL_TARGET
 
@@ -182,15 +151,6 @@ SAH_OPTION_BITNESS
 dnl Determine the BOINC platform given the target arch-platform-os.
 BOINC_PLATFORM
 
-if ( test "${enable_client_release}" = yes ) && ( test "${enable_client}" != yes ); then
-   AC_MSG_WARN([--enable-client-release ignored.
---------------------------------------------------
-The switch --enable-client-release is only useful for building the client and will be ignored
---------------------------------------------------])
-fi
-   
-
-
 dnl Find the extensions used on shared and static libraries on this system
 SAH_LIBEXT
 SAH_DLLEXT
@@ -203,24 +163,6 @@ if test "${enable_debug}" = yes; then
     AC_SUBST(CXXFLAGS)
     AC_SUBST(CFLAGS)
 fi
-
-if test "${enable_server}" = yes; then
-   AC_CHECK_MYSQL
-   if test "${no_mysql}" = yes; then
-      AC_MSG_WARN([ mysql not found.
-======================================================================
-WARNING: trying to build BOINC-server, but MYSQL was not be found.
-If you dont want to build the server you should use --disable-server.
-
-I am continuing now as if --disable-server had been specified.
-
-======================================================================
-])
-   enable_server=no
-   fi
-fi
-
-
 
 dnl Checks for libraries.
 
@@ -253,11 +195,10 @@ BOINC_GETSOCKOPT_TYPE
 
 dnl ---------- libcurl (m4/libcurl.m4) ------------------------------
 
-if test "${enable_client}" = yes; then
-   LIBCURL_CHECK_CONFIG([yes], [7.17.1], [haveCurl=yes], [haveCurl=no])
-   
-   if test "${haveCurl}" != yes; then
-      AC_MSG_ERROR([
+LIBCURL_CHECK_CONFIG([yes], [7.17.1], [haveCurl=yes], [haveCurl=no])
+
+if test "${haveCurl}" != yes; then
+    AC_MSG_ERROR([
 ================================================================================
 ERROR: could not find (recent enough) development-libs for libcurl.
 
@@ -271,24 +212,23 @@ ERROR: could not find (recent enough) development-libs for libcurl.
   You can download libcurl from: http://curl.haxx.se/
 
 ================================================================================
-	])
-   else
-      ## add libcurl et al. to the list of statically linked libs
-      STATIC_LIB_LIST="${STATIC_LIB_LIST} curl idn crypto ssl krb5 k5crypto gssapi_krb5 com_err resolv"
-      CPPFLAGS="${CPPFLAGS} ${LIBCURL_CPPFLAGS}"
-      CURL_LIB_PATHS=`echo $LIBCURL | sed 's/[^[a-zA-Z]]*-l[^ ]*//g'`
-      LDFLAGS="$CURL_LIB_PATHS $LDFLAGS"
+    ])
+else
+    ## add libcurl et al. to the list of statically linked libs
+    STATIC_LIB_LIST="${STATIC_LIB_LIST} curl idn crypto ssl krb5 k5crypto gssapi_krb5 com_err resolv"
+    CPPFLAGS="${CPPFLAGS} ${LIBCURL_CPPFLAGS}"
+    CURL_LIB_PATHS=`echo $LIBCURL | sed 's/[^[a-zA-Z]]*-l[^ ]*//g'`
+    LDFLAGS="$CURL_LIB_PATHS $LDFLAGS"
 
-      if test "${enable_debug}" = yes; then
-         echo "LIBCURL = ${LIBCURL}"
-	 echo "LIBCURL_CPPFLAGS = ${LIBCURL_CPPFLAGS}"
-	 echo "CURL_LIB_PATHS = ${CURL_LIB_PATHS}"
-	 echo "LDFLAGS = ${LDFLAGS}"
-      fi
-
-   fi	
+    if test "${enable_debug}" = yes; then
+        echo "LIBCURL = ${LIBCURL}"
+        echo "LIBCURL_CPPFLAGS = ${LIBCURL_CPPFLAGS}"
+        echo "CURL_LIB_PATHS = ${CURL_LIB_PATHS}"
+        echo "LDFLAGS = ${LDFLAGS}"
+    fi
 
 fi
+
 
 dnl ---------- SSL (m4/check_ssl.m4)
 CHECK_SSL
@@ -391,7 +331,7 @@ see http://www.ijg.org/
 HINT: on MacOSX/Darwin these libs/includes are sometimes found in '/sw/' (if using fink)
       or '/opt/local' (if using port).
 ================================================================================
-	]);
+    ]);
    fi
 fi
 
@@ -526,7 +466,7 @@ else
 fi
 
 
-if ( test "${enable_client}" = yes ) && ( test "$wxWin" != 1 ); then
+if ( test "$wxWin" != 1 ); then
    AC_MSG_WARN([
 ================================================================================
 WARNING: A suitable installation of wxWidgets could not be found 
@@ -551,7 +491,7 @@ WARNING: A suitable installation of wxWidgets could not be found
        ])
 fi
 
-AM_CONDITIONAL(BUILD_CLIENTGUI, [ test "$wxWin" = 1 -a "${enable_client}" = yes ])
+AM_CONDITIONAL(BUILD_CLIENTGUI, [ test "$wxWin" = 1 ])
 
 dnl --------------------------------------------------------------------------------
 
@@ -566,12 +506,6 @@ fi
 AM_CONDITIONAL(OS_LINUX, [echo $host_os | grep '^linux' > /dev/null])
 dnl In case anyone wants to try building the windows code using mingw!
 AM_CONDITIONAL(OS_WIN32_MINGW, [echo $host_os | grep '^mingw' > /dev/null])
-
-dnl tell automake about whether to build client and/or server
-AM_CONDITIONAL(ENABLE_SERVER, [test "${enable_server}" = yes])
-AM_CONDITIONAL(ENABLE_CLIENT, [test "${enable_client}" = yes])
-
-
 
 dnl ======================================================================
 dnl some more vodoo required for building portable client-binary (client, clientgui)
@@ -681,4 +615,3 @@ AC_CONFIG_HEADERS([config.h])
 AC_OUTPUT
 
 echo "--- Configuring BOINC AC_PACKAGE_VERSION (${build_state}) ---"
-echo "--- Build Components: (${configured_to_build}) ---"
