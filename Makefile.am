@@ -8,9 +8,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 API_SUBDIRS = api lib
 
-if ENABLE_CLIENT
-   CLIENT_SUBDIRS = client client/scripts
-endif
+CLIENT_SUBDIRS = client client/scripts
 
 if BUILD_CLIENTGUI
    CLIENTGUI_SUBDIRS = clientgui clientgui/res locale/client 
@@ -18,14 +16,13 @@ endif
 
 # ORDER MATTERS below.  One must build dependencies FIRST, then things
 # that depend on them later
-SUBDIRS = m4 $(API_SUBDIRS) $(SERVER_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS)
+SUBDIRS = m4 $(API_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS)
 
 # Putting a directory name recursively copies the entire contents - the
 # dist-hook below gets rid of CVS directories.
 
 EXTRA_DIST =                                    \
 	win_build                                   \
-	stripchart                                  \
     INSTALL										
 
 pkginclude_HEADERS = \
