@@ -2158,11 +2158,11 @@
 				Name="Views"
 				>
 				<File
-					RelativePath="..\clientgui\BOINCGridCtrl.cpp"
+					RelativePath="..\clientgui\BOINCBaseView.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\clientgui\BOINCGridCtrl.h"
+					RelativePath="..\clientgui\BOINCBaseView.h"
 					>
 				</File>
 				<File
@@ -2179,6 +2179,14 @@
 				</File>
 				<File
 					RelativePath="..\clientgui\BOINCTaskCtrl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\clientgui\TaskViewBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\clientgui\TaskViewBase.h"
 					>
 				</File>
 				<File
@@ -2233,14 +2241,6 @@
 			<Filter
 				Name="Support"
 				>
-				<File
-					RelativePath="..\clientgui\BOINCBaseView.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\clientgui\BOINCBaseView.h"
-					>
-				</File>
 				<File
 					RelativePath="..\clientgui\DlgAbout.cpp"
 					>

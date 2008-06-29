@@ -669,6 +669,7 @@ bool CAdvancedFrame::CreateNotebook() {
 bool CAdvancedFrame::RepopulateNotebook() {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::RepopulateNotebook - Function Begin"));
 
+    Freeze();
     DeleteNotebook();
 
     // Create the various notebook pages
@@ -678,6 +679,9 @@ bool CAdvancedFrame::RepopulateNotebook() {
     CreateNotebookPage(new CViewMessages(m_pNotebook));
     CreateNotebookPage(new CViewStatistics(m_pNotebook));
     CreateNotebookPage(new CViewResources(m_pNotebook));
+
+    m_pNotebook->SetSelection(0);
+    Thaw();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::RepopulateNotebook - Function End"));
     return true;
@@ -704,7 +708,12 @@ bool CAdvancedFrame::CreateNotebookPage(T pwndNewNotebookPage) {
     }
     
     iImageIndex = pImageList->Add(wxBitmap(pwndNewNotebookPage->GetViewIcon()));
-    m_pNotebook->AddPage(pwndNewNotebookPage, pwndNewNotebookPage->GetViewDisplayName(), TRUE, iImageIndex);
+    m_pNotebook->InsertPage(
+        m_pNotebook->GetPageCount(),
+        pwndNewNotebookPage,
+        pwndNewNotebookPage->GetViewDisplayName(),
+        false,
+        iImageIndex);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CreateNotebookPage - Function End"));
     return true;
@@ -1974,6 +1983,19 @@ void CAdvancedFrame::OnNotebookSelectionChanged(wxNotebookEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnNotebookSelectionChanged - Function Begin"));
 
     if ((-1 != event.GetSelection())) {
+
+        wxWindow*       pwndNotebookPage = NULL;
+        CBOINCBaseView* pView = NULL;
+
+        wxASSERT(m_pNotebook);
+
+        pwndNotebookPage = m_pNotebook->GetPage(event.GetSelection());
+        wxASSERT(pwndNotebookPage);
+
+        pView = wxDynamicCast(pwndNotebookPage, CBOINCBaseView);
+        wxASSERT(pView);
+
+        pView->FireOnShowView();
         UpdateRefreshTimerInterval(event.GetSelection());
         FireRefreshView();
     }

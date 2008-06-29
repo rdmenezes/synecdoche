@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -22,7 +23,7 @@
 #endif
 
 #include "stdwx.h"
-#include "BOINCBaseView.h"
+#include "TaskViewBase.h"
 #include "BOINCTaskCtrl.h"
 
 
@@ -32,7 +33,7 @@ IMPLEMENT_DYNAMIC_CLASS(CBOINCTaskCtrl, wxScrolledWindow)
 CBOINCTaskCtrl::CBOINCTaskCtrl() {}
 
 
-CBOINCTaskCtrl::CBOINCTaskCtrl(CBOINCBaseView* pView, wxWindowID iTaskWindowID, wxInt32 iTaskWindowFlags) :
+CBOINCTaskCtrl::CBOINCTaskCtrl(CTaskViewBase* pView, wxWindowID iTaskWindowID, wxInt32 iTaskWindowFlags) :
     wxScrolledWindow(pView, iTaskWindowID, wxDefaultPosition, wxSize(200, -1), iTaskWindowFlags)
 {
     m_pParent = pView;
@@ -234,6 +235,3 @@ bool CBOINCTaskCtrl::OnRestoreState(wxConfigBase* pConfig) {
 
     return true;
 }
-
-
-const char *BOINC_RCSID_125ef3d14d = "$Id: BOINCTaskCtrl.cpp 13804 2007-10-09 11:35:47Z fthomas $";

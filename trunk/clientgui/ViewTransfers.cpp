@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -49,25 +50,9 @@
 #define BTN_ABORT       1
 
 
-CTransfer::CTransfer() {
-}
+IMPLEMENT_DYNAMIC_CLASS(CViewTransfers, CTaskViewBase)
 
-
-CTransfer::~CTransfer() {
-    m_strProjectName.Clear();
-    m_strFileName.Clear();
-    m_fProgress = 0.0;
-    m_fBytesXferred = 0.0;
-    m_fTotalBytes = 0.0;
-    m_dTime = 0.0;
-    m_dSpeed = 0.0;
-    m_strStatus.Clear();
-}
-
-
-IMPLEMENT_DYNAMIC_CLASS(CViewTransfers, CBOINCBaseView)
-
-BEGIN_EVENT_TABLE (CViewTransfers, CBOINCBaseView)
+BEGIN_EVENT_TABLE (CViewTransfers, CTaskViewBase)
     EVT_BUTTON(ID_TASK_TRANSFERS_RETRYNOW, CViewTransfers::OnTransfersRetryNow)
     EVT_BUTTON(ID_TASK_TRANSFERS_ABORT, CViewTransfers::OnTransfersAbort)
     EVT_LIST_ITEM_SELECTED(ID_LIST_TRANSFERSVIEW, CViewTransfers::OnListSelected)
@@ -86,10 +71,10 @@ static int CompareViewTransferItems(int *iRowIndex1, int *iRowIndex2) {
     
     switch (MyCViewTransfers->m_iSortColumn) {
         case COLUMN_PROJECT:
-	result = transfer1->m_strProjectName.CmpNoCase(transfer2->m_strProjectName);
+    result = transfer1->m_strProjectName.CmpNoCase(transfer2->m_strProjectName);
         break;
     case COLUMN_FILE:
-	result = transfer1->m_strFileName.CmpNoCase(transfer2->m_strFileName);
+    result = transfer1->m_strFileName.CmpNoCase(transfer2->m_strFileName);
         break;
     case COLUMN_PROGRESS:
         if (transfer1->m_fProgress < transfer2->m_fProgress) {
@@ -120,7 +105,7 @@ static int CompareViewTransferItems(int *iRowIndex1, int *iRowIndex2) {
         }
         break;
     case COLUMN_STATUS:
-	result = transfer1->m_strStatus.CmpNoCase(transfer2->m_strStatus);
+    result = transfer1->m_strStatus.CmpNoCase(transfer2->m_strStatus);
         break;
     }
 
@@ -133,10 +118,24 @@ CViewTransfers::CViewTransfers()
 
 
 CViewTransfers::CViewTransfers(wxNotebook* pNotebook) :
-    CBOINCBaseView(pNotebook, ID_TASK_TRANSFERSVIEW, DEFAULT_TASK_FLAGS, ID_LIST_TRANSFERSVIEW, DEFAULT_LIST_MULTI_SEL_FLAGS)
-{
-	CTaskItemGroup* pGroup = NULL;
-	CTaskItem*      pItem = NULL;
+CTaskViewBase(pNotebook) {}
+
+
+CViewTransfers::~CViewTransfers() {
+    EmptyCache();
+}
+
+void CViewTransfers::DemandLoadView() {
+    wxASSERT(!m_bViewLoaded);
+
+    CTaskViewBase::DemandLoadView(
+        ID_TASK_TRANSFERSVIEW,
+        DEFAULT_TASK_FLAGS,
+        ID_LIST_TRANSFERSVIEW,
+        DEFAULT_LIST_MULTI_SEL_FLAGS);
+
+    CTaskItemGroup* pGroup = NULL;
+    CTaskItem*      pItem = NULL;
 
     wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
@@ -145,17 +144,17 @@ CViewTransfers::CViewTransfers(wxNotebook* pNotebook) :
     //
     // Setup View
     //
-	pGroup = new CTaskItemGroup( _("Commands") );
-	m_TaskGroups.push_back( pGroup );
+    pGroup = new CTaskItemGroup( _("Commands") );
+    m_TaskGroups.push_back( pGroup );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Retry Now"),
         _("Click 'Retry now' to transfer the file now"),
         ID_TASK_TRANSFERS_RETRYNOW 
     );
     pGroup->m_Tasks.push_back( pItem );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Abort Transfer"),
         _("Click 'Abort transfer' to delete the file from the transfer queue. "
           "This will prevent you from being granted credit for this result."),
@@ -183,12 +182,6 @@ CViewTransfers::CViewTransfers(wxNotebook* pNotebook) :
     m_funcSortCompare = CompareViewTransferItems;
 
     UpdateSelection();
-}
-
-
-CViewTransfers::~CViewTransfers() {
-    EmptyCache();
-    EmptyTasks();
 }
 
 
@@ -375,7 +368,7 @@ wxInt32 CViewTransfers::RemoveCacheElement() {
 void CViewTransfers::UpdateSelection() {
     CTaskItemGroup* pGroup = m_TaskGroups[0];
 
-    CBOINCBaseView::PreUpdateSelection();
+    CTaskViewBase::PreUpdateSelection();
 
     if (m_pListPane->GetSelectedItemCount()) {
         m_pTaskPane->EnableTaskGroupTasks(pGroup);
@@ -383,7 +376,7 @@ void CViewTransfers::UpdateSelection() {
         m_pTaskPane->DisableTaskGroupTasks(pGroup);
     }
 
-    CBOINCBaseView::PostUpdateSelection();
+    CTaskViewBase::PostUpdateSelection();
 }
 
 
@@ -702,6 +695,3 @@ double CViewTransfers::GetProgressValue(long item) {
     
     return (fBytesSent / fFileSize);
 }
-
-
-const char *BOINC_RCSID_7aadb93332 = "$Id: ViewTransfers.cpp 13804 2007-10-09 11:35:47Z fthomas $";

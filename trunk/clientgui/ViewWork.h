@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -25,16 +26,15 @@
 #endif
 
 
-#include "BOINCBaseView.h"
+#include "TaskViewBase.h"
 
 
 class CWork : public wxObject
 {
 public:
-	CWork();
-	~CWork();
+    CWork() {}
 
-	wxString m_strProjectName;
+    wxString m_strProjectName;
     wxString m_strApplicationName;
     wxString m_strName;
     float m_fCPUTime;
@@ -45,7 +45,7 @@ public:
 };
 
 
-class CViewWork : public CBOINCBaseView
+class CViewWork : public CTaskViewBase
 {
     DECLARE_DYNAMIC_CLASS( CViewWork )
 
@@ -80,6 +80,8 @@ protected:
     virtual bool            SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex);
     virtual void            UpdateSelection();
 
+    virtual void            DemandLoadView();
+
     void                    GetDocProjectName(wxInt32 item, wxString& strBuffer) const;
     wxInt32                 FormatProjectName( wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocApplicationName(wxInt32 item, wxString& strBuffer) const;
@@ -104,5 +106,3 @@ protected:
 
 
 #endif
-
-

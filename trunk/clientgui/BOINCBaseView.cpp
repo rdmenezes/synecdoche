@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -50,10 +51,8 @@ CBOINCBaseView::CBOINCBaseView(wxNotebook* pNotebook) :
     m_bForceUpdateSelection = true;
     m_bIgnoreUIEvents = false;
 
-    //
-    // Setup View
-    //
-    m_pTaskPane = NULL;
+    m_bViewLoaded = false;
+
     m_pListPane = NULL;
     m_iProgressColumn = -1;
     m_iSortColumn = -1;
@@ -61,65 +60,7 @@ CBOINCBaseView::CBOINCBaseView(wxNotebook* pNotebook) :
     
     SetName(GetViewName());
 
-    SetAutoLayout(TRUE);
-}
-
-
-CBOINCBaseView::CBOINCBaseView(
-    wxNotebook* pNotebook, wxWindowID iTaskWindowID, int iTaskWindowFlags, wxWindowID iListWindowID, int iListWindowFlags) :
-    wxPanel(pNotebook, -1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-{
-    wxASSERT(pNotebook);
-
-    m_bProcessingTaskRenderEvent = false;
-    m_bProcessingListRenderEvent = false;
-
-    m_bForceUpdateSelection = true;
-    m_bIgnoreUIEvents = false;
-
-    //
-    // Setup View
-    //
-    m_pTaskPane = NULL;
-    m_pListPane = NULL;
-
-    SetName(GetViewName());
-
-    SetAutoLayout(TRUE);
-
-    wxFlexGridSizer* itemFlexGridSizer = new wxFlexGridSizer(2, 0, 0);
-    wxASSERT(itemFlexGridSizer);
-
-    itemFlexGridSizer->AddGrowableRow(0);
-    itemFlexGridSizer->AddGrowableCol(1);
-    
-    m_pTaskPane = new CBOINCTaskCtrl(this, iTaskWindowID, iTaskWindowFlags);
-    wxASSERT(m_pTaskPane);
-
-    m_pListPane = new CBOINCListCtrl(this, iListWindowID, iListWindowFlags);
-    wxASSERT(m_pListPane);
-
-    itemFlexGridSizer->Add(m_pTaskPane, 1, wxGROW|wxALL, 1);
-    itemFlexGridSizer->Add(m_pListPane, 1, wxGROW|wxALL, 1);
-
-    SetSizer(itemFlexGridSizer);
-
-    Layout();
-
-#if USE_NATIVE_LISTCONTROL
-    m_pListPane->PushEventHandler(new MyEvtHandler(m_pListPane));
-#else
-    (m_pListPane->GetMainWin())->PushEventHandler(new MyEvtHandler(m_pListPane));
-#endif
-
-    m_iProgressColumn = -1;
-    m_iSortColumn = -1;
-    m_bReverseSort = false;
-
-    m_SortArrows = new wxImageList(16, 16, true);
-    m_SortArrows->Add( wxIcon( sortascending_xpm ) );
-    m_SortArrows->Add( wxIcon( sortdescending_xpm ) );
-    m_pListPane->SetImageList(m_SortArrows, wxIMAGE_LIST_SMALL);
+    SetAutoLayout(true);
 }
 
 
@@ -173,12 +114,15 @@ const int CBOINCBaseView::GetViewRefreshRate() {
 
 
 bool CBOINCBaseView::FireOnSaveState(wxConfigBase* pConfig) {
-    return OnSaveState(pConfig);
+    if (m_bViewLoaded) return OnSaveState(pConfig);
+    return true;
 }
 
 
 bool CBOINCBaseView::FireOnRestoreState(wxConfigBase* pConfig) {
-    return OnRestoreState(pConfig);
+    if (m_bViewLoaded) return OnRestoreState(pConfig);
+    // What does the return value mean?
+    return true;
 }
 
 
@@ -189,7 +133,7 @@ int CBOINCBaseView::GetListRowCount() {
 
 
 void CBOINCBaseView::FireOnListRender(wxTimerEvent& event) {
-    OnListRender(event);
+    if (m_bViewLoaded) OnListRender(event);
 }
 
 
@@ -215,6 +159,16 @@ int CBOINCBaseView::FireOnListGetItemImage(long item) const {
 
 wxListItemAttr* CBOINCBaseView::FireOnListGetItemAttr(long item) const {
     return OnListGetItemAttr(item);
+}
+
+
+void CBOINCBaseView::FireOnShowView() {
+    if (!m_bViewLoaded) {
+        Freeze();
+        DemandLoadView();
+        Thaw();
+        m_bViewLoaded = true;
+    }
 }
 
 
@@ -257,7 +211,7 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
             SynchronizeCache();
         }
 
-        if (_EnsureLastItemVisible() && (iDocCount != iCacheCount)) {
+        if (EnsureLastItemVisible() && (iDocCount != iCacheCount)) {
             m_pListPane->EnsureVisible(iDocCount - 1);
         }
 
@@ -288,37 +242,18 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
 
 
 bool CBOINCBaseView::OnSaveState(wxConfigBase* pConfig) {
-    bool bReturnValue = true;
-
     wxASSERT(pConfig);
-    wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
 
-    if (!m_pTaskPane->OnSaveState(pConfig)) {
-        bReturnValue = false;
-    }
-
-    if (!m_pListPane->OnSaveState(pConfig)) {
-        bReturnValue = false;
-    }
-
-    return bReturnValue;
+    return m_pListPane->OnSaveState(pConfig);
 }
 
 
 bool CBOINCBaseView::OnRestoreState(wxConfigBase* pConfig) {
     wxASSERT(pConfig);
-    wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
 
-    if (!m_pTaskPane->OnRestoreState(pConfig)) {
-        return false;
-    }
-
-    if (!m_pListPane->OnRestoreState(pConfig)) {
-        return false;
-    }
-    return true;
+    return m_pListPane->OnRestoreState(pConfig);
 }
 
 
@@ -550,20 +485,6 @@ void CBOINCBaseView::sortData() {
     }
 }
 
-
-void CBOINCBaseView::EmptyTasks() {
-    unsigned int i;
-    unsigned int j;
-    for (i=0; i<m_TaskGroups.size(); i++) {
-        for (j=0; j<m_TaskGroups[i]->m_Tasks.size(); j++) {
-            delete m_TaskGroups[i]->m_Tasks[j];
-        }
-        m_TaskGroups[i]->m_Tasks.clear();
-        delete m_TaskGroups[i];
-    }
-    m_TaskGroups.clear();
-}
-
     
 void CBOINCBaseView::PreUpdateSelection(){
 }
@@ -573,74 +494,8 @@ void CBOINCBaseView::UpdateSelection(){
 }
 
 
-void CBOINCBaseView::PostUpdateSelection(){
-    wxASSERT(m_pTaskPane);
-    m_pTaskPane->UpdateControls();
+void CBOINCBaseView::PostUpdateSelection() {
     Layout();
-}
-
-
-void CBOINCBaseView::UpdateWebsiteSelection(long lControlGroup, PROJECT* project){
-    unsigned int        i;
-    CTaskItemGroup*     pGroup = NULL;
-    CTaskItem*          pItem = NULL;
-
-    wxASSERT(m_pTaskPane);
-    wxASSERT(m_pListPane);
-
-    // Update the websites list
-    //
-    if (m_bForceUpdateSelection) {
-        if (m_TaskGroups.size() > 1) {
-
-            // Delete task group, objects, and controls.
-            pGroup = m_TaskGroups[lControlGroup];
-
-            m_pTaskPane->DeleteTaskGroupAndTasks(pGroup);
-            for (i=0; i<pGroup->m_Tasks.size(); i++) {
-                delete pGroup->m_Tasks[i];
-            }
-            pGroup->m_Tasks.clear();
-            delete pGroup;
-
-            pGroup = NULL;
-
-            m_TaskGroups.erase( m_TaskGroups.begin() + 1 );
-        }
-
-        // If something is selected create the tasks and controls
-        if (m_pListPane->GetSelectedItemCount()) {
-            if (project) {
-                // Create the web sites task group
-  	            pGroup = new CTaskItemGroup( _("Web sites") );
-	            m_TaskGroups.push_back( pGroup );
-
-                // Default project url
-                pItem = new CTaskItem(
-                    wxString(project->project_name.c_str(), wxConvUTF8), 
-                    wxT(""), 
-                    wxString(project->master_url.c_str(), wxConvUTF8),
-                    ID_TASK_PROJECT_WEB_PROJDEF_MIN
-                );
-                pGroup->m_Tasks.push_back(pItem);
-
-
-                // Project defined urls
-                for (i=0;(i<project->gui_urls.size())&&(i<=ID_TASK_PROJECT_WEB_PROJDEF_MAX);i++) {
-                    pItem = new CTaskItem(
-                        wxGetTranslation(wxString(project->gui_urls[i].name.c_str(), wxConvUTF8)),
-                        wxGetTranslation(wxString(project->gui_urls[i].description.c_str(), wxConvUTF8)),
-                        wxString(project->gui_urls[i].url.c_str(), wxConvUTF8),
-                        ID_TASK_PROJECT_WEB_PROJDEF_MIN + 1 + i
-                    );
-                    pGroup->m_Tasks.push_back(pItem);
-                }
-            }
-        }
-
-        m_bForceUpdateSelection = false;
-    }
-
 }
 
 
@@ -659,12 +514,40 @@ double CBOINCBaseView::GetProgressValue(long) {
 }
 
 
-void CBOINCBaseView::append_to_status(wxString& existing, const wxChar* additional) {
-    if (existing.size() == 0) {
+void CBOINCBaseView::AppendToStatus(wxString& existing, const wxChar* additional) {
+    if (existing.IsEmpty()) {
         existing = additional;
     } else {
         existing = existing + wxT(", ") + additional;
     }
+}
+
+
+void CBOINCBaseView::DemandLoadView() {}
+
+
+void CBOINCBaseView::DemandLoadView(wxWindowID iTaskWindowID, int iTaskWindowFlags,
+    wxWindowID iListWindowID, int iListWindowFlags) {
+
+    wxASSERT(!m_bViewLoaded);
+
+    m_pListPane = new CBOINCListCtrl(this, iListWindowID, iListWindowFlags);
+    wxASSERT(m_pListPane);
+
+    #if USE_NATIVE_LISTCONTROL
+    m_pListPane->PushEventHandler(new MyEvtHandler(m_pListPane));
+#else
+    (m_pListPane->GetMainWin())->PushEventHandler(new MyEvtHandler(m_pListPane));
+#endif
+
+    m_SortArrows = new wxImageList(16, 16, true);
+    m_SortArrows->Add( wxIcon( sortascending_xpm ) );
+    m_SortArrows->Add( wxIcon( sortdescending_xpm ) );
+    m_pListPane->SetImageList(m_SortArrows, wxIMAGE_LIST_SMALL);
+
+    this->AddChild(m_pListPane);
+
+    Layout();
 }
 
 

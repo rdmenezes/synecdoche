@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -56,24 +57,9 @@
 #define BTN_DETACH       4
 
 
-CProject::CProject() {
-}
+IMPLEMENT_DYNAMIC_CLASS(CViewProjects, CTaskViewBase)
 
-
-CProject::~CProject() {
-    m_strProjectName.Clear();
-    m_strAccountName.Clear();
-    m_strTeamName.Clear();
-    m_fTotalCredit = 0.0;
-    m_fAVGCredit = 0.0;
-    m_fResourceShare = 0.0;
-    m_strStatus.Clear();
-}
-
-
-IMPLEMENT_DYNAMIC_CLASS(CViewProjects, CBOINCBaseView)
-
-BEGIN_EVENT_TABLE (CViewProjects, CBOINCBaseView)
+BEGIN_EVENT_TABLE (CViewProjects, CTaskViewBase)
     EVT_BUTTON(ID_TASK_PROJECT_UPDATE, CViewProjects::OnProjectUpdate)
     EVT_BUTTON(ID_TASK_PROJECT_SUSPEND, CViewProjects::OnProjectSuspend)
     EVT_BUTTON(ID_TASK_PROJECT_NONEWWORK, CViewProjects::OnProjectNoNewWork)
@@ -96,13 +82,13 @@ static int CompareViewProjectsItems(int *iRowIndex1, int *iRowIndex2) {
     
     switch (myCViewProjects->m_iSortColumn) {
         case COLUMN_PROJECT:
-	result = project1->m_strProjectName.CmpNoCase(project2->m_strProjectName);
+    result = project1->m_strProjectName.CmpNoCase(project2->m_strProjectName);
         break;
     case COLUMN_ACCOUNTNAME:
-	result = project1->m_strAccountName.CmpNoCase(project2->m_strAccountName);
+    result = project1->m_strAccountName.CmpNoCase(project2->m_strAccountName);
         break;
     case COLUMN_TEAMNAME:
-	result = project1->m_strTeamName.CmpNoCase(project2->m_strTeamName);
+    result = project1->m_strTeamName.CmpNoCase(project2->m_strTeamName);
         break;
     case COLUMN_TOTALCREDIT:
         if (project1->m_fTotalCredit < project2->m_fTotalCredit) {
@@ -126,7 +112,7 @@ static int CompareViewProjectsItems(int *iRowIndex1, int *iRowIndex2) {
         }
         break;
     case COLUMN_STATUS:
-	result = project1->m_strStatus.CmpNoCase(project2->m_strStatus);
+    result = project1->m_strStatus.CmpNoCase(project2->m_strStatus);
         break;
     }
 
@@ -138,11 +124,28 @@ CViewProjects::CViewProjects()
 {}
 
 
-CViewProjects::CViewProjects(wxNotebook* pNotebook) :
-    CBOINCBaseView(pNotebook, ID_TASK_PROJECTSVIEW, DEFAULT_TASK_FLAGS, ID_LIST_PROJECTSVIEW, DEFAULT_LIST_MULTI_SEL_FLAGS)
-{
-	CTaskItemGroup* pGroup = NULL;
-	CTaskItem*      pItem = NULL;
+CViewProjects::CViewProjects(wxNotebook* pNotebook)
+: CTaskViewBase(pNotebook) {}
+
+
+CViewProjects::~CViewProjects() {
+    EmptyCache();
+}
+
+
+void CViewProjects::DemandLoadView() {
+
+    wxASSERT(!m_bViewLoaded);
+
+    CTaskViewBase::DemandLoadView(
+        ID_TASK_PROJECTSVIEW,
+        DEFAULT_TASK_FLAGS,
+        ID_LIST_PROJECTSVIEW,
+        DEFAULT_LIST_MULTI_SEL_FLAGS
+    );
+
+    CTaskItemGroup* pGroup = NULL;
+    CTaskItem*      pItem = NULL;
 
     wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
@@ -151,10 +154,10 @@ CViewProjects::CViewProjects(wxNotebook* pNotebook) :
     //
     // Setup View
     //
-	pGroup = new CTaskItemGroup( _("Commands") );
-	m_TaskGroups.push_back( pGroup );
+    pGroup = new CTaskItemGroup( _("Commands") );
+    m_TaskGroups.push_back( pGroup );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Update"),
         _("Report all completed tasks, get latest credit, "
           "get latest preferences, and possibly get more tasks."),
@@ -162,21 +165,21 @@ CViewProjects::CViewProjects(wxNotebook* pNotebook) :
     );
     pGroup->m_Tasks.push_back( pItem );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Suspend"),
         _("Suspend tasks for this project."),
         ID_TASK_PROJECT_SUSPEND 
     );
     pGroup->m_Tasks.push_back( pItem );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("No new tasks"),
         _("Don't get new tasks for this project."),
         ID_TASK_PROJECT_NONEWWORK 
     );
     pGroup->m_Tasks.push_back( pItem );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Reset project"),
         _("Delete all files and tasks associated with this project, "
           "and get new tasks.  "
@@ -186,7 +189,7 @@ CViewProjects::CViewProjects(wxNotebook* pNotebook) :
     );
     pGroup->m_Tasks.push_back( pItem );
 
-	pItem = new CTaskItem(
+    pItem = new CTaskItem(
         _("Detach"),
         _("Detach computer from this project.  "
           "Tasks in progress will be lost "
@@ -208,18 +211,12 @@ CViewProjects::CViewProjects(wxNotebook* pNotebook) :
     m_pListPane->InsertColumn(COLUMN_STATUS, _("Status"), wxLIST_FORMAT_LEFT, 150);
 
     m_iProgressColumn = COLUMN_RESOURCESHARE;
- 
+
     // Needed by static sort routine;
     myCViewProjects = this;
     m_funcSortCompare = CompareViewProjectsItems;
    
     UpdateSelection();
-}
-
-
-CViewProjects::~CViewProjects() {
-    EmptyCache();
-    EmptyTasks();
 }
 
 
@@ -579,7 +576,7 @@ void CViewProjects::UpdateSelection() {
     wxASSERT(m_pListPane);
 
 
-    CBOINCBaseView::PreUpdateSelection();
+    CTaskViewBase::PreUpdateSelection();
 
 
     // Update the tasks static box buttons
@@ -667,7 +664,7 @@ void CViewProjects::UpdateSelection() {
         }
     }
 
-    CBOINCBaseView::PostUpdateSelection();
+    CTaskViewBase::PostUpdateSelection();
 }
 
 
@@ -865,29 +862,29 @@ void CViewProjects::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
 
     if (project) {
         if (project->suspended_via_gui) {
-            append_to_status(strBuffer, _("Suspended by user"));
+            AppendToStatus(strBuffer, _("Suspended by user"));
         }
         if (project->dont_request_more_work) {
-            append_to_status(strBuffer, _("Won't get new tasks"));
+            AppendToStatus(strBuffer, _("Won't get new tasks"));
         }
         if (project->ended) {
-            append_to_status(strBuffer, _("Project ended - OK to detach"));
+            AppendToStatus(strBuffer, _("Project ended - OK to detach"));
         }
         if (project->detach_when_done) {
-            append_to_status(strBuffer, _("Will detach when tasks done"));
+            AppendToStatus(strBuffer, _("Will detach when tasks done"));
         }
         if (project->sched_rpc_pending) {
-            append_to_status(strBuffer, _("Scheduler request pending"));
-			append_to_status(strBuffer, wxString(rpc_reason_string(project->sched_rpc_pending), wxConvUTF8));
+            AppendToStatus(strBuffer, _("Scheduler request pending"));
+            AppendToStatus(strBuffer, wxString(rpc_reason_string(project->sched_rpc_pending), wxConvUTF8));
         }
         if (project->scheduler_rpc_in_progress) {
-            append_to_status(strBuffer, _("Scheduler request in progress"));
+            AppendToStatus(strBuffer, _("Scheduler request in progress"));
         }
         wxDateTime dtNextRPC((time_t)project->min_rpc_time);
         wxDateTime dtNow(wxDateTime::Now());
         if (dtNextRPC > dtNow) {
             wxTimeSpan tsNextRPC(dtNextRPC - dtNow);
-            append_to_status(strBuffer, _("Communication deferred ") + tsNextRPC.Format());
+            AppendToStatus(strBuffer, _("Communication deferred ") + tsNextRPC.Format());
         }
     }
 }
@@ -948,6 +945,3 @@ wxInt32 CViewProjects::ConvertLinkToWebsiteIndex(const wxString& strLink, wxInt3
 
     return 0;
 }
-
-
-const char *BOINC_RCSID_b4edf777fc = "$Id: ViewProjects.cpp 14634 2008-01-29 14:28:56Z charlief $";

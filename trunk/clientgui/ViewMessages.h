@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -25,11 +26,9 @@
 #endif
 
 
-#include "BOINCBaseView.h"
+#include "TaskViewBase.h"
 
-class CBOINCBaseView;
-
-class CViewMessages : public CBOINCBaseView
+class CViewMessages : public CTaskViewBase
 {
     DECLARE_DYNAMIC_CLASS( CViewMessages )
     DECLARE_EVENT_TABLE()
@@ -65,6 +64,8 @@ protected:
 
     virtual void            UpdateSelection();
 
+    virtual void            DemandLoadView();
+
     wxInt32                 FormatProjectName( wxInt32 item, wxString& strBuffer ) const;
     wxInt32                 FormatTime( wxInt32 item, wxString& strBuffer ) const;
     wxInt32                 FormatMessage( wxInt32 item, wxString& strBuffer ) const;
@@ -79,4 +80,3 @@ protected:
 };
 
 #endif
-
