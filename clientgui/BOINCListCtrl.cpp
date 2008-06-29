@@ -267,6 +267,7 @@ void CBOINCListCtrl::DrawBarGraphs()
 
         if (numItems <= (topItem + numVisibleItems)) numVisibleItems = numItems - topItem;
 
+        // Ugly hack required because GetSubItemRect isn't supported by the generic control.
 #if ! USE_NATIVE_LISTCONTROL
         int w = 0, x = 0;
         if (progressColumn >= 0) {
@@ -275,8 +276,11 @@ void CBOINCListCtrl::DrawBarGraphs()
             }
             w = GetColumnWidth(progressColumn);
         }
+
+        // Unchecked cast is only safe for wxWidgets 2.8
+        wxASSERT((wxMAJOR_VERSION == 2) && (wxMINOR_VERSION == 8));
         int dummy;
-        CalcScrolledPosition(x, 0, &x, &dummy);
+        ((wxScrolledWindow*)m_mainWin)->CalcScrolledPosition(x, 0, &x, &dummy);
 #endif
 
         for (i=0; i<numVisibleItems; i++) {
