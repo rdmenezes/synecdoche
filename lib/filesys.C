@@ -665,7 +665,7 @@ void relative_to_absolute(const char* relname, char* path) {
 
 // get total and free space on current filesystem (in bytes)
 //
-int get_filesystem_info(double &total_space, double &free_space, char* path) {
+int get_filesystem_info(double &total_space, double &free_space, const char* path) {
 #ifdef _WIN32
     char buf[256];
     boinc_getcwd(buf);
