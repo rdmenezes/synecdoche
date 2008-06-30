@@ -79,7 +79,7 @@ void PROJECT::init() {
     nrpc_failures = 0;
     master_fetch_failures = 0;
     min_rpc_time = 0;
-	possibly_backed_off = true;
+    possibly_backed_off = true;
     master_url_fetch_pending = false;
     sched_rpc_pending = 0;
     next_rpc_time = 0;
@@ -235,9 +235,9 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) {
         "    <long_term_debt>%f</long_term_debt>\n"
         "    <resource_share>%f</resource_share>\n"
         "    <duration_correction_factor>%f</duration_correction_factor>\n"
-		"    <sched_rpc_pending>%d</sched_rpc_pending>\n"
-		"    <send_time_stats_log>%d</send_time_stats_log>\n"
-		"    <send_job_log>%d</send_job_log>\n"
+        "    <sched_rpc_pending>%d</sched_rpc_pending>\n"
+        "    <send_time_stats_log>%d</send_time_stats_log>\n"
+        "    <send_job_log>%d</send_job_log>\n"
         "%s%s%s%s%s%s%s%s%s%s%s%s",
         master_url,
         project_name,
@@ -264,7 +264,7 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) {
         long_term_debt,
         resource_share,
         duration_correction_factor,
-		sched_rpc_pending,
+        sched_rpc_pending,
         send_time_stats_log,
         send_job_log,
         master_url_fetch_pending?"    <master_url_fetch_pending/>\n":"",
@@ -288,10 +288,10 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) {
     if (gui_rpc) {
         out.printf("%s", gui_urls.c_str());
         out.printf(
-		    "    <rr_sim_deadlines_missed>%d</rr_sim_deadlines_missed>\n"
+            "    <rr_sim_deadlines_missed>%d</rr_sim_deadlines_missed>\n"
             "    <last_rpc_time>%f</last_rpc_time>\n"
             "    <project_files_downloaded_time>%f</project_files_downloaded_time>\n",
-		    rr_sim_status.deadlines_missed,
+            rr_sim_status.deadlines_missed,
             last_rpc_time,
             project_files_downloaded_time
         );
@@ -492,7 +492,7 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
 // and flag FILE_INFOs as being project files.
 //
 void PROJECT::link_project_files(bool recreate_symlink_files) {
-	FILE_INFO* fip;
+    FILE_INFO* fip;
     vector<FILE_REF>::iterator fref_iter;
     fref_iter = project_files.begin();
     while (fref_iter != project_files.end()) {
@@ -510,14 +510,14 @@ void PROJECT::link_project_files(bool recreate_symlink_files) {
         fref_iter++;
     }
 
-	if (recreate_symlink_files) {
-		for (unsigned i=0; i<gstate.file_infos.size(); i++) {
-			fip = gstate.file_infos[i];
-			if (fip->project == this && fip->is_project_file && fip->status == FILE_PRESENT) {
-				write_symlink_for_project_file(fip);
-			}
-		}
-	}
+    if (recreate_symlink_files) {
+        for (unsigned i=0; i<gstate.file_infos.size(); i++) {
+            fip = gstate.file_infos[i];
+            if (fip->project == this && fip->is_project_file && fip->status == FILE_PRESENT) {
+                write_symlink_for_project_file(fip);
+            }
+        }
+    }
 }
 
 void PROJECT::write_project_files(MIOFILE& f) {
@@ -619,7 +619,7 @@ FILE_INFO::FILE_INFO() {
     signature_required = false;
     is_user_file = false;
     is_project_file = false;
-	is_auto_update_file = false;
+    is_auto_update_file = false;
     pers_file_xfer = NULL;
     result = NULL;
     project = NULL;
@@ -1212,19 +1212,21 @@ int APP_VERSION::api_major_version() {
 
 int FILE_REF::parse(MIOFILE& in) {
     char buf[256];
+    bool temp;
 
     strcpy(file_name, "");
     strcpy(open_name, "");
     main_program = false;
     copy_file = false;
-	optional = false;
+    optional = false;
     while (in.fgets(buf, 256)) {
         if (match_tag(buf, "</file_ref>")) return 0;
         if (parse_str(buf, "<file_name>", file_name, sizeof(file_name))) continue;
         if (parse_str(buf, "<open_name>", open_name, sizeof(open_name))) continue;
         if (parse_bool(buf, "main_program", main_program)) continue;
         if (parse_bool(buf, "copy_file", copy_file)) continue;
-		if (parse_bool(buf, "optional", optional)) continue;
+        if (parse_bool(buf, "optional", optional)) continue;
+        if (parse_bool(buf, "no_validate", temp)) continue;
         if (log_flags.unparsed_xml) {
             msg_printf(0, MSG_INFO,
                 "[unparsed_xml] FILE_REF::parse(): unrecognized: %s\n", buf
@@ -1812,11 +1814,9 @@ int MODE::get_current() {
 }
 
 double MODE::delay() {
-	if (temp_timeout > gstate.now) {
-		return temp_timeout - gstate.now;
-	} else {
-		return 0;
-	}
+    if (temp_timeout > gstate.now) {
+        return temp_timeout - gstate.now;
+    } else {
+        return 0;
+    }
 }
-
-const char *BOINC_RCSID_b81ff9a584 = "$Id: client_types.C 15286 2008-05-23 20:58:06Z davea $";
