@@ -1,6 +1,7 @@
 // Synecdoche
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -724,18 +725,21 @@ void CViewWork::GetDocApplicationName(wxInt32 item, wxString& strBuffer) const {
         } else {
             strLocalBuffer = HtmlEntityDecode(wxString(state_result->wup->avp->app_name.c_str(), wxConvUTF8));
         }
-        char buf[256];
-        if (state_result->wup->avp->plan_class.size()) {
-            sprintf(buf, " (%s)", state_result->wup->avp->plan_class.c_str());
+        if (state_result->wup->avp->plan_class.empty()) {
+            strBuffer.Printf(
+                wxT("%s %.2f"), 
+                strLocalBuffer.c_str(),
+                state_result->wup->avp->version_num/100.0
+            );
         } else {
-            strcpy(buf, "");
+            wxString planClass = wxString(state_result->wup->avp->plan_class.c_str(), wxConvUTF8);
+            strBuffer.Printf(
+                wxT("%s %.2f (%s)"), 
+                strLocalBuffer.c_str(),
+                state_result->wup->avp->version_num/100.0,
+                planClass.c_str()
+            );
         }
-        strBuffer.Printf(
-            wxT(" %s %.2f%s"), 
-            strLocalBuffer.c_str(),
-            state_result->wup->avp->version_num/100.0,
-            buf
-        );
         setlocale(LC_NUMERIC, (const char*)strLocale.mb_str());
     }
 }
