@@ -1,7 +1,6 @@
 // Synecdoche
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 David Barnard, Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -267,7 +266,6 @@ void CViewWork::OnWorkShowGraphics( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkShowGraphics - Function Begin"));
 
     wxInt32  iAnswer        = 0; 
-    wxString strMachineName = wxEmptyString;
     CMainDocument* pDoc     = wxGetApp().GetDocument();
     CAdvancedFrame* pFrame  = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
     int row;
@@ -282,9 +280,9 @@ void CViewWork::OnWorkShowGraphics( wxCommandEvent& WXUNUSED(event) ) {
 
     // We don't change "Show Graphics" button to "Hide Graphics" because Mac allows user to bring 
     // a graphics window to the foreground when necessary by clicking Show Graphics button again
+    // TODO: shared with simple view
 #if (defined(_WIN32) || defined(__WXMAC__))
-    pDoc->GetConnectedComputerName(strMachineName);
-    if (!pDoc->IsComputerNameLocal(strMachineName)) {
+    if (!pDoc->IsLocalClient()) {
         iAnswer = ::wxMessageBox(
             _("Are you sure you want to display graphics on a remote machine?"),
             _("Show graphics"),

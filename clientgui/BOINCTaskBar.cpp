@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -316,16 +317,15 @@ void CTaskBarIcon::OnMouseMove(wxTaskBarIconEvent& WXUNUSED(event)) {
         // Construct tooltip title using branded name.
         strTitle = pSkinAdvanced->GetApplicationName();
 
-        if (pDoc->IsConnected()) {
+        // Only show machine name if connected to remote machine.
+        if (!pDoc->IsLocalClient()) {
             pDoc->GetConnectedComputerName(strMachineName);
- 
-            // Only show machine name if connected to remote machine.
-            if (!pDoc->IsComputerNameLocal(strMachineName)) {
-                strTitle = strTitle + wxT(" - (") + strMachineName + wxT(")");
-            }
+            strTitle = strTitle + wxT(" - (") + strMachineName + wxT(")");
+        }
 
-			strMessage += strTitle;
+        strMessage += strTitle;
 
+        if (pDoc->IsConnected()) {
             pDoc->GetCoreClientStatus(status);
             if (status.task_suspend_reason && !(status.task_suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT)) {
                 strBuffer.Printf(

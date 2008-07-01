@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -409,12 +410,10 @@ void CViewTabPage::SGUITimeFormat(float fBuffer, wxString& strBuffer) const {
 void CViewTabPage::OnWorkShowGraphics() {
     CMainDocument* pDoc     = wxGetApp().GetDocument();
     wxInt32  iAnswer        = 0; 
-    wxString strMachineName = wxEmptyString;
-    
+
     // TODO: implement hide as well as show
 #if (defined(_WIN32) || defined(__WXMAC__))
-    pDoc->GetConnectedComputerName(strMachineName);
-    if (!pDoc->IsComputerNameLocal(strMachineName)) {
+    if (!pDoc->IsLocalClient()) {
         iAnswer = ::wxMessageBox(
             _("Are you sure you want to display graphics on a remote machine?"),
             _("Show graphics"),

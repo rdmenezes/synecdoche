@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -522,8 +523,13 @@ int CMainDocument::Reconnect() {
 }
 
 
+// Gets the last connected computer name, or the new name if reconnecting.
 int CMainDocument::GetConnectedComputerName(wxString& strMachine) {
-    m_pNetworkConnection->GetConnectedComputerName(strMachine);
+    if (IsReconnecting()) {
+        m_pNetworkConnection->GetConnectingComputerName(strMachine);
+    } else {
+        m_pNetworkConnection->GetConnectedComputerName(strMachine);
+    }
     return 0;
 }
 
@@ -534,14 +540,16 @@ int CMainDocument::GetConnectedComputerVersion(wxString& strVersion) {
 }
 
 
-int CMainDocument::GetConnectingComputerName(wxString& strMachine) {
-    m_pNetworkConnection->GetConnectingComputerName(strMachine);
-    return 0;
+bool CMainDocument::IsComputerNameLocal(const wxString strMachine) {
+    return m_pNetworkConnection->IsComputerNameLocal(strMachine);
 }
 
 
-bool CMainDocument::IsComputerNameLocal(const wxString strMachine) {
-    return m_pNetworkConnection->IsComputerNameLocal(strMachine);
+// Checks whether the connected (or connecting) computer is local.
+bool CMainDocument::IsLocalClient() {
+    wxString strComputer;
+    GetConnectedComputerName(strComputer);
+    return m_pNetworkConnection->IsComputerNameLocal(strComputer);
 }
 
 
@@ -578,8 +586,7 @@ int CMainDocument::GetCoreClientStatus(CC_STATUS& ccs, bool bForce) {
             if (0 == iRetVal) {
                 status = ccs;
                 if (ccs.manager_must_quit) {
-                    GetConnectedComputerName(strMachine);
-                    if (IsComputerNameLocal(strMachine)) {
+                    if (IsLocalClient()) {
                         CBOINCBaseFrame* pFrame = wxGetApp().GetFrame();
                         wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
                         pFrame->Close(true);
