@@ -59,9 +59,6 @@
 #include "WizardAccountManager.h"
 #include "DlgAdvPreferences.h"
 
-#include "res/connect.xpm"
-#include "res/disconnect.xpm"
-
 
 enum STATUSBARFIELDS {
     STATUS_TEXT,
@@ -70,10 +67,6 @@ enum STATUSBARFIELDS {
 
 
 IMPLEMENT_DYNAMIC_CLASS(CStatusBar, wxStatusBar)
-
-BEGIN_EVENT_TABLE(CStatusBar, wxStatusBar)
-    EVT_SIZE(CStatusBar::OnSize)
-END_EVENT_TABLE()
 
 
 CStatusBar::CStatusBar() {
@@ -87,71 +80,11 @@ CStatusBar::CStatusBar(wxWindow *parent) :
 {
     wxLogTrace(wxT("Function Start/End"), wxT("CStatusBar::CStatusBar - Function Begin"));
 
-    wxPoint conSize = ConvertDialogToPixels(wxPoint(150, 0));
+    wxPoint conSize = ConvertDialogToPixels(wxPoint(140, 0));
     const int widths[] = {-1, conSize.x};
     SetFieldsCount(WXSIZEOF(widths), widths);
 
-    m_pbmpConnected = new wxStaticBitmap(this, -1, wxIcon(connect_xpm));
-    wxASSERT(m_pbmpConnected);
-    m_pbmpConnected->Hide();
-
-    m_ptxtConnected = new wxStaticText(this, -1, _("Connected"), wxPoint(0, 0), wxDefaultSize, wxALIGN_LEFT);
-    wxASSERT(m_ptxtConnected);
-    m_ptxtConnected->Hide();
-
-    m_pbmpDisconnect = new wxStaticBitmap(this, -1, wxIcon(disconnect_xpm));
-    wxASSERT(m_pbmpDisconnect);
-    m_pbmpDisconnect->Hide();
-
-    m_ptxtDisconnect = new wxStaticText(this, -1, _("Disconnected"), wxPoint(0, 0), wxDefaultSize, wxALIGN_LEFT);
-    wxASSERT(m_ptxtDisconnect);
-    m_ptxtDisconnect->Hide();
-
     wxLogTrace(wxT("Function Start/End"), wxT("CStatusBar::CStatusBar - Function End"));
-}
-
-
-CStatusBar::~CStatusBar()
-{
-
-}
-
-
-void CStatusBar::OnSize(wxSizeEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CStatusBar::OnSize - Function Begin"));
-
-    if (IsShown()) {
-        wxRect rect;
-        wxSize size;
-
-        GetFieldRect(STATUS_CONNECTION_STATUS, rect);
-
-        if (m_pbmpConnected) {
-            size = m_pbmpConnected->GetSize();
-            m_pbmpConnected->Move(rect.x + 1,
-                                  rect.y + (rect.height - size.y) / 2);
-        }
-
-        if (m_ptxtConnected) {
-            m_ptxtConnected->Move((rect.x + size.x) + 2,
-                                  (rect.y + (rect.height - size.y) / 2) + 1);
-        }
-
-        if (m_pbmpDisconnect) {
-            size = m_pbmpConnected->GetSize();
-            m_pbmpDisconnect->Move(rect.x + 1,
-                                   rect.y + (rect.height - size.y) / 2);
-        }
-
-        if (m_ptxtDisconnect) {
-            m_ptxtDisconnect->Move((rect.x + size.x) + 2,
-                                   (rect.y + (rect.height - size.y) / 2) + 1);
-        }
-    }
-
-    event.Skip();
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CStatusBar::OnSize - Function End"));
 }
 
 
@@ -162,8 +95,8 @@ BEGIN_EVENT_TABLE (CAdvancedFrame, CBOINCBaseFrame)
     EVT_MENU(ID_FILESELECTCOMPUTER, CAdvancedFrame::OnSelectComputer)
     EVT_MENU(ID_SHUTDOWNCORECLIENT, CAdvancedFrame::OnClientShutdown)
     EVT_MENU(ID_VIEWSIMPLEGUI, CAdvancedFrame::OnSwitchGUI)
-	EVT_MENU(ID_READ_PREFS, CAdvancedFrame::Onread_prefs)
-	EVT_MENU(ID_READ_CONFIG, CAdvancedFrame::Onread_config)
+    EVT_MENU(ID_READ_PREFS, CAdvancedFrame::Onread_prefs)
+    EVT_MENU(ID_READ_CONFIG, CAdvancedFrame::Onread_config)
     EVT_MENU(wxID_EXIT, CAdvancedFrame::OnExit)
     EVT_MENU_RANGE(ID_FILEACTIVITYRUNALWAYS, ID_FILEACTIVITYSUSPEND, CAdvancedFrame::OnActivitySelection)
     EVT_MENU_RANGE(ID_FILENETWORKRUNALWAYS, ID_FILENETWORKSUSPEND, CAdvancedFrame::OnNetworkSelection)
@@ -173,7 +106,7 @@ BEGIN_EVENT_TABLE (CAdvancedFrame, CBOINCBaseFrame)
     EVT_MENU(ID_PROJECTSATTACHPROJECT, CAdvancedFrame::OnProjectsAttachToProject)
     EVT_MENU(ID_COMMANDSRETRYCOMMUNICATIONS, CAdvancedFrame::OnCommandsRetryCommunications)
     EVT_MENU(ID_OPTIONSOPTIONS, CAdvancedFrame::OnOptionsOptions)
-	EVT_MENU(ID_ADVPREFSDLG, CAdvancedFrame::OnDlgPreferences)
+    EVT_MENU(ID_ADVPREFSDLG, CAdvancedFrame::OnDlgPreferences)
     EVT_HELP(wxID_ANY, CAdvancedFrame::OnHelp)
     EVT_MENU(ID_HELPBOINC, CAdvancedFrame::OnHelpBOINC)
     EVT_MENU(ID_HELPBOINCMANAGER, CAdvancedFrame::OnHelpBOINC)
@@ -223,7 +156,6 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     wxCHECK_RET(CreateMenu(), _T("Failed to create menu bar."));
     wxCHECK_RET(CreateNotebook(), _T("Failed to create notebook."));
     wxCHECK_RET(CreateStatusbar(), _T("Failed to create status bar."));
-    SetStatusBarPane(0);
 
     // Restore view settings
     RestoreViewState();
@@ -323,7 +255,7 @@ bool CAdvancedFrame::CreateMenu() {
     menuFile->Append(
         ID_FILECLOSEWINDOW,
         _("&Close Window\tCTRL+W"),
-		strMenuDescription
+        strMenuDescription
     );
 
     // %s is the application name
@@ -451,7 +383,7 @@ bool CAdvancedFrame::CreateMenu() {
         _("Configure GUI options and proxy settings")
     );
     menuAdvanced->Append(
-		ID_ADVPREFSDLG, 
+        ID_ADVPREFSDLG, 
         _("&Preferences..."),
         _("Configure local preferences")
     );
@@ -654,7 +586,7 @@ bool CAdvancedFrame::CreateNotebook() {
     wxBoxSizer *pPanelSizer = new wxBoxSizer(wxVERTICAL);
 
     pPanelSizer->Add(new wxStaticLine(pPanel, -1), 0, wxEXPAND);
-	pPanelSizer->Add(0, 5);
+    pPanelSizer->Add(0, 5);
     pPanelSizer->Add(m_pNotebook, 1, wxEXPAND);
 
     // Display default views
@@ -1264,14 +1196,14 @@ void CAdvancedFrame::OnClientShutdown(wxCommandEvent& WXUNUSED(event)) {
 
 
 void CAdvancedFrame::Onread_prefs(wxCommandEvent& WXUNUSED(event)) {
-	CMainDocument* pDoc = wxGetApp().GetDocument();
-	pDoc->rpc.read_global_prefs_override();
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    pDoc->rpc.read_global_prefs_override();
 }
 
 
 void CAdvancedFrame::Onread_config(wxCommandEvent& WXUNUSED(event)) {
-	CMainDocument* pDoc = wxGetApp().GetDocument();
-	pDoc->rpc.read_cc_config();
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    pDoc->rpc.read_cc_config();
 }
 
 
@@ -1488,9 +1420,9 @@ void CAdvancedFrame::OnCommandsRetryCommunications( wxCommandEvent& WXUNUSED(eve
 
 void CAdvancedFrame::OnDlgPreferences(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnDlgPreferences - Function Begin"));
-	CDlgAdvPreferences dlg(this);
-	dlg.ShowModal();
-	wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnDlgPreferences - Function End"));
+    CDlgAdvPreferences dlg(this);
+    dlg.ShowModal();
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnDlgPreferences - Function End"));
 }
 
 void CAdvancedFrame::OnOptionsOptions(wxCommandEvent& WXUNUSED(event)) {
@@ -1626,11 +1558,11 @@ void CAdvancedFrame::OnHelp(wxHelpEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINCManager - Function Begin"));
 
     if (IsShown()) {
-		std::string url;
-		url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
+        std::string url;
+        url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
 
-		wxString wxurl;
-		wxurl.Printf(
+        wxString wxurl;
+        wxurl.Printf(
             wxT("%s?target=advanced&version=%s&controlid=%d"),
             wxString(url.c_str(), wxConvUTF8).c_str(),
             wxString(BOINC_VERSION_STRING, wxConvUTF8).c_str(),
@@ -1647,11 +1579,11 @@ void CAdvancedFrame::OnHelpBOINC(wxCommandEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINC - Function Begin"));
 
     if (IsShown()) {
-		std::string url;
-		url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
+        std::string url;
+        url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
 
-		wxString wxurl;
-		wxurl.Printf(
+        wxString wxurl;
+        wxurl.Printf(
             wxT("%s?target=advanced&version=%s&controlid=%d"),
             wxString(url.c_str(), wxConvUTF8).c_str(),
             wxString(BOINC_VERSION_STRING, wxConvUTF8).c_str(),
@@ -1738,7 +1670,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
     bool bCachedCredentials = false;
     ACCT_MGR_INFO ami;
     PROJECT_INIT_STATUS pis;
-	CC_STATUS     status;
+    CC_STATUS     status;
 
     wxASSERT(m_pNotebook);
     wxASSERT(pDoc);
@@ -1834,7 +1766,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
 
     // Set the correct refresh interval, then manually fire the refresh
-	//   event to do the initial population of the view.
+    //   event to do the initial population of the view.
     UpdateRefreshTimerInterval(m_pNotebook->GetSelection());
     FireRefreshView();
 
@@ -1907,15 +1839,10 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
 
                 // Update the statusbar
                 if (pDoc->IsConnected() || pDoc->IsReconnecting()) {
-                    m_pStatusbar->m_pbmpConnected->Show();
-                    m_pStatusbar->m_ptxtConnected->Show();
-                    m_pStatusbar->m_pbmpDisconnect->Hide();
-                    m_pStatusbar->m_ptxtDisconnect->Hide();
 
-                    wxString strBuffer = wxEmptyString;
-                    wxString strComputerName = wxEmptyString;
-                    wxString strComputerVersion = wxEmptyString;
-                    wxString strStatusText = wxEmptyString;
+                    wxString strComputerName;
+                    wxString strComputerVersion;
+                    wxString strStatusText;
                     wxString strTitle = m_strBaseTitle;
                     wxString strLocale = wxString(setlocale(LC_NUMERIC, NULL), wxConvUTF8);
 
@@ -1951,13 +1878,10 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
 
                     if (strStatusText != m_cachedStatusText) {
                         m_cachedStatusText = strStatusText;
-                        m_pStatusbar->m_ptxtConnected->SetLabel(strStatusText);
+                        SetStatusText(strStatusText, STATUS_CONNECTION_STATUS);
                     }
                 } else {
-                    m_pStatusbar->m_pbmpConnected->Hide();
-                    m_pStatusbar->m_ptxtConnected->Hide();
-                    m_pStatusbar->m_pbmpDisconnect->Show();
-                    m_pStatusbar->m_ptxtDisconnect->Show();
+                    SetStatusText(_("Disconnected"), STATUS_CONNECTION_STATUS);
 
                     if (GetTitle() != m_strBaseTitle)
                         SetTitle(m_strBaseTitle);
@@ -2128,6 +2052,3 @@ void CAdvancedFrame::StopTimers() {
     m_pFrameRenderTimer->Stop();
     m_pFrameListPanelRenderTimer->Stop();
 }
-
-
-const char *BOINC_RCSID_d881a56dc5 = "$Id: AdvancedFrame.cpp 15450 2008-06-23 17:54:44Z romw $";

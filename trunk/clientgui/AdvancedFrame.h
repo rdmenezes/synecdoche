@@ -32,17 +32,8 @@ class CStatusBar : public wxStatusBar
 public:
     CStatusBar();
     CStatusBar(wxWindow *parent);
-    ~CStatusBar();
+    ~CStatusBar() {}
 
-    void OnSize(wxSizeEvent& event);
-
-    wxStaticBitmap* m_pbmpConnected;
-    wxStaticText*   m_ptxtConnected;
-    wxStaticBitmap* m_pbmpDisconnect;
-    wxStaticText*   m_ptxtDisconnect;
-
-private:
-    DECLARE_EVENT_TABLE()
 };
 
 
