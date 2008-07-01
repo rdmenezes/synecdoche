@@ -200,20 +200,8 @@ void CBOINCBaseFrame::OnAlert(CFrameAlertEvent& event) {
         CTaskBarIcon* pTaskbar = wxGetApp().GetTaskBarIcon();
         wxASSERT(pTaskbar);
 
-        if ((IsShown() && !event.m_notification_only) || (IsShown() && !pTaskbar->IsBalloonsSupported())) {
-            if (!event.m_notification_only) {
-                int retval = 0;
-
-                if (!IsShown()) {
-                    Show();
-                }
-
-                retval = ::wxMessageBox(event.m_message, event.m_title, event.m_style, this);
-                if (event.m_alert_event_type == AlertProcessResponse) {
-                    event.ProcessResponse(retval);
-                }
-            }
-        } else {
+        if ((event.m_notification_only || !IsShown() || IsIconized())
+            && pTaskbar->IsBalloonsSupported()) {
             // If the main window is hidden or minimzed use the system tray ballon
             //   to notify the user instead.  This keeps dialogs from interfering
             //   with people typing email messages or any other activity where they
@@ -237,6 +225,19 @@ void CBOINCBaseFrame::OnAlert(CFrameAlertEvent& event) {
                 5000,
                 icon_type
             );
+        } else {
+            if (!event.m_notification_only) {
+                int retval = 0;
+
+                if (!IsShown()) {
+                    Show();
+                }
+
+                retval = ::wxMessageBox(event.m_message, event.m_title, event.m_style, this);
+                if (event.m_alert_event_type == AlertProcessResponse) {
+                    event.ProcessResponse(retval);
+                }
+            }
         }
 #elif defined (__WXMAC__)
         // wxMessageBox() / ProcessResponse() hangs the Manager if hidden.
