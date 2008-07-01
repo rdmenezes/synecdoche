@@ -173,7 +173,7 @@ void CBOINCBaseFrame::OnAlertPoll(wxTimerEvent& WXUNUSED(event)) {
             }
         }
 
-        if (m_bShowConnectionFailedAlert && IsShown()) {
+        if (m_bShowConnectionFailedAlert && IsShown() && !IsIconized()) {
             m_bShowConnectionFailedAlert = false;
             ShowConnectionFailedAlert();
         }
@@ -202,7 +202,7 @@ void CBOINCBaseFrame::OnAlert(CFrameAlertEvent& event) {
 
         if ((event.m_notification_only || !IsShown() || IsIconized())
             && pTaskbar->IsBalloonsSupported()) {
-            // If the main window is hidden or minimzed use the system tray ballon
+            // If the main window is hidden or minimized use the system tray ballon
             //   to notify the user instead.  This keeps dialogs from interfering
             //   with people typing email messages or any other activity where they
             //   do not want keyboard focus changed to another window while typing.
@@ -242,7 +242,7 @@ void CBOINCBaseFrame::OnAlert(CFrameAlertEvent& event) {
 #elif defined (__WXMAC__)
         // wxMessageBox() / ProcessResponse() hangs the Manager if hidden.
         // Currently, the only non-notification-only alert is Connection Failed,
-        // which is now has logic to be displayed when Manager is maximized.
+        // which now has logic to be displayed when Manager is restored.
 
         // Notification only events on platforms other than Windows are 
         //   currently discarded.  Otherwise the application would be restored 
@@ -446,7 +446,7 @@ void CBOINCBaseFrame::ShowConnectionFailedAlert() {
     );
 
     // If we are minimized, set flag to show alert when maximized
-    m_bShowConnectionFailedAlert = !IsShown();
+    m_bShowConnectionFailedAlert = !IsShown() || IsIconized();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::ShowConnectionFailedAlert - Function End"));
 }
