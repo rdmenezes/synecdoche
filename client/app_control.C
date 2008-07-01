@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -18,8 +19,6 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 // monitoring and process control of running apps
-
-#include "cpp.h"
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -54,7 +53,7 @@
 
 #endif
 
-using std::vector;
+#include <vector>
 
 #include "filesys.h"
 #include "error_numbers.h"
@@ -736,7 +735,7 @@ int ACTIVE_TASK_SET::wait_for_exit(double wait_time, PROJECT* proj) {
 }
 
 int ACTIVE_TASK_SET::abort_project(PROJECT* project) {
-    vector<ACTIVE_TASK*>::iterator task_iter;
+    std::vector<ACTIVE_TASK*>::iterator task_iter;
     ACTIVE_TASK* atp;
 
     exit_tasks(project);

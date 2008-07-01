@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -18,19 +19,20 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 // If you change anything, make sure you also change:
-// client_types.C         (to write and parse it)
+// client_types.C  (to write and parse it)
 // client_state.C  (to cross-link objects)
 //
 
 #ifndef _CLIENT_TYPES_
 #define _CLIENT_TYPES_
 
-#include "cpp.h"
-
 #if !defined(_WIN32) || defined(__CYGWIN32__)
 #include <stdio.h>
 #include <sys/time.h>
 #endif
+
+#include <vector>
+#include <string>
 
 #include "md5_file.h"
 #include "hostinfo.h"
@@ -73,7 +75,7 @@ public:
     bool signature_required;    // true iff associated with app version
     bool is_user_file;
     bool is_project_file;
-	bool is_auto_update_file;
+    bool is_auto_update_file;
     bool gzip_when_done;
         // for output files: gzip file when done, and append .gz to its name
     class PERS_FILE_XFER* pers_file_xfer;
@@ -129,9 +131,9 @@ struct FILE_REF {
     FILE_INFO* file_info;
     bool copy_file;
         // if true, core client will copy the file instead of linking
-	bool optional;
-		// for output files: app may not generate file;
-		// don't treat as error if file is missing.
+    bool optional;
+        // for output files: app may not generate file;
+        // don't treat as error if file is missing.
     int parse(MIOFILE&);
     int write(MIOFILE&);
 };
