@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -294,15 +295,13 @@ void CBOINCClientManager::ShutdownBOINCCore() {
     wxInt32            iCount = 0;
     DWORD              dwExitCode = 0;
     bool               bClientQuit = false;
-    wxString           strConnectedCompter = wxEmptyString;
     wxString           strPassword = wxEmptyString;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
     if (m_bBOINCStartedByManager) {
-        pDoc->GetConnectedComputerName(strConnectedCompter);
-        if (!pDoc->IsComputerNameLocal(strConnectedCompter)) {
+        if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
                 pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
@@ -400,15 +399,13 @@ bool CBOINCClientManager::ProcessExists(pid_t thePID)
 void CBOINCClientManager::ShutdownBOINCCore() {
     CMainDocument*     pDoc = wxGetApp().GetDocument();
     wxInt32            iCount = 0;
-    wxString           strConnectedCompter = wxEmptyString;
     wxString           strPassword = wxEmptyString;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
     if (m_bBOINCStartedByManager) {
-        pDoc->GetConnectedComputerName(strConnectedCompter);
-        if (!pDoc->IsComputerNameLocal(strConnectedCompter)) {
+        if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
                 pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
@@ -447,15 +444,13 @@ void CBOINCClientManager::ShutdownBOINCCore() {
     CMainDocument*     pDoc = wxGetApp().GetDocument();
     wxInt32            iCount = 0;
     bool               bClientQuit = false;
-    wxString           strConnectedCompter = wxEmptyString;
     wxString           strPassword = wxEmptyString;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
     if (m_bBOINCStartedByManager) {
-        pDoc->GetConnectedComputerName(strConnectedCompter);
-        if (!pDoc->IsComputerNameLocal(strConnectedCompter)) {
+        if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
                 pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);

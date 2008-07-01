@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -388,7 +389,6 @@ void CSimpleFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
     CMainDocument*     pDoc = wxGetApp().GetDocument();
     CWizardAccountManager* pAMWizard = NULL;
     CWizardAttachProject* pAPWizard = NULL;
-    wxString strComputer = wxEmptyString;
     wxString strName = wxEmptyString;
     wxString strURL = wxEmptyString;
     bool bCachedCredentials = false;
@@ -403,8 +403,7 @@ void CSimpleFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
 	// If we are connected to the localhost, run a really quick screensaver
     //   test to trigger a firewall popup.
-    pDoc->GetConnectedComputerName(strComputer);
-    if (pDoc->IsComputerNameLocal(strComputer)) {
+    if (pDoc->IsLocalClient()) {
         wxGetApp().StartBOINCScreensaverTest();
     }
 

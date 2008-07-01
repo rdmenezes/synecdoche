@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -389,7 +390,6 @@ void CBOINCBaseFrame::ShowConnectionBadPasswordAlert( bool bUsedDefaultPassword,
 void CBOINCBaseFrame::ShowConnectionFailedAlert() {
     CSkinAdvanced*      pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
     CMainDocument*      pDoc = wxGetApp().GetDocument();
-    wxString            strConnectedCompter = wxEmptyString;
     wxString            strDialogTitle = wxEmptyString;
     wxString            strDialogMessage = wxEmptyString;
 
@@ -402,8 +402,7 @@ void CBOINCBaseFrame::ShowConnectionFailedAlert() {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::ShowConnectionFailedAlert - Function Begin"));
 
     // Did BOINC crash on local computer? If so restart it and reconnect.
-    pDoc->GetConnectedComputerName(strConnectedCompter);
-    if (pDoc->IsComputerNameLocal(strConnectedCompter)) {
+    if (pDoc->IsLocalClient()) {
         if (pDoc->m_pClientManager->AutoRestart()) {
             boinc_sleep(0.5);       // Allow time for Client to restart
             if (pDoc->m_pClientManager->IsBOINCCoreRunning()) {
@@ -497,7 +496,6 @@ void CBOINCBaseFrame::ShowDaemonStartFailedAlert() {
 void CBOINCBaseFrame::ShowNotCurrentlyConnectedAlert() {
     CSkinAdvanced*      pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
     CMainDocument*      pDoc = wxGetApp().GetDocument();
-    wxString            strConnectedCompter = wxEmptyString;
     wxString            strDialogTitle = wxEmptyString;
     wxString            strDialogMessage = wxEmptyString;
 
@@ -510,8 +508,7 @@ void CBOINCBaseFrame::ShowNotCurrentlyConnectedAlert() {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::ShowNotCurrentlyConnectedAlert - Function Begin"));
 
     // Did BOINC crash on local computer? If so restart it and reconnect.
-    pDoc->GetConnectedComputerName(strConnectedCompter);
-    if (pDoc->IsComputerNameLocal(strConnectedCompter)) {
+    if (pDoc->IsLocalClient()) {
         if (pDoc->m_pClientManager->AutoRestart()) {
             boinc_sleep(0.5);       // Allow time for Client to restart
             if (pDoc->m_pClientManager->IsBOINCCoreRunning()) {

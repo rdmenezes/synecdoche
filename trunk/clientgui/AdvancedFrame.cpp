@@ -1731,7 +1731,6 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
     CSkinAdvanced* pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
     CWizardAccountManager* pAMWizard = NULL;
     CWizardAttachProject* pAPWizard = NULL;
-    wxString strComputer = wxEmptyString;
     wxString strName = wxEmptyString;
     wxString strURL = wxEmptyString;
     wxString strDialogTitle = wxEmptyString;
@@ -1766,8 +1765,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
     // If we are connected to the localhost, run a really quick screensaver
     //   test to trigger a firewall popup.
-    pDoc->GetConnectedComputerName(strComputer);
-    if (pDoc->IsComputerNameLocal(strComputer)) {
+    if (pDoc->IsLocalClient()) {
         wxGetApp().StartBOINCScreensaverTest();
     }
 
@@ -1920,11 +1918,9 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
                     wxString strStatusText = wxEmptyString;
                     wxString strTitle = m_strBaseTitle;
                     wxString strLocale = wxString(setlocale(LC_NUMERIC, NULL), wxConvUTF8);
-     
-                    if (pDoc->IsReconnecting()) {
-                        pDoc->GetConnectingComputerName(strComputerName);
-                    } else {
-                        pDoc->GetConnectedComputerName(strComputerName);
+
+                    pDoc->GetConnectedComputerName(strComputerName);
+                    if (!pDoc->IsReconnecting()) {
                         pDoc->GetConnectedComputerVersion(strComputerVersion);
                     }
 
