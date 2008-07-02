@@ -28,12 +28,10 @@
 #include <algorithm>
 #include <deque>
 #include <string>
-#include <string.h>
 
 #include "log_flags.h"
 
 class PROJECT;
-
 
 // the following stores a message in memory, where it can be retrieved via RPC
 //
@@ -46,8 +44,8 @@ struct MESSAGE_DESC {
 };
 
 extern std::deque<MESSAGE_DESC*> message_descs;
-extern void record_message(class PROJECT *p, int priority, int now, char* msg);
-extern void show_message(class PROJECT *p, char* message, int priority);
+extern void record_message(PROJECT *p, int priority, int now, char* msg);
+extern void show_message(PROJECT *p, char* message, int priority);
 
 // the __attribute((format...)) tags are GCC extensions that let the compiler
 // do like-checking on printf-like arguments

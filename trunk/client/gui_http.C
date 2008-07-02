@@ -24,11 +24,15 @@
 #endif
 
 #include <cstring>
+#include <string>
+
+#include "gui_http.h"
+
 #include "client_state.h"
 #include "filesys.h"
 #include "error_numbers.h"
 
-#include "gui_http.h"
+using std::string;
 
 int GUI_HTTP::do_rpc(GUI_HTTP_OP* op, string url, string output_file) {
     int retval;

@@ -25,6 +25,8 @@
 // particular data server.
 // 
 
+#include <vector>
+
 #include "client_types.h"
 #include "http_curl.h"
 

@@ -20,17 +20,23 @@
 #ifndef _TASK_
 #define _TASK_
 
-#ifndef _WIN32
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
-#endif
 
-#include "client_types.h"
 #include "common_defs.h"
 #include "app_ipc.h"
 #include "procinfo.h"
 
+//forward declarations
+//(we don't need to include the full declarations from client_state.h)
 class CLIENT_STATE;
+class PROJECT;
+class WORKUNIT;
+class RESULT;
+class APP_VERSION;
+class FILE_REF;
+class FILE_INFO;
+
 typedef int PROCESS_ID;
 
 #define MAX_STDERR_LEN  65536

@@ -24,14 +24,15 @@
 #ifndef _NET_STATS_
 #define _NET_STATS_
 
-#ifndef _WIN32
 #include <cstdio>
-#endif
+#include <string>
 
-#include "miofile.h"
+#include "gui_http.h"
+#include "error_numbers.h"
 
 class FILE_XFER_SET;
 class HTTP_OP_SET;
+class MIOFILE;
 
 // there's one of these each for upload and download
 //

@@ -31,6 +31,8 @@
 #define SOCKS_VERSION_5             0x05
 
 #include <curl/curl.h>
+#include <cstdio>
+#include <vector>
 
 #include "network.h"
 #include "proxy_info.h"

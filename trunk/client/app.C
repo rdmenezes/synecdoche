@@ -21,8 +21,6 @@
 // connected to I/O files in various ways.
 // Shouldn't depend on CLIENT_STATE.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #else 
@@ -247,7 +245,7 @@ void ACTIVE_TASK_SET::get_memory_usage() {
     if (diff < 10) return;
 
     last_mem_time = gstate.now;
-    vector<PROCINFO> piv;
+    std::vector<PROCINFO> piv;
     retval = procinfo_setup(piv);
 	if (retval) {
 		if (log_flags.mem_usage_debug) {
@@ -722,7 +720,7 @@ void MSG_QUEUE::msg_queue_poll(MSG_CHANNEL& channel) {
 int MSG_QUEUE::msg_queue_purge(const char* msg) {
 	int count = msgs.size();
 	if (!count) return 0;
-	vector<string>::iterator iter = msgs.begin();
+	std::vector<std::string>::iterator iter = msgs.begin();
 	for (int i=0; i<count-1; i++) {
 		iter++;
 	}

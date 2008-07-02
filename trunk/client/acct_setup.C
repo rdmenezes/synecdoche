@@ -26,6 +26,7 @@
 #endif
 
 #include <cstring>
+#include <string>
 #include "client_state.h"
 #include "file_names.h"
 #include "parse.h"
@@ -33,6 +34,8 @@
 #include "str_util.h"
 #include "util.h"
 #include "client_msgs.h"
+
+using std::string;
 
 #include "acct_setup.h"
 

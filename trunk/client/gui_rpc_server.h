@@ -17,8 +17,15 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef _GUI_RPC_SERVER_H
+#define _GUI_RPC_SERVER_H
+
+#include <vector>
+
 #include "network.h"
+#include "gui_http.h"
 #include "acct_setup.h"
+#include "miofile.h"
 
 // FSM states for auto-update
 
@@ -96,3 +103,5 @@ public:
     bool quits_sent();
     bool poll();
 };
+
+#endif

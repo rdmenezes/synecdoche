@@ -26,9 +26,6 @@
 #include <ctime>
 #endif
 
-using std::string;
-using std::vector;
-
 #include "acct_mgr.h"
 #include "acct_setup.h"
 #include "app.h"
@@ -64,13 +61,13 @@ using std::vector;
 //
 class CLIENT_STATE {
 public:
-    vector<PLATFORM> platforms;
-    vector<PROJECT*> projects;
-    vector<APP*> apps;
-    vector<FILE_INFO*> file_infos;
-    vector<APP_VERSION*> app_versions;
-    vector<WORKUNIT*> workunits;
-    vector<RESULT*> results;
+    std::vector<PLATFORM> platforms;
+    std::vector<PROJECT*> projects;
+    std::vector<APP*> apps;
+    std::vector<FILE_INFO*> file_infos;
+    std::vector<APP_VERSION*> app_versions;
+    std::vector<WORKUNIT*> workunits;
+    std::vector<RESULT*> results;
 
     PERS_FILE_XFER_SET* pers_file_xfers;
     HTTP_OP_SET* http_ops;
@@ -86,7 +83,7 @@ public:
     COPROCS coprocs;
 
     VERSION_INFO core_client_version;
-    string statefile_platform_name;
+    std::string statefile_platform_name;
     int file_xfer_giveup_period;
     MODE run_mode;
     MODE network_mode;
@@ -200,7 +197,7 @@ public:
     void all_projects_list_check();
     double new_version_check_time;
     double all_projects_list_check_time;
-    string newer_version;
+    std::string newer_version;
 
 // --------------- auto_update.C:
 public:
@@ -265,7 +262,7 @@ private:
     bool enforce_schedule();
     bool no_work_for_a_cpu();
     void rr_simulation();
-    void make_running_task_heap(vector<ACTIVE_TASK*>&, double&);
+    void make_running_task_heap(std::vector<ACTIVE_TASK*>&, double&);
     void print_deadline_misses();
 public:
     double retry_shmem_time;

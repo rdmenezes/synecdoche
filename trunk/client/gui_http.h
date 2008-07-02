@@ -24,7 +24,7 @@
 // i.e. triggered by the user.
 //
 
-using std::string;
+#include <string>
 
 #include "http_curl.h"
 
@@ -43,8 +43,8 @@ struct GUI_HTTP {
     HTTP_OP http_op;
 
     GUI_HTTP(): state(GUI_HTTP_STATE_IDLE) {}
-    int do_rpc(GUI_HTTP_OP*, string url, string output_file);
-    int do_rpc_post(GUI_HTTP_OP*, string url, string input_file, string output_file);
+    int do_rpc(GUI_HTTP_OP*, std::string url, std::string output_file);
+    int do_rpc_post(GUI_HTTP_OP*, std::string url, std::string input_file, std::string output_file);
     bool poll();
 };
 

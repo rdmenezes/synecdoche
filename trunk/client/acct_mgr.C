@@ -256,7 +256,7 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
 int ACCT_MGR_OP::parse(FILE* f) {
     char tag[1024];
 	bool is_tag;
-    string message;
+    std::string message;
     int retval;
 	MIOFILE mf;
 	mf.init_file(f);

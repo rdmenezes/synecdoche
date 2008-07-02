@@ -20,20 +20,16 @@
 #ifndef _AUTO_UPDATE_
 #define _AUTO_UPDATE_
 
-#include <string>
 #include <vector>
 #include "common_defs.h"
 #include "client_types.h"
-
-using std::string;
-using std::vector;
 
 class AUTO_UPDATE {
 public:
     bool present;
     bool install_failed;
     VERSION_INFO version;
-    vector<FILE_REF> file_refs;
+    std::vector<FILE_REF> file_refs;
     PROJECT* project;
 
     AUTO_UPDATE();

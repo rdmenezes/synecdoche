@@ -1,4 +1,5 @@
-
+#ifndef _DHRYSTONE_
+#define _DHRYSTONE_
 #define REG register
 
 typedef enum    {Ident_1, Ident_2, Ident_3, Ident_4, Ident_5} Enumeration;
@@ -51,3 +52,4 @@ struct DS_DATA {
 #define Ptr_Glob dd._Ptr_Glob
 #define Next_Ptr_Glob dd._Next_Ptr_Glob
 
+#endif
