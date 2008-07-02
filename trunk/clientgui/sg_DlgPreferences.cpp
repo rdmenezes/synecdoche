@@ -1088,7 +1088,7 @@ void CDlgPreferences::OnHelp(wxHelpEvent& event) {
  * wxEVT_COMMAND_BUTTON_CLICKED event handler for wxID_OK
  */
 
-void CDlgPreferences::OnOK( wxCommandEvent& event ) {
+void CDlgPreferences::OnOK( wxCommandEvent& WXUNUSED(event) ) {
 #if wxCHECK_VERSION(2,8,0)
 //    event.skip();
 #else
@@ -1097,6 +1097,3 @@ void CDlgPreferences::OnOK( wxCommandEvent& event ) {
     m_pBackgroundPanel->OnOK();
     EndModal(wxID_OK);
 }
-
-
-
