@@ -282,11 +282,10 @@ void CLIENT_STATE::new_version_check() {
 
 int GET_PROJECT_LIST_OP::do_rpc() {
     int retval;
-    char buf[256];
+    const std::string project_list_url("http://boinc.berkeley.edu/project_list.php");
 
-    sprintf(buf, "http://boinc.berkeley.edu/project_list.php");
     retval = gui_http->do_rpc(
-        this, string(buf), ALL_PROJECTS_LIST_FILENAME_TEMP
+        this, project_list_url, ALL_PROJECTS_LIST_FILENAME_TEMP
     );
     if (retval) {
         error_num = retval;
