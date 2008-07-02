@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -52,10 +53,10 @@ extern void strip_whitespace(std::string&);
 extern void unescape_url(std::string& url);
 extern void unescape_url(char *url);
 extern void escape_url(std::string& url);
-extern void escape_url(char *in, char*out);
-extern void escape_url_readable(char* in, char* out);
-extern void escape_project_url(char *in, char* out);
-extern bool valid_master_url(char*);
+extern void escape_url(const char *in, char*out);
+extern void escape_url_readable(const char* in, char* out);
+extern void escape_project_url(const char *in, char* out);
+extern bool valid_master_url(const char*);
 extern void canonicalize_master_url(char *url);
 extern void canonicalize_master_url(std::string&);
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
