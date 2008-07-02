@@ -48,6 +48,7 @@
 #include "log_flags.h"
 
 #include "time_stats.h"
+#include "version.h"
 
 #define CONNECTED_STATE_UNINITIALIZED   -1
 #define CONNECTED_STATE_NOT_CONNECTED   0
