@@ -595,7 +595,7 @@ AC_SUBST(CLIENTGUILIBS)
 dnl ======================================================================
 
 AC_CONFIG_FILES([
-                 ./version.h
+                 version.h
                  api/Makefile
                  clientgui/Makefile
                  clientgui/res/Makefile
