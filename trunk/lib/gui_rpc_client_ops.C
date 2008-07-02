@@ -1251,6 +1251,7 @@ int RPC_CLIENT::get_simple_gui_info(CC_STATE& state, RESULTS& results) {
                 state_project = state.projects[i];
                 if (state_project->flag_for_delete) {
                     retval = ERR_FILE_MISSING;
+                    break;
                 }
             }
         }
