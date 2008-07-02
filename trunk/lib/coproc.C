@@ -35,7 +35,6 @@
 
 #include "coproc.h"
 
-#ifndef _USING_FCGI_
 void COPROC::write_xml(MIOFILE& f) {
     f.printf(
         "<coproc>\n"
@@ -45,7 +44,6 @@ void COPROC::write_xml(MIOFILE& f) {
         type, count
     );
 }
-#endif
 
 int COPROC::parse(MIOFILE& fin) {
     char buf[1024];
@@ -188,7 +186,6 @@ void fake_cuda(COPROCS& coprocs) {
    coprocs.coprocs.push_back(cc);
 }
 
-#ifndef _USING_FCGI_
 void COPROC_CUDA::write_xml(MIOFILE& f) {
     f.printf(
         "<coproc_cuda>\n"
@@ -225,7 +222,6 @@ void COPROC_CUDA::write_xml(MIOFILE& f) {
         (unsigned int)prop.textureAlignment
     );
 }
-#endif
 
 void COPROC_CUDA::clear() {
     count = 0;
@@ -264,8 +260,6 @@ int COPROC_CUDA::parse(FILE* fin) {
         if (parse_int(buf, "<memPitch`>", (int&)prop.memPitch)) continue;
         if (parse_int(buf, "<maxThreadsPerBlock`>", prop.maxThreadsPerBlock)) continue;
         if (parse_str(buf, "<maxThreadsDim`>", buf2, sizeof(buf2))) {
-            // can't use sscanf here (FCGI)
-            //
             prop.maxThreadsDim[0] = atoi(buf2);
             char* p = strchr(buf2, ' ');
             if (p) {

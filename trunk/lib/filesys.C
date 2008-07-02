@@ -65,11 +65,6 @@ typedef BOOL (CALLBACK* FreeFn)(LPCTSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULAR
 #include "error_numbers.h"
 #include "filesys.h"
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
-
 using std::string;
 
 char boinc_failed_file[256];

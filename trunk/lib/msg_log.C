@@ -32,10 +32,6 @@
 #include "util.h"
 #include "msg_log.h"
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 using std::string;
 
 // MSG_LOG is a base class for writing messages not intended for the end user.

@@ -34,10 +34,6 @@
 
 #include "crypt.h"
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 // NOTE: the fast CGI I/O library doesn't have fscanf(),
 // so some of the following have been modified to use
 // fgets() and sscanf() instead
@@ -84,21 +80,6 @@ int scan_hex_data(FILE* f, DATA_BLOCK& x) {
     int n;
 
     x.len = 0;
-#if _USING_FCGI_
-    char *p, buf[256];
-    int i, j;
-    while (1) {
-        p = fgets(buf, 256, f);
-        if (!p) return ERR_GETS;
-        n = strlen(p)/2;
-        if (n == 0) break;
-        for (i=0; i<n; i++) {
-            sscanf(buf+i*2, "%2x", &j);
-            x.data[x.len] = j;
-            x.len++;
-        }
-    }
-#else
     while (1) {
         int j;
         n = fscanf(f, "%2x", &j);
@@ -106,7 +87,6 @@ int scan_hex_data(FILE* f, DATA_BLOCK& x) {
         x.data[x.len] = j;
         x.len++;
     }
-#endif
     return 0;
 }
 
@@ -151,26 +131,6 @@ int scan_key_hex(FILE* f, KEY* key, int size) {
     int len, i, n;
     int num_bits;
 
-#if _USING_FCGI_
-    char *p, buf[256];
-    int j = 0, b;
-    fgets(buf, 256, f);
-    sscanf(buf, "%d", &num_bits);
-    key->bits = num_bits;
-    len = size - sizeof(key->bits);
-    while (1) {
-        p = fgets(buf, 256, f);
-        if (!p) break;
-        n = (strlen(p)-1)/2;
-        if (n == 0) break;
-        for (i=0; i<n; i++) {
-            sscanf(buf+i*2, "%2x", &b);
-            if (j == len) break;
-            key->data[j++] = b;
-        }
-    }
-    if (j != len) return ERR_NULL;
-#else
     fscanf(f, "%d", &num_bits);
     key->bits = num_bits;
     len = size - sizeof(key->bits);
@@ -179,7 +139,6 @@ int scan_key_hex(FILE* f, KEY* key, int size) {
         key->data[i] = n;
     }
     fscanf(f, ".");
-#endif
     return 0;
 }
 
