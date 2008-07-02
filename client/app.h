@@ -31,10 +31,10 @@
 //(we don't need to include the full declarations from client_state.h)
 class CLIENT_STATE;
 class PROJECT;
-class WORKUNIT;
-class RESULT;
-class APP_VERSION;
-class FILE_REF;
+struct WORKUNIT;
+struct RESULT;
+struct APP_VERSION;
+struct FILE_REF;
 class FILE_INFO;
 
 typedef int PROCESS_ID;
