@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -296,7 +297,7 @@ int parse_command_line(char* p, char** argv) {
     return argc;
 }
 
-static char x2c(char *what) {
+static char x2c(const char *what) {
     register char digit;
 
     digit = (what[0] >= 'A' ? ((what[0] & 0xdf) - 'A')+10 : (what[0] - '0'));
@@ -391,7 +392,7 @@ void unescape_url(string& url) {
     url = buf;
 }
 
-void escape_url(char *in, char*out) {
+void escape_url(const char *in, char*out) {
     int x, y;
     for (x=0, y=0; in[x]; ++x) {
         if (isalnum(in[x])) {
@@ -442,7 +443,7 @@ void escape_url(string& url) {
 // Escape a URL for the project directory, cutting off the "http://",
 // converting everthing other than alphanumbers, ., - and _ to "_".
 //
-void escape_url_readable(char *in, char* out) {
+void escape_url_readable(const char *in, char* out) {
     int x, y;
     char *temp;
 
@@ -502,7 +503,7 @@ void canonicalize_master_url(string& url) {
 
 // is the string a valid master URL, in canonical form?
 //
-bool valid_master_url(char* buf) {
+bool valid_master_url(const char* buf) {
     char* p, *q;
     size_t n;
 	bool bSSL = false;
@@ -593,7 +594,7 @@ string timediff_format(double diff) {
     return buf;
 }
 
-void escape_project_url(char *in, char* out) {
+void escape_project_url(const char *in, char* out) {
     escape_url_readable(in, out);
     char& last = out[strlen(out)-1];
     // remove trailing _
