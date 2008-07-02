@@ -178,6 +178,9 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     //         CPU time
     wxUpdateUIEvent::SetUpdateInterval(500);
 
+    // We want to disconnect this later, so connect here instead of in the event table.
+    Connect(wxEVT_IDLE, wxIdleEventHandler(CAdvancedFrame::OnIdleInit));
+
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CAdvancedFrame - Function End"));
 }
 
@@ -2029,6 +2032,42 @@ void CAdvancedFrame::UpdateRefreshTimerInterval( wxInt32 iCurrentNotebookPage ) 
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::UpdateRefreshTimerInterval - Function End"));
+}
+
+
+// Preloads notebook pages when the system is idle.
+void CAdvancedFrame::OnIdleInit(wxIdleEvent& event) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnIdleInit - Function Begin"));
+    wxASSERT(m_pNotebook);
+
+    // Next page to load in the background
+    static size_t page = 0;
+
+    if (page < m_pNotebook->GetPageCount()) {
+
+        wxWindow*       pwndNotebookPage = NULL;
+        CBOINCBaseView* pView = NULL;
+
+        pwndNotebookPage = m_pNotebook->GetPage(page);
+        wxASSERT(pwndNotebookPage);
+
+        pView = wxDynamicCast(pwndNotebookPage, CBOINCBaseView);
+        wxASSERT(pView);
+
+        // Demand load view (does nothing for loaded pages)
+        pView->FireOnShowView();
+
+        page++;
+
+        // Handle one page at a time. Make sure idle is called again, even if
+        // there is nothing else in the event queue:
+        event.RequestMore();
+
+    } else {
+        // Loading done, unlink event.
+        Disconnect(wxEVT_IDLE, wxIdleEventHandler(CAdvancedFrame::OnIdleInit));
+    }
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnIdleInit - Function End"));
 }
 
 

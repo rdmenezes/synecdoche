@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -58,7 +59,7 @@ public:
     void OnAccountManagerDetach( wxCommandEvent& event );
 
     void OnOptionsOptions( wxCommandEvent& event );
-	void OnDlgPreferences( wxCommandEvent& event );
+    void OnDlgPreferences( wxCommandEvent& event );
     void OnSelectComputer( wxCommandEvent& event );
     void OnClientShutdown( wxCommandEvent& event );
     void OnRunBenchmarks( wxCommandEvent& event );
@@ -81,6 +82,8 @@ public:
     void OnRefreshView( CFrameEvent& event );
     void OnConnect( CFrameEvent& event );
     void OnUpdateStatus( CFrameEvent& event );
+
+    void OnIdleInit(wxIdleEvent& event);
 
     void ResetReminderTimers();
 
@@ -138,5 +141,3 @@ protected:
 
 
 #endif
-
-
