@@ -132,7 +132,7 @@ void CTaskBarIcon::OnClose(wxCloseEvent& event) {
 
 
 void CTaskBarIcon::OnRefresh(wxTimerEvent& WXUNUSED(event)) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CTaskBarIcon::OnRefresh - Function Begin"));
+    //wxLogTrace(wxT("Function Start/End"), wxT("CTaskBarIcon::OnRefresh - Function Begin"));
 
     CMainDocument* pDoc = wxGetApp().GetDocument();
     CC_STATUS      status;
@@ -154,7 +154,7 @@ void CTaskBarIcon::OnRefresh(wxTimerEvent& WXUNUSED(event)) {
         }
     }
 
-    wxLogTrace(wxT("Function Start/End"), wxT("CTaskBarIcon::OnRefresh - Function End"));
+    //wxLogTrace(wxT("Function Start/End"), wxT("CTaskBarIcon::OnRefresh - Function End"));
 }
 
 

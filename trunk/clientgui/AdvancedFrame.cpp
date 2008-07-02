@@ -142,6 +142,7 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     // Working Variables
     m_strBaseTitle = title;
     m_bDisplayShutdownClientWarning = true;
+    m_pageToLoad = 0;
 
     // Initialize Application
     wxIconBundle icons;
@@ -2040,15 +2041,12 @@ void CAdvancedFrame::OnIdleInit(wxIdleEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnIdleInit - Function Begin"));
     wxASSERT(m_pNotebook);
 
-    // Next page to load in the background
-    static size_t page = 0;
-
-    if (page < m_pNotebook->GetPageCount()) {
+    if (m_pageToLoad < m_pNotebook->GetPageCount()) {
 
         wxWindow*       pwndNotebookPage = NULL;
         CBOINCBaseView* pView = NULL;
 
-        pwndNotebookPage = m_pNotebook->GetPage(page);
+        pwndNotebookPage = m_pNotebook->GetPage(m_pageToLoad);
         wxASSERT(pwndNotebookPage);
 
         pView = wxDynamicCast(pwndNotebookPage, CBOINCBaseView);
@@ -2057,7 +2055,7 @@ void CAdvancedFrame::OnIdleInit(wxIdleEvent& event) {
         // Demand load view (does nothing for loaded pages)
         pView->FireOnShowView();
 
-        page++;
+        m_pageToLoad++;
 
         // Handle one page at a time. Make sure idle is called again, even if
         // there is nothing else in the event queue:
