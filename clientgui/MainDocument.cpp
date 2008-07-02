@@ -451,7 +451,7 @@ int CMainDocument::OnRefreshState() {
 
 
 int CMainDocument::CachedStateUpdate() {
-    wxLogTrace(wxT("Function Start/End"), wxT("CMainDocument::CachedStateUpdate - Function Begin"));
+    //wxLogTrace(wxT("Function Start/End"), wxT("CMainDocument::CachedStateUpdate - Function Begin"));
 
     CBOINCBaseFrame* pFrame = wxGetApp().GetFrame();
     int     retval = 0;
@@ -478,7 +478,7 @@ int CMainDocument::CachedStateUpdate() {
         pFrame->UpdateStatusText(wxEmptyString);
     }
 
-    wxLogTrace(wxT("Function Start/End"), wxT("CMainDocument::CachedStateUpdate - Function End"));
+    //wxLogTrace(wxT("Function Start/End"), wxT("CMainDocument::CachedStateUpdate - Function End"));
     return retval;
 }
 

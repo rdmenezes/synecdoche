@@ -102,6 +102,9 @@ private:
     wxString        m_strBaseTitle;
     wxString        m_cachedStatusText;
 
+    // Next page to load in the background
+    size_t          m_pageToLoad;
+
     bool            CreateMenu();
     bool            DeleteMenu();
 
