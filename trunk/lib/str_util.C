@@ -445,7 +445,7 @@ void escape_url(string& url) {
 //
 void escape_url_readable(const char *in, char* out) {
     int x, y;
-    char *temp;
+    const char *temp;
 
     temp = strstr(in,"://");
     if (temp) {
@@ -504,7 +504,7 @@ void canonicalize_master_url(string& url) {
 // is the string a valid master URL, in canonical form?
 //
 bool valid_master_url(const char* buf) {
-    char* p, *q;
+    const char *p, *q;
     size_t n;
 	bool bSSL = false;
 
