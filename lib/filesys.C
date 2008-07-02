@@ -647,11 +647,13 @@ int FILE_LOCK::unlock(const char* filename) {
 }
 
 void boinc_getcwd(char* path) {
-    char* p __attribute__ ((unused)) = getcwd(path, 256);
+    // TODO: This is unsafe.
+    getcwd(path, 256);
 }
 
 void relative_to_absolute(const char* relname, char* path) {
-    char* p __attribute__ ((unused)) = getcwd(path, 256);
+    // TODO: Still unsafe here.
+    getcwd(path, 256);
     if (strlen(relname)) {
         strcat(path, "/");
         strcat(path, relname);
@@ -660,7 +662,7 @@ void relative_to_absolute(const char* relname, char* path) {
 
 // get total and free space on current filesystem (in bytes)
 //
-int get_filesystem_info(double &total_space, double &free_space, const char* path) {
+int get_filesystem_info(double &total_space, double &free_space, const char*) {
 #ifdef _WIN32
     char buf[256];
     boinc_getcwd(buf);

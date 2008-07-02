@@ -402,10 +402,10 @@ int main(int argc, char** argv) {
                         if (amrr.error_num != ERR_IN_PROGRESS) break;
                         boinc_sleep(1);
                     } else {
-                        unsigned int j, n = amrr.messages.size();
+                        size_t n = amrr.messages.size();
                         if (n) {
                             printf("Messages from account manager:\n");
-                            for (j=0; j<n; j++) {
+                            for (size_t j=0; j<n; j++) {
                                 printf("%s\n", amrr.messages[j].c_str());
                             }
                         }

@@ -98,11 +98,9 @@ const char* COPROC_CUDA::get(COPROCS& coprocs) {
     int count;
 
 #ifdef _WIN32
-    int retval;
     int (__stdcall* __cudaGetDeviceCount)(int*);
     int (__stdcall* __cudaGetDeviceProperties)(cudaDeviceProp*, int);
-    int bufsize=256;
-    char buf[256], path[256];
+
     HMODULE cudalib = LoadLibrary("nvcuda.dll");
     if (!cudalib) {
         return "Can't load library nvcuda.dll";

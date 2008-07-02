@@ -1066,8 +1066,8 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
     CMainDocument*      pDoc = wxGetApp().GetDocument();
     CDlgSelectComputer  dlg(this);
-    size_t              lIndex = 0;
-    long                lRetVal = -1;
+    size_t              index = 0;
+    int                 retVal = -1;
     wxArrayString       aComputerNames;
 
     wxASSERT(pDoc);
@@ -1079,40 +1079,40 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
     // Lets populate the combo control with the MRU list
     dlg.m_ComputerNameCtrl->Clear();
-    for (lIndex = 0; lIndex < aComputerNames.Count(); lIndex++) {
-        dlg.m_ComputerNameCtrl->Append(aComputerNames.Item(lIndex));
+    for (index = 0; index < aComputerNames.Count(); index++) {
+        dlg.m_ComputerNameCtrl->Append(aComputerNames.Item(index));
     }
 
     if (wxID_OK == dlg.ShowModal()) {
 
         // Make a null hostname be the same thing as localhost
         if (wxEmptyString == dlg.m_ComputerNameCtrl->GetValue()) {
-            lRetVal = pDoc->Connect(
+            retVal = pDoc->Connect(
                 wxT("localhost"),
                 GUI_RPC_PORT,
                 wxEmptyString,
-                TRUE,
-                TRUE
+                true,
+                true
             );
         } else {
             // Connect to the remote machine
             wxString sHost = dlg.m_ComputerNameCtrl->GetValue(); 
             long lPort = GUI_RPC_PORT; 
-            int iPos = sHost.find(_(":")); 
-            if (iPos != wxNOT_FOUND) { 
-                wxString sPort = sHost.substr((size_t)iPos + 1); 
+            size_t pos = sHost.find(_(":")); 
+            if (pos != wxNOT_FOUND) { 
+                wxString sPort = sHost.substr(pos + 1); 
                 if (!sPort.ToLong(&lPort)) lPort = GUI_RPC_PORT; 
-                sHost.erase((size_t)iPos); 
+                sHost.erase(pos); 
             } 
-            lRetVal = pDoc->Connect(
+            retVal = pDoc->Connect(
                 sHost,
                 (int)lPort,
                 dlg.m_ComputerPasswordCtrl->GetValue(),
-                TRUE,
-                FALSE
+                true,
+                false
             );
         }
-        if (lRetVal) {
+        if (retVal) {
             ShowConnectionFailedAlert();
         }
 
@@ -1124,9 +1124,9 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
         // Loops through the computer names and remove any duplicates that
         //   might exist with the new head value
-        for (lIndex = 1; lIndex < aComputerNames.Count(); lIndex++) {
-            if (aComputerNames.Item(lIndex) == aComputerNames.Item(0))
-                aComputerNames.RemoveAt(lIndex);
+        for (index = 1; index < aComputerNames.Count(); index++) {
+            if (aComputerNames.Item(index) == aComputerNames.Item(0))
+                aComputerNames.RemoveAt(index);
         }
 
         // Store the modified computer name MRU list back to the system state
