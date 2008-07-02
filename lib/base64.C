@@ -28,10 +28,6 @@
 
 #include "base64.h"
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 using std::string;
 
 // Table of characters coding the 64 values.

@@ -26,10 +26,6 @@
 
 #include "mfile.h"
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 // MIOFILE lets you do formatted I/O to either a FILE or a memory buffer,
 // depending on how you initialize it.
 //
@@ -63,11 +59,7 @@ public:
     int _ungetc(int);
     inline int _getc() {
         if (f) {
-#ifdef _USING_FCGI_
-            return FCGI_fgetc(f);
-#else
             return getc(f);
-#endif
         }
         return (*buf)?(*buf++):EOF;
     }

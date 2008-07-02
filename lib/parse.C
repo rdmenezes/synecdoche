@@ -43,13 +43,7 @@
 #include "str_util.h"
 #include "parse.h"
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 using std::string;
-
-
 
 // Parse a boolean; tag is of form "foobar"
 // Accept either <foobar/> or <foobar>0|1</foobar>

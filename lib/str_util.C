@@ -43,10 +43,6 @@
 #include "filesys.h"
 #include "str_util.h"
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 using std::string;
 
 // Use this instead of strncpy().

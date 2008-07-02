@@ -23,19 +23,11 @@
 #include <cstdio>
 #include <cstdarg>
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 // the __attribute((format...)) tags are GCC extensions that let the compiler
 // do like-checking on printf-like arguments
 //
 #if !defined(__GNUC__) && !defined(__attribute__)
 #define __attribute__(x) /*nothing*/
-#endif
-
-#ifdef _USING_FCGI_
-#define __attribute__(x) //nothing
 #endif
 
 class MSG_LOG {

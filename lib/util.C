@@ -52,11 +52,6 @@
 #include "miofile.h"
 #include "parse.h"
 
-
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 using std::min;
 using std::string;
 using std::vector;
@@ -268,7 +263,6 @@ void update_average(
     avg_time = now;
 }
 
-#ifndef _USING_FCGI_
 #ifndef _WIN32
 // (linux) return current CPU time of the given process
 //
@@ -286,7 +280,6 @@ double linux_cpu_time(int pid) {
     }
     return (double)(utime + stime)/100;
 }
-#endif
 #endif
 
 void boinc_crash() {
@@ -310,14 +303,12 @@ int read_file_malloc(const char* path, char*& buf, int max_len, bool tail) {
     f = fopen(path, "r");
     if (!f) return ERR_FOPEN;
 
-#ifndef _USING_FCGI_
     if (max_len && size > max_len) {
         if (tail) {
             fseek(f, (long)size-max_len, SEEK_SET);
         }
         size = max_len;
     }
-#endif
     isize = (int) size;
     buf = (char*)malloc(isize+1);
     size_t n = fread(buf, 1, isize, f);
