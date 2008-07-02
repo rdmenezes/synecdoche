@@ -20,8 +20,10 @@
 #ifndef _TIME_STATS_
 #define _TIME_STATS_
 
-#include "miofile.h"
+#include <cstdio>
 #include <vector>
+
+#include "miofile.h"
 
 class TIME_STATS {
     bool first;

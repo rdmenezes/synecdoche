@@ -24,7 +24,6 @@
 #include "boinc_win.h"
 #else
 #include "config.h"
-#include <stdio.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #include <cerrno>
@@ -34,25 +33,29 @@
 #endif
 #include <sys/stat.h>
 #include <sys/un.h>
-#include <vector>
-#include <string.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
 #endif
 
-#include "str_util.h"
-#include "util.h"
-#include "error_numbers.h"
-#include "network.h"
-#include "filesys.h"
-#include "md5_file.h"
+#include "gui_rpc_server.h"
 
-#include "file_names.h"
 #include "client_msgs.h"
+#include "log_flags.h"
 #include "client_state.h"
+#include "file_names.h"
+#include "filesys.h"
 #include "sandbox.h"
+#include "str_util.h"
+#include "network.h"
+#include "md5_file.h"
+#include "hostinfo.h"
+
+#include <cstdio>
+#include <cstring>
+#include <vector>
+#include <string>
 
 using std::string;
 using std::vector;

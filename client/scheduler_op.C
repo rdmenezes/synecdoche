@@ -311,7 +311,7 @@ int SCHEDULER_OP::parse_master_file(PROJECT* p, vector<std::string> &urls) {
                 char* q2 = strchr(buf2, '"');
                 if (q2) *q2 = 0;
                 strip_whitespace(buf2);
-                str = string(buf2);
+                str = std::string(buf2);
                 push_unique(str, urls);
             }
             q = strchr(q, '>');

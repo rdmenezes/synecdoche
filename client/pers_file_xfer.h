@@ -20,9 +20,10 @@
 #ifndef _PERS_FILE_XFER_H
 #define _PERS_FILE_XFER_H
 
+#include <vector>
+
 #include "client_types.h"
 #include "file_xfer.h"
-
 
 // PERS_FILE_XFER represents a "persistent file transfer",
 // i.e. a long-term effort to upload or download a file.

@@ -209,7 +209,7 @@ void NET_STATUS::contact_reference_site() {
 	need_to_contact_reference_site = false;
 }
 
-int LOOKUP_WEBSITE_OP::do_rpc(string& url) {
+int LOOKUP_WEBSITE_OP::do_rpc(std::string& url) {
     int retval;
 
     if (net_status.show_ref_message) {

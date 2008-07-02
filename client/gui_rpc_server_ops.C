@@ -29,7 +29,6 @@
 
 #ifndef _WIN32
 #include "config.h"
-#include <stdio.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -37,13 +36,15 @@
 #include <sys/socket.h>
 #endif
 #include <sys/un.h>
-#include <vector>
 #include <string.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #endif
+#include <cstdio>
+#include <vector>
 
+#include "gui_rpc_server.h"
 #include "str_util.h"
 #include "client_state.h"
 #include "util.h"

@@ -21,11 +21,11 @@
 #define _SCHEDULER_OP_
 
 #include <vector>
+#include <string>
 
 #include "client_types.h"
 #include "auto_update.h"
 #include "http_curl.h"
-#include "prefs.h"
 
 // SCHEDULER_OP encapsulates the mechanism for
 // 1) fetching master files
