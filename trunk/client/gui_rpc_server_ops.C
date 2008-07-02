@@ -41,6 +41,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #endif
+
 #include <cstdio>
 #include <vector>
 
@@ -52,6 +53,7 @@
 #include "parse.h"
 #include "network.h"
 #include "filesys.h"
+#include "version.h"
 
 #include "file_names.h"
 #include "client_msgs.h"
