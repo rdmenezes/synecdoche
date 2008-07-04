@@ -472,7 +472,7 @@ void CBOINCBaseView::sortData() {
     }
 }
 
-    
+
 void CBOINCBaseView::PreUpdateSelection(){
 }
 

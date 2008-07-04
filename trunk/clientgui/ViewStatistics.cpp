@@ -2109,6 +2109,6 @@ void CViewStatistics::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
 }
 
 void CViewStatistics::UpdateSelection() {
-    CBOINCBaseView::PreUpdateSelection();
-    CBOINCBaseView::PostUpdateSelection();
+    CTaskViewBase::PreUpdateSelection();
+    CTaskViewBase::PostUpdateSelection();
 }

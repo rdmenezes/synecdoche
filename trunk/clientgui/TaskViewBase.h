@@ -94,6 +94,8 @@ protected:
 
     virtual void            EmptyTasks();
 
+    virtual void            PreUpdateSelection();
+    virtual void            UpdateSelection();
     virtual void            PostUpdateSelection();
 
     virtual void            UpdateWebsiteSelection(long lControlGroup, PROJECT* project);
