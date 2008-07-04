@@ -367,9 +367,6 @@ void wxPieCtrl::Draw(wxPaintDC & pdc)
 		pieRect.SetBottom(pieRect.GetTop() + maxL);
 		pieRect.SetRight(pieRect.GetLeft() + maxL);
 
-#if ! wxCHECK_VERSION(2,8,0)
-		m_CanvasDC.BeginDrawing();
-#endif
 		m_CanvasDC.SetBackground(wxBrush(m_BackColour));
 		m_CanvasDC.Clear();
 		if(m_Series.Count())
@@ -377,26 +374,7 @@ void wxPieCtrl::Draw(wxPaintDC & pdc)
 			DrawParts(pieRect);
 			DrawLegend(10, 10);
 		}
-		else {
-			//no data, draw an black circle
-			m_CanvasDC.SetBrush(*wxBLACK_BRUSH);
-#if (defined(__WXMAC__) && wxCHECK_VERSION(2,8,2))
-			DrawEllipticArc(pieRect.GetLeft(),
-											   pieRect.GetTop(),
-											   pieRect.GetRight()-pieRect.GetLeft(),
-											   pieRect.GetBottom()-pieRect.GetTop(),
-											   0,360);
-#else
-			m_CanvasDC.DrawEllipticArc(pieRect.GetLeft(),
-											   pieRect.GetTop(),
-											   pieRect.GetRight()-pieRect.GetLeft(),
-											   pieRect.GetBottom()-pieRect.GetTop(),
-											   0,360);
-#endif
-		}
-#if ! wxCHECK_VERSION(2,8,0)
-		m_CanvasDC.EndDrawing();		
-#endif
+
 		m_CanRepaint = false;
 	}
 	pdc.Blit(0,0,bgW,bgH,&m_CanvasDC,0,0);

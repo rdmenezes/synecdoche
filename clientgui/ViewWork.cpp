@@ -505,7 +505,7 @@ void CViewWork::UpdateSelection() {
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
     wxASSERT(NULL != m_pTaskPane);
 
-    CBOINCBaseView::PreUpdateSelection();
+    CTaskViewBase::PreUpdateSelection();
 
     pGroup = m_TaskGroups[0];
     
@@ -595,7 +595,7 @@ void CViewWork::UpdateSelection() {
         }
     }
 
-    CBOINCBaseView::PostUpdateSelection();
+    CTaskViewBase::PostUpdateSelection();
 }
 
 

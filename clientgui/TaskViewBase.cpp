@@ -95,10 +95,26 @@ void CTaskViewBase::EmptyTasks() {
     m_TaskGroups.clear();
 }
 
+
+void CTaskViewBase::PreUpdateSelection(){
+
+    CBOINCBaseView::PreUpdateSelection();
+
+    wxASSERT(m_pTaskPane);
+    m_pTaskPane->Freeze();
+}
+
+
+void CTaskViewBase::UpdateSelection(){
+}
+
+
 void CTaskViewBase::PostUpdateSelection(){
+
     wxASSERT(m_pTaskPane);
     m_pTaskPane->UpdateControls();
-    
+    m_pTaskPane->Thaw();
+
     CBOINCBaseView::PostUpdateSelection();
 }
 

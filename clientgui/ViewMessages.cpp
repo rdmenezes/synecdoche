@@ -356,7 +356,7 @@ bool CViewMessages::EnsureLastItemVisible() {
 void CViewMessages::UpdateSelection() {
     CTaskItemGroup*     pGroup = NULL;
 
-    CBOINCBaseView::PreUpdateSelection();
+    CTaskViewBase::PreUpdateSelection();
 
     pGroup = m_TaskGroups[0];
     if (m_pListPane->GetSelectedItemCount()) {
@@ -365,7 +365,7 @@ void CViewMessages::UpdateSelection() {
         m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_COPYSELECTED]);
     }
 
-    CBOINCBaseView::PostUpdateSelection();
+    CTaskViewBase::PostUpdateSelection();
 }
 
 

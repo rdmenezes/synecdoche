@@ -108,9 +108,8 @@ const char** CViewResources::GetViewIcon() {
 }
 
 void CViewResources::UpdateSelection() {
-    //TODO: is this needed ? no task buttons
     CBOINCBaseView::PreUpdateSelection();
-    //CBOINCBaseView::PostUpdateSelection();
+    CBOINCBaseView::PostUpdateSelection();
 }
 
 
@@ -216,19 +215,6 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
                 m_pieCtrlBOINC->m_Series.Add(part);
             }
             m_pieCtrlBOINC->Refresh();
-        }
-    } else {
-        if(!m_BOINCwasEmpty) {
-            //paint an empty black pie
-            m_pieCtrlBOINC->m_Series.Clear();
-            wxPiePart part;
-            part.SetLabel(_("not attached to any BOINC project - 0 bytes"));
-            part.SetValue(1);
-            part.SetColour(wxColour(0,0,0));
-            m_pieCtrlBOINC->m_Series.Add(part);
-            m_pieCtrlBOINC->Refresh();
-            m_BOINCwasEmpty=true;
-            refreshBOINC=true;
         }
     }
     //data for pie chart 2 (total disk usage)
