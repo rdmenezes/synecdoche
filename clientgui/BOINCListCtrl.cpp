@@ -272,14 +272,16 @@ void CBOINCListCtrl::DrawBarGraphs()
     wxClientDC dc(GetMainWin());   // Available only in wxGenericListCtrl
 #endif
 
-#ifdef __WXMAC__
-    wxColour progressColor = wxColour( 40, 170, 170, 60);
-    wxColour rowStripeColor = wxColour( 0, 0, 0, 10);
-#else
-    wxColour progressColor = wxTheColourDatabase->Find(wxT("LIGHT BLUE"));
-    wxColour rowStripeColor = wxColour( 240, 240, 240);
+    wxColour progressColorLight = GetBlendedColour(
+        wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
+        wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT), 0.6);
+
+    wxColour progressColorDark = GetBlendedColour(
+        wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
+        wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT), 0.4);
+
+    // This is a compromise.
     dc.SetLogicalFunction(wxAND);
-#endif
 
     numItems = GetItemCount();
     if (numItems) {
@@ -312,11 +314,6 @@ void CBOINCListCtrl::DrawBarGraphs()
 #if ! USE_NATIVE_LISTCONTROL
             r.y = r.y - GetHeaderHeight() - 1;
 #endif
-            if (item % 2) {
-                dc.SetPen(rowStripeColor);
-                dc.SetBrush(rowStripeColor);
-                dc.DrawRectangle( r );
-            }
 
             if (progressColumn < 0) continue;
 #if USE_NATIVE_LISTCONTROL
@@ -326,7 +323,7 @@ void CBOINCListCtrl::DrawBarGraphs()
             r.width = w;
 #endif
             r.Inflate(-1, -1);
-            dc.SetPen(progressColor);
+            dc.SetPen(progressColorDark);
             dc.SetBrush(*wxTRANSPARENT_BRUSH);
             dc.DrawRectangle( r );
             r.Inflate(-1, 0);
@@ -334,10 +331,20 @@ void CBOINCListCtrl::DrawBarGraphs()
 
             r.width = r.width * m_pParentView->GetProgressValue(item);
             dc.SetPen(*wxTRANSPARENT_PEN);
-            dc.SetBrush(progressColor);
+            dc.SetBrush(progressColorLight);
             dc.DrawRectangle( r );
         }
     }
+}
+
+
+// Returns a solid colour that would result from alpha blending the accent colour over the base.
+wxColour CBOINCListCtrl::GetBlendedColour(const wxColour base, const wxColour accent, float blend) const {
+
+    float r = base.Red() * blend + accent.Red() * (1.0 - blend);
+    float g = base.Green() * blend + accent.Green() * (1.0 - blend);
+    float b = base.Blue() * blend + accent.Blue() * (1.0 - blend);
+    return wxColor(r, g, b);
 }
 
 #if USE_NATIVE_LISTCONTROL
