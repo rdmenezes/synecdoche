@@ -108,13 +108,14 @@ protected:
     virtual void            UpdateSelection();
     virtual void            PostUpdateSelection();
 
-    virtual void            DemandLoadView();
+    // Can't be pure virtual because of wxWidgets' RTTI.
+    virtual void            DemandLoadView() {}
     virtual void            DemandLoadView(
-                                wxWindowID iTaskWindowID,
-                                int iTaskWindowFlags,
-                                wxWindowID iListWindowID,
-                                int iListWindowFlags
-                            );
+                                wxWindowID,
+                                int,
+                                wxWindowID,
+                                int
+                                ) {}
 
     bool                    _EnsureLastItemVisible();
     virtual bool            EnsureLastItemVisible();
