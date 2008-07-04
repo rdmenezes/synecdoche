@@ -131,7 +131,6 @@ protected:
     
     int                     m_iProgressColumn;
 
-    wxImageList *           m_SortArrows;
     ListSortCompareFunc     m_funcSortCompare;
     wxArrayInt              m_iSortedIndexes;
 

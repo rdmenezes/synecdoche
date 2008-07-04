@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -66,6 +67,7 @@ private:
     virtual wxListItemAttr* OnGetItemAttr(long item) const;
 
     CBOINCBaseView*         m_pParentView;
+    wxImageList *           m_SortArrows;
 
 #if USE_NATIVE_LISTCONTROL
 public:
@@ -118,5 +120,3 @@ private:
 };
 
 #endif
-
-
