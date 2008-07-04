@@ -510,23 +510,6 @@ void CBOINCBaseView::AppendToStatus(wxString& existing, const wxChar* additional
 }
 
 
-void CBOINCBaseView::DemandLoadView() {}
-
-
-void CBOINCBaseView::DemandLoadView(wxWindowID iTaskWindowID, int iTaskWindowFlags,
-    wxWindowID iListWindowID, int iListWindowFlags) {
-
-    wxASSERT(!m_bViewLoaded);
-
-    m_pListPane = new CBOINCListCtrl(this, iListWindowID, iListWindowFlags);
-    wxASSERT(m_pListPane);
-
-    this->AddChild(m_pListPane);
-
-    Layout();
-}
-
-
 // HTML Entity Conversion:
 // http://www.webreference.com/html/reference/character/
 // Completed: The ISO Latin 1 Character Set
