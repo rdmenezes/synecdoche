@@ -27,6 +27,9 @@
 #include "BOINCListCtrl.h"
 #include "Events.h"
 
+#include "res/sortascending.xpm"
+#include "res/sortdescending.xpm"
+
 
 #if USE_NATIVE_LISTCONTROL
 DEFINE_EVENT_TYPE(wxEVT_DRAW_BARGRAPH)
@@ -65,11 +68,31 @@ CBOINCListCtrl::CBOINCListCtrl(
         wxEVT_COMMAND_LEFT_CLICK, 
         (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) &CBOINCListCtrl::OnClick
     );
+
+#if USE_NATIVE_LISTCONTROL
+    PushEventHandler(new MyEvtHandler(this));
+#else
+    (GetMainWin())->PushEventHandler(new MyEvtHandler(this));
+#endif
+
+    m_SortArrows = new wxImageList(16, 16, true);
+    m_SortArrows->Add( wxIcon( sortascending_xpm ) );
+    m_SortArrows->Add( wxIcon( sortdescending_xpm ) );
+    SetImageList(m_SortArrows, wxIMAGE_LIST_SMALL);
 }
 
 
 CBOINCListCtrl::~CBOINCListCtrl()
 {
+#if USE_NATIVE_LISTCONTROL
+    PopEventHandler(true);
+#else
+    (GetMainWin())->PopEventHandler(true);
+#endif
+
+    if (m_SortArrows) {
+        delete m_SortArrows;
+    }
 }
 
 
@@ -353,6 +376,3 @@ void MyEvtHandler::OnPaint(wxPaintEvent & event)
 }
 
 #endif
-
-
-const char *BOINC_RCSID_5cf411daa0 = "$Id: BOINCListCtrl.cpp 13804 2007-10-09 11:35:47Z fthomas $";

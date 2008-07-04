@@ -31,8 +31,6 @@
 #include "Events.h"
 
 #include "res/boinc.xpm"
-#include "res/sortascending.xpm"
-#include "res/sortdescending.xpm"
 
 
 IMPLEMENT_DYNAMIC_CLASS(CBOINCBaseView, wxPanel)
@@ -56,7 +54,6 @@ CBOINCBaseView::CBOINCBaseView(wxNotebook* pNotebook) :
     m_pListPane = NULL;
     m_iProgressColumn = -1;
     m_iSortColumn = -1;
-    m_SortArrows = NULL;
     
     SetName(GetViewName());
 
@@ -65,16 +62,6 @@ CBOINCBaseView::CBOINCBaseView(wxNotebook* pNotebook) :
 
 
 CBOINCBaseView::~CBOINCBaseView() {
-    if (m_pListPane) {
-#if USE_NATIVE_LISTCONTROL
-        m_pListPane->PopEventHandler(true);
-#else
-        (m_pListPane->GetMainWin())->PopEventHandler(true);
-#endif
-    }
-    if (m_SortArrows) {
-        delete m_SortArrows;
-    }
 }
 
 
@@ -318,7 +305,7 @@ void CBOINCBaseView::OnGridSelectCell( wxGridEvent& event ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnGridSelectCell - Function Begin"));
 
     if (!m_bIgnoreUIEvents) {
-	    m_bForceUpdateSelection = true;
+        m_bForceUpdateSelection = true;
         UpdateSelection();
         event.Skip();
     }
@@ -332,7 +319,7 @@ void CBOINCBaseView::OnGridSelectRange( wxGridRangeSelectEvent& event ) {
     if (!m_bIgnoreUIEvents) {
         m_bForceUpdateSelection = true;
         UpdateSelection();
-	    event.Skip();
+        event.Skip();
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnGridSelectRange - Function End"));
@@ -534,17 +521,6 @@ void CBOINCBaseView::DemandLoadView(wxWindowID iTaskWindowID, int iTaskWindowFla
     m_pListPane = new CBOINCListCtrl(this, iListWindowID, iListWindowFlags);
     wxASSERT(m_pListPane);
 
-    #if USE_NATIVE_LISTCONTROL
-    m_pListPane->PushEventHandler(new MyEvtHandler(m_pListPane));
-#else
-    (m_pListPane->GetMainWin())->PushEventHandler(new MyEvtHandler(m_pListPane));
-#endif
-
-    m_SortArrows = new wxImageList(16, 16, true);
-    m_SortArrows->Add( wxIcon( sortascending_xpm ) );
-    m_SortArrows->Add( wxIcon( sortdescending_xpm ) );
-    m_pListPane->SetImageList(m_SortArrows, wxIMAGE_LIST_SMALL);
-
     this->AddChild(m_pListPane);
 
     Layout();
@@ -556,7 +532,7 @@ void CBOINCBaseView::DemandLoadView(wxWindowID iTaskWindowID, int iTaskWindowFla
 // Completed: The ISO Latin 1 Character Set
 //
 wxString CBOINCBaseView::HtmlEntityEncode(wxString strRaw) {
-	wxString strEncodedHtml(strRaw);
+    wxString strEncodedHtml(strRaw);
 
 #ifdef __WXMSW__
     strEncodedHtml.Replace(wxT("&"),  wxT("&amp;"),    true);
@@ -683,7 +659,7 @@ wxString CBOINCBaseView::HtmlEntityEncode(wxString strRaw) {
 }
 
 wxString CBOINCBaseView::HtmlEntityDecode(wxString strRaw) {
-	wxString strDecodedHtml(strRaw);
+    wxString strDecodedHtml(strRaw);
 
     if (0 <= strDecodedHtml.Find(wxT("&"))) {
 #ifdef __WXMSW__
@@ -808,8 +784,5 @@ wxString CBOINCBaseView::HtmlEntityDecode(wxString strRaw) {
 #endif
     }
 
-	return strDecodedHtml;
+    return strDecodedHtml;
 }
-
-
-const char *BOINC_RCSID_0a1bd38a5a = "$Id: BOINCBaseView.cpp 14938 2008-03-18 18:19:49Z romw $";

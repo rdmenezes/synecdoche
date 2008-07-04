@@ -136,8 +136,8 @@ void CTaskViewBase::UpdateWebsiteSelection(long lControlGroup, PROJECT* project)
         if (m_pListPane->GetSelectedItemCount()) {
             if (project) {
                 // Create the web sites task group
-  	            pGroup = new CTaskItemGroup( _("Web sites") );
-	            m_TaskGroups.push_back( pGroup );
+                pGroup = new CTaskItemGroup( _("Web sites") );
+                m_TaskGroups.push_back( pGroup );
 
                 // Default project url
                 pItem = new CTaskItem(
@@ -187,17 +187,6 @@ void CTaskViewBase::DemandLoadView(wxWindowID iTaskWindowID, int iTaskWindowFlag
 
     m_pListPane = new CBOINCListCtrl(this, iListWindowID, iListWindowFlags);
     wxASSERT(m_pListPane);
-
-#if USE_NATIVE_LISTCONTROL
-    m_pListPane->PushEventHandler(new MyEvtHandler(m_pListPane));
-#else
-    (m_pListPane->GetMainWin())->PushEventHandler(new MyEvtHandler(m_pListPane));
-#endif
-
-    m_SortArrows = new wxImageList(16, 16, true);
-    m_SortArrows->Add( wxIcon( sortascending_xpm ) );
-    m_SortArrows->Add( wxIcon( sortdescending_xpm ) );
-    m_pListPane->SetImageList(m_SortArrows, wxIMAGE_LIST_SMALL);
 
     itemFlexGridSizer->Add(m_pTaskPane, 1, wxGROW|wxALL, 1);
     itemFlexGridSizer->Add(m_pListPane, 1, wxGROW|wxALL, 1);
