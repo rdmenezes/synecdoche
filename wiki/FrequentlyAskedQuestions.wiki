@@ -1,0 +1,17 @@
+#summary Answers to frequently asked questions
+
+= What does Synecdoche mean? =
+
+A [http://en.wiktionary.org/wiki/synecdoche synecdoche] is a figure of speech where:
+ * A part stands for a whole
+ * An individual stands for a class
+ * A material stands for a thing
+(Or the reverse.)
+
+In distributed computing, this idea is everywhere. We talk about a task, meaning a fragment run on a single computer, or a whole distributed grid working on a unified task. *Synecdoche* embodies this idea.
+ 
+= How is Synecdoche pronounced? =
+
+*syn·ec·do·che* (sĭ-nĕk'də-kē)
+
+Listen to an [http://en.wiktionary.org/wiki/Image:en-us-synecdoche.ogg audio clip].
