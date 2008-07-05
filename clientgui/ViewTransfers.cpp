@@ -109,6 +109,11 @@ static int CompareViewTransferItems(int *iRowIndex1, int *iRowIndex2) {
         break;
     }
 
+    // Tie-breaker
+    if (result == 0) {
+        return (*iRowIndex2 - *iRowIndex1);
+    }
+
     return (MyCViewTransfers->m_bReverseSort ? result * (-1) : result);
 }
 

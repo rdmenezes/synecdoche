@@ -121,6 +121,11 @@ static int CompareViewWorkItems(int *iRowIndex1, int *iRowIndex2) {
         break;
     }
 
+    // Tie-breaker
+    if (result == 0) {
+        return (*iRowIndex2 - *iRowIndex1);
+    }
+
     return (myCViewWork->m_bReverseSort ? result * (-1) : result);
 }
 
