@@ -16,3 +16,6 @@ In order to get the first release available quickly, Synecdoche will not diverge
 = Tasks not yet assigned to a milestone =
 
  * Multi-threaded communications.
+ * New theme engine for simple view.
+ * Multi-computer view.
+ * Standard XML library.
