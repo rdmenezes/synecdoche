@@ -364,7 +364,7 @@ void CTaskBarIcon::OnMouseMove(wxTaskBarIconEvent& WXUNUSED(event)) {
                 
                     strBuffer.Printf(wxT("\n%s: %.2f%%"), app_name.c_str(), fProgress );
                     strMessage += strBuffer;
-                    i++;
+                    ++i;
                  }
             } else {
                 // More than two active tasks are running on the system, we don't have
