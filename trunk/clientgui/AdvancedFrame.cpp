@@ -626,8 +626,7 @@ bool CAdvancedFrame::RepopulateNotebook() {
 }
 
 
-template < class T >
-bool CAdvancedFrame::CreateNotebookPage(T pwndNewNotebookPage) {
+bool CAdvancedFrame::CreateNotebookPage(CBOINCBaseView* pwndNewNotebookPage) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CreateNotebookPage - Function Begin"));
 
     wxImageList*    pImageList;
@@ -635,7 +634,6 @@ bool CAdvancedFrame::CreateNotebookPage(T pwndNewNotebookPage) {
 
     wxASSERT(pwndNewNotebookPage);
     wxASSERT(m_pNotebook);
-    wxASSERT(wxDynamicCast(pwndNewNotebookPage, CBOINCBaseView));
 
 
     pImageList = m_pNotebook->GetImageList();

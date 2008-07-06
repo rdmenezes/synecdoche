@@ -26,6 +26,8 @@
 #pragma interface "AdvancedFrame.cpp"
 #endif
 
+class CBOINCBaseView;
+
 class CStatusBar : public wxStatusBar
 {
     DECLARE_DYNAMIC_CLASS(CStatusBar)
@@ -110,8 +112,8 @@ private:
 
     bool            CreateNotebook();
     bool            RepopulateNotebook();
-    template < class T >
-        bool        CreateNotebookPage( T pwndNewNotebookPage );
+
+    bool            CreateNotebookPage( CBOINCBaseView* pwndNewNotebookPage );
     bool            DeleteNotebook();
 
     bool            CreateStatusbar();
