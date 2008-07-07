@@ -54,18 +54,20 @@
 // buttons in the "tasks" area
 #define BTN_GRAPHICS                0
 #define BTN_SUSPEND                 1
-#define BTN_ABORT                   2
+#define BTN_RESUME                  2
+#define BTN_ABORT                   3
 
 
 IMPLEMENT_DYNAMIC_CLASS(CViewWork, CTaskViewBase)
 
 BEGIN_EVENT_TABLE (CViewWork, CTaskViewBase)
     EVT_BUTTON(ID_TASK_WORK_SUSPEND, CViewWork::OnWorkSuspend)
+    EVT_BUTTON(ID_TASK_WORK_RESUME, CViewWork::OnWorkResume)
     EVT_BUTTON(ID_TASK_WORK_SHOWGRAPHICS, CViewWork::OnWorkShowGraphics)
     EVT_BUTTON(ID_TASK_WORK_ABORT, CViewWork::OnWorkAbort)
     EVT_CUSTOM_RANGE(wxEVT_COMMAND_BUTTON_CLICKED, ID_TASK_PROJECT_WEB_PROJDEF_MIN, ID_TASK_PROJECT_WEB_PROJDEF_MAX, CViewWork::OnProjectWebsiteClicked)
+    EVT_LIST_ITEM_FOCUSED(ID_LIST_WORKVIEW, CViewWork::OnListSelected)
     EVT_LIST_ITEM_SELECTED(ID_LIST_WORKVIEW, CViewWork::OnListSelected)
-    EVT_LIST_ITEM_DESELECTED(ID_LIST_WORKVIEW, CViewWork::OnListDeselected)
     EVT_LIST_COL_CLICK(ID_LIST_WORKVIEW, CViewWork::OnColClick)
     EVT_LIST_CACHE_HINT(ID_LIST_WORKVIEW, CViewWork::OnCacheHint)
 END_EVENT_TABLE ()
@@ -180,6 +182,13 @@ void CViewWork::DemandLoadView() {
     );
     pGroup->m_Tasks.push_back( pItem );
 
+        pItem = new CTaskItem(
+        _("Resume"),
+        _("Resume work for this result."),
+        ID_TASK_WORK_RESUME
+    );
+    pGroup->m_Tasks.push_back( pItem );
+
     pItem = new CTaskItem(
         _("Abort"),
         _("Abandon work on the result. "
@@ -250,10 +259,7 @@ void CViewWork::OnWorkSuspend( wxCommandEvent& WXUNUSED(event) ) {
         
         RESULT* result = pDoc->result(m_iSortedIndexes[row]);
         if (result) {
-            if (result->suspended_via_gui) {
-                pFrame->UpdateStatusText(_("Resuming task..."));
-                pDoc->WorkResume(result->project_url, result->name);
-            } else {
+            if (!result->suspended_via_gui) {
                 pFrame->UpdateStatusText(_("Suspending task..."));
                 pDoc->WorkSuspend(result->project_url, result->name);
             }
@@ -266,6 +272,44 @@ void CViewWork::OnWorkSuspend( wxCommandEvent& WXUNUSED(event) ) {
 
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkSuspend - Function End"));
 }
+
+
+void CViewWork::OnWorkResume( wxCommandEvent& WXUNUSED(event) ) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkResume - Function Begin"));
+
+    CMainDocument* pDoc     = wxGetApp().GetDocument();
+    CAdvancedFrame* pFrame  = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
+    int row;
+
+    wxASSERT(pDoc);
+    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+    wxASSERT(pFrame);
+    wxASSERT(wxDynamicCast(pFrame, CAdvancedFrame));
+    wxASSERT(m_pTaskPane);
+    wxASSERT(m_pListPane);
+
+    row = -1;
+    while (1) {
+        // Step through all selected items
+        row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        if (row < 0) break;
+        
+        RESULT* result = pDoc->result(m_iSortedIndexes[row]);
+        if (result) {
+            if (result->suspended_via_gui) {
+                pFrame->UpdateStatusText(_("Resuming task..."));
+                pDoc->WorkResume(result->project_url, result->name);
+            }
+        }
+    }
+    pFrame->UpdateStatusText(wxT(""));
+    
+    UpdateSelection();
+    pFrame->FireRefreshView();
+
+    wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkResume - Function End"));
+}
+
 
 void CViewWork::OnWorkShowGraphics( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkShowGraphics - Function Begin"));
@@ -502,10 +546,8 @@ void CViewWork::UpdateSelection() {
     PROJECT*            project = NULL;
     CC_STATUS           status;
     CMainDocument*      pDoc = wxGetApp().GetDocument();
-    int                 i, n, row;
-    bool                wasSuspended=false, all_same_project=false;
-    std::string         first_project_url;
- 
+    int                 n, row;
+
     wxASSERT(NULL != pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
     wxASSERT(NULL != m_pTaskPane);
@@ -513,92 +555,54 @@ void CViewWork::UpdateSelection() {
     CTaskViewBase::PreUpdateSelection();
 
     pGroup = m_TaskGroups[0];
-    
+
+    row = -1;
     n = m_pListPane->GetSelectedItemCount();
-    if (n > 0) {
+    if (n == 1) {
+        // Single selection
+        row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        result = pDoc->result(m_iSortedIndexes[row]);
+
+        // Start with everything enabled.
         m_pTaskPane->EnableTaskGroupTasks(pGroup);
-        pDoc->GetCoreClientStatus(status);
-        if (status.task_suspend_reason & ~(SUSPEND_REASON_CPU_USAGE_LIMIT)) {
+
+        // Disable Show Graphics button if selected task can't display graphics
+        if (((!result->supports_graphics) || pDoc->GetState()->executing_as_daemon) 
+            && result->graphics_exec_path.empty()) {
+
             m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
         }
+
+        // Disable Suspend / Resume button
+        if (result->suspended_via_gui) {
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+        } else {
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
+        }
+
+        // Disable Abort button if selected task already aborted
+        if (
+            result->active_task_state == PROCESS_ABORT_PENDING ||
+            result->active_task_state == PROCESS_ABORTED ||
+            result->state == RESULT_ABORTED 
+        ) {
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_ABORT]);
+        }
+
+        project = pDoc->state.lookup_project(result->project_url);
+
+    } else if (n > 1) {
+        // Multiple selection
+        // Allow everything except graphics.
+        m_pTaskPane->EnableTaskGroupTasks(pGroup);
+        m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
+
     } else {
+        // No selection
         m_pTaskPane->DisableTaskGroupTasks(pGroup);
     }
-   
-    row = -1;
-    for (i=0; i<n; i++) {
-        // Step through all selected items
-        row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-        if (row < 0) break;     // Should never happen
-        
-        result = pDoc->result(m_iSortedIndexes[row]);
-        if (result) {
-            if (i == 0) {
-                wasSuspended = result->suspended_via_gui;
-                if (result->suspended_via_gui) {
-                    m_pTaskPane->UpdateTask(
-                        pGroup->m_Tasks[BTN_SUSPEND],
-                        _("Resume"),
-                        _("Resume work for this task.")
-                    );
-                } else {
-                    m_pTaskPane->UpdateTask(
-                        pGroup->m_Tasks[BTN_SUSPEND],
-                        _("Suspend"),
-                        _("Suspend work for this task.")
-                    );
-                }
-            } else {
-                if (wasSuspended != result->suspended_via_gui) {
-                    // Disable Suspend / Resume button if the multiple selection
-                    // has a mix of suspended and not suspended tasks
-                    m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
-                }
-            }
-            
-            // Disable Show Graphics button if any selected task can't display graphics
-            if (((!result->supports_graphics) || pDoc->GetState()->executing_as_daemon) 
-                        && result->graphics_exec_path.empty()
-                ) {
-                     m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
-                }
- 
-            if (result->suspended_via_gui || result->project_suspended_via_gui) {
-                 m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
-            }
-           
-            // Disable Abort button if any selected task already aborted
-            if (
-                result->active_task_state == PROCESS_ABORT_PENDING ||
-                result->active_task_state == PROCESS_ABORTED ||
-                result->state == RESULT_ABORTED 
-            ) {
-                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_ABORT]);
-            }
 
-           if (i == 0) {
-                first_project_url = result->project_url;
-                all_same_project = true;
-            } else {
-                if (first_project_url != result->project_url) {
-                    all_same_project = false;
-                }
-            }
-        }
-    }
-
-    if (all_same_project) {
-        project = pDoc->state.lookup_project(result->project_url);
-        UpdateWebsiteSelection(GRP_WEBSITES, project);
-        if(m_TaskGroups.size()>1) {
-            m_pTaskPane->EnableTaskGroupTasks(m_TaskGroups[1]);
-        }
-    } else {
-        UpdateWebsiteSelection(GRP_WEBSITES, NULL);
-        if(m_TaskGroups.size()>1) {
-            m_pTaskPane->DisableTaskGroupTasks(m_TaskGroups[1]);
-        }
-    }
+    UpdateWebsiteSelection(GRP_WEBSITES, project);
 
     CTaskViewBase::PostUpdateSelection();
 }

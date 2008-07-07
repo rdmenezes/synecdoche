@@ -129,11 +129,6 @@ void CBOINCBaseView::FireOnListSelected(wxListEvent& event) {
 }
 
 
-void CBOINCBaseView::FireOnListDeselected(wxListEvent& event) {
-    OnListDeselected(event);
-}
-
-
 wxString CBOINCBaseView::FireOnListGetItemText(long item, long column) const {
     return OnListGetItemText(item, column);
 }
@@ -257,19 +252,6 @@ void CBOINCBaseView::OnListSelected(wxListEvent& event) {
 }
 
 
-void CBOINCBaseView::OnListDeselected(wxListEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnListDeselected - Function Begin"));
-
-    if (!m_bIgnoreUIEvents) {
-        m_bForceUpdateSelection = true;
-        UpdateSelection();
-        event.Skip();
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnListDeselected - Function End"));
-}
-
-
 // Work around a bug (feature?) in virtual list control 
 //   which does not send deselection events
 void CBOINCBaseView::OnCacheHint(wxListEvent& event) {
@@ -279,7 +261,7 @@ void CBOINCBaseView::OnCacheHint(wxListEvent& event) {
     if (newSelectionCount < oldSelectionCount) {
         wxListEvent leDeselectedEvent(wxEVT_COMMAND_LIST_ITEM_DESELECTED, m_windowId);
         leDeselectedEvent.SetEventObject(this);
-        OnListDeselected(leDeselectedEvent);
+        OnListSelected(leDeselectedEvent);
     }
     oldSelectionCount = newSelectionCount;
     event.Skip();

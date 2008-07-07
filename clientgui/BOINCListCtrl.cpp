@@ -53,7 +53,7 @@ CBOINCListCtrl::CBOINCListCtrl() {}
 CBOINCListCtrl::CBOINCListCtrl(
     CBOINCBaseView* pView, wxWindowID iListWindowID, wxInt32 iListWindowFlags
 ) : LISTCTRL_BASE(
-    pView, iListWindowID, wxDefaultPosition, wxSize(-1, -1), iListWindowFlags
+    pView, iListWindowID, wxDefaultPosition, wxSize(-1, -1), iListWindowFlags | wxLC_HRULES
 ) {
     m_pParentView = pView;
 
@@ -222,12 +222,12 @@ void CBOINCListCtrl::OnClick(wxCommandEvent& event) {
                 long desiredstate = wxLIST_STATE_FOCUSED | wxLIST_STATE_SELECTED;
                 SetItemState(GetFocusedItem(), desiredstate, desiredstate);
             } else {
-                m_pParentView->FireOnListDeselected(leDeselectedEvent);
+                m_pParentView->FireOnListSelected(leDeselectedEvent);
             }
         }
     } else {
         if (-1 == GetFirstSelected()) {
-            m_pParentView->FireOnListDeselected(leDeselectedEvent);
+            m_pParentView->FireOnListSelected(leDeselectedEvent);
         }
     }
 
