@@ -640,7 +640,7 @@ bool CAdvancedFrame::CreateNotebookPage(CBOINCBaseView* pwndNewNotebookPage) {
     if (!pImageList) {
         pImageList = new wxImageList(16, 16, true, 0);
         wxASSERT(pImageList != NULL);
-        m_pNotebook->SetImageList(pImageList);
+        m_pNotebook->AssignImageList(pImageList);
     }
     
     iImageIndex = pImageList->Add(wxBitmap(pwndNewNotebookPage->GetViewIcon()));
