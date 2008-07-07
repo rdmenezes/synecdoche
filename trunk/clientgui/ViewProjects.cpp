@@ -52,9 +52,11 @@
 // buttons in the "tasks" area
 #define BTN_UPDATE       0
 #define BTN_SUSPEND      1
-#define BTN_NOWORK       2
-#define BTN_RESET        3
-#define BTN_DETACH       4
+#define BTN_RESUME       2
+#define BTN_NOWORK       3
+#define BTN_ALLOWWORK    4
+#define BTN_RESET        5
+#define BTN_DETACH       6
 
 
 IMPLEMENT_DYNAMIC_CLASS(CViewProjects, CTaskViewBase)
@@ -62,12 +64,14 @@ IMPLEMENT_DYNAMIC_CLASS(CViewProjects, CTaskViewBase)
 BEGIN_EVENT_TABLE (CViewProjects, CTaskViewBase)
     EVT_BUTTON(ID_TASK_PROJECT_UPDATE, CViewProjects::OnProjectUpdate)
     EVT_BUTTON(ID_TASK_PROJECT_SUSPEND, CViewProjects::OnProjectSuspend)
+    EVT_BUTTON(ID_TASK_PROJECT_RESUME, CViewProjects::OnProjectResume)
     EVT_BUTTON(ID_TASK_PROJECT_NONEWWORK, CViewProjects::OnProjectNoNewWork)
+    EVT_BUTTON(ID_TASK_PROJECT_ALLOWNEWWORK, CViewProjects::OnProjectAllowNewWork)
     EVT_BUTTON(ID_TASK_PROJECT_RESET, CViewProjects::OnProjectReset)
     EVT_BUTTON(ID_TASK_PROJECT_DETACH, CViewProjects::OnProjectDetach)
     EVT_CUSTOM_RANGE(wxEVT_COMMAND_BUTTON_CLICKED, ID_TASK_PROJECT_WEB_PROJDEF_MIN, ID_TASK_PROJECT_WEB_PROJDEF_MAX, CViewProjects::OnProjectWebsiteClicked)
+    EVT_LIST_ITEM_FOCUSED(ID_LIST_PROJECTSVIEW, CViewProjects::OnListSelected)
     EVT_LIST_ITEM_SELECTED(ID_LIST_PROJECTSVIEW, CViewProjects::OnListSelected)
-    EVT_LIST_ITEM_DESELECTED(ID_LIST_PROJECTSVIEW, CViewProjects::OnListDeselected)
     EVT_LIST_COL_CLICK(ID_LIST_PROJECTSVIEW, CViewProjects::OnColClick)
     EVT_LIST_CACHE_HINT(ID_LIST_PROJECTSVIEW, CViewProjects::OnCacheHint)
 END_EVENT_TABLE ()
@@ -178,9 +182,23 @@ void CViewProjects::DemandLoadView() {
     pGroup->m_Tasks.push_back( pItem );
 
     pItem = new CTaskItem(
+        _("Resume"),
+        _("Resume tasks for this project."),
+        ID_TASK_PROJECT_RESUME
+    );
+    pGroup->m_Tasks.push_back( pItem );
+
+    pItem = new CTaskItem(
         _("No new tasks"),
         _("Don't get new tasks for this project."),
         ID_TASK_PROJECT_NONEWWORK 
+    );
+    pGroup->m_Tasks.push_back( pItem );
+
+    pItem = new CTaskItem(
+        _("Allow new tasks"),
+        _("Allow fetching new tasks for this project."),
+        ID_TASK_PROJECT_ALLOWNEWWORK 
     );
     pGroup->m_Tasks.push_back( pItem );
 
@@ -292,26 +310,59 @@ void CViewProjects::OnProjectSuspend( wxCommandEvent& WXUNUSED(event) ) {
         // Step through all selected items
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
         if (row < 0) break;
-        
+
         PROJECT* project = pDoc->project(m_iSortedIndexes[row]);
         if (project) {
-            if (project->suspended_via_gui) {
-                pFrame->UpdateStatusText(_("Resuming project..."));
-                pDoc->ProjectResume(m_iSortedIndexes[row]);
-                pFrame->UpdateStatusText(wxT(""));
-            } else {
+            if (!project->suspended_via_gui) {
                 pFrame->UpdateStatusText(_("Suspending project..."));
                 pDoc->ProjectSuspend(m_iSortedIndexes[row]);
-                pFrame->UpdateStatusText(wxT(""));
             }
         }
     }
-    
+    pFrame->UpdateStatusText(wxT(""));
+
     m_bForceUpdateSelection = true;
     UpdateSelection();
     pFrame->FireRefreshView();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectSuspend - Function End"));
+}
+
+
+void CViewProjects::OnProjectResume( wxCommandEvent& WXUNUSED(event) ) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectResume - Function Begin"));
+
+    CMainDocument*  pDoc   = wxGetApp().GetDocument();
+    CAdvancedFrame* pFrame = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
+    int row;
+
+    wxASSERT(pDoc);
+    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+    wxASSERT(pFrame);
+    wxASSERT(wxDynamicCast(pFrame, CAdvancedFrame));
+    wxASSERT(m_pListPane);
+
+    row = -1;
+    while (1) {
+        // Step through all selected items
+        row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        if (row < 0) break;
+
+        PROJECT* project = pDoc->project(m_iSortedIndexes[row]);
+        if (project) {
+            if (project->suspended_via_gui) {
+                pFrame->UpdateStatusText(_("Resuming project..."));
+                pDoc->ProjectResume(m_iSortedIndexes[row]);
+            }
+        }
+    }
+    pFrame->UpdateStatusText(wxT(""));
+
+    m_bForceUpdateSelection = true;
+    UpdateSelection();
+    pFrame->FireRefreshView();
+
+    wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectResume - Function End"));
 }
 
 
@@ -333,21 +384,17 @@ void CViewProjects::OnProjectNoNewWork( wxCommandEvent& WXUNUSED(event) ) {
         // Step through all selected items
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
         if (row < 0) break;
-        
+
         PROJECT* project = pDoc->project(m_iSortedIndexes[row]);
         if (project) {
-            if (project->dont_request_more_work) {
-                pFrame->UpdateStatusText(_("Telling project to allow additional task downloads..."));
-                pDoc->ProjectAllowMoreWork(m_iSortedIndexes[row]);
-                pFrame->UpdateStatusText(wxT(""));
-            } else {
+            if (!project->dont_request_more_work) {
                 pFrame->UpdateStatusText(_("Telling project to not fetch any additional tasks..."));
                 pDoc->ProjectNoMoreWork(m_iSortedIndexes[row]);
-                pFrame->UpdateStatusText(wxT(""));
             }
         }
     }
-    
+    pFrame->UpdateStatusText(wxT(""));
+
     m_bForceUpdateSelection = true;
     UpdateSelection();
     pFrame->FireRefreshView();
@@ -356,6 +403,41 @@ void CViewProjects::OnProjectNoNewWork( wxCommandEvent& WXUNUSED(event) ) {
 }
 
 
+void CViewProjects::OnProjectAllowNewWork( wxCommandEvent& WXUNUSED(event) ) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectAllowNewWork - Function Begin"));
+
+    CMainDocument*  pDoc   = wxGetApp().GetDocument();
+    CAdvancedFrame* pFrame = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
+    int row;
+
+    wxASSERT(pDoc);
+    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+    wxASSERT(pFrame);
+    wxASSERT(wxDynamicCast(pFrame, CAdvancedFrame));
+    wxASSERT(m_pListPane);
+
+    row = -1;
+    while (1) {
+        // Step through all selected items
+        row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        if (row < 0) break;
+
+        PROJECT* project = pDoc->project(m_iSortedIndexes[row]);
+        if (project) {
+            if (project->dont_request_more_work) {
+                pFrame->UpdateStatusText(_("Telling project to allow additional task downloads..."));
+                pDoc->ProjectAllowMoreWork(m_iSortedIndexes[row]);
+            }
+        }
+    }
+    pFrame->UpdateStatusText(wxT(""));
+
+    m_bForceUpdateSelection = true;
+    UpdateSelection();
+    pFrame->FireRefreshView();
+
+    wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectAllowNewWork - Function End"));
+}
 
 
 void CViewProjects::OnProjectReset( wxCommandEvent& WXUNUSED(event) ) {
@@ -572,8 +654,7 @@ void CViewProjects::UpdateSelection() {
     CTaskItemGroup*     pGroup = NULL;
     PROJECT*            project = NULL;
     CMainDocument*      pDoc = wxGetApp().GetDocument();
-    int                 i, n, row;
-    bool                wasSuspended=false, wasNoNewWork=false;
+    int                 n, row;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -583,91 +664,47 @@ void CViewProjects::UpdateSelection() {
 
     CTaskViewBase::PreUpdateSelection();
 
-
-    // Update the tasks static box buttons
-    //
     pGroup = m_TaskGroups[0];
 
-    n = m_pListPane->GetSelectedItemCount();
-    if (n > 0) {
-        m_pTaskPane->EnableTaskGroupTasks(pGroup);
-    } else {
-        m_pTaskPane->DisableTaskGroupTasks(pGroup);
-        UpdateWebsiteSelection(GRP_WEBSITES, NULL);
-        if(m_TaskGroups.size()>1) {
-            m_pTaskPane->DisableTaskGroupTasks(m_TaskGroups[1]);
-        }
-    }
-   
     row = -1;
-    for (i=0; i<n; i++) {
-        // Step through all selected items
+    n = m_pListPane->GetSelectedItemCount();
+    if (n == 1) {
+        // Single selection
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-        if (row < 0) break;     // Should never happen
-        
         project = pDoc->project(m_iSortedIndexes[row]);
-        if (!project) {
-            m_pTaskPane->DisableTaskGroupTasks(pGroup);
-            if(m_TaskGroups.size()>1) {
-                m_pTaskPane->DisableTaskGroupTasks(m_TaskGroups[1]);
-            }
-            return;
+
+        // Start with everything enabled.
+        m_pTaskPane->EnableTaskGroupTasks(pGroup);
+
+        // Disable Suspend / Resume button
+        if (project->suspended_via_gui) {
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+        } else {
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
         }
 
-        if (i == 0) {
-            wasSuspended = project->suspended_via_gui;
-             if (project->suspended_via_gui) {
-                m_pTaskPane->UpdateTask(
-                    pGroup->m_Tasks[BTN_SUSPEND], _("Resume"), _("Resume tasks for this project.")
-                );
-            } else {
-                m_pTaskPane->UpdateTask(
-                    pGroup->m_Tasks[BTN_SUSPEND], _("Suspend"), _("Suspend tasks for this project.")
-                );
-            }
+        // Allow / no new work
+        if (project->dont_request_more_work) {
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_NOWORK]);
         } else {
-            if (wasSuspended != project->suspended_via_gui) {
-                // Disable Suspend / Resume button if the multiple selection
-                // has a mix of suspended and not suspended projects
-                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
-            }
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_ALLOWWORK]);
         }
 
-        if (i == 0) {
-            wasNoNewWork = project->dont_request_more_work;
-            if (project->dont_request_more_work) {
-                m_pTaskPane->UpdateTask(
-                    pGroup->m_Tasks[BTN_NOWORK], _("Allow new tasks"), _("Allow fetching new tasks for this project.")
-                );
-            } else {
-                m_pTaskPane->UpdateTask(
-                    pGroup->m_Tasks[BTN_NOWORK], _("No new tasks"), _("Don't fetch new tasks for this project.")
-                );
-            }
-        } else {
-            if (wasNoNewWork != project->dont_request_more_work) {
-                // Disable Allow New Work / No New Work button if the multiple 
-                // selection has a mix of Allow New Work and No New Work projects
-                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_NOWORK]);
-            }
-        }
-        
         if (project->attached_via_acct_mgr) {
             m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_DETACH]);
         }
-        
-        if (n == 1) {
-            UpdateWebsiteSelection(GRP_WEBSITES, project);
-            if(m_TaskGroups.size()>1) {
-                m_pTaskPane->EnableTaskGroupTasks(m_TaskGroups[1]);
-            }
-        } else {
-            UpdateWebsiteSelection(GRP_WEBSITES, NULL);
-            if(m_TaskGroups.size()>1) {
-                m_pTaskPane->DisableTaskGroupTasks(m_TaskGroups[1]);
-            }
-        }
+
+    } else if (n > 1) {
+        // Multiple selection
+        // Allow everything.
+        m_pTaskPane->EnableTaskGroupTasks(pGroup);
+
+    } else {
+        // No selection
+        m_pTaskPane->DisableTaskGroupTasks(pGroup);
     }
+
+    UpdateWebsiteSelection(GRP_WEBSITES, project);
 
     CTaskViewBase::PostUpdateSelection();
 }

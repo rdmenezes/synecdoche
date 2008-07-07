@@ -60,6 +60,7 @@ public:
     virtual const char**    GetViewIcon();
 
     void                    OnWorkSuspend( wxCommandEvent& event );
+    void                    OnWorkResume(wxCommandEvent& event);
     void                    OnWorkShowGraphics( wxCommandEvent& event );
     void                    OnWorkAbort( wxCommandEvent& event );
 

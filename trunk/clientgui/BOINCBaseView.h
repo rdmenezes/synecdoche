@@ -59,7 +59,6 @@ public:
     virtual int             GetListRowCount();
     void                    FireOnListRender( wxTimerEvent& event );
     void                    FireOnListSelected( wxListEvent& event );
-    void                    FireOnListDeselected( wxListEvent& event );
     wxString                FireOnListGetItemText( long item, long column ) const;
     int                     FireOnListGetItemImage( long item ) const;
     wxListItemAttr*         FireOnListGetItemAttr( long item ) const;
@@ -81,7 +80,6 @@ protected:
 
     virtual void            OnListRender( wxTimerEvent& event );
     virtual void            OnListSelected( wxListEvent& event );
-    virtual void            OnListDeselected( wxListEvent& event );
     virtual void            OnCacheHint(wxListEvent& event);
     virtual wxString        OnListGetItemText( long item, long column ) const;
     virtual int             OnListGetItemImage( long item ) const;
