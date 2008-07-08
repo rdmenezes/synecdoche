@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -126,16 +127,16 @@ bool CBOINCGUIApp::OnInit() {
     //
     // Determine BOINCMgr Data Directory
     //
-	LONG    lReturnValue;
-	HKEY    hkSetupHive;
+    LONG    lReturnValue;
+    HKEY    hkSetupHive;
     LPTSTR  lpszRegistryValue = NULL;
-	DWORD   dwSize = 0;
+    DWORD   dwSize = 0;
 
     // change the current directory to the boinc data directory if it exists
-	lReturnValue = RegOpenKeyEx(
+    lReturnValue = RegOpenKeyEx(
         HKEY_LOCAL_MACHINE, 
         _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"),
-		0, 
+        0, 
         KEY_READ,
         &hkSetupHive
     );
@@ -172,7 +173,7 @@ bool CBOINCGUIApp::OnInit() {
     }
 
     // Cleanup
-	if (hkSetupHive) RegCloseKey(hkSetupHive);
+    if (hkSetupHive) RegCloseKey(hkSetupHive);
     if (lpszRegistryValue) free(lpszRegistryValue);
 
 
@@ -183,7 +184,7 @@ bool CBOINCGUIApp::OnInit() {
 
     // change the current directory to the boinc install directory
     GetModuleFileName(NULL, szPath, (sizeof(szPath)/sizeof(TCHAR)));
-		
+        
     TCHAR *pszProg = strrchr(szPath, '\\');
     if (pszProg) {
         szPath[pszProg - szPath + 1] = 0;
@@ -201,7 +202,7 @@ bool CBOINCGUIApp::OnInit() {
 // so use traditional generic implementation.
     wxSystemOptions::SetOption(wxT("mac.listctrl.always_use_generic"), 1);
 #endif
-	
+    
     wxString strDirectory = wxEmptyString;
     bool success;
     ProcessSerialNumber psn;
@@ -287,9 +288,9 @@ bool CBOINCGUIApp::OnInit() {
 
     // Enable known image types
     wxImage::AddHandler(new wxXPMHandler);
-	wxImage::AddHandler(new wxPNGHandler);
-	wxImage::AddHandler(new wxGIFHandler);
-	wxImage::AddHandler(new wxICOHandler);
+    wxImage::AddHandler(new wxPNGHandler);
+    wxImage::AddHandler(new wxGIFHandler);
+    wxImage::AddHandler(new wxICOHandler);
 
     // Initialize the internationalization module
     m_pLocale = new wxLocale();
@@ -363,7 +364,7 @@ bool CBOINCGUIApp::OnInit() {
 
     // Initialize the task bar icon
 #if defined(__WXMSW__) || defined(__WXMAC__)
-	m_pTaskBarIcon = new CTaskBarIcon(
+    m_pTaskBarIcon = new CTaskBarIcon(
         m_pSkinManager->GetAdvanced()->GetApplicationName(), 
         m_pSkinManager->GetAdvanced()->GetApplicationIcon(),
         m_pSkinManager->GetAdvanced()->GetApplicationDisconnectedIcon(),
@@ -422,7 +423,7 @@ bool CBOINCGUIApp::OnInit() {
         GetCurrentProcess(&psn);
         ShowHideProcess(&psn, false);
 #endif
-	}
+    }
 
     return true;
 }
@@ -542,7 +543,7 @@ OSErr CBOINCGUIApp::QuitAppleEventHandler( const AppleEvent *appleEvt, AppleEven
         Boolean			isSame;
         ProcessInfoRec		pInfo;
         FSSpec			fileSpec;
- 	OSStatus		anErr;
+    OSStatus		anErr;
 
         // Refuse to quit if a modal dialog is open.  Search for the dialog 
         // by ID since all of BOINC Manager's dialog IDs are 10000.
@@ -634,16 +635,16 @@ int CBOINCGUIApp::StartBOINCScreensaverTest() {
 //
 void CBOINCGUIApp::FireReloadSkin() {
     if (m_pFrame) {
-	    m_pFrame->FireReloadSkin();
+        m_pFrame->FireReloadSkin();
     }
     if (m_pTaskBarIcon) {
-	    m_pTaskBarIcon->FireReloadSkin();
+        m_pTaskBarIcon->FireReloadSkin();
     }
 }
 
 
 bool CBOINCGUIApp::SetActiveGUI(int iGUISelection, bool bShowWindow) {
-    CBOINCBaseFrame* pNewFrame = NULL;
+    CBOINCBaseFrame* pOldFrame = m_pFrame;
 
     // Create the new window
     if ((iGUISelection != m_iGUISelected) || !m_pFrame) {
@@ -651,7 +652,7 @@ bool CBOINCGUIApp::SetActiveGUI(int iGUISelection, bool bShowWindow) {
             case BOINC_SIMPLEGUI:
             default:
                 // Initialize the simple gui window
-                pNewFrame = new CSimpleFrame(
+                m_pFrame = new CSimpleFrame(
                     m_pSkinManager->GetAdvanced()->GetApplicationName(), 
                     m_pSkinManager->GetAdvanced()->GetApplicationIcon(),
                     m_pSkinManager->GetAdvanced()->GetApplicationIcon32()
@@ -659,27 +660,27 @@ bool CBOINCGUIApp::SetActiveGUI(int iGUISelection, bool bShowWindow) {
                 break;
             case BOINC_ADVANCEDGUI:
                 // Initialize the advanced gui window
-                pNewFrame = new CAdvancedFrame(
+                m_pFrame = new CAdvancedFrame(
                     m_pSkinManager->GetAdvanced()->GetApplicationName(), 
                     m_pSkinManager->GetAdvanced()->GetApplicationIcon(),
                     m_pSkinManager->GetAdvanced()->GetApplicationIcon32()
                 );
                 break;
         }
-        wxASSERT(pNewFrame);
-        if (pNewFrame) {
-            SetTopWindow(pNewFrame);
+        wxASSERT(m_pFrame);
+        if (m_pFrame) {
+            SetTopWindow(m_pFrame);
 
 #ifdef __WXMAC__
             // So closing old view doesn't hide application
-            pNewFrame->m_iWindowType = iGUISelection;
+            m_pFrame->m_iWindowType = iGUISelection;
             m_iGUISelected = iGUISelection;
 #endif
             // Delete the old one if it exists
-            if (m_pFrame) m_pFrame->Destroy();
-
-            // Store the new frame for future use
-            m_pFrame = pNewFrame;
+            if (pOldFrame) {
+                pOldFrame->Hide();
+                pOldFrame->Destroy();
+            }
         }
     }
 
@@ -747,6 +748,3 @@ int CBOINCGUIApp::ConfirmExit() {
 #endif
     return 0;       // User cancelled exit
 }
-
-
-const char *BOINC_RCSID_487cbf3018 = "$Id: BOINCGUIApp.cpp 15450 2008-06-23 17:54:44Z romw $";

@@ -735,6 +735,3 @@ void CFrameAlertEvent::ProcessResponse(const int response) const {
         pDoc->Reconnect();
     }
 }
-
-
-const char *BOINC_RCSID_0a1bd38a5b = "$Id: BOINCBaseFrame.cpp 14685 2008-02-06 00:42:59Z davea $";

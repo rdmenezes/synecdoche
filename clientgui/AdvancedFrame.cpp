@@ -150,9 +150,6 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     icons.AddIcon(*icon32);
     SetIcons(icons);
 
-    // Restore main application frame settings
-    RestoreState();
-
     // Create UI elements
     wxCHECK_RET(CreateMenu(), _T("Failed to create menu bar."));
     wxCHECK_RET(CreateNotebook(), _T("Failed to create notebook."));
@@ -181,6 +178,9 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
 
     // We want to disconnect this later, so connect here instead of in the event table.
     Connect(wxEVT_IDLE, wxIdleEventHandler(CAdvancedFrame::OnIdleInit));
+
+    // Restore main application frame settings
+    RestoreState();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CAdvancedFrame - Function End"));
 }
@@ -842,9 +842,7 @@ bool CAdvancedFrame::RestoreState() {
 
     pConfig->Read(wxT("DisplayShutdownClientWarning"), &m_bDisplayShutdownClientWarning, true);
 
-#ifdef __WXMAC__
     RestoreWindowDimensions();
-#endif
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::RestoreState - Function End"));
     return true;
@@ -964,11 +962,13 @@ void CAdvancedFrame::RestoreWindowDimensions() {
 
 #ifndef __WXMAC__
 
-    Iconize(bWindowIconized);
-    Maximize(bWindowMaximized);
-    if (!IsIconized() && !IsMaximized()) {
+    if (!bWindowIconized && !bWindowMaximized) {
         SetSize(-1, -1, iWidth, iHeight);
     }
+
+    Iconize(bWindowIconized);
+    Maximize(bWindowMaximized);
+
 
 #else   // ! __WXMAC__
 
