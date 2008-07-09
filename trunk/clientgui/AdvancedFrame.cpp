@@ -1130,7 +1130,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
         // Loops through the computer names and remove any duplicates that
         //   might exist with the new head value
-        for (index = 1; index < aComputerNames.Count(); index++) {
+        for (index = aComputerNames.Count() - 1; index > 0; index--) {
             if (aComputerNames.Item(index) == aComputerNames.Item(0))
                 aComputerNames.RemoveAt(index);
         }
