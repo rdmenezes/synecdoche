@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -24,96 +25,33 @@
 #pragma interface "DlgAbout.cpp"
 #endif
 
-/*!
- * Includes
- */
-
-////@begin includes
-#include "wx/valgen.h"
 #include "hyperlink.h"
 #include "wx/statline.h"
-////@end includes
 
-/*!
- * Forward declarations
- */
-
-////@begin forward declarations
 class wxHyperLink;
-////@end forward declarations
 
-/*!
- * Control identifiers
- */
 
-////@begin control identifiers
-#define ID_DIALOG 10000
-#define SYMBOL_CDLGABOUT_STYLE wxDEFAULT_DIALOG_STYLE
-#define SYMBOL_CDLGABOUT_TITLE wxT("")
-#define SYMBOL_CDLGABOUT_IDNAME ID_DIALOG
-#define SYMBOL_CDLGABOUT_SIZE wxSize(-1, -1)
-#define SYMBOL_CDLGABOUT_POSITION wxDefaultPosition
-#define ID_ABOUTBOINCLINK 10031
-////@end control identifiers
+class CDlgAbout: public wxDialog {
 
-/*!
- * Compatibility
- */
-
-#ifndef wxCLOSE_BOX
-#define wxCLOSE_BOX 0x1000
-#endif
-#ifndef wxFIXED_MINSIZE
-#define wxFIXED_MINSIZE 0
-#endif
-
-/*!
- * CDlgAbout class declaration
- */
-
-class CDlgAbout: public wxDialog
-{    
-    DECLARE_DYNAMIC_CLASS( CDlgAbout )
-    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(CDlgAbout)
 
 public:
     /// Constructors
-    CDlgAbout( );
-    CDlgAbout( wxWindow* parent, wxWindowID id = SYMBOL_CDLGABOUT_IDNAME, const wxString& caption = SYMBOL_CDLGABOUT_TITLE, const wxPoint& pos = SYMBOL_CDLGABOUT_POSITION, const wxSize& size = SYMBOL_CDLGABOUT_SIZE, long style = SYMBOL_CDLGABOUT_STYLE );
+    CDlgAbout() {}
+    CDlgAbout(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxString& caption = wxEmptyString,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
+        long style = wxDEFAULT_DIALOG_STYLE
+        );
 
     /// Creation
-    bool Create( wxWindow* parent, wxWindowID id = SYMBOL_CDLGABOUT_IDNAME, const wxString& caption = SYMBOL_CDLGABOUT_TITLE, const wxPoint& pos = SYMBOL_CDLGABOUT_POSITION, const wxSize& size = SYMBOL_CDLGABOUT_SIZE, long style = SYMBOL_CDLGABOUT_STYLE );
+    bool Create( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& caption = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
 
+private:
     /// Creates the controls and sizers
-    void CreateControls();
-
-////@begin CDlgAbout event handler declarations
-
-////@end CDlgAbout event handler declarations
-
-////@begin CDlgAbout member function declarations
-
-    wxString GetVersion() const { return m_strVersion ; }
-    void SetVersion(wxString value) { m_strVersion = value ; }
-
-    /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
-
-    /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CDlgAbout member function declarations
-
-    /// Should we show tooltips?
-    static bool ShowToolTips();
-
-////@begin CDlgAbout member variables
-    wxStaticText* m_AboutBOINCTitleCtrl;
-    wxStaticBitmap* m_AboutBOINCLogoCtrl;
-    wxStaticText* m_AboutBOINCSloganCtrl;
-    wxHyperLink* m_AboutBOINCURLCtrl;
-    wxString m_strVersion;
-////@end CDlgAbout member variables
+    void CreateControls(CSkinAdvanced* pSkinAdvanced);
 };
 
 #endif
-    // _DLGABOUT_H_

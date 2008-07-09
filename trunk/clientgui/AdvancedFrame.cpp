@@ -373,10 +373,14 @@ bool CAdvancedFrame::CreateMenu() {
         _("Network activity based on &preferences"),
         _("Allow network activity according to your preferences")
     );
+    strMenuDescription.Printf(
+        _("Stop %s network activity"), 
+        pSkinAdvanced->GetApplicationName().c_str()
+    );
     menuActivity->AppendRadioItem(
         ID_FILENETWORKSUSPEND,
         _("&Network activity suspended"),
-        _("Stop BOINC network activity")
+        strMenuDescription
     );
 
     // Advanced menu
@@ -408,10 +412,14 @@ bool CAdvancedFrame::CreateMenu() {
         _("Shut down connected client..."),
         _("Shut down the currently connected core client")
     );
+    strMenuDescription.Printf(
+        _("Runs %s CPU benchmarks"), 
+        pSkinAdvanced->GetApplicationName().c_str()
+    );
     menuAdvanced->Append(
         ID_FILERUNBENCHMARKS, 
         _("Run CPU &benchmarks"),
-        _("Runs BOINC CPU benchmarks")
+        strMenuDescription
     );
     menuAdvanced->Append(
         ID_COMMANDSRETRYCOMMUNICATIONS, 
@@ -476,7 +484,7 @@ bool CAdvancedFrame::CreateMenu() {
     // %s is the application name
     //    i.e. 'BOINC Manager', 'GridRepublic Manager'
     strMenuDescription.Printf(
-        _("Show information about the %s"), 
+        _("Show information about %s"), 
         pSkinAdvanced->GetApplicationName().c_str()
     );
     menuHelp->Append(
