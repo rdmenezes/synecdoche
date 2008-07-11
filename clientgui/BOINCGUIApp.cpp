@@ -279,6 +279,9 @@ bool CBOINCGUIApp::OnInit() {
         "stderrgui"
     );
 
+    // Use default maximum to cycle logs.
+    diagnostics_set_max_file_sizes(0, 0);
+
     // Enable Logging and Trace Masks
     m_pLog = new wxLogBOINC();
     wxLog::SetActiveTarget(m_pLog);
