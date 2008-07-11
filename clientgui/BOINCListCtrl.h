@@ -100,9 +100,7 @@ public:
     virtual wxEvent *       Clone() const { return new CDrawBarGraphEvent(*this); }
 };
 
-BEGIN_DECLARE_EVENT_TYPES()
-DECLARE_EVENT_TYPE( wxEVT_DRAW_BARGRAPH, 10000 )
-END_DECLARE_EVENT_TYPES()
+DECLARE_EVENT_TYPE( wxEVT_DRAW_BARGRAPH, -1 )
 
 #define EVT_DRAW_BARGRAPH(fn)            DECLARE_EVENT_TABLE_ENTRY(wxEVT_DRAW_BARGRAPH, -1, -1, (wxObjectEventFunction) (wxEventFunction) &fn, NULL),
 
