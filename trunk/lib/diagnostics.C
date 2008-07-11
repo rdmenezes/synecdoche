@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -77,8 +78,8 @@ static int         boinc_proxy_enabled;
 static char        boinc_proxy[256];
 static char        symstore[256];
 static int         aborted_via_gui;
-static int         max_stderr_file_size = 2048*1024;
-static int         max_stdout_file_size = 2048*1024;
+static int         max_stderr_file_size = 0;
+static int         max_stdout_file_size = 0;
 
 
 #if defined(_WIN32) && defined(_DEBUG)
@@ -145,7 +146,7 @@ int boinc_install_signal_handlers() {
 #ifdef _WIN32
     SetUnhandledExceptionFilter(boinc_catch_signal);
 #if _MSC_VER >= 1400
-	_set_invalid_parameter_handler(boinc_catch_signal_invalid_parameter);
+    _set_invalid_parameter_handler(boinc_catch_signal_invalid_parameter);
 #endif
 #else  //_WIN32
 
@@ -302,21 +303,21 @@ int diagnostics_init(
         proxy_port = 0;
 
         p = fopen(INIT_DATA_FILE, "r");
-		if (p) {
-			mf.init_file(p);
-			while(mf.fgets(buf, sizeof(buf))) {
-				if (match_tag(buf, "</app_init_data>")) break;
-				else if (parse_str(buf, "<boinc_dir>", boinc_dir, 256)) continue;
-				else if (parse_str(buf, "<symstore>", symstore, 256)) continue;
-				else if (match_tag(buf, "<use_http_proxy/>")) {
-					boinc_proxy_enabled = true;
-					continue;
-				}
-				else if (parse_str(buf, "<http_server_name>", proxy_address, 256)) continue;
-				else if (parse_int(buf, "<http_server_port>", proxy_port)) continue;
-			}
-			fclose(p);
-		}
+        if (p) {
+            mf.init_file(p);
+            while(mf.fgets(buf, sizeof(buf))) {
+                if (match_tag(buf, "</app_init_data>")) break;
+                else if (parse_str(buf, "<boinc_dir>", boinc_dir, 256)) continue;
+                else if (parse_str(buf, "<symstore>", symstore, 256)) continue;
+                else if (match_tag(buf, "<use_http_proxy/>")) {
+                    boinc_proxy_enabled = true;
+                    continue;
+                }
+                else if (parse_str(buf, "<http_server_name>", proxy_address, 256)) continue;
+                else if (parse_int(buf, "<http_server_port>", proxy_port)) continue;
+            }
+            fclose(p);
+        }
 
         if (boinc_proxy_enabled) {
             int buffer_used = snprintf(boinc_proxy, sizeof(boinc_proxy), "%s:%d", proxy_address, proxy_port);
@@ -331,7 +332,7 @@ int diagnostics_init(
         lReturnValue = RegOpenKeyEx(
             HKEY_LOCAL_MACHINE, 
             _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"),  
-	        0, 
+            0, 
             KEY_READ,
             &hkSetupHive
         );
@@ -491,7 +492,7 @@ int diagnostics_cycle_logs() {
 
     // If the stderr.txt or stdout.txt files are too big, cycle them
     //
-    if (flags & BOINC_DIAG_REDIRECTSTDERR) {
+    if ((flags & BOINC_DIAG_REDIRECTSTDERR) && (max_stderr_file_size > 0)) {
 #ifdef __EMX__
         // OS/2 can't stat() open files!
         struct stat sbuf;
@@ -509,7 +510,7 @@ int diagnostics_cycle_logs() {
         }
     }
 
-    if (flags & BOINC_DIAG_REDIRECTSTDOUT) {
+    if ((flags & BOINC_DIAG_REDIRECTSTDOUT) && (max_stdout_file_size > 0)) {
 #ifdef __EMX__
         // OS/2 can't stat() open files!
         struct stat sbuf;
@@ -710,8 +711,6 @@ void boinc_info(const char* pszFormat, ...){
 #endif
 
 void diagnostics_set_max_file_sizes(int stdout_size, int stderr_size) {
-    if (stdout_size) max_stdout_file_size = stdout_size;
-    if (stderr_size) max_stderr_file_size = stderr_size;
+    max_stdout_file_size = (stdout_size) ? stdout_size : 2048*1024;
+    max_stderr_file_size = (stderr_size) ? stderr_size : 2048*1024;
 }
-
-const char *BOINC_RCSID_4967ad204c = "$Id: diagnostics.C 15494 2008-06-26 20:37:48Z romw $";

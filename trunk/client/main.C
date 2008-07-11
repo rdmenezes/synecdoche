@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -183,7 +184,7 @@ DWORD WINAPI Win9xMonitorSystemThread( LPVOID  ) {
     wc.hCursor       = NULL;
     wc.hbrBackground = NULL;
     wc.lpszMenuName  = NULL;
-	wc.lpszClassName = "BOINCWin9xMonitorSystem";
+    wc.lpszClassName = "BOINCWin9xMonitorSystem";
 
     if (!RegisterClass(&wc))
     {
@@ -194,7 +195,7 @@ DWORD WINAPI Win9xMonitorSystemThread( LPVOID  ) {
     /* Create an invisible window */
     hwndMain = CreateWindow(
         wc.lpszClassName,
-		"BOINC Monitor System",
+        "BOINC Monitor System",
         WS_OVERLAPPEDWINDOW & ~WS_VISIBLE,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
@@ -302,19 +303,21 @@ static void init_core_client(int argc, char** argv) {
     }
 
     diagnostics_init(flags, "stdoutdae", "stderrdae");
-    diagnostics_set_max_file_sizes(
-        config.max_stdout_file_size, config.max_stderr_file_size
-    );
 
     // Read config and parse the commandline after initializing the
     // diagnostics framework.
     read_config_file();
 
-	// Win32 - detach from console if requested
+    // Until the config file has been read, log files are unbounded.
+    diagnostics_set_max_file_sizes(
+        config.max_stdout_file_size, config.max_stderr_file_size
+    );
+
+    // Win32 - detach from console if requested
 #ifdef _WIN32
-	if (gstate.detach_console) {
-		FreeConsole();
-	}
+    if (gstate.detach_console) {
+        FreeConsole();
+    }
 #endif
 
     // Unix: install signal handlers
@@ -403,7 +406,7 @@ int initialize() {
     }
 #endif
 
-	curl_init();
+    curl_init();
 
 #ifdef _WIN32
     if(g_hClientLibraryDll) {
@@ -553,12 +556,12 @@ int finalize() {
 #endif
 
     if (g_bIsWin9x && g_Win9xMonitorSystemThreadID) {
-	    PostThreadMessage(g_Win9xMonitorSystemThreadID, WM_QUIT, 0, 0);
+        PostThreadMessage(g_Win9xMonitorSystemThreadID, WM_QUIT, 0, 0);
     }
 
 #endif
 
-	curl_cleanup();
+    curl_cleanup();
     boinc_cleanup_completed = true;
     return 0;
 }
@@ -738,6 +741,3 @@ int main(int argc, char** argv) {
 
     return retval;
 }
-
-
-const char *BOINC_RCSID_f02264aefe = "$Id: main.C 15442 2008-06-20 16:21:55Z davea $";
