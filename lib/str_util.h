@@ -92,4 +92,13 @@ extern const char* boincerror(int which_error);
 extern const char* network_status_string(int);
 extern const char* rpc_reason_string(int);
 
+#ifdef _WIN32
+#include <windows.h>
+
+extern char* windows_error_string(char* pszBuf, int iSize);
+extern char* windows_format_error_string(
+    unsigned long dwError, char* pszBuf, int iSize
+);
+#endif
+
 #endif
