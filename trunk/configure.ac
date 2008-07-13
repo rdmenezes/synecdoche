@@ -202,8 +202,7 @@ if test "${haveCurl}" != yes; then
 ================================================================================
 ERROR: could not find (recent enough) development-libs for libcurl.
 
-  This library is required to build the boinc-client.
-  (If you don't want to build the client, use --disable-client with configure.
+  This library is required to build the BOINC client.
 
   If libcurl-dev is installed on your system, make sure that the script 
   'curl-config' is found in your PATH, and that 
