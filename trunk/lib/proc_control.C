@@ -30,6 +30,7 @@
 #include "error_numbers.h"
 #include "common_defs.h"
 #include "util.h"
+#include "str_util.h"
 #include "parse.h"
 #include "base64.h"
 

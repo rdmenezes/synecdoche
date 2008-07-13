@@ -47,6 +47,7 @@
 #include "common_defs.h"
 #include "filesys.h"
 #include "util.h"
+#include "str_util.h"
 #include "base64.h"
 #include "mfile.h"
 #include "miofile.h"
