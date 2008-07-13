@@ -1222,8 +1222,9 @@ int RPC_CLIENT::get_simple_gui_info(CC_STATE& state, RESULTS& results) {
         }
 
         while (rpc.fin.fgets(buf, 256)) {
-            if (match_tag(buf, "</simple_gui_info>")) break;
-            else if (match_tag(buf, "<project>")) {
+            if (match_tag(buf, "</simple_gui_info>")) {
+                break;
+            } else if (match_tag(buf, "<project>")) {
                 project.clear();
                 project.parse(rpc.fin);
                 state_project = state.lookup_project(project.master_url);
@@ -1233,13 +1234,10 @@ int RPC_CLIENT::get_simple_gui_info(CC_STATE& state, RESULTS& results) {
                 } else {
                     retval = ERR_NOT_FOUND;
                 }
-                continue;
-            }
-            else if (match_tag(buf, "<result>")) {
+            } else if (match_tag(buf, "<result>")) {
                 RESULT* result = new RESULT();
                 result->parse(rpc.fin);
                 results.results.push_back(result);
-                continue;
             }
         }
 
@@ -1250,8 +1248,7 @@ int RPC_CLIENT::get_simple_gui_info(CC_STATE& state, RESULTS& results) {
             for (i=0; i<state.projects.size(); i++) {
                 state_project = state.projects[i];
                 if (state_project->flag_for_delete) {
-                    retval = ERR_FILE_MISSING;
-                    break;
+                    return ERR_FILE_MISSING;
                 }
             }
         }
