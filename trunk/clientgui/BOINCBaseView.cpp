@@ -189,31 +189,33 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
             }
         }
 
-        if (iDocCount) {
+        if (iDocCount > 0) {
             SynchronizeCache();
-        }
 
-        if (EnsureLastItemVisible() && (iDocCount != iCacheCount)) {
-            m_pListPane->EnsureVisible(iDocCount - 1);
-        }
 
-        if (m_pListPane->m_bIsSingleSelection) {
-            // If no item has been selected yet, select the first item.
+            if (EnsureLastItemVisible() && (iDocCount != iCacheCount)) {
+                m_pListPane->EnsureVisible(iDocCount - 1);
+            }
+
+            if (m_pListPane->m_bIsSingleSelection) {
+                // If no item has been selected yet, select the first item.
 #ifdef __WXMSW__
-         if ((m_pListPane->GetSelectedItemCount() == 0) &&
-            (m_pListPane->GetItemCount() >= 1)) {
+                if ((m_pListPane->GetSelectedItemCount() == 0) &&
+                    (m_pListPane->GetItemCount() >= 1)) {
 
-            long desiredstate = wxLIST_STATE_FOCUSED | wxLIST_STATE_SELECTED;
-            m_pListPane->SetItemState(0, desiredstate, desiredstate);
-        }
+                    long desiredstate = wxLIST_STATE_FOCUSED | wxLIST_STATE_SELECTED;
+                    m_pListPane->SetItemState(0, desiredstate, desiredstate);
+                }
 #else
-         if ((m_pListPane->GetFirstSelected() < 0) &&
-            (m_pListPane->GetItemCount() >= 1))
-            m_pListPane->SetItemState(0, wxLIST_STATE_FOCUSED | wxLIST_STATE_SELECTED, 
-                                            wxLIST_STATE_FOCUSED | wxLIST_STATE_SELECTED);
+                if ((m_pListPane->GetFirstSelected() < 0) &&
+                    (m_pListPane->GetItemCount() >= 1)) {
+                    m_pListPane->SetItemState(0, wxLIST_STATE_FOCUSED | wxLIST_STATE_SELECTED, 
+                                                    wxLIST_STATE_FOCUSED | wxLIST_STATE_SELECTED);
+                }
 #endif
+            }
         }
-        
+
         UpdateSelection();
 
         m_bProcessingListRenderEvent = false;
