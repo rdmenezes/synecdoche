@@ -27,6 +27,7 @@
 
 #include "hyperlink.h"
 #include "wx/statline.h"
+#include "SkinManager.h"
 
 class wxHyperLink;
 

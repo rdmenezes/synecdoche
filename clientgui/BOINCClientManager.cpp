@@ -208,8 +208,8 @@ bool CBOINCClientManager::StartupBOINCCore() {
 
 #elif defined(__WXMAC__)
 
-    wxChar buf[1024];
-    wxChar *argv[5];
+    char buf[1024];
+    char *argv[5];
     ProcessSerialNumber ourPSN;
     FSRef ourFSRef;
     OSErr err;
