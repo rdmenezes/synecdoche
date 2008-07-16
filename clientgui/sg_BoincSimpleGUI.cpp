@@ -106,7 +106,7 @@ CSimpleFrame::CSimpleFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     menuFile->Append(
         ID_FILECLOSEWINDOW,
         _("&Close Window\tCTRL+W"),
-		_("Close BOINC Manager Window.")
+		_("Close Manager Window.")
     );
 
     // Help menu
@@ -148,7 +148,7 @@ CSimpleFrame::CSimpleFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
         strMenuDescription
     );
 
-    // %s is the project name
+    /*// %s is the project name
     //    i.e. 'BOINC', 'GridRepublic'
     strMenuName.Printf(
         _("%s &website"), 
@@ -157,14 +157,14 @@ CSimpleFrame::CSimpleFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     // %s is the application name
     //    i.e. 'BOINC Manager', 'GridRepublic Manager'
     strMenuDescription.Printf(
-        _("Show information about BOINC and %s"),
+        _("Show information about Synecdoche and %s"),
         pSkinAdvanced->GetApplicationName().c_str()
     );
     menuHelp->Append(
         ID_HELPBOINCWEBSITE,
         strMenuName, 
         strMenuDescription
-    );
+    );*/
 
     // Clear menubar
     m_pMenubar = new wxMenuBar;
