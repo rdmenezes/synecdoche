@@ -502,7 +502,7 @@ bool CAdvancedFrame::CreateMenu() {
     // %s is the application name
     //    i.e. 'BOINC Manager', 'GridRepublic Manager'
     strMenuDescription.Printf(
-        _("Show information about BOINC and %s"),
+        _("Show information about Synecdoche and %s"),
         pSkinAdvanced->GetApplicationName().c_str()
     );
     menuHelp->Append(
