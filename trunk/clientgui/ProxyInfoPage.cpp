@@ -198,7 +198,7 @@ void CErrProxyInfoPage::OnPageChanged( wxWizardExEvent& event ) {
         _("Network communication failure")
     );
     m_pDescriptionStaticCtrl->SetLabel(
-    	-("An Internet connection failed. The most likely reasons are:\n"
+    	_("An Internet connection failed. The most likely reasons are:\n"
           "\n"
           "1) Connectivity problem.  Check your network\n"
           "or modem connection and click Back to try again.\n"

@@ -30,6 +30,7 @@
 #include "BOINCListCtrl.h"
 #include "ViewResources.h"
 #include "Events.h"
+#include "SkinManager.h"
 #include <wx/arrimpl.cpp>
 #include "res/usage.xpm"
 
@@ -165,12 +166,14 @@ bool CViewResources::OnRestoreState(wxConfigBase* /*pConfig*/) {
 
 void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
+    CSkinAdvanced* pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
     wxString diskspace;
     static double project_total=0.0;
     unsigned int i;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+    wxASSERT(wxDynamicCast(pSkinAdvanced, CSkinAdvanced));
 
     //get data for BOINC projects disk usage
     pDoc->CachedDiskUsageUpdate();
