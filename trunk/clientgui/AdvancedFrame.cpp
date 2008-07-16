@@ -493,7 +493,7 @@ bool CAdvancedFrame::CreateMenu() {
         strMenuDescription
     );
 
-    // %s is the project name
+    /*// %s is the project name
     //    i.e. 'BOINC', 'GridRepublic'
     strMenuName.Printf(
         _("%s &website"), 
@@ -509,7 +509,7 @@ bool CAdvancedFrame::CreateMenu() {
         ID_HELPBOINCWEBSITE,
         strMenuName, 
         strMenuDescription
-    );
+    );*/
 
 #ifndef __WXMAC__
     menuHelp->AppendSeparator();

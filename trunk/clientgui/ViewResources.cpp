@@ -78,7 +78,7 @@ void CViewResources::DemandLoadView() {
     m_pieCtrlBOINC->SetHorLegendBorder(10);
     m_pieCtrlBOINC->SetLabelFont(*wxSWISS_FONT);
     m_pieCtrlBOINC->SetLabelColour(wxColour(0,0,0));
-    m_pieCtrlBOINC->SetLabel(_("disk usage by BOINC projects"));
+    m_pieCtrlBOINC->SetLabel(_("disk usage by projects"));
     //init the flexGrid
     itemGridSizer->Add(m_pieCtrlTotal,1,wxGROW|wxALL,1);
     itemGridSizer->Add(m_pieCtrlBOINC,1, wxGROW|wxALL,1);
@@ -239,11 +239,13 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
     if(refreshBOINC || refreshTotal) {
         m_pieCtrlTotal->m_Series.Clear();
         wxPiePart part;
+        wxString label;
 
         // used by BOINC
         double boinc_total = project_total + pDoc->disk_usage.d_boinc;
         FormatDiskSpace(boinc_total, diskspace);
-        part.SetLabel(_("used by BOINC - ") + diskspace);
+        label.Printf(_("used by %s - "), pSkinAdvanced->GetApplicationName().c_str());
+        part.SetLabel(label + diskspace);
         part.SetValue(boinc_total);
         part.SetColour(wxColour(0,0,0));
         m_pieCtrlTotal->m_Series.Add(part);
@@ -252,7 +254,8 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
         if (avail > 0) {
             if (avail > free) avail = free;
             FormatDiskSpace(avail, diskspace);
-            part.SetLabel(_("free, available to BOINC - ") + diskspace);
+	        label.Printf(_("free, available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
+            part.SetLabel(label + diskspace);
             part.SetValue(avail);
             part.SetColour(wxColour(128, 128, 128));
             m_pieCtrlTotal->m_Series.Add(part);
@@ -263,7 +266,8 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
         // free disk space
         double not_avail = free - avail;
         FormatDiskSpace(not_avail, diskspace);
-        part.SetLabel(_("free, not available to BOINC - ") + diskspace);
+        label.Printf(_("free, not available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
+        part.SetLabel(label + diskspace);
         part.SetValue(not_avail);
         part.SetColour(wxColour(238,238,238));
         m_pieCtrlTotal->m_Series.Add(part);
