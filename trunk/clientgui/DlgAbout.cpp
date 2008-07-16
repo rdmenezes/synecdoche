@@ -30,7 +30,6 @@
 #include "parse.h"
 #include "LogBOINC.h"
 #include "BOINCGUIApp.h"
-#include "SkinManager.h"
 
 #include "DlgAbout.h"
 
