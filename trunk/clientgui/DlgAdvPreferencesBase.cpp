@@ -323,7 +323,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 
 	m_chkNetDisconnectWhenDone = new wxCheckBox( m_panelNetwork, ID_CHKNETDISCONNECTWHENDONE, _("Disconnect when done"), wxDefaultPosition, wxDefaultSize, 0 );
 
-	m_chkNetDisconnectWhenDone->SetToolTip( _("if checked, BOINC hangs up when network usage is done\n(only relevant for dialup-connection)") );
+	m_chkNetDisconnectWhenDone->SetToolTip( _("if checked, hang up when network usage is done\n(only relevant for dialup-connection)") );
 
 	sbSizer7->Add( m_chkNetDisconnectWhenDone, 0, wxALL, 5 );
 
@@ -452,7 +452,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 	fgSizerDiskUsage->Add( m_staticText40, 0, wxALL|wxEXPAND, 5 );
 
 	m_txtDiskMaxSpace = new wxTextCtrl( m_panelDiskAndMemory, ID_TXTDISKMAXSPACE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-	m_txtDiskMaxSpace->SetToolTip( _("the maximum disk space used by BOINC (in Gigabytes)") );
+	m_txtDiskMaxSpace->SetToolTip( _("Maximum allowed disk space (in Gigabytes)") );
 
 	fgSizerDiskUsage->Add( m_txtDiskMaxSpace, 0, wxALL, 1 );
 
@@ -463,7 +463,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 	fgSizerDiskUsage->Add( m_staticText42, 0, wxALL|wxEXPAND, 5 );
 
 	m_txtDiskLeastFree = new wxTextCtrl( m_panelDiskAndMemory, ID_TXTDISKLEASTFREE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-	m_txtDiskLeastFree->SetToolTip( _("BOINC leaves at least this amount of disk space free (in Gigagytes)") );
+	m_txtDiskLeastFree->SetToolTip( _("Leave at least this much disk space free (in Gigagytes)") );
 
 	fgSizerDiskUsage->Add( m_txtDiskLeastFree, 0, wxALL, 1 );
 
@@ -474,7 +474,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 	fgSizerDiskUsage->Add( m_staticText44, 0, wxALL|wxEXPAND, 5 );
 
 	m_txtDiskMaxOfTotal = new wxTextCtrl( m_panelDiskAndMemory, ID_TXTDISKMAXOFTOTAL, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-	m_txtDiskMaxOfTotal->SetToolTip( _("BOINC uses at most this percentage of total disk space") );
+	m_txtDiskMaxOfTotal->SetToolTip( _("Use at most this percentage of total disk space") );
 
 	fgSizerDiskUsage->Add( m_txtDiskMaxOfTotal, 0, wxALL, 1 );
 
