@@ -138,7 +138,7 @@ void CProjectsComponent::CreateComponent()
     btnSynchronize->Show(false);
 
     /// Help
-	wxToolTip *ttHelp = new wxToolTip(_("Get help with BOINC"));
+	wxToolTip *ttHelp = new wxToolTip(_("Get Help"));
 	btnHelp=new wxBitmapButton(
         this,
         ID_SIMPLE_HELP,
@@ -266,7 +266,7 @@ void CProjectsComponent::CreateComponent()
     i_spacer3->LoadImage(*(pSkinSimple->GetSpacerImage()->GetBitmap()));
 
     // Advanced View
-	wxToolTip *ttAdvView = new wxToolTip(_("Switch to the BOINC advanced view"));
+	wxToolTip *ttAdvView = new wxToolTip(_("Switch to the advanced view"));
 	btnAdvancedView = new CLinkButton(
         this,
         -1,

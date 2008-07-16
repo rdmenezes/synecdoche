@@ -118,8 +118,8 @@ void	SetUpSystemMenu(MenuRef menuToCopy, CGImageRef theIcon) {
     OSErr err;
 
     // Add the submenu
-    newItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:@"BOINC!" action:NULL keyEquivalent:@""];
-    sysMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:@"BOINC!"];
+    newItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:@"Synecdoche" action:NULL keyEquivalent:@""];
+    sysMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:@"Synecdoche"];
     [newItem setSubmenu:sysMenu];
 
     if (gStatusItem == NULL) {
