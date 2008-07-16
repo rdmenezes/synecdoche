@@ -103,10 +103,16 @@ CSimpleFrame::CSimpleFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     // File menu
     wxMenu *menuFile = new wxMenu;
 
+    // %s is the application name
+    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+    strMenuDescription.Printf(
+        _("Close %s window."),
+        pSkinAdvanced->GetApplicationName().c_str()
+    );
     menuFile->Append(
         ID_FILECLOSEWINDOW,
         _("&Close Window\tCTRL+W"),
-		_("Close Manager Window.")
+        strMenuDescription
     );
 
     // Help menu
