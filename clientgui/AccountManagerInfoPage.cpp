@@ -33,7 +33,7 @@
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
-#include "hyperlink.h"
+#include <wx/hyperlink.h>
 #include "ValidateURL.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
@@ -147,8 +147,8 @@ void CAccountManagerInfoPage::CreateControls()
     m_pBOINCPromoStaticCtrl->Create( itemWizardPage23, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer24->Add(m_pBOINCPromoStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
-    m_pBOINCPromoUrlCtrl = new wxHyperLink;
-    m_pBOINCPromoUrlCtrl->Create( itemWizardPage23, ID_BOINCHYPERLINK, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+    m_pBOINCPromoUrlCtrl = new wxHyperlinkCtrl;
+    m_pBOINCPromoUrlCtrl->Create( itemWizardPage23, ID_BOINCHYPERLINK, wxT("http://boinc.berkeley.edu/"), wxT("http://boinc.berkeley.edu/"));
     itemBoxSizer24->Add(m_pBOINCPromoUrlCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     // Set validators
@@ -186,9 +186,6 @@ void CAccountManagerInfoPage::OnPageChanged( wxWizardExEvent& event ) {
     );
     m_pBOINCPromoStaticCtrl->SetLabel(
         _("For a list of BOINC-based account managers go to:")
-    );
-    m_pBOINCPromoUrlCtrl->SetLabel(
-        wxT("http://boinc.berkeley.edu/")
     );
 
     Fit();

@@ -402,7 +402,7 @@ void CProjectsComponent::OnHelp(wxCommandEvent& /*event*/) {
 
 	wxString wxurl;
 	wxurl.Printf(wxT("%smanager_links.php?target=simple"), url.c_str());
-    wxHyperLink::ExecuteLink(wxurl);
+    HyperLink::ExecuteLink(wxurl);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectsComponent::OnHelp - Function End"));
 }

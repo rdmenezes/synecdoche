@@ -470,7 +470,7 @@ void CPanelMessages::OnButtonHelp( wxCommandEvent& event ) {
         BOINC_VERSION_STRING,
         event.GetId()
     );
-    wxHyperLink::ExecuteLink(wxurl);
+    HyperLink::ExecuteLink(wxurl);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CPanelMessages::OnHelp - Function End"));
 }
@@ -858,7 +858,7 @@ void CDlgMessages::OnHelp(wxHelpEvent& event) {
 
 		wxString wxurl;
 		wxurl.Printf(wxT("%smanager_links.php?target=simple_messages&controlid=%d"), url.c_str(), event.GetId());
-        wxHyperLink::ExecuteLink(wxurl);
+        HyperLink::ExecuteLink(wxurl);
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgMessages::OnHelp - Function End"));

@@ -35,7 +35,7 @@
 #include "MainDocument.h"
 #include "wx/valgen.h"
 #include "wx/valtext.h"
-#include "hyperlink.h"
+#include <wx/hyperlink.h>
 #include "ValidateEmailAddress.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
@@ -191,8 +191,8 @@ void CAccountInfoPage::CreateControls()
     m_pAccountPasswordRequirmentsStaticCtrl->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL, FALSE));
     itemFlexGridSizer64->Add(m_pAccountPasswordRequirmentsStaticCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
-    m_pAccountForgotPasswordCtrl = new wxHyperLink;
-    m_pAccountForgotPasswordCtrl->Create( itemWizardPage56, ID_ACCOUNTFORGOTPASSWORDCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pAccountForgotPasswordCtrl = new wxHyperlinkCtrl;
+    m_pAccountForgotPasswordCtrl->Create( itemWizardPage56, ID_ACCOUNTFORGOTPASSWORDCTRL, wxEmptyString, wxEmptyString);
     itemFlexGridSizer64->Add(m_pAccountForgotPasswordCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     // Set validators

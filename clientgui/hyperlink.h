@@ -1,106 +1,35 @@
-//////////////////////////////////////////////////////////////////////////////
-// File:        hyperlink.h
-// Purpose:     wxHyperLink control
-// Maintainer:  Wyo
-// Created:     2003-04-07
-// RCS-ID:      $Id: hyperlink.h 6483 2005-06-28 22:22:29Z rwalton $
-// Copyright:   (c) 2004 wxCode
-// Licence:     wxWindows
-//////////////////////////////////////////////////////////////////////////////
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
+// Copyright (C) 2005 University of California
+//
+// This is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation;
+// either version 2.1 of the License, or (at your option) any later version.
+//
+// This software is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
+//
+// To view the GNU Lesser General Public License visit
+// http://www.gnu.org/copyleft/lesser.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef _MY_HYPERLINK_H_
-#define _MY_HYPERLINK_H_
+#ifndef _HYPERLINK_H_
+#define _HYPERLINK_H_
 
 #ifdef __GNUG__
     #pragma implementation "hyperlink.h"
 #endif
 
-//----------------------------------------------------------------------------
-// information
-//----------------------------------------------------------------------------
-
-
-//----------------------------------------------------------------------------
-// headers
-//----------------------------------------------------------------------------
-//! wxWidgets headers
-
-
-//============================================================================
-// declarations
-//============================================================================
-
-//----------------------------------------------------------------------------
-//!
-
-
-//----------------------------------------------------------------------------
-//! wxHyperLink
-class wxHyperLink: public wxStaticText {
-
-DECLARE_DYNAMIC_CLASS (wxHyperLink)
+class HyperLink {
 
 public:
-
-    //! default constructor
-    wxHyperLink () {}
-
-    //! create constructor
-    wxHyperLink (wxWindow *parent,
-                 wxWindowID id,
-                 const wxString &label = wxEmptyString,
-                 const wxPoint &pos = wxDefaultPosition,
-                 const wxSize &size = wxDefaultSize,
-                 long style = 0,
-                 const wxString &name = _T("HyperLink")) {
-        Create (parent, id, label, pos, size, style, name);
-    }
-
-    // function create
-    bool Create (wxWindow *parent,
-                 wxWindowID id,
-                 const wxString &label = wxEmptyString,
-                 const wxPoint &pos = wxDefaultPosition,
-                 const wxSize &size = wxDefaultSize,
-                 long style = 0,
-                 const wxString &name = _T("HyperLink"));
-
-    // event handlers
-    void OnWindowEnter (wxMouseEvent& event);
-    void OnWindowLeave (wxMouseEvent& event);
-    void OnLinkActivate (wxMouseEvent& event);
-
-    // get/set settings
-    wxCursor GetHoverCursor ();
-    void SetHoverCursor (wxCursor cursor);
-    wxColour GetMarkedColour ();
-    void SetMarkedColour (wxColour colour);
-    wxColour GetNormalColour ();
-    void SetNormalColour (wxColour colour);
-    wxColour GetVisitedColour ();
-    void SetVisitedColour (wxColour colour);
-    wxString GetURL ();
-    void SetURL (const wxString &url);
-
     //! execute according to mimetype
     static void ExecuteLink (const wxString &link);
-
-private:
-
-    //! hypertext variables
-    wxString m_URL;
-    bool m_Marked;
-    bool m_Visited;
-
-    //! style settings
-    wxCursor m_HoverCursor;
-    wxColour m_MarkedColour;
-    wxColour m_NormalColour;
-    wxColour m_VisitedColour;
-    wxColour m_BackgroundColour;
-
-    DECLARE_EVENT_TABLE()
 };
 
-#endif // _MY_HYPERLINK_H_
-
+#endif // _HYPERLINK_H_

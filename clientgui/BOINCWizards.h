@@ -145,11 +145,6 @@ class CErrProxyInfoPage;
 class CErrProxyPage;
 
 
-// Forward declare special controls
-//
-class wxHyperLink;
-
-
 // Diagnostics Tools
 //
 #define WIZDEBUG_ERRPROJECTPROPERTIES                 0x00000001

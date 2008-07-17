@@ -23,7 +23,7 @@
 #endif
 
 #include "stdwx.h"
-#include "hyperlink.h"
+#include <wx/hyperlink.h>
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 
@@ -107,10 +107,12 @@ void CDlgAbout::CreateControls(CSkinAdvanced* pSkinAdvanced) {
     wxStaticText* itemStaticText13 = new wxStaticText(this, wxID_STATIC, wxT("Synecdoche Open Infrastructure for Network Computing"));
     verticalSizer->Add(itemStaticText13, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 
-    wxHyperLink* SynecHyperLink = new wxHyperLink(this, wxID_ANY, wxT("http://synecdoche.googlecode.com/"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+    wxHyperlinkCtrl* SynecHyperLink = new wxHyperlinkCtrl(this, wxID_ANY, wxT("http://synecdoche.googlecode.com/"),
+        wxT("http://synecdoche.googlecode.com/"));
     verticalSizer->Add(SynecHyperLink, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 
-    wxHyperLink* BOINCHyperLink = new wxHyperLink(this, wxID_ANY, wxT("http://boinc.berkeley.edu/"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+    wxHyperlinkCtrl* BOINCHyperLink = new wxHyperlinkCtrl(this, wxID_ANY, wxT("http://boinc.berkeley.edu/"),
+        wxT("http://boinc.berkeley.edu/"));
     verticalSizer->Add(BOINCHyperLink, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 
     wxStaticLine* staticLine = new wxStaticLine(this, wxID_STATIC, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL);
