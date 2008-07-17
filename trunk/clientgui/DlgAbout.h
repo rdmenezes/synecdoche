@@ -25,12 +25,7 @@
 #pragma interface "DlgAbout.cpp"
 #endif
 
-#include "hyperlink.h"
-#include "wx/statline.h"
-#include "SkinManager.h"
-
-class wxHyperLink;
-
+class CSkinAdvanced;
 
 class CDlgAbout: public wxDialog {
 
