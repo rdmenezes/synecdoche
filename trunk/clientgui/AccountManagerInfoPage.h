@@ -24,6 +24,8 @@
 #pragma interface "AccountManagerInfoPage.cpp"
 #endif
 
+class wxHyperlinkCtrl;
+
 /*!
  * CAccountManagerInfoPage class declaration
  */
@@ -86,7 +88,7 @@ public:
     wxStaticText* m_pProjectUrlStaticCtrl;
     wxTextCtrl* m_pProjectUrlCtrl;
     wxStaticText* m_pBOINCPromoStaticCtrl;
-    wxHyperLink* m_pBOINCPromoUrlCtrl;
+    wxHyperlinkCtrl* m_pBOINCPromoUrlCtrl;
     wxString m_strProjectURL;
 ////@end CAccountManagerInfoPage member variables
 };

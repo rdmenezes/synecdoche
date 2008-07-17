@@ -571,7 +571,7 @@ void CPanelPreferences::OnButtonHelp( wxCommandEvent& WXUNUSED(event) ) {
 
 	wxString wxurl;
 	wxurl.Printf(wxT("%smanager_links.php?target=simple"), url.c_str());
-    wxHyperLink::ExecuteLink(wxurl);
+    HyperLink::ExecuteLink(wxurl);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CPanelPreferences::OnHelp - Function End"));
 }
@@ -1077,7 +1077,7 @@ void CDlgPreferences::OnHelp(wxHelpEvent& event) {
             BOINC_VERSION_STRING,
             event.GetId()
         );
-        wxHyperLink::ExecuteLink(wxurl);
+        HyperLink::ExecuteLink(wxurl);
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgPreferences::OnHelp - Function End"));

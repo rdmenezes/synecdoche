@@ -82,6 +82,8 @@ bool CProjectListCtrl::Create( wxWindow* parent )
     wxScrolledWindow::Create( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER );
     SetExtraStyle( wxWS_EX_BLOCK_EVENTS );
 
+    SetMinSize(wxSize(100, 180));
+
     CreateControls();
 
     SetBackgroundColour( wxT("WHITE") );
@@ -167,6 +169,7 @@ bool CProjectListCtrl::Append(
     m_pMainSizer->Add( pItem, 0, wxEXPAND );
 
     FitInside();
+    Layout();
 
     return true;
 }
@@ -313,7 +316,7 @@ void CProjectListItemCtrl::OnWebsiteButtonClick( wxCommandEvent& /*event*/ ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectListItemCtrl::OnWebsiteButtonClick - Function Begin"));
 
     if (!m_strURL.IsEmpty()) {
-        wxHyperLink::ExecuteLink(m_strURL);
+        HyperLink::ExecuteLink(m_strURL);
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectListItemCtrl::OnWebsiteButtonClick - Function End"));

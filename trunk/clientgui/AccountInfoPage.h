@@ -24,6 +24,7 @@
 #pragma interface "AccountInfoPage.cpp"
 #endif
 
+class wxHyperlinkCtrl;
 
 /*!
  * CAccountInfoPage class declaration
@@ -108,7 +109,7 @@ public:
     wxString m_strAccountEmailAddress;
     wxString m_strAccountPassword;
     wxString m_strAccountConfirmPassword;
-    wxHyperLink* m_pAccountForgotPasswordCtrl;
+    wxHyperlinkCtrl* m_pAccountForgotPasswordCtrl;
 ////@end CAccountInfoPage member variables
 };
 

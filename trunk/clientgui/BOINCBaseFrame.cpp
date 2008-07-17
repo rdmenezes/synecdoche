@@ -584,7 +584,7 @@ void CBOINCBaseFrame::ShowAlert( const wxString title, const wxString message, c
 
 
 void CBOINCBaseFrame::ExecuteBrowserLink(const wxString &strLink) {
-    wxHyperLink::ExecuteLink(strLink);
+    HyperLink::ExecuteLink(strLink);
 }
 
 
