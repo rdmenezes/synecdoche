@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef GRIDREPUBLIC32_XPM
+#define GRIDREPUBLIC32_XPM
 /* XPM */
 static const char *gridrepublic32_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -267,3 +269,4 @@ static const char *gridrepublic32_xpm[] = {
 "            X.&.                p...X.X. X  N.p.                ",
 "            4X8X                                                "
 };
+#endif

@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef CLOSE_BUTTON_XPM
+#define CLOSE_BUTTON_XPM
 /* XPM */
 static const char *close_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -167,3 +169,4 @@ static const char *close_button_xpm[] = {
 "#.$.%.$.&.u i s s s s s s s s d s s d s s s s s s s s s s s s s s s d s d s d s d s d s d s d d d s d s d s d s d s d s d s d s d s d s d s d s d s d p X.*.j j N =.",
 "-.;. .:.$.D y >.u ,.<.<.b 1.>.1.t 1.t 2.1.t 3.3.y 4.y 5.O 6.6.O 7.7.8.' 9.v 0.q.q.9.9.0.w.9.0.e.D r.0.w.t.*.*.r.B 0.0.*.*.*.*.*.*.*.*.*.*.q.o.*.*.*.P q w w e e w j "
 };
+#endif

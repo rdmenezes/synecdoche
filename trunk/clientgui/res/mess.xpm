@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef MESS_XPM
+#define MESS_XPM
 /* XPM */
 static const char *mess_xpm[] = {
 "16 16 3 1",
@@ -39,3 +41,4 @@ static const char *mess_xpm[] = {
 "                ",
 "                ",
 "                "};
+#endif

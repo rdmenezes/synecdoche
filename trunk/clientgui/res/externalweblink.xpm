@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef EXTERNALWEBLINK_XPM
+#define EXTERNALWEBLINK_XPM
 /* XPM */
 static const char *externalweblink_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -41,3 +43,4 @@ static const char *externalweblink_xpm[] = {
 " OOOOOOO    ",
 "            "
 };
+#endif

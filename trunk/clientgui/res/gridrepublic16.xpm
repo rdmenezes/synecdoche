@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef GRIDREPUBLIC16_XPM
+#define GRIDREPUBLIC16_XPM
 /* XPM */
 static const char *gridrepublic16_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -197,3 +199,4 @@ static const char *gridrepublic16_xpm[] = {
 "s.s.b.n.s.s.s.m.M.N.B.V.C.Z.s.. ",
 ". . A.S.D.s.s.s.A.F.D.G.H.s.. . "
 };
+#endif

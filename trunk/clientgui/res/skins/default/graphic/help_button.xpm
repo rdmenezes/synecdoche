@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef HELP_BUTTON_XPM
+#define HELP_BUTTON_XPM
 /* XPM */
 static const char *help_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -99,3 +101,4 @@ static const char *help_button_xpm[] = {
 "OO  +rg;-=BMVo+O++",
 ".+ .X#$+Oo.O$@o@,o"
 };
+#endif

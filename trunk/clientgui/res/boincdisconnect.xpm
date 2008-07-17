@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef BOINCDISCONNECT_XPM
+#define BOINCDISCONNECT_XPM
 /* XPM */
 static const char *boincdisconnect_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -50,3 +52,4 @@ static const char *boincdisconnect_xpm[] = {
 " oo......&&&&&&.",
 "  ........&&&&.."
 };
+#endif

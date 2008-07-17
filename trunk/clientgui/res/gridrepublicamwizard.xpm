@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef GRIDREPUBLICAMWIZARD_XPM
+#define GRIDREPUBLICAMWIZARD_XPM
 /* XPM */
 static const char *gridrepublicamwizard_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -532,3 +534,4 @@ static const char *gridrepublicamwizard_xpm[] = {
 "rXrXrXqXqXqXqXqXqX6XqX6X6X6X6X1X1X=X1X=X  =X    =X      .   X   X . . X   X 5 . X . X . X X X X a X a X 6 X ~ a 6 6 6 X 6 X 6 6 6 6 6 o 6 6 o [ &.o o &.o o o o o o o C o o C o 2.C C 2.C ^.P ^.^ 3X!.wXs.sX4XfXdXaXW.pX+ @ @ 8 @ @ 8 ",
 "rXuXrXrXrXqXqXqX8XqX6X6X8X6X6X6X1X=X1X=X1X  =X      . 5   .   .   . 5 . X . . X X X X X X X a X X a ~ a ~ a a ~ a ~ a 6 6 6 6 6 6 o 6 6 o [ &.[ &.6 o [ o o &.o o o 2.o o C o C o C 2.C C C C P P ^.^ 3X!.s.wXsX4X4XfX&Xi.8 @ H A @ @ "
 };
+#endif

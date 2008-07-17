@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef COPY_CLICKED_BUTTON_XPM
+#define COPY_CLICKED_BUTTON_XPM
 /* XPM */
 static const char *copy_clicked_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -134,3 +136,4 @@ static const char *copy_clicked_button_xpm[] = {
 "4 .   ( b * w t j j j t t t t t t j t j t j t t j j j t j t j t j t t j t j t j t j t j t j t j t j t j t j t j t t t j t j t j t t t t t t j t j j t y f + o 6 9 4 ",
 "6 4 . ( ` ' b i + + ) + ^ + + + + + J + + ^ + + + + + ] + + + + ) + + + + + + + [ z + + + J + { + ) ) ) ^ + + ^ + ^ + + + J + + + ^ ^ J J + + ) ) ) ) b p p . } |  ."
 };
+#endif

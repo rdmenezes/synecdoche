@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef WIZPROGRESS03_XPM
+#define WIZPROGRESS03_XPM
 /* XPM */
 static const char *wizprogress03_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -220,3 +222,4 @@ static const char *wizprogress03_xpm[] = {
 "                                                          ,.z.M.M.M.M.                                                                                                                                                                                                                                          ,.z.M.M.M.M.                                                    ",
 "                                                                                                                                                                                                                                                                                                                                                                                "
 };
+#endif

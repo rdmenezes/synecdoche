@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef GRIDREPUBLIC_XPM
+#define GRIDREPUBLIC_XPM
 /* XPM */
 static const char *gridrepublic_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -107,3 +109,4 @@ static const char *gridrepublic_xpm[] = {
 "DEDEBEKDDEDEDEJDAAAAIAMDPDODDEDE",
 "DEDEDEAEDEDEDEAEIBNANBAEODCEDEDE",
 "DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE"};
+#endif

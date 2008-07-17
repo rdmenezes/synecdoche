@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef WORKUNIT_SUSPENDED_IMAGE_XPM
+#define WORKUNIT_SUSPENDED_IMAGE_XPM
 /* XPM */
 static const char *workunit_suspended_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -142,3 +144,4 @@ static const char *workunit_suspended_image_xpm[] = {
 "                                ",
 "                                "
 };
+#endif

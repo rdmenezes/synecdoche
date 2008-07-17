@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef SAVE_CLICKED_BUTTON_XPM
+#define SAVE_CLICKED_BUTTON_XPM
 /* XPM */
 static const char *save_clicked_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -131,3 +133,4 @@ static const char *save_clicked_button_xpm[] = {
 "ON87 <Useseesesesessesessesesesesesssesessesesessesesssesesseeeseseesssesesrt~ 6(8",
 " ).67(R_`WW##WhWW'WWWW#Wh'#Wh#'hWW9]][9W'WWW'h`#'W#hWW#W#WW###W#WW##WWW##`'_86 8{X"
 };
+#endif

@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef COPY_BUTTON_XPM
+#define COPY_BUTTON_XPM
 /* XPM */
 static const char *copy_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -136,3 +138,4 @@ static const char *copy_button_xpm[] = {
 "4 . . ( X # T j j j j t t t t t t j t j t j t t j j j t t t j t j t j t j t t t t t t t t j t j t j t j t j t j t t t j t j t j t t t t t t j t j j t y f + o 6 9 4 ",
 "6 / . ( o ' ] i + + ) + [ + + + + + H + + [ + + + + + { { } + + ) + + + + + + + ) + + H + + { | } z z ) [ + + [ + [ + + + H + + + [ [ H H + + ) ) ) ) ] p p .  ...X."
 };
+#endif

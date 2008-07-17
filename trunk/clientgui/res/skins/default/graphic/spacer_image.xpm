@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef SPACER_IMAGE_XPM
+#define SPACER_IMAGE_XPM
 /* XPM */
 static const char *spacer_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -42,3 +44,4 @@ static const char *spacer_image_xpm[] = {
 " #",
 " #"
 };
+#endif
