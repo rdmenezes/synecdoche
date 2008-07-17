@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef RIGHT_ARROW_BUTTON_XPM
+#define RIGHT_ARROW_BUTTON_XPM
 /* XPM */
 static const char *right_arrow_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -244,3 +246,4 @@ static const char *right_arrow_button_xpm[] = {
 "g.%.C oXOX+XU.@Xp.#Xv.$X%X&Xt.v.-.U.*Xy.",
 "Y.=X-._.-Xd.*.%.F.6.e.%.P.;X:XC.4.e.y.>X"
 };
+#endif

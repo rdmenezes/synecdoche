@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef ATTACH_PROJECT_CLICKED_BUTTON_XPM
+#define ATTACH_PROJECT_CLICKED_BUTTON_XPM
 /* XPM */
 static const char *attach_project_clicked_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -276,3 +278,4 @@ static const char *attach_project_clicked_button_xpm[] = {
 "A J.K.L.P.I.' q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.q.) U.Y.T.{ Q R.",
 "E.W.| Q.!.! ~.^./.(.)._.`.'.].[.{.}.|. X.XXXoXOX+X@X#X$X%X&X*X=X-X;X:X>X,X<X1X2X3X+X4X5X6X_. X#X7X8X9X|.`.].0XqX7XwXeXrX.XtX).yXuXiXpXaX<XsXdXfXgXhXjXkXlXzXxXcXvX"
 };
+#endif

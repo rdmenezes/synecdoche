@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef SYNCHRONIZE_BUTTON_XPM
+#define SYNCHRONIZE_BUTTON_XPM
 /* XPM */
 static const char *synchronize_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -228,3 +230,4 @@ static const char *synchronize_button_xpm[] = {
 "A T.R.E.W.Q.' ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` 8.) !.~.^.{ Q /.",
 "(.).| _.`.! '.` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ].[.{.}.|. X.XXX"
 };
+#endif

@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef CONNECTING_INDICATOR_IMAGE_XPM
+#define CONNECTING_INDICATOR_IMAGE_XPM
 /* XPM */
 static const char *connecting_indicator_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -52,3 +54,4 @@ static const char *connecting_indicator_image_xpm[] = {
 "  %oooooooo-@ ",
 "   .#&oooX=   "
 };
+#endif

@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef BOINC32_XPM
+#define BOINC32_XPM
 /* XPM */
 static const char * boinc32_xpm[] = {
 "32 32 460 2",
@@ -512,3 +514,4 @@ static const char * boinc32_xpm[] = {
 "M#N#O#P#Q#                                            R#S#T#U#V#",
 "  W#X#W#                                                Y#Z#S#  ",
 "    W#                                                    `#    "};
+#endif

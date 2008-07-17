@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef ADVANCED_LINK_IMAGE_XPM
+#define ADVANCED_LINK_IMAGE_XPM
 /* XPM */
 static const char *advanced_link_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -151,3 +153,4 @@ static const char *advanced_link_image_xpm[] = {
 ". X .   X @   .   o   #   . +   . X   #   #   o   X @ #   .   #   . X . . X   X   X @   X   #   O X .   o O   X   @   @ . X . +   + +   $ % + $ r %   * $ + % = * % * & * ; % { t = : = - > , < 1 ;., < 1 ",
 "  X   . X   O X   X . X . X   X .   o X   # @   # . .     # @ . X   X . X . X .   #   # o   o X .   +   X . X o @ X X   # @   X @     X   o X $ + $ $ @ % r + + % e % % * * t * = ; { : - - - > > ; > : , "
 };
+#endif

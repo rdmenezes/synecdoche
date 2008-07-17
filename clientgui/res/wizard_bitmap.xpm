@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef WIZARD_BITMAP_XPM
+#define WIZARD_BITMAP_XPM
 /* XPM */
 static const char *wizard_bitmap_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -554,3 +556,4 @@ static const char *wizard_bitmap_xpm[] = {
 "GXGXGXGXGXGXGXGXGXDXGXGX* GXDXAXGX* GX* GX* GX* * DX* * DX* * * *   * * *     *       * 7.            7.    . . . . . . . . X . . X X . o . o . o . o X o X o o o o o o o o O o o O o O O O o O O O O O O O + O O @ O @ o @ @ O @ + @ ",
 "GXGXGXGXGXGXGXGXGXDXGXGXGXAXDX* GX* GX* GX* * DX* * DX* * * * * * * * *   * *   *     *   *       7.      .   . . . . . . X . X . o . X . o . o X o X o X o X o X o o o o o o O o o O o O o + O O O o + O + O O @ o @ O @ @ @ O @ @ O "
 };
+#endif

@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef SUSPEND_LINK_IMAGE_XPM
+#define SUSPEND_LINK_IMAGE_XPM
 /* XPM */
 static const char *suspend_link_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -114,3 +116,4 @@ static const char *suspend_link_image_xpm[] = {
 "+X XXX$X X 2X+X#+#X$ #$32$..$1%.-%=::;6G,O11O,O11$1o1O,,O3,",
 "XOX2$X+$+$XX2$X$$X $2$#O.$$3O14.4%=0-666-,O,O1,O,O<O,.<Oo,,"
 };
+#endif

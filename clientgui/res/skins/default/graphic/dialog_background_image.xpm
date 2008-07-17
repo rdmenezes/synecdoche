@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef DIALOG_BACKGROUND_IMAGE_XPM
+#define DIALOG_BACKGROUND_IMAGE_XPM
 /* XPM */
 static const char *dialog_background_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -685,3 +687,4 @@ static const char *dialog_background_image_xpm[] = {
 "..... .. .@oX@@@ .. $#@@@%%%%%&-&&<;;;;::82ay788876pqqwwt04V13xw940p9ddd8kksdusk7sdds8yd7syd5k6jp9=55kq56<0txddd6<,rid5prtyrw8899gtqqlhiy47qe74==8806438x7qq7s5fx9pprr=Vaa2dihsytt,9siy5<SnbAFFFFFFFFFFFFAAFFFFAAAAAAAAAAAAAvvvvvvvcbbcccccccccccccncnccncncncnccncccccccvvbbcvvcSD,4fhq7k7,j85s9ugxxxxhflqwid8<488sddq74>>jjtt98l3*=Vrwrsldx86<gdd=MMa08d29,p83ffsp,8ls9gV>6klxui5z5f3Vj9ee8=1==sfdx8zzz7pp77f841N183ff890Nz58xy2299083s84ys399ux99956SbFFFFAFFAAAAAAAvAAvbbbvvvcccnncnnnnmmmmSDDD;;;:&MM&&&;-;;--BB=*#$%N1*dd$$%MBB---B-aCCaz::&::mmmSSmmmDDmmmnnnnnmnnnnnncccnnccccccbbbvvvvbbvvvAvvAAAAAAAAAAAFAvnnSS>MNN477515qZ88t9904dixp7784468t>>a13hhd148wtpp0Vyqqq8=3shi9t9ur93fhf8zj8ddfll58648x3887,67f3Mtp5*ddrww8457qlhllqsssjSbAAvvvvvcccnnnnnnmmmnmDmmm:a--&&N-B-%#OO+$%$+$$#...@+...ooOO ..XXX+@XXoO.@@XX.@++@",
 " ....  ... .XXXXX  +@@.o$+++%%%$*aCCCCa,,ff=9xiq76<12xwwxy=f*58yg0aV8Z908768dd*zzjy==xiillf=38Zwt004667p74&<,9u3<<68xx7kkygrwpqlf2t9pllZ5z8xwlhh218w9zz48iZZZff*=dirrx*1tj9yguu9jprx94&=,cAFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAvvvvvvbbcccccccccccccnnccnccnnnncccnnnnnncccccccccccvvvbnnSy38jtxxs88suuyrry=*x3*wew5zz&1sZiuxs8<>jkl82uiZ7Va8q88xdy3<<32=ggg2==**9ew92dxp,,839j<<85kk8888xihuM&zlxyN&Nfhiit0<zsxt<78=3465kk76thsj67lleru2gwtudi9<65*=9j<4sii,bAAFFFAFAAFFAAAvvvAvccvbccccnnnnnnnmmmmSS,DDC;;;--&&&<%%%N-%%-&#of##*=ddBBBB=2B--;0tV234:;;Mt>mmDDmmD>DmmmnmmnnnmnnnnnnccccccccccvvvvvvccvvvvbbbvAAAAAAAAAAAAAAAvcSw2=4445ker9558sq55*=47puudxg&<0j>02ssqkk99999tpwl8j8sqZs2uuueeihhxttygy9hhl54>akk8=uu7<<jtgatttg224<48sl887qq76665fSvAAbvvbcccnnncccnnnnnnSSm:CCN::N%--%%*Ooo*%%$B+.++#XX.    OO.XXXX....X@@.XXXX  .XX"
 };
+#endif

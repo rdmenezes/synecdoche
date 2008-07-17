@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef SYNCHRONIZE_CLICKED_BUTTON_XPM
+#define SYNCHRONIZE_CLICKED_BUTTON_XPM
 /* XPM */
 static const char *synchronize_clicked_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -283,3 +285,4 @@ static const char *synchronize_clicked_button_xpm[] = {
 "A T.R.E.W.Q.' 8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.8.) !.~.^.{ Q /.",
 "(.).| _.`.! '.].[.{.}.|. X.XXXoXOX+X@X#X$X%X&X*X=X-X;X:X>X,X<X1X2X3X4X5X6X7X8X9X0X=XqXwXeX|.#X;XrXtXyX@X XXXuXiXrXpXaXsX$XdX}.fXgXhXjXkX7XlXzXxXcXvXbXnXmXMXNXBXVX"
 };
+#endif

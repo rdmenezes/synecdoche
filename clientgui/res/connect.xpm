@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef CONNECT_XPM
+#define CONNECT_XPM
 /* XPM */
 static const char *connect_xpm[] = {
 "16 16 92 2",
@@ -128,3 +130,4 @@ static const char *connect_xpm[] = {
 "      v W } | | | Z             ",
 "                                ",
 "                                "};
+#endif

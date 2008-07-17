@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef RESUME_LINK_IMAGE_XPM
+#define RESUME_LINK_IMAGE_XPM
 /* XPM */
 static const char *resume_link_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -117,3 +119,4 @@ static const char *resume_link_image_xpm[] = {
 "+X XX$X$+XoXO+X3+#$X $$32$.O$114-%=::;6T,O81O,O1.O1 1O,,,.,",
 "XOXOX$+X $XXX$2X$X o@X32.$$.O14.4%=0-666;O$1O1O,,O<O,.oOoO,"
 };
+#endif

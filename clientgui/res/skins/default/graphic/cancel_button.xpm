@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef CANCEL_BUTTON_XPM
+#define CANCEL_BUTTON_XPM
 /* XPM */
 static const char *cancel_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -124,3 +126,4 @@ static const char *cancel_button_xpm[] = {
 "WE73W:swwwwpwppwppwpwpwpwpwpwpwwpwpwpwpwpwpwpwpwwwpwpwpwpwpwpwwpwppwpwpwpwwerQy Ot",
 "77O!o3Y~S^^^SS/^^^/SSS^^QS/S(SS^Q(^^SS^S^^^^^SS(^@P@^Q^S(Q^(gS^^SSg/SS@/^S^~3tE 47"
 };
+#endif

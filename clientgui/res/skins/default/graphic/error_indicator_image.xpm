@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef ERROR_INDICATOR_IMAGE_XPM
+#define ERROR_INDICATOR_IMAGE_XPM
 /* XPM */
 static const char *error_indicator_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -89,3 +91,4 @@ static const char *error_indicator_image_xpm[] = {
 "                                                                     ",
 "                                                                     "
 };
+#endif

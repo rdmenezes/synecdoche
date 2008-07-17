@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef WORKUNIT_TAB_AREA_BACKGROUND_IMAGE_XPM
+#define WORKUNIT_TAB_AREA_BACKGROUND_IMAGE_XPM
 /* XPM */
 static const char *workunit_tab_area_background_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -268,3 +270,4 @@ static const char *workunit_tab_area_background_image_xpm[] = {
 "g b E c M # # i t # u O.# r # m X.l t g l a c O k l W t r +  .t w ;.W.H   -.F.x.J.o j ) O I.w D.] & ` Y k 3 , 3 I a.; I , I - < 2 ; ; - a.I < ; < : < ; < 1 2 4 1 - < < - < 1 < < ; 1 < < < < < ; < - < < ; 1 < < - : ; 4 - : P >  .= K 0 oXw b . b | @ m c l l j f l a W i $ a v l  .+ b l g E O E ~ t y l k # v W x R j ..W b R h # t t X.a r o v c i + a a y g @  .p a i k f ~ p E # z r M b f u a g c E | + b s x l j t s n f f v f r d @ t b c v # r $ r ~ $ c k r @.[.>XZ :Xh.tXE.G <Xw.r.e e ) w ) i.@ # @ ] ~ # & k ~ Y 2.@ K f t c x | f k b c j $ b b O b o g @ E y X.$ l } O n r t a ~ x a r r O p E s l u b r i y } + t X.y l l a @ g E R c d $ $ X.X.s $ j g t $ ~ ~ O v X.O.s c t d i s a + v a ",
 "# f 7 + 7 s v y O j b t @ O g s r y.i a a x @ g a W + W W y m x ~ # >.yXuX*.e.F.S.J :.T X j !.K ` # k _ @ ] 7 1 # 3 2 : * < I & ; > 6 6 < < < < < < < - 1 < > < < ; - - 2 < < < 4 < < < - < < ; < < < < - < 2 < < < : < { 5 2 > ' * 7 k D._ q _ ( t y t ~ a a l i W l s $ + r $ t O c @ 7 l t X. .b t o r c t s j } j a t O $ x | l E t  .j r n l t i # # g $ W a E $ M t + W t ..l n u p  .f ! x t j r 7 # f s 7 c x a t o.c R t k l ..O b t ~ v f # f c } O s E $ + + T.^.g.iX:X:X5Xk.q.c.2XS.  b.r.:.:.0 I.j + + & # + 0 oX0 ( X p o l o l y @ # b + p m t v a y.t t + t a i + Q O ..b l y @ M E 7 c t t r @ E p M a E a @ c y x ..j x M y l # E ..c l s r k j 7 z j $ z | z O + | + o O.t f j p f 7 O a R "
 };
+#endif

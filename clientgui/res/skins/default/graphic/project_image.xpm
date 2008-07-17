@@ -17,6 +17,8 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+#ifndef PROJECT_IMAGE_XPM
+#define PROJECT_IMAGE_XPM
 /* XPM */
 static const char *project_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
@@ -268,3 +270,4 @@ static const char *project_image_xpm[] = {
 ". X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X . ",
 "        .   .   .   . . . . .   . .   . . . . . . . . . .   .               .   "
 };
+#endif
