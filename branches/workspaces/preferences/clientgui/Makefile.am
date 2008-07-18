@@ -60,6 +60,18 @@ boinc_gui_SOURCES = \
     NoInternetConnectionPage.cpp \
     NotDetectedPage.cpp \
     NotFoundPage.cpp \
+    PrefFrame.cpp \
+    PrefLocationManager.cpp \
+    PrefNodeBase.cpp \
+    PrefNodeDisk.cpp \
+    PrefNodeGeneral.cpp \
+    PrefNodeMemory.cpp \
+    PrefNodeNetwork.cpp \
+    PrefNodeNetworkTimes.cpp \
+    PrefNodePresets.cpp \
+    PrefNodeProcessor.cpp \
+    PrefNodeProcessorTimes.cpp \
+    PrefTreeBook.cpp \
     ProjectInfoPage.cpp \
     ProjectListCtrl.cpp \
     ProjectProcessingPage.cpp \
