@@ -20,10 +20,6 @@
 #ifndef _CLIENTSTATEINDICATOR_H_
 #define _CLIENTSTATEINDICATOR_H_ 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_ClientStateIndicator.cpp"
-#endif
-
 
 class ImageLoader;
 

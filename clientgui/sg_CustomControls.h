@@ -20,10 +20,6 @@
 #ifndef _CUSTOMCONTROLS_H_
 #define _CUSTOMCONTROLS_H_ 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_CustomControls.cpp"
-#endif
-
 
 class CTransparentStaticLine : public wxPanel 
 { 

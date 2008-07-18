@@ -13,11 +13,6 @@
 #ifndef _TASKBAREX_H_
 #define _TASKBAREX_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "taskbarex.cpp"
-#endif
-
-
 // ----------------------------------------------------------------------------
 // wxTaskBarIconEx 
 // ----------------------------------------------------------------------------

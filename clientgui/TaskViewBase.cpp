@@ -18,10 +18,6 @@
 // or write to the Free Software Foundation, Inc.,
 // 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma implementation "TaskViewBase.h"
-#endif
-
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "MainDocument.h"

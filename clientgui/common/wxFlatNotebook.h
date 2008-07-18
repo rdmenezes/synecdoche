@@ -12,10 +12,6 @@
 #ifndef WXFLATNOTEBOOK_H
 #define WXFLATNOTEBOOK_H
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "common/wxFlatNotebook.cpp"
-#endif
-
 
 #include "common/wxFNBDropTarget.h"
 

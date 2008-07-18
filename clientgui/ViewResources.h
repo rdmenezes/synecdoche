@@ -21,10 +21,6 @@
 #ifndef _VIEWRESOURCES_H_
 #define _VIEWRESOURCES_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ViewResources.cpp"
-#endif
-
 
 #include "BOINCBaseView.h"
 #include "common/wxPieCtrl.h"

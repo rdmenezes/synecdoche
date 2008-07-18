@@ -20,10 +20,6 @@
 #ifndef _LOGBOINC_H_
 #define _LOGBOINC_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "LogBOINC.cpp"
-#endif
-
 
 class wxLogBOINC : public wxLogStderr
 {

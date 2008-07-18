@@ -21,10 +21,6 @@
 #ifndef _DLG_PREFERENCES_H_ 
 #define _DLG_PREFERENCES_H_ 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_DlgPreferences.cpp"
-#endif
-
 /*!
  * Includes
  */

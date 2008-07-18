@@ -20,10 +20,6 @@
 #ifndef _DLGOPTIONS_H_
 #define _DLGOPTIONS_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "DlgOptions.cpp"
-#endif
-
 /*!
  * Includes
  */

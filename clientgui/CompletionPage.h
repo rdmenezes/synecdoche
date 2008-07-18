@@ -20,10 +20,6 @@
 #ifndef _WIZ_COMPLETIONPAGE_H_
 #define _WIZ_COMPLETIONPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "CompletionPage.cpp"
-#endif
-
 /*!
  * CCompletionPage class declaration
  */

@@ -21,10 +21,6 @@
 #ifndef _BOINCLISTCTRL_H_
 #define _BOINCLISTCTRL_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "BOINCListCtrl.cpp"
-#endif
-
 #ifdef __WXMSW__
 #define USE_NATIVE_LISTCONTROL 1
 #else

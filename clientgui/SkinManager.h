@@ -20,10 +20,6 @@
 #ifndef _SKINMANAGER_H_
 #define _SKINMANAGER_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "SkinManager.cpp"
-#endif
-
 class MIOFILE;
 
 class CSkinItem : public wxObject

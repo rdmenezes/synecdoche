@@ -20,10 +20,6 @@
 #ifndef _WIZ_NOTDETECTEDPAGE_H_
 #define _WIZ_NOTDETECTEDPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "NotDetectedPage.cpp"
-#endif
-
 /*!
  * CErrNotDetectedPage class declaration
  */

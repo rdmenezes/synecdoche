@@ -20,10 +20,6 @@
 #ifndef _WIZ_PROJECTPROCESSINGPAGE_H_
 #define _WIZ_PROJECTPROCESSINGPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ProjectProcessingPage.cpp"
-#endif
-
 /*!
  * CProjectProcessingPage custom events
  */

@@ -21,10 +21,6 @@
 #ifndef _DLGABOUT_H_
 #define _DLGABOUT_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "DlgAbout.cpp"
-#endif
-
 class CSkinAdvanced;
 
 class CDlgAbout: public wxDialog {

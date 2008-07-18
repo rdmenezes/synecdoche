@@ -20,10 +20,6 @@
 #ifndef _WIZ_ALREADYATTACHEDPAGE_H_
 #define _WIZ_ALREADYATTACHEDPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "AlreadyAttachedPage.cpp"
-#endif
-
 /*!
  * CErrAlreadyAttachedPage class declaration
  */

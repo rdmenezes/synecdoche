@@ -21,10 +21,6 @@
 #define _PROJECTSCOMPONENT_H_
 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_ProjectsComponent.cpp"
-#endif
-
 class SkinClass;
 class StatImageLoader;
 class CSimplePanel;

@@ -20,10 +20,6 @@
 #ifndef _WIZ_ACCOUNTINFOPAGE_H_
 #define _WIZ_ACCOUNTINFOPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "AccountInfoPage.cpp"
-#endif
-
 class wxHyperlinkCtrl;
 
 /*!

@@ -21,10 +21,6 @@
 #ifndef _HYPERLINK_H_
 #define _HYPERLINK_H_
 
-#ifdef __GNUG__
-    #pragma implementation "hyperlink.h"
-#endif
-
 class HyperLink {
 
 public:

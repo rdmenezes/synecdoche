@@ -20,10 +20,6 @@
 #ifndef _BOINCTASKBAR_H_
 #define _BOINCTASKBAR_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "BOINCTaskBar.cpp"
-#endif
-
 #include "MainDocument.h"
 
 #ifdef __WXMSW__

@@ -20,10 +20,6 @@
 #ifndef _PROGRESSBAR_H_
 #define _PROGRESSBAR_H_ 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_ProgressBar.cpp"
-#endif
-
 class ImageLoader;
 
 class CProgressBar : public wxPanel

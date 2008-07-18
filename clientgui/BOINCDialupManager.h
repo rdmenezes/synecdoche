@@ -20,10 +20,6 @@
 #ifndef _BOINCDIALUPMANAGER_H_
 #define _BOINCDIALUPMANAGER_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "BOINCDialupManager.cpp"
-#endif
-
 
 class CBOINCDialUpManager : public wxObject
 {

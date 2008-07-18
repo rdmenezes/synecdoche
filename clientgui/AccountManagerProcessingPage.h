@@ -20,10 +20,6 @@
 #ifndef _WIZ_ACCOUNTMANAGERPROCESSINGPAGE_H_
 #define _WIZ_ACCOUNTMANAGERPROCESSINGPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "AccountManagerProcessingPage.cpp"
-#endif
-
 /*!
  * CAccountManagerProcessingPage custom events
  */

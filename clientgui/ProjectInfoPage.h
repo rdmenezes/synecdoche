@@ -20,10 +20,6 @@
 #ifndef _WIZ_PROJECTINFOPAGE_H_
 #define _WIZ_PROJECTINFOPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ProjectInfoPage.cpp"
-#endif
-
 class CProjectListCtrl;
 class ProjectListCtrlEvent;
 

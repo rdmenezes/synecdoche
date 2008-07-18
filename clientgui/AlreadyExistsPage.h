@@ -20,10 +20,6 @@
 #ifndef _WIZ_ALREADYEXISTSPAGE_H_
 #define _WIZ_ALREADYEXISTSPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "AlreadyExistsPage.cpp"
-#endif
-
 /*!
  * CErrAlreadyExistsPage class declaration
  */

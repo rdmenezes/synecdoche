@@ -20,10 +20,6 @@
 #ifndef _VIEWTABPAGE_H_
 #define _VIEWTABPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_ViewTabPage.cpp"
-#endif
-
 #ifdef __WXMAC__
 #define SMALL_FONT 12
 #define MEDIUM_FONT 16

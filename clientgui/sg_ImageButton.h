@@ -20,10 +20,6 @@
 #ifndef _IMAGEBUTTON_H_
 #define _IMAGEBUTTON_H_ 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_ImageButton.cpp"
-#endif
-
 #define TAB_STATUS_RUNNING 1
 #define TAB_STATUS_PREEMPTED 2 
 #define TAB_STATUS_PAUSED_USER_ACTIVE 3

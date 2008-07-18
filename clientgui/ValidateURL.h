@@ -20,10 +20,6 @@
 #ifndef _VALIDATEURL_H_
 #define _VALIDATEURL_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ValidateURL.cpp"
-#endif
-
 
 class CValidateURL : public wxValidator
 {
