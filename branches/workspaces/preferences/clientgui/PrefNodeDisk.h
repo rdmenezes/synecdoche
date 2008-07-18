@@ -20,10 +20,6 @@
 #ifndef _PREFNODEDISK_H_
 #define _PREFNODEDISK_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodeDisk.cpp"
-#endif
-
 #include "prefs.h"
 
 class PrefNodeDisk : public PrefNodeBase {

@@ -20,10 +20,6 @@
 #ifndef _VALIDATETIME_H_
 #define _VALIDATETIME_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ValidateTime.cpp"
-#endif
-
 #include "wx/valtext.h"
 #include "prefs.h"
 

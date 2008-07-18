@@ -20,10 +20,6 @@
 #ifndef _PREFNODEBASE_H_
 #define _PREFNODEBASE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodeBase.cpp"
-#endif
-
 #include "prefs.h"
 #include "ValidateBool.h"
 #include "ValidateNumber.h"

@@ -20,10 +20,6 @@
 #ifndef _PREFNODEPROCESSORTIMES_H_
 #define _PREFNODEPROCESSORTIMES_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodeProcessorTimes.cpp"
-#endif
-
 struct GLOBAL_PREFS;
 
 class PrefNodeProcessorTimes : public PrefNodeBase {

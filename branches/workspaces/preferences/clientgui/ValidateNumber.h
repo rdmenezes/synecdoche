@@ -20,11 +20,6 @@
 #ifndef _VALIDATENUMBER_H_
 #define _VALIDATENUMBER_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ValidateNumber.cpp"
-#endif
-
-
 // Templated validator to handle any numeric type. T must
 // support insertion and extraction operators or it will all fail horribly.
 template<class T>

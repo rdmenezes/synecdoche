@@ -20,11 +20,6 @@
 #ifndef _PREFFRAME_H_
 #define _PREFFRAME_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefFrame.cpp"
-#endif
-
-
 #include "prefs.h"
 #include "PrefTreeBook.h"
 

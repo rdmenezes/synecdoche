@@ -20,10 +20,6 @@
 #ifndef _PREFTREEBOOK_H_
 #define _PREFTREEBOOK_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefTreeBook.cpp"
-#endif
-
 #include "PrefNodeBase.h"
 #include "wx/treectrl.h"
 

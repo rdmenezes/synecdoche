@@ -20,10 +20,6 @@
 #ifndef _PREFNODEGENERAL_H_
 #define _PREFNODEGENERAL_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodeGeneral.cpp"
-#endif
-
 #include "PrefNodeBase.h"
 
 struct GLOBAL_PREFS;

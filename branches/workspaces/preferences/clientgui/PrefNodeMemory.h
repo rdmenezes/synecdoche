@@ -20,10 +20,6 @@
 #ifndef _PREFNODEMEMORY_H_
 #define _PREFNODEMEMORY_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodeMemory.cpp"
-#endif
-
 struct GLOBAL_PREFS;
 
 class PrefNodeMemory : public PrefNodeBase {

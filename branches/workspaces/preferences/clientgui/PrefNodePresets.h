@@ -20,10 +20,6 @@
 #ifndef _PREFNODEPRESETS_H_
 #define _PREFNODEPRESETS_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodePresets.cpp"
-#endif
-
 struct GLOBAL_PREFS;
 
 class PrefNodePresets : public PrefNodeBase {

@@ -20,10 +20,6 @@
 #ifndef _PREFNODENETWORK_H_
 #define _PREFNODENETWORK_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodeNetwork.cpp"
-#endif
-
 struct GLOBAL_PREFS;
 
 class PrefNodeNetwork : public PrefNodeBase {

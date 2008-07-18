@@ -20,10 +20,6 @@
 #ifndef _PREFNODENETWORKTIMES_H_
 #define _PREFNODENETWORKTIMES_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodeNetworkTimes.cpp"
-#endif
-
 struct GLOBAL_PREFS;
 
 #define ID_PREF_COPY_TIMES 7999
