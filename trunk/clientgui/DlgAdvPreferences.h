@@ -20,10 +20,6 @@
 #ifndef _DLGADVPREFERENCES_H_
 #define _DLGADVPREFERENCES_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "DlgAdvPreferences.cpp"
-#endif
-
 
 #include "DlgAdvPreferencesBase.h"
 #include "prefs.h"

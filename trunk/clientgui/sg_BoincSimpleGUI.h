@@ -21,10 +21,6 @@
 #ifndef _SIMPLEFRAME_H_
 #define _SIMPLEFRAME_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_BoincSimpleGUI.cpp"
-#endif
-
 class CViewTabPage;
 class StatImageLoader;
 class ImageLoader;

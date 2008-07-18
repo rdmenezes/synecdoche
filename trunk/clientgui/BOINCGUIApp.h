@@ -20,10 +20,6 @@
 #ifndef _BOINCGUIAPP_H_
 #define _BOINCGUIAPP_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "BOINCGUIApp.cpp"
-#endif
-
 #ifdef __WXMAC__
 #include "mac/MacSysMenu.h"     // Must be included before MainDocument.h
 #endif

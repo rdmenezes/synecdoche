@@ -21,10 +21,6 @@
 #ifndef _VIEWPROJECTS_H_
 #define _VIEWPROJECTS_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ViewProjects.cpp"
-#endif
-
 
 #include "TaskViewBase.h"
 

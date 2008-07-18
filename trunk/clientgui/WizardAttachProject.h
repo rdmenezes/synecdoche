@@ -20,10 +20,6 @@
 #ifndef _WIZ_ATTACHPROJECT_H_
 #define _WIZ_ATTACHPROJECT_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "WizardAttachProject.cpp"
-#endif
-
 /*!
  * Forward declarations
  */

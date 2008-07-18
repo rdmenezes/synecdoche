@@ -21,10 +21,6 @@
 #ifndef _VIEWSTATISTICS_H_
 #define _VIEWSTATISTICS_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ViewStatistics.cpp"
-#endif
-
 
 #include "TaskViewBase.h"
 

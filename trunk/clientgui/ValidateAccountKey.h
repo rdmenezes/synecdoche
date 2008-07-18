@@ -20,10 +20,6 @@
 #ifndef _VALIDATEACCOUNTKEY_H_
 #define _VALIDATEACCOUNTKEY_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ValidateAccountKey.cpp"
-#endif
-
 
 class CValidateAccountKey : public wxValidator
 {

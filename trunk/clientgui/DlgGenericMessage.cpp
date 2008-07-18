@@ -18,10 +18,6 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma implementation "DlgGenericMessage.h"
-#endif
-
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 

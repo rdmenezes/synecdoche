@@ -20,10 +20,6 @@
 #ifndef _IMAGELOADER_H_
 #define _IMAGELOADER_H_ 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_ImageLoader.cpp"
-#endif
-
 class ImageLoader : public wxWindow 
 { 
 public: 

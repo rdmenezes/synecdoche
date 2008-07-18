@@ -20,10 +20,6 @@
 #ifndef _WIZ_ACCOUNTMANAGER_H_
 #define _WIZ_ACCOUNTMANAGER_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "WizardAccountManager.cpp"
-#endif
-
 /*!
  * Forward declarations
  */

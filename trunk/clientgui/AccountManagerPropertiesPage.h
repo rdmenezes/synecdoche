@@ -20,10 +20,6 @@
 #ifndef _WIZ_ACCOUNTMANAGERPROPERTIESPAGE_H_
 #define _WIZ_ACCOUNTMANAGERPROPERTIESPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "AccountManagerPropertiesPage.cpp"
-#endif
-
 /*!
  * CAccountManagerPropertiesPage custom events
  */

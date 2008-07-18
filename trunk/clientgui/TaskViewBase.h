@@ -21,10 +21,6 @@
 #ifndef _TASKVIEWBASE_H_
 #define _TASKVIEWBASE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "TaskViewBase.cpp"
-#endif
-
 #include "BOINCBaseView.h"
 
 #define DEFAULT_TASK_FLAGS             wxTAB_TRAVERSAL | wxADJUST_MINSIZE

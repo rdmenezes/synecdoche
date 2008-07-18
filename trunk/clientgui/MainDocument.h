@@ -21,10 +21,6 @@
 #ifndef _MAINDOCUMENT_H_
 #define _MAINDOCUMENT_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "MainDocument.cpp"
-#endif
-
 #include <vector>
 #include "common_defs.h"
 #include "gui_rpc_client.h"

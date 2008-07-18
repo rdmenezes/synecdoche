@@ -18,10 +18,6 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma implementation "ViewProjects.h"
-#endif
-
 #include "stdwx.h"
 #include "str_util.h"
 #include "BOINCGUIApp.h"

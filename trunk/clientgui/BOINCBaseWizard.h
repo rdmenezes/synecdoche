@@ -20,10 +20,6 @@
 #ifndef _WIZ_BOINCBASEWIZARD_H_
 #define _WIZ_BOINCBASEWIZARD_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "BOINCBaseWizard.cpp"
-#endif
-
 /*!
  * CBOINCBaseWizard class declaration
  */

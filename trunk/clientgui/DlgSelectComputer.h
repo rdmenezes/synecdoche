@@ -20,10 +20,6 @@
 #ifndef _DLGSELECTCOMPUTER_H_
 #define _DLGSELECTCOMPUTER_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "DlgSelectComputer.cpp"
-#endif
-
 /*!
  * Includes
  */

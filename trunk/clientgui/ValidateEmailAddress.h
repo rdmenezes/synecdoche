@@ -20,10 +20,6 @@
 #ifndef _VALIDATEEMAILADDRESS_H_
 #define _VALIDATEEMAILADDRESS_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ValidateEmailAddress.cpp"
-#endif
-
 
 class CValidateEmailAddress : public wxValidator
 {

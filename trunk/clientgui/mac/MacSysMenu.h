@@ -20,10 +20,6 @@
 #ifndef _MACSYSMENU_H_
 #define _MACSYSMENU_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "MacSysMenu.cpp"
-#endif
-
 #include <Carbon/Carbon.h>
 
 #include "BOINCTaskBar.h"

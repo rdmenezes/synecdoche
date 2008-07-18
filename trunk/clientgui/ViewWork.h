@@ -21,10 +21,6 @@
 #ifndef _VIEWWORK_H_
 #define _VIEWWORK_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ViewWork.cpp"
-#endif
-
 
 #include "TaskViewBase.h"
 

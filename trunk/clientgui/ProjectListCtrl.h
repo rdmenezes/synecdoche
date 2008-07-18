@@ -20,10 +20,6 @@
 #ifndef _WIZ_PROJECTLISTCTRL_H_
 #define _WIZ_PROJECTLISTCTRL_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ProjectListCtrl.cpp"
-#endif
-
 
 class CProjectListItemCtrl;
 class CProjectListItemStaticCtrl;

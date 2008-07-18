@@ -20,10 +20,6 @@
 #ifndef _STATIMAGELOADER_H_
 #define _STATIMAGELOADER_H_ 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_StatImageLoader.cpp"
-#endif
-
 
 class StatImageLoader : public wxWindow 
 { 

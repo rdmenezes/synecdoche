@@ -10,10 +10,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma implementation "common/wxFlatNotebook.h"
-#endif
-
 #include "stdwx.h"
 #include "common/wxFlatNotebook.h"
 #include "common/wxFlatNotebookImages.h"

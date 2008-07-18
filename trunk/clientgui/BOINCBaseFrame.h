@@ -20,10 +20,6 @@
 #ifndef _BOINCBASEFRAME_H_
 #define _BOINCBASEFRAME_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "BOINCBaseFrame.cpp"
-#endif
-
 class CFrameEvent;
 class CFrameAlertEvent;
 class CBOINCDialUpManager;

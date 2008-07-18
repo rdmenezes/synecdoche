@@ -22,10 +22,6 @@
 #ifndef _ADVANCEDFRAME_H_
 #define _ADVANCEDFRAME_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "AdvancedFrame.cpp"
-#endif
-
 class CBOINCBaseView;
 
 class CStatusBar : public wxStatusBar

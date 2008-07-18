@@ -18,10 +18,6 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma implementation "BOINCGUIApp.h"
-#endif
-
 #ifdef __WXMAC__
 #include <Carbon/Carbon.h>
 #include "filesys.h"

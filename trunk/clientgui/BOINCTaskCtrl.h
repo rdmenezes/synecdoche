@@ -21,10 +21,6 @@
 #ifndef _BOINCTASKCTRL_H_
 #define _BOINCTASKCTRL_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "BOINCTaskCtrl.cpp"
-#endif
-
 
 class CTaskItem;
 class CTaskItemGroup;

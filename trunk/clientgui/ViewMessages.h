@@ -21,10 +21,6 @@
 #ifndef _VIEWMESSAGES_H_
 #define _VIEWMESSAGES_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ViewMessages.cpp"
-#endif
-
 
 #include "TaskViewBase.h"
 

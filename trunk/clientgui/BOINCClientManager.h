@@ -20,10 +20,6 @@
 #ifndef _BOINCCLIENTMANAGER_H_
 #define _BOINCCLIENTMANAGER_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "BOINCClientManager.cpp"
-#endif
-
 
 class CBOINCClientManager : public wxObject
 {

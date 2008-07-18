@@ -20,10 +20,6 @@
 #ifndef _WIZ_NOTFOUNDPAGE_H_
 #define _WIZ_NOTFOUNDPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "NotFoundPage.cpp"
-#endif
-
 /*!
  * CErrNotFoundPage class declaration
  */

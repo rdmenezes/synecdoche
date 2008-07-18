@@ -20,10 +20,6 @@
 #ifndef _LOCALIZATION_H_
 #define _LOCALIZATION_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "Localization.cpp"
-#endif
-
 
 class CLocalization : public wxObject
 {

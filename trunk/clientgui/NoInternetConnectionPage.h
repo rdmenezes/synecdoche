@@ -20,10 +20,6 @@
 #ifndef _WIZ_NOINTERNETCONNECTIONPAGE_H_
 #define _WIZ_NOINTERNETCONNECTIONPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "NoInternetConnectionPage.cpp"
-#endif
-
 /*!
  * CErrNoInternetConnectionPage class declaration
  */

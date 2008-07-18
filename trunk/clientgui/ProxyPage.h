@@ -20,10 +20,6 @@
 #ifndef _WIZ_PROXYPAGE_H_
 #define _WIZ_PROXYPAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ProxyPage.cpp"
-#endif
-
 /*!
  * CErrProxyPage class declaration
  */

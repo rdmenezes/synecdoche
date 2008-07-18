@@ -21,10 +21,6 @@
 #ifndef _DLG_MESSAGES_H_ 
 #define _DLG_MESSAGES_H_ 
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "sg_DlgMessages.cpp"
-#endif
-
 
 /*!
  * Includes

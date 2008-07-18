@@ -21,10 +21,6 @@
 #ifndef _DLGGENERICMESSAGE_H_
 #define _DLGGENERICMESSAGE_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "DlgGenericMessage.cpp"
-#endif
-
 /*!
  * Includes
  */
