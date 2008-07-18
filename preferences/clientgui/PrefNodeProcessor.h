@@ -20,10 +20,6 @@
 #ifndef _PREFNODEPROCESSOR_H_
 #define _PREFNODEPROCESSOR_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefNodeProcessor.cpp"
-#endif
-
 struct GLOBAL_PREFS;
 
 class PrefNodeProcessor : public PrefNodeBase {

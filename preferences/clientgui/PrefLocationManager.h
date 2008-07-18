@@ -20,11 +20,6 @@
 #ifndef _PREFLOCATIONMANAGER_H_
 #define _PREFLOCATIONMANAGER_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "PrefLocationManager.cpp"
-#endif
-
-
 #include "prefs.h"
 #include "PrefTreeBook.h"
 

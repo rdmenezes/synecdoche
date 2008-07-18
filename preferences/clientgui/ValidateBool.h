@@ -20,10 +20,6 @@
 #ifndef _VALIDATEBOOL_H_
 #define _VALIDATEBOOL_H_
 
-#if defined(__GNUG__) && !defined(__APPLE__)
-#pragma interface "ValidateBool.cpp"
-#endif
-
 #include "wx/valgen.h"
 
 // wxGenericValidator does all we need for a boolean (checkbox) validator.
