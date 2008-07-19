@@ -47,7 +47,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("Gigabytes of disk space free"),
         _("This option is combined with the other disk restrictions to "
         "determine the maximum space BOINC may use for project application data. "
-        "Default 50%."),
+        "Default 0.1 Gigabytes."),
         CValidateNumber<double>(&m_preferences->disk_min_free_gb))
     );
 
@@ -57,7 +57,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("% of total disk space"),
         _("This option is combined with the other disk restrictions to "
         "determine the maximum space BOINC may use for project application data. "
-        "Default 0.1 Gigabytes."),
+        "Default 50%."),
         CValidateNumber<double>(&m_preferences->disk_max_used_pct))
     );
 

@@ -47,14 +47,16 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
     limits->AddPreference(new PrefValueText(this,
         _("max_cpus"),
         _("On multiprocessor systems, at most use"),
-        _("processors"),
+        _("% of available processors"),
         _("This limit specifies the number of processors or individual "
-        "processor cores that BOINC will use. Many projects will run one "
-        "process on each permitted core. Default 16."),
-        CValidateNumber<double>(&m_preferences->max_ncpus_pct, 1, 0xFFFF, false))
+        "processor cores as a percentage of the total. Many projects will run one "
+        "process on each permitted core. Default 100%."),
+        CValidateNumber<double>(&m_preferences->max_ncpus_pct, 0, 100))
     );
 
     PrefGroup* restrict = AddGroup(_("Processing Restrictions"));
+
+    // Suspend while in use
 
     // WARNING! Prompt is opposite sense.
     PrefValueBase* run_if_user_active = new PrefValueBool(this,
@@ -64,15 +66,13 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         "only working when you are away from your computer. Default false."),
         CValidateBoolInverse(&m_preferences->run_if_user_active));
 
-    m_idleTime = new PrefValueText(this,
+    m_idleTimeResume = new PrefValueText(this,
         _("idle_time_to_run"),
         _("Resume if computer is idle for"),
         _("minutes"),
         _("This option prevents BOINC from starting if you are only "
         "away from your computer briefly. Default 3 minutes."),
         CValidateNumber<double>(&m_preferences->idle_time_to_run));
-
-
 
     run_if_user_active->Connect(
         wxEVT_COMMAND_CHECKBOX_CLICKED,
@@ -81,10 +81,43 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         this
         );
 
-    m_idleTime->Enable(! m_preferences->run_if_user_active);
+    m_idleTimeResume->Enable(! m_preferences->run_if_user_active);
 
     restrict->AddPreference(run_if_user_active);
-    restrict->AddPreference(m_idleTime);
+    restrict->AddPreference(m_idleTimeResume);
+
+    // Suspend while not in use (power saving option)
+
+    m_suspendIdle = (m_preferences->suspend_if_no_recent_input != 0);
+
+    PrefValueBase* suspend_if_no_recent_input = new PrefValueBool(this,
+        wxEmptyString,
+        _("Use power saving features"),
+        _("Use this option if you don't want processing to conflict "
+        "with power saving features. Default false."),
+        CValidateBool(&m_suspendIdle));
+
+    m_idleTimeSuspend = new PrefValueText(this,
+        _("suspend_if_no_recent_input"),
+        _("Suspend if computer is idle for"),
+        _("minutes"),
+        _("This is the length of time your computer will continue "
+        "processing after it falls idle. Default 20 minutes."),
+        CValidateNumber<double>(&m_preferences->suspend_if_no_recent_input));
+
+    suspend_if_no_recent_input->Connect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED,
+        wxCommandEventHandler(PrefNodeProcessor::OnSuspendIdleChanged),
+        NULL,
+        this
+        );
+
+    m_idleTimeSuspend->Enable(m_suspendIdle);
+
+    restrict->AddPreference(suspend_if_no_recent_input);
+    restrict->AddPreference(m_idleTimeSuspend);
+
+    // Run on batteries
 
     // WARNING! Prompt is opposite sense.
     restrict->AddPreference(new PrefValueBool(this,
@@ -99,5 +132,11 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
 
 void PrefNodeProcessor::OnRunIdleChanged(wxCommandEvent& event) {
 
-    m_idleTime->Enable(event.IsChecked());
+    m_idleTimeResume->Enable(event.IsChecked());
+}
+
+
+void PrefNodeProcessor::OnSuspendIdleChanged(wxCommandEvent& event) {
+
+    m_idleTimeSuspend->Enable(event.IsChecked());
 }
