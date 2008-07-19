@@ -95,7 +95,10 @@ boinc_gui_SOURCES = \
     TaskViewBase.cpp \
     UnavailablePage.cpp \
     ValidateAccountKey.cpp \
+    ValidateBool.cpp \
     ValidateEmailAddress.cpp \
+    ValidateNumber.cpp \
+    ValidateTime.cpp \
     ValidateURL.cpp \
     ViewMessages.cpp \
     ViewProjects.cpp \
