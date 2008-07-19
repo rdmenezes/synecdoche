@@ -32,8 +32,12 @@ public:
 
 private:
     void OnRunIdleChanged(wxCommandEvent& event);
+    void OnSuspendIdleChanged(wxCommandEvent& event);
 
-    PrefValueBase* m_idleTime;
+    PrefValueBase* m_idleTimeResume;
+    PrefValueBase* m_idleTimeSuspend;
+
+    bool m_suspendIdle;
 
 };
 
