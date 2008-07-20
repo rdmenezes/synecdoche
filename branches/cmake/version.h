@@ -18,7 +18,6 @@
 /* Package is a pre-release (Alpha/Beta) package */
 #define BOINC_PRERELEASE 1
 
-#if (defined(_WIN32) || defined(__APPLE__))
 /* Name of package */
 #define PACKAGE "boinc"
 
@@ -37,7 +36,6 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "6.3.4"
 
-#endif /* #if (defined(_WIN32) || defined(__APPLE__)) */
 
 #endif /* #ifndef BOINC_VERSION_H */
 
