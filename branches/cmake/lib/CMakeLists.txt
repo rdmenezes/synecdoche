@@ -11,5 +11,10 @@ ADD_LIBRARY(boinc STATIC
 	md5.c md5_file.C
 	gui_rpc_client.C gui_rpc_client_ops.C gui_rpc_client_print.C
 	${WIN_LIB_SOURCES})
+
+IF(WIN32)
+	TARGET_LINK_LIBRARIES(boinc wsock32)
+ENDIF(WIN32)
+
 ADD_EXECUTABLE(boinc_cmd boinc_cmd.C)
 TARGET_LINK_LIBRARIES(boinc_cmd boinc)
