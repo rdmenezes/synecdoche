@@ -2063,14 +2063,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\clientgui\Localization.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\Localization.h"
-				>
-			</File>
-			<File
 				RelativePath="..\clientgui\LogBOINC.cpp"
 				>
 			</File>
@@ -2323,6 +2315,14 @@
 				</File>
 				<File
 					RelativePath="..\clientgui\PrefFrame.h"
+					>
+				</File>
+				<File
+					RelativePath="..\clientgui\PrefGridBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\clientgui\PrefGridBase.h"
 					>
 				</File>
 				<File
