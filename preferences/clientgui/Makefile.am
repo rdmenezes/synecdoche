@@ -61,6 +61,7 @@ boinc_gui_SOURCES = \
     NotDetectedPage.cpp \
     NotFoundPage.cpp \
     PrefFrame.cpp \
+    PrefGridBase.cpp \
     PrefLocationManager.cpp \
     PrefNodeBase.cpp \
     PrefNodeDisk.cpp \

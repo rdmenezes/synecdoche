@@ -39,7 +39,8 @@ IMPLEMENT_DYNAMIC_CLASS(PrefNodeBase, wxPanel)
 
 
 PrefNodeBase::PrefNodeBase(wxWindow* parent, GLOBAL_PREFS* preferences)
-: wxScrolledWindow(parent), m_preferences(preferences) {
+: wxScrolledWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME),
+m_preferences(preferences) {
 
     SetScrollRate(10, 10);
 
@@ -54,7 +55,7 @@ PrefNodeBase::~PrefNodeBase() {}
 PrefNodeBase::PrefGroup* PrefNodeBase::AddGroup(const wxString& title) {
 
     PrefGroup* group = new PrefGroup(this, title);
-    m_groupSizer->Add(group, 0, wxEXPAND | wxBOTTOM, 8);
+    m_groupSizer->Add(group, 0, wxEXPAND | wxALL, 4);
     m_groupList.push_back(group);
     Fit();
     return group;

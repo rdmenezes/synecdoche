@@ -92,7 +92,7 @@ private:
     bool Find(const wxTreeItemId& root, wxTreeItemId& result, PrefNodeType nodeType);
 
     wxTreeCtrl*     m_tree;
-    wxTextCtrl*     m_helpTextCtrl;
+    wxStaticText*     m_helpTextCtrl;
     wxWindow*       m_helpSourceFocus;
     wxWindow*       m_helpSourceMouse;
     wxWindow*       m_helpSource;

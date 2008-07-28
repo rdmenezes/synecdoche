@@ -57,8 +57,8 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
     // Content placeholder
     m_content = new wxPanel(this);
 
-    m_helpTextCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString,
-        wxDefaultPosition, wxSize(-1, 75), wxTE_MULTILINE | wxTE_READONLY);
+    m_helpTextCtrl = new wxStaticText(this, wxID_ANY, wxEmptyString,
+        wxDefaultPosition, wxSize(-1, 75), wxBORDER_THEME | wxST_NO_AUTORESIZE);
 
     m_helpTextCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     m_helpTextCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
@@ -66,7 +66,7 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
     wxBoxSizer* contentBox = new wxBoxSizer(wxVERTICAL);
 
     contentBox->Add(m_content, 4, wxEXPAND);
-    contentBox->Add(m_helpTextCtrl, 1, wxEXPAND);
+    contentBox->Add(m_helpTextCtrl, 1, wxEXPAND | wxTOP, 8 );
 
     m_tree = new wxTreeCtrl(
         this,
@@ -76,15 +76,21 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
         wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT
     );
     wxTreeItemId root = m_tree->AddRoot(_("Preferences"));
-    m_tree->AppendItem(root, _("Presets"), -1, -1, new PrefNodeItemData(Presets));
-    m_tree->AppendItem(root, _("General Options"), -1, -1, new PrefNodeItemData(General));
-    wxTreeItemId proc = m_tree->AppendItem(root, _("Processor Usage"), -1, -1, new PrefNodeItemData(Processor));
-    m_tree->AppendItem(proc, _("Custom Times"), -1, -1, new PrefNodeItemData(ProcessorTimes));
-    wxTreeItemId net = m_tree->AppendItem(root, _("Network Usage"), -1, -1, new PrefNodeItemData(Network));
-    m_tree->AppendItem(net, _("Custom Times"), -1, -1, new PrefNodeItemData(NetworkTimes));
-    m_tree->AppendItem(root, _("Memory Usage"), -1, -1, new PrefNodeItemData(Memory));
-    m_tree->AppendItem(root, _("Disk Usage"), -1, -1, new PrefNodeItemData(Disk));
 
+    wxTreeItemId global = m_tree->AppendItem(root, _("Global Preferences"), -1, -1, new PrefNodeItemData(Presets));
+    m_tree->AppendItem(global, _("Presets"), -1, -1, new PrefNodeItemData(Presets));
+    m_tree->AppendItem(global, _("General Options"), -1, -1, new PrefNodeItemData(General));
+    wxTreeItemId proc = m_tree->AppendItem(global, _("Processor Usage"), -1, -1, new PrefNodeItemData(Processor));
+    m_tree->AppendItem(proc, _("Custom Times"), -1, -1, new PrefNodeItemData(ProcessorTimes));
+    wxTreeItemId net = m_tree->AppendItem(global, _("Network Usage"), -1, -1, new PrefNodeItemData(Network));
+    m_tree->AppendItem(net, _("Custom Times"), -1, -1, new PrefNodeItemData(NetworkTimes));
+    m_tree->AppendItem(global, _("Memory Usage"), -1, -1, new PrefNodeItemData(Memory));
+    m_tree->AppendItem(global, _("Disk Usage"), -1, -1, new PrefNodeItemData(Disk));
+
+    wxTreeItemId local = m_tree->AppendItem(root, _("Local Preferences"), -1, -1, new PrefNodeItemData(Presets));
+    m_tree->AppendItem(local, _("Manager"), -1, -1, new PrefNodeItemData(Presets));
+    m_tree->AppendItem(local, _("Connection"), -1, -1, new PrefNodeItemData(Presets));
+    m_tree->AppendItem(local, _("Proxy"), -1, -1, new PrefNodeItemData(Presets));
 
     contentRow->Add(m_tree, 1, wxALL | wxEXPAND, 4);
     contentRow->Add(contentBox, 2, wxALL | wxEXPAND, 4);
@@ -192,9 +198,9 @@ void PrefTreeBook::ShowHelpText(wxWindow* source) {
 
     if (m_helpSource != source) {
         if (source) {
-            m_helpTextCtrl->SetValue(source->GetHelpText());
+            m_helpTextCtrl->SetLabel(source->GetHelpText());
         } else {
-            m_helpTextCtrl->SetValue(wxEmptyString);
+            m_helpTextCtrl->SetLabel(wxEmptyString);
         }
     }
     m_helpSource = source;

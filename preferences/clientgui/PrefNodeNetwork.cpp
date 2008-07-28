@@ -20,19 +20,18 @@
 #include "stdwx.h"
 #include "prefs.h"
 #include "ValidateNumber.h"
-#include "PrefNodeBase.h"
+#include "PrefGridBase.h"
 #include "PrefNodeNetwork.h"
 
 
-IMPLEMENT_DYNAMIC_CLASS(PrefNodeNetwork, PrefNodeBase)
+IMPLEMENT_DYNAMIC_CLASS(PrefNodeNetwork, PrefGridBase)
 
 PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
-: PrefNodeBase(parent, preferences) {
+: PrefGridBase(parent, preferences) {
 
     PrefGroup* connect = AddGroup(_("Connection"));
 
     connect->AddPreference(new PrefValueBool(this,
-        _("confirm_before_connecting"),
         _("Confirm before connecting to Internet"),
         _("BOINC will only try and get an Internet connection when it needs one. "
         "Default true."),
@@ -40,7 +39,6 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
     );
 
     connect->AddPreference(new PrefValueBool(this,
-        _("hangup_if_dialed"),
         _("Disconnect when done"),
         _("BOINC will only disconnect if it initiated the Internet connection. "
         "Default false."),
@@ -48,9 +46,7 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
     );
 
     connect->AddPreference(new PrefValueText(this,
-        _("work_buf_min_days"),
-        _("Connect about every"),
-        _("days"),
+        _("Approximate connection interval (days)"),
         _("BOINC will use this as a hint for buffering work between connections. "
         "BOINC will still use the Internet more frequently if a connection "
         "is available. Default 0.1 days."),
@@ -60,25 +56,20 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
     PrefGroup* limits = AddGroup(_("Bandwidth Limits"));
 
     limits->AddPreference(new PrefValueText(this,
-        _("max_bytes_sec_up"),
-        _("Maximum upload rate"),
-        _("Kbytes/sec"),
-        _("Zero means upload is unrestricted. Default unrestricted."),
+        _("Maximum upload rate (Kbytes/sec)"),
+        _("Zero means upload rate is unrestricted. Default unrestricted."),
         CValidateNumber<double>(&m_preferences->max_bytes_sec_up))
     );
 
     limits->AddPreference(new PrefValueText(this,
-        _("max_bytes_sec_down"),
-        _("Maximum download rate"),
-        _("Kbytes/sec"),
-        _("Zero means download is unrestricted. Default unrestricted."),
+        _("Maximum download rate (Kbytes/sec)"),
+        _("Zero means download rate is unrestricted. Default unrestricted."),
         CValidateNumber<double>(&m_preferences->max_bytes_sec_down))
     );
 
     PrefGroup* errors = AddGroup(_("Error Checking"));
 
     errors->AddPreference(new PrefValueBool(this,
-        _("dont_verify_images"),
         _("Skip image file verification"),
         _("Some dialup Internet Service Providers compress image downloads on the fly. "
         "If you can't use a better ISP, use this option to ignore the modified images "
