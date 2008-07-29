@@ -2145,6 +2145,14 @@
 					RelativePath="..\clientgui\ValidateURL.h"
 					>
 				</File>
+				<File
+					RelativePath="..\clientgui\ValidateYesNo.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\clientgui\ValidateYesNo.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Dialogs"

@@ -101,6 +101,7 @@ boinc_gui_SOURCES = \
     ValidateNumber.cpp \
     ValidateTime.cpp \
     ValidateURL.cpp \
+    ValidateYesNo.cpp \
     ViewMessages.cpp \
     ViewProjects.cpp \
     ViewResources.cpp \

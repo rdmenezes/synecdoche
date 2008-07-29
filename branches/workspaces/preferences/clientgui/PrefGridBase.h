@@ -22,7 +22,7 @@
 
 #include "prefs.h"
 #include "PrefNodeBase.h"
-#include "ValidateBool.h"
+#include "ValidateYesNo.h"
 #include "ValidateNumber.h"
 #include "ValidateTime.h"
 
@@ -42,8 +42,6 @@ protected:
 
     PrefGroup*      AddGroup(const wxString& title);
     void            AddPreference(PrefValueBase* pref);
-
-    GLOBAL_PREFS*   m_preferences;
 
 private:
     int GetTotalSize() const;
@@ -82,7 +80,8 @@ protected:
         PrefValueBase(
             PrefGridBase* parent,
             const wxString& label,
-            const wxString& helpText
+            const wxString& helpText,
+            const wxValidator& val
         );
 
         virtual wxPanel* CreateControls();
@@ -98,6 +97,7 @@ protected:
         PrefGridBase*   m_grid;
         wxString        m_label;
         wxString        m_helpText;
+        wxValidator*    m_validator;
 
         wxPanel*        m_labelPanel;
         wxStaticText* m_labelCtrl;
@@ -138,7 +138,7 @@ protected:
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
-            const CValidateBool& val
+            const ValidateYesNo& val
         );
 
         virtual wxPanel* CreateControls();

@@ -206,7 +206,7 @@ bool CValidateTimeSpan::ParseTimeSpan(wxString timeStr, TIME_SPAN* span) {
     double start = 0.0, end = 0.0;
 
     // Strip out all white space
-    wxRegEx ws = wxT("[[:space:]]+");
+    wxRegEx ws(wxT("[[:space:]]+"));
     ws.ReplaceAll(&timeStr, wxEmptyString);
 
     // Accept localised and non-localised versions.
@@ -220,7 +220,7 @@ bool CValidateTimeSpan::ParseTimeSpan(wxString timeStr, TIME_SPAN* span) {
             valid = true;
     } else {
         // Regex time!
-        wxRegEx spanTemplate = wxT("^([[:digit:]]+:[[:digit:]]+)-([[:digit:]]+:[[:digit:]]+$)");
+        wxRegEx spanTemplate(wxT("^([[:digit:]]+:[[:digit:]]+)-([[:digit:]]+:[[:digit:]]+$)"));
         if (spanTemplate.Matches(timeStr)) {
             
             wxString startStr = spanTemplate.GetMatch(timeStr, 1);
