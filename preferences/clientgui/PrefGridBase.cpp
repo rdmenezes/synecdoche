@@ -113,12 +113,13 @@ PrefGridBase::PrefValueBase::PrefValueBase(
 }
 
 PrefGridBase::PrefValueBase::PrefValueBase(
-            PrefGridBase* parent,
-            const wxString& label,
-            const wxString& helpText
-            ) : wxEvtHandler(), m_grid(parent), m_label(label), m_helpText(helpText)
+    PrefGridBase* parent,
+    const wxString& label,
+    const wxString& helpText,
+    const wxValidator& val
+    ) : wxEvtHandler(), m_grid(parent), m_label(label), m_helpText(helpText)
 {
-
+    m_validator = (wxValidator*) val.Clone();
 }
 
 
@@ -193,12 +194,14 @@ void PrefGridBase::PrefValueBase::Deselect() {
 void PrefGridBase::PrefValueBase::OnClick(wxMouseEvent& event) {
 
     m_controlPanel->SetFocus();
+    event.Skip();
 }
 
 
 void PrefGridBase::PrefValueBase::OnFocus(wxFocusEvent& event) {
 
     Select();
+    event.Skip();
 }
 // PrefValueText implementation
 
@@ -217,7 +220,7 @@ PrefGridBase::PrefValueText::PrefValueText(
             const wxString& helpText,
             const wxTextValidator& val
             ) : PrefGridBase::PrefValueBase(
-            parent, label, helpText)
+            parent, label, helpText, val)
 {
 
 }
@@ -225,7 +228,8 @@ PrefGridBase::PrefValueText::PrefValueText(
 wxPanel* PrefGridBase::PrefValueText::CreateControls() {
     PrefValueBase::CreateControls();
 
-    m_text = new wxTextCtrl(m_controlPanel, wxID_ANY, _("Flibble"), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    m_text = new wxTextCtrl(m_controlPanel, wxID_ANY, wxEmptyString,
+        wxDefaultPosition, wxDefaultSize, wxBORDER_NONE, *m_validator);
 
     m_text->SetMinSize(wxSize(m_text->GetMinSize().GetX(), m_labelPanel->GetSize().GetY() - 6));
 
@@ -253,9 +257,9 @@ PrefGridBase::PrefValueBool::PrefValueBool(
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
-            const CValidateBool& val
+            const ValidateYesNo& val
             ) : PrefGridBase::PrefValueBase(
-            parent, label, helpText)
+            parent, label, helpText, val)
 {
 
 }
@@ -268,13 +272,20 @@ wxPanel* PrefGridBase::PrefValueBool::CreateControls() {
     choices.Add( _("No") );
 
     m_combo = new wxOwnerDrawnComboBox (m_controlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-        choices, wxODCB_DCLICK_CYCLES | wxBORDER_NONE);
+        choices, wxODCB_DCLICK_CYCLES | wxCB_READONLY | wxBORDER_NONE);
+
+    // There is a bug in wxComboCtrl::SetValidator().
+    m_combo->wxControl::SetValidator(*m_validator);
 
     m_combo->SetMinSize(wxSize(m_combo->GetMinSize().GetX(), m_labelPanel->GetSize().GetY()));
 
     wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
     s->Add(m_combo, 0, wxALL | wxEXPAND, 0);
     m_controlPanel->SetSizer(s);
+
+
+    m_combo->Connect(wxEVT_LEFT_DOWN,
+        wxMouseEventHandler(PrefGridBase::PrefValueBase::OnClick), 0, this);
 
     m_combo->Connect(wxEVT_SET_FOCUS,
         wxFocusEventHandler(PrefGridBase::PrefValueBase::OnFocus), 0, this);

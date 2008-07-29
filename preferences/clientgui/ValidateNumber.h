@@ -158,7 +158,7 @@ bool CValidateNumber<T>::TransferFromWindow() {
 template<class T>
 bool CValidateNumber<T>::Parse(const wxString& value, T& result) {
 
-    std::istringstream iss(value.c_str());
+    std::basic_istringstream<wxChar> iss(value.c_str());
     iss >> result;
 
     if (! iss.fail()) {
