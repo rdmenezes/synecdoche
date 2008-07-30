@@ -34,15 +34,15 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
 
     connect->AddPreference(new PrefValueBool(this,
         _("Confirm before connecting to Internet"),
-        _("BOINC will only try and get an Internet connection when it needs one. "
-        "Default true."),
+        _("BOINC will only try and get an Internet connection when it needs one."),
+        _("Yes"),
         ValidateYesNo(&m_preferences->confirm_before_connecting))
     );
 
     connect->AddPreference(new PrefValueBool(this,
         _("Disconnect when done"),
-        _("BOINC will only disconnect if it initiated the Internet connection. "
-        "Default false."),
+        _("BOINC will only disconnect if it initiated the Internet connection."),
+        _("No"),
         ValidateYesNo(&m_preferences->hangup_if_dialed))
     );
 
@@ -50,7 +50,8 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("Approximate connection interval (days)"),
         _("BOINC will use this as a hint for buffering work between connections. "
         "BOINC will still use the Internet more frequently if a connection "
-        "is available. Default 0.1 days."),
+        "is available."),
+        _("0.1 days."),
         CValidateNumber<double>(&m_preferences->work_buf_min_days))
     );
 
@@ -58,13 +59,15 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
 
     limits->AddPreference(new PrefValueText(this,
         _("Maximum upload rate (Kbytes/sec)"),
-        _("Zero means upload rate is unrestricted. Default unrestricted."),
+        _("Zero means upload rate is unrestricted."),
+        _("Unrestricted."),
         CValidateNumber<double>(&m_preferences->max_bytes_sec_up))
     );
 
     limits->AddPreference(new PrefValueText(this,
         _("Maximum download rate (Kbytes/sec)"),
-        _("Zero means download rate is unrestricted. Default unrestricted."),
+        _("Zero means download rate is unrestricted."),
+        _("Unrestricted."),
         CValidateNumber<double>(&m_preferences->max_bytes_sec_down))
     );
 
@@ -74,7 +77,8 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("Skip image file verification"),
         _("Some dialup Internet Service Providers compress image downloads on the fly. "
         "If you can't use a better ISP, use this option to ignore the modified images "
-        "until you can switch to a better ISP. Default false."),
+        "until you can switch to a better ISP."),
+        _("No"),
         ValidateYesNo(&m_preferences->dont_verify_images))
     );
 }

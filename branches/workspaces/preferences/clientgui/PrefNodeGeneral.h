@@ -20,11 +20,11 @@
 #ifndef _PREFNODEGENERAL_H_
 #define _PREFNODEGENERAL_H_
 
-#include "PrefNodeBase.h"
+#include "PrefGridBase.h"
 
 struct GLOBAL_PREFS;
 
-class PrefNodeGeneral : public PrefNodeBase {
+class PrefNodeGeneral : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeGeneral)
 
