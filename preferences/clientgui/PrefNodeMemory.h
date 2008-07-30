@@ -22,7 +22,7 @@
 
 struct GLOBAL_PREFS;
 
-class PrefNodeMemory : public PrefNodeBase {
+class PrefNodeMemory : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeMemory)
 

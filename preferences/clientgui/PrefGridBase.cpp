@@ -39,7 +39,7 @@ PrefGridBase::PrefGridBase(wxWindow* parent, GLOBAL_PREFS* preferences)
     m_groupSizer = new wxGridBagSizer(1, 1);
 
     m_groupSizer->AddGrowableCol(0, 1);
-    m_groupSizer->AddGrowableCol(1, 1);
+    //m_groupSizer->AddGrowableCol(1, 1);
 
     SetSizer(m_groupSizer);
 }
@@ -116,8 +116,9 @@ PrefGridBase::PrefValueBase::PrefValueBase(
     PrefGridBase* parent,
     const wxString& label,
     const wxString& helpText,
+    const wxString& default,
     const wxValidator& val
-    ) : wxEvtHandler(), m_grid(parent), m_label(label), m_helpText(helpText)
+    ) : wxEvtHandler(), m_grid(parent), m_label(label), m_helpText(helpText), m_default(default)
 {
     m_validator = (wxValidator*) val.Clone();
 }
@@ -135,7 +136,7 @@ wxPanel* PrefGridBase::PrefValueBase::CreateControls() {
 
     m_labelCtrl = new wxStaticText(m_labelPanel, wxID_ANY, m_label, wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
-    s->Add(m_labelCtrl, 0, wxALL | wxEXPAND, 3);
+    s->Add(m_labelCtrl, 0, wxALL, 3);
     m_labelPanel->SetSizer(s);
 
     m_labelPanel->SetHelpText(m_helpText);
@@ -218,9 +219,10 @@ PrefGridBase::PrefValueText::PrefValueText(
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
+            const wxString& default,
             const wxTextValidator& val
             ) : PrefGridBase::PrefValueBase(
-            parent, label, helpText, val)
+            parent, label, helpText, default, val)
 {
 
 }
@@ -231,7 +233,7 @@ wxPanel* PrefGridBase::PrefValueText::CreateControls() {
     m_text = new wxTextCtrl(m_controlPanel, wxID_ANY, wxEmptyString,
         wxDefaultPosition, wxDefaultSize, wxBORDER_NONE, *m_validator);
 
-    m_text->SetMinSize(wxSize(m_text->GetMinSize().GetX(), m_labelPanel->GetSize().GetY() - 6));
+    m_text->SetMinSize(wxSize(-1, m_labelPanel->GetSize().GetY() - 6));
 
     wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
     s->Add(m_text, 0, wxALL | wxEXPAND, 3);
@@ -257,9 +259,10 @@ PrefGridBase::PrefValueBool::PrefValueBool(
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
+            const wxString& default,
             const ValidateYesNo& val
             ) : PrefGridBase::PrefValueBase(
-            parent, label, helpText, val)
+            parent, label, helpText, default, val)
 {
 
 }
@@ -277,7 +280,7 @@ wxPanel* PrefGridBase::PrefValueBool::CreateControls() {
     // There is a bug in wxComboCtrl::SetValidator().
     m_combo->wxControl::SetValidator(*m_validator);
 
-    m_combo->SetMinSize(wxSize(m_combo->GetMinSize().GetX(), m_labelPanel->GetSize().GetY()));
+    m_combo->SetMinSize(wxSize(m_labelPanel->GetSize().GetY() * 3, m_labelPanel->GetSize().GetY()));
 
     wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
     s->Add(m_combo, 0, wxALL | wxEXPAND, 0);

@@ -23,34 +23,32 @@
 #include "PrefNodeGeneral.h"
 
 
-IMPLEMENT_DYNAMIC_CLASS(PrefNodeGeneral, PrefNodeBase)
+IMPLEMENT_DYNAMIC_CLASS(PrefNodeGeneral, PrefGridBase)
 
 PrefNodeGeneral::PrefNodeGeneral(wxWindow* parent, GLOBAL_PREFS* preferences)
-: PrefNodeBase(parent, preferences) {
+: PrefGridBase(parent, preferences) {
 
     PrefGroup* work = AddGroup(_("Work Buffer"));
 
     work->AddPreference(new PrefValueText(this,
-        _("work_buf_additional_days"),
-        _("Buffer at least"),
-        _("days (Max 10)"),
-        _("BOINC will try to buffer at least this much work at all times. "
+        _("Minimum size of work buffer (days)"),
+        _("Try to buffer at least this much work at all times. "
         "This is in addition to the work buffered based on your network "
         "settings. The maximum buffer is 10 days, but some projects may "
-        "have a lower limit. Default 0.25 days."),
+        "have a lower limit."),
+        _("0.25 days"),
         CValidateNumber<double>(&m_preferences->work_buf_additional_days, 0.0, 10.0))
     );
 
     PrefGroup* switching = AddGroup(_("Application Switching"));
 
     switching->AddPreference(new PrefValueText(this,
-        _("cpu_scheduling_period_minutes"),
-        _("Switch between applications every"),
-        _("minutes"),
-        _("If you are attached to more than one project, BOINC uses this "
-        "value to balance the load between your projects. BOINC will not "
+        _("Interval between switching applications (minutes)"),
+        _("If you are attached to more than one project, this value is "
+        "used to balance the load between your projects. Tasks will not "
         "switch exactly at this interval, it is only used as a guide. "
-        "Default 60 minutes."),
+        "If you are attached to a single project, this value is ignored."),
+        _("60 minutes"),
         CValidateNumber<double>(&m_preferences->cpu_scheduling_period_minutes))
     );
 }

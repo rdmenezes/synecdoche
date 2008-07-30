@@ -19,46 +19,43 @@
 
 #include "stdwx.h"
 #include "prefs.h"
-#include "PrefNodeBase.h"
+#include "PrefGridBase.h"
 #include "PrefNodeMemory.h"
 
 
-IMPLEMENT_DYNAMIC_CLASS(PrefNodeMemory, PrefNodeBase)
+IMPLEMENT_DYNAMIC_CLASS(PrefNodeMemory, PrefGridBase)
 
 PrefNodeMemory::PrefNodeMemory(wxWindow* parent, GLOBAL_PREFS* preferences)
-: PrefNodeBase(parent, preferences) {
+: PrefGridBase(parent, preferences) {
 
     PrefGroup* work = AddGroup(_("Memory Limits"));
 
     work->AddPreference(new PrefValueText(this,
-        _("ram_max_used_busy_frac"),
-        _("When computer is in use, use no more than"),
-        _("% total memory"),
-        _("Limits the amount of RAM used by BOINC applications when your computer "
+        _("Maximum memory to use when computer is in use"),
+        _("Limits the amount of RAM used by project applications when your computer "
         "is in use (i.e. when there has been recent mouse or keyboard activity). "
-        "Setting this to a low value lets you run BOINC all the time without "
-        "impacting your computer's performance. Default 50%."),
+        "Setting this to a low value lets you process all the time without "
+        "impacting your computer's performance."),
+        _("50%"),
         CValidatePercent<double>(&m_preferences->ram_max_used_busy_frac))
     );
 
     work->AddPreference(new PrefValueText(this,
-        _("ram_max_used_idle_frac"),
-        _("When computer is idle, use no more than"),
-        _("% total memory"),
-        _("Limits the amount of RAM used by BOINC applications when your computer "
-        "is not in use. Default 90%."),
+        _("Maximum memory to use when computer is idle"),
+        _("Limits the amount of RAM used by project applications when your computer "
+        "is not in use."),
+        _("90%"),
         CValidatePercent<double>(&m_preferences->ram_max_used_idle_frac))
     );
 
     PrefGroup* switching = AddGroup(_("Application Switching"));
 
     switching->AddPreference(new PrefValueBool(this,
-        _("leave_apps_in_memory"),
         _("Leave applications in memory while suspended"),
         _("This improves CPU effectiveness at the cost of virtual memory. This "
-        "option is not relevant if you are only attached to one project. "
-        "Default false."),
-        CValidateBool(&m_preferences->leave_apps_in_memory))
+        "option is not relevant if you are only attached to one project."),
+        _("No"),
+        ValidateYesNo(&m_preferences->leave_apps_in_memory))
     );
 
 }

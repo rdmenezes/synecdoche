@@ -81,6 +81,7 @@ protected:
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
+            const wxString& default,
             const wxValidator& val
         );
 
@@ -97,10 +98,11 @@ protected:
         PrefGridBase*   m_grid;
         wxString        m_label;
         wxString        m_helpText;
+        wxString        m_default;
         wxValidator*    m_validator;
 
         wxPanel*        m_labelPanel;
-        wxStaticText* m_labelCtrl;
+        wxStaticText*   m_labelCtrl;
         wxPanel*        m_controlPanel;
 
     };
@@ -117,6 +119,7 @@ protected:
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
+            const wxString& default,
             const wxTextValidator& val
         );
 
@@ -138,6 +141,7 @@ protected:
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
+            const wxString& default,
             const ValidateYesNo& val
         );
 
