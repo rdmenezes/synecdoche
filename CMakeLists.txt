@@ -25,9 +25,10 @@ MACRO(AC_CHECK_TYPE_SIZE TYPE)
 	CHECK_TYPE_SIZE(${TYPE} ${l_type_varname})
 ENDMACRO(AC_CHECK_TYPE_SIZE)
 
-AC_CHECK_INCLUDE_FILE(malloc.h)
-
-FOREACH(inc "types" "socket" "resource" "param" "mount" "statvfs" "statfs")
+FOREACH(inc "csignal" "signal.h" "malloc.h")
+	AC_CHECK_INCLUDE_FILE(${inc})
+ENDFOREACH(inc)
+FOREACH(inc "types" "ipc" "socket" "resource" "param" "mount" "statvfs" "statfs" "signal" "wait")
 	AC_CHECK_INCLUDE_FILE(sys/${inc}.h)
 ENDFOREACH(inc)
 
