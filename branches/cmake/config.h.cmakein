@@ -21,3 +21,4 @@
 
 #cmakedefine BOINC_SOCKLEN_T @BOINC_SOCKLEN_T@
 
+#define HOSTTYPE "unknown-unknown"
