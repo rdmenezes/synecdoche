@@ -12,7 +12,7 @@ ADD_LIBRARY(boinc STATIC
 	coproc.C diagnostics.C proxy_info.C
 	filesys.C mfile.C miofile.C network.C
 	parse.C hostinfo.C prefs.C
-	md5.c md5_file.C
+	md5.c md5_file.C crypt.C
 	gui_rpc_client.C gui_rpc_client_ops.C gui_rpc_client_print.C
 	${PLATFORM_LIB_SOURCES})
 
