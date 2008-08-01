@@ -5,7 +5,7 @@ ADD_EXECUTABLE(boinc_client main.C
 	client_msgs.C log_flags.C
 	file_xfer.C pers_file_xfer.C http_curl.C gui_http.C 
 	sandbox.C auto_update.C
-	net_stats.C time_stats.C
+	net_stats.C time_stats.C hostinfo_network.C
 	whetstone.C dhrystone.C dhrystone2.C
 	app_graphics.C
 	)
