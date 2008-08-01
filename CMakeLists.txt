@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.4)
 INCLUDE (CheckFunctionExists)
 INCLUDE (CheckIncludeFile)
 INCLUDE (CheckTypeSize)
