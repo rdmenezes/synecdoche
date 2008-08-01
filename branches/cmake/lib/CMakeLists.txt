@@ -6,6 +6,8 @@ ENDIF(WIN32)
 
 ADD_LIBRARY(boinc STATIC
 	util.C str_util.C
+	shmem.C app_ipc.C
+	coproc.C
 	filesys.C mfile.C miofile.C network.C
 	parse.C hostinfo.C prefs.C
 	md5.c md5_file.C
