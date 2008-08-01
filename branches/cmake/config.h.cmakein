@@ -1,13 +1,20 @@
 #include "version.h"
 
+#cmakedefine HAVE_CSIGNAL 1
+
 #cmakedefine HAVE_MALLOC_H 1
+#cmakedefine HAVE_SIGNAL_H 1
+
 #cmakedefine HAVE_SYS_TYPES_H 1
+#cmakedefine HAVE_SYS_IPC_H 1
 #cmakedefine HAVE_SYS_SOCKET_H 1
 #cmakedefine HAVE_SYS_RESOURCE_H 1
 #cmakedefine HAVE_SYS_PARAM_H 1
 #cmakedefine HAVE_SYS_MOUNT_H 1
 #cmakedefine HAVE_SYS_STATVFS_H 1
 #cmakedefine HAVE_SYS_STATFS_H 1
+#cmakedefine HAVE_SYS_SIGNAL_H 1
+#cmakedefine HAVE_SYS_WAIT_H 1
 
 /* XXX gotta define other stuff from str_util.h too */
 #cmakedefine HAVE_STRCASESTR
