@@ -28,7 +28,7 @@ ENDMACRO(AC_CHECK_TYPE_SIZE)
 FOREACH(inc "csignal" "signal.h" "malloc.h" "unistd.h" "netdb.h" "arpa/inet.h" "netinet/in.h")
 	AC_CHECK_INCLUDE_FILE(${inc})
 ENDFOREACH(inc)
-FOREACH(inc "types" "ipc" "socket" "resource" "param" "mount" "statvfs" "statfs" "signal" "wait")
+FOREACH(inc "types" "ipc" "socket" "resource" "param" "mount" "statvfs" "statfs" "signal" "wait" "systeminfo" "sysctl" "utsname")
 	AC_CHECK_INCLUDE_FILE(sys/${inc}.h)
 ENDFOREACH(inc)
 
