@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -99,9 +100,8 @@ void CLIENT_STATE::detect_platforms() {
 #endif
 
     if (config.no_alt_platform) {
-        PLATFORM p = platforms[0];
-        platforms.clear();
-        platforms.push_back(p);
+        //delete all but first platform (primary)
+        platforms.resize(1);
     }
 
     // add platforms listed in cc_config.xml AFTER the above.
@@ -135,7 +135,7 @@ void CLIENT_STATE::write_platforms(PROJECT* p, MIOFILE& mf) {
 bool CLIENT_STATE::is_supported_platform(const char* p) {
     for (unsigned int i=0; i<platforms.size(); i++) {
         PLATFORM& platform = platforms[i];
-        if (!strcmp(p, platform.name.c_str())) {
+        if (platform.name == p) {
             return true;
         }
     }
