@@ -32,6 +32,7 @@ IMPLEMENT_DYNAMIC_CLASS(PrefGridBase, PrefNodeBase)
 PrefGridBase::PrefGridBase(wxWindow* parent, GLOBAL_PREFS* preferences)
 : PrefNodeBase(parent, preferences) {
 
+    //SetAutoLayout(true);
     m_selected = 0;
 
     SetScrollRate(10, 10);
@@ -116,9 +117,9 @@ PrefGridBase::PrefValueBase::PrefValueBase(
     PrefGridBase* parent,
     const wxString& label,
     const wxString& helpText,
-    const wxString& default,
+    const wxString& helpDefault,
     const wxValidator& val
-    ) : wxEvtHandler(), m_grid(parent), m_label(label), m_helpText(helpText), m_default(default)
+    ) : wxEvtHandler(), m_grid(parent), m_label(label), m_helpText(helpText), m_default(helpDefault)
 {
     m_validator = (wxValidator*) val.Clone();
 }
@@ -174,7 +175,8 @@ void PrefGridBase::PrefValueBase::Select() {
         m_grid->m_selected = this;
 
         PrefHelpEvent e(PREF_EVT_HELP_CMD, m_grid->GetId());
-        e.SetTrigger(PrefHelpEvent::Focus);
+        e.SetTitle(m_label);
+        e.SetDefault(m_default);
         e.SetEventObject(m_labelPanel);
         m_grid->GetEventHandler()->ProcessEvent(e);
     }
@@ -219,10 +221,10 @@ PrefGridBase::PrefValueText::PrefValueText(
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
-            const wxString& default,
+            const wxString& helpDefault,
             const wxTextValidator& val
             ) : PrefGridBase::PrefValueBase(
-            parent, label, helpText, default, val)
+            parent, label, helpText, helpDefault, val)
 {
 
 }
@@ -259,10 +261,10 @@ PrefGridBase::PrefValueBool::PrefValueBool(
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
-            const wxString& default,
+            const wxString& helpDefault,
             const ValidateYesNo& val
             ) : PrefGridBase::PrefValueBase(
-            parent, label, helpText, default, val)
+            parent, label, helpText, helpDefault, val)
 {
 
 }

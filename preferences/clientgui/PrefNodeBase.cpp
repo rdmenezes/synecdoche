@@ -186,25 +186,25 @@ void PrefNodeBase::PrefValueBase::OnMouseLeave(wxMouseEvent& WXUNUSED(event)) {
     // This is because we don't get events from the child windows, but entering a child window
     // generates a leave event for the parent. Daft, but what can you do?
 
-    wxWindow* parent = GetParent();
-    wxASSERT(parent->IsKindOf(CLASSINFO(PrefNodeBase)));
-    PrefNodeBase* page = wxDynamicCast(parent, PrefNodeBase);
+    //wxWindow* parent = GetParent();
+    //wxASSERT(parent->IsKindOf(CLASSINFO(PrefNodeBase)));
+    //PrefNodeBase* page = wxDynamicCast(parent, PrefNodeBase);
 
-    wxWindow* source = page->GetHelpAtPoint(wxGetMousePosition());
+    //wxWindow* source = page->GetHelpAtPoint(wxGetMousePosition());
 
-    PrefHelpEvent e(PREF_EVT_HELP_CMD, GetId());
-    e.SetTrigger(PrefHelpEvent::Mouse);
-    e.SetEventObject(source);
-    GetEventHandler()->ProcessEvent(e);
+    //PrefHelpEvent e(PREF_EVT_HELP_CMD, GetId());
+    //e.SetTrigger(PrefHelpEvent::Mouse);
+    //e.SetEventObject(source);
+    //GetEventHandler()->ProcessEvent(e);
 }
 
 
 void PrefNodeBase::PrefValueBase::OnFocus(wxChildFocusEvent& WXUNUSED(event)) {
 
-    PrefHelpEvent e(PREF_EVT_HELP_CMD, GetId());
-    e.SetTrigger(PrefHelpEvent::Focus);
-    e.SetEventObject(this);
-    GetEventHandler()->ProcessEvent(e);
+    //PrefHelpEvent e(PREF_EVT_HELP_CMD, GetId());
+    //e.SetTrigger(PrefHelpEvent::Focus);
+    //e.SetEventObject(this);
+    //GetEventHandler()->ProcessEvent(e);
 }
 
 // PrefValueText implementation

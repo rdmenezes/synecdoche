@@ -51,7 +51,7 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("BOINC will use this as a hint for buffering work between connections. "
         "BOINC will still use the Internet more frequently if a connection "
         "is available."),
-        _("0.1 days."),
+        _("0.1 days"),
         CValidateNumber<double>(&m_preferences->work_buf_min_days))
     );
 
@@ -60,14 +60,14 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
     limits->AddPreference(new PrefValueText(this,
         _("Maximum upload rate (Kbytes/sec)"),
         _("Zero means upload rate is unrestricted."),
-        _("Unrestricted."),
+        _("Unrestricted"),
         CValidateNumber<double>(&m_preferences->max_bytes_sec_up))
     );
 
     limits->AddPreference(new PrefValueText(this,
         _("Maximum download rate (Kbytes/sec)"),
         _("Zero means download rate is unrestricted."),
-        _("Unrestricted."),
+        _("Unrestricted"),
         CValidateNumber<double>(&m_preferences->max_bytes_sec_down))
     );
 
