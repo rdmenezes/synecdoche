@@ -39,6 +39,11 @@ PrefFrame::PrefFrame(wxWindow* parent) : wxDialog(parent, ID_ANYDIALOG, _("Prefe
     wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
+
+    SetMinSize(wxSize(500, 400));
+
+    RestoreState();
+
     wxBoxSizer* vShape = new wxBoxSizer(wxVERTICAL);
 
     // Venue controls at the top.
@@ -85,9 +90,7 @@ PrefFrame::PrefFrame(wxWindow* parent) : wxDialog(parent, ID_ANYDIALOG, _("Prefe
     vShape->Add(m_treeBook, 1, wxLEFT | wxRIGHT | wxEXPAND, PREF_DLG_MARGIN);
     vShape->Add(buttonRow, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, PREF_DLG_MARGIN);
 
-    SetSizerAndFit(vShape);
-
-    RestoreState();
+    SetSizer(vShape);
 }
 
 
@@ -118,8 +121,8 @@ bool PrefFrame::RestoreState() {
     if (!pConfig) return false;
 
     pConfig->SetPath(strBaseConfigLocation);
-    pConfig->Read(wxT("Width"), &w, -1);
-    pConfig->Read(wxT("Height"), &h, -1);
+    pConfig->Read(wxT("Width"), &w, 600);
+    pConfig->Read(wxT("Height"), &h, 500);
     this->SetSize(w, h);
 
     return true;

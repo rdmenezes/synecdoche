@@ -81,7 +81,7 @@ protected:
             PrefGridBase* parent,
             const wxString& label,
             const wxString& helpText,
-            const wxString& default,
+            const wxString& helpDefault,
             const wxValidator& val
         );
 

@@ -31,7 +31,6 @@ DEFINE_EVENT_TYPE(PREF_EVT_HELP_CMD)
 IMPLEMENT_DYNAMIC_CLASS(PrefTreeBook, wxPanel)
 
 BEGIN_EVENT_TABLE(PrefTreeBook, wxPanel)
-    EVT_TIMER(wxID_ANY, PrefTreeBook::OnTimer)
     EVT_TREE_SEL_CHANGING(wxID_ANY, PrefTreeBook::OnTreeSelectionChanging)
     PREF_EVT_HELP(wxID_ANY, PrefTreeBook::OnHelp)
 END_EVENT_TABLE()
@@ -48,8 +47,6 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
     pDoc->rpc.get_global_prefs_working_struct(m_preferences, mask);
 
     m_helpSource = 0;
-    m_helpSourceFocus = 0;
-    m_helpSourceMouse = 0;
 
     // Treeview preferences - ratio 1:2
     wxBoxSizer* contentRow = new wxBoxSizer(wxHORIZONTAL);
@@ -57,22 +54,41 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
     // Content placeholder
     m_content = new wxPanel(this);
 
-    m_helpTextCtrl = new wxStaticText(this, wxID_ANY, wxEmptyString,
-        wxDefaultPosition, wxSize(-1, 75), wxBORDER_THEME | wxST_NO_AUTORESIZE);
+    wxPanel* helpPanel = new wxPanel(this, wxID_ANY,
+        wxDefaultPosition, wxDefaultSize, wxBORDER_THEME);
+    helpPanel->SetAutoLayout(true);
+    helpPanel->SetMinSize(wxSize(-1, 100));
 
-    m_helpTextCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
-    m_helpTextCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    helpPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+    helpPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+
+    m_helpTitleCtrl = new wxStaticText(helpPanel, wxID_ANY, wxEmptyString);
+    wxFont font = m_helpTitleCtrl->GetFont();
+    font.SetWeight(wxBOLD);
+    m_helpTitleCtrl->SetFont(font);
+
+    m_helpTextCtrl = new wxStaticText(helpPanel, wxID_ANY, wxEmptyString);
+
+    m_helpDefaultCtrl = new wxStaticText(helpPanel, wxID_ANY, wxEmptyString);
+
+    wxBoxSizer* helpBox = new wxBoxSizer(wxVERTICAL);
+
+    helpBox->Add(m_helpTitleCtrl, 0, wxALL | wxEXPAND, 2);
+    helpBox->Add(m_helpTextCtrl, 0, wxALL | wxEXPAND, 2);
+    helpBox->Add(m_helpDefaultCtrl, 0, wxALL | wxEXPAND, 2);
+
+    helpPanel->SetSizer(helpBox);
 
     wxBoxSizer* contentBox = new wxBoxSizer(wxVERTICAL);
 
     contentBox->Add(m_content, 4, wxEXPAND);
-    contentBox->Add(m_helpTextCtrl, 1, wxEXPAND | wxTOP, 8 );
+    contentBox->Add(helpPanel, 0, wxEXPAND | wxTOP, 8 );
 
     m_tree = new wxTreeCtrl(
         this,
         wxID_ANY,
         wxDefaultPosition,
-        wxSize(200, -1),
+        wxDefaultSize,
         wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT
     );
     wxTreeItemId root = m_tree->AddRoot(_("Preferences"));
@@ -95,40 +111,15 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
     contentRow->Add(m_tree, 1, wxALL | wxEXPAND, 4);
     contentRow->Add(contentBox, 2, wxALL | wxEXPAND, 4);
 
-    SetSizerAndFit(contentRow);
+    SetSizer(contentRow);
 
     RestoreState();
 
-    m_helpTimer = new wxTimer(this);
-    m_helpTimer->Start(250);
 }
 
 
 PrefTreeBook::~PrefTreeBook() {
-    m_helpTimer->Stop();
     SaveState();
-}
-
-
-void PrefTreeBook::OnTimer(wxTimerEvent& WXUNUSED(event)) {
-
-    wxWindow* win = 0;
-    wxPoint p = wxGetMousePosition();
-    if (p != m_mouse) {
-        m_mouse = p;
-        wxRect r = m_content->GetScreenRect();
-
-        if (r.Contains(p)) {
-            if (m_content->IsKindOf(CLASSINFO(PrefNodeBase))) {
-                PrefNodeBase* page = (PrefNodeBase*) m_content;
-                win = page->GetHelpAtPoint(p);
-            }
-        }
-        PrefHelpEvent e(PREF_EVT_HELP_CMD, GetId());
-        e.SetTrigger(PrefHelpEvent::Mouse);
-        e.SetEventObject(win);
-        GetEventHandler()->ProcessEvent(e);
-    }
 }
 
 
@@ -154,6 +145,7 @@ void PrefTreeBook::OnTreeSelectionChanging(wxTreeEvent& event) {
                 m_content->Destroy();
                 TransferDataToWindow();
                 s->Layout();
+                page->Layout();
 
                 m_content = page;
             }
@@ -161,7 +153,6 @@ void PrefTreeBook::OnTreeSelectionChanging(wxTreeEvent& event) {
         }
 
         PrefHelpEvent e(PREF_EVT_HELP_CMD, GetId());
-        e.SetTrigger(PrefHelpEvent::Focus);
         e.SetEventObject(0);
         GetEventHandler()->ProcessEvent(e);
     }
@@ -179,33 +170,26 @@ void PrefTreeBook::OnHelp(PrefHelpEvent& event) {
         source = wxDynamicCast(eo, wxWindow);
     }
 
-    if (event.GetTrigger() == PrefHelpEvent::Focus) {
-        m_helpSourceFocus = source;
-        m_helpSourceMouse = 0;
-        ShowHelpText(source);        
-    } else {
-        if (!source && m_helpSourceFocus) {
-            ShowHelpText(m_helpSourceFocus);
-        } else {
-            ShowHelpText(source);
-        }
-        m_helpSourceMouse = source;
-    }
-}
+    if (source) {
+        if (m_helpSource != source) {
 
+            m_helpTitleCtrl->SetLabel(event.GetTitle());
+            m_helpDefaultCtrl->SetLabel(_("Default: ") + event.GetDefault());
 
-void PrefTreeBook::ShowHelpText(wxWindow* source) {
-
-    if (m_helpSource != source) {
-        if (source) {
             m_helpTextCtrl->SetLabel(source->GetHelpText());
-        } else {
-            m_helpTextCtrl->SetLabel(wxEmptyString);
+            m_helpTextCtrl->GetParent()->Layout();
+            m_helpTextCtrl->Wrap(m_helpTextCtrl->GetSize().GetWidth());
+            m_helpTextCtrl->GetParent()->Layout();
+
+            m_helpSource = source;
         }
+    } else {
+        m_helpTitleCtrl->SetLabel(wxEmptyString);
+        m_helpTextCtrl->SetLabel(wxEmptyString);
+        m_helpDefaultCtrl->SetLabel(wxEmptyString);
     }
-    m_helpSource = source;
-    m_mouse = wxGetMousePosition();
 }
+
 
 bool PrefTreeBook::SaveState() {
 

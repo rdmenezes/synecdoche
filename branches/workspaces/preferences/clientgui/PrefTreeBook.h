@@ -38,21 +38,21 @@ private:
 class PrefHelpEvent: public wxCommandEvent {
 public:
     PrefHelpEvent(wxEventType commandType = wxEVT_NULL, int id = 0) : wxCommandEvent(commandType, id) {}
-    PrefHelpEvent(const PrefHelpEvent& event) : wxCommandEvent(event), m_trigger(event.m_trigger) {}
+    PrefHelpEvent(const PrefHelpEvent& event)
+        : wxCommandEvent(event), m_title(event.m_title), m_default(event.m_default) {}
 
-    enum Trigger {
-        Focus,
-        Mouse,
-    };
+    wxString GetTitle() { return m_title; }
+    void SetTitle(const wxString& title) { m_title = title; }
 
-    Trigger GetTrigger() { return m_trigger; }
-    void SetTrigger(Trigger trigger) { m_trigger = trigger; }
+    wxString GetDefault() { return m_default; }
+    void SetDefault(const wxString& helpDefault) { m_default = helpDefault; }
 
-    // required for sending with wxPostEvent()
+    // Clone required for sending with wxPostEvent()
     wxEvent* Clone() const { return new PrefHelpEvent(*this); }
 
 private:
-    Trigger   m_trigger;
+    wxString m_title;
+    wxString m_default;
 };
 
 DECLARE_EVENT_TYPE(PREF_EVT_HELP_CMD, -1)
@@ -85,20 +85,18 @@ protected:
     bool RestoreState();
     void OnTreeSelectionChanging(wxTreeEvent& event);
     void OnHelp(PrefHelpEvent& event);
-    void ShowHelpText(wxWindow* source);
 
 private:
-    void OnTimer(wxTimerEvent& event);
     bool Find(const wxTreeItemId& root, wxTreeItemId& result, PrefNodeType nodeType);
 
     wxTreeCtrl*     m_tree;
-    wxStaticText*     m_helpTextCtrl;
-    wxWindow*       m_helpSourceFocus;
-    wxWindow*       m_helpSourceMouse;
-    wxWindow*       m_helpSource;
-    wxPoint         m_mouse;
 
-    wxTimer*        m_helpTimer;
+    wxStaticText*   m_helpTitleCtrl;
+    wxStaticText*   m_helpTextCtrl;
+    wxStaticText*   m_helpDefaultCtrl;
+
+    wxWindow*       m_helpSource;
+
     wxWindow*       m_content;
     GLOBAL_PREFS    m_preferences;
 
