@@ -18,7 +18,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 IF(WIN32)
-	SET(PLATFORM_LIB_SOURCES procinfo_win.C win_util.C proc_control.C diagnostics_win.C)
+	SET(PLATFORM_LIB_SOURCES procinfo_win.C win_util.C proc_control.C diagnostics_win.C stackwalker_win.cpp)
 ELSEIF(APPLE)
 	SET(PLATFORM_LIB_SOURCES procinfo_mac.C)
 ELSEIF(UNIX)
@@ -31,7 +31,7 @@ ADD_LIBRARY(boinc STATIC
 	coproc.C diagnostics.C proxy_info.C
 	filesys.C mfile.C miofile.C network.C
 	parse.C hostinfo.C prefs.C
-	md5.c md5_file.C crypt.C
+	md5.c md5_file.C base64.C crypt.C
 	gui_rpc_client.C gui_rpc_client_ops.C gui_rpc_client_print.C
 	${PLATFORM_LIB_SOURCES})
 
