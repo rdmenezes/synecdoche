@@ -18,7 +18,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 IF(WIN32)
-	SET(PLATFORM_LIB_SOURCES win_util.C procinfo_win.C)
+	SET(PLATFORM_LIB_SOURCES procinfo_win.C win_util.C proc_control.C diagnostics_win.C)
 ELSEIF(APPLE)
 	SET(PLATFORM_LIB_SOURCES procinfo_mac.C)
 ELSEIF(UNIX)
