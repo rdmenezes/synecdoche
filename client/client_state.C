@@ -164,13 +164,11 @@ void CLIENT_STATE::show_proxy_info() {
         msg_printf(NULL, MSG_INFO, "Using HTTP proxy %s:%d",
             proxy_info.http_server_name, proxy_info.http_server_port
         );
-    }
-    if (proxy_info.use_socks_proxy) {
+    } else if (proxy_info.use_socks_proxy) {
         msg_printf(NULL, MSG_INFO, "Using SOCKS proxy %s:%d",
             proxy_info.socks_server_name, proxy_info.socks_server_port
         );
-    }
-    if (!proxy_info.use_http_proxy && !proxy_info.use_socks_proxy) {
+    } else {
         msg_printf(NULL, MSG_INFO, "Not using a proxy");
     }
 }
