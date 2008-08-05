@@ -207,6 +207,7 @@ public:
 public:
     CLIENT_STATE();
     void show_host_info();
+    void show_proxy_info();
     int init();
     bool poll_slow_events();
         // Never blocks.

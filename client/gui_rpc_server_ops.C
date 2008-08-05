@@ -334,6 +334,7 @@ static void handle_set_proxy_settings(char* buf, MIOFILE& fout) {
     gstate.proxy_info.parse(in);
     gstate.set_client_state_dirty("Set proxy settings RPC");
     fout.printf("<success/>\n");
+    gstate.show_proxy_info();
 
     // tell running apps to reread app_info file (for F@h)
     //
@@ -1196,4 +1197,3 @@ int GUI_RPC_CONN::handle_rpc() {
     }
     return retval;
 }
-const char *BOINC_RCSID_7bf15dcb49="$Id: gui_rpc_server_ops.C 15282 2008-05-23 19:24:20Z davea $";
