@@ -228,7 +228,7 @@ int HTTP_OP::init_post(
 // This is used for file upload (both get_file_size and file_upload)
 //
 int HTTP_OP::init_post2(
-    const char* url, char* r1, int r1_len, const char* in, double offset
+    const char* url, char* r1, size_t r1_len, const char* in, double offset
 ) {
     int retval;
     double size;

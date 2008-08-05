@@ -88,7 +88,7 @@ public:
     char error_msg[256];    // put Curl error message here
     bool bTempOutfile; // CMC -- flag that outfile is really a tempfile we should delete
     char* req1;
-    int req1_len;
+    size_t req1_len;
     bool bSentHeader;  // CMC -- a flag that I already sent the header
     CURLcode CurlResult;   // CMC -- send up curl result code
 
@@ -135,7 +135,7 @@ public:
     int init_post2(
         const char* url,
         char* req1,     // first part of request.  ALSO USED FOR REPLY
-        int req1_len,
+        size_t req1_len,
         const char* infile, double offset     // infile is NULL if no file sent
     );
     bool http_op_done();
