@@ -159,6 +159,20 @@ void CLIENT_STATE::show_host_info() {
     );
 }
 
+void CLIENT_STATE::show_proxy_info() {
+    if (proxy_info.use_http_proxy) {
+        msg_printf(NULL, MSG_INFO, "Using HTTP proxy %s:%d",
+            proxy_info.http_server_name, proxy_info.http_server_port
+        );
+    } else if (proxy_info.use_socks_proxy) {
+        msg_printf(NULL, MSG_INFO, "Using SOCKS proxy %s:%d",
+            proxy_info.socks_server_name, proxy_info.socks_server_port
+        );
+    } else {
+        msg_printf(NULL, MSG_INFO, "Not using a proxy");
+    }
+}
+
 int CLIENT_STATE::init() {
     int retval;
     unsigned int i;
@@ -230,6 +244,7 @@ int CLIENT_STATE::init() {
     host_info.get_host_info();
     set_ncpus();
     show_host_info();
+    show_proxy_info();
 
     check_clock_reset();
 
@@ -1601,5 +1616,3 @@ void CLIENT_STATE::check_clock_reset() {
 
     // RESULT: could change report_deadline, but not clear how
 }
-
-const char *BOINC_RCSID_e836980ee1 = "$Id: client_state.C 15496 2008-06-26 20:53:51Z davea $";

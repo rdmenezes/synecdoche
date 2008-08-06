@@ -369,7 +369,7 @@ void *CScreensaver::DataManagementProc() {
             continue;
         }
 
-	if (suspend_reason != 0) {
+    if (suspend_reason && !(suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT)) {
             SetError(TRUE, SCRAPPERR_BOINCSUSPENDED);
             if (m_hGraphicsApplication || previous_result_ptr) {
                 // use previous_result_ptr because graphics_app_result_ptr may no longer be valid
