@@ -316,7 +316,7 @@ public:
         // files not specific to apps or work - e.g. icons
     int parse_preferences_for_user_files();
     int parse_project_files(MIOFILE&, bool delete_existing_symlinks);
-    void write_project_files(MIOFILE&);
+    void write_project_files(MIOFILE&) const;
     void link_project_files(bool recreate_symlink_files);
     int write_symlink_for_project_file(FILE_INFO*);
     double project_files_downloaded_time;
@@ -445,7 +445,7 @@ struct APP {
     PROJECT* project;
 
     int parse(MIOFILE&);
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
 };
 
 struct APP_VERSION {
@@ -469,7 +469,7 @@ struct APP_VERSION {
     APP_VERSION(){}
     ~APP_VERSION(){}
     int parse(MIOFILE&);
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
     bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string&);
     void clear_errors();
@@ -496,7 +496,7 @@ struct WORKUNIT {
     WORKUNIT(){}
     ~WORKUNIT(){}
     int parse(MIOFILE&);
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
     bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string&) const;
     void clear_errors();
@@ -556,7 +556,7 @@ struct RESULT {
     int parse_server(MIOFILE&);
     int parse_state(MIOFILE&);
     int parse_name(FILE*, const char* end_tag);
-    int write(MIOFILE&, bool to_server);
+    int write(MIOFILE&, bool to_server) const;
     int write_gui(MIOFILE&);
     bool is_upload_done() const;    // files uploaded?
     void clear_uploaded_flags();
