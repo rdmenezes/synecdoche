@@ -36,7 +36,7 @@
 #include <sys/socket.h>
 #endif
 #include <sys/un.h>
-#include <string.h>
+#include <cstring>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
@@ -170,7 +170,7 @@ static void handle_get_disk_usage(MIOFILE& fout) {
     fout.printf("</disk_usage_summary>\n");
 }
 
-static PROJECT* get_project(char* buf, MIOFILE& fout) {
+static PROJECT* get_project(const char* buf, MIOFILE& fout) {
     string url;
     if (!parse_str(buf, "<project_url>", url)) {
         fout.printf("<error>Missing project URL</error>\n");
@@ -184,7 +184,7 @@ static PROJECT* get_project(char* buf, MIOFILE& fout) {
     return p;
 }
 
-static void handle_result_show_graphics(char* buf, MIOFILE& fout) {
+static void handle_result_show_graphics(const char* buf, MIOFILE& fout) {
     string result_name;
     GRAPHICS_MSG gm;
     ACTIVE_TASK* atp;
@@ -229,7 +229,7 @@ static void handle_result_show_graphics(char* buf, MIOFILE& fout) {
 }
 
 
-static void handle_project_op(char* buf, MIOFILE& fout, const char* op) {
+static void handle_project_op(const char* buf, MIOFILE& fout, const char* op) {
     PROJECT* p = get_project(buf, fout);
     if (!p) {
         fout.printf("<error>no such project</error>\n");
@@ -278,7 +278,7 @@ static void handle_project_op(char* buf, MIOFILE& fout, const char* op) {
     fout.printf("<success/>\n");
 }
 
-static void handle_set_run_mode(char* buf, MIOFILE& fout) {
+static void handle_set_run_mode(const char* buf, MIOFILE& fout) {
     double duration = 0;
     int mode;
     parse_double(buf, "<duration>", duration);
@@ -298,7 +298,7 @@ static void handle_set_run_mode(char* buf, MIOFILE& fout) {
     fout.printf("<success/>\n");
 }
 
-static void handle_set_network_mode(char* buf, MIOFILE& fout) {
+static void handle_set_network_mode(const char* buf, MIOFILE& fout) {
     double duration = 0;
     int mode;
     parse_double(buf, "<duration>", duration);
@@ -323,12 +323,12 @@ static void handle_set_network_mode(char* buf, MIOFILE& fout) {
     fout.printf("<success/>\n");
 }
 
-static void handle_run_benchmarks(char* , MIOFILE& fout) {
+static void handle_run_benchmarks(const char* , MIOFILE& fout) {
     gstate.start_cpu_benchmarks();
     fout.printf("<success/>\n");
 }
 
-static void handle_set_proxy_settings(char* buf, MIOFILE& fout) {
+static void handle_set_proxy_settings(const char* buf, MIOFILE& fout) {
     MIOFILE in;
     in.init_buf_read(buf);
     gstate.proxy_info.parse(in);
@@ -341,7 +341,7 @@ static void handle_set_proxy_settings(char* buf, MIOFILE& fout) {
     gstate.active_tasks.request_reread_app_info();
 }
 
-static void handle_get_proxy_settings(char* , MIOFILE& fout) {
+static void handle_get_proxy_settings(const char* , MIOFILE& fout) {
     gstate.proxy_info.write(fout);
 }
 
@@ -349,7 +349,7 @@ static void handle_get_proxy_settings(char* , MIOFILE& fout) {
 // [ <seqno>n</seqno> ]
 //    return only msgs with seqno > n; if absent or zero, return all
 //
-static void handle_get_messages(char* buf, MIOFILE& fout) {
+static void handle_get_messages(const char* buf, MIOFILE& fout) {
     int seqno=0, i, j;
     unsigned int k;
     MESSAGE_DESC* mdp;
@@ -395,7 +395,7 @@ static void handle_get_messages(char* buf, MIOFILE& fout) {
 //    <filename>XXX</filename>
 // </retry_file_transfer>
 //
-static void handle_file_transfer_op(char* buf, MIOFILE& fout, const char* op) {
+static void handle_file_transfer_op(const char* buf, MIOFILE& fout, const char* op) {
     string filename;
 
     PROJECT* p = get_project(buf, fout);
@@ -436,7 +436,7 @@ static void handle_file_transfer_op(char* buf, MIOFILE& fout, const char* op) {
     fout.printf("<success/>\n");
 }
 
-static void handle_result_op(char* buf, MIOFILE& fout, const char* op) {
+static void handle_result_op(const char* buf, MIOFILE& fout, const char* op) {
     RESULT* rp;
     char result_name[256];
     ACTIVE_TASK* atp;
@@ -477,7 +477,7 @@ static void handle_result_op(char* buf, MIOFILE& fout, const char* op) {
     fout.printf("<success/>\n");
 }
 
-static void handle_get_host_info(char*, MIOFILE& fout) {
+static void handle_get_host_info(const char*, MIOFILE& fout) {
     gstate.host_info.write(fout, false);
 }
 
@@ -500,12 +500,12 @@ static void handle_get_screensaver_tasks(MIOFILE& fout) {
     fout.printf("</handle_get_screensaver_tasks>\n");
 }
 
-static void handle_quit(char*, MIOFILE& fout) {
+static void handle_quit(const char*, MIOFILE& fout) {
     gstate.requested_exit = true;
     fout.printf("<success/>\n");
 }
 
-static void handle_acct_mgr_info(char*, MIOFILE& fout) {
+static void handle_acct_mgr_info(const char*, MIOFILE& fout) {
     fout.printf(
         "<acct_mgr_info>\n"
         "   <acct_mgr_url>%s</acct_mgr_url>\n"
@@ -518,7 +518,7 @@ static void handle_acct_mgr_info(char*, MIOFILE& fout) {
     );
 }
 
-static void handle_get_statistics(char*, MIOFILE& fout) {
+static void handle_get_statistics(const char*, MIOFILE& fout) {
     fout.printf("<statistics>\n");
     for (std::vector<PROJECT*>::iterator i=gstate.projects.begin();
         i!=gstate.projects.end();++i
@@ -567,12 +567,12 @@ static void handle_get_cc_status(GUI_RPC_CONN* gr, MIOFILE& fout) {
     );
 }
 
-static void handle_network_available(char*, MIOFILE& fout) {
+static void handle_network_available(const char*, MIOFILE& fout) {
     net_status.network_available();
     fout.printf("<success/>\n");
 }
 
-static void handle_get_project_init_status(char*, MIOFILE& fout) {
+static void handle_get_project_init_status(const char*, MIOFILE& fout) {
     fout.printf(
         "<get_project_init_status>\n"
         "    <url>%s</url>\n"
@@ -832,7 +832,7 @@ static void handle_get_global_prefs_override(MIOFILE& fout) {
     }
 }
 
-static void handle_set_global_prefs_override(char* buf, MIOFILE& fout) {
+static void handle_set_global_prefs_override(/* const */ char* buf, MIOFILE& fout) {
     char *p, *q=0;
     int retval = ERR_XML_PARSE;
 
@@ -955,7 +955,7 @@ static void handle_set_debts(const char* buf, MIOFILE& fout) {
     fout.printf("<error>No end tag</error>\n");
 }
 
-static void handle_set_cc_config(char* buf, MIOFILE& fout) {
+static void handle_set_cc_config(/* const */ char* buf, MIOFILE& fout) {
     char *p, *q=0;
     int retval = ERR_XML_PARSE;
 
