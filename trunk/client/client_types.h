@@ -570,9 +570,9 @@ struct RESULT {
 
     // stuff related to CPU scheduling
 
-    double estimated_cpu_time(bool for_work_fetch);
-    double estimated_cpu_time_uncorrected();
-    double estimated_cpu_time_remaining(bool for_work_fetch);
+    double estimated_cpu_time(bool for_work_fetch) const;
+    double estimated_cpu_time_uncorrected() const;
+    double estimated_cpu_time_remaining(bool for_work_fetch) const;
     bool computing_done() const;
     bool runnable() const;
         // downloaded, not finished, not suspended, project not suspended

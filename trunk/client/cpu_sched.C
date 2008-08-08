@@ -1389,7 +1389,7 @@ void CLIENT_STATE::request_schedule_cpus(const char* where) {
 
 // Find the active task for a given result
 //
-ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(RESULT* rep) {
+ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* rep) {
     for (unsigned int i = 0; i < active_tasks.active_tasks.size(); i ++) {
         if (active_tasks.active_tasks[i]->result == rep) {
             return active_tasks.active_tasks[i];
