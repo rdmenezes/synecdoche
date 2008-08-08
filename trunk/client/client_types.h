@@ -110,10 +110,10 @@ public:
     const char* get_init_url(bool);
     const char* get_next_url(bool);
     const char* get_current_url(bool);
-    bool is_correct_url_type(bool, std::string&);
+    bool is_correct_url_type(bool, const std::string&) const;
     bool had_failure(int& failnum) const;
     void failure_message(std::string&) const;
-    int merge_info(FILE_INFO&);
+    int merge_info(const FILE_INFO&);
     int verify_file(bool, bool);
     int gzip();     // gzip file and add .gz to name
 };
@@ -135,7 +135,7 @@ struct FILE_REF {
         // for output files: app may not generate file;
         // don't treat as error if file is missing.
     int parse(MIOFILE&);
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
 };
 
 // statistics at a specific day
