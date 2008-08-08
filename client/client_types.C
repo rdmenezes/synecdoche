@@ -520,13 +520,13 @@ void PROJECT::link_project_files(bool recreate_symlink_files) {
     }
 }
 
-void PROJECT::write_project_files(MIOFILE& f) {
+void PROJECT::write_project_files(MIOFILE& f) const {
     unsigned int i;
 
     if (!project_files.size()) return;
     f.printf("<project_files>\n");
     for (i=0; i<project_files.size(); i++) {
-        FILE_REF& fref = project_files[i];
+        const FILE_REF& fref = project_files[i];
         fref.write(f);
     }
     f.printf("</project_files>\n");
@@ -590,7 +590,7 @@ int APP::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int APP::write(MIOFILE& out) {
+int APP::write(MIOFILE& out) const {
     out.printf(
         "<app>\n"
         "    <name>%s</name>\n"
@@ -1125,7 +1125,7 @@ int APP_VERSION::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int APP_VERSION::write(MIOFILE& out) {
+int APP_VERSION::write(MIOFILE& out) const {
     unsigned int i;
     int retval;
 
@@ -1236,7 +1236,7 @@ int FILE_REF::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int FILE_REF::write(MIOFILE& out) {
+int FILE_REF::write(MIOFILE& out) const {
 
     out.printf(
         "    <file_ref>\n"
@@ -1326,7 +1326,7 @@ int WORKUNIT::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int WORKUNIT::write(MIOFILE& out) {
+int WORKUNIT::write(MIOFILE& out) const {
     unsigned int i;
 
     out.printf(
@@ -1541,7 +1541,7 @@ int RESULT::parse_state(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int RESULT::write(MIOFILE& out, bool to_server) {
+int RESULT::write(MIOFILE& out, bool to_server) const {
     unsigned int i;
     FILE_INFO* fip;
     int n, retval;
