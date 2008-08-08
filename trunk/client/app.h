@@ -213,7 +213,7 @@ public:
     typedef std::vector<ACTIVE_TASK*> active_tasks_v;
     active_tasks_v active_tasks;
     ACTIVE_TASK* lookup_pid(int);
-    ACTIVE_TASK* lookup_result(RESULT*);
+    ACTIVE_TASK* lookup_result(const RESULT*);
     void init();
     bool poll();
     void suspend_all(bool leave_apps_in_memory=true);

@@ -104,8 +104,8 @@ public:
     void reset();
     int set_permissions();
     int parse(MIOFILE&, bool from_server);
-    int write(MIOFILE&, bool to_server);
-    int write_gui(MIOFILE&);
+    int write(MIOFILE&, bool to_server) const;
+    int write_gui(MIOFILE&) const;
     int delete_file();      // attempt to delete the underlying file
     const char* get_init_url(bool);
     const char* get_next_url(bool);
