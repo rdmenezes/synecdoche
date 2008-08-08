@@ -111,8 +111,8 @@ public:
     const char* get_next_url(bool);
     const char* get_current_url(bool);
     bool is_correct_url_type(bool, std::string&);
-    bool had_failure(int& failnum);
-    void failure_message(std::string&);
+    bool had_failure(int& failnum) const;
+    void failure_message(std::string&) const;
     int merge_info(FILE_INFO&);
     int verify_file(bool, bool);
     int gzip();     // gzip file and add .gz to name
@@ -470,10 +470,10 @@ struct APP_VERSION {
     ~APP_VERSION(){}
     int parse(MIOFILE&);
     int write(MIOFILE&);
-    bool had_download_failure(int& failnum);
+    bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string&);
     void clear_errors();
-    int api_major_version();
+    int api_major_version() const;
 };
 
 struct WORKUNIT {
@@ -497,8 +497,8 @@ struct WORKUNIT {
     ~WORKUNIT(){}
     int parse(MIOFILE&);
     int write(MIOFILE&);
-    bool had_download_failure(int& failnum);
-    void get_file_errors(std::string&);
+    bool had_download_failure(int& failnum) const;
+    void get_file_errors(std::string&) const;
     void clear_errors();
 };
 
@@ -591,7 +591,7 @@ struct RESULT {
     bool already_selected;
         // used to keep cpu scheduler from scheduling a result twice
         // transient; used only within schedule_cpus()
-    double computation_deadline();
+    double computation_deadline() const;
         // report deadline - prefs.work_buf_min - time slice
     bool rr_sim_misses_deadline;
     bool last_rr_sim_missed_deadline;
@@ -610,9 +610,9 @@ private:
 public:
     MODE();
     void set(int mode, double duration);
-    int get_perm();
-    int get_current();
-	double delay();
+    int get_perm() const;
+    int get_current() const;
+	double delay() const;
 };
 
 // a platform supported by the client.
