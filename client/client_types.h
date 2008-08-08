@@ -393,7 +393,7 @@ public:
 
     int nresults_returned;
         // # of results being returned in current scheduler op
-    const char* get_scheduler_url(int index, double r);
+    const char* get_scheduler_url(int index, double r) const;
         // get scheduler URL with random offset r
     bool checked;
         // temporary used when scanning projects
@@ -415,27 +415,27 @@ public:
     double next_file_xfer_up;
     double next_file_xfer_down;
 
-    double next_file_xfer_time(const bool);
+    double next_file_xfer_time(const bool) const;
     void file_xfer_failed(const bool);
     void file_xfer_succeeded(const bool);
 
     PROJECT();
     ~PROJECT(){}
     void init();
-    void copy_state_fields(PROJECT&);
-    char *get_project_name();
+    void copy_state_fields(const PROJECT&);
+    const char *get_project_name() const;
     int write_account_file();
     int parse_account(FILE*);
     int parse_account_file_venue();
     int parse_account_file();
     int parse_state(MIOFILE&);
-    int write_state(MIOFILE&, bool gui_rpc=false);
+    int write_state(MIOFILE&, bool gui_rpc=false) const;
 
     // statistic of the last x days
     std::vector<DAILY_STATS> statistics;
     int parse_statistics(MIOFILE&);
     int parse_statistics(FILE*);
-    int write_statistics(MIOFILE&, bool gui_rpc=false);
+    int write_statistics(MIOFILE&, bool gui_rpc=false) const;
     int write_statistics_file();
 };
 
