@@ -1017,7 +1017,7 @@ int FILE_INFO::merge_info(FILE_INFO& new_info) {
 // Returns true if the file had an unrecoverable error
 // (couldn't download, RSA/MD5 check failed, etc)
 //
-bool FILE_INFO::had_failure(int& failnum) {
+bool FILE_INFO::had_failure(int& failnum) const {
     if (status != FILE_NOT_PRESENT && status != FILE_PRESENT) {
         failnum = status;
         return true;
@@ -1025,7 +1025,7 @@ bool FILE_INFO::had_failure(int& failnum) {
     return false;
 }
 
-void FILE_INFO::failure_message(string& s) {
+void FILE_INFO::failure_message(string& s) const {
     char buf[1024];
     sprintf(buf,
         "<file_xfer_error>\n"
@@ -1165,7 +1165,7 @@ int APP_VERSION::write(MIOFILE& out) {
     return 0;
 }
 
-bool APP_VERSION::had_download_failure(int& failnum) {
+bool APP_VERSION::had_download_failure(int& failnum) const {
     unsigned int i;
 
     for (i=0; i<app_files.size();i++) {
@@ -1203,7 +1203,7 @@ void APP_VERSION::clear_errors() {
     }
 }
 
-int APP_VERSION::api_major_version() {
+int APP_VERSION::api_major_version() const {
     int v, n;
     n = sscanf(api_version, "%d", &v);
     if (n != 1) return 0;
@@ -1363,7 +1363,7 @@ int WORKUNIT::write(MIOFILE& out) {
     return 0;
 }
 
-bool WORKUNIT::had_download_failure(int& failnum) {
+bool WORKUNIT::had_download_failure(int& failnum) const {
     unsigned int i;
 
     for (i=0;i<input_files.size();i++) {
@@ -1374,7 +1374,7 @@ bool WORKUNIT::had_download_failure(int& failnum) {
     return false;
 }
 
-void WORKUNIT::get_file_errors(string& str) {
+void WORKUNIT::get_file_errors(string& str) const {
     int x;
     unsigned int i;
     FILE_INFO* fip;
@@ -1801,11 +1801,11 @@ void MODE::set(int mode, double duration) {
     }
 }
 
-int MODE::get_perm() {
+int MODE::get_perm() const {
     return perm_mode;
 }
 
-int MODE::get_current() {
+int MODE::get_current() const {
     if (temp_timeout > gstate.now) {
         return temp_mode;
     } else {
@@ -1813,7 +1813,7 @@ int MODE::get_current() {
     }
 }
 
-double MODE::delay() {
+double MODE::delay() const {
     if (temp_timeout > gstate.now) {
         return temp_timeout - gstate.now;
     } else {

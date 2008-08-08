@@ -1496,7 +1496,7 @@ ACTIVE_TASK* CLIENT_STATE::get_task(RESULT* rp) {
 // Results must be complete early enough to report before the report deadline.
 // Not all hosts are connected all of the time.
 //
-double RESULT::computation_deadline() {
+double RESULT::computation_deadline() const {
     return report_deadline - (
         gstate.work_buf_min()
             // Seconds that the host will not be connected to the Internet
