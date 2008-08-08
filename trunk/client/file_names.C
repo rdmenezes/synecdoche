@@ -44,7 +44,7 @@
 
 #include "file_names.h"
 
-void get_project_dir(PROJECT* p, char* path, int len) {
+void get_project_dir(const PROJECT* p, char* path, int len) {
     char buf[1024];
     escape_project_url(p->master_url, buf);
     snprintf(path, len, "%s/%s", PROJECTS_DIR, buf);
@@ -52,8 +52,8 @@ void get_project_dir(PROJECT* p, char* path, int len) {
 
 // Gets the pathname of a file
 //
-void get_pathname(FILE_INFO* fip, char* path, int len) {
-    PROJECT* p = fip->project;
+void get_pathname(const FILE_INFO* fip, char* path, int len) {
+    const PROJECT* p = fip->project;
     char buf[1024];
 
     // for testing purposes, it's handy to allow a FILE_INFO without
@@ -71,28 +71,28 @@ void get_pathname(FILE_INFO* fip, char* path, int len) {
     }
 }
 
-void get_sched_request_filename(PROJECT& project, char* buf, int len) {
+void get_sched_request_filename(const PROJECT& project, char* buf, int len) {
     char url[1024];
 
     escape_project_url(project.master_url, url);
     snprintf(buf, len, "%s%s.xml", SCHED_OP_REQUEST_BASE, url);
 }
 
-void get_sched_reply_filename(PROJECT& project, char* buf, int len) {
+void get_sched_reply_filename(const PROJECT& project, char* buf, int len) {
     char url[1024];
 
     escape_project_url(project.master_url, url);
     snprintf(buf, len, "%s%s.xml", SCHED_OP_REPLY_BASE, url);
 }
 
-void get_master_filename(PROJECT& project, char* buf, int len) {
+void get_master_filename(const PROJECT& project, char* buf, int len) {
     char url[1024];
 
     escape_project_url(project.master_url, url);
     snprintf(buf, len, "%s%s.xml", MASTER_BASE, url);
 }
 
-void job_log_filename(PROJECT& project, char* buf, int len) {
+void job_log_filename(const PROJECT& project, char* buf, int len) {
     char url[1024];
 
     escape_project_url(project.master_url, url);
@@ -107,7 +107,7 @@ void get_slot_dir(int slot, char* path, int len) {
 
 // Create the directory for the project p
 //
-int make_project_dir(PROJECT& p) {
+int make_project_dir(const PROJECT& p) {
     char buf[1024];
     int retval;
 
@@ -141,7 +141,7 @@ int make_project_dir(PROJECT& p) {
     return retval;
 }
 
-int remove_project_dir(PROJECT& p) {
+int remove_project_dir(/* XXX const */ PROJECT& p) {
     char buf[1024];
     int retval;
 
@@ -235,7 +235,7 @@ void delete_old_slot_dirs() {
     dir_close(dirp);
 }
 
-void get_account_filename(char* master_url, char* path) {
+void get_account_filename(const char* master_url, char* path) {
     char buf[1024];
     escape_project_url(master_url, buf);
     sprintf(path, "account_%s.xml", buf);
@@ -289,7 +289,7 @@ bool is_statistics_file(const char* filename) {
     return true;
 }
 
-void get_statistics_filename(char* master_url, char* path) {
+void get_statistics_filename(const char* master_url, char* path) {
     char buf[256];
     escape_project_url(master_url, buf);
     sprintf(path, "statistics_%s.xml", buf);
@@ -304,13 +304,13 @@ bool is_image_file(const char* filename) {
     return false;
 }
 
-void boinc_version_dir(PROJECT& p, VERSION_INFO& vi, char* buf) {
+void boinc_version_dir(const PROJECT& p, const VERSION_INFO& vi, char* buf) {
 	char projdir[1024];
 	get_project_dir(&p, projdir, sizeof(projdir));
     sprintf(buf, "%s/boinc_version_%d_%d_%d", projdir, vi.major, vi.minor, vi.release);
 }
 
-bool is_version_dir(char* buf, VERSION_INFO& vi) {
+bool is_version_dir(const char* buf, VERSION_INFO& vi) {
     int n = sscanf(buf, "boinc_version_%d_%d_%d", &vi.major, &vi.minor, &vi.release);
     return (n==3);
 }
