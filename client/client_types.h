@@ -337,21 +337,21 @@ public:
     // fields used by CPU scheduler and work fetch
     // everything from here on applies only to CPU intensive projects
 
-    bool contactable();
+    bool contactable() const;
         // not suspended and not deferred and not no more work
-    bool runnable();
+    bool runnable() const;
         // has a runnable result
-    bool downloading();
+    bool downloading() const;
         // has a result in downloading state
-    bool potentially_runnable();
+    bool potentially_runnable() const;
         // runnable or contactable or downloading
-    bool nearly_runnable();
+    bool nearly_runnable() const;
         // runnable or downloading
-    bool overworked();
+    bool overworked() const;
         // the project has used too much CPU time recently
-    bool some_download_stalled();
+    bool some_download_stalled() /* XXX const */;
         // a download is backed off
-    bool some_result_suspended();
+    bool some_result_suspended() const;
 
     RR_SIM_PROJECT_STATUS rr_sim_status;
         // temps used in CLIENT_STATE::rr_simulation();
@@ -525,7 +525,7 @@ struct RESULT {
     double intops_per_cpu_sec;   // nonzero if reported by app
     double intops_cumulative;    // nonzero if reported by app
     int _state;                  // state of this result: see lib/common_defs.h
-    inline int state() { return _state; }
+    inline int state() const { return _state; }
     void set_state(int, const char*);
     int exit_status;            // return value from the application
     std::string stderr_out;
@@ -573,15 +573,15 @@ struct RESULT {
     double estimated_cpu_time(bool for_work_fetch);
     double estimated_cpu_time_uncorrected();
     double estimated_cpu_time_remaining(bool for_work_fetch);
-    bool computing_done();
-    bool runnable();
+    bool computing_done() const;
+    bool runnable() const;
         // downloaded, not finished, not suspended, project not suspended
-    bool nearly_runnable();
+    bool nearly_runnable() const;
         // downloading or downloaded,
         // not finished, suspended, project not suspended
-    bool downloading();
+    bool downloading() const;
         // downloading, not downloaded, not suspended, project not suspended
-    bool some_download_stalled();
+    bool some_download_stalled() /* XXX const */;
         // some input or app file is downloading, and backed off
         // i.e. it may be a long time before we can run this result
 
