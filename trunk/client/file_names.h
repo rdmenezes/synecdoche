@@ -35,7 +35,7 @@ extern void get_project_dir(const PROJECT*, char*, int);
 extern void get_slot_dir(int slot, char* path, int len);
 
 extern int make_project_dir(const PROJECT&);
-extern int remove_project_dir(/* XXX const */ PROJECT&);
+extern int remove_project_dir(const PROJECT&);
 extern int make_slot_dir(int);
 extern void delete_old_slot_dirs();
 extern void get_account_filename(const char* master_url, char* path);

@@ -141,7 +141,7 @@ int make_project_dir(const PROJECT& p) {
     return retval;
 }
 
-int remove_project_dir(/* XXX const */ PROJECT& p) {
+int remove_project_dir(const PROJECT& p) {
     char buf[1024];
     int retval;
 
