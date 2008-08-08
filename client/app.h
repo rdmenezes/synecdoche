@@ -72,7 +72,7 @@ public:
 	PROCINFO procinfo;
 
     int slot;   // subdirectory of slots/ where this runs
-    inline int task_state() {
+    inline int task_state() const {
         return _task_state;
     }
     void set_task_state(int, const char*);
@@ -196,7 +196,7 @@ public:
     double est_cpu_time_to_completion(bool for_work_fetch);
     bool read_stderr_file();
     bool finish_file_present();
-    bool supports_graphics();
+    bool supports_graphics() const;
     int write_app_init_file();
     int move_trickle_file();
     int handle_upload_files();
@@ -204,7 +204,7 @@ public:
     int copy_output_files();
 
     int write(MIOFILE&);
-    int write_gui(MIOFILE&);
+    int write_gui(MIOFILE&) const;
     int parse(MIOFILE&);
 };
 
@@ -228,7 +228,7 @@ public:
     bool check_app_exited();
     bool check_rsc_limits_exceeded();
     bool check_quit_timeout_exceeded();
-    bool is_slot_in_use(int);
+    bool is_slot_in_use(int) const;
     bool is_slot_dir_in_use(char*);
     int get_free_slot();
     void send_heartbeats();
@@ -239,7 +239,7 @@ public:
     bool want_network();    // does any task want network?
     void network_available();   // notify tasks that network is available
     void free_mem();
-    bool slot_taken(int);
+    bool slot_taken(int) const;
     void get_memory_usage();
 
     // graphics-related functions

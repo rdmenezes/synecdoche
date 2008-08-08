@@ -130,7 +130,7 @@ void ACTIVE_TASK_SET::graphics_poll() {
     }
 }
 
-bool ACTIVE_TASK::supports_graphics() {
+bool ACTIVE_TASK::supports_graphics() const {
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
     // PowerPC apps emulated on i386 Macs crash if running graphics
     if (powerpc_emulated_on_i386)
