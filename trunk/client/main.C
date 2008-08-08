@@ -91,7 +91,7 @@ static bool boinc_cleanup_completed = false;
 // Display a message to the user.
 // Depending on the priority, the message may be more or less obtrusive
 //
-void show_message(PROJECT *p, char* msg, int priority) {
+void show_message(const PROJECT *p, const char* msg, int priority) {
     const char* x;
     char message[1024];
     time_t now = time(0);
