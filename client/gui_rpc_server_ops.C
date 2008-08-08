@@ -71,7 +71,7 @@ void GUI_RPC_CONN::handle_auth1(MIOFILE& fout) {
     fout.printf("<nonce>%s</nonce>\n", nonce);
 }
 
-int GUI_RPC_CONN::handle_auth2(char* buf, MIOFILE& fout) {
+int GUI_RPC_CONN::handle_auth2(const char* buf, MIOFILE& fout) {
     char nonce_hash[256], nonce_hash_correct[256], buf2[256];
     if (!parse_str(buf, "<nonce_hash>", nonce_hash, 256)) {
         auth_failure(fout);
@@ -585,7 +585,7 @@ static void handle_get_project_init_status(char*, MIOFILE& fout) {
     );
 }
 
-void GUI_RPC_CONN::handle_get_project_config(char* buf, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_get_project_config(const char* buf, MIOFILE& fout) {
     string url;
 
     parse_str(buf, "<url>", url);
@@ -595,7 +595,7 @@ void GUI_RPC_CONN::handle_get_project_config(char* buf, MIOFILE& fout) {
     fout.printf("<success/>\n");
 }
 
-void GUI_RPC_CONN::handle_get_project_config_poll(char*, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_get_project_config_poll(const char*, MIOFILE& fout) {
     if (get_project_config_op.error_num) {
         fout.printf(
             "<project_config>\n"
@@ -608,7 +608,7 @@ void GUI_RPC_CONN::handle_get_project_config_poll(char*, MIOFILE& fout) {
     }
 }
 
-void GUI_RPC_CONN::handle_lookup_account(char* buf, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_lookup_account(const char* buf, MIOFILE& fout) {
     ACCOUNT_IN ai;
 
     ai.parse(buf);
@@ -621,7 +621,7 @@ void GUI_RPC_CONN::handle_lookup_account(char* buf, MIOFILE& fout) {
     fout.printf("<success/>\n");
 }
 
-void GUI_RPC_CONN::handle_lookup_account_poll(char*, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_lookup_account_poll(const char*, MIOFILE& fout) {
     if (lookup_account_op.error_num) {
         fout.printf(
             "<account_out>\n"
@@ -634,7 +634,7 @@ void GUI_RPC_CONN::handle_lookup_account_poll(char*, MIOFILE& fout) {
     }
 }
 
-void GUI_RPC_CONN::handle_create_account(char* buf, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_create_account(const char* buf, MIOFILE& fout) {
     ACCOUNT_IN ai;
 
     ai.parse(buf);
@@ -643,7 +643,7 @@ void GUI_RPC_CONN::handle_create_account(char* buf, MIOFILE& fout) {
     fout.printf("<success/>\n");
 }
 
-void GUI_RPC_CONN::handle_create_account_poll(char*, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_create_account_poll(const char*, MIOFILE& fout) {
     if (create_account_op.error_num) {
         fout.printf(
             "<account_out>\n"
@@ -656,7 +656,7 @@ void GUI_RPC_CONN::handle_create_account_poll(char*, MIOFILE& fout) {
     }
 }
 
-static void handle_project_attach(char* buf, MIOFILE& fout) {
+static void handle_project_attach(const char* buf, MIOFILE& fout) {
     string url, authenticator, project_name;
     bool use_config_file = false;
     bool already_attached = false;
@@ -728,7 +728,7 @@ static void handle_project_attach(char* buf, MIOFILE& fout) {
     fout.printf("<success/>\n");
 }
 
-static void handle_project_attach_poll(char*, MIOFILE& fout) {
+static void handle_project_attach_poll(const char*, MIOFILE& fout) {
     unsigned int i;
     fout.printf(
         "<project_attach_reply>\n"
@@ -748,7 +748,7 @@ static void handle_project_attach_poll(char*, MIOFILE& fout) {
     );
 }
 
-static void handle_acct_mgr_rpc(char* buf, MIOFILE& fout) {
+static void handle_acct_mgr_rpc(const char* buf, MIOFILE& fout) {
     std::string url, name, password;
     std::string password_hash, name_lc;
     bool use_config_file = false;
@@ -779,7 +779,7 @@ static void handle_acct_mgr_rpc(char* buf, MIOFILE& fout) {
     }
 }
 
-static void handle_acct_mgr_rpc_poll(char*, MIOFILE& fout) {
+static void handle_acct_mgr_rpc_poll(const char*, MIOFILE& fout) {
     fout.printf(
         "<acct_mgr_rpc_reply>\n"
     );
@@ -920,7 +920,7 @@ static int set_debt(XML_PARSER& xp) {
     return 0;
 }
 
-static void handle_set_debts(char* buf, MIOFILE& fout) {
+static void handle_set_debts(const char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
     bool is_tag;

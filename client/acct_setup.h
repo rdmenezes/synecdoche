@@ -47,7 +47,7 @@ struct ACCOUNT_IN {
         // during account creation.
     std::string passwd_hash;
 
-    void parse(char*);
+    void parse(const char*);
 };
 
 struct GET_PROJECT_CONFIG_OP: public GUI_HTTP_OP {

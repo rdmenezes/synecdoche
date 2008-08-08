@@ -78,7 +78,7 @@ int PROJECT_INIT::remove() {
     return boinc_delete_file(PROJECT_INIT_FILENAME);
 }
 
-void ACCOUNT_IN::parse(char* buf) {
+void ACCOUNT_IN::parse(const char* buf) {
     url = "";
     email_addr = "";
     passwd_hash = "";
