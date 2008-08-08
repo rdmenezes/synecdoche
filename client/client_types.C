@@ -802,7 +802,7 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
     return ERR_XML_PARSE;
 }
 
-int FILE_INFO::write(MIOFILE& out, bool to_server) {
+int FILE_INFO::write(MIOFILE& out, bool to_server) const {
     unsigned int i;
     int retval;
 
@@ -850,14 +850,15 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) {
         }
     }
     if (!error_msg.empty()) {
-        strip_whitespace(error_msg);
-        out.printf("    <error_msg>\n%s\n</error_msg>\n", error_msg.c_str());
+        std::string error_msg_nows = error_msg;
+        strip_whitespace(error_msg_nows);
+        out.printf("    <error_msg>\n%s\n</error_msg>\n", error_msg_nows.c_str());
     }
     out.printf("</file_info>\n");
     return 0;
 }
 
-int FILE_INFO::write_gui(MIOFILE& out) {
+int FILE_INFO::write_gui(MIOFILE& out) const {
     out.printf(
         "<file_transfer>\n"
         "    <project_url>%s</project_url>\n"
