@@ -199,7 +199,7 @@ int PROJECT::parse_state(MIOFILE& in) {
 
 // Write project information to client state file or GUI RPC reply
 //
-int PROJECT::write_state(MIOFILE& out, bool gui_rpc) {
+int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
     unsigned int i;
     char un[2048], tn[2048];
 
@@ -317,7 +317,7 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) {
 // Some project data is stored in account file, other in client_state.xml
 // Copy fields that are stored in client_state.xml from "p" into "this"
 //
-void PROJECT::copy_state_fields(PROJECT& p) {
+void PROJECT::copy_state_fields(const PROJECT& p) {
     scheduler_urls = p.scheduler_urls;
     safe_strcpy(project_name, p.project_name);
     safe_strcpy(user_name, p.user_name);
@@ -364,14 +364,14 @@ void PROJECT::copy_state_fields(PROJECT& p) {
 
 // Write project statistic to project statistics file
 //
-int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) {
+int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) const {
     out.printf(
         "<project_statistics>\n"
         "    <master_url>%s</master_url>\n",
         master_url
     );
 
-    for (std::vector<DAILY_STATS>::iterator i=statistics.begin();
+    for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
         i!=statistics.end(); ++i
     ) {
         out.printf(
@@ -395,7 +395,7 @@ int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) {
     return 0;
 }
 
-char* PROJECT::get_project_name() {
+const char* PROJECT::get_project_name() const {
     if (strlen(project_name)) {
         return project_name;
     } else {
@@ -403,14 +403,14 @@ char* PROJECT::get_project_name() {
     }
 }
 
-const char* PROJECT::get_scheduler_url(int index, double r) {
+const char* PROJECT::get_scheduler_url(int index, double r) const {
     int n = (int) scheduler_urls.size();
     int ir = (int)(r*n);
     int i = (index + ir)%n;
     return scheduler_urls[i].c_str();
 }
 
-double PROJECT::next_file_xfer_time(const bool is_upload) {
+double PROJECT::next_file_xfer_time(const bool is_upload) const {
     return (is_upload ? next_file_xfer_up : next_file_xfer_down);
 }
 
