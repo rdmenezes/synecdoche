@@ -973,7 +973,7 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
 // Checks if the URL includes the phrase "file_upload_handler"
 // This indicates the URL is an upload url
 // 
-bool FILE_INFO::is_correct_url_type(bool is_upload, std::string& url) {
+bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) const {
     const char* has_str = strstr(url.c_str(), "file_upload_handler");
     if ((is_upload && !has_str) || (!is_upload && has_str)) {
         return false;
@@ -986,7 +986,7 @@ bool FILE_INFO::is_correct_url_type(bool is_upload, std::string& url) {
 // that is already present in the client state file.
 // Potentially changes upload_when_present, max_nbytes, and signed_xml
 //
-int FILE_INFO::merge_info(FILE_INFO& new_info) {
+int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     char buf[256];
     unsigned int i;
 
