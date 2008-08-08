@@ -1672,7 +1672,7 @@ int RESULT::write_gui(MIOFILE& out) {
 // Returns true if the result's output files are all either
 // successfully uploaded or have unrecoverable errors
 //
-bool RESULT::is_upload_done() {
+bool RESULT::is_upload_done() const {
     unsigned int i;
     FILE_INFO* fip;
     int retval;
@@ -1740,9 +1740,9 @@ bool RESULT::some_download_stalled() {
     return false;
 }
 
-FILE_REF* RESULT::lookup_file(FILE_INFO* fip) {
+const FILE_REF* RESULT::lookup_file(const FILE_INFO* fip) const {
     for (unsigned int i=0; i<output_files.size(); i++) {
-        FILE_REF& fr = output_files[i];
+        const FILE_REF& fr = output_files[i];
         if (fr.file_info == fip) return &fr;
     }
     return 0;

@@ -558,9 +558,9 @@ struct RESULT {
     int parse_name(FILE*, const char* end_tag);
     int write(MIOFILE&, bool to_server);
     int write_gui(MIOFILE&);
-    bool is_upload_done();    // files uploaded?
+    bool is_upload_done() const;    // files uploaded?
     void clear_uploaded_flags();
-    FILE_REF* lookup_file(FILE_INFO*);
+    const FILE_REF* lookup_file(const FILE_INFO*) const;
     FILE_INFO* lookup_file_logical(const char*);
     void abort_inactive(int);
         // abort the result if it hasn't started computing yet
