@@ -376,7 +376,7 @@ int ACTIVE_TASK::current_disk_usage(double& size) {
     return 0;
 }
 
-bool ACTIVE_TASK_SET::is_slot_in_use(int slot) {
+bool ACTIVE_TASK_SET::is_slot_in_use(int slot) const {
     unsigned int i;
     for (i=0; i<active_tasks.size(); i++) {
         if (active_tasks[i]->slot == slot) {
@@ -422,7 +422,7 @@ int ACTIVE_TASK_SET::get_free_slot() {
     return ERR_NOT_FOUND;   // probably never get here
 }
 
-bool ACTIVE_TASK_SET::slot_taken(int slot) {
+bool ACTIVE_TASK_SET::slot_taken(int slot) const {
     unsigned int i;
     for (i=0; i<active_tasks.size(); i++) {
         if (active_tasks[i]->slot == slot) return true;
@@ -465,7 +465,7 @@ int ACTIVE_TASK::write(MIOFILE& fout) {
     return 0;
 }
 
-int ACTIVE_TASK::write_gui(MIOFILE& fout) {
+int ACTIVE_TASK::write_gui(MIOFILE& fout) const {
     fout.printf(
         "<active_task>\n"
         "    <active_task_state>%d</active_task_state>\n"
