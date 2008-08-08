@@ -760,13 +760,13 @@ bool RESULT::downloading() const {
     return true;
 }
 
-double RESULT::estimated_cpu_time_uncorrected() {
+double RESULT::estimated_cpu_time_uncorrected() const {
     return wup->rsc_fpops_est/gstate.host_info.p_fpops;
 }
 
 // estimate how long a result will take on this host
 //
-double RESULT::estimated_cpu_time(bool for_work_fetch) {
+double RESULT::estimated_cpu_time(bool for_work_fetch) const {
 #ifdef SIM
     SIM_PROJECT* spp = (SIM_PROJECT*)project;
     if (dual_dcf && for_work_fetch && spp->completions_ratio_mean) {
@@ -776,7 +776,7 @@ double RESULT::estimated_cpu_time(bool for_work_fetch) {
     return estimated_cpu_time_uncorrected()*project->duration_correction_factor;
 }
 
-double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) {
+double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) const {
     if (computing_done()) return 0;
     ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(this);
     if (atp) {
