@@ -46,8 +46,8 @@ ACCT_MGR_OP::ACCT_MGR_OP() {
 // if URL is null, detach from current account manager
 //
 int ACCT_MGR_OP::do_rpc(
-    std::string _url, std::string name, std::string password_hash,
-    bool _via_gui
+    const std::string& _url, const std::string& name,
+    const std::string& password_hash, bool _via_gui
 ) {
     int retval;
     unsigned int i;
