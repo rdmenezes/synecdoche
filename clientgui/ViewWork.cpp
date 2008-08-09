@@ -53,6 +53,60 @@
 #define BTN_RESUME                  2
 #define BTN_ABORT                   3
 
+enum DlgButtons {
+    Cancel      = 0x01,
+    Yes         = 0x02,
+    No          = 0x04,
+    YesToAll    = 0x08,
+};
+
+
+IMPLEMENT_DYNAMIC_CLASS(DlgYesToAll, wxDialog)
+
+BEGIN_EVENT_TABLE (DlgYesToAll, wxDialog)
+    EVT_BUTTON(wxID_ANY, DlgYesToAll::OnButton)
+END_EVENT_TABLE ()
+
+DlgYesToAll::DlgYesToAll(wxWindow* parent, const wxString& caption, const wxString& message, long buttons)
+: wxDialog(parent, wxID_ANY, caption, wxDefaultPosition, wxDefaultSize, wxCAPTION)
+{
+    wxBoxSizer* verticalSizer = new wxBoxSizer(wxVERTICAL);
+
+    wxStaticText* messageLabel = new wxStaticText(this, wxID_STATIC, message);
+    verticalSizer->Add(messageLabel, 0, wxALIGN_LEFT|wxALL, 5);
+
+    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    if (buttons & YesToAll) {
+        wxButton* yesToAllButton = new wxButton(this, wxID_YESTOALL, _("Yes to &All"));
+        buttonSizer->Add(yesToAllButton, 0, wxALL, 5);
+    }
+    if (buttons & Yes) {
+        wxButton* yesButton = new wxButton(this, wxID_YES);
+        yesButton->SetDefault();
+        buttonSizer->Add(yesButton, 0, wxALL, 5);
+    }
+    if (buttons & No) {
+        wxButton* noButton = new wxButton(this, wxID_NO);
+        buttonSizer->Add(noButton, 0, wxALL, 5);
+    }
+    if (buttons & Cancel) {
+        wxButton* cancelButton = new wxButton(this, wxID_CANCEL);
+        buttonSizer->Add(cancelButton, 0, wxALL, 5);
+    }
+
+    verticalSizer->Add(buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+
+    verticalSizer->SetSizeHints(this);
+    SetSizer(verticalSizer);
+}
+
+
+void DlgYesToAll::OnButton(wxCommandEvent& event) {
+
+    EndModal(event.GetId());
+}
+
 
 IMPLEMENT_DYNAMIC_CLASS(CViewWork, CTaskViewBase)
 
@@ -375,6 +429,8 @@ void CViewWork::OnWorkAbort( wxCommandEvent& WXUNUSED(event) ) {
     CMainDocument* pDoc     = wxGetApp().GetDocument();
     CAdvancedFrame* pFrame  = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
     int row;
+    long buttons = Yes | No;
+    bool yesToAll = false;
 
     wxASSERT(pDoc);
     wxASSERT(pFrame);
@@ -388,41 +444,50 @@ void CViewWork::OnWorkAbort( wxCommandEvent& WXUNUSED(event) ) {
 
     pFrame->UpdateStatusText(_("Aborting result..."));
 
+    if (m_pListPane->GetSelectedItemCount() > 1) {
+        buttons |= YesToAll | Cancel;
+    }
+
     row = -1;
     while (1) {
         // Step through all selected items
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
         if (row < 0) break;
-        
-        iResult = m_iSortedIndexes[row];
-        FormatName(iResult, strName);
-        FormatProgress(iResult, strProgress);
-        FormatStatus(iResult, strStatus);
 
-        strMessage.Printf(
-            _("Are you sure you want to abort this task '%s'?\n"
-              "(Progress: %s, Status: %s)"), 
-            strName.c_str(),
-            strProgress.c_str(),
-            strStatus.c_str()
-        );
+        if (!yesToAll) {
+            iResult = m_iSortedIndexes[row];
+            FormatName(iResult, strName);
+            FormatProgress(iResult, strProgress);
+            FormatStatus(iResult, strStatus);
 
-        iAnswer = ::wxMessageBox(
-            strMessage,
-            _("Abort task"),
-            wxYES_NO | wxICON_QUESTION,
-            this
-        );
+            strMessage.Printf(
+                _("Are you sure you want to abort task '%s'?\n"
+                  "(Progress: %s, Status: %s)"), 
+                strName.c_str(),
+                strProgress.c_str(),
+                strStatus.c_str()
+            );
 
-        if (wxYES == iAnswer) {
-            RESULT* result = pDoc->result(m_iSortedIndexes[row]);
-            if (result) {
-                pDoc->WorkAbort(result->project_url, result->name);
+            DlgYesToAll dlg = DlgYesToAll(this, _("Abort task"), strMessage, buttons);
+
+            iAnswer = dlg.ShowModal();
+
+            if (wxID_NO == iAnswer) continue;
+            if (wxID_CANCEL == iAnswer) break;
+
+            if (wxID_YESTOALL == iAnswer) {
+                yesToAll = true;
             }
+        }
+
+        // Abort the result:
+        RESULT* result = pDoc->result(m_iSortedIndexes[row]);
+        if (result) {
+            pDoc->WorkAbort(result->project_url, result->name);
         }
     }
 
-    pFrame->UpdateStatusText(wxT(""));
+    pFrame->UpdateStatusText(wxEmptyString);
 
     UpdateSelection();
     pFrame->FireRefreshView();
