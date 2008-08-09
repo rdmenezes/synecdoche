@@ -95,7 +95,7 @@ public:
         // wall time at the last checkpoint
     double current_cpu_time;
         // most recent CPU time reported by app
-    int current_disk_usage(double&);
+    int current_disk_usage(double&) const;
         // disk used by output files and temp files of this task
     char slot_dir[256];      // directory where process runs (relative)
     char slot_path[512];        // same, absolute
@@ -229,14 +229,14 @@ public:
     bool check_rsc_limits_exceeded();
     bool check_quit_timeout_exceeded();
     bool is_slot_in_use(int) const;
-    bool is_slot_dir_in_use(char*);
-    int get_free_slot();
+    bool is_slot_dir_in_use(const char*) const;
+    int get_free_slot() const;
     void send_heartbeats();
     void send_trickle_downs();
-    void report_overdue();
+    void report_overdue() const;
     void handle_upload_files();
-    void upload_notify_app(FILE_INFO*);
-    bool want_network();    // does any task want network?
+    void upload_notify_app(const FILE_INFO*);
+    bool want_network() const;    // does any task want network?
     void network_available();   // notify tasks that network is available
     void free_mem();
     bool slot_taken(int) const;
