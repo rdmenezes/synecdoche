@@ -358,11 +358,11 @@ int ACTIVE_TASK::move_trickle_file() {
 
 // size of output files and files in slot dir
 //
-int ACTIVE_TASK::current_disk_usage(double& size) {
+int ACTIVE_TASK::current_disk_usage(double& size) const {
     double x;
     unsigned int i;
     int retval;
-    FILE_INFO* fip;
+    const FILE_INFO* fip;
     char path[1024];
 
     retval = dir_size(slot_dir, size);
@@ -386,7 +386,7 @@ bool ACTIVE_TASK_SET::is_slot_in_use(int slot) const {
     return false;
 }
 
-bool ACTIVE_TASK_SET::is_slot_dir_in_use(char* dir) {
+bool ACTIVE_TASK_SET::is_slot_dir_in_use(const char* dir) const {
     char path[1024];
     unsigned int i;
     for (i=0; i<active_tasks.size(); i++) {
@@ -399,7 +399,7 @@ bool ACTIVE_TASK_SET::is_slot_dir_in_use(char* dir) {
 // Get a free slot,
 // and make a slot dir if needed
 //
-int ACTIVE_TASK_SET::get_free_slot() {
+int ACTIVE_TASK_SET::get_free_slot() const {
     int j, retval;
     char path[1024];
 
@@ -748,9 +748,9 @@ bool MSG_QUEUE::timeout(double diff) {
 	return false;
 }
 
-void ACTIVE_TASK_SET::report_overdue() {
+void ACTIVE_TASK_SET::report_overdue() const {
     unsigned int i;
-    ACTIVE_TASK* atp;
+    const ACTIVE_TASK* atp;
 
     for (i=0; i<active_tasks.size(); i++) {
         atp = active_tasks[i];
@@ -806,9 +806,9 @@ void ACTIVE_TASK_SET::handle_upload_files() {
     }
 }
 
-bool ACTIVE_TASK_SET::want_network() {
+bool ACTIVE_TASK_SET::want_network() const {
     for (unsigned int i=0; i<active_tasks.size(); i++) {
-        ACTIVE_TASK* atp = active_tasks[i];
+        const ACTIVE_TASK* atp = active_tasks[i];
         if (atp->want_network) return true;
     }
     return false;
@@ -836,10 +836,10 @@ void ACTIVE_TASK::upload_notify_app(const FILE_INFO* fip, const FILE_REF* frp) {
 // a file upload has finished.
 // If any running apps are waiting for it, notify them
 //
-void ACTIVE_TASK_SET::upload_notify_app(FILE_INFO* fip) {
+void ACTIVE_TASK_SET::upload_notify_app(const FILE_INFO* fip) {
     for (unsigned int i=0; i<active_tasks.size(); i++) {
         ACTIVE_TASK* atp = active_tasks[i];
-        RESULT* rp = atp->result;
+        const RESULT* rp = atp->result;
         const FILE_REF* frp = rp->lookup_file(fip);
         if (frp) {
             atp->upload_notify_app(fip, frp);
