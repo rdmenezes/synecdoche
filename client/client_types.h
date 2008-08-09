@@ -424,7 +424,7 @@ public:
     void init();
     void copy_state_fields(const PROJECT&);
     const char *get_project_name() const;
-    int write_account_file();
+    int write_account_file() const;
     int parse_account(FILE*);
     int parse_account_file_venue();
     int parse_account_file();
@@ -436,7 +436,7 @@ public:
     int parse_statistics(MIOFILE&);
     int parse_statistics(FILE*);
     int write_statistics(MIOFILE&, bool gui_rpc=false) const;
-    int write_statistics_file();
+    int write_statistics_file() const;
 };
 
 struct APP {
