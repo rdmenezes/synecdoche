@@ -624,7 +624,7 @@ void ACTIVE_TASK::free_coprocs() {
 
 // Write XML information about this active task set
 //
-int ACTIVE_TASK_SET::write(MIOFILE& fout) {
+int ACTIVE_TASK_SET::write(MIOFILE& fout) const {
     unsigned int i;
     int retval;
 

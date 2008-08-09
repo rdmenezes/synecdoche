@@ -248,7 +248,7 @@ public:
     void request_reread_prefs(PROJECT*);
     void request_reread_app_info();
 
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
     int parse(MIOFILE&);
 };
 
