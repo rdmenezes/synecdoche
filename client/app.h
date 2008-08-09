@@ -203,7 +203,7 @@ public:
     void upload_notify_app(const FILE_INFO*, const FILE_REF*);
     int copy_output_files();
 
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
     int write_gui(MIOFILE&) const;
     int parse(MIOFILE&);
 };

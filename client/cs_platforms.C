@@ -42,7 +42,7 @@
 
 // return the primary platform id.
 //
-const char* CLIENT_STATE::get_primary_platform() {
+const char* CLIENT_STATE::get_primary_platform() const {
     return platforms[0].name.c_str();
 }
 

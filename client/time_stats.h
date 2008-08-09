@@ -55,7 +55,7 @@ public:
     void update_cpu_efficiency(double cpu_wall_time, double cpu_time);
 
     TIME_STATS();
-    int write(MIOFILE&, bool to_server);
+    int write(MIOFILE&, bool to_server) const;
     int parse(MIOFILE&);
 
     void log_append(const char*, double);
