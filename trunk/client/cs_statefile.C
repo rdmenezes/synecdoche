@@ -641,7 +641,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
             auto_update.write(f);
         }
     }
-    const_cast<ACTIVE_TASK_SET&>(active_tasks).write(f); //XXX HACK
+    active_tasks.write(f);
     f.printf(
         "<platform_name>%s</platform_name>\n"
         "<core_client_major_version>%d</core_client_major_version>\n"
