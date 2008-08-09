@@ -48,9 +48,6 @@
 using std::min;
 using std::string;
 
-#define MAX_PROJ_PREFS_LEN  65536
-    // max length of project-specific prefs
-
 // Return the maximum allowed disk usage as determined by user preferences.
 // There are three different settings in the prefs;
 // return the least of the three.
