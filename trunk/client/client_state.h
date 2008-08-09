@@ -366,7 +366,7 @@ private:
 
 // --------------- cs_platforms.C:
 public:
-    const char* get_primary_platform();
+    const char* get_primary_platform() const;
 private:
     void add_platform(const char*);
     void detect_platforms();
@@ -412,8 +412,8 @@ private:
 public:
     void set_client_state_dirty(const char*);
     int parse_state_file();
-    int write_state(MIOFILE&);
-    int write_state_file();
+    int write_state(MIOFILE&) const;
+    int write_state_file() const;
     int write_state_file_if_needed();
     void check_anonymous();
     int parse_app_info(PROJECT*, FILE*);

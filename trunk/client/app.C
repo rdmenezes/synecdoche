@@ -433,7 +433,7 @@ bool ACTIVE_TASK_SET::slot_taken(int slot) const {
 // <active_task_state> is here for the benefit of 3rd-party software
 // that reads the client state file
 //
-int ACTIVE_TASK::write(MIOFILE& fout) {
+int ACTIVE_TASK::write(MIOFILE& fout) const {
     fout.printf(
         "<active_task>\n"
         "    <project_master_url>%s</project_master_url>\n"

@@ -37,7 +37,7 @@ struct PROXY_INFO {
     char socks5_user_passwd[256];
 
     int parse(MIOFILE&);
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
     void clear();
 };
 
