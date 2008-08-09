@@ -67,7 +67,7 @@ public:
     int write(MIOFILE&, bool suppress_net_info) const;
     int parse_cpu_benchmarks(FILE*);
     int write_cpu_benchmarks(FILE*);
-    void print();
+    void print() const;
 
     bool host_is_running_on_batteries();
 #ifdef __APPLE__
