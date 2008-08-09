@@ -468,7 +468,7 @@ void CViewWork::OnWorkAbort( wxCommandEvent& WXUNUSED(event) ) {
                 strStatus.c_str()
             );
 
-            DlgYesToAll dlg = DlgYesToAll(this, _("Abort task"), strMessage, buttons);
+            DlgYesToAll dlg(this, _("Abort task"), strMessage, buttons);
 
             iAnswer = dlg.ShowModal();
 
