@@ -25,22 +25,23 @@
 template<class T>
 class CValidateNumber : public wxTextValidator {
 public:
-    CValidateNumber<T>(T* val)
+    CValidateNumber() {}
+    CValidateNumber(T* val)
         : wxTextValidator(wxFILTER_NUMERIC),
         m_value(val),
         m_min(0),
         m_max(0),
         m_constrained(false),
         m_clamped(false) {}
-    CValidateNumber<T>(T* val, T min, T max, bool clamped = true)
+    CValidateNumber(T* val, T min, T max, bool clamped = true)
         : wxTextValidator(wxFILTER_NUMERIC),
         m_value(val),
         m_min(min),
         m_max(max),
         m_constrained(true),
         m_clamped(clamped) {}
-    CValidateNumber<T>(const CValidateNumber<T>& val) : wxTextValidator() { Copy(val); }
-    ~CValidateNumber<T>() {};
+    CValidateNumber(const CValidateNumber<T>& val) { Copy(val); }
+    ~CValidateNumber() {}
 
     virtual wxObject*   Clone() const { return new CValidateNumber<T>(*this); }
     virtual bool        Copy(const CValidateNumber& val);
@@ -66,9 +67,9 @@ protected:
 template<class T>
 class CValidatePercent : public CValidateNumber<T> {
 public:
-    CValidatePercent<T>(T* val) : CValidateNumber<T>(val, (T)0, (T)1) {}
-    CValidatePercent<T>(const CValidateNumber<T>& val) : CValidateNumber<T>() { Copy(val); }
-    ~CValidatePercent<T>() {};
+    CValidatePercent(T* val) : CValidateNumber<T>(val, (T)0, (T)1) {}
+    CValidatePercent(const CValidateNumber<T>& val) { Copy(val); }
+    ~CValidatePercent() {}
 
     virtual wxObject*   Clone() const { return new CValidatePercent<T>(*this); }
 
