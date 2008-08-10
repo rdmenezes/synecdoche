@@ -104,16 +104,16 @@ public:
     void reset();
     int set_permissions();
     int parse(MIOFILE&, bool from_server);
-    int write(MIOFILE&, bool to_server);
-    int write_gui(MIOFILE&);
+    int write(MIOFILE&, bool to_server) const;
+    int write_gui(MIOFILE&) const;
     int delete_file();      // attempt to delete the underlying file
     const char* get_init_url(bool);
     const char* get_next_url(bool);
     const char* get_current_url(bool);
-    bool is_correct_url_type(bool, std::string&);
-    bool had_failure(int& failnum);
-    void failure_message(std::string&);
-    int merge_info(FILE_INFO&);
+    bool is_correct_url_type(bool, const std::string&) const;
+    bool had_failure(int& failnum) const;
+    void failure_message(std::string&) const;
+    int merge_info(const FILE_INFO&);
     int verify_file(bool, bool);
     int gzip();     // gzip file and add .gz to name
 };
@@ -135,7 +135,7 @@ struct FILE_REF {
         // for output files: app may not generate file;
         // don't treat as error if file is missing.
     int parse(MIOFILE&);
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
 };
 
 // statistics at a specific day
@@ -316,7 +316,7 @@ public:
         // files not specific to apps or work - e.g. icons
     int parse_preferences_for_user_files();
     int parse_project_files(MIOFILE&, bool delete_existing_symlinks);
-    void write_project_files(MIOFILE&);
+    void write_project_files(MIOFILE&) const;
     void link_project_files(bool recreate_symlink_files);
     int write_symlink_for_project_file(FILE_INFO*);
     double project_files_downloaded_time;
@@ -337,21 +337,21 @@ public:
     // fields used by CPU scheduler and work fetch
     // everything from here on applies only to CPU intensive projects
 
-    bool contactable();
+    bool contactable() const;
         // not suspended and not deferred and not no more work
-    bool runnable();
+    bool runnable() const;
         // has a runnable result
-    bool downloading();
+    bool downloading() const;
         // has a result in downloading state
-    bool potentially_runnable();
+    bool potentially_runnable() const;
         // runnable or contactable or downloading
-    bool nearly_runnable();
+    bool nearly_runnable() const;
         // runnable or downloading
-    bool overworked();
+    bool overworked() const;
         // the project has used too much CPU time recently
-    bool some_download_stalled();
+    bool some_download_stalled() /* XXX const */;
         // a download is backed off
-    bool some_result_suspended();
+    bool some_result_suspended() const;
 
     RR_SIM_PROJECT_STATUS rr_sim_status;
         // temps used in CLIENT_STATE::rr_simulation();
@@ -393,7 +393,7 @@ public:
 
     int nresults_returned;
         // # of results being returned in current scheduler op
-    const char* get_scheduler_url(int index, double r);
+    const char* get_scheduler_url(int index, double r) const;
         // get scheduler URL with random offset r
     bool checked;
         // temporary used when scanning projects
@@ -415,28 +415,28 @@ public:
     double next_file_xfer_up;
     double next_file_xfer_down;
 
-    double next_file_xfer_time(const bool);
+    double next_file_xfer_time(const bool) const;
     void file_xfer_failed(const bool);
     void file_xfer_succeeded(const bool);
 
     PROJECT();
     ~PROJECT(){}
     void init();
-    void copy_state_fields(PROJECT&);
-    char *get_project_name();
-    int write_account_file();
+    void copy_state_fields(const PROJECT&);
+    const char *get_project_name() const;
+    int write_account_file() const;
     int parse_account(FILE*);
     int parse_account_file_venue();
     int parse_account_file();
     int parse_state(MIOFILE&);
-    int write_state(MIOFILE&, bool gui_rpc=false);
+    int write_state(MIOFILE&, bool gui_rpc=false) const;
 
     // statistic of the last x days
     std::vector<DAILY_STATS> statistics;
     int parse_statistics(MIOFILE&);
     int parse_statistics(FILE*);
-    int write_statistics(MIOFILE&, bool gui_rpc=false);
-    int write_statistics_file();
+    int write_statistics(MIOFILE&, bool gui_rpc=false) const;
+    int write_statistics_file() const;
 };
 
 struct APP {
@@ -445,7 +445,7 @@ struct APP {
     PROJECT* project;
 
     int parse(MIOFILE&);
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
 };
 
 struct APP_VERSION {
@@ -469,11 +469,11 @@ struct APP_VERSION {
     APP_VERSION(){}
     ~APP_VERSION(){}
     int parse(MIOFILE&);
-    int write(MIOFILE&);
-    bool had_download_failure(int& failnum);
+    int write(MIOFILE&) const;
+    bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string&);
     void clear_errors();
-    int api_major_version();
+    int api_major_version() const;
 };
 
 struct WORKUNIT {
@@ -496,9 +496,9 @@ struct WORKUNIT {
     WORKUNIT(){}
     ~WORKUNIT(){}
     int parse(MIOFILE&);
-    int write(MIOFILE&);
-    bool had_download_failure(int& failnum);
-    void get_file_errors(std::string&);
+    int write(MIOFILE&) const;
+    bool had_download_failure(int& failnum) const;
+    void get_file_errors(std::string&) const;
     void clear_errors();
 };
 
@@ -524,8 +524,8 @@ struct RESULT {
     double fpops_cumulative;    // nonzero if reported by app
     double intops_per_cpu_sec;   // nonzero if reported by app
     double intops_cumulative;    // nonzero if reported by app
-    int _state;                  // state of this result: see lib/result_state.h
-    inline int state() { return _state; }
+    int _state;                  // state of this result: see lib/common_defs.h
+    inline int state() const { return _state; }
     void set_state(int, const char*);
     int exit_status;            // return value from the application
     std::string stderr_out;
@@ -556,11 +556,11 @@ struct RESULT {
     int parse_server(MIOFILE&);
     int parse_state(MIOFILE&);
     int parse_name(FILE*, const char* end_tag);
-    int write(MIOFILE&, bool to_server);
+    int write(MIOFILE&, bool to_server) const;
     int write_gui(MIOFILE&);
-    bool is_upload_done();    // files uploaded?
+    bool is_upload_done() const;    // files uploaded?
     void clear_uploaded_flags();
-    FILE_REF* lookup_file(FILE_INFO*);
+    const FILE_REF* lookup_file(const FILE_INFO*) const;
     FILE_INFO* lookup_file_logical(const char*);
     void abort_inactive(int);
         // abort the result if it hasn't started computing yet
@@ -570,18 +570,18 @@ struct RESULT {
 
     // stuff related to CPU scheduling
 
-    double estimated_cpu_time(bool for_work_fetch);
-    double estimated_cpu_time_uncorrected();
-    double estimated_cpu_time_remaining(bool for_work_fetch);
-    bool computing_done();
-    bool runnable();
+    double estimated_cpu_time(bool for_work_fetch) const;
+    double estimated_cpu_time_uncorrected() const;
+    double estimated_cpu_time_remaining(bool for_work_fetch) const;
+    bool computing_done() const;
+    bool runnable() const;
         // downloaded, not finished, not suspended, project not suspended
-    bool nearly_runnable();
+    bool nearly_runnable() const;
         // downloading or downloaded,
         // not finished, suspended, project not suspended
-    bool downloading();
+    bool downloading() const;
         // downloading, not downloaded, not suspended, project not suspended
-    bool some_download_stalled();
+    bool some_download_stalled() /* XXX const */;
         // some input or app file is downloading, and backed off
         // i.e. it may be a long time before we can run this result
 
@@ -591,7 +591,7 @@ struct RESULT {
     bool already_selected;
         // used to keep cpu scheduler from scheduling a result twice
         // transient; used only within schedule_cpus()
-    double computation_deadline();
+    double computation_deadline() const;
         // report deadline - prefs.work_buf_min - time slice
     bool rr_sim_misses_deadline;
     bool last_rr_sim_missed_deadline;
@@ -610,9 +610,9 @@ private:
 public:
     MODE();
     void set(int mode, double duration);
-    int get_perm();
-    int get_current();
-	double delay();
+    int get_perm() const;
+    int get_current() const;
+	double delay() const;
 };
 
 // a platform supported by the client.

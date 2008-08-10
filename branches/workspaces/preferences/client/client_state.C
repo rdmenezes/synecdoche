@@ -159,6 +159,20 @@ void CLIENT_STATE::show_host_info() {
     );
 }
 
+void CLIENT_STATE::show_proxy_info() {
+    if (proxy_info.use_http_proxy) {
+        msg_printf(NULL, MSG_INFO, "Using HTTP proxy %s:%d",
+            proxy_info.http_server_name, proxy_info.http_server_port
+        );
+    } else if (proxy_info.use_socks_proxy) {
+        msg_printf(NULL, MSG_INFO, "Using SOCKS proxy %s:%d",
+            proxy_info.socks_server_name, proxy_info.socks_server_port
+        );
+    } else {
+        msg_printf(NULL, MSG_INFO, "Not using a proxy");
+    }
+}
+
 int CLIENT_STATE::init() {
     int retval;
     unsigned int i;
@@ -230,6 +244,7 @@ int CLIENT_STATE::init() {
     host_info.get_host_info();
     set_ncpus();
     show_host_info();
+    show_proxy_info();
 
     check_clock_reset();
 
@@ -647,7 +662,7 @@ PROJECT* CLIENT_STATE::lookup_project(const char* master_url) {
     return 0;
 }
 
-APP* CLIENT_STATE::lookup_app(PROJECT* p, const char* name) {
+APP* CLIENT_STATE::lookup_app(const PROJECT* p, const char* name) {
     for (unsigned int i=0; i<apps.size(); i++) {
         APP* app = apps[i];
         if (app->project == p && !strcmp(name, app->name)) return app;
@@ -655,7 +670,7 @@ APP* CLIENT_STATE::lookup_app(PROJECT* p, const char* name) {
     return 0;
 }
 
-RESULT* CLIENT_STATE::lookup_result(PROJECT* p, const char* name) {
+RESULT* CLIENT_STATE::lookup_result(const PROJECT* p, const char* name) {
     for (unsigned int i=0; i<results.size(); i++) {
         RESULT* rp = results[i];
         if (rp->project == p && !strcmp(name, rp->name)) return rp;
@@ -663,7 +678,7 @@ RESULT* CLIENT_STATE::lookup_result(PROJECT* p, const char* name) {
     return 0;
 }
 
-WORKUNIT* CLIENT_STATE::lookup_workunit(PROJECT* p, const char* name) {
+WORKUNIT* CLIENT_STATE::lookup_workunit(const PROJECT* p, const char* name) {
     for (unsigned int i=0; i<workunits.size(); i++) {
         WORKUNIT* wup = workunits[i];
         if (wup->project == p && !strcmp(name, wup->name)) return wup;
@@ -688,7 +703,7 @@ APP_VERSION* CLIENT_STATE::lookup_app_version(
     return 0;
 }
 
-FILE_INFO* CLIENT_STATE::lookup_file_info(PROJECT* p, const char* name) {
+FILE_INFO* CLIENT_STATE::lookup_file_info(const PROJECT* p, const char* name) {
     for (unsigned int i=0; i<file_infos.size(); i++) {
         FILE_INFO* fip = file_infos[i];
         if (fip->project == p && !strcmp(fip->name, name)) {
@@ -834,7 +849,7 @@ int CLIENT_STATE::link_result(PROJECT* p, RESULT* rp) {
 // Print debugging information about how many projects/files/etc
 // are currently in the client state record
 //
-void CLIENT_STATE::print_summary() {
+void CLIENT_STATE::print_summary() const {
     unsigned int i;
     double t;
     if (!log_flags.state_debug) return;
@@ -875,7 +890,7 @@ void CLIENT_STATE::print_summary() {
     }
 }
 
-int CLIENT_STATE::nresults_for_project(PROJECT* p) {
+int CLIENT_STATE::nresults_for_project(const PROJECT* p) const {
     int n=0;
     for (unsigned int i=0; i<results.size(); i++) {
         if (results[i]->project == p) n++;
@@ -1215,7 +1230,7 @@ bool CLIENT_STATE::update_results() {
 // Returns true if client should exit because of debugging criteria
 // (timeout or idle)
 //
-bool CLIENT_STATE::time_to_exit() {
+bool CLIENT_STATE::time_to_exit() const {
     if (exit_after_app_start_secs
         && (app_started>0)
         && ((now - app_started) >= exit_after_app_start_secs)
@@ -1601,5 +1616,3 @@ void CLIENT_STATE::check_clock_reset() {
 
     // RESULT: could change report_deadline, but not clear how
 }
-
-const char *BOINC_RCSID_e836980ee1 = "$Id: client_state.C 15496 2008-06-26 20:53:51Z davea $";

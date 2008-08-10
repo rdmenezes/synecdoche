@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -46,9 +47,6 @@
 
 using std::min;
 using std::string;
-
-#define MAX_PROJ_PREFS_LEN  65536
-    // max length of project-specific prefs
 
 // Return the maximum allowed disk usage as determined by user preferences.
 // There are three different settings in the prefs;
@@ -291,26 +289,27 @@ void CLIENT_STATE::show_global_prefs_source(bool found_venue) {
 // generating FILE_REF and FILE_INFO objects for each <app_file> element.
 //
 int PROJECT::parse_preferences_for_user_files() {
-    char* p, *q, *q2;
-    char buf[1024];
+    size_t start = 0, end;
+    string app_file_xml;
     string timestamp, open_name, url, filename;
     FILE_INFO* fip;
     FILE_REF fr;
-    char prefs_buf[MAX_PROJ_PREFS_LEN];
-    strcpy(prefs_buf, project_specific_prefs.c_str());
-    p = prefs_buf;
 
     user_files.clear();
     while (1) {
-        q = strstr(p, "<app_file>");
-        if (!q) break;
-        q2 = strstr(q, "</app_file>");
-        if (!q2) break;
-        *q2 = 0;
-        strcpy(buf, q);
-        if (!parse_str(buf, "<timestamp>", timestamp)) break;
-        if (!parse_str(buf, "<open_name>", open_name)) break;
-        if (!parse_str(buf, "<url>", url)) break;
+        start = project_specific_prefs.find("<app_file>", start);
+        if (start == string::npos) break;
+        end = project_specific_prefs.find("</app_file>", start);
+        if (end == string::npos) break;
+
+        //copy just until the beginning of </app_file>
+        app_file_xml = project_specific_prefs.substr(start, end-start);
+
+        const char* sz_app_file = app_file_xml.c_str();
+
+        if (!parse_str(sz_app_file, "<timestamp>", timestamp)) break;
+        if (!parse_str(sz_app_file, "<open_name>", open_name)) break;
+        if (!parse_str(sz_app_file, "<url>", url)) break;
 
         filename = open_name + "_" + timestamp;
         fip = gstate.lookup_file_info(this, filename.c_str());
@@ -327,7 +326,9 @@ int PROJECT::parse_preferences_for_user_files() {
         strcpy(fr.open_name, open_name.c_str());
         user_files.push_back(fr);
 
-        p = q2+strlen("</app_file>");
+        //set p to just past the end of </app_file>, to parse the
+        //next element (if any)
+        start = end + strlen("</app_file>");
     }
 
     return 0;

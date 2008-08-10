@@ -57,7 +57,7 @@ public:
     NET_STATS();
     //void poll(FILE_XFER_SET&, HTTP_OP_SET&);
 
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
     int parse(MIOFILE&);
 };
 

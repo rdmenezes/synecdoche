@@ -51,7 +51,7 @@ using std::string;
 // So in either case PROJECT.project_prefs
 // (which normally is undefined) is valid
 //
-int PROJECT::write_account_file() {
+int PROJECT::write_account_file() const {
     char path[256];
     FILE* f;
     int retval;
@@ -363,7 +363,7 @@ int CLIENT_STATE::parse_statistics_files() {
     return 0;
 }
 
-int PROJECT::write_statistics_file() {
+int PROJECT::write_statistics_file() const {
     char path[256];
     FILE* f;
     int retval;
@@ -377,7 +377,7 @@ int PROJECT::write_statistics_file() {
         master_url
     );
 
-    for (std::vector<DAILY_STATS>::iterator i=statistics.begin();
+    for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
         i!=statistics.end(); ++i
     ) {
         fprintf(f, 

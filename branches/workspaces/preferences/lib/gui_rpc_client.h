@@ -42,7 +42,7 @@ struct GUI_URL {
     std::string url;
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
 };
 
 // statistics at a specific day
@@ -75,7 +75,7 @@ public:
     int parse(XML_PARSER&);
     void clear();
 
-    bool operator<(const PROJECT_LIST_ENTRY& compare);
+    bool operator<(const PROJECT_LIST_ENTRY& compare) const;
 };
 
 class PROJECT {
@@ -123,10 +123,10 @@ public:
     ~PROJECT();
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
     void clear();
-    void get_name(std::string&);
-    void copy(PROJECT&);        // copy to this object
+    void get_name(std::string&) const;
+    void copy(const PROJECT&);        // copy to this object
 
     // temp - keep track of whether or not this record needs to be deleted
     bool flag_for_delete;
@@ -142,7 +142,7 @@ public:
     ~APP();
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -158,7 +158,7 @@ public:
     ~APP_VERSION();
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -179,7 +179,7 @@ public:
     ~WORKUNIT();
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -226,7 +226,7 @@ public:
     ~RESULT();
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -257,7 +257,7 @@ public:
     ~FILE_TRANSFER();
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -273,7 +273,7 @@ public:
     ~MESSAGE();
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -296,7 +296,7 @@ public:
     ~GR_PROXY_INFO();
 
     int parse(MIOFILE&);
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -315,17 +315,17 @@ public:
     CC_STATE();
     ~CC_STATE();
 
-    PROJECT* lookup_project(std::string&);
-    APP* lookup_app(std::string&, std::string&);
-    APP* lookup_app(PROJECT*, std::string&);
-    APP_VERSION* lookup_app_version(std::string&, std::string&, int);
-    APP_VERSION* lookup_app_version(PROJECT*, std::string&, int);
-    WORKUNIT* lookup_wu(std::string&, std::string&);
-    WORKUNIT* lookup_wu(PROJECT*, std::string&);
-    RESULT* lookup_result(std::string&, std::string&);
-    RESULT* lookup_result(PROJECT*, std::string&);
+    PROJECT* lookup_project(const std::string&);
+    APP* lookup_app(const std::string&, const std::string&);
+    APP* lookup_app(const PROJECT*, const std::string&);
+    APP_VERSION* lookup_app_version(const std::string&, const std::string&, int);
+    APP_VERSION* lookup_app_version(const PROJECT*, const std::string&, int);
+    WORKUNIT* lookup_wu(const std::string&, const std::string&);
+    WORKUNIT* lookup_wu(const PROJECT*, const std::string&);
+    RESULT* lookup_result(const std::string&, const std::string&);
+    RESULT* lookup_result(const PROJECT*, const std::string&);
 
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -347,7 +347,7 @@ public:
     PROJECTS(){}
     ~PROJECTS();
 
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -361,7 +361,7 @@ struct DISK_USAGE {
     DISK_USAGE(){clear();}
     ~DISK_USAGE();
 
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -372,7 +372,7 @@ public:
     RESULTS(){}
     ~RESULTS();
 
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -383,7 +383,7 @@ public:
     FILE_TRANSFERS();
     ~FILE_TRANSFERS();
 
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -394,7 +394,7 @@ public:
     MESSAGES();
     ~MESSAGES();
 
-    void print();
+    void print() const;
     void clear();
 };
 
@@ -404,7 +404,7 @@ struct DISPLAY_INFO {
     char display[256];          // X11
 
     DISPLAY_INFO();
-    void print_str(char*);
+    void print_str(char*) const;
 };
 
 struct ACCT_MGR_INFO {
@@ -468,7 +468,7 @@ struct PROJECT_CONFIG {
 
     int parse(MIOFILE&);
     void clear();
-    void print();
+    void print() const;
 };
 
 struct ACCOUNT_IN {
@@ -494,7 +494,7 @@ struct ACCOUNT_OUT {
 
     int parse(MIOFILE&);
     void clear();
-    void print();
+    void print() const;
 };
 
 struct CC_STATUS {
@@ -517,13 +517,13 @@ struct CC_STATUS {
 
     int parse(MIOFILE&);
     void clear();
-    void print();
+    void print() const;
 };
 
 struct SIMPLE_GUI_INFO {
     std::vector<PROJECT*> projects;
     std::vector<RESULT*> results;
-    void print();
+    void print() const;
 };
 
 class RPC_CLIENT {
@@ -579,7 +579,7 @@ public:
     int set_proxy_settings(GR_PROXY_INFO&);
     int get_proxy_settings(GR_PROXY_INFO&);
     int get_messages(int seqno, MESSAGES&);
-    int file_transfer_op(FILE_TRANSFER&, const char*);
+    int file_transfer_op(const FILE_TRANSFER&, const char*);
     int result_op(RESULT&, const char*);
     int get_host_info(HOST_INFO&);
     int quit();
@@ -594,7 +594,7 @@ public:
     // call the second one periodically until it returns zero.
     // TODO: do project update
     //
-    int get_project_config(std::string url);
+    int get_project_config(const std::string& url);
     int get_project_config_poll(PROJECT_CONFIG&);
     int lookup_account(ACCOUNT_IN&);
     int lookup_account_poll(ACCOUNT_OUT&);
@@ -619,10 +619,10 @@ public:
     int get_global_prefs_working(std::string&);
     int get_global_prefs_working_struct(GLOBAL_PREFS&, GLOBAL_PREFS_MASK&);
     int get_global_prefs_override(std::string&);
-    int set_global_prefs_override(std::string&);
+    int set_global_prefs_override(const std::string&);
     int get_global_prefs_override_struct(GLOBAL_PREFS&, GLOBAL_PREFS_MASK&);
     int set_global_prefs_override_struct(GLOBAL_PREFS&, GLOBAL_PREFS_MASK&);
-    int set_debts(std::vector<PROJECT>);
+    int set_debts(const std::vector<PROJECT>&);
 };
 
 struct RPC {
