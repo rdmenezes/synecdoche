@@ -20,6 +20,7 @@
 #include "stdwx.h"
 #include "prefs.h"
 #include "ValidateNumber.h"
+#include "ValidateMultiplied.h"
 #include "ValidateYesNo.h"
 #include "PrefGridBase.h"
 #include "PrefNodeNetwork.h"
@@ -61,14 +62,14 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("Maximum upload rate (Kbytes/sec)"),
         _("Zero means upload rate is unrestricted."),
         _("Unrestricted"),
-        CValidateNumber<double>(&m_preferences->max_bytes_sec_up))
+        ValidateMultiplied<double>(&m_preferences->max_bytes_sec_up, 0.001))
     );
 
     limits->AddPreference(new PrefValueText(this,
         _("Maximum download rate (Kbytes/sec)"),
         _("Zero means download rate is unrestricted."),
         _("Unrestricted"),
-        CValidateNumber<double>(&m_preferences->max_bytes_sec_down))
+        ValidateMultiplied<double>(&m_preferences->max_bytes_sec_down, 0.001))
     );
 
     PrefGroup* errors = AddGroup(_("Error Checking"));
