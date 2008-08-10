@@ -2122,7 +2122,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\clientgui\ValidateNumber.cpp"
+					RelativePath="..\clientgui\ValidateMultiplied.h"
 					>
 				</File>
 				<File
