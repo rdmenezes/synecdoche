@@ -72,7 +72,7 @@ public:
 	PROCINFO procinfo;
 
     int slot;   // subdirectory of slots/ where this runs
-    inline int task_state() {
+    inline int task_state() const {
         return _task_state;
     }
     void set_task_state(int, const char*);
@@ -95,7 +95,7 @@ public:
         // wall time at the last checkpoint
     double current_cpu_time;
         // most recent CPU time reported by app
-    int current_disk_usage(double&);
+    int current_disk_usage(double&) const;
         // disk used by output files and temp files of this task
     char slot_dir[256];      // directory where process runs (relative)
     char slot_path[512];        // same, absolute
@@ -196,15 +196,15 @@ public:
     double est_cpu_time_to_completion(bool for_work_fetch);
     bool read_stderr_file();
     bool finish_file_present();
-    bool supports_graphics();
+    bool supports_graphics() const;
     int write_app_init_file();
     int move_trickle_file();
     int handle_upload_files();
     void upload_notify_app(const FILE_INFO*, const FILE_REF*);
     int copy_output_files();
 
-    int write(MIOFILE&);
-    int write_gui(MIOFILE&);
+    int write(MIOFILE&) const;
+    int write_gui(MIOFILE&) const;
     int parse(MIOFILE&);
 };
 
@@ -213,7 +213,7 @@ public:
     typedef std::vector<ACTIVE_TASK*> active_tasks_v;
     active_tasks_v active_tasks;
     ACTIVE_TASK* lookup_pid(int);
-    ACTIVE_TASK* lookup_result(RESULT*);
+    ACTIVE_TASK* lookup_result(const RESULT*);
     void init();
     bool poll();
     void suspend_all(bool leave_apps_in_memory=true);
@@ -228,18 +228,18 @@ public:
     bool check_app_exited();
     bool check_rsc_limits_exceeded();
     bool check_quit_timeout_exceeded();
-    bool is_slot_in_use(int);
-    bool is_slot_dir_in_use(char*);
-    int get_free_slot();
+    bool is_slot_in_use(int) const;
+    bool is_slot_dir_in_use(const char*) const;
+    int get_free_slot() const;
     void send_heartbeats();
     void send_trickle_downs();
-    void report_overdue();
+    void report_overdue() const;
     void handle_upload_files();
-    void upload_notify_app(FILE_INFO*);
-    bool want_network();    // does any task want network?
+    void upload_notify_app(const FILE_INFO*);
+    bool want_network() const;    // does any task want network?
     void network_available();   // notify tasks that network is available
     void free_mem();
-    bool slot_taken(int);
+    bool slot_taken(int) const;
     void get_memory_usage();
 
     // graphics-related functions
@@ -248,7 +248,7 @@ public:
     void request_reread_prefs(PROJECT*);
     void request_reread_app_info();
 
-    int write(MIOFILE&);
+    int write(MIOFILE&) const;
     int parse(MIOFILE&);
 };
 

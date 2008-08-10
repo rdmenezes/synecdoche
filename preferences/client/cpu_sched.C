@@ -1389,7 +1389,7 @@ void CLIENT_STATE::request_schedule_cpus(const char* where) {
 
 // Find the active task for a given result
 //
-ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(RESULT* rep) {
+ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* rep) {
     for (unsigned int i = 0; i < active_tasks.active_tasks.size(); i ++) {
         if (active_tasks.active_tasks[i]->result == rep) {
             return active_tasks.active_tasks[i];
@@ -1398,7 +1398,7 @@ ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(RESULT* rep) {
     return NULL;
 }
 
-bool RESULT::computing_done() {
+bool RESULT::computing_done() const {
     return (state() >= RESULT_COMPUTE_ERROR || ready_to_report);
 }
 
@@ -1496,7 +1496,7 @@ ACTIVE_TASK* CLIENT_STATE::get_task(RESULT* rp) {
 // Results must be complete early enough to report before the report deadline.
 // Not all hosts are connected all of the time.
 //
-double RESULT::computation_deadline() {
+double RESULT::computation_deadline() const {
     return report_deadline - (
         gstate.work_buf_min()
             // Seconds that the host will not be connected to the Internet

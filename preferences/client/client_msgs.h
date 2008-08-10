@@ -44,8 +44,8 @@ struct MESSAGE_DESC {
 };
 
 extern std::deque<MESSAGE_DESC*> message_descs;
-extern void record_message(PROJECT *p, int priority, int now, char* msg);
-extern void show_message(PROJECT *p, char* message, int priority);
+extern void record_message(const PROJECT *p, int priority, int now, const char* message);
+extern void show_message(const PROJECT *p, const char* message, int priority);
 
 // the __attribute((format...)) tags are GCC extensions that let the compiler
 // do like-checking on printf-like arguments
@@ -56,6 +56,6 @@ extern void show_message(PROJECT *p, char* message, int priority);
 
 // Show a message, preceded by timestamp and project name
 //
-extern void msg_printf(PROJECT *p, int priority, const char *fmt, ...) __attribute__ ((format (printf, 3, 4)));
+extern void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) __attribute__ ((format (printf, 3, 4)));
 
 #endif

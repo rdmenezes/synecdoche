@@ -199,7 +199,7 @@ int PROJECT::parse_state(MIOFILE& in) {
 
 // Write project information to client state file or GUI RPC reply
 //
-int PROJECT::write_state(MIOFILE& out, bool gui_rpc) {
+int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
     unsigned int i;
     char un[2048], tn[2048];
 
@@ -317,7 +317,7 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) {
 // Some project data is stored in account file, other in client_state.xml
 // Copy fields that are stored in client_state.xml from "p" into "this"
 //
-void PROJECT::copy_state_fields(PROJECT& p) {
+void PROJECT::copy_state_fields(const PROJECT& p) {
     scheduler_urls = p.scheduler_urls;
     safe_strcpy(project_name, p.project_name);
     safe_strcpy(user_name, p.user_name);
@@ -364,14 +364,14 @@ void PROJECT::copy_state_fields(PROJECT& p) {
 
 // Write project statistic to project statistics file
 //
-int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) {
+int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) const {
     out.printf(
         "<project_statistics>\n"
         "    <master_url>%s</master_url>\n",
         master_url
     );
 
-    for (std::vector<DAILY_STATS>::iterator i=statistics.begin();
+    for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
         i!=statistics.end(); ++i
     ) {
         out.printf(
@@ -395,7 +395,7 @@ int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) {
     return 0;
 }
 
-char* PROJECT::get_project_name() {
+const char* PROJECT::get_project_name() const {
     if (strlen(project_name)) {
         return project_name;
     } else {
@@ -403,14 +403,14 @@ char* PROJECT::get_project_name() {
     }
 }
 
-const char* PROJECT::get_scheduler_url(int index, double r) {
+const char* PROJECT::get_scheduler_url(int index, double r) const {
     int n = (int) scheduler_urls.size();
     int ir = (int)(r*n);
     int i = (index + ir)%n;
     return scheduler_urls[i].c_str();
 }
 
-double PROJECT::next_file_xfer_time(const bool is_upload) {
+double PROJECT::next_file_xfer_time(const bool is_upload) const {
     return (is_upload ? next_file_xfer_up : next_file_xfer_down);
 }
 
@@ -520,13 +520,13 @@ void PROJECT::link_project_files(bool recreate_symlink_files) {
     }
 }
 
-void PROJECT::write_project_files(MIOFILE& f) {
+void PROJECT::write_project_files(MIOFILE& f) const {
     unsigned int i;
 
     if (!project_files.size()) return;
     f.printf("<project_files>\n");
     for (i=0; i<project_files.size(); i++) {
-        FILE_REF& fref = project_files[i];
+        const FILE_REF& fref = project_files[i];
         fref.write(f);
     }
     f.printf("</project_files>\n");
@@ -590,7 +590,7 @@ int APP::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int APP::write(MIOFILE& out) {
+int APP::write(MIOFILE& out) const {
     out.printf(
         "<app>\n"
         "    <name>%s</name>\n"
@@ -802,7 +802,7 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
     return ERR_XML_PARSE;
 }
 
-int FILE_INFO::write(MIOFILE& out, bool to_server) {
+int FILE_INFO::write(MIOFILE& out, bool to_server) const {
     unsigned int i;
     int retval;
 
@@ -850,14 +850,15 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) {
         }
     }
     if (!error_msg.empty()) {
-        strip_whitespace(error_msg);
-        out.printf("    <error_msg>\n%s\n</error_msg>\n", error_msg.c_str());
+        std::string error_msg_nows = error_msg;
+        strip_whitespace(error_msg_nows);
+        out.printf("    <error_msg>\n%s\n</error_msg>\n", error_msg_nows.c_str());
     }
     out.printf("</file_info>\n");
     return 0;
 }
 
-int FILE_INFO::write_gui(MIOFILE& out) {
+int FILE_INFO::write_gui(MIOFILE& out) const {
     out.printf(
         "<file_transfer>\n"
         "    <project_url>%s</project_url>\n"
@@ -973,7 +974,7 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
 // Checks if the URL includes the phrase "file_upload_handler"
 // This indicates the URL is an upload url
 // 
-bool FILE_INFO::is_correct_url_type(bool is_upload, std::string& url) {
+bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) const {
     const char* has_str = strstr(url.c_str(), "file_upload_handler");
     if ((is_upload && !has_str) || (!is_upload && has_str)) {
         return false;
@@ -986,7 +987,7 @@ bool FILE_INFO::is_correct_url_type(bool is_upload, std::string& url) {
 // that is already present in the client state file.
 // Potentially changes upload_when_present, max_nbytes, and signed_xml
 //
-int FILE_INFO::merge_info(FILE_INFO& new_info) {
+int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     char buf[256];
     unsigned int i;
 
@@ -1017,7 +1018,7 @@ int FILE_INFO::merge_info(FILE_INFO& new_info) {
 // Returns true if the file had an unrecoverable error
 // (couldn't download, RSA/MD5 check failed, etc)
 //
-bool FILE_INFO::had_failure(int& failnum) {
+bool FILE_INFO::had_failure(int& failnum) const {
     if (status != FILE_NOT_PRESENT && status != FILE_PRESENT) {
         failnum = status;
         return true;
@@ -1025,7 +1026,7 @@ bool FILE_INFO::had_failure(int& failnum) {
     return false;
 }
 
-void FILE_INFO::failure_message(string& s) {
+void FILE_INFO::failure_message(string& s) const {
     char buf[1024];
     sprintf(buf,
         "<file_xfer_error>\n"
@@ -1125,7 +1126,7 @@ int APP_VERSION::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int APP_VERSION::write(MIOFILE& out) {
+int APP_VERSION::write(MIOFILE& out) const {
     unsigned int i;
     int retval;
 
@@ -1165,7 +1166,7 @@ int APP_VERSION::write(MIOFILE& out) {
     return 0;
 }
 
-bool APP_VERSION::had_download_failure(int& failnum) {
+bool APP_VERSION::had_download_failure(int& failnum) const {
     unsigned int i;
 
     for (i=0; i<app_files.size();i++) {
@@ -1203,7 +1204,7 @@ void APP_VERSION::clear_errors() {
     }
 }
 
-int APP_VERSION::api_major_version() {
+int APP_VERSION::api_major_version() const {
     int v, n;
     n = sscanf(api_version, "%d", &v);
     if (n != 1) return 0;
@@ -1236,7 +1237,7 @@ int FILE_REF::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int FILE_REF::write(MIOFILE& out) {
+int FILE_REF::write(MIOFILE& out) const {
 
     out.printf(
         "    <file_ref>\n"
@@ -1326,7 +1327,7 @@ int WORKUNIT::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int WORKUNIT::write(MIOFILE& out) {
+int WORKUNIT::write(MIOFILE& out) const {
     unsigned int i;
 
     out.printf(
@@ -1363,7 +1364,7 @@ int WORKUNIT::write(MIOFILE& out) {
     return 0;
 }
 
-bool WORKUNIT::had_download_failure(int& failnum) {
+bool WORKUNIT::had_download_failure(int& failnum) const {
     unsigned int i;
 
     for (i=0;i<input_files.size();i++) {
@@ -1374,7 +1375,7 @@ bool WORKUNIT::had_download_failure(int& failnum) {
     return false;
 }
 
-void WORKUNIT::get_file_errors(string& str) {
+void WORKUNIT::get_file_errors(string& str) const {
     int x;
     unsigned int i;
     FILE_INFO* fip;
@@ -1541,7 +1542,7 @@ int RESULT::parse_state(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int RESULT::write(MIOFILE& out, bool to_server) {
+int RESULT::write(MIOFILE& out, bool to_server) const {
     unsigned int i;
     FILE_INFO* fip;
     int n, retval;
@@ -1672,7 +1673,7 @@ int RESULT::write_gui(MIOFILE& out) {
 // Returns true if the result's output files are all either
 // successfully uploaded or have unrecoverable errors
 //
-bool RESULT::is_upload_done() {
+bool RESULT::is_upload_done() const {
     unsigned int i;
     FILE_INFO* fip;
     int retval;
@@ -1740,9 +1741,9 @@ bool RESULT::some_download_stalled() {
     return false;
 }
 
-FILE_REF* RESULT::lookup_file(FILE_INFO* fip) {
+const FILE_REF* RESULT::lookup_file(const FILE_INFO* fip) const {
     for (unsigned int i=0; i<output_files.size(); i++) {
-        FILE_REF& fr = output_files[i];
+        const FILE_REF& fr = output_files[i];
         if (fr.file_info == fip) return &fr;
     }
     return 0;
@@ -1801,11 +1802,11 @@ void MODE::set(int mode, double duration) {
     }
 }
 
-int MODE::get_perm() {
+int MODE::get_perm() const {
     return perm_mode;
 }
 
-int MODE::get_current() {
+int MODE::get_current() const {
     if (temp_timeout > gstate.now) {
         return temp_mode;
     } else {
@@ -1813,7 +1814,7 @@ int MODE::get_current() {
     }
 }
 
-double MODE::delay() {
+double MODE::delay() const {
     if (temp_timeout > gstate.now) {
         return temp_timeout - gstate.now;
     } else {

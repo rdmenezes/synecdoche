@@ -50,7 +50,7 @@
 using std::string;
 using std::vector;
 
-void GUI_URL::print() {
+void GUI_URL::print() const {
     printf(
         "GUI URL:\n"
         "   name: %s\n"
@@ -60,7 +60,7 @@ void GUI_URL::print() {
     );
 }
 
-void PROJECT::print() {
+void PROJECT::print() const {
     unsigned int i;
 
     printf("   name: %s\n", project_name.c_str());
@@ -88,18 +88,18 @@ void PROJECT::print() {
     }
 }
 
-void APP::print() {
+void APP::print() const {
     printf("   name: %s\n", name.c_str());
     printf("   Project: %s\n", project->project_name.c_str());
 }
 
-void APP_VERSION::print() {
+void APP_VERSION::print() const {
     printf("   application: %s\n", app->name.c_str());
     printf("   version: %.2f\n", version_num/100.0);
     printf("   project: %s\n", project->project_name.c_str());
 }
 
-void WORKUNIT::print() {
+void WORKUNIT::print() const {
     printf("   name: %s\n", name.c_str());
     printf("   FP estimate: %f\n", rsc_fpops_est);
     printf("   FP bound: %f\n", rsc_fpops_bound);
@@ -107,7 +107,7 @@ void WORKUNIT::print() {
     printf("   disk bound: %f\n", rsc_disk_bound);
 }
 
-void RESULT::print() {
+void RESULT::print() const {
     printf("   name: %s\n", name.c_str());
     printf("   WU name: %s\n", wu_name.c_str());
     printf("   project URL: %s\n", project_url.c_str());
@@ -133,7 +133,7 @@ void RESULT::print() {
     printf("   supports graphics: %s\n", supports_graphics?"yes":"no");
 }
 
-void FILE_TRANSFER::print() {
+void FILE_TRANSFER::print() const {
     printf("   name: %s\n", name.c_str());
     printf("   generated locally: %s\n", generated_locally?"yes":"no");
     printf("   uploaded: %s\n", uploaded?"yes":"no");
@@ -147,16 +147,16 @@ void FILE_TRANSFER::print() {
     printf("   xfer_speed: %f\n", xfer_speed);
 }
 
-void MESSAGE::print() {
+void MESSAGE::print() const {
     printf("%s %d %d %s\n",
         project.c_str(), priority, timestamp, body.c_str()
     );
 }
 
-void GR_PROXY_INFO::print() {      // anyone need this?
+void GR_PROXY_INFO::print() const {      // anyone need this?
 }
 
-void HOST_INFO::print() {
+void HOST_INFO::print() const {
     printf("  timezone: %d\n", timezone);
     printf("  domain name: %s\n", domain_name);
     printf("  IP addr: %s\n", ip_addr);
@@ -175,7 +175,7 @@ void HOST_INFO::print() {
     printf("  disk free: %f\n", d_free);
 }
 
-void SIMPLE_GUI_INFO::print() {
+void SIMPLE_GUI_INFO::print() const {
     unsigned int i;
     printf("======== Projects ========\n");
     for (i=0; i<projects.size(); i++) {
@@ -189,7 +189,7 @@ void SIMPLE_GUI_INFO::print() {
     }
 }
 
-void CC_STATE::print() {
+void CC_STATE::print() const {
     unsigned int i;
     printf("======== Projects ========\n");
     for (i=0; i<projects.size(); i++) {
@@ -218,7 +218,7 @@ void CC_STATE::print() {
     }
 }
 
-void PROJECTS::print() {
+void PROJECTS::print() const {
     unsigned int i;
     printf("======== Projects ========\n");
     for (i=0; i<projects.size(); i++) {
@@ -227,7 +227,7 @@ void PROJECTS::print() {
     }
 }
 
-void DISK_USAGE::print() {
+void DISK_USAGE::print() const {
     unsigned int i;
     printf("======== Disk usage ========\n");
     printf("total: %f\n", d_total);
@@ -238,7 +238,7 @@ void DISK_USAGE::print() {
     }
 }
 
-void RESULTS::print() {
+void RESULTS::print() const {
     unsigned int i;
     printf("\n======== Results ========\n");
     for (i=0; i<results.size(); i++) {
@@ -247,7 +247,7 @@ void RESULTS::print() {
     }
 }
 
-void FILE_TRANSFERS::print() {
+void FILE_TRANSFERS::print() const {
     unsigned int i;
     printf("\n======== File transfers ========\n");
     for (i=0; i<file_transfers.size(); i++) {
@@ -256,7 +256,7 @@ void FILE_TRANSFERS::print() {
     }
 }
 
-void MESSAGES::print() {
+void MESSAGES::print() const {
     unsigned int i;
     printf("\n======== Messages ========\n");
     for (i=0; i<messages.size(); i++) {
@@ -265,7 +265,7 @@ void MESSAGES::print() {
     }
 }
 
-void PROJECT_CONFIG::print() {
+void PROJECT_CONFIG::print() const {
     printf(
         "uses_username: %d\n"
         "name: %s\n"
@@ -276,7 +276,7 @@ void PROJECT_CONFIG::print() {
     );
 }
 
-void ACCOUNT_OUT::print() {
+void ACCOUNT_OUT::print() const {
     if (error_num) {
         printf("error in account lookup: %s\n", boincerror(error_num));
     } else {

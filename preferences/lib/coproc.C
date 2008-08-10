@@ -35,7 +35,7 @@
 
 #include "coproc.h"
 
-void COPROC::write_xml(MIOFILE& f) {
+void COPROC::write_xml(MIOFILE& f) const {
     f.printf(
         "<coproc>\n"
         "   <type>%s</type>\n"

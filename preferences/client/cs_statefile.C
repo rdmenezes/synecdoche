@@ -466,7 +466,7 @@ int CLIENT_STATE::parse_state_file() {
 
 // Write the client_state.xml file
 //
-int CLIENT_STATE::write_state_file() {
+int CLIENT_STATE::write_state_file() const {
     MFILE mf;
     int retval, ret1, ret2, attempt;
 #ifdef _WIN32
@@ -598,7 +598,7 @@ int CLIENT_STATE::write_state_file() {
     return 0;
 }
 
-int CLIENT_STATE::write_state(MIOFILE& f) {
+int CLIENT_STATE::write_state(MIOFILE& f) const {
     unsigned int i, j;
     int retval;
 
@@ -610,7 +610,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) {
     retval = net_stats.write(f);
     if (retval) return retval;
     for (j=0; j<projects.size(); j++) {
-        PROJECT* p = projects[j];
+        const PROJECT* p = projects[j];
         retval = p->write_state(f);
         if (retval) return retval;
         for (i=0; i<apps.size(); i++) {

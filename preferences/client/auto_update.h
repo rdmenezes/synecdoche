@@ -35,7 +35,7 @@ public:
     AUTO_UPDATE();
     void init();
     int parse(MIOFILE&);
-    void write(MIOFILE&);
+    void write(MIOFILE&) const;
     int validate_and_link(PROJECT*);
     void install();
     void poll();
