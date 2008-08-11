@@ -20,6 +20,7 @@
 #include "stdwx.h"
 #include "prefs.h"
 #include "ValidateNumber.h"
+#include "ValidatePercent.h"
 #include "PrefNodeBase.h"
 #include "PrefNodeDisk.h"
 
@@ -82,6 +83,6 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("Restrict the amount of virtual memory that BOINC may use. This "
         "setting should be used with care if your page file size is managed by "
         "the operating system. Default 75%."),
-        CValidatePercent<double>(&m_preferences->vm_max_used_frac))
+        ValidatePercent<double>(&m_preferences->vm_max_used_frac))
     );
 }

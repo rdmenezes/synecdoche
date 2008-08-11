@@ -19,6 +19,7 @@
 
 #include "stdwx.h"
 #include "prefs.h"
+#include "ValidatePercent.h"
 #include "PrefGridBase.h"
 #include "PrefNodeMemory.h"
 
@@ -37,7 +38,7 @@ PrefNodeMemory::PrefNodeMemory(wxWindow* parent, GLOBAL_PREFS* preferences)
         "Setting this to a low value lets you process all the time without "
         "impacting your computer's performance."),
         _("50%"),
-        CValidatePercent<double>(&m_preferences->ram_max_used_busy_frac))
+        ValidatePercent<double>(&m_preferences->ram_max_used_busy_frac))
     );
 
     work->AddPreference(new PrefValueText(this,
@@ -45,7 +46,7 @@ PrefNodeMemory::PrefNodeMemory(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("Limits the amount of RAM used by project applications when your computer "
         "is not in use."),
         _("90%"),
-        CValidatePercent<double>(&m_preferences->ram_max_used_idle_frac))
+        ValidatePercent<double>(&m_preferences->ram_max_used_idle_frac))
     );
 
     PrefGroup* switching = AddGroup(_("Application Switching"));
