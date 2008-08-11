@@ -21,10 +21,10 @@
 #include "ValidateTime.h"
 
 
-IMPLEMENT_CLASS(CValidateTime, wxTextValidator)
+IMPLEMENT_CLASS(ValidateTime, wxTextValidator)
 
 
-bool CValidateTime::TransferToWindow(void) {
+bool ValidateTime::TransferToWindow(void) {
 
     if (!m_validatorWindow) return false;
 
@@ -41,7 +41,7 @@ bool CValidateTime::TransferToWindow(void) {
 }
 
 
-bool CValidateTime::TransferFromWindow(void) {
+bool ValidateTime::TransferFromWindow(void) {
 
     if (!m_validatorWindow) return false;
 
@@ -56,7 +56,7 @@ bool CValidateTime::TransferFromWindow(void) {
 }
 
 
-bool CValidateTime::Validate(wxWindow* parent) {
+bool ValidateTime::Validate(wxWindow* parent) {
 
     bool valid = wxTextValidator::Validate(parent);
 
@@ -86,7 +86,7 @@ bool CValidateTime::Validate(wxWindow* parent) {
 
 
 // convert a Timestring HH:MM into a double
-bool CValidateTime::TimeStringToDouble(wxString timeStr, double& time) {
+bool ValidateTime::TimeStringToDouble(wxString timeStr, double& time) {
     double hour;
     double minutes;
     bool valid;
@@ -104,7 +104,7 @@ bool CValidateTime::TimeStringToDouble(wxString timeStr, double& time) {
 
 
 // convert a double into a timestring HH:MM
-wxString CValidateTime::DoubleToTimeString(double dt) {
+wxString ValidateTime::DoubleToTimeString(double dt) {
     int hour = (int)dt;
     int minutes = (int)(60.0 * (dt - hour));
     return wxString::Format(wxT("%02d:%02d"), hour, minutes);
@@ -112,10 +112,10 @@ wxString CValidateTime::DoubleToTimeString(double dt) {
 
 //
 
-IMPLEMENT_CLASS(CValidateTimeSpan, wxTextValidator)
+IMPLEMENT_CLASS(ValidateTimeSpan, wxTextValidator)
 
 
-bool CValidateTimeSpan::TransferToWindow() {
+bool ValidateTimeSpan::TransferToWindow() {
 
     if (!m_validatorWindow) return false;
 
@@ -137,9 +137,9 @@ bool CValidateTimeSpan::TransferToWindow() {
                     break;
                 default:
                     range
-                        << CValidateTime::DoubleToTimeString(t->start_hour)
+                        << ValidateTime::DoubleToTimeString(t->start_hour)
                         << _(" - ")
-                        << CValidateTime::DoubleToTimeString(t->end_hour);
+                        << ValidateTime::DoubleToTimeString(t->end_hour);
                     break;
             }
             pControl->SetValue(range);
@@ -150,7 +150,7 @@ bool CValidateTimeSpan::TransferToWindow() {
 }
 
 
-bool CValidateTimeSpan::TransferFromWindow() {
+bool ValidateTimeSpan::TransferFromWindow() {
 
     if (!m_validatorWindow) return false;
 
@@ -178,7 +178,7 @@ bool CValidateTimeSpan::TransferFromWindow() {
 
 
 // Disregard white space and case.
-bool CValidateTimeSpan::Validate(wxWindow* parent) {
+bool ValidateTimeSpan::Validate(wxWindow* parent) {
 
     bool valid = false;
     if (m_validatorWindow->IsKindOf(CLASSINFO(wxTextCtrl))) {
@@ -200,7 +200,7 @@ bool CValidateTimeSpan::Validate(wxWindow* parent) {
 }
 
 
-bool CValidateTimeSpan::ParseTimeSpan(wxString timeStr, TIME_SPAN* span) {
+bool ValidateTimeSpan::ParseTimeSpan(wxString timeStr, TIME_SPAN* span) {
 
     bool valid = false;
     double start = 0.0, end = 0.0;
@@ -226,8 +226,8 @@ bool CValidateTimeSpan::ParseTimeSpan(wxString timeStr, TIME_SPAN* span) {
             wxString startStr = spanTemplate.GetMatch(timeStr, 1);
             wxString endStr = spanTemplate.GetMatch(timeStr, 2);
 
-            valid = CValidateTime::TimeStringToDouble(startStr, start)
-                && CValidateTime::TimeStringToDouble(endStr, end);
+            valid = ValidateTime::TimeStringToDouble(startStr, start)
+                && ValidateTime::TimeStringToDouble(endStr, end);
         }
     }
     if (valid && span) {

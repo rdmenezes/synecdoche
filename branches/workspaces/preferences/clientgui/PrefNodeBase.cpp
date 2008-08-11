@@ -351,8 +351,8 @@ PrefNodeBase::PrefValueTime::PrefValueTime(
     m_startCtrl->SetMinSize(wxSize(m_startCtrl->GetSize().y * 3, -1));
     m_endCtrl->SetMinSize(wxSize(m_endCtrl->GetSize().y * 3, -1));
 
-    m_startCtrl->SetValidator(CValidateTime(&m_time->start_hour));
-    m_endCtrl->SetValidator(CValidateTime(&m_time->end_hour));
+    m_startCtrl->SetValidator(ValidateTime(&m_time->start_hour));
+    m_endCtrl->SetValidator(ValidateTime(&m_time->end_hour));
 
     betweenLine->Add(m_rbBetween, 0, wxALL | wxCENTER, 2);
     betweenLine->Add(m_startCtrl, 0, wxALL | wxCENTER, 2);
@@ -522,7 +522,7 @@ PrefNodeBase::PrefValueTimeSpan::PrefValueTimeSpan(
     
 
     m_timeText = new wxTextCtrl(this, wxID_ANY);
-    m_timeText->SetValidator(CValidateTimeSpan(prefs, day));
+    m_timeText->SetValidator(ValidateTimeSpan(prefs, day));
     m_timeText->Enable(present);
 
     line->Add(dayTxt, 1, wxALL | wxCENTER, 2);
