@@ -20,8 +20,6 @@
 #ifndef _VALIDATEBOOL_H_
 #define _VALIDATEBOOL_H_
 
-#include "wx/valgen.h"
-
 // wxGenericValidator does all we need for a boolean (checkbox) validator.
 // Rename it for convenience and clarity:
 typedef wxGenericValidator ValidateBool;

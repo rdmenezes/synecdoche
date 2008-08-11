@@ -29,9 +29,6 @@
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
-#include "wx/valgen.h"
-#include "wx/valtext.h"
-#include <wx/hyperlink.h>
 #include "ValidateEmailAddress.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"

@@ -22,15 +22,6 @@
 #define _DLG_PREFERENCES_H_ 
 
 /*!
- * Includes
- */
-
-////@begin includes
-#include "wx/valtext.h"
-#include "wx/valgen.h"
-////@end includes
-
-/*!
  * Forward declarations
  */
 
