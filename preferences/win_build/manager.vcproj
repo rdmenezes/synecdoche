@@ -2130,6 +2130,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\clientgui\ValidatePercent.h"
+					>
+				</File>
+				<File
 					RelativePath="..\clientgui\ValidateTime.cpp"
 					>
 				</File>

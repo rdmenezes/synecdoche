@@ -20,6 +20,8 @@
 #ifndef _VALIDATENUMBER_H_
 #define _VALIDATENUMBER_H_
 
+#include "stdwx.h"
+
 // Templated validator to handle any numeric type. T must
 // support insertion and extraction operators or it will all fail horribly.
 template<class T>
@@ -60,22 +62,6 @@ protected:
     T                   m_max;
     bool                m_constrained;
     bool                m_clamped;
-};
-
-
-// In addition to the CValidateNumber requirements, T must cast to various integer values.
-template<class T>
-class CValidatePercent : public CValidateNumber<T> {
-public:
-    CValidatePercent(T* val) : CValidateNumber<T>(val, (T)0, (T)1) {}
-    CValidatePercent(const CValidateNumber<T>& val) { Copy(val); }
-    ~CValidatePercent() {}
-
-    virtual wxObject*   Clone() const { return new CValidatePercent<T>(*this); }
-
-protected:
-    virtual T           TranslateTo(T val) { return val * (T)100; }
-    virtual T           TranslateFrom(T val) { return val / (T)100; }
 };
 
 
