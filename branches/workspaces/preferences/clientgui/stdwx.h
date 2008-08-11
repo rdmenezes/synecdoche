@@ -59,6 +59,7 @@
 #include <wx/clipbrd.h>         // clipboard support
 #include <wx/cmdline.h>         // command line support
 #include <wx/colour.h>
+#include <wx/combo.h>
 #include <wx/config.h>          // configuration support
 #include <wx/control.h>
 #include <wx/cshelp.h>
@@ -77,6 +78,7 @@
 #include <wx/gdicmn.h>
 #include <wx/gifdecod.h>
 #include <wx/grid.h>
+#include <wx/hyperlink.h>
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/imaglist.h>
