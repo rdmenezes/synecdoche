@@ -44,7 +44,7 @@ protected:
 template<class T>
 bool ValidateMultiplied<T>::Copy(const ValidateMultiplied& val) {
 
-    ValidateNumber::Copy(val);
+    ValidateNumber<T>::Copy(val);
     m_multiplier = val.m_multiplier;
     return true;
 }
