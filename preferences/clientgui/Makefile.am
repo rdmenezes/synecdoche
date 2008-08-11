@@ -98,7 +98,6 @@ boinc_gui_SOURCES = \
     ValidateAccountKey.cpp \
     ValidateBool.cpp \
     ValidateEmailAddress.cpp \
-    ValidateNumber.cpp \
     ValidateTime.cpp \
     ValidateURL.cpp \
     ValidateYesNo.cpp \
