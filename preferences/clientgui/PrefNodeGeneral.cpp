@@ -37,7 +37,7 @@ PrefNodeGeneral::PrefNodeGeneral(wxWindow* parent, GLOBAL_PREFS* preferences)
         "settings. The maximum buffer is 10 days, but some projects may "
         "have a lower limit."),
         _("0.25 days"),
-        CValidateNumber<double>(&m_preferences->work_buf_additional_days, 0.0, 10.0))
+        ValidateNumber<double>(&m_preferences->work_buf_additional_days, 0.0, 10.0))
     );
 
     PrefGroup* switching = AddGroup(_("Application Switching"));
@@ -49,6 +49,6 @@ PrefNodeGeneral::PrefNodeGeneral(wxWindow* parent, GLOBAL_PREFS* preferences)
         "switch exactly at this interval, it is only used as a guide. "
         "If you are attached to a single project, this value is ignored."),
         _("60 minutes"),
-        CValidateNumber<double>(&m_preferences->cpu_scheduling_period_minutes))
+        ValidateNumber<double>(&m_preferences->cpu_scheduling_period_minutes))
     );
 }

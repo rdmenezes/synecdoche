@@ -21,17 +21,17 @@
 #include "ValidateBool.h"
 
 
-IMPLEMENT_CLASS(CValidateBoolInverse, CValidateBool)
+IMPLEMENT_CLASS(ValidateBoolInverse, ValidateBool)
 
 
-//bool CValidateBoolInverse::Copy(const CValidateBoolInverse& val) {
+//bool ValidateBoolInverse::Copy(const ValidateBoolInverse& val) {
 //
-//    CValidateBool::Copy(val);
+//    ValidateBool::Copy(val);
 //    return true;
 //}
 
 
-bool CValidateBoolInverse::TransferToWindow(void) {
+bool ValidateBoolInverse::TransferToWindow(void) {
 
     if (!m_validatorWindow) return false;
 
@@ -48,7 +48,7 @@ bool CValidateBoolInverse::TransferToWindow(void) {
 }
 
 
-bool CValidateBoolInverse::TransferFromWindow(void) {
+bool ValidateBoolInverse::TransferFromWindow(void) {
 
     if (!m_validatorWindow) return false;
 

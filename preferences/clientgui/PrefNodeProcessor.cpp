@@ -41,7 +41,7 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         "This is commonly used to reduce the risk of overheating. The throttle "
         "is coarse-grained; you may see a sawtooth profile if you graph "
         "CPU usage. Default 100%."),
-        CValidateNumber<double>(&m_preferences->cpu_usage_limit, 0, 100))
+        ValidateNumber<double>(&m_preferences->cpu_usage_limit, 0, 100))
     );
 
     limits->AddPreference(new PrefValueText(this,
@@ -51,7 +51,7 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         _("This limit specifies the number of processors or individual "
         "processor cores as a percentage of the total. Many projects will run one "
         "process on each permitted core. Default 100%."),
-        CValidateNumber<double>(&m_preferences->max_ncpus_pct, 0, 100))
+        ValidateNumber<double>(&m_preferences->max_ncpus_pct, 0, 100))
     );
 
     PrefGroup* restrict = AddGroup(_("Processing Restrictions"));
@@ -64,7 +64,7 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         _("Suspend while computer is in use"),
         _("Use this option if you want BOINC to behave like a screensaver, "
         "only working when you are away from your computer. Default false."),
-        CValidateBoolInverse(&m_preferences->run_if_user_active));
+        ValidateBoolInverse(&m_preferences->run_if_user_active));
 
     m_idleTimeResume = new PrefValueText(this,
         _("idle_time_to_run"),
@@ -72,7 +72,7 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         _("minutes"),
         _("This option prevents BOINC from starting if you are only "
         "away from your computer briefly. Default 3 minutes."),
-        CValidateNumber<double>(&m_preferences->idle_time_to_run));
+        ValidateNumber<double>(&m_preferences->idle_time_to_run));
 
     run_if_user_active->Connect(
         wxEVT_COMMAND_CHECKBOX_CLICKED,
@@ -95,7 +95,7 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         _("Use power saving features"),
         _("Use this option if you don't want processing to conflict "
         "with power saving features. Default false."),
-        CValidateBool(&m_suspendIdle));
+        ValidateBool(&m_suspendIdle));
 
     m_idleTimeSuspend = new PrefValueText(this,
         _("suspend_if_no_recent_input"),
@@ -103,7 +103,7 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         _("minutes"),
         _("This is the length of time your computer will continue "
         "processing after it falls idle. Default 20 minutes."),
-        CValidateNumber<double>(&m_preferences->suspend_if_no_recent_input));
+        ValidateNumber<double>(&m_preferences->suspend_if_no_recent_input));
 
     suspend_if_no_recent_input->Connect(
         wxEVT_COMMAND_CHECKBOX_CLICKED,
@@ -125,7 +125,7 @@ PrefNodeProcessor::PrefNodeProcessor(wxWindow* parent, GLOBAL_PREFS* preferences
         _("Suspend while computer is running on batteries"),
         _("Generally, laptop users don't want BOINC to run while "
         "on battery power. Default true."),
-        CValidateBoolInverse(&m_preferences->run_on_batteries))
+        ValidateBoolInverse(&m_preferences->run_on_batteries))
     );
 }
 

@@ -25,28 +25,28 @@
 // Templated validator to handle any numeric type. T must
 // support insertion and extraction operators or it will all fail horribly.
 template<class T>
-class CValidateNumber : public wxTextValidator {
+class ValidateNumber : public wxTextValidator {
 public:
-    CValidateNumber() {}
-    CValidateNumber(T* val)
+    ValidateNumber() {}
+    ValidateNumber(T* val)
         : wxTextValidator(wxFILTER_NUMERIC),
         m_value(val),
         m_min(0),
         m_max(0),
         m_constrained(false),
         m_clamped(false) {}
-    CValidateNumber(T* val, T min, T max, bool clamped = true)
+    ValidateNumber(T* val, T min, T max, bool clamped = true)
         : wxTextValidator(wxFILTER_NUMERIC),
         m_value(val),
         m_min(min),
         m_max(max),
         m_constrained(true),
         m_clamped(clamped) {}
-    CValidateNumber(const CValidateNumber<T>& val) { Copy(val); }
-    ~CValidateNumber() {}
+    ValidateNumber(const ValidateNumber<T>& val) { Copy(val); }
+    ~ValidateNumber() {}
 
-    virtual wxObject*   Clone() const { return new CValidateNumber<T>(*this); }
-    virtual bool        Copy(const CValidateNumber& val);
+    virtual wxObject*   Clone() const { return new ValidateNumber<T>(*this); }
+    virtual bool        Copy(const ValidateNumber& val);
 
     virtual bool        Validate(wxWindow *parent);
     virtual bool        TransferToWindow();
@@ -66,7 +66,7 @@ protected:
 
 
 template<class T>
-bool CValidateNumber<T>::Copy(const CValidateNumber& val) {
+bool ValidateNumber<T>::Copy(const ValidateNumber& val) {
 
     wxTextValidator::Copy(val);
 
@@ -81,7 +81,7 @@ bool CValidateNumber<T>::Copy(const CValidateNumber& val) {
 
 
 template<class T>
-bool CValidateNumber<T>::Validate(wxWindow* parent) {
+bool ValidateNumber<T>::Validate(wxWindow* parent) {
  
     bool valid = wxTextValidator::Validate(parent);
     if (!valid || !m_validatorWindow) return false;
@@ -104,7 +104,7 @@ bool CValidateNumber<T>::Validate(wxWindow* parent) {
 
 
 template<class T>
-bool CValidateNumber<T>::TransferToWindow() {
+bool ValidateNumber<T>::TransferToWindow() {
 
     if (!m_validatorWindow) return false;
 
@@ -125,7 +125,7 @@ bool CValidateNumber<T>::TransferToWindow() {
 
 
 template<class T>
-bool CValidateNumber<T>::TransferFromWindow() {
+bool ValidateNumber<T>::TransferFromWindow() {
 
     if (!m_validatorWindow) return false;
 
@@ -143,7 +143,7 @@ bool CValidateNumber<T>::TransferFromWindow() {
 
 
 template<class T>
-bool CValidateNumber<T>::Parse(const wxString& value, T& result) {
+bool ValidateNumber<T>::Parse(const wxString& value, T& result) {
 
     std::basic_istringstream<wxChar> iss(value.c_str());
     iss >> result;
