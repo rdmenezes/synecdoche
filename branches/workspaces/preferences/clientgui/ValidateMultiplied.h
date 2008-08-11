@@ -23,9 +23,9 @@
 #include "ValidateNumber.h"
 
 template<class T>
-class ValidateMultiplied : public CValidateNumber<T> {
+class ValidateMultiplied : public ValidateNumber<T> {
 public:
-    ValidateMultiplied(T* val, T multiplier) : CValidateNumber<T>(val),
+    ValidateMultiplied(T* val, T multiplier) : ValidateNumber<T>(val),
     m_multiplier(multiplier) {}
     ValidateMultiplied(const ValidateMultiplied<T>& val) { Copy(val); }
     ~ValidateMultiplied() {}
@@ -44,7 +44,7 @@ protected:
 template<class T>
 bool ValidateMultiplied<T>::Copy(const ValidateMultiplied& val) {
 
-    CValidateNumber::Copy(val);
+    ValidateNumber::Copy(val);
     m_multiplier = val.m_multiplier;
     return true;
 }

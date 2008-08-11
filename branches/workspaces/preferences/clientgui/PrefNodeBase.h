@@ -153,7 +153,7 @@ protected:
             const wxString& xmlElementName,
             const wxString& prompt,
             const wxString& helpText,
-            const CValidateBool& val
+            const ValidateBool& val
         );
 
     protected:

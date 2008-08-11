@@ -39,7 +39,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("This option is combined with the other disk restrictions to "
         "determine the maximum space BOINC may use for project application data. "
         "Default 10 Gigabytes."),
-        CValidateNumber<double>(&m_preferences->disk_max_used_gb))
+        ValidateNumber<double>(&m_preferences->disk_max_used_gb))
     );
 
     quotas->AddPreference(new PrefValueText(this,
@@ -49,7 +49,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("This option is combined with the other disk restrictions to "
         "determine the maximum space BOINC may use for project application data. "
         "Default 0.1 Gigabytes."),
-        CValidateNumber<double>(&m_preferences->disk_min_free_gb))
+        ValidateNumber<double>(&m_preferences->disk_min_free_gb))
     );
 
     quotas->AddPreference(new PrefValueText(this,
@@ -59,7 +59,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("This option is combined with the other disk restrictions to "
         "determine the maximum space BOINC may use for project application data. "
         "Default 50%."),
-        CValidateNumber<double>(&m_preferences->disk_max_used_pct))
+        ValidateNumber<double>(&m_preferences->disk_max_used_pct))
     );
 
     PrefGroup* access = AddGroup(_("Disk Access"));
@@ -71,7 +71,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
         _("This setting is not observed by all projects. Use this setting to "
         "prevent the drive spinning up unnecessarily. Also refer to your power "
         "management settings. Default 60 seconds."),
-        CValidateNumber<double>(&m_preferences->disk_interval))
+        ValidateNumber<double>(&m_preferences->disk_interval))
     );
 
     PrefGroup* vm = AddGroup(_("Virtual Memory"));

@@ -24,23 +24,23 @@
 
 // wxGenericValidator does all we need for a boolean (checkbox) validator.
 // Rename it for convenience and clarity:
-typedef wxGenericValidator CValidateBool;
+typedef wxGenericValidator ValidateBool;
 
-// CValidateBoolInverse reverses the checkbox meaning. Checked == false, Not checked == true.
+// ValidateBoolInverse reverses the checkbox meaning. Checked == false, Not checked == true.
 // Useful when the sense of the backing variable does not match the prompt.
-class CValidateBoolInverse : public CValidateBool {
+class ValidateBoolInverse : public ValidateBool {
 
-    DECLARE_CLASS(CValidateBool)
+    DECLARE_CLASS(ValidateBool)
 
 public:
 
-    CValidateBoolInverse(bool* val) : CValidateBool(val) {};
-    CValidateBoolInverse(const CValidateBoolInverse& val): CValidateBool(val) {};
+    ValidateBoolInverse(bool* val) : ValidateBool(val) {};
+    ValidateBoolInverse(const ValidateBoolInverse& val): ValidateBool(val) {};
 
-    ~CValidateBoolInverse() {};
+    ~ValidateBoolInverse() {};
 
-    virtual wxObject* Clone() const { return new CValidateBoolInverse(*this); }
-    //virtual bool      Copy(const CValidateBoolInverse& val);
+    virtual wxObject* Clone() const { return new ValidateBoolInverse(*this); }
+    //virtual bool      Copy(const ValidateBoolInverse& val);
 
     virtual bool      TransferToWindow();
     virtual bool      TransferFromWindow();

@@ -53,7 +53,7 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
         "BOINC will still use the Internet more frequently if a connection "
         "is available."),
         _("0.1 days"),
-        CValidateNumber<double>(&m_preferences->work_buf_min_days))
+        ValidateNumber<double>(&m_preferences->work_buf_min_days))
     );
 
     PrefGroup* limits = AddGroup(_("Bandwidth Limits"));

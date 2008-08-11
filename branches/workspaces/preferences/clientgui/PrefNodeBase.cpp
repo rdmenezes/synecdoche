@@ -261,7 +261,7 @@ PrefNodeBase::PrefValueBool::PrefValueBool(
             const wxString& xmlElementName,
             const wxString& prompt,
             const wxString& helpText,
-            const CValidateBool& val
+            const ValidateBool& val
             ) : PrefNodeBase::PrefValueBase(
             parent, xmlElementName, helpText)
 {

@@ -22,12 +22,12 @@
 
 #include "ValidateNumber.h"
 
-// In addition to the CValidateNumber requirements, T must cast to various integer values.
+// In addition to the ValidateNumber requirements, T must cast to various integer values.
 template<class T>
-class ValidatePercent : public CValidateNumber<T> {
+class ValidatePercent : public ValidateNumber<T> {
 public:
-    ValidatePercent(T* val) : CValidateNumber<T>(val, (T)0, (T)1) {}
-    ValidatePercent(const CValidateNumber<T>& val) { Copy(val); }
+    ValidatePercent(T* val) : ValidateNumber<T>(val, (T)0, (T)1) {}
+    ValidatePercent(const ValidateNumber<T>& val) { Copy(val); }
     ~ValidatePercent() {}
 
     virtual wxObject*   Clone() const { return new ValidatePercent<T>(*this); }
