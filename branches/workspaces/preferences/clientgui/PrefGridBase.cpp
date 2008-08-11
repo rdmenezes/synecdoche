@@ -18,12 +18,9 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdwx.h"
-#include "wx/treectrl.h"
-#include "wx/valgen.h"
-#include "wx/gbsizer.h"
 #include "PrefGridBase.h"
 #include "PrefTreeBook.h"
-#include <wx/odcombo.h>
+
 
 
 IMPLEMENT_DYNAMIC_CLASS(PrefGridBase, PrefNodeBase)

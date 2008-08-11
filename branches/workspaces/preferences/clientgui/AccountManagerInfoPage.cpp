@@ -29,7 +29,6 @@
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
-#include <wx/hyperlink.h>
 #include "ValidateURL.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"

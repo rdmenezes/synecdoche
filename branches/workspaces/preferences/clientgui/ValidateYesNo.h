@@ -20,7 +20,6 @@
 #ifndef _VALIDATEYESNO_H_
 #define _VALIDATEYESNO_H_
 
-#include "wx/valtext.h"
 #include "prefs.h"
 
 

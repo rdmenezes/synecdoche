@@ -19,7 +19,6 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 //
 #include "stdwx.h"
-#include <wx/hyperlink.h>
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 

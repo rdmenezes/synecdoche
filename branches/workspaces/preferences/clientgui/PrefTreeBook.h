@@ -21,7 +21,6 @@
 #define _PREFTREEBOOK_H_
 
 #include "PrefNodeBase.h"
-#include "wx/treectrl.h"
 
 // Data class to attach NodeType to TreeItem
 class PrefNodeItemData : public wxTreeItemData {

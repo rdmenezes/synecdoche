@@ -20,7 +20,6 @@
 #ifndef _VALIDATETIME_H_
 #define _VALIDATETIME_H_
 
-#include "wx/valtext.h"
 #include "prefs.h"
 
 
