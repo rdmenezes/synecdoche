@@ -24,13 +24,13 @@
 #include "prefs.h"
 
 
-class CValidateTime : public wxTextValidator {
+class ValidateTime : public wxTextValidator {
 
-    DECLARE_CLASS(CValidateTime)
+    DECLARE_CLASS(ValidateTime)
 
 public:
-    CValidateTime() : wxTextValidator(wxFILTER_INCLUDE_CHAR_LIST) {}
-    CValidateTime(double* val) : wxTextValidator(wxFILTER_INCLUDE_CHAR_LIST), m_time(val) {
+    ValidateTime() : wxTextValidator(wxFILTER_INCLUDE_CHAR_LIST) {}
+    ValidateTime(double* val) : wxTextValidator(wxFILTER_INCLUDE_CHAR_LIST), m_time(val) {
         const wxChar *numbers[] = {
            wxT("0"), wxT("1"), wxT("2"), wxT("3"), wxT("4"),
            wxT("5"), wxT("6"), wxT("7"), wxT("8"), wxT("9"),
@@ -38,10 +38,10 @@ public:
         };
         SetIncludes(wxArrayString(11, numbers));
     }
-    CValidateTime(const CValidateTime& val): wxTextValidator(val) { m_time = val.m_time; }
-    ~CValidateTime() {};
+    ValidateTime(const ValidateTime& val): wxTextValidator(val) { m_time = val.m_time; }
+    ~ValidateTime() {};
 
-    virtual wxObject*   Clone() const { return new CValidateTime(*this); }
+    virtual wxObject*   Clone() const { return new ValidateTime(*this); }
 
     virtual bool        TransferToWindow();
     virtual bool        TransferFromWindow();
@@ -55,16 +55,16 @@ protected:
     double*             m_time;
 };
 
-class CValidateTimeSpan : public wxTextValidator {
+class ValidateTimeSpan : public wxTextValidator {
 
-    DECLARE_CLASS(CValidateTimeSpan)
+    DECLARE_CLASS(ValidateTimeSpan)
 
 public:
-    CValidateTimeSpan(TIME_PREFS* val, int day) : m_prefs(val), m_day(day) {}
-    CValidateTimeSpan(const CValidateTimeSpan& val): m_prefs(val.m_prefs), m_day(val.m_day) {}
-    ~CValidateTimeSpan() {};
+    ValidateTimeSpan(TIME_PREFS* val, int day) : m_prefs(val), m_day(day) {}
+    ValidateTimeSpan(const ValidateTimeSpan& val): m_prefs(val.m_prefs), m_day(val.m_day) {}
+    ~ValidateTimeSpan() {};
 
-    virtual wxObject*   Clone() const { return new CValidateTimeSpan(*this); }
+    virtual wxObject*   Clone() const { return new ValidateTimeSpan(*this); }
 
     virtual bool        TransferToWindow();
     virtual bool        TransferFromWindow();
