@@ -35,7 +35,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
     quotas->AddPreference(new PrefValueText(this,
         _("Maximum disk space to use (Gigabytes)"),
         _("This option is combined with the other disk restrictions to "
-        "determine the maximum space BOINC may use for project application data."),
+        "determine the maximum space used for project application data."),
         _("10 Gigabytes"),
         ValidateNumber<double>(&m_preferences->disk_max_used_gb))
     );
@@ -43,7 +43,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
     quotas->AddPreference(new PrefValueText(this,
         _("Minimum free disk space (Gigabytes)"),
         _("This option is combined with the other disk restrictions to "
-        "determine the maximum space BOINC may use for project application data."),
+        "determine the maximum space used for project application data."),
         _("0.1 Gigabytes"),
         ValidateNumber<double>(&m_preferences->disk_min_free_gb))
     );
@@ -51,7 +51,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
     quotas->AddPreference(new PrefValueText(this,
         _("Maximum percentage of disk space to use"),
         _("This option is combined with the other disk restrictions to "
-        "determine the maximum space BOINC may use for project application data."),
+        "determine the maximum space used for project application data."),
         _("50%"),
         ValidateNumber<double>(&m_preferences->disk_max_used_pct))
     );
@@ -71,7 +71,7 @@ PrefNodeDisk::PrefNodeDisk(wxWindow* parent, GLOBAL_PREFS* preferences)
 
     vm->AddPreference(new PrefValueText(this,
          _("Maximum percentage of page file to use"),
-        _("Restrict the amount of virtual memory that BOINC may use. This "
+        _("Restrict the amount of virtual memory that may be used by tasks. This "
         "setting should be used with care if your page file size is managed by "
         "the operating system."),
         _("75%"),
