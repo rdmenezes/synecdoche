@@ -46,6 +46,7 @@ protected:
 private:
     int GetTotalSize() const;
 
+    wxPanel*                    m_gridPanel;
     wxGridBagSizer*             m_groupSizer;
     std::vector<PrefGroup*>     m_groupList;
     std::vector<PrefValueBase*> m_prefList;
