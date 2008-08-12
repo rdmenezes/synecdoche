@@ -30,7 +30,7 @@ struct COPROC {
     int count;          // how many are present
     int used;           // how many are in use (used by client)
 
-    virtual void write_xml(MIOFILE&);
+    virtual void write_xml(MIOFILE&) const;
     COPROC(const char* t){
         strcpy(type, t);
         count = 0;
@@ -51,7 +51,7 @@ struct COPROCS {
             delete coprocs[i];
         }
     }
-    void write_xml(MIOFILE& out) {
+    void write_xml(MIOFILE& out) const {
         for (unsigned int i=0; i<coprocs.size(); i++) {
             coprocs[i]->write_xml(out);
         }

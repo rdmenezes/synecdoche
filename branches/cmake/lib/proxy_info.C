@@ -56,7 +56,7 @@ int PROXY_INFO::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int PROXY_INFO::write(MIOFILE& out) {
+int PROXY_INFO::write(MIOFILE& out) const {
     char s5un[2048], s5up[2048], hun[2048], hup[2048];
     xml_escape(socks5_user_name, s5un);
     xml_escape(socks5_user_passwd, s5up);

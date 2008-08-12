@@ -43,7 +43,7 @@ deque<MESSAGE_DESC*> message_descs;
 // and passes it to show_message
 // TODO: add translation functionality
 //
-void msg_printf(PROJECT *p, int priority, const char *fmt, ...) {
+void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) {
     char        buf[8192];  // output can be much longer than format
     va_list     ap;
 
@@ -58,7 +58,7 @@ void msg_printf(PROJECT *p, int priority, const char *fmt, ...) {
 
 // stash message in memory
 //
-void record_message(PROJECT* p, int priority, int now, char* message) {
+void record_message(const PROJECT* p, int priority, int now, const char* message) {
     MESSAGE_DESC* mdp = new MESSAGE_DESC;
     static int seqno = 1;
     strcpy(mdp->project_name, "");

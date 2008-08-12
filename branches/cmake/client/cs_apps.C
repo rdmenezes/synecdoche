@@ -313,7 +313,7 @@ ACTIVE_TASK* ACTIVE_TASK_SET::lookup_pid(int pid) {
 
 // Find the ACTIVE_TASK in the current set with the matching result
 //
-ACTIVE_TASK* ACTIVE_TASK_SET::lookup_result(RESULT* result) {
+ACTIVE_TASK* ACTIVE_TASK_SET::lookup_result(const RESULT* result) {
     unsigned int i;
     ACTIVE_TASK* atp;
 

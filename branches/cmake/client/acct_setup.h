@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -47,7 +48,7 @@ struct ACCOUNT_IN {
         // during account creation.
     std::string passwd_hash;
 
-    void parse(char*);
+    void parse(const char*);
 };
 
 struct GET_PROJECT_CONFIG_OP: public GUI_HTTP_OP {
@@ -59,7 +60,7 @@ struct GET_PROJECT_CONFIG_OP: public GUI_HTTP_OP {
         gui_http = p;
     }
     virtual ~GET_PROJECT_CONFIG_OP(){}
-    int do_rpc(std::string url);
+    int do_rpc(const std::string& url);
     virtual void handle_reply(int http_op_retval);
 };
 
@@ -72,7 +73,7 @@ struct LOOKUP_ACCOUNT_OP: public GUI_HTTP_OP {
         gui_http = p;
     }
     virtual ~LOOKUP_ACCOUNT_OP(){}
-    int do_rpc(ACCOUNT_IN&);
+    int do_rpc(const ACCOUNT_IN&);
     virtual void handle_reply(int http_op_retval);
 };
 
@@ -85,7 +86,7 @@ struct CREATE_ACCOUNT_OP: public GUI_HTTP_OP {
         gui_http = p;
     }
     virtual ~CREATE_ACCOUNT_OP(){}
-    int do_rpc(ACCOUNT_IN&);
+    int do_rpc(const ACCOUNT_IN&);
     virtual void handle_reply(int http_op_retval);
 };
 
