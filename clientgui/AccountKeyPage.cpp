@@ -167,7 +167,6 @@ wxWizardPageEx* CAccountKeyPage::GetNext() const
     } else {
         return PAGE_TRANSITION_NEXT(ID_PROJECTPROCESSINGPAGE);
     }
-    return NULL;
 }
  
 /*!

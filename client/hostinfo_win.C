@@ -457,7 +457,6 @@ BOOL is_processor_feature_supported(DWORD feature) {
             return test_processor_feature(feature);
         }
     }
-    return 0;
 }
 
 

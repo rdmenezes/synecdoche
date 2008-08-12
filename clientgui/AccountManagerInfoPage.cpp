@@ -225,7 +225,6 @@ wxWizardPageEx* CAccountManagerInfoPage::GetNext() const
     } else {
         return PAGE_TRANSITION_NEXT(ID_ACCOUNTMANAGERPROPERTIESPAGE);
     }
-    return NULL;
 }
 
 /*!
