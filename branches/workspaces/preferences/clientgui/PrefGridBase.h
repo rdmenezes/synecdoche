@@ -28,6 +28,10 @@
 
 class wxOwnerDrawnComboBox;
 
+/// Base class for property grid preferences.
+/// Preferences are arranged in a grid, with group headers spanning both
+/// columns. The selected row is shown highlighted, and selection changes
+/// fire a PrefHelpEvent.
 class PrefGridBase : public PrefNodeBase {
 
     DECLARE_DYNAMIC_CLASS(PrefGridBase)
@@ -46,17 +50,19 @@ protected:
 private:
     int GetTotalSize() const;
 
-    wxPanel*                    m_gridPanel;
-    wxGridBagSizer*             m_groupSizer;
-    std::vector<PrefGroup*>     m_groupList;
-    std::vector<PrefValueBase*> m_prefList;
+    wxPanel*                    m_gridPanel;    ///< Panel filling the virtual scrolled window size.
+    wxGridBagSizer*             m_groupSizer;   ///< Sizer for m_gridPanel.
+    std::vector<PrefGroup*>     m_groupList;    ///< All groups added to the grid.
+    std::vector<PrefValueBase*> m_prefList;     ///< All preferences added to the grid.
 
-    PrefValueBase* m_selected;
+    PrefValueBase*              m_selected;     ///< Currently selected preference item. May be null.
 
 // Nested utility classes:
 protected:
 
-    // Group box containing pref widgets.
+    /// A group of preferences.
+    /// In a property grid page, groups are rendered as a bold heading, spanning
+    /// both columns.
     class PrefGroup : public wxObject {
     public:
         PrefGroup(wxWindow* win, const wxString& title);
