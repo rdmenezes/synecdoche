@@ -29,17 +29,21 @@ IMPLEMENT_DYNAMIC_CLASS(PrefGridBase, PrefNodeBase)
 PrefGridBase::PrefGridBase(wxWindow* parent, GLOBAL_PREFS* preferences)
 : PrefNodeBase(parent, preferences) {
 
-    //SetAutoLayout(true);
     m_selected = 0;
 
-    SetScrollRate(10, 10);
+    SetScrollRate(0, 10);
+
+    wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
+    SetSizer(s);
+
+    m_gridPanel = new wxPanel(this);
+    s->Add(m_gridPanel, 1, wxEXPAND);
 
     m_groupSizer = new wxGridBagSizer(1, 1);
 
     m_groupSizer->AddGrowableCol(0, 1);
-    //m_groupSizer->AddGrowableCol(1, 1);
 
-    SetSizer(m_groupSizer);
+    m_gridPanel->SetSizer(m_groupSizer);
 }
 
 
@@ -50,14 +54,14 @@ PrefGridBase::PrefGroup* PrefGridBase::AddGroup(const wxString& title) {
 
     PrefGroup* group = new PrefGroup(this, title);
 
-    wxStaticText* groupLabel = new wxStaticText(this, wxID_ANY, title);
+    wxStaticText* groupLabel = new wxStaticText(m_gridPanel, wxID_ANY, title);
     wxFont font = groupLabel->GetFont();
     font.SetWeight(wxBOLD);
     groupLabel->SetFont(font);
 
     m_groupSizer->Add(groupLabel, wxGBPosition(GetTotalSize(), 0), wxGBSpan(1, 2), wxALL, 3);
     m_groupList.push_back(group);
-    //Fit();
+
     return group;
 }
 
@@ -124,11 +128,11 @@ PrefGridBase::PrefValueBase::PrefValueBase(
 
 wxPanel* PrefGridBase::PrefValueBase::CreateControls() {
 
-    m_labelPanel = new wxPanel(m_grid);
+    m_labelPanel = new wxPanel(m_grid->m_gridPanel);
     m_labelPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     m_labelPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
-    m_controlPanel = new wxPanel(m_grid);
+    m_controlPanel = new wxPanel(m_grid->m_gridPanel);
     m_controlPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     m_controlPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
@@ -139,12 +143,9 @@ wxPanel* PrefGridBase::PrefValueBase::CreateControls() {
 
     m_labelPanel->SetHelpText(m_helpText);
 
-    //inputCtrl->SetValidator(val);
-
     m_grid->m_groupSizer->Add(m_labelPanel, wxGBPosition(m_grid->GetTotalSize(), 0), wxDefaultSpan, wxEXPAND);
     m_grid->m_groupSizer->Add(m_controlPanel, wxGBPosition(m_grid->GetTotalSize(), 1), wxDefaultSpan, wxEXPAND);
 
-    //m_labelPanel->PushEventHandler(this);
     m_labelPanel->Connect(wxEVT_LEFT_DOWN,
         wxMouseEventHandler(PrefGridBase::PrefValueBase::OnClick), 0, this);
 

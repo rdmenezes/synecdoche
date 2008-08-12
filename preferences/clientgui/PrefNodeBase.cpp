@@ -32,7 +32,7 @@
 
 DEFINE_EVENT_TYPE(PREF_EVT_CMD_UPDATE)
 
-IMPLEMENT_DYNAMIC_CLASS(PrefNodeBase, wxPanel)
+IMPLEMENT_DYNAMIC_CLASS(PrefNodeBase, wxScrolledWindow)
 
 
 PrefNodeBase::PrefNodeBase(wxWindow* parent, GLOBAL_PREFS* preferences)
