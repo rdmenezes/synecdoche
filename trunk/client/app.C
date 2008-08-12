@@ -419,7 +419,6 @@ int ACTIVE_TASK_SET::get_free_slot() const {
             if (!retval) return j;
         }
     }
-    return ERR_NOT_FOUND;   // probably never get here
 }
 
 bool ACTIVE_TASK_SET::slot_taken(int slot) const {

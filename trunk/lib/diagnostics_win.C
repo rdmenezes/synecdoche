@@ -725,7 +725,6 @@ char* diagnostics_format_thread_state(int thread_state) {
         case ThreadStateTransition: return "Transition";
         default: return "Unknown";
     }
-    return "";
 }
 
 
@@ -757,7 +756,6 @@ char* diagnostics_format_thread_wait_reason(int thread_wait_reason) {
         case ThreadWaitReasonWrPageOut: return "PageOut";
         default: return "Unknown";
     }
-    return "";
 }
 
 
@@ -775,7 +773,6 @@ char* diagnostics_format_process_priority(int process_priority) {
         case REALTIME_PRIORITY_CLASS: return "Realtime";
         default: return "Unknown";
     }
-    return "";
 }
 
 
@@ -794,7 +791,6 @@ char* diagnostics_format_thread_priority(int thread_priority) {
         case THREAD_PRIORITY_TIME_CRITICAL: return "Time Critical";
         default: return "Unknown";
     }
-    return "";
 }
 
 
