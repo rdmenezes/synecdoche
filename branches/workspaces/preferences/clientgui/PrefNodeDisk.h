@@ -22,7 +22,7 @@
 
 #include "prefs.h"
 
-class PrefNodeDisk : public PrefNodeBase {
+class PrefNodeDisk : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeDisk)
 
