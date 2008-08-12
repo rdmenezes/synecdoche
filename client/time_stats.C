@@ -257,7 +257,7 @@ void TIME_STATS::update_cpu_efficiency(double cpu_wall_time, double cpu_time) {
 
 // Write XML based time statistics
 //
-int TIME_STATS::write(MIOFILE& out, bool to_server) {
+int TIME_STATS::write(MIOFILE& out, bool to_server) const {
     out.printf(
         "<time_stats>\n"
         "    <on_frac>%f</on_frac>\n"

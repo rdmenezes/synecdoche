@@ -41,6 +41,19 @@ public:
 };
 
 
+class DlgYesToAll: public wxDialog {
+
+    DECLARE_DYNAMIC_CLASS(DlgYesToAll)
+    DECLARE_EVENT_TABLE()
+
+public:
+    DlgYesToAll() {}
+    DlgYesToAll(wxWindow* parent, const wxString& caption, const wxString& message, long buttons);
+
+    void OnButton(wxCommandEvent& event);
+};
+
+
 class CViewWork : public CTaskViewBase
 {
     DECLARE_DYNAMIC_CLASS( CViewWork )

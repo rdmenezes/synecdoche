@@ -86,7 +86,7 @@ int AUTO_UPDATE::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-void AUTO_UPDATE::write(MIOFILE& out) {
+void AUTO_UPDATE::write(MIOFILE& out) const {
     out.printf(
         "<auto_update>\n"
     );
@@ -268,7 +268,7 @@ int VERSION_INFO::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-void VERSION_INFO::write(MIOFILE& out) {
+void VERSION_INFO::write(MIOFILE& out) const {
     out.printf(
         "<version>\n"
         "   <major>%d</major>\n"
@@ -280,7 +280,7 @@ void VERSION_INFO::write(MIOFILE& out) {
     );
 }
 
-bool VERSION_INFO::greater_than(VERSION_INFO& vi) {
+bool VERSION_INFO::greater_than(VERSION_INFO& vi) const {
     if (major > vi.major) return true;
     if (major < vi.major) return false;
     if (minor > vi.minor) return true;

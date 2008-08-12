@@ -214,12 +214,12 @@ public:
         // Returns true if it actually did something,
         // in which case it should be called again immediately.
     void do_io_or_sleep(double dt);
-    bool time_to_exit();
+    bool time_to_exit() const;
     PROJECT* lookup_project(const char*);
-    APP* lookup_app(PROJECT*, const char*);
-    FILE_INFO* lookup_file_info(PROJECT*, const char* name);
-    RESULT* lookup_result(PROJECT*, const char*);
-    WORKUNIT* lookup_workunit(PROJECT*, const char*);
+    APP* lookup_app(const PROJECT*, const char*);
+    FILE_INFO* lookup_file_info(const PROJECT*, const char* name);
+    RESULT* lookup_result(const PROJECT*, const char*);
+    WORKUNIT* lookup_workunit(const PROJECT*, const char*);
     APP_VERSION* lookup_app_version(
         APP*, char* platform, int ver, char* plan_class
     );
@@ -234,11 +234,11 @@ private:
     int link_app_version(PROJECT*, APP_VERSION*);
     int link_workunit(PROJECT*, WORKUNIT*);
     int link_result(PROJECT*, RESULT*);
-    void print_summary();
+    void print_summary() const;
     bool garbage_collect();
     bool garbage_collect_always();
     bool update_results();
-    int nresults_for_project(PROJECT*);
+    int nresults_for_project(const PROJECT*) const;
     void check_clock_reset();
 
 // --------------- cpu_sched.C:
@@ -326,7 +326,7 @@ public:
     double estimate_cpu_time(WORKUNIT&);
     double get_fraction_done(RESULT* result);
     int input_files_available(RESULT*, bool, FILE_INFO** f=0);
-    ACTIVE_TASK* lookup_active_task_by_result(RESULT*);
+    ACTIVE_TASK* lookup_active_task_by_result(const RESULT*);
     int ncpus;
         // number of usable cpus
 private:
@@ -366,7 +366,7 @@ private:
 
 // --------------- cs_platforms.C:
 public:
-    const char* get_primary_platform();
+    const char* get_primary_platform() const;
 private:
     void add_platform(const char*);
     void detect_platforms();
@@ -412,8 +412,8 @@ private:
 public:
     void set_client_state_dirty(const char*);
     int parse_state_file();
-    int write_state(MIOFILE&);
-    int write_state_file();
+    int write_state(MIOFILE&) const;
+    int write_state_file() const;
     int write_state_file_if_needed();
     void check_anonymous();
     int parse_app_info(PROJECT*, FILE*);

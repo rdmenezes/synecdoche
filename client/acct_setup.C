@@ -1,5 +1,6 @@
-// Berkeley Open Infrastructure for Network Computing
-// http://boinc.berkeley.edu
+// Synecdoche
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // This is free software; you can redistribute it and/or
@@ -78,7 +79,7 @@ int PROJECT_INIT::remove() {
     return boinc_delete_file(PROJECT_INIT_FILENAME);
 }
 
-void ACCOUNT_IN::parse(char* buf) {
+void ACCOUNT_IN::parse(const char* buf) {
     url = "";
     email_addr = "";
     passwd_hash = "";
@@ -91,11 +92,10 @@ void ACCOUNT_IN::parse(char* buf) {
     canonicalize_master_url(url);
 }
 
-int GET_PROJECT_CONFIG_OP::do_rpc(string master_url) {
+int GET_PROJECT_CONFIG_OP::do_rpc(const string& master_url) {
     int retval;
-    string url;
+    string url = master_url;
 
-    url = master_url;
     canonicalize_master_url(url);
 
     url += "get_project_config.php";
@@ -121,7 +121,7 @@ void GET_PROJECT_CONFIG_OP::handle_reply(int http_op_retval) {
     }
 }
 
-int LOOKUP_ACCOUNT_OP::do_rpc(ACCOUNT_IN& ai) {
+int LOOKUP_ACCOUNT_OP::do_rpc(const ACCOUNT_IN& ai) {
     int retval;
     string url;
     string parameter;
@@ -156,7 +156,7 @@ void LOOKUP_ACCOUNT_OP::handle_reply(int http_op_retval) {
     }
 }
 
-int CREATE_ACCOUNT_OP::do_rpc(ACCOUNT_IN& ai) {
+int CREATE_ACCOUNT_OP::do_rpc(const ACCOUNT_IN& ai) {
     int retval;
     string url;
     string parameter;
@@ -212,7 +212,7 @@ int GET_CURRENT_VERSION_OP::do_rpc() {
     return retval;
 }
 
-static bool is_version_newer(char* p) {
+static bool is_version_newer(const char* p) {
     int maj=0, min=0, rel=0;
 
     sscanf(p, "%d.%d.%d", &maj, &min, &rel);

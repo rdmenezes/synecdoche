@@ -684,17 +684,17 @@ void CLIENT_STATE::compute_nuploading_results() {
     }
 }
 
-bool PROJECT::runnable() {
+bool PROJECT::runnable() const {
     if (suspended_via_gui) return false;
     for (unsigned int i=0; i<gstate.results.size(); i++) {
-        RESULT* rp = gstate.results[i];
+        const RESULT* rp = gstate.results[i];
         if (rp->project != this) continue;
         if (rp->runnable()) return true;
     }
     return false;
 }
 
-bool PROJECT::downloading() {
+bool PROJECT::downloading() const {
     if (suspended_via_gui) return false;
     for (unsigned int i=0; i<gstate.results.size(); i++) {
         RESULT* rp = gstate.results[i];
@@ -704,7 +704,7 @@ bool PROJECT::downloading() {
     return false;
 }
 
-bool PROJECT::some_result_suspended() {
+bool PROJECT::some_result_suspended() const {
     unsigned int i;
     for (i=0; i<gstate.results.size(); i++) {
          RESULT *rp = gstate.results[i];
@@ -714,7 +714,7 @@ bool PROJECT::some_result_suspended() {
     return false;
 }
 
-bool PROJECT::contactable() {
+bool PROJECT::contactable() const {
     if (suspended_via_gui) return false;
     if (master_url_fetch_pending) return false;
     if (min_rpc_time > gstate.now) return false;
@@ -722,51 +722,51 @@ bool PROJECT::contactable() {
     return true;
 }
 
-bool PROJECT::potentially_runnable() {
+bool PROJECT::potentially_runnable() const {
     if (runnable()) return true;
     if (contactable()) return true;
     if (downloading()) return true;
     return false;
 }
 
-bool PROJECT::nearly_runnable() {
+bool PROJECT::nearly_runnable() const {
     if (runnable()) return true;
     if (downloading()) return true;
     return false;
 }
 
-bool PROJECT::overworked() {
+bool PROJECT::overworked() const {
     return long_term_debt < -gstate.global_prefs.cpu_scheduling_period();
 }
 
-bool RESULT::runnable() {
+bool RESULT::runnable() const {
     if (suspended_via_gui) return false;
     if (project->suspended_via_gui) return false;
     if (state() != RESULT_FILES_DOWNLOADED) return false;
     return true;
 }
 
-bool RESULT::nearly_runnable() {
+bool RESULT::nearly_runnable() const {
     return runnable() || downloading();
 }
 
 // Return true if the result is waiting for its files to download,
 // and nothing prevents this from happening soon
 //
-bool RESULT::downloading() {
+bool RESULT::downloading() const {
     if (suspended_via_gui) return false;
     if (project->suspended_via_gui) return false;
     if (state() > RESULT_FILES_DOWNLOADING) return false;
     return true;
 }
 
-double RESULT::estimated_cpu_time_uncorrected() {
+double RESULT::estimated_cpu_time_uncorrected() const {
     return wup->rsc_fpops_est/gstate.host_info.p_fpops;
 }
 
 // estimate how long a result will take on this host
 //
-double RESULT::estimated_cpu_time(bool for_work_fetch) {
+double RESULT::estimated_cpu_time(bool for_work_fetch) const {
 #ifdef SIM
     SIM_PROJECT* spp = (SIM_PROJECT*)project;
     if (dual_dcf && for_work_fetch && spp->completions_ratio_mean) {
@@ -776,7 +776,7 @@ double RESULT::estimated_cpu_time(bool for_work_fetch) {
     return estimated_cpu_time_uncorrected()*project->duration_correction_factor;
 }
 
-double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) {
+double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) const {
     if (computing_done()) return 0;
     ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(this);
     if (atp) {

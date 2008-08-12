@@ -102,8 +102,8 @@ struct ACCT_MGR_OP: public GUI_HTTP_OP {
     char host_venue[256];
 
     int do_rpc(
-        std::string url, std::string name, std::string password,
-        bool via_gui
+        const std::string& url, const std::string& name,
+        const std::string& password, bool via_gui
     );
     int parse(FILE*);
     virtual void handle_reply(int http_op_retval);

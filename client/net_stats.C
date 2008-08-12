@@ -78,7 +78,7 @@ void NET_INFO::update(double nbytes, double dt) {
     );
 }
 
-int NET_STATS::write(MIOFILE& out) {
+int NET_STATS::write(MIOFILE& out) const {
     out.printf(
         "<net_stats>\n"
         "    <bwup>%f</bwup>\n"

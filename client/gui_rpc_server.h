@@ -66,13 +66,13 @@ public:
     ~GUI_RPC_CONN();
     int handle_rpc();
     void handle_auth1(MIOFILE&);
-    int handle_auth2(char*, MIOFILE&);
-    void handle_get_project_config(char* buf, MIOFILE& fout);
-    void handle_get_project_config_poll(char*, MIOFILE& fout);
-    void handle_lookup_account(char* buf, MIOFILE& fout);
-    void handle_lookup_account_poll(char*, MIOFILE& fout);
-    void handle_create_account(char* buf, MIOFILE& fout);
-    void handle_create_account_poll(char*, MIOFILE& fout);
+    int handle_auth2(const char*, MIOFILE&);
+    void handle_get_project_config(const char* buf, MIOFILE& fout);
+    void handle_get_project_config_poll(const char*, MIOFILE& fout);
+    void handle_lookup_account(const char* buf, MIOFILE& fout);
+    void handle_lookup_account_poll(const char*, MIOFILE& fout);
+    void handle_create_account(const char* buf, MIOFILE& fout);
+    void handle_create_account_poll(const char*, MIOFILE& fout);
 };
 
 // authentication for GUI RPCs:
