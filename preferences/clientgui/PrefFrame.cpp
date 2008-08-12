@@ -76,9 +76,9 @@ PrefFrame::PrefFrame(wxWindow* parent) : wxDialog(parent, ID_ANYDIALOG, _("Prefe
     // Dialog buttons - right aligned.
     wxBoxSizer* buttonRow = new wxBoxSizer(wxHORIZONTAL);
 
-    m_buttonOkay = new wxButton(this, wxID_OK, _("Okay"));
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"));
-    m_buttonHelp = new wxButton(this, wxID_HELP, _("Help"));
+    m_buttonOkay = new wxButton(this, wxID_OK);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL);
+    m_buttonHelp = new wxButton(this, wxID_HELP);
 
     buttonRow->AddStretchSpacer();
     buttonRow->Add(m_buttonOkay, 0, wxALL, PREF_DLG_MARGIN);
