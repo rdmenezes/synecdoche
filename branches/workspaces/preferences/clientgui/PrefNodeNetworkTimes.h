@@ -35,9 +35,9 @@ public:
 
     void OnCopyTimes(wxCommandEvent& event);
 
+private:
     PrefValueTime* m_time;
     PrefValueWeek* m_week;
-    GLOBAL_PREFS* m_preferences;
 };
 
 #endif // _PREFNODENETWORKTIMES_H_

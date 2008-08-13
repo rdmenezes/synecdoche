@@ -31,7 +31,7 @@ BEGIN_EVENT_TABLE(PrefNodeNetworkTimes, PrefNodeBase)
 END_EVENT_TABLE()
 
 PrefNodeNetworkTimes::PrefNodeNetworkTimes(wxWindow* parent, GLOBAL_PREFS* preferences)
-: PrefNodeBase(parent, preferences), m_preferences(preferences) {
+: PrefNodeBase(parent, preferences) {
 
     PrefGroup* copy = AddGroup(_("Copy Settings"));
 
