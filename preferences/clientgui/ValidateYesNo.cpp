@@ -32,7 +32,7 @@ bool ValidateYesNo::TransferToWindow() {
 
         wxComboCtrl* pControl = (wxComboCtrl*) m_validatorWindow;
         if (m_bool) {
-            if (*m_bool) {
+            if (*m_bool ^ m_invert) {
                 pControl->SetValue(_("Yes"));
             } else {
                 pControl->SetValue(_("No"));
@@ -52,7 +52,7 @@ bool ValidateYesNo::TransferFromWindow() {
 
         wxComboCtrl* pControl = (wxComboCtrl*) m_validatorWindow;
         if (m_bool) {
-            *m_bool = pControl->GetValue().IsSameAs(_("Yes"));
+            *m_bool = m_invert ^ pControl->GetValue().IsSameAs(_("Yes"));
             return true;
         }
     }
