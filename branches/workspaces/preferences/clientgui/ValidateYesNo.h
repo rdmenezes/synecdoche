@@ -29,12 +29,13 @@ class ValidateYesNo : public wxValidator {
 
 public:
     ValidateYesNo() : wxValidator() {}
-    ValidateYesNo(bool* val) : wxValidator(), m_bool(val) {
+    ValidateYesNo(bool* val, bool invert = false) : wxValidator(), m_bool(val), m_invert(invert) {
 
     }
     ValidateYesNo(const ValidateYesNo& val): wxValidator() { 
-        //wxValidator::Copy(val);
-        m_bool = val.m_bool; }
+        m_bool = val.m_bool;
+        m_invert = val.m_invert;
+    }
     ~ValidateYesNo() {};
 
     virtual wxObject*   Clone() const { return new ValidateYesNo(*this); }
@@ -45,7 +46,8 @@ public:
     bool                GetBool() const { return *m_bool; }
 
 protected:
-    bool*             m_bool;
+    bool*               m_bool;
+    bool                m_invert;
 };
 
 #endif // _VALIDATEYESNO_H_
