@@ -1,5 +1,3 @@
-/* SystemMenu.m */
-
 // Berkeley Open Infrastructure for Network Computing
 // http://boinc.berkeley.edu
 // Copyright (C) 2005 University of California
@@ -293,3 +291,4 @@ static OSStatus LoadFrameworkBundle(CFStringRef framework, CFBundleRef *bundlePt
 }
 
 @end
+/* vim: set ft=objc: */

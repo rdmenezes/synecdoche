@@ -89,3 +89,4 @@ bail:
 
     return retval;
 }
+/* vim: set ft=objcpp: */
