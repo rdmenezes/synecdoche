@@ -22,7 +22,7 @@
 
 struct GLOBAL_PREFS;
 
-class PrefNodeProcessor : public PrefNodeBase {
+class PrefNodeProcessor : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeProcessor)
 
@@ -34,8 +34,8 @@ private:
     void OnRunIdleChanged(wxCommandEvent& event);
     void OnSuspendIdleChanged(wxCommandEvent& event);
 
-    PrefValueBase* m_idleTimeResume;
-    PrefValueBase* m_idleTimeSuspend;
+    PrefValueText* m_idleTimeResume;
+    PrefValueText* m_idleTimeSuspend;
 
     bool m_suspendIdle;
 
