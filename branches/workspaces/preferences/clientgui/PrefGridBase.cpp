@@ -299,9 +299,15 @@ wxPanel* PrefGridBase::PrefValueText::CreateControls() {
     return m_controlPanel;
 }
 
-void PrefGridBase::PrefValueText::OnChange(wxCommandEvent& event) {
+void PrefGridBase::PrefValueText::OnChange(wxCommandEvent& WXUNUSED(event)) {
 
     m_valueStaticCtrl->SetLabel(m_text->GetValue());
+}
+
+void PrefGridBase::PrefValueText::SetValue(const wxString& value) {
+    if (m_text) {
+        m_text->SetValue(value);
+    }
 }
 
 // PrefValueBool implementation
@@ -359,7 +365,7 @@ wxPanel* PrefGridBase::PrefValueBool::CreateControls() {
     return m_controlPanel;
 }
 
-void PrefGridBase::PrefValueBool::OnChange(wxCommandEvent& event) {
+void PrefGridBase::PrefValueBool::OnChange(wxCommandEvent& WXUNUSED(event)) {
 
     m_valueStaticCtrl->SetLabel(m_combo->GetValue());
 }

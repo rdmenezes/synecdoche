@@ -139,6 +139,7 @@ protected:
 
         virtual wxPanel* CreateControls();
         void OnChange(wxCommandEvent& event);
+        void SetValue(const wxString& value);
 
     protected:
         wxTextCtrl*       m_text;
