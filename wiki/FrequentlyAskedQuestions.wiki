@@ -1,4 +1,5 @@
 #summary Answers to frequently asked questions
+#labels Featured
 
 = What does Synecdoche mean? =
 
@@ -44,3 +45,13 @@ We will reconsider any idea, whether BOINC rejected it or not. However, there is
 We will try out and study any patches submitted to Synecdoche, and provide feedback whether we apply the patch as provided or not. The caveats for feature requests apply to patches, too.
 
 We welcome patches for existing Synecdoche and BOINC issues, as well as new features. Talk to us first if you want to improve the usefulness of your patch, and avoid duplicated effort.
+
+= Can I set up a Synecdoche project? =
+
+Not yet. Our initial releases will focus on the client parts of Synecdoche. However, we plan to support the server features as soon as practically possible. If you want to help with this, or set up a Synecdoche project, please contact us.
+
+= I want to help. What should I do? =
+
+Please contact us. Join the [http://groups.google.com/group/synecdoche-dev developer list] or talk to us at irc://irc.freenode.net/synecdoche
+
+Synecdoche is looking for talented developers, technical writers, designers and translators. We have large and small tasks for all skill levels, so please tell us which areas of Synecdoche interest you.
