@@ -95,12 +95,14 @@ protected:
         virtual wxPanel* CreateControls();
         void OnClick(wxMouseEvent& event);
         void OnFocus(wxFocusEvent& event);
-    protected:
 
+        bool Enable(bool enable = true);
+        bool Disable() { return Enable(false); }
         void Select();
         void Deselect();
 
-
+    protected:
+        void UpdateColours();
 
         PrefGridBase*   m_grid;
         wxString        m_label;
@@ -111,6 +113,11 @@ protected:
         wxPanel*        m_labelPanel;
         wxStaticText*   m_labelCtrl;
         wxPanel*        m_controlPanel;
+
+        wxWindow*       m_valueCtrl;
+        wxWindow*       m_valueStaticCtrl;
+
+        bool            m_enabled;
 
     };
 
@@ -131,6 +138,7 @@ protected:
         );
 
         virtual wxPanel* CreateControls();
+        void OnChange(wxCommandEvent& event);
 
     protected:
         wxTextCtrl*       m_text;
@@ -153,6 +161,7 @@ protected:
         );
 
         virtual wxPanel* CreateControls();
+        void OnChange(wxCommandEvent& event);
 
     protected:
         wxOwnerDrawnComboBox* m_combo;
