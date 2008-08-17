@@ -102,12 +102,6 @@ void PrefGridBase::PrefGroup::AddPreference(PrefValueBase* pref) {
 
 IMPLEMENT_DYNAMIC_CLASS(PrefGridBase::PrefValueBase, wxEvtHandler)
 
-//BEGIN_EVENT_TABLE(PrefGridBase::PrefValueBase, wxEvtHandler)
-////    EVT_ENTER_WINDOW(PrefNodeBase::PrefValueBase::OnMouseLeave)
-////    EVT_LEAVE_WINDOW(PrefNodeBase::PrefValueBase::OnMouseLeave)
-//    EVT_COMMAND_LEFT_CLICK(wxID_ANY, PrefGridBase::PrefValueBase::OnClick)
-//END_EVENT_TABLE()
-
 PrefGridBase::PrefValueBase::PrefValueBase(
             PrefGridBase* parent) : wxEvtHandler(), m_grid(parent)
 {
@@ -123,37 +117,50 @@ PrefGridBase::PrefValueBase::PrefValueBase(
     ) : wxEvtHandler(), m_grid(parent), m_label(label), m_helpText(helpText), m_default(helpDefault)
 {
     m_validator = (wxValidator*) val.Clone();
+    m_enabled = true;
+
+    m_labelPanel = 0;
+    m_controlPanel = 0;
+
+    m_valueCtrl = 0;
+    m_valueStaticCtrl = 0;
 }
 
 
 wxPanel* PrefGridBase::PrefValueBase::CreateControls() {
 
     m_labelPanel = new wxPanel(m_grid->m_gridPanel);
-    m_labelPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    m_labelPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-
     m_controlPanel = new wxPanel(m_grid->m_gridPanel);
-    m_controlPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    m_controlPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
-    m_labelCtrl = new wxStaticText(m_labelPanel, wxID_ANY, m_label, wxDefaultPosition, wxDefaultSize);
+    m_labelCtrl = new wxStaticText(m_labelPanel, wxID_ANY, m_label);
     wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
     s->Add(m_labelCtrl, 0, wxALL, 3);
     m_labelPanel->SetSizer(s);
 
     m_labelPanel->SetHelpText(m_helpText);
 
+    m_valueStaticCtrl = new wxStaticText(m_controlPanel, wxID_ANY, wxEmptyString);
+    m_valueStaticCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+
+    s = new wxBoxSizer(wxVERTICAL);
+    s->Add(m_valueStaticCtrl, 0, wxALL | wxEXPAND, 3);
+    m_controlPanel->SetSizer(s);
+
+    m_valueStaticCtrl->Show(!m_enabled);
+
     m_grid->m_groupSizer->Add(m_labelPanel, wxGBPosition(m_grid->GetTotalSize(), 0), wxDefaultSpan, wxEXPAND);
     m_grid->m_groupSizer->Add(m_controlPanel, wxGBPosition(m_grid->GetTotalSize(), 1), wxDefaultSpan, wxEXPAND);
 
     m_labelPanel->Connect(wxEVT_LEFT_DOWN,
         wxMouseEventHandler(PrefGridBase::PrefValueBase::OnClick), 0, this);
-
     m_labelCtrl->Connect(wxEVT_LEFT_DOWN,
         wxMouseEventHandler(PrefGridBase::PrefValueBase::OnClick), 0, this);
-
     m_controlPanel->Connect(wxEVT_LEFT_DOWN,
         wxMouseEventHandler(PrefGridBase::PrefValueBase::OnClick), 0, this);
+    m_valueStaticCtrl->Connect(wxEVT_LEFT_DOWN,
+        wxMouseEventHandler(PrefGridBase::PrefValueBase::OnClick), 0, this);
+
+    UpdateColours();
 
     return m_controlPanel;
 }
@@ -183,9 +190,7 @@ void PrefGridBase::PrefValueBase::Select() {
 
 void PrefGridBase::PrefValueBase::Deselect() {
 
-    m_labelPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    m_labelCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-
+    UpdateColours();
     m_labelPanel->Refresh();
 
     m_grid->m_selected = 0;
@@ -194,6 +199,7 @@ void PrefGridBase::PrefValueBase::Deselect() {
 
 void PrefGridBase::PrefValueBase::OnClick(wxMouseEvent& event) {
 
+    Select();
     m_controlPanel->SetFocus();
     event.Skip();
 }
@@ -204,6 +210,50 @@ void PrefGridBase::PrefValueBase::OnFocus(wxFocusEvent& event) {
     Select();
     event.Skip();
 }
+
+
+bool PrefGridBase::PrefValueBase::Enable(bool enable) {
+
+    if (m_enabled != enable) {
+        m_enabled = enable;
+        if (m_valueCtrl) {
+            m_valueCtrl->Show(enable);
+            m_valueStaticCtrl->Show(!enable);
+        }
+        if (m_controlPanel) {
+            m_controlPanel->Layout();
+        }
+        UpdateColours();
+        return true;
+    }
+    return false;
+}
+
+
+void PrefGridBase::PrefValueBase::UpdateColours() {
+    
+    if (m_labelPanel) {
+        m_labelPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        if (m_enabled) {
+            m_labelCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+        } else {
+            m_labelCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+        }
+        m_labelPanel->Refresh();
+    }
+
+    if (m_controlPanel) {
+        m_controlPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        if (m_enabled) {
+            m_controlPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+        } else {
+            m_controlPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+        }
+        m_controlPanel->Refresh();
+    }
+}
+
+
 // PrefValueText implementation
 
 IMPLEMENT_DYNAMIC_CLASS(PrefGridBase::PrefValueText, PrefGridBase::PrefValueBase)
@@ -235,14 +285,23 @@ wxPanel* PrefGridBase::PrefValueText::CreateControls() {
 
     m_text->SetMinSize(wxSize(-1, m_labelPanel->GetSize().GetY() - 6));
 
-    wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
-    s->Add(m_text, 0, wxALL | wxEXPAND, 3);
-    m_controlPanel->SetSizer(s);
+    m_controlPanel->GetSizer()->Add(m_text, 0, wxALL | wxEXPAND, 3);
+    m_text->Show(m_enabled);
 
     m_text->Connect(wxEVT_SET_FOCUS,
         wxFocusEventHandler(PrefGridBase::PrefValueBase::OnFocus), 0, this);
 
+    m_text->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+        wxCommandEventHandler(PrefGridBase::PrefValueText::OnChange), 0, this);
+
+    m_valueCtrl = m_text;
+
     return m_controlPanel;
+}
+
+void PrefGridBase::PrefValueText::OnChange(wxCommandEvent& event) {
+
+    m_valueStaticCtrl->SetLabel(m_text->GetValue());
 }
 
 // PrefValueBool implementation
@@ -282,10 +341,9 @@ wxPanel* PrefGridBase::PrefValueBool::CreateControls() {
 
     m_combo->SetMinSize(wxSize(m_labelPanel->GetSize().GetY() * 3, m_labelPanel->GetSize().GetY()));
 
-    wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
-    s->Add(m_combo, 0, wxALL | wxEXPAND, 0);
-    m_controlPanel->SetSizer(s);
-
+    m_controlPanel->GetSizer()->Add(m_combo, 0, wxALL | wxEXPAND, 0);
+    m_combo->Show(m_enabled);
+    m_combo->PushEventHandler(this);
 
     m_combo->Connect(wxEVT_LEFT_DOWN,
         wxMouseEventHandler(PrefGridBase::PrefValueBase::OnClick), 0, this);
@@ -293,5 +351,15 @@ wxPanel* PrefGridBase::PrefValueBool::CreateControls() {
     m_combo->Connect(wxEVT_SET_FOCUS,
         wxFocusEventHandler(PrefGridBase::PrefValueBase::OnFocus), 0, this);
 
+    m_combo->Connect(wxEVT_COMMAND_COMBOBOX_SELECTED,
+        wxCommandEventHandler(PrefGridBase::PrefValueBool::OnChange), 0, this);
+
+    m_valueCtrl = m_combo;
+
     return m_controlPanel;
+}
+
+void PrefGridBase::PrefValueBool::OnChange(wxCommandEvent& event) {
+
+    m_valueStaticCtrl->SetLabel(m_combo->GetValue());
 }
