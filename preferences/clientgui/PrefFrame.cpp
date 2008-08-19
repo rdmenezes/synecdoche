@@ -35,7 +35,7 @@ END_EVENT_TABLE()
 PrefFrame::PrefFrame(wxWindow* parent) : wxDialog(parent, ID_ANYDIALOG, _("Preferences"),
     wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-    SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
+    SetExtraStyle(GetExtraStyle() | wxWS_EX_VALIDATE_RECURSIVELY);
 
     SetMinSize(wxSize(500, 400));
 
