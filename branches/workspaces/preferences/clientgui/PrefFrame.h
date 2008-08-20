@@ -24,6 +24,9 @@
 #define PREF_DLG_MARGIN 4
 #define ID_LOCATIONMANAGER 7000
 
+/// Preferences dialog class.
+/// The preferences dialog is the user interface for all local and global
+/// preferences.
 class PrefFrame : public wxDialog {
 
     DECLARE_DYNAMIC_CLASS(PrefFrame)
@@ -33,8 +36,13 @@ public:
     PrefFrame(wxWindow* parent=NULL);
     virtual ~PrefFrame();
 
+    /// Handler for OK button.
     void OnOK(wxCommandEvent& event);
+
+    /// Handler for Help button.
     void OnHelp(wxCommandEvent& event);
+
+    /// Handler for Location Manager button.
     void OnLocationManager(wxCommandEvent& ev);
 
 protected:

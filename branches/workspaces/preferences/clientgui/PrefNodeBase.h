@@ -35,6 +35,9 @@ enum PrefNodeType {
     Disk,
 };
 
+
+/// Days of the week.
+/// Used by day-specific preferences.
 enum DayOfWeek { 
     Sunday,
     Monday,
@@ -49,6 +52,9 @@ DECLARE_EVENT_TYPE(PREF_EVT_CMD_UPDATE, -1)
 
 class PrefNodeBase;
 
+
+/// Base class for all preference pages.
+/// 
 class PrefNodeBase : public wxScrolledWindow {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeBase)
@@ -79,7 +85,8 @@ private:
 // Nested utility classes:
 protected:
 
-    // Group box containing pref widgets.
+    /// A group of preferences.
+    /// In the base implementation, groups are rendered as a static box.
     class PrefGroup : public wxStaticBoxSizer {
     public:
         PrefGroup(wxWindow* win, const wxString& title);
@@ -92,7 +99,8 @@ protected:
 
     };
 
-    // Base for individual preference widgets. Abstract.
+    /// Base class for individual preference widgets.
+    /// Abstract.
     class PrefValueBase : public wxPanel {
 
         DECLARE_DYNAMIC_CLASS(PrefValueBase)

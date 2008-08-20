@@ -29,6 +29,7 @@ PrefGridBase::PrefGridBase(wxWindow* parent, GLOBAL_PREFS* preferences)
 
     m_selected = 0;
 
+    // PrefGridBase is derived from wxScrolledWindow. Allow vertical scroll only.
     SetScrollRate(0, 10);
 
     wxBoxSizer* s = new wxBoxSizer(wxVERTICAL);
@@ -39,6 +40,7 @@ PrefGridBase::PrefGridBase(wxWindow* parent, GLOBAL_PREFS* preferences)
 
     m_groupSizer = new wxGridBagSizer(1, 1);
 
+    // The label column is growable.
     m_groupSizer->AddGrowableCol(0, 1);
 
     m_gridPanel->SetSizer(m_groupSizer);
@@ -47,7 +49,10 @@ PrefGridBase::PrefGridBase(wxWindow* parent, GLOBAL_PREFS* preferences)
 
 PrefGridBase::~PrefGridBase() {}
 
-
+/// Creates a new group, and adds it to the grid. The group is owned by the
+/// grid object.
+/// \param[in] title The heading for the group.
+/// \return A pointer to the newly created group.
 PrefGridBase::PrefGroup* PrefGridBase::AddGroup(const wxString& title) {
 
     PrefGroup* group = new PrefGroup(this, title);
@@ -106,6 +111,9 @@ PrefGridBase::PrefValueBase::PrefValueBase(
 
 }
 
+
+/// The child windows are not created until the preference is added to a
+/// property grid with PrefGroup::AddPreference.
 PrefGridBase::PrefValueBase::PrefValueBase(
     PrefGridBase* parent,
     const wxString& label,
@@ -125,6 +133,10 @@ PrefGridBase::PrefValueBase::PrefValueBase(
 }
 
 
+/// The property label is created in the left column, and a panel for the
+/// input control in the right column. Derived classes add a suitable control
+/// to this panel.
+/// \return A pointer to the input control panel.
 wxPanel* PrefGridBase::PrefValueBase::CreateControls() {
 
     m_labelPanel = new wxPanel(m_grid->m_gridPanel);
@@ -164,6 +176,11 @@ wxPanel* PrefGridBase::PrefValueBase::CreateControls() {
 }
 
 
+/// Highlights the property row, and sets the focus to the control if the
+/// property is enabled. Disabled properties can be selected, but don't get
+/// focus. Selecting a row will automatically deselect the previous selection.
+///
+/// Selecting a property fires a PrefHelpEvent.
 void PrefGridBase::PrefValueBase::Select() {
     if (this != m_grid->m_selected) {
 
@@ -186,6 +203,7 @@ void PrefGridBase::PrefValueBase::Select() {
 }
 
 
+/// Clears the selected state.
 void PrefGridBase::PrefValueBase::Deselect() {
 
     UpdateColours();
@@ -229,7 +247,7 @@ bool PrefGridBase::PrefValueBase::Enable(bool enable) {
 
 
 void PrefGridBase::PrefValueBase::UpdateColours() {
-    
+
     if (m_labelPanel) {
         m_labelPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         if (m_enabled) {
