@@ -42,7 +42,10 @@ protected:
     class PrefGroup;
     class PrefValueBase;
 
+    /// Adds a group to the grid.
     PrefGroup*      AddGroup(const wxString& title);
+
+    /// Adds a single preference to the grid.
     void            AddPreference(PrefValueBase* pref);
 
 private:
@@ -90,16 +93,22 @@ protected:
             const wxValidator& val
         );
 
+        /// Creates the standard child controls for a property row.
         virtual wxPanel* CreateControls();
         void OnClick(wxMouseEvent& event);
         void OnFocus(wxFocusEvent& event);
 
         bool Enable(bool enable = true);
         bool Disable() { return Enable(false); }
+
+        /// Selects the property row.
         void Select();
+
+        /// Deselects the property row.
         void Deselect();
 
     protected:
+        /// Changes the child control colours to match the current state.
         void UpdateColours();
 
         PrefGridBase*   m_grid;
