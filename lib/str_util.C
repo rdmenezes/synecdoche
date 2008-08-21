@@ -25,7 +25,6 @@
 
 #ifndef _WIN32
 #include "config.h"
-#include <string>
 #include <cmath>
 #include <cstring>
 #include <cstdlib>
@@ -35,13 +34,13 @@
 #endif
 #endif
 
-
+#include <string>
+#include <sstream>
+#include <iomanip>
 #include "error_numbers.h"
 #include "common_defs.h"
 #include "filesys.h"
 #include "str_util.h"
-
-using std::string;
 
 // Use this instead of strncpy().
 // Result will always be null-terminated, and it's faster.
@@ -129,107 +128,123 @@ extern char *strcasestr(const char *s1, const char *s2) {
   return p;
 }
 #endif
-// Converts a double precision time (where the value of 1 represents
-// a day) into a string.  smallest_timescale determines the smallest
-// unit of time division used
-// smallest_timescale: 0=seconds, 1=minutes, 2=hours, 3=days, 4=years
-//
-int ndays_to_string (double x, int smallest_timescale, char *buf) {
-    double years, days, hours, minutes, seconds;
-    char year_buf[64], day_buf[16], hour_buf[16], min_buf[16], sec_buf[16];
 
-    if (x < 0 || buf == NULL) return ERR_NULL;
+/// Convert a double precision time (where the value of 1 represents
+/// a day) into a string. smallest_timescale determines the smallest
+/// unit of time division used
+/// smallest_timescale: 0=seconds, 1=minutes, 2=hours, 3=days, 4=years
+///
+/// \param[in] x The number of days.
+/// \param[in] smallest_timescale determines the smallest
+///                               unit of time division used.
+/// \param[out] str The buffer which will receive the string representing the
+///                 number of days given by x.
+/// \param[in] len The size of the buffer 'str'.
+/// \return 0 if no error occured. ERR_NULL if x is negative or str is NULL.
+///         ERR_BUFFER_OVERFLOW if str is to small to receive the whole string.
+int ndays_to_string (double x, int smallest_timescale, char* str, size_t len) {
 
-    years = x / 365.25;
-    days = fmod(x, 365.25);
-    hours = fmod(x*24, 24);
-    minutes = fmod(x*24*60, 60);
-    seconds = fmod(x*24*60*60, 60);
+    if (x < 0 || str == NULL) return ERR_NULL;
+
+    double years = x / 365.25;
+    double days = fmod(x, 365.25);
+    double hours = fmod(x*24, 24);
+    double minutes = fmod(x*24*60, 60);
+    double seconds = fmod(x*24*60*60, 60);
+    std::ostringstream buf;
+    buf.flags(std::ios_base::dec | std::ios_base::fixed);
 
     if (smallest_timescale==4) {
-        sprintf( year_buf, "%.3f yr ", years );
+        buf << std::setprecision(3) << years << " yr ";
     } else if (years > 1 && smallest_timescale < 4) {
-        sprintf( year_buf, "%d yr ", (int)years );
-    } else {
-        strcpy( year_buf, "" );
+        buf << static_cast<int>(years) << " yr ";
     }
 
     if (smallest_timescale==3) {
-        sprintf( day_buf, "%.2f day%s ", days, (days>1?"s":"") );
+        buf << std::setprecision(2) << days << ((days > 1) ? " days ":" day ");
     } else if (days > 1 && smallest_timescale < 3) {
-        sprintf( day_buf, "%d day%s ", (int)days, (days>1?"s":"") );
-    } else {
-        strcpy( day_buf, "" );
+        buf << static_cast<int>(days) << ((days > 1) ? " days ":" day ");
     }
 
     if (smallest_timescale==2) {
-        sprintf( hour_buf, "%.2f hr ", hours );
+        buf << std::setprecision(2) << hours << " hr ";
     } else if (hours > 1 && smallest_timescale < 2) {
-        sprintf( hour_buf, "%d hr ", (int)hours );
-    } else {
-        strcpy( hour_buf, "" );
+        buf << static_cast<int>(hours) << " hr ";
     }
 
     if (smallest_timescale==1) {
-        sprintf( min_buf, "%.2f min ", minutes );
+        buf << std::setprecision(2) << minutes << " min ";
     } else if (minutes > 1 && smallest_timescale < 1) {
-        sprintf( min_buf, "%d min ", (int)minutes );
-    } else {
-        strcpy( min_buf, "" );
+        buf << static_cast<int>(minutes) << " min ";
     }
 
     if (smallest_timescale==0) {
-        sprintf( sec_buf, "%.2f sec ", seconds );
+        buf << std::setprecision(2) << seconds << " sec ";
     } else if (seconds > 1 && smallest_timescale < 0) {
-        sprintf( sec_buf, "%d sec ", (int)seconds );
-    } else {
-        strcpy( sec_buf, "" );
+        buf << static_cast<int>(seconds) << " sec ";
     }
-    // the "-0.05" below is to prevent it from printing 60.0 sec
-    // when the real value is e.g. 59.91
-    //
-    sprintf(buf, "%s%s%s%s%s", year_buf, day_buf, hour_buf, min_buf, sec_buf);
 
+    std::string result = buf.str();
+    if (result.length() >= len)
+        return ERR_BUFFER_OVERFLOW;
+
+    strlcpy(str, result.c_str(), len);
     return 0;
 }
 
-// Convert nbytes into a string.  If total_bytes is non-zero,
-// convert the two into a fractional display (i.e. 4/16 KB)
-//
-void nbytes_to_string(double nbytes, double total_bytes, char* str, int len) {
-    char buf[256];
-    double xTera = (1024.0*1024.0*1024.0*1024.0);
-    double xGiga = (1024.0*1024.0*1024.0);
-    double xMega = (1024.0*1024.0);
-    double xKilo = (1024.0);
+/// Convert nbytes into a string. If total_bytes is non-zero,
+/// convert the two into a fractional display (i.e. 4/16 KB)
+///
+/// \param[in] nbytes The number that should be converted.
+/// \param[in] total_bytes Second number, only used for fractional display.
+/// \param[out] str The buffer which will receive the resulting string.
+/// \param[in] len The size of the buffer 'str'.
+/// \return 0 if no error occured. ERR_NULL if str is NULL.
+///         ERR_BUFFER_OVERFLOW if str is to small to receive the whole string.
+int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len) {
+    if (!str)
+        return ERR_NULL;
+
+    std::ostringstream buf;
+    buf.flags(std::ios_base::dec | std::ios_base::fixed);
+    buf.precision(2);
+    const double xTera = (1024.0*1024.0*1024.0*1024.0);
+    const double xGiga = (1024.0*1024.0*1024.0);
+    const double xMega = (1024.0*1024.0);
+    const double xKilo = (1024.0);
 
     if (total_bytes != 0) {
         if (total_bytes >= xTera) {
-            sprintf(buf, "%0.2f/%0.2f TB", nbytes/xTera, total_bytes/xTera);
+            buf << (nbytes / xTera) << "/" << (total_bytes / xTera) << " TB";
         } else if (total_bytes >= xGiga) {
-            sprintf(buf, "%0.2f/%0.2f GB", nbytes/xGiga, total_bytes/xGiga);
+            buf << (nbytes / xGiga) << "/" << (total_bytes / xGiga) << " GB";
         } else if (total_bytes >= xMega) {
-            sprintf(buf, "%0.2f/%0.2f MB", nbytes/xMega, total_bytes/xMega);
+            buf << (nbytes / xMega) << "/" << (total_bytes / xMega) << " MB";
         } else if (total_bytes >= xKilo) {
-            sprintf(buf, "%0.2f/%0.2f KB", nbytes/xKilo, total_bytes/xKilo);
+            buf << (nbytes / xKilo) << "/" << (total_bytes / xKilo) << " KB";
         } else {
-            sprintf(buf, "%0.0f/%0.0f bytes", nbytes, total_bytes);
+            buf << nbytes << "/" << total_bytes << " Bytes";
         }
     } else {
         if (nbytes >= xTera) {
-            sprintf(buf, "%0.2f TB", nbytes/xTera);
+            buf << (nbytes / xTera) << " TB";
         } else if (nbytes >= xGiga) {
-            sprintf(buf, "%0.2f GB", nbytes/xGiga);
+            buf << (nbytes / xGiga) << " GB";
         } else if (nbytes >= xMega) {
-            sprintf(buf, "%0.2f MB", nbytes/xMega);
+            buf << (nbytes / xMega) << " MB";
         } else if (nbytes >= xKilo) {
-            sprintf(buf, "%0.2f KB", nbytes/xKilo);
+            buf << (nbytes / xKilo) << " KB";
         } else {
-            sprintf(buf, "%0.0f bytes", nbytes);
+            buf << nbytes << " Bytes";
         }
     }
 
-    strlcpy(str, buf, len);
+    std::string result = buf.str();
+    if (result.length() >= len)
+        return ERR_BUFFER_OVERFLOW;
+
+    strlcpy(str, result.c_str(), len);
+    return 0;
 }
 
 // take a string containing some space separated words.
@@ -317,40 +332,25 @@ void c2x(char *what) {
     strcpy(what, buf);
 }
 
-// remove whitespace from start and end of a string
-//
-void strip_whitespace(char *str) {
-    int n;
-    while (1) {
-        if (!str[0]) break;
-        if (!isascii(str[0])) break;
-        if (!isspace(str[0])) break;
-        strcpy(str, str+1);
-    }
-    while (1) {
-        n = (int)strlen(str);
-        if (n == 0) break;
-        if (!isascii(str[n-1])) break;
-        if (!isspace(str[n-1])) break;
-        str[n-1] = 0;
-    }
+/// Remove leading and trailing whitespace froma string
+///
+/// \param[in,out] str Pointer to the C-string that should get trimmed
+void strip_whitespace(char* str) {
+    std::string buf(str);
+    strip_whitespace(buf);
+
+    // This should be save as strip_whitespaces only shortens the string.
+    strcpy(str, buf.c_str());
 }
 
-void strip_whitespace(string& str) {
-    int n;
-    while (1) {
-        if (str.length() == 0) break;
-        if (!isascii(str[0])) break;
-        if (!isspace(str[0])) break;
-        str.erase(0, 1);
-    }
-    while (1) {
-        n = (int)str.length();
-        if (n == 0) break;
-        if (!isascii(str[n-1])) break;
-        if (!isspace(str[n-1])) break;
-        str.erase(n-1, 1);
-    }
+/// Remove leading and trailing whitespace froma string
+///
+/// \param[in,out] str Reference to the string that should get trimmed
+void strip_whitespace(std::string& str) {
+    std::string::size_type pos = str.find_first_not_of(" \f\t\v\r\n");
+    str.erase(0, pos);
+    pos = str.find_last_not_of(" \f\t\v\r\n");
+    str.erase(pos + 1);
 }
 
 void unescape_url(char *url) {
@@ -379,7 +379,7 @@ void unescape_url_safe(char *url, int url_size) {
 
 // unescape_url needs to be able to handle potentially hostile
 // urls.
-void unescape_url(string& url) {
+void unescape_url(std::string& url) {
     char buf[1024];
     strncpy(buf, url.c_str(), sizeof(buf));
     unescape_url_safe(buf, sizeof(buf));
@@ -428,7 +428,7 @@ void escape_url_safe(const char *in, char*out, int out_size) {
 
 // escape_url needs to be able to handle potentially hostile
 // urls
-void escape_url(string& url) {
+void escape_url(std::string& url) {
     char buf[1024];
     escape_url_safe(url.c_str(), buf, sizeof(buf));
     url = buf;
@@ -458,41 +458,47 @@ void escape_url_readable(const char *in, char* out) {
 }
 
 
-// Canonicalize a master url.
-//   - Convert the first part of a URL (before the "://") to http://,
-// or prepend it
-//   - Remove double slashes in the rest
-//   - Add a trailing slash if necessary
-//
-void canonicalize_master_url(char* url) {
-    char buf[1024];
-    size_t n;
+/// Canonicalize a master url.
+///   - Convert the first part of a URL (before the "://") to http://,
+/// or prepend it
+///   - Remove double slashes in the rest
+///   - Add a trailing slash if necessary
+///
+/// \praram[in,out] url The url that should get canonicalized.
+void canonicalize_master_url(std::string& url) {
+    std::string buf(url);
 	bool bSSL = false; // keep track if they sent in https://
 
-    char *p = strstr(url, "://");
-    if (p) {
-		bSSL = (bool) (p == url + 5);
-		strcpy(buf, p+3);
-    } else {
-        strcpy(buf, url);
+    std::string::size_type pos = buf.find("://");
+    if (pos != std::string::npos) {
+        if (buf.substr(0, 8) == std::string("https://")) {
+            bSSL = true;
+        }
+        buf.erase(0, pos + 3);
     }
-    while (1) {
-        p = strstr(buf, "//");
-        if (!p) break;
-        strcpy(p, p+1);
+    while ((pos = buf.find("//")) != std::string::npos) {
+        buf.erase(pos, 1);
     }
-    n = strlen(buf);
-    if (buf[n-1] != '/') {
-        strcat(buf, "/");
+    if (*(buf.end() - 1) != '/') {
+        buf += "/";
     }
-	sprintf(url, "http%s://%s", (bSSL ? "s" : ""), buf);
+
+    url = std::string("http") + (bSSL ? "s://" : "://") + buf;
 }
 
-void canonicalize_master_url(string& url) {
-    char buf[1024];
-    strcpy(buf, url.c_str());
+/// Canonicalize a master url.
+///   - Convert the first part of a URL (before the "://") to http://,
+/// or prepend it
+///   - Remove double slashes in the rest
+///   - Add a trailing slash if necessary
+///
+/// \praram[in,out] url The url that should get canonicalized.
+/// \deprecated Use canonicalize_master_url(std::string&) instead which
+///             is more secure.
+void canonicalize_master_url(char* url) {
+    std::string buf(url);
     canonicalize_master_url(buf);
-    url = buf;
+    strcpy(url, buf.c_str());
 }
 
 // is the string a valid master URL, in canonical form?
@@ -552,40 +558,45 @@ char* precision_time_to_string(double t) {
     return buf;
 }
 
-string timediff_format(double diff) {
-    char buf[256];
-    int tdiff = (int)diff;
+/// Convert a time difference given as floating point value
+/// into a descriptive string.
+///
+/// \param[in] diff The time difference in seconds.
+/// \return A descriptive string representing the given time difference.
+std::string timediff_format(double diff) {
+    std::ostringstream buf;
+    int tdiff = static_cast<int>(diff);
 
     int sex = tdiff % 60;
     tdiff /= 60;
     if (!tdiff) {
-        sprintf(buf, "%d sec", sex);
-        return buf;
+        buf << sex << " sec";
+        return buf.str();
     }
 
     int min = tdiff % 60;
     tdiff /= 60;
     if (!tdiff) {
-        sprintf(buf, "%d min %d sec", min, sex);
-        return buf;
+        buf << min << " min " << sex << " sec";
+        return buf.str();
     }
 
     int hours = tdiff % 24;
     tdiff /= 24;
     if (!tdiff) {
-        sprintf(buf, "%d hr %d min %d sec", hours, min, sex);
-        return buf;
+        buf << hours << " hr " << min << " min " << sex << " sec";
+        return buf.str();
     }
 
     int days = tdiff % 7;
     tdiff /= 7;
     if (!tdiff) {
-        sprintf(buf, "%d days %d hr %d min %d sec", days, hours, min, sex);
-        return buf;
+        buf << days << " days " << hours << " hr " << min << " min " << sex << " sec";
+        return buf.str();
     }
 
-    sprintf(buf, "%d weeks %d days %d hrs %d min %d sec", (int)tdiff, days, hours, min, sex);
-    return buf;
+    buf << tdiff << " weeks " << days << " days " << hours << " hr " << min << " min " << sex << " sec";
+    return buf.str();
 }
 
 void escape_project_url(const char *in, char* out) {
@@ -597,14 +608,39 @@ void escape_project_url(const char *in, char* out) {
     }
 }
 
-void mysql_timestamp(double dt, char* p) {
+/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
+///
+/// \param[in] dt UNIX timestamp.
+/// \return The MySQL timestamp equivalent of the given timestamp as string.
+std::string mysql_timestamp(double dt) {
     struct tm* tmp;
     time_t t = (time_t)dt;
     tmp = localtime(&t);     // MySQL timestamps are in local time
-    sprintf(p, "%4d%02d%02d%02d%02d%02d",
-        tmp->tm_year+1900, tmp->tm_mon+1, tmp->tm_mday,
-        tmp->tm_hour, tmp->tm_min, tmp->tm_sec
-    );
+    std::ostringstream res;
+    res << std::setw(4) << (tmp->tm_year + 1900);
+    res.fill('0');
+    res.width(2);
+    res << (tmp->tm_mon + 1) << tmp->tm_mday << tmp->tm_hour;
+    res << tmp->tm_min << tmp->tm_sec;
+    return res.str();
+}
+
+/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
+///
+/// \param[in] dt UNIX timestamp.
+/// \param[out] p Pointer to a char array that will receive the string
+///               with the MySQL timestamp equivalent to the given UNIX
+///               timestamp.
+/// \param[in] len Size of the buffer 'p'.
+/// \return 0 if no error occured, ERR_BUFFER_OVERFLOW if the given buffer
+///         'p' is too small.
+int mysql_timestamp(double dt, char* p, size_t len) {
+    std::string buf = mysql_timestamp(dt);
+    if (buf.length() >= len) {
+        return ERR_BUFFER_OVERFLOW;
+    }
+    strlcpy(p, buf.c_str(), len);
+    return 0;
 }
 
 // Return a text-string description of a given error.
