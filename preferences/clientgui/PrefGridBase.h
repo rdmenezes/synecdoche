@@ -93,6 +93,8 @@ protected:
             const wxValidator& val
         );
 
+        virtual ~PrefValueBase() {}
+
         /// Creates the standard child controls for a property row.
         virtual wxPanel* CreateControls();
         void OnClick(wxMouseEvent& event);
@@ -167,6 +169,8 @@ protected:
             const wxString& helpDefault,
             const ValidateYesNo& val
         );
+
+        virtual ~PrefValueBool();
 
         virtual wxPanel* CreateControls();
         void OnChange(wxCommandEvent& event);

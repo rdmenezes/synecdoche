@@ -47,7 +47,22 @@ PrefGridBase::PrefGridBase(wxWindow* parent, GLOBAL_PREFS* preferences)
 }
 
 
-PrefGridBase::~PrefGridBase() {}
+PrefGridBase::~PrefGridBase() {
+
+    // Groups and preferences are not owned by wxWidgets. Delete them manually.
+
+    std::vector<PrefGroup*>::iterator group = m_groupList.begin();
+    while (group != m_groupList.end()) {
+        delete (*group);
+        ++group;
+    }
+
+    std::vector<PrefValueBase*>::iterator pref = m_prefList.begin();
+    while (pref != m_prefList.end()) {
+        delete (*pref);
+        ++pref;
+    }
+}
 
 /// Creates a new group, and adds it to the grid. The group is owned by the
 /// grid object.
@@ -346,6 +361,13 @@ PrefGridBase::PrefValueBool::PrefValueBool(
             parent, label, helpText, helpDefault, val)
 {
 
+}
+
+PrefGridBase::PrefValueBool::~PrefValueBool() {
+
+    if (m_combo) {
+        m_combo->PopEventHandler();
+    }
 }
 
 wxPanel* PrefGridBase::PrefValueBool::CreateControls() {
