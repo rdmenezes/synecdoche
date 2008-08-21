@@ -42,12 +42,21 @@ extern size_t strlcat(char *dst, const char *src, size_t size);
 extern char *strcasestr(const char *s1, const char *s2);
 #endif
 
-extern int ndays_to_string(double x, int smallest_timescale, char *buf);
-extern void nbytes_to_string(double nbytes, double total_bytes, char* str, int len);
+/// Convert a double precision time into a string.
+extern int ndays_to_string(double x, int smallest_timescale, char* str, size_t len);
+
+/// Convert nbytes into a string.
+extern int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len);
+
 extern int parse_command_line(char*, char**);
 extern void c2x(char *what);
+
+/// Remove leading and trailing whitespace froma string
 extern void strip_whitespace(char *str);
+
+/// Remove leading and trailing whitespace froma string
 extern void strip_whitespace(std::string&);
+
 extern void unescape_url(std::string& url);
 extern void unescape_url(char *url);
 extern void escape_url(std::string& url);
@@ -55,12 +64,19 @@ extern void escape_url(const char *in, char*out);
 extern void escape_url_readable(const char* in, char* out);
 extern void escape_project_url(const char *in, char* out);
 extern bool valid_master_url(const char*);
+
+/// Canonicalize a master url.
 extern void canonicalize_master_url(char *url);
+
+/// Canonicalize a master url.
 extern void canonicalize_master_url(std::string&);
+
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
 #define safe_strcat(x, y) if (strlen(x)+strlen(y)<sizeof(x)) strcat(x, y)
 extern char* time_to_string(double);
 extern char* precision_time_to_string(double);
+
+/// Convert a time difference into a descriptive string.
 extern std::string timediff_format(double);
 
 inline bool ends_with(std::string const& s, std::string const& suffix) {
@@ -79,9 +95,11 @@ inline void downcase_string(std::string& w) {
     }
 }
 
-// convert UNIX time to MySQL timestamp (yyyymmddhhmmss)
-//
-extern void mysql_timestamp(double, char*);
+/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
+extern std::string mysql_timestamp(double dt);
+
+/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
+extern int mysql_timestamp(double dt, char* p, size_t len);
 
 // returns short text description of error corresponding to
 // int errornumber from error_numbers.h
