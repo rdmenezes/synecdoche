@@ -123,7 +123,7 @@ IMPLEMENT_DYNAMIC_CLASS(PrefGridBase::PrefValueBase, wxEvtHandler)
 PrefGridBase::PrefValueBase::PrefValueBase(
             PrefGridBase* parent) : wxEvtHandler(), m_grid(parent)
 {
-
+    m_validator = 0;
 }
 
 
@@ -145,6 +145,14 @@ PrefGridBase::PrefValueBase::PrefValueBase(
 
     m_valueCtrl = 0;
     m_valueStaticCtrl = 0;
+}
+
+
+PrefGridBase::PrefValueBase::~PrefValueBase() {
+
+    if (m_validator) {
+        delete m_validator;
+    }
 }
 
 

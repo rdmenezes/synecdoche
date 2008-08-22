@@ -93,7 +93,7 @@ protected:
             const wxValidator& val
         );
 
-        virtual ~PrefValueBase() {}
+        virtual ~PrefValueBase();
 
         /// Creates the standard child controls for a property row.
         virtual wxPanel* CreateControls();
