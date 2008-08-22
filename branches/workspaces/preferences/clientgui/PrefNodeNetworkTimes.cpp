@@ -33,7 +33,7 @@ PrefNodeNetworkTimes::PrefNodeNetworkTimes(wxWindow* parent, GLOBAL_PREFS* prefe
 
     PrefGroup* copy = AddGroup(_("Copy Settings"));
 
-    copy->AddPreference(new PrefValueButton(this, wxEmptyString,
+    copy->AddPreference(new PrefValueButton(this,
         _("Copy the network time settings from the processor time settings."),
         _("Copy"),
         _("If you want to use the same settings for networking and processing, copy them here."),
