@@ -369,7 +369,7 @@ int CLIENT_STATE::init() {
 
     // If platform name changed, print warning
     //
-    if (statefile_platform_name.size() && strcmp(get_primary_platform(), statefile_platform_name.c_str())) {
+    if (!statefile_platform_name.empty() && statefile_platform_name != get_primary_platform()) {
         msg_printf(NULL, MSG_INFO,
             "Platform changed from %s to %s",
             statefile_platform_name.c_str(), get_primary_platform()
