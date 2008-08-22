@@ -253,16 +253,17 @@ PROJECT* CLIENT_STATE::global_prefs_source_project() {
 
 void CLIENT_STATE::show_global_prefs_source(bool found_venue) {
     PROJECT* pp = global_prefs_source_project();
+    std::string mod_time_string = time_to_string(global_prefs.mod_time);
     if (pp) {
         msg_printf(NULL, MSG_INFO,
             "General prefs: from %s (last modified %s)",
-            pp->get_project_name(), time_to_string(global_prefs.mod_time)
+            pp->get_project_name(), mod_time_string.c_str()
         );
     } else {
         msg_printf(NULL, MSG_INFO,
             "General prefs: from %s (last modified %s)",
             global_prefs.source_project,
-            time_to_string(global_prefs.mod_time)
+            mod_time_string.c_str()
         );
     }
     if (strlen(main_host_venue)) {

@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -531,17 +531,28 @@ bool valid_master_url(const char* buf) {
     return true;
 }
 
-char* time_to_string(double t) {
-    static char buf[100];
+/// Convert a timestamp into a string.
+///
+/// \param[in] t A timestamp in seconds.
+/// \return A string representing the given timestamp.
+std::string time_to_string(double t) {
+    char buf[256];
     time_t x = (time_t)t;
     struct tm* tm = localtime(&x);
-    strftime(buf, sizeof(buf)-1, "%d-%b-%Y %H:%M:%S", tm);
-    return buf;
+    if (strftime(buf, sizeof(buf)-1, "%d-%b-%Y %H:%M:%S", tm)) {
+        return std::string(buf);
+    } else { // Actually this should never happen.
+        return std::string("");
+    }
 }
 
-char* precision_time_to_string(double t) {
-    static char buf[100];
-    char finer[16];
+/// Convert a timestamp with sub-second precision into a string.
+///
+/// \param[in] t A timestamp in seconds which should get converted.
+/// \return A string representing the given timestamp with a
+///         precision of 0.0001 seconds.
+std::string precision_time_to_string(double t) {
+    char buf[256];
     int hundreds_of_microseconds=(int)(10000*(t-(int)t));
     if (hundreds_of_microseconds == 10000) {
         // paranoia -- this should never happen!
@@ -552,10 +563,13 @@ char* precision_time_to_string(double t) {
     time_t x = (time_t)t;
     struct tm* tm = localtime(&x);
 
-    strftime(buf, sizeof(buf)-1, "%Y-%m-%d %H:%M:%S", tm);
-    sprintf(finer, ".%04d", hundreds_of_microseconds);
-    strcat(buf, finer);
-    return buf;
+    if (strftime(buf, sizeof(buf) - 1, "%Y-%m-%d %H:%M:%S", tm)) {
+        std::ostringstream finer;
+        finer << buf << "." << std::setw(4) << std::setfill('0') << hundreds_of_microseconds;
+        return finer.str();
+    } else { // Actually this should never happen.
+        return std::string("");
+    }
 }
 
 /// Convert a time difference given as floating point value
