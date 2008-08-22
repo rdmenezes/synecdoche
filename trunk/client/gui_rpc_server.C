@@ -59,16 +59,17 @@ using std::string;
 using std::vector;
 
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
+    sock(s),
+    auth_needed(false),
+    got_auth1(false),
+    got_auth2(false),
+    au_ss_state(AU_SS_INIT),
+    au_mgr_state(AU_MGR_INIT),
+
     get_project_config_op(&gui_http),
     lookup_account_op(&gui_http),
     create_account_op(&gui_http)
 {
-    sock = s;
-    auth_needed = false;
-    au_ss_state = AU_SS_INIT;
-    au_mgr_state = AU_MGR_INIT;
-    got_auth1 = false;
-    got_auth2 = false;
 }
 
 GUI_RPC_CONN::~GUI_RPC_CONN() {
@@ -84,7 +85,9 @@ bool GUI_RPC_CONN_SET::poll() {
     unsigned int i;
     bool action = false;
     for (i=0; i<gui_rpcs.size(); i++) {
-        action |= gui_rpcs[i]->gui_http.poll();
+        if (gui_rpcs[i]->gui_http.poll()) {
+            action = true;
+        }
     }
     return action;
 }
