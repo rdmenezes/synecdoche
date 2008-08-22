@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -73,8 +73,12 @@ extern void canonicalize_master_url(std::string&);
 
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
 #define safe_strcat(x, y) if (strlen(x)+strlen(y)<sizeof(x)) strcat(x, y)
-extern char* time_to_string(double);
-extern char* precision_time_to_string(double);
+
+/// Convert a timestamp into a string.
+extern std::string time_to_string(double t);
+
+/// Convert a timestamp with sub-second precision into a string.
+extern std::string precision_time_to_string(double t);
 
 /// Convert a time difference into a descriptive string.
 extern std::string timediff_format(double);

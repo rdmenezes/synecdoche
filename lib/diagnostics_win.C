@@ -1018,10 +1018,11 @@ int diagnostics_message_monitor_dump() {
     // Clear out any previous messages.
     for (i=0; i<diagnostics_monitor_messages.size(); i++) {
         pMessageEntry = diagnostics_monitor_messages[i];
+        std::string timestamp_string = time_to_string(pMessageEntry->timestamp);
         fprintf(
             stderr, 
             "[%s] %s",
-            time_to_string(pMessageEntry->timestamp),
+            timestamp_string,
             pMessageEntry->message.c_str()
         );
     }
