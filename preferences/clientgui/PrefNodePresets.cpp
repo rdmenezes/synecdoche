@@ -38,19 +38,19 @@ PrefNodePresets::PrefNodePresets(wxWindow* parent, GLOBAL_PREFS* preferences)
     //work->Add(rb3, 0, wxALL, 2);
     //work->Add(rb4, 0, wxALL, 2);
 
-    work->AddPreference(new PrefValueButton(this, wxEmptyString,
+    work->AddPreference(new PrefValueButton(this,
         _("Set my profile so that it will have a minimal amount of impact on my computer."),
         _("Minimum Impact"),
         _("See the documentation to find out which options this will set."),
         wxID_ANY));
 
-    work->AddPreference(new PrefValueButton(this, wxEmptyString,
+    work->AddPreference(new PrefValueButton(this,
         _("Set my profile so that it will do the maximum amount of research possible on my computer."),
         _("Maximum Output"),
         _("See the documentation to find out which options this will set."),
         wxID_ANY));
 
-    work->AddPreference(new PrefValueButton(this, wxEmptyString,
+    work->AddPreference(new PrefValueButton(this,
         _("Set my profile so that my computer will save power while not in use."),
         _("Power Saving"),
         _("See the documentation to find out which options this will set."),
@@ -58,7 +58,7 @@ PrefNodePresets::PrefNodePresets(wxWindow* parent, GLOBAL_PREFS* preferences)
 
     PrefGroup* defaults = AddGroup(_("Defaults"));
 
-    defaults->AddPreference(new PrefValueButton(this, wxEmptyString,
+    defaults->AddPreference(new PrefValueButton(this,
         _("Reset all preferences to their default values."),
         _("Reset"),
         _("See the help text for each preference to see the default value."),

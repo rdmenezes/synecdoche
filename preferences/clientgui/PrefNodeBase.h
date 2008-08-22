@@ -111,7 +111,6 @@ protected:
 
         PrefValueBase(
             wxWindow* parent,
-            const wxString& xmlElementName,
             const wxString& helpText
         );
 
@@ -120,8 +119,6 @@ protected:
         virtual void    OnMouseLeave(wxMouseEvent& event);
         virtual void    OnFocus(wxChildFocusEvent& event);
         void            OnCreate(wxWindowCreateEvent& event);
-
-        wxString        m_xmlElementName;
     };
 
 
@@ -134,7 +131,6 @@ protected:
 
         PrefValueText(
             wxWindow* parent,
-            const wxString& xmlElementName,
             const wxString& prompt,
             const wxString& units,
             const wxString& helpText,
@@ -156,7 +152,6 @@ protected:
 
         PrefValueBool(
             wxWindow* parent,
-            const wxString& xmlElementName,
             const wxString& prompt,
             const wxString& helpText,
             const ValidateBool& val
@@ -176,7 +171,6 @@ protected:
 
         PrefValueButton(
             wxWindow* parent,
-            const wxString& xmlElementName,
             const wxString& prompt,
             const wxString& title,
             const wxString& helpText,

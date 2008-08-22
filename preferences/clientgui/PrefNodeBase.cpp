@@ -158,16 +158,15 @@ BEGIN_EVENT_TABLE(PrefNodeBase::PrefValueBase, wxPanel)
 END_EVENT_TABLE()
 
 PrefNodeBase::PrefValueBase::PrefValueBase(
-            wxWindow* parent) : wxPanel(parent), m_xmlElementName(wxEmptyString)
+            wxWindow* parent) : wxPanel(parent)
 {
 
 }
 
 PrefNodeBase::PrefValueBase::PrefValueBase(
             wxWindow* parent,
-            const wxString& xmlElementName,
             const wxString& helpText
-            ) : wxPanel(parent), m_xmlElementName(xmlElementName)
+            ) : wxPanel(parent)
 {
     SetHelpText(helpText);
 }
@@ -215,13 +214,12 @@ PrefNodeBase::PrefValueText::PrefValueText(
 
 PrefNodeBase::PrefValueText::PrefValueText(
             wxWindow* parent,
-            const wxString& xmlElementName,
             const wxString& prompt,
             const wxString& units,
             const wxString& helpText,
             const wxTextValidator& val
             ) : PrefNodeBase::PrefValueBase(
-            parent, xmlElementName, helpText)
+            parent, helpText)
 {
     wxBoxSizer* line = new wxBoxSizer(wxHORIZONTAL);
 
@@ -253,12 +251,11 @@ PrefNodeBase::PrefValueBool::PrefValueBool(
 
 PrefNodeBase::PrefValueBool::PrefValueBool(
             wxWindow* parent,
-            const wxString& xmlElementName,
             const wxString& prompt,
             const wxString& helpText,
             const ValidateBool& val
             ) : PrefNodeBase::PrefValueBase(
-            parent, xmlElementName, helpText)
+            parent, helpText)
 {
     wxBoxSizer* line = new wxBoxSizer(wxHORIZONTAL);
     m_check = new wxCheckBox(this, wxID_ANY, prompt);
@@ -282,13 +279,12 @@ PrefNodeBase::PrefValueButton::PrefValueButton(
 
 PrefNodeBase::PrefValueButton::PrefValueButton(
             wxWindow* parent,
-            const wxString& xmlElementName,
             const wxString& prompt,
             const wxString& title,
             const wxString& helpText,
             wxWindowID id
             ) : PrefNodeBase::PrefValueBase(
-            parent, xmlElementName, helpText)
+            parent, helpText)
 {
     wxBoxSizer* lines = new wxBoxSizer(wxVERTICAL);
     wxStaticText* promptTxt = new wxStaticText(this, wxID_ANY, prompt);
@@ -324,7 +320,7 @@ PrefNodeBase::PrefValueTime::PrefValueTime(
             const wxString& helpText,
             TIME_SPAN* time
             ) : PrefNodeBase::PrefValueBase(
-            parent, wxEmptyString, helpText), m_time(time)
+            parent, helpText), m_time(time)
 {
     wxBoxSizer* lines = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* betweenLine = new wxBoxSizer(wxHORIZONTAL);
@@ -439,7 +435,7 @@ PrefNodeBase::PrefValueWeek::PrefValueWeek(
             const wxString& helpText,
             TIME_PREFS* prefs
             ) : PrefNodeBase::PrefValueBase(
-            parent, wxEmptyString, helpText), m_prefs(prefs)
+            parent, helpText), m_prefs(prefs)
 {
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
