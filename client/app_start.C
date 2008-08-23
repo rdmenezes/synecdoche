@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -18,6 +19,7 @@
 /// \file
 /// initialization and starting of applications
 
+#include <sstream>
 #include "cpp.h"
 
 #ifdef _WIN32
@@ -56,8 +58,6 @@
 #if(!defined (_WIN32) && !defined (__EMX__))
 #include <fcntl.h>
 #endif
-
-using std::vector;
 
 #include "filesys.h"
 #include "error_numbers.h"
@@ -101,9 +101,10 @@ static void debug_print_argv(char** argv) {
 }
 #endif
 
-// Make a unique key for core/app shared memory segment.
-// Windows: also create and attach to the segment.
-//
+/// Make a unique key for core/app shared memory segment.
+/// Windows: also create and attach to the segment.
+///
+/// \return 0 on success, ERR_SHMEM_NAME or ERR_SHMGET on error.
 int ACTIVE_TASK::get_shmem_seg_name() {
 #ifdef _WIN32
     int i;
@@ -122,7 +123,6 @@ int ACTIVE_TASK::get_shmem_seg_name() {
     if (!h) return ERR_SHMGET;
     sprintf(shmem_seg_name, "boinc_%d", i);
 #else
-    char init_data_path[256];
 #ifndef __EMX__
     // shmem_seg_name is not used with mmap() shared memory 
     if (app_version->api_major_version() >= 6) {
@@ -130,26 +130,28 @@ int ACTIVE_TASK::get_shmem_seg_name() {
         return 0;
     }
 #endif
-    sprintf(init_data_path, "%s/%s", slot_dir, INIT_DATA_FILE);
+    std::string init_data_path = std::string(slot_dir) + std::string("/")
+                                                       + std::string(INIT_DATA_FILE);
 
     // ftok() only works if there's a file at the given location
     //
-    FILE* f = boinc_fopen(init_data_path, "w");
+    FILE* f = boinc_fopen(init_data_path.c_str(), "w");
     if (f) fclose(f);
-    shmem_seg_name = ftok(init_data_path, 1);
+    shmem_seg_name = ftok(init_data_path.c_str(), 1);
     if (shmem_seg_name == -1) return ERR_SHMEM_NAME;
 #endif
     return 0;
 }
 
-// write the app init file.
-// This is done before starting the app,
-// and when project prefs have changed during app execution
-//
+/// Write the app init file.
+/// This is done before starting the app,
+/// and when project prefs have changed during app execution.
+///
+/// \return 0 on success, ERR_FOPEN if the file could not be opened.
 int ACTIVE_TASK::write_app_init_file() {
     APP_INIT_DATA aid;
     FILE *f;
-    char init_data_path[256], project_dir[256], project_path[256];
+    char project_dir[256], project_path[256];
     int retval;
 
     memset(&aid, 0, sizeof(aid));
@@ -202,12 +204,13 @@ int ACTIVE_TASK::write_app_init_file() {
     //
     aid.wu_cpu_time = episode_start_cpu_time;
 
-    sprintf(init_data_path, "%s/%s", slot_dir, INIT_DATA_FILE);
-    f = boinc_fopen(init_data_path, "w");
+    std::string init_data_path = std::string(slot_dir) + std::string("/")
+                                                       + std::string(INIT_DATA_FILE);
+    f = boinc_fopen(init_data_path.c_str(), "w");
     if (!f) {
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
             "Failed to open init file %s",
-            init_data_path
+            init_data_path.c_str()
         );
         return ERR_FOPEN;
     }
@@ -220,7 +223,7 @@ int ACTIVE_TASK::write_app_init_file() {
     return retval;
 }
 
-static int make_soft_link(PROJECT* project, char* link_path, char* rel_file_path) {
+static int make_soft_link(PROJECT* project, const char* link_path, const char* rel_file_path) {
     FILE *fp = boinc_fopen(link_path, "w");
     if (!fp) {
         msg_printf(project, MSG_INTERNAL_ERROR,
@@ -233,38 +236,38 @@ static int make_soft_link(PROJECT* project, char* link_path, char* rel_file_path
     return 0;
 }
 
-// set up a file reference, given a slot dir and project dir.
-// This means:
-// 1) copy the file to slot dir, if reference is by copy
-// 2) (Unix) make a symbolic link
-// 3) (Windows) make a 
-//
+/// set up a file reference, given a slot dir and project dir.
+/// This means:
+/// 1) copy the file to slot dir, if reference is by copy
+/// 2) (Unix) make a symbolic link
+/// 3) (Windows) make a 
 static int setup_file(
     PROJECT* project, FILE_INFO* fip, FILE_REF& fref,
     char* file_path, char* slot_dir, bool input
 ) {
-    char link_path[256], rel_file_path[256];
     int retval;
 
-    sprintf(link_path,
-        "%s/%s",
-        slot_dir, strlen(fref.open_name)?fref.open_name:fip->name
-    );
-    sprintf(rel_file_path, "../../%s", file_path );
+    std::string link_path = std::string(slot_dir) + std::string("/");
+    if (strlen(fref.open_name)) {
+        link_path += std::string(fref.open_name);
+    } else {
+        link_path += std::string(fip->name);
+    }
+    std::string rel_file_path = std::string("../../") + std::string(file_path);
 
     // if anonymous platform, this is called even if not first time,
     // so link may already be there
     //
-    if (input && project->anonymous_platform && boinc_file_exists(link_path)) {
+    if (input && project->anonymous_platform && boinc_file_exists(link_path.c_str())) {
         return 0;
     }
 
     if (fref.copy_file) {
         if (input) {
-            retval = boinc_copy(file_path, link_path);
+            retval = boinc_copy(file_path, link_path.c_str());
             if (retval) {
                 msg_printf(project, MSG_INTERNAL_ERROR,
-                    "Can't copy %s to %s: %s", file_path, link_path,
+                    "Can't copy %s to %s: %s", file_path, link_path.c_str(),
                     boincerror(retval)
                 );
                 return retval;
@@ -274,18 +277,18 @@ static int setup_file(
     }
 
 #ifdef _WIN32
-    retval = make_soft_link(project, link_path, rel_file_path);
+    retval = make_soft_link(project, link_path.c_str(), rel_file_path.c_str());
     if (retval) return retval;
 #else
     if (project->use_symlinks) {
-        retval = symlink(rel_file_path, link_path);
+        retval = symlink(rel_file_path.c_str(), link_path.c_str());
     } else {
-        retval = make_soft_link(project, link_path, rel_file_path);
+        retval = make_soft_link(project, link_path.c_str(), rel_file_path.c_str());
     }
     if (retval) return retval;
 #endif
 #ifdef SANDBOX
-    return set_to_project_group(link_path);
+    return set_to_project_group(link_path.c_str());
 #endif
     return 0;
 }
@@ -308,15 +311,16 @@ int ACTIVE_TASK::link_user_files() {
 }
 
 int ACTIVE_TASK::copy_output_files() {
-    char slotfile[256], projfile[256];
+    char projfile[256];
     unsigned int i;
     for (i=0; i<result->output_files.size(); i++) {
         FILE_REF& fref = result->output_files[i];
         if (!fref.copy_file) continue;
         FILE_INFO* fip = fref.file_info;
-        sprintf(slotfile, "%s/%s", slot_dir, fref.open_name);
+        std::string slotfile = std::string(slot_dir) + std::string("/")
+                                                     + std::string(fref.open_name);
         get_pathname(fip, projfile, sizeof(projfile));
-        int retval = boinc_rename(slotfile, projfile);
+        int retval = boinc_rename(slotfile.c_str(), projfile);
         if (retval) {
             msg_printf(wup->project, MSG_INTERNAL_ERROR,
                 "Can't rename output file %s to %s: %s",
@@ -327,25 +331,29 @@ int ACTIVE_TASK::copy_output_files() {
     return 0;
 }
 
-// Start a task in a slot directory.
-// This includes setting up soft links,
-// passing preferences, and starting the process
-//
-// Current dir is top-level BOINC dir
-//
-// postcondition:
-// If any error occurs
-//   ACTIVE_TASK::task_state is PROCESS_COULDNT_START
-//   report_result_error() is called
-//  else
-//   ACTIVE_TASK::task_state is PROCESS_EXECUTING
-//
+/// Start a task in a slot directory.
+/// This includes setting up soft links,
+/// passing preferences, and starting the process
+///
+/// Current dir is top-level BOINC dir
+///
+/// postcondition:
+/// If any error occurs
+///   ACTIVE_TASK::task_state is PROCESS_COULDNT_START
+///   report_result_error() is called
+///  else
+///   ACTIVE_TASK::task_state is PROCESS_EXECUTING
+///
+/// \param[in] first_time Set this to true if the app
+///                       will be started for the first time.
+/// \return 0 on success, nonzero otherwise.
 int ACTIVE_TASK::start(bool first_time) {
-    char exec_name[256], file_path[256], buf[256], exec_path[256];
+    char exec_name[256], file_path[256], exec_path[256];
     unsigned int i;
     FILE_REF fref;
     FILE_INFO* fip;
     int retval;
+    std::ostringstream err_stream;
 #ifdef _WIN32
     std::string cmd_line;
 
@@ -368,11 +376,10 @@ int ACTIVE_TASK::start(bool first_time) {
         retval = gstate.input_files_available(result, true, &fip);
         if (retval) {
             if (fip) {
-                snprintf(
-                    buf, sizeof(buf), "Input file %s missing or invalid: %d", fip->name, retval
-                );
+                err_stream << "Input file " << fip->name
+                           << " missing or invalid: " << retval;
             } else {
-                strcpy(buf, "Input file missing or invalid");
+                err_stream << "Input file missing or invalid";
             }
             goto error;
         }
@@ -392,10 +399,7 @@ int ACTIVE_TASK::start(bool first_time) {
     if (!app_client_shm.shm) {
         retval = get_shmem_seg_name();
         if (retval) {
-            sprintf(buf,
-                "Can't get shared memory segment name: %s",
-                boincerror(retval)
-            );
+            err_stream << "Can't get shared memory segment name: " << boincerror(retval);
             goto error;
         }
     }
@@ -405,7 +409,7 @@ int ACTIVE_TASK::start(bool first_time) {
     //
     retval = write_app_init_file();
     if (retval) {
-        sprintf(buf, "Can't write init file: %d", retval);
+        err_stream << "Can't write init file: " << retval;
         goto error;
     }
 
@@ -418,12 +422,12 @@ int ACTIVE_TASK::start(bool first_time) {
         get_pathname(fip, file_path, sizeof(file_path));
         if (fref.main_program) {
             if (is_image_file(fip->name)) {
-                sprintf(buf, "Main program %s is an image file", fip->name);
+                err_stream << "Main program " << fip->name << " is an image file";
                 retval = ERR_NO_SIGNATURE;
                 goto error;
             }
             if (!fip->executable && !wup->project->anonymous_platform) {
-                sprintf(buf, "Main program %s is not executable", fip->name);
+                err_stream << "Main program " << fip->name << " is not executable";
                 retval = ERR_NO_SIGNATURE;
                 goto error;
             }
@@ -436,13 +440,13 @@ int ACTIVE_TASK::start(bool first_time) {
         if (first_time || wup->project->anonymous_platform) {
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, true);
             if (retval) {
-                strcpy(buf, "Can't link input file");
+                err_stream << "Can't link input file";
                 goto error;
             }
         }
     }
     if (!strlen(exec_name)) {
-        strcpy(buf, "No main program specified");
+        err_stream << "No main program specified";
         retval = ERR_NOT_FOUND;
         goto error;
     }
@@ -456,7 +460,7 @@ int ACTIVE_TASK::start(bool first_time) {
             get_pathname(fref.file_info, file_path, sizeof(file_path));
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, true);
             if (retval) {
-                strcpy(buf, "Can't link input file");
+                err_stream << "Can't link input file";
                 goto error;
             }
         }
@@ -467,7 +471,7 @@ int ACTIVE_TASK::start(bool first_time) {
             get_pathname(fref.file_info, file_path, sizeof(file_path));
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, false);
             if (retval) {
-                strcpy(buf, "Can't link output file");
+                err_stream << "Can't link output file";
                 goto error;
             }
         }
@@ -598,7 +602,7 @@ int ACTIVE_TASK::start(bool first_time) {
     }
 
     if (!success) {
-        sprintf(buf, "CreateProcess() failed - %s", error_msg);
+        err_stream << "CreateProcess() failed - " << error_msg;
         retval = ERR_EXEC;
         goto error;
     }
@@ -628,7 +632,8 @@ int ACTIVE_TASK::start(bool first_time) {
     //
     retval = chdir(slot_dir);
     if (retval) {
-        sprintf(buf, "Can't change directory: %s", slot_dir, boincerror(retval));
+        err_stream << "Can't change directory: " << slot_dir
+                   << " The error message was: " << boincerror(retval);
         goto error;
     }
 
@@ -647,10 +652,12 @@ int ACTIVE_TASK::start(bool first_time) {
     if (log_flags.task_debug) {
         debug_print_argv(argv);
     }
+    char buf[270];
     sprintf(buf, "../../%s", exec_path );
     pid = spawnv(P_NOWAIT, buf, argv);
     if (pid == -1) {
-        sprintf(buf, "Process creation failed: %s\n", buf, boincerror(retval));
+        err_stream << "Process creation failed: "
+                   << " The error message was: " << boincerror(retval);
         chdir(current_dir);
         retval = ERR_EXEC;
         goto error;
@@ -680,20 +687,21 @@ int ACTIVE_TASK::start(bool first_time) {
     if (!app_client_shm.shm) {
         if (app_version->api_major_version() >= 6) {
             // Use mmap() shared memory
-            sprintf(buf, "%s/%s", slot_dir, MMAPPED_FILE_NAME);
+            std::string buf = std::string(slot_dir) + std::string("/")
+                                                    + std::string(MMAPPED_FILE_NAME);
             if (g_use_sandbox) {
-                if (!boinc_file_exists(buf)) {
-                    int fd = open(buf, O_RDWR | O_CREAT, 0660);
+                if (!boinc_file_exists(buf.c_str())) {
+                    int fd = open(buf.c_str(), O_RDWR | O_CREAT, 0660);
                     if (fd >= 0) {
                         close (fd);
 #ifdef SANDBOX
-                        set_to_project_group(buf);
+                        set_to_project_group(buf.c_str());
 #endif
                     }
                 }
             }
             retval = create_shmem_mmap(
-                buf, sizeof(SHARED_MEM), (void**)&app_client_shm.shm
+                buf.c_str(), sizeof(SHARED_MEM), (void**)&app_client_shm.shm
             );
         } else {
             // Use shmget() shared memory
@@ -723,7 +731,7 @@ int ACTIVE_TASK::start(bool first_time) {
     }
     pid = fork();
     if (pid == -1) {
-        sprintf(buf, "fork() failed: %s", strerror(errno));
+        err_stream << "fork() failed: " << strerror(errno);
         retval = ERR_FORK;
         goto error;
     }
@@ -745,13 +753,12 @@ int ACTIVE_TASK::start(bool first_time) {
         // We use relative paths in case higher-level dirs
         // are not readable to the account under which app runs
         //
-        char libpath[8192];
-        get_project_dir(wup->project, buf, sizeof(buf));
-        sprintf(libpath, "%s:../../%s:.:../..",
-            getenv("LD_LIBRARY_PATH"), buf
-        );
-        fprintf(stderr, "LD PATH: %s\n", libpath);
-        setenv("LD_LIBRARY_PATH", libpath, 1);
+        char pdir[256];
+        get_project_dir(wup->project, pdir, sizeof(pdir));
+        std::string libpath(getenv("LD_LIBRARY_PATH"));
+        libpath += std::string(":../../") + std::string(pdir) + std::string(":.:../..");
+        fprintf(stderr, "LD PATH: %s\n", libpath.c_str());
+        setenv("LD_LIBRARY_PATH", libpath.c_str(), 1);
 
         retval = chdir(slot_dir);
         if (retval) {
@@ -795,6 +802,7 @@ int ACTIVE_TASK::start(bool first_time) {
             strcat(cmdline, " ");
             strcat(cmdline, app_version->cmdline);
         }
+        char buf[270];
         sprintf(buf, "../../%s", exec_path );
         if (g_use_sandbox) {
             char switcher_path[100];
@@ -834,21 +842,24 @@ int ACTIVE_TASK::start(bool first_time) {
     reserve_coprocs();
     return 0;
 
-    // go here on error; "buf" contains error message, "retval" is nonzero
+    // go here on error; "error_msg" contains error message, "retval" is nonzero
     //
 error:
     // if something failed, it's possible that the executable was munged.
     // Verify it to trigger another download.
     //
     gstate.input_files_available(result, true);
-    gstate.report_result_error(*result, buf);
+    gstate.report_result_error(*result, "%s", err_stream.str().c_str());
     set_task_state(PROCESS_COULDNT_START, "start");
     return retval;
 }
 
-// Resume the task if it was previously running; otherwise start it
-// Postcondition: "state" is set correctly
-//
+/// Resume the task if it was previously running; otherwise start it.
+/// Postcondition: "state" is set correctly
+///
+/// \param[in] first_time Set this to true if the app
+///                       will be started for the first time.
+/// \return 0 on success, nonzero otherwise.
 int ACTIVE_TASK::resume_or_start(bool first_time) {
     const char* str = "??";
     int retval;
