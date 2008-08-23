@@ -17,7 +17,7 @@
 
 /// \file
 /// NET_STATS estimates average network throughput,
-/// i.e. the average total throughput in both the up and down directions.
+/// i.e the average total throughput in both the up and down directions.
 ///
 /// NET_STATUS keeps track of whether we have a physical connection,
 /// and whether we need one.

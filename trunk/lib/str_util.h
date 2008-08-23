@@ -45,7 +45,7 @@ extern char *strcasestr(const char *s1, const char *s2);
 /// Convert a double precision time into a string.
 extern int ndays_to_string(double x, int smallest_timescale, char* str, size_t len);
 
-/// Convert nbytes into a string.
+/// Convert \a nbytes into a string.
 extern int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len);
 
 extern int parse_command_line(char*, char**);
@@ -65,10 +65,10 @@ extern void escape_url_readable(const char* in, char* out);
 extern void escape_project_url(const char *in, char* out);
 extern bool valid_master_url(const char*);
 
-/// Canonicalize a master url.
+/// Canonicalize a master URL.
 extern void canonicalize_master_url(char *url);
 
-/// Canonicalize a master url.
+/// Canonicalize a master URL.
 extern void canonicalize_master_url(std::string&);
 
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
