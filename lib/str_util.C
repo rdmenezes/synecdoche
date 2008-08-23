@@ -138,10 +138,10 @@ extern char *strcasestr(const char *s1, const char *s2) {
 /// \param[in] smallest_timescale determines the smallest
 ///                               unit of time division used.
 /// \param[out] str The buffer which will receive the string representing the
-///                 number of days given by x.
-/// \param[in] len The size of the buffer 'str'.
-/// \return 0 if no error occured. ERR_NULL if x is negative or str is NULL.
-///         ERR_BUFFER_OVERFLOW if str is to small to receive the whole string.
+///                 number of days given by \a x.
+/// \param[in] len The size of the buffer \a str.
+/// \return 0 if no error occured. \ref ERR_NULL if \a x is negative or \a str is NULL.
+///           \ref ERR_BUFFER_OVERFLOW if \a str is to small to receive the whole string.
 int ndays_to_string (double x, int smallest_timescale, char* str, size_t len) {
 
     if (x < 0 || str == NULL) return ERR_NULL;
@@ -192,15 +192,15 @@ int ndays_to_string (double x, int smallest_timescale, char* str, size_t len) {
     return 0;
 }
 
-/// Convert nbytes into a string. If total_bytes is non-zero,
+/// Convert \a nbytes into a string. If \a total_bytes is non-zero,
 /// convert the two into a fractional display (i.e. 4/16 KB)
 ///
 /// \param[in] nbytes The number that should be converted.
 /// \param[in] total_bytes Second number, only used for fractional display.
 /// \param[out] str The buffer which will receive the resulting string.
-/// \param[in] len The size of the buffer 'str'.
-/// \return 0 if no error occured. ERR_NULL if str is NULL.
-///         ERR_BUFFER_OVERFLOW if str is to small to receive the whole string.
+/// \param[in] len The size of the buffer \a str.
+/// \return 0 if no error occured. \ref ERR_NULL if \a str is \c NULL.
+///           \ref ERR_BUFFER_OVERFLOW if \a str is to small to receive the whole string.
 int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len) {
     if (!str)
         return ERR_NULL;
@@ -332,7 +332,7 @@ void c2x(char *what) {
     strcpy(what, buf);
 }
 
-/// Remove leading and trailing whitespace froma string
+/// Remove leading and trailing whitespace from a string
 ///
 /// \param[in,out] str Pointer to the C-string that should get trimmed
 void strip_whitespace(char* str) {
@@ -343,7 +343,7 @@ void strip_whitespace(char* str) {
     strcpy(str, buf.c_str());
 }
 
-/// Remove leading and trailing whitespace froma string
+/// Remove leading and trailing whitespace from a string
 ///
 /// \param[in,out] str Reference to the string that should get trimmed
 void strip_whitespace(std::string& str) {
@@ -434,9 +434,8 @@ void escape_url(std::string& url) {
     url = buf;
 }
 
-// Escape a URL for the project directory, cutting off the "http://",
-// converting everthing other than alphanumbers, ., - and _ to "_".
-//
+/// Escape a URL for the project directory, cutting off the "http://",
+/// converting everthing other than alphanumbers, ., - and _ to "_".
 void escape_url_readable(const char *in, char* out) {
     int x, y;
     const char *temp;
@@ -458,7 +457,7 @@ void escape_url_readable(const char *in, char* out) {
 }
 
 
-/// Canonicalize a master url.
+/// Canonicalize a master URL.
 ///   - Convert the first part of a URL (before the "://") to http://,
 /// or prepend it
 ///   - Remove double slashes in the rest
@@ -486,7 +485,7 @@ void canonicalize_master_url(std::string& url) {
     url = std::string("http") + (bSSL ? "s://" : "://") + buf;
 }
 
-/// Canonicalize a master url.
+/// Canonicalize a master URL.
 ///   - Convert the first part of a URL (before the "://") to http://,
 /// or prepend it
 ///   - Remove double slashes in the rest
@@ -645,9 +644,9 @@ std::string mysql_timestamp(double dt) {
 /// \param[out] p Pointer to a char array that will receive the string
 ///               with the MySQL timestamp equivalent to the given UNIX
 ///               timestamp.
-/// \param[in] len Size of the buffer 'p'.
-/// \return 0 if no error occured, ERR_BUFFER_OVERFLOW if the given buffer
-///         'p' is too small.
+/// \param[in] len Size of the buffer \a p.
+/// \return 0 if no error occured, \ref ERR_BUFFER_OVERFLOW if the given buffer
+///         \a p is too small.
 int mysql_timestamp(double dt, char* p, size_t len) {
     std::string buf = mysql_timestamp(dt);
     if (buf.length() >= len) {
@@ -657,9 +656,8 @@ int mysql_timestamp(double dt, char* p, size_t len) {
     return 0;
 }
 
-// Return a text-string description of a given error.
-// Must be kept consistent with error_numbers.h
-//
+/// Return a text-string description of a given error.
+/// Must be kept consistent with error_numbers.h
 const char* boincerror(int which_error) {
     switch (which_error) {
         case BOINC_SUCCESS: return "Success";
