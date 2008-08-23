@@ -27,14 +27,14 @@
 
 // FSM states for auto-update
 
+/// No get_screensaver_mode() yet
 #define AU_SS_INIT          0
-    // no get_screensaver_mode() yet
+/// Got a get_screensaver_mode()
 #define AU_SS_GOT           1
-    // got a get_screensaver_mode()
+/// Send a QUIT next time
 #define AU_SS_QUIT_REQ      2
-    // send a QUIT next time
+/// QUIT sent
 #define AU_SS_QUIT_SENT     3
-    // QUIT sent
 
 #define AU_MGR_INIT         0
 #define AU_MGR_GOT          1
@@ -45,14 +45,12 @@ class GUI_RPC_CONN {
 public:
     int sock;
     char nonce[256];
-    bool auth_needed;
-        // if true, don't allow operations other than authentication
+    bool auth_needed; ///< If true, don't allow operations other than authentication
     bool got_auth1;
     bool got_auth2;
         // keep track of whether we've got the 2 authentication msgs;
         // don't accept more than one of each (to prevent DoS)
-    bool is_local;
-        // connection is from local host
+    bool is_local; ///< Connection is from local host
     int au_ss_state;
     int au_mgr_state;
     GUI_HTTP gui_http;
@@ -87,8 +85,8 @@ class GUI_RPC_CONN_SET {
     bool remote_hosts_file_exists;
 public:
     int lsock;
+    /// Time of the last RPC that needs network access to handle
     double time_of_last_rpc_needing_network;
-        // time of the last RPC that needs network access to handle
 
     GUI_RPC_CONN_SET();
     char password[256];
