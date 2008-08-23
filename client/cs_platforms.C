@@ -16,8 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Determine which platforms are supported and provide a way
-//   of exposing that information to the rest of the client.
+/// \file
+/// Determine which platforms are supported and provide a way
+/// of exposing that information to the rest of the client.
 
 #include "cpp.h"
 

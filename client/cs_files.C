@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// The "policy" part of file transfer is here.
-// The "mechanism" part is in pers_file_xfer.C and file_xfer.C
-//
+/// \file
+/// The "policy" part of file transfer is here.
+/// The "mechanism" part is in pers_file_xfer.C and file_xfer.C
 
 #include "cpp.h"
 

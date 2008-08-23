@@ -15,25 +15,26 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// CPU scheduling logic.
-//
-// Terminology:
-//
-// Episode
-// The execution of a task is divided into "episodes".
-// An episode starts then the application is executed,
-// and ends when it exits or dies
-// (e.g., because it's preempted and not left in memory,
-// or the user quits BOINC, or the host is turned off).
-// A task may checkpoint now and then.
-// Each episode begins with the state of the last checkpoint.
-//
-// Debt interval
-// The interval between consecutive executions of adjust_debts()
-//
-// Run interval
-// If an app is running (not suspended), the interval
-// during which it's been running.
+/// \file
+/// CPU scheduling logic.
+///
+/// Terminology:
+///
+/// Episode
+/// The execution of a task is divided into "episodes".
+/// An episode starts then the application is executed,
+/// and ends when it exits or dies
+/// (e.g., because it's preempted and not left in memory,
+/// or the user quits BOINC, or the host is turned off).
+/// A task may checkpoint now and then.
+/// Each episode begins with the state of the last checkpoint.
+///
+/// Debt interval
+/// The interval between consecutive executions of adjust_debts()
+///
+/// Run interval
+/// If an app is running (not suspended), the interval
+/// during which it's been running.
 
 #ifdef _WIN32
 #include "boinc_win.h"

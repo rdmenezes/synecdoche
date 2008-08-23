@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Logic related to general (also known as global) preferences:
-// when to compute, how much disk to use, etc.
-//
+/// \file
+/// Logic related to general (also known as global) preferences:
+/// when to compute, how much disk to use, etc.
 
 #ifdef _WIN32
 #include "boinc_win.h"

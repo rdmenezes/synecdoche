@@ -16,7 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// monitoring and process control of running apps
+/// \file
+/// monitoring and process control of running apps
 
 #ifdef _WIN32
 #include "boinc_win.h"

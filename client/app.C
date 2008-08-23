@@ -15,9 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Abstraction of a set of executing applications,
-// connected to I/O files in various ways.
-// Shouldn't depend on CLIENT_STATE.
+/// \file
+/// Abstraction of a set of executing applications,
+/// connected to I/O files in various ways.
+///
+/// Shouldn't depend on CLIENT_STATE.
 
 #ifdef _WIN32
 #include "boinc_win.h"
