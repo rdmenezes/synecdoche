@@ -1,7 +1,8 @@
-// This is a test framework for the rr_simulation() function.
-// To use it:
-// - cut and paste the current code from cpu_sched.C (see below)
-// - edit main() to set up your test case
+/// \file
+/// This is a test framework for the rr_simulation() function.
+/// To use it:
+/// - cut and paste the current code from cpu_sched.C (see below)
+/// - edit main() to set up your test case
 
 #include <vector>
 #include <cstdarg>

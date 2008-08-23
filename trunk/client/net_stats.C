@@ -15,11 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// NET_STATS estimates average network throughput,
-// i.e. the average total throughput in both the up and down directions.
-//
-// NET_STATUS keeps track of whether we have a physical connection,
-// and whether we need one
+/// \file
+/// NET_STATS estimates average network throughput,
+/// i.e. the average total throughput in both the up and down directions.
+///
+/// NET_STATUS keeps track of whether we have a physical connection,
+/// and whether we need one.
 
 #include "cpp.h"
 

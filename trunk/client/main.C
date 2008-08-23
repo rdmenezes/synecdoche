@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// command-line version of the BOINC core client
-
-// This file contains no GUI-related code.
+/// \file
+/// command-line version of the BOINC core client
+///
+/// This file contains no GUI-related code.
 
 #ifdef WIN32
 #define _CONSOLE 1

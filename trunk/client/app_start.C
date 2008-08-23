@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// initialization and starting of applications
+/// \file
+/// initialization and starting of applications
 
 #include "cpp.h"
 
