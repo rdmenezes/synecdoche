@@ -236,11 +236,11 @@ static int make_soft_link(PROJECT* project, const char* link_path, const char* r
     return 0;
 }
 
-/// set up a file reference, given a slot dir and project dir.
+/// Set up a file reference, given a slot dir and project dir.
 /// This means:
-/// 1) copy the file to slot dir, if reference is by copy
-/// 2) (Unix) make a symbolic link
-/// 3) (Windows) make a 
+/// -# copy the file to slot dir, if reference is by copy
+/// -# (Unix) make a symbolic link
+/// -# (Windows) make a 
 static int setup_file(
     PROJECT* project, FILE_INFO* fip, FILE_REF& fref,
     char* file_path, char* slot_dir, bool input
@@ -333,16 +333,16 @@ int ACTIVE_TASK::copy_output_files() {
 
 /// Start a task in a slot directory.
 /// This includes setting up soft links,
-/// passing preferences, and starting the process
+/// passing preferences, and starting the process.
 ///
-/// Current dir is top-level BOINC dir
+/// Current dir is top-level BOINC dir.
 ///
-/// postcondition:
-/// If any error occurs
-///   ACTIVE_TASK::task_state is PROCESS_COULDNT_START
-///   report_result_error() is called
-///  else
-///   ACTIVE_TASK::task_state is PROCESS_EXECUTING
+/// Postcondition:
+/// - If any error occurs
+///   - ACTIVE_TASK::task_state is PROCESS_COULDNT_START
+///   - report_result_error() is called
+/// - else
+///   - ACTIVE_TASK::task_state is PROCESS_EXECUTING
 ///
 /// \param[in] first_time Set this to true if the app
 ///                       will be started for the first time.
@@ -855,7 +855,7 @@ error:
 }
 
 /// Resume the task if it was previously running; otherwise start it.
-/// Postcondition: "state" is set correctly
+/// Postcondition: "state" is set correctly.
 ///
 /// \param[in] first_time Set this to true if the app
 ///                       will be started for the first time.
