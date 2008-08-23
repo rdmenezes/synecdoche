@@ -1543,12 +1543,13 @@ void CLIENT_STATE::set_ncpus() {
 /// Preempt this task.
 /// Called from the CLIENT_STATE::schedule_cpus().
 /// If quit_task is true, do this by quitting.
+///
+/// \param[in] quit_task If true and app has checkpointed
+///                      it will be removed from memory
+/// \return Always returns 0.
 int ACTIVE_TASK::preempt(bool quit_task) {
-    int retval;
-
     // If the app hasn't checkpoint yet, suspend instead of quit
     // (accommodate apps that never checkpoint)
-    //
     if (quit_task && (checkpoint_cpu_time>0)) {
         if (log_flags.cpu_sched) {
             msg_printf(result->project, MSG_INFO,
@@ -1557,7 +1558,7 @@ int ACTIVE_TASK::preempt(bool quit_task) {
             );
         }
         set_task_state(PROCESS_QUIT_PENDING, "preempt");
-        retval = request_exit();
+        request_exit();
     } else {
         if (log_flags.cpu_sched) {
             if (quit_task) {
@@ -1572,7 +1573,7 @@ int ACTIVE_TASK::preempt(bool quit_task) {
                 );
             }
         }
-        retval = suspend();
+        suspend();
     }
     return 0;
 }
