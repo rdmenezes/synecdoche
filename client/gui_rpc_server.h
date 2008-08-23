@@ -83,7 +83,7 @@ class GUI_RPC_CONN_SET {
     int get_allowed_hosts();
     int get_password();
     int insert(GUI_RPC_CONN*);
-    bool check_allowed_list(int ip_addr);
+    bool check_allowed_list(int ip_addr) const;
     bool remote_hosts_file_exists;
 public:
     int lsock;
@@ -92,13 +92,13 @@ public:
 
     GUI_RPC_CONN_SET();
     char password[256];
-    void get_fdset(FDSET_GROUP&, FDSET_GROUP&);
-    void got_select(FDSET_GROUP&);
+    void get_fdset(FDSET_GROUP&, FDSET_GROUP&) const;
+    void got_select(const FDSET_GROUP&);
     int init(bool last_time);
     void close();
-    bool recent_rpc_needs_network(double interval);
+    bool recent_rpc_needs_network(double interval) const;
     void send_quits();
-    bool quits_sent();
+    bool quits_sent() const;
     bool poll();
 };
 

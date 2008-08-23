@@ -92,7 +92,7 @@ bool GUI_RPC_CONN_SET::poll() {
     return action;
 }
 
-bool GUI_RPC_CONN_SET::recent_rpc_needs_network(double interval) {
+bool GUI_RPC_CONN_SET::recent_rpc_needs_network(double interval) const {
     if (!time_of_last_rpc_needing_network) return false;
     if (gstate.now < time_of_last_rpc_needing_network + interval) return true;
     return false;
@@ -304,7 +304,7 @@ static void show_connect_error(in_addr ia) {
     count = 0;
 }
 
-void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) {
+void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
     unsigned int i;
     GUI_RPC_CONN* gr;
 
@@ -326,8 +326,8 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) {
     if (lsock > all.max_fd) all.max_fd = lsock;
 }
 
-bool GUI_RPC_CONN_SET::check_allowed_list(int peer_ip) {
-    vector<int>::iterator remote_iter = allowed_remote_ip_addresses.begin();
+bool GUI_RPC_CONN_SET::check_allowed_list(int peer_ip) const {
+    vector<int>::const_iterator remote_iter = allowed_remote_ip_addresses.begin();
     while (remote_iter != allowed_remote_ip_addresses.end() ) {
         int remote_host = *remote_iter;
         if (peer_ip == remote_host) {
@@ -338,7 +338,7 @@ bool GUI_RPC_CONN_SET::check_allowed_list(int peer_ip) {
     return false;
 }
 
-void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
+void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
     int sock, retval;
     vector<GUI_RPC_CONN*>::iterator iter;
     GUI_RPC_CONN* gr;
@@ -464,9 +464,9 @@ void GUI_RPC_CONN_SET::send_quits() {
 
 // check whether the quit messages have actually been sent
 //
-bool GUI_RPC_CONN_SET::quits_sent() {
+bool GUI_RPC_CONN_SET::quits_sent() const {
     for (unsigned int i=0; i<gui_rpcs.size(); i++) {
-        GUI_RPC_CONN* gr = gui_rpcs[i];
+        const GUI_RPC_CONN* gr = gui_rpcs[i];
         if (gr->au_ss_state == AU_SS_QUIT_REQ) return false;
         if (gr->au_mgr_state == AU_MGR_QUIT_REQ) return false;
     }
