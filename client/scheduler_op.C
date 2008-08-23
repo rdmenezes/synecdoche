@@ -150,7 +150,7 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
 /// One of the following errors occurred:
 /// - connection failure in fetching master file
 /// - connection failure in scheduler RPC
-/// - got master file, but it didn't have any <scheduler> elements
+/// - got master file, but it didn't have any \<scheduler\> elements
 /// - tried all schedulers, none responded
 /// - sent nonzero work request, got a reply with no work
 ///
