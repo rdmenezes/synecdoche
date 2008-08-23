@@ -464,7 +464,7 @@ void escape_url_readable(const char *in, char* out) {
 ///   - Remove double slashes in the rest
 ///   - Add a trailing slash if necessary
 ///
-/// \praram[in,out] url The url that should get canonicalized.
+/// \param[in,out] url The url that should get canonicalized.
 void canonicalize_master_url(std::string& url) {
     std::string buf(url);
 	bool bSSL = false; // keep track if they sent in https://
@@ -492,7 +492,7 @@ void canonicalize_master_url(std::string& url) {
 ///   - Remove double slashes in the rest
 ///   - Add a trailing slash if necessary
 ///
-/// \praram[in,out] url The url that should get canonicalized.
+/// \param[in,out] url The url that should get canonicalized.
 /// \deprecated Use canonicalize_master_url(std::string&) instead which
 ///             is more secure.
 void canonicalize_master_url(char* url) {
