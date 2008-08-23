@@ -447,9 +447,8 @@ void GUI_RPC_CONN_SET::close() {
     }
 }
 
-// this is called when we're ready to auto-update;
-// set flags to send quit messages to screensaver and local manager
-//
+/// this is called when we're ready to auto-update;
+/// set flags to send quit messages to screensaver and local manager
 void GUI_RPC_CONN_SET::send_quits() {
     for (unsigned int i=0; i<gui_rpcs.size(); i++) {
         GUI_RPC_CONN* gr = gui_rpcs[i];
@@ -462,8 +461,7 @@ void GUI_RPC_CONN_SET::send_quits() {
     }
 }
 
-// check whether the quit messages have actually been sent
-//
+/// check whether the quit messages have actually been sent
 bool GUI_RPC_CONN_SET::quits_sent() const {
     for (unsigned int i=0; i<gui_rpcs.size(); i++) {
         const GUI_RPC_CONN* gr = gui_rpcs[i];
