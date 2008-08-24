@@ -148,7 +148,8 @@ int GUI_RPC_CONN_SET::get_password() {
 }
 
 int GUI_RPC_CONN_SET::get_allowed_hosts() {
-    int ipaddr, retval;
+    int retval;
+    uint32_t ipaddr;
     char buf[256];
 
     allowed_remote_ip_addresses.clear();
@@ -179,7 +180,7 @@ int GUI_RPC_CONN_SET::get_allowed_hosts() {
                         buf, REMOTEHOST_FILE_NAME
                     );
                 } else {
-                    allowed_remote_ip_addresses.push_back((int)ntohl(ipaddr));
+                    allowed_remote_ip_addresses.push_back(ntohl(ipaddr));
                 }
             }
         }
@@ -327,8 +328,8 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
     if (lsock > all.max_fd) all.max_fd = lsock;
 }
 
-bool GUI_RPC_CONN_SET::check_allowed_list(int peer_ip) const {
-    vector<int>::const_iterator remote_iter = allowed_remote_ip_addresses.begin();
+bool GUI_RPC_CONN_SET::check_allowed_list(uint32_t peer_ip) const {
+    vector<uint32_t>::const_iterator remote_iter = allowed_remote_ip_addresses.begin();
     while (remote_iter != allowed_remote_ip_addresses.end() ) {
         int remote_host = *remote_iter;
         if (peer_ip == remote_host) {
@@ -373,7 +374,7 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
         fcntl(sock, F_SETFD, FD_CLOEXEC);
 #endif
 
-        int peer_ip = (int) ntohl(addr.sin_addr.s_addr);
+        uint32_t peer_ip = ntohl(addr.sin_addr.s_addr);
         bool allowed;
          
         // accept the connection if:
