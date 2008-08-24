@@ -144,7 +144,7 @@ public:
     void OnMouseClick( wxMouseEvent& event );
 
     /// wxEVT_COMMAND_BUTTON_CLICKED event handler for window
-    void OnWebsiteButtonClick( wxCommandEvent& event );
+    void OnWebsiteButtonClick( wxMouseEvent& event );
 
 ////@end CProjectListItemCtrl event handler declarations
 
@@ -157,7 +157,7 @@ public:
 
 private:
     CProjectListItemStaticCtrl* m_pTitleStaticCtrl;
-    wxBitmapButton*             m_pWebsiteButtonCtrl;
+    wxStaticBitmap*             m_pWebsiteButtonCtrl;
     wxString                    m_strTitle;
     wxString                    m_strURL;
     bool                        m_bLeftButtonDownDetected;
