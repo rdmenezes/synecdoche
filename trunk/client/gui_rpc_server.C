@@ -55,10 +55,7 @@
 #include <cstring>
 #include <algorithm>
 #include <vector>
-#include <string>
-
-using std::string;
-using std::vector;
+#include <set>
 
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
     sock(s),
@@ -181,7 +178,7 @@ int GUI_RPC_CONN_SET::get_allowed_hosts() {
                         buf, REMOTEHOST_FILE_NAME
                     );
                 } else {
-                    allowed_remote_ip_addresses.push_back(ntohl(ipaddr));
+                    allowed_remote_ip_addresses.insert(ntohl(ipaddr));
                 }
             }
         }
@@ -330,17 +327,12 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
 }
 
 bool GUI_RPC_CONN_SET::check_allowed_list(uint32_t peer_ip) const {
-    vector<uint32_t>::const_iterator match = std::find(
-        allowed_remote_ip_addresses.begin(),
-        allowed_remote_ip_addresses.end(),
-        peer_ip
-    );
-    return match != allowed_remote_ip_addresses.end();
+    return allowed_remote_ip_addresses.count(peer_ip) == 1;
 }
 
 void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
     int sock, retval;
-    vector<GUI_RPC_CONN*>::iterator iter;
+    std::vector<GUI_RPC_CONN*>::iterator iter;
     GUI_RPC_CONN* gr;
     bool is_local = false;
 
