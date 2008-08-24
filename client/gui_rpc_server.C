@@ -53,6 +53,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
 #include <vector>
 #include <string>
 
@@ -329,15 +330,12 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
 }
 
 bool GUI_RPC_CONN_SET::check_allowed_list(uint32_t peer_ip) const {
-    vector<uint32_t>::const_iterator remote_iter = allowed_remote_ip_addresses.begin();
-    while (remote_iter != allowed_remote_ip_addresses.end() ) {
-        int remote_host = *remote_iter;
-        if (peer_ip == remote_host) {
-            return true;
-        }
-        remote_iter++;
-    }
-    return false;
+    vector<uint32_t>::const_iterator match = std::find(
+        allowed_remote_ip_addresses.begin(),
+        allowed_remote_ip_addresses.end(),
+        peer_ip
+    );
+    return match != allowed_remote_ip_addresses.end();
 }
 
 void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
