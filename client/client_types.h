@@ -60,42 +60,40 @@ public:
     double max_nbytes;
     double nbytes;
     double upload_offset;
-    bool generated_locally; // file is produced by app
+    bool generated_locally; ///< file is produced by app
     int status;
-    bool executable;        // change file protections to make executable
-    bool uploaded;          // file has been uploaded
+    bool executable;        ///< change file protections to make executable
+    bool uploaded;          ///< file has been uploaded
     bool upload_when_present;
-    bool sticky;            // don't delete unless instructed to do so
-    bool report_on_rpc;     // include this in each scheduler request
-    bool marked_for_delete;     // server requested delete;
-        // if not in use, delete even if sticky is true
-        // don't report to server even if report_on_rpc is true
-    bool signature_required;    // true iff associated with app version
+    bool sticky;            ///< don't delete unless instructed to do so
+    bool report_on_rpc;     ///< include this in each scheduler request
+    bool marked_for_delete;     ///< server requested delete;
+        ///< if not in use, delete even if sticky is true
+        ///< don't report to server even if report_on_rpc is true
+    bool signature_required;    ///< true iff associated with app version
     bool is_user_file;
     bool is_project_file;
     bool is_auto_update_file;
-    bool gzip_when_done;
-        // for output files: gzip file when done, and append .gz to its name
-    class PERS_FILE_XFER* pers_file_xfer;
-        // nonzero if in the process of being up/downloaded
-    struct RESULT* result;         // for upload files (to authenticate)
+    bool gzip_when_done; ///< for output files: gzip file when done, and append .gz to its name
+    class PERS_FILE_XFER* pers_file_xfer; ///< nonzero if in the process of being up/downloaded
+    struct RESULT* result;         ///< for upload files (to authenticate)
     class PROJECT* project;
     int ref_cnt;
     std::vector<std::string> urls;
     int start_url;
     int current_url;
+    /// If the file_info is signed (for uploadable files),
+    /// this is the text that is signed.
+    /// Otherwise it is the FILE_INFO's XML descriptor
+    /// (without enclosing <file_info> tags).
     char signed_xml[MAX_FILE_INFO_LEN];
-        // if the file_info is signed (for uploadable files)
-        // this is the text that is signed
-        // Otherwise it is the FILE_INFO's XML descriptor
-        // (without enclosing <file_info> tags)
-    char xml_signature[MAX_SIGNATURE_LEN];
-        // ... and this is the signature
+    char xml_signature[MAX_SIGNATURE_LEN]; ///< ... and this is the signature
+    /// If the file itself is signed (for executable files),
+    /// this is the signature
     char file_signature[MAX_SIGNATURE_LEN];
-        // if the file itself is signed (for executable files)
-        // this is the signature
-    std::string error_msg;       // if permanent error occurs during file xfer,
-                            // it's recorded here
+    /// If permanent error occurs during file xfer,
+    /// it's recorded here
+    std::string error_msg;
 
     FILE_INFO();
     ~FILE_INFO();
@@ -104,7 +102,7 @@ public:
     int parse(MIOFILE&, bool from_server);
     int write(MIOFILE&, bool to_server) const;
     int write_gui(MIOFILE&) const;
-    int delete_file();      // attempt to delete the underlying file
+    int delete_file();      ///< attempt to delete the underlying file
     const char* get_init_url(bool);
     const char* get_next_url(bool);
     const char* get_current_url(bool);
@@ -113,31 +111,29 @@ public:
     void failure_message(std::string&) const;
     int merge_info(const FILE_INFO&);
     int verify_file(bool, bool);
-    int gzip();     // gzip file and add .gz to name
+    int gzip();     ///< gzip file and add .gz to name
 };
 
-// Describes a connection between a file and a workunit, result, or application.
-// In the first two cases,
-// the app will either use open() or fopen() to access the file
-// (in which case "open_name" is the name it will use)
-// or the app will be connected by the given fd (in which case fd is nonzero)
-//
+/// Describes a connection between a file and a workunit, result, or application.
+/// In the first two cases,
+/// the app will either use open() or fopen() to access the file
+/// (in which case \ref open_name is the name it will use)
+/// or the app will be connected by the given fd (in which case fd is nonzero).
 struct FILE_REF {
-    char file_name[256];    // physical name
-    char open_name[256];    // logical name
+    char file_name[256];    ///< physical name
+    char open_name[256];    ///< logical name
     bool main_program;
     FILE_INFO* file_info;
+    /// if true, core client will copy the file instead of linking
     bool copy_file;
-        // if true, core client will copy the file instead of linking
+    /// for output files: app may not generate file;
+    /// don't treat as error if file is missing.
     bool optional;
-        // for output files: app may not generate file;
-        // don't treat as error if file is missing.
     int parse(MIOFILE&);
     int write(MIOFILE&) const;
 };
 
-// statistics at a specific day
-//
+/// statistics at a specific day
 struct DAILY_STATS {
     double user_total_credit;
     double user_expavg_credit;
@@ -152,14 +148,14 @@ struct DAILY_STATS {
 bool operator < (const DAILY_STATS&, const DAILY_STATS&);
 
 struct RR_SIM_PROJECT_STATUS {
+    /// jobs currently running (in simulation)
     std::vector<RESULT*>active;
-        // jobs currently running (in simulation)
+    /// jobs runnable but not running yet
     std::vector<RESULT*>pending;
-        // jobs runnable but not running yet
     int deadlines_missed;
+    /// fraction of each CPU this project will get
+    /// set in CLIENT_STATE::rr_misses_deadline();
     double proc_rate;
-        // fraction of each CPU this project will get
-        // set in CLIENT_STATE::rr_misses_deadline();
     double cpu_shortfall;
 
     inline void clear() {
@@ -204,38 +200,41 @@ struct RR_SIM_PROJECT_STATUS {
 
 class PROJECT {
 public:
-    // the following items come from the account file
-    // They are a function only of the user and the project
-    //
-    char master_url[256];       // url of site that contains scheduler tags
-                                // for this project
-    char authenticator[256];    // user's authenticator on this project
-    std::string project_prefs;
-        // without the enclosing <project_preferences> tags.
-        // May include <venue> elements
-        // This field is used only briefly: between handling a
-        // scheduler RPC reply and writing the account file
-    std::string project_specific_prefs;
-        // without enclosing <project_specific> tags
-        // Does not include <venue> elements
-    std::string gui_urls;
-        // GUI URLs, with enclosing <gui_urls> tags
-    double resource_share;
-        // project's resource share relative to other projects.
-    char host_venue[256];
-        // logically, this belongs in the client state file
-        // rather than the account file.
-        // But we need it in the latter in order to parse prefs.
-    bool using_venue_specific_prefs;
+    /// @name Account file
+    /// The following items come from the account file.
+    /// They are a function only of the user and the project.
+    /// @{
 
-    // the following items come from client_state.xml
-    // They may depend on the host as well as user and project
-    // NOTE: if you add anything, add it to copy_state_fields() also!!!
-    //
-    std::vector<std::string> scheduler_urls;
-        // where to find scheduling servers
-    char project_name[256];             // descriptive.  not unique
-    char symstore[256];             // URL of symbol server (Windows)
+    char master_url[256];       ///< url of site that contains scheduler tags
+                                ///< for this project
+    char authenticator[256];    ///< user's authenticator on this project
+    /// Project preferences without the enclosing \<project_preferences\> tags.
+    /// May include \<venue\> elements
+    /// This field is used only briefly: between handling a
+    /// scheduler RPC reply and writing the account file
+    std::string project_prefs;
+    /// Project-specific preferences without enclosing \<project_specific\> tags.
+    /// Does not include \<venue\> elements.
+    std::string project_specific_prefs;
+    /// GUI URLs, with enclosing <gui_urls> tags.
+    std::string gui_urls;
+    /// Project's resource share relative to other projects.
+    double resource_share;
+    // logically, this belongs in the client state file
+    // rather than the account file.
+    // But we need it in the latter in order to parse prefs.
+    char host_venue[256];
+    bool using_venue_specific_prefs;
+    ///@}
+
+    /// @name client_state
+    /// The following items come from client_state.xml.
+    /// They may depend on the host as well as user and project.
+    /// \note if you add anything, add it to copy_state_fields() also!!!
+    /// @{
+    std::vector<std::string> scheduler_urls; ///< where to find scheduling servers
+    char project_name[256];             ///< descriptive.  not unique
+    char symstore[256];             ///< URL of symbol server (Windows)
     char user_name[256];
     char team_name[256];
     char email_hash[MD5_LEN];
@@ -248,22 +247,21 @@ public:
     double host_total_credit;
     double host_expavg_credit;
     double host_create_time;
-    double ams_resource_share;
-        // resource share according to AMS; overrides project
+    double ams_resource_share; ///< resource share according to AMS; overrides project
+    /// @}
 
     // stuff related to scheduler RPCs and master fetch
     //
     int rpc_seqno;
-    int nrpc_failures;          // # of consecutive times we've failed to
-                                // contact all scheduling servers
+    int nrpc_failures;          ///< # of consecutive times we've failed to
+                                ///< contact all scheduling servers
     int master_fetch_failures;
-    double min_rpc_time;           // earliest time to contact any server
-                                   // of this project (or zero)
+    double min_rpc_time;           ///< earliest time to contact any server
+                                   ///< of this project (or zero)
     void set_min_rpc_time(double future_time, const char* reason);
-    bool waiting_until_min_rpc_time();
-        // returns true if min_rpc_time > now
-    bool master_url_fetch_pending;
-                                // need to fetch and parse the master URL
+    bool waiting_until_min_rpc_time(); ///< returns true if min_rpc_time > now
+    bool master_url_fetch_pending;  ///< need to fetch and parse the master URL
+
     int sched_rpc_pending;
         // we need to do a scheduler RPC, for various possible reasons:
         // user request, propagate host CPID, time-based, etc.
@@ -276,8 +274,8 @@ public:
         // transitions from being backed off to not.
         // This (slightly misnamed) keeps track of whether this
         // may still need to be done for given project
-    bool trickle_up_pending;    // have trickle up to send
-    double last_rpc_time;          // when last RPC finished
+    bool trickle_up_pending;    ///< have trickle up to send
+    double last_rpc_time;       ///< when last RPC finished
 
     // Other stuff
 
