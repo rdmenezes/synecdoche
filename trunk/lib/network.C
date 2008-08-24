@@ -84,7 +84,7 @@ const char* socket_error_str() {
 #endif
 }
 
-int resolve_hostname(char* hostname, int &ip_addr) {
+int resolve_hostname(char* hostname, uint32_t &ip_addr) {
 
     // if the hostname is in Internet Standard dotted notation, 
     // return that address.
@@ -101,7 +101,7 @@ int resolve_hostname(char* hostname, int &ip_addr) {
     if (!hep) {
         return ERR_GETHOSTBYNAME;
     }
-    ip_addr = *(int*)hep->h_addr_list[0];
+    ip_addr = *(uint32_t*)hep->h_addr_list[0];
     return 0;
 }
 
