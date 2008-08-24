@@ -755,10 +755,15 @@ int ACTIVE_TASK::start(bool first_time) {
         //
         char pdir[256];
         get_project_dir(wup->project, pdir, sizeof(pdir));
-        std::string libpath(getenv("LD_LIBRARY_PATH"));
-        libpath += std::string(":../../") + std::string(pdir) + std::string(":.:../..");
-        fprintf(stderr, "LD PATH: %s\n", libpath.c_str());
-        setenv("LD_LIBRARY_PATH", libpath.c_str(), 1);
+
+        std::ostringstream libpath;
+        const char* env_lib_path = getenv("LD_LIBRARY_PATH");
+        if (env_lib_path) {
+            libpath << env_lib_path << ':';
+        }
+        libpath << "../../" << pdir << ":.:../..";
+        fprintf(stderr, "LD PATH: %s\n", libpath.str().c_str());
+        setenv("LD_LIBRARY_PATH", libpath.str().c_str(), 1);
 
         retval = chdir(slot_dir);
         if (retval) {
