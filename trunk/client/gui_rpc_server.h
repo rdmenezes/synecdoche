@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -19,6 +20,7 @@
 #define _GUI_RPC_SERVER_H
 
 #include <vector>
+#include <set>
 
 #include "network.h"
 #include "gui_http.h"
@@ -77,11 +79,11 @@ public:
 
 class GUI_RPC_CONN_SET {
     std::vector<GUI_RPC_CONN*> gui_rpcs;
-    std::vector<int> allowed_remote_ip_addresses;
+    std::set<unsigned long> allowed_remote_ip_addresses;
     int get_allowed_hosts();
     int get_password();
     int insert(GUI_RPC_CONN*);
-    bool check_allowed_list(int ip_addr) const;
+    bool check_allowed_list(unsigned long ip_addr) const;
     bool remote_hosts_file_exists;
 public:
     int lsock;

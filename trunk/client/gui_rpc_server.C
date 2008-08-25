@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -54,6 +55,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <set>
 
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
     sock(s),
@@ -175,7 +177,7 @@ int GUI_RPC_CONN_SET::get_allowed_hosts() {
                         buf, REMOTEHOST_FILE_NAME
                     );
                 } else {
-                    allowed_remote_ip_addresses.push_back((int)ntohl(ipaddr));
+                    allowed_remote_ip_addresses.insert(ntohl(ipaddr));
                 }
             }
         }
@@ -323,16 +325,8 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
     if (lsock > all.max_fd) all.max_fd = lsock;
 }
 
-bool GUI_RPC_CONN_SET::check_allowed_list(int peer_ip) const {
-    std::vector<int>::const_iterator remote_iter = allowed_remote_ip_addresses.begin();
-    while (remote_iter != allowed_remote_ip_addresses.end() ) {
-        int remote_host = *remote_iter;
-        if (peer_ip == remote_host) {
-            return true;
-        }
-        remote_iter++;
-    }
-    return false;
+bool GUI_RPC_CONN_SET::check_allowed_list(unsigned long peer_ip) const {
+    return allowed_remote_ip_addresses.count(peer_ip) == 1;
 }
 
 void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
