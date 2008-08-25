@@ -19,7 +19,6 @@
 #define _GUI_RPC_SERVER_H
 
 #include <vector>
-#include <set>
 
 #include "network.h"
 #include "gui_http.h"
@@ -78,11 +77,11 @@ public:
 
 class GUI_RPC_CONN_SET {
     std::vector<GUI_RPC_CONN*> gui_rpcs;
-    std::set<uint32_t> allowed_remote_ip_addresses;
+    std::vector<int> allowed_remote_ip_addresses;
     int get_allowed_hosts();
     int get_password();
     int insert(GUI_RPC_CONN*);
-    bool check_allowed_list(uint32_t ip_addr) const;
+    bool check_allowed_list(int ip_addr) const;
     bool remote_hosts_file_exists;
 public:
     int lsock;
