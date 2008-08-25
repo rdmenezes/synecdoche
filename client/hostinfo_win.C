@@ -441,7 +441,7 @@ BOOL is_processor_feature_supported(DWORD feature) {
     GetVersionEx(&osvi);
 
     if (VER_PLATFORM_WIN32_WINDOWS == osvi.dwPlatformId) {
-        // Win9x does have the IsProcessorFeaturePresent function, so just
+        // Win9x doesn't have the IsProcessorFeaturePresent function, so just
         //   run a quick test.
         return test_processor_feature(feature);
     } else {
@@ -457,7 +457,6 @@ BOOL is_processor_feature_supported(DWORD feature) {
             return test_processor_feature(feature);
         }
     }
-    return 0;
 }
 
 
