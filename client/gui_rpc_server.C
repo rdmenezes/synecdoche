@@ -54,10 +54,6 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
-#include <string>
-
-using std::string;
-using std::vector;
 
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
     sock(s),
@@ -328,7 +324,7 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
 }
 
 bool GUI_RPC_CONN_SET::check_allowed_list(int peer_ip) const {
-    vector<int>::const_iterator remote_iter = allowed_remote_ip_addresses.begin();
+    std::vector<int>::const_iterator remote_iter = allowed_remote_ip_addresses.begin();
     while (remote_iter != allowed_remote_ip_addresses.end() ) {
         int remote_host = *remote_iter;
         if (peer_ip == remote_host) {
@@ -341,7 +337,7 @@ bool GUI_RPC_CONN_SET::check_allowed_list(int peer_ip) const {
 
 void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
     int sock, retval;
-    vector<GUI_RPC_CONN*>::iterator iter;
+    std::vector<GUI_RPC_CONN*>::iterator iter;
     GUI_RPC_CONN* gr;
     bool is_local = false;
 
