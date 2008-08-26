@@ -120,7 +120,7 @@ public:
     bool too_large;                 ///< Working set too large to run now.
     bool needs_shmem;               ///< Waiting for a free shared memory segment.
 
-    /// This task wants to do network comm (for F@h).
+    /// This task wants to do network comm.
     /// This is passed via share-memory message (app_status channel).
     int want_network;
 

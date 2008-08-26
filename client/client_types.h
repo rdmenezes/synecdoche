@@ -87,7 +87,7 @@ public:
     /// Otherwise it is the FILE_INFO's XML descriptor
     /// (without enclosing <file_info> tags).
     char signed_xml[MAX_FILE_INFO_LEN];
-    char xml_signature[MAX_SIGNATURE_LEN]; ///< ... and this is the signature
+    char xml_signature[MAX_SIGNATURE_LEN]; ///< the actual signature
     /// If the file itself is signed (for executable files),
     /// this is the signature
     char file_signature[MAX_SIGNATURE_LEN];
