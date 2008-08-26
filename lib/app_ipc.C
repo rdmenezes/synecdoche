@@ -300,14 +300,13 @@ void APP_CLIENT_SHM::reset_msgs() {
     memset(shm, 0, sizeof(SHARED_MEM));
 }
 
-// Resolve virtual name (in slot dir) to physical path (in project dir).
-// Cases:
-// - Windows and pre-6.12 Unix:
-//   virtual name refers to a "soft link" (XML file acting as symbolic link)
-// - 6.12+ Unix:
-//   virtual name is a symbolic link
-// - Standalone: physical path is same as virtual name
-//
+/// Resolve virtual name (in slot dir) to physical path (in project dir).
+/// Cases:
+/// - Windows and pre-6.12 Unix:
+///   virtual name refers to a "soft link" (XML file acting as symbolic link)
+/// - 6.12+ Unix:
+///   virtual name is a symbolic link
+/// - Standalone: physical path is same as virtual name
 int boinc_resolve_filename(
     const char *virtual_name, char *physical_name, int len
 ) {
@@ -342,8 +341,9 @@ int boinc_resolve_filename(
 }
 
 
-// same, std::string version
-//
+/**
+ * \overload
+ */
 int boinc_resolve_filename_s(const char *virtual_name, string& physical_name) {
     char buf[512], *p;
     if (!virtual_name) return ERR_NULL;
