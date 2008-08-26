@@ -46,6 +46,7 @@
 #include "filesys.h"
 #include "str_util.h"
 
+#if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
 /// Result will always be null-terminated, and it's faster.
 /// See http://www.gratisoft.us/todd/papers/strlcpy.html
@@ -55,7 +56,6 @@
 /// \param[in] size Size of the destination buffer pointed to by \a dst.
 /// \return The number of characters written to the destination buffer \a
 ///         without the terminating '\0'-character.
-#if !defined(HAVE_STRLCPY)
 size_t strlcpy(char* dst, const char* src, size_t size) {
     size_t ret = strlen(src);
 
@@ -69,6 +69,7 @@ size_t strlcpy(char* dst, const char* src, size_t size) {
 }
 #endif
 
+#if !defined(HAVE_STRLCAT)
 /// Use this instead of strncat().
 /// Result will always be null-terminated.
 /// See http://www.gratisoft.us/todd/papers/strlcpy.html
@@ -79,7 +80,6 @@ size_t strlcpy(char* dst, const char* src, size_t size) {
 /// \param[in] size Size of the destination buffer pointed to by \a dst
 /// \return The number of characters in the destination buffer \a
 ///         without the terminating '\0'-character.
-#if !defined(HAVE_STRLCAT)
 size_t strlcat(char* dst, const char* src, size_t size) {
     size_t dst_len = strlen(dst);
     size_t src_len = strlen(src);
@@ -94,6 +94,7 @@ size_t strlcat(char* dst, const char* src, size_t size) {
 }
 #endif // !HAVE_STRLCAT
 
+#if !defined(HAVE_STRCASESTR)
 /// Search for a substring while ignoring upper-/lowercase.
 ///
 /// \param[in] s1 The string in which will be searched for \a s2
@@ -101,7 +102,6 @@ size_t strlcat(char* dst, const char* src, size_t size) {
 /// \return A pointer pointing to the start of the sequence determined
 ///         by \a s2 in the string \a s1. If \a s2 cannot be found in
 ///         \a s1 NULL is returned.
-#if !defined(HAVE_STRCASESTR)
 extern char* strcasestr(const char* s1, const char* s2) {
   char *needle, *haystack, *p=NULL;
   // Is alloca() really less likely to fail with out of memory error 
@@ -576,7 +576,7 @@ std::string time_to_string(double t) {
     char buf[256];
     time_t x = (time_t)t;
     struct tm* tm = localtime(&x);
-    if (strftime(buf, sizeof(buf)-1, "%d-%b-%Y %H:%M:%S", tm)) {
+    if (strftime(buf, sizeof(buf), "%d-%b-%Y %H:%M:%S", tm)) {
         return std::string(buf);
     } else { // Actually this should never happen.
         return std::string("");
@@ -600,7 +600,7 @@ std::string precision_time_to_string(double t) {
     time_t x = (time_t)t;
     struct tm* tm = localtime(&x);
 
-    if (strftime(buf, sizeof(buf) - 1, "%Y-%m-%d %H:%M:%S", tm)) {
+    if (strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", tm)) {
         std::ostringstream finer;
         finer << buf << "." << std::setw(4) << std::setfill('0') << hundreds_of_microseconds;
         return finer.str();
