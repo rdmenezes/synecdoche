@@ -16,6 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+/// \file
+/// Helper functions for string handling and conversion.
+
 #ifndef STR_UTIL_H
 #define STR_UTIL_H
 
@@ -24,22 +27,25 @@
 #include <cctype>
 #include <cstring>
 #include <string>
-#include <vector>
+#include <list>
 
 #define KILO (1024.0)
 #define MEGA (1048576.0)
 #define GIGA (1024.*1048576.0)
 
+/// Use this instead of strncpy().
 #if !defined(HAVE_STRLCPY)
-extern size_t strlcpy(char*, const char*, size_t);
+extern size_t strlcpy(char* dst, const char* src, size_t size);
 #endif
 
+/// Use this instead of strncat().
 #if !defined(HAVE_STRLCAT)
-extern size_t strlcat(char *dst, const char *src, size_t size);
+extern size_t strlcat(char* dst, const char* src, size_t size);
 #endif
 
+/// Search for a substring while ignoring upper-/lowercase.
 #if !defined(HAVE_STRCASESTR)
-extern char *strcasestr(const char *s1, const char *s2);
+extern char* strcasestr(const char* s1, const char* s2);
 #endif
 
 /// Convert a double precision time into a string.
@@ -48,7 +54,9 @@ extern int ndays_to_string(double x, int smallest_timescale, char* str, size_t l
 /// Convert \a nbytes into a string.
 extern int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len);
 
-extern int parse_command_line(char*, char**);
+/// Split a string with space separated words into single words.
+extern std::list<std::string> parse_command_line(const char* p);
+
 extern void c2x(char *what);
 
 /// Remove leading and trailing whitespace froma string

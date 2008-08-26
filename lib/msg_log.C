@@ -122,7 +122,7 @@ void MSG_LOG::vprintf_multiline(
         ++str;
     }
     if (!line.empty()) {
-        fprintf(output, "%s %s[%s] %s%s\n", now_timestamp, spaces, skind, sprefix, line.c_str());
+        fprintf(output, "%s %s[%s] %s%s\n", now_timestamp.c_str(), spaces, skind, sprefix, line.c_str());
     }
 }
 

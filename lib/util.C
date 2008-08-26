@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -39,6 +40,7 @@
 #include <errno.h>
 #include <string>
 #include <cstring>
+#include <list>
 #endif
 
 #include "error_numbers.h"
@@ -454,6 +456,37 @@ bool process_exists(int pid) {
     if (p == -1) return false;      // PID doesn't exist
     return true;
 }
+
+/// Prepare arguments for execv and call that function.
+/// This function returns only in case of an error or if the platform is OS/2.
+///
+/// \param[in] path The path name of the executable that should get executed.
+/// \param[in] argv A list containing all command line arguments for the
+///                 program specified in \a path.
+/// \return Only returns -1, if it returns. On OS/2 the id of the new process
+///         is returned or -1 in case of an error.
+int do_execv(const char* path, const std::list<std::string>& argv)
+{
+    char** argv_p = new char*[argv.size() + 1];
+    int i = 0;
+    for (std::list<std::string>::const_iterator it = argv.begin();
+                it != argv.end(); ++it) {
+        // Ugly but necessary as you cannot create an array of char* const
+        // without immediate initialization of all members in C++98:
+        argv_p[i++] = const_cast<char*>((*it).c_str());
+    }
+    argv_p[i] = 0;
+
+#if defined(__EMX__)
+    int ret_val = spawnv(P_NOWAIT, path, argv_p);
+#else
+    int ret_val = execv(path, argv_p);
+#endif
+
+    delete[] argv_p;
+    return ret_val;
+}
+
 #endif
 
 #ifdef _WIN32
