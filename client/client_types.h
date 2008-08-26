@@ -208,13 +208,13 @@ public:
     char master_url[256];       ///< url of site that contains scheduler tags
                                 ///< for this project
     char authenticator[256];    ///< user's authenticator on this project
-    /// Project preferences without the enclosing \<project_preferences\> tags.
-    /// May include \<venue\> elements
+    /// Project preferences without the enclosing <project_preferences> tags.
+    /// May include <venue> elements
     /// This field is used only briefly: between handling a
     /// scheduler RPC reply and writing the account file
     std::string project_prefs;
-    /// Project-specific preferences without enclosing \<project_specific\> tags.
-    /// Does not include \<venue\> elements.
+    /// Project-specific preferences without enclosing <project_specific> tags.
+    /// Does not include <venue> elements.
     std::string project_specific_prefs;
     /// GUI URLs, with enclosing <gui_urls> tags.
     std::string gui_urls;
