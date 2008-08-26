@@ -16,6 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+/// \file
+/// Helper functions for string handling and conversion.
+
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
 #endif
@@ -37,17 +40,23 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <list>
 #include "error_numbers.h"
 #include "common_defs.h"
 #include "filesys.h"
 #include "str_util.h"
 
-// Use this instead of strncpy().
-// Result will always be null-terminated, and it's faster.
-// see http://www.gratisoft.us/todd/papers/strlcpy.html
-//
+/// Use this instead of strncpy().
+/// Result will always be null-terminated, and it's faster.
+/// See http://www.gratisoft.us/todd/papers/strlcpy.html
+///
+/// \param[out] dst Pointer to a char array which will be the destination.
+/// \param[in] src Pointer to a char array which will be copied to \a dst.
+/// \param[in] size Size of the destination buffer pointed to by \a dst.
+/// \return The number of characters written to the destination buffer \a
+///         without the terminating '\0'-character.
 #if !defined(HAVE_STRLCPY)
-size_t strlcpy(char *dst, const char *src, size_t size) {
+size_t strlcpy(char* dst, const char* src, size_t size) {
     size_t ret = strlen(src);
 
     if (size) {
@@ -60,8 +69,18 @@ size_t strlcpy(char *dst, const char *src, size_t size) {
 }
 #endif
 
+/// Use this instead of strncat().
+/// Result will always be null-terminated.
+/// See http://www.gratisoft.us/todd/papers/strlcpy.html
+///
+/// \param[out] dst Pointer to a char array to which the string pointed to
+///                 by \a src will be appended.
+/// \param[in] src Pointer to a char array which will be appended to \a dst
+/// \param[in] size Size of the destination buffer pointed to by \a dst
+/// \return The number of characters in the destination buffer \a
+///         without the terminating '\0'-character.
 #if !defined(HAVE_STRLCAT)
-size_t strlcat(char *dst, const char *src, size_t size) {
+size_t strlcat(char* dst, const char* src, size_t size) {
     size_t dst_len = strlen(dst);
     size_t src_len = strlen(src);
 
@@ -75,8 +94,15 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 }
 #endif // !HAVE_STRLCAT
 
+/// Search for a substring while ignoring upper-/lowercase.
+///
+/// \param[in] s1 The string in which will be searched for \a s2
+/// \param[in] s2 The substring that should be searched.
+/// \return A pointer pointing to the start of the sequence determined
+///         by \a s2 in the string \a s1. If \a s2 cannot be found in
+///         \a s1 NULL is returned.
 #if !defined(HAVE_STRCASESTR)
-extern char *strcasestr(const char *s1, const char *s2) {
+extern char* strcasestr(const char* s1, const char* s2) {
   char *needle, *haystack, *p=NULL;
   // Is alloca() really less likely to fail with out of memory error 
   // than strdup?
@@ -185,8 +211,9 @@ int ndays_to_string (double x, int smallest_timescale, char* str, size_t len) {
     }
 
     std::string result = buf.str();
-    if (result.length() >= len)
+    if (result.length() >= len) {
         return ERR_BUFFER_OVERFLOW;
+    }
 
     strlcpy(str, result.c_str(), len);
     return 0;
@@ -240,70 +267,71 @@ int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len) {
     }
 
     std::string result = buf.str();
-    if (result.length() >= len)
+    if (result.length() >= len) {
         return ERR_BUFFER_OVERFLOW;
+    }
 
     strlcpy(str, result.c_str(), len);
     return 0;
 }
 
-// take a string containing some space separated words.
-// return an array of pointers to the null-terminated words.
-// Modifies the string arg.
-// Returns argc
-// TODO: use strtok here
+/// This enum will be used by the state machine in \ref parse_command_line.
+enum cmd_line_parser_state {
+    NOT_IN_TOKEN,
+    IN_SINGLE_QUOTED_TOKEN,
+    IN_DOUBLE_QUOTED_TOKEN,
+    IN_UNQUOTED_TOKEN
+};
 
-#define NOT_IN_TOKEN                0
-#define IN_SINGLE_QUOTED_TOKEN      1
-#define IN_DOUBLE_QUOTED_TOKEN      2
-#define IN_UNQUOTED_TOKEN           3
-
-int parse_command_line(char* p, char** argv) {
-    int state = NOT_IN_TOKEN;
-    int argc=0;
+/// Take a string containing some space separated words.
+/// Return an array of pointers to the null-terminated words.
+/// TODO: use strtok here
+///
+/// \param[in] p A string with space separated words.
+/// \return A list of strings with all space separated words taken from \a p.
+std::list<std::string> parse_command_line(const char* p) {
+    cmd_line_parser_state state = NOT_IN_TOKEN;
+    std::list<std::string> result;
+    const char* start = p;
 
     while (*p) {
         switch(state) {
         case NOT_IN_TOKEN:
-            if (isspace(*p)) {
-            } else if (*p == '\'') {
-                p++;
-                argv[argc++] = p;
-                state = IN_SINGLE_QUOTED_TOKEN;
-                break;
-            } else if (*p == '\"') {
-                p++;
-                argv[argc++] = p;
-                state = IN_DOUBLE_QUOTED_TOKEN;
-                break;
-            } else {
-                argv[argc++] = p;
-                state = IN_UNQUOTED_TOKEN;
+            if (!isspace(*p)) {
+                if (*p == '\'') {
+                    start = ++p;
+                    state = IN_SINGLE_QUOTED_TOKEN;
+                } else if (*p == '\"') {
+                    start = ++p;
+                    state = IN_DOUBLE_QUOTED_TOKEN;
+                } else {
+                    start = p;
+                    state = IN_UNQUOTED_TOKEN;
+                }
             }
             break;
         case IN_SINGLE_QUOTED_TOKEN:
             if (*p == '\'') {
-                *p = 0;
+                result.push_back(std::string(start, p));
                 state = NOT_IN_TOKEN;
             }
             break;
         case IN_DOUBLE_QUOTED_TOKEN:
             if (*p == '\"') {
-                *p = 0;
+                result.push_back(std::string(start, p));
                 state = NOT_IN_TOKEN;
             }
             break;
         case IN_UNQUOTED_TOKEN:
             if (isspace(*p)) {
-                *p = 0;
+                result.push_back(std::string(start, p));
                 state = NOT_IN_TOKEN;
             }
             break;
         }
-        p++;
+        ++p;
     }
-    argv[argc] = 0;
-    return argc;
+    return result;
 }
 
 static char x2c(const char *what) {

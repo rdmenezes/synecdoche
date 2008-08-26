@@ -88,14 +88,17 @@ typedef BOOL (WINAPI *tDEB)(LPVOID lpEnvironment);
 
 #endif
 
-// Goes through an array of strings, and prints each string
-//
+/// Goes through a list of strings, and prints each string.
+///
+/// \param[in] argv The list of strings that should get printed.
 #ifndef _WIN32
-static void debug_print_argv(char** argv) {
+static void debug_print_argv(std::list<std::string> argv) {
     msg_printf(0, MSG_INFO, "[task_debug] Arguments:");
-    for (int i=0; argv[i]; i++) {
+    int count = 0;
+    for (std::list<std::string>::const_iterator it = argv.begin();
+            it != argv.end(); ++it) {
         msg_printf(0, MSG_INFO,
-            "[task_debug]    argv[%d]: %s\n", i, argv[i]
+            "[task_debug]    argv[%d]: %s\n", count++, *it
         );
     }
 }
@@ -610,7 +613,6 @@ int ACTIVE_TASK::start(bool first_time) {
     pid_handle = process_info.hProcess;
 #elif defined(__EMX__)
 
-    char* argv[100];
     char current_dir[_MAX_PATH];
 
     // Set up core/app shared memory seg if needed
@@ -641,20 +643,20 @@ int ACTIVE_TASK::start(bool first_time) {
     //
     //freopen(STDERR_FILE, "a", stderr);
 
-    argv[0] = exec_name;
     char cmdline[8192];
     strcpy(cmdline, wup->command_line.c_str());
     if (strlen(result->cmdline)) {
         strcat(cmdline, " ");
         strcat(cmdline, result->cmdline);
     }
-    parse_command_line(cmdline, argv+1);
+    std::list<std::string> argv = parse_command_line(cmdline);
+    argv.push_front(exec_name);
     if (log_flags.task_debug) {
         debug_print_argv(argv);
     }
     char buf[270];
-    sprintf(buf, "../../%s", exec_path );
-    pid = spawnv(P_NOWAIT, buf, argv);
+    sprintf(buf, "../../%s", exec_path);
+    pid = do_execv(buf, argv);
     if (pid == -1) {
         err_stream << "Process creation failed: "
                    << " The error message was: " << boincerror(retval);
@@ -679,8 +681,6 @@ int ACTIVE_TASK::start(bool first_time) {
 
 #else
     // Unix/Linux/Mac case
-
-    char* argv[100];
 
     // Set up core/app shared memory seg if needed
     //
@@ -812,21 +812,21 @@ int ACTIVE_TASK::start(bool first_time) {
         if (g_use_sandbox) {
             char switcher_path[100];
             sprintf(switcher_path, "../../%s/%s", SWITCHER_DIR, SWITCHER_FILE_NAME);
-            argv[0] = SWITCHER_FILE_NAME;
-            argv[1] = buf;
-            argv[2] = exec_name;
-            parse_command_line(cmdline, argv+3);
+            std::list<std::string> argv = parse_command_line(cmdline);
+            argv.push_front(exec_name);
+            argv.push_front(buf);
+            argv.push_front(SWITCHER_FILE_NAME);
             if (log_flags.task_debug) {
                 debug_print_argv(argv);
             }
             // Files written by projects have user boinc_project and group boinc_project, 
             // so they must be world-readable so BOINC CLient can read them 
             umask(2);
-            retval = execv(switcher_path, argv);
+            retval = do_execv(switcher_path, argv);
         } else {
-            argv[0] = exec_name;
-            parse_command_line(cmdline, argv+1);
-            retval = execv(buf, argv);
+            std::list<std::string> argv = parse_command_line(cmdline);
+            argv.push_front(exec_name);
+            retval = do_execv(buf, argv);
         }
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
             "Process creation (%s) failed: %s, errno=%d\n", buf, boincerror(retval), errno
