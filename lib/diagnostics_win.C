@@ -15,8 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Stuff related to catching SEH exceptions, monitoring threads, and trapping
-// debugger messages; used by both core client and by apps.
+/// \file
+/// Stuff related to catching SEH exceptions, monitoring threads, and trapping
+/// debugger messages; used by both core client and by apps.
 
 #if !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -54,8 +55,8 @@ typedef BOOL (WINAPI *tT32N)(HANDLE hSnapshot, LPTHREADENTRY32 lpte);
 typedef HANDLE (WINAPI *tOT)(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwThreadId);
 
 
-// Look in the registry for the specified value user the BOINC diagnostics
-//   hive.
+/// Look in the registry for the specified value user the BOINC diagnostics
+/// hive.
 BOOL diagnostics_get_registry_value(LPCTSTR lpName, LPDWORD lpdwType, LPDWORD lpdwSize, LPBYTE lpData) {
 	LONG  lRetVal;
 	HKEY  hKey;
@@ -93,8 +94,8 @@ BOOL diagnostics_get_registry_value(LPCTSTR lpName, LPDWORD lpdwType, LPDWORD lp
 }
 
 
-// Provide a structure to store process measurements at the time of a
-//   crash.
+/// Provide a structure to store process measurements at the time of a
+/// crash.
 typedef struct _BOINC_PROCESSENTRY {
     DWORD               process_id;
     VM_COUNTERS         vm_counters;
@@ -110,10 +111,10 @@ static BOINC_PROCESSENTRY diagnostics_process;
 //   SEH exception is thrown.
 //
 
-// This structure is used to keep track of stuff nessassary
-//   to dump backtraces for all threads during an abort or
-//   crash.  This is platform specific in nature since it
-//   depends on the OS datatypes.
+/// This structure is used to keep track of stuff nessassary
+/// to dump backtraces for all threads during an abort or
+/// crash.  This is platform specific in nature since it
+/// depends on the OS datatypes.
 typedef struct _BOINC_THREADLISTENTRY {
     DWORD               thread_id;
     HANDLE              thread_handle;
@@ -133,7 +134,7 @@ static std::vector<PBOINC_THREADLISTENTRY> diagnostics_threads;
 static HANDLE hThreadListSync;
 
 
-// Initialize the thread list entry.
+/// Initialize the thread list entry.
 int diagnostics_init_thread_entry(PBOINC_THREADLISTENTRY entry) {
     entry->thread_id = 0;
     entry->thread_handle = 0;
@@ -151,8 +152,8 @@ int diagnostics_init_thread_entry(PBOINC_THREADLISTENTRY entry) {
 }
 
 
-// Initialize the thread list, which means empty it if anything is
-//   in it.
+/// Initialize the thread list, which means empty it if anything is
+/// in it.
 int diagnostics_init_thread_list() {
     int retval = 0;
     size_t i;
@@ -183,8 +184,8 @@ int diagnostics_init_thread_list() {
 }
 
 
-// Finish the thread list, which means empty it if anything is
-//   in it.
+/// Finish the thread list, which means empty it if anything is
+/// in it.
 int diagnostics_finish_thread_list() {
     size_t i;
     size_t size;
@@ -206,8 +207,7 @@ int diagnostics_finish_thread_list() {
 }
 
 
-// Return a pointer to the thread entry.
-//
+/// Return a pointer to the thread entry.
 PBOINC_THREADLISTENTRY diagnostics_find_thread_entry(DWORD dwThreadId) {
     PBOINC_THREADLISTENTRY pThread = NULL;
     UINT                   uiIndex = 0;
@@ -226,8 +226,8 @@ PBOINC_THREADLISTENTRY diagnostics_find_thread_entry(DWORD dwThreadId) {
 }
 
 
-// Enumerate the running threads in the process space and add them to
-//   the list.  This is the most compatible implementation.
+/// Enumerate the running threads in the process space and add them to
+/// the list.  This is the most compatible implementation.
 int diagnostics_update_thread_list_9X() {
     HANDLE  hThreadSnap = INVALID_HANDLE_VALUE; 
     HANDLE  hThread = NULL;
@@ -303,12 +303,12 @@ int diagnostics_update_thread_list_9X() {
 }
 
 
-// Use the native NT API to get all the process and thread information
-//   about the current process.  This isn't a fully documented API but
-//   enough information exists that we can rely on it for the known
-//   Windows OS versions.  For each new Windows version check the
-//   _SYSTEM_PROCESS and _SYSTEM_THREAD structures in the DDK to make
-//   sure it is compatible with the existing stuff.
+/// Use the native NT API to get all the process and thread information
+/// about the current process.  This isn't a fully documented API but
+/// enough information exists that we can rely on it for the known
+/// Windows OS versions.  For each new Windows version check the
+/// _SYSTEM_PROCESS and _SYSTEM_THREAD structures in the DDK to make
+/// sure it is compatible with the existing stuff.
 int diagnostics_get_process_information(PVOID* ppBuffer, PULONG pcbBuffer) {
     int      retval = 0;
     NTSTATUS Status = STATUS_INFO_LENGTH_MISMATCH;
@@ -345,10 +345,10 @@ int diagnostics_get_process_information(PVOID* ppBuffer, PULONG pcbBuffer) {
 }
 
 
-// Enumerate the running threads in the process space and add them to
-//   the list.  This only works on NT 4.0 based machines.  This also
-//   includes additional information which can be logged during a crash
-//   event.
+/// Enumerate the running threads in the process space and add them to
+/// the list.  This only works on NT 4.0 based machines.  This also
+/// includes additional information which can be logged during a crash
+/// event.
 int diagnostics_update_thread_list_NT() {
     DWORD                   dwCurrentProcessId = GetCurrentProcessId();
     HANDLE                  hThread = NULL;
@@ -436,10 +436,10 @@ int diagnostics_update_thread_list_NT() {
 }
 
 
-// Enumerate the running threads in the process space and add them to
-//   the list.  This only works on XP or better based machines.  This also
-//   includes additional information which can be logged during a crash
-//   event.
+/// Enumerate the running threads in the process space and add them to
+/// the list.  This only works on XP or better based machines.  This also
+/// includes additional information which can be logged during a crash
+/// event.
 int diagnostics_update_thread_list_XP() {
     DWORD                   dwCurrentProcessId = GetCurrentProcessId();
     HANDLE                  hThread = NULL;
@@ -528,8 +528,8 @@ int diagnostics_update_thread_list_XP() {
 }
 
 
-// Determine which update thread list function to call based on OS
-//   version.
+/// Determine which update thread list function to call based on OS
+/// version.
 int diagnostics_update_thread_list() {
     int retval = 0;
 
@@ -578,8 +578,8 @@ int diagnostics_update_thread_list() {
 }
 
 
-// Set the current threads name to make it easy to know what the
-//   thread is supposed to be doing.
+/// Set the current threads name to make it easy to know what the
+/// thread is supposed to be doing.
 int diagnostics_set_thread_exception_record(PEXCEPTION_POINTERS pExPtrs) {
     HANDLE hThread;
     PBOINC_THREADLISTENTRY pThreadEntry = NULL;
@@ -616,8 +616,8 @@ int diagnostics_set_thread_exception_record(PEXCEPTION_POINTERS pExPtrs) {
 }
 
 
-// Set the current threads name to make it easy to know what the
-//   thread is supposed to be doing.
+/// Set the current threads name to make it easy to know what the
+/// thread is supposed to be doing.
 int diagnostics_set_thread_exempt_suspend() {
     HANDLE hThread;
     PBOINC_THREADLISTENTRY pThreadEntry = NULL;
@@ -654,8 +654,7 @@ int diagnostics_set_thread_exempt_suspend() {
 }
 
 
-// Set the current thread's crash message.
-//
+/// Set the current thread's crash message.
 int diagnostics_set_thread_crash_message(char* message) {
     HANDLE hThread;
     PBOINC_THREADLISTENTRY pThreadEntry = NULL;
@@ -708,10 +707,9 @@ int diagnostics_set_thread_crash_message(char* message) {
 }
 
 
-// Translate the thread state into a human readable form.
-//
-// See: http://support.microsoft.com/?kbid=837372
-//
+/// Translate the thread state into a human readable form.
+/// 
+/// See: http://support.microsoft.com/?kbid=837372
 char* diagnostics_format_thread_state(int thread_state) {
     switch(thread_state) {
         case ThreadStateInitialized: return "Initialized";
@@ -726,10 +724,9 @@ char* diagnostics_format_thread_state(int thread_state) {
 }
 
 
-// Translate the thread wait reason into a human readable form.
-//
-// See: http://support.microsoft.com/?kbid=837372
-//
+/// Translate the thread wait reason into a human readable form.
+/// 
+/// See: http://support.microsoft.com/?kbid=837372
 char* diagnostics_format_thread_wait_reason(int thread_wait_reason) {
     switch(thread_wait_reason) {
         case ThreadWaitReasonExecutive: return "Executive";
@@ -757,10 +754,9 @@ char* diagnostics_format_thread_wait_reason(int thread_wait_reason) {
 }
 
 
-// Translate the process priority class into a human readable form.
-//
-// See: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/scheduling_priorities.asp
-//
+/// Translate the process priority class into a human readable form.
+/// 
+/// See: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/scheduling_priorities.asp
 char* diagnostics_format_process_priority(int process_priority) {
     switch(process_priority) {
         case IDLE_PRIORITY_CLASS: return "Idle";
@@ -774,10 +770,9 @@ char* diagnostics_format_process_priority(int process_priority) {
 }
 
 
-// Translate the thread priority class into a human readable form.
-//
-// See: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/scheduling_priorities.asp
-//
+/// Translate the thread priority class into a human readable form.
+/// 
+/// See: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/scheduling_priorities.asp
 char* diagnostics_format_thread_priority(int thread_priority) {
     switch(thread_priority) {
         case THREAD_PRIORITY_IDLE: return "Idle";
@@ -792,13 +787,12 @@ char* diagnostics_format_thread_priority(int thread_priority) {
 }
 
 
-// Provide a mechinism to trap and report messages sent to the debugger's
-//   viewport.  This should only been enabled if a debugger isn't running
-//   against the current process already.
-//
-// Documentation about the protocol can be found here:
-//   http://www.unixwiz.net/techtips/outputdebugstring.html
-//
+/// Provide a mechinism to trap and report messages sent to the debugger's
+/// viewport.  This should only been enabled if a debugger isn't running
+/// against the current process already.
+/// 
+/// Documentation about the protocol can be found here:
+/// http://www.unixwiz.net/techtips/outputdebugstring.html
 
 typedef struct _DEBUGGERMESSAGE {
         DWORD   dwProcessId;
@@ -822,8 +816,7 @@ static HANDLE hMessageQuitEvent;
 static HANDLE hMessageQuitFinishedEvent;
 
 
-// Initialize the needed structures and startup the message processing thread.
-//
+/// Initialize the needed structures and startup the message processing thread.
 int diagnostics_init_message_monitor() {
     int retval = 0;
     unsigned int i;
@@ -966,8 +959,8 @@ int diagnostics_init_message_monitor() {
 }
 
 
-// Shutdown the message monitoring thread and cleanup any of the in memory
-//   structures.
+/// Shutdown the message monitoring thread and cleanup any of the in memory
+/// structures.
 int diagnostics_finish_message_monitor() {
     unsigned int i;
 
@@ -1036,13 +1029,12 @@ int diagnostics_message_monitor_dump() {
 }
 
 
-// This thread monitors the shared memory buffer used to pass debug messages
-//   around.  due to an anomaly in the Windows debug environment it is
-//   suggested that a sleep(0) be introduced before any 
-//   SetEvent/ResetEvent/PulseEvent function is called.
-//
-// See: http://support.microsoft.com/kb/q173260/
-//
+/// This thread monitors the shared memory buffer used to pass debug messages
+/// around.  due to an anomaly in the Windows debug environment it is
+/// suggested that a sleep(0) be introduced before any 
+/// SetEvent/ResetEvent/PulseEvent function is called.
+/// 
+/// See: http://support.microsoft.com/kb/q173260/
 UINT WINAPI diagnostics_message_monitor(LPVOID /* lpParameter */) {
     DWORD       dwEvent = (DWORD)NULL;
     DWORD       dwCurrentProcessId = (DWORD)NULL;
@@ -1199,9 +1191,9 @@ UINT WINAPI diagnostics_message_monitor(LPVOID /* lpParameter */) {
 //   threads.
 //
 
-// This structure is used to keep track of stuff nessassary
-//   to dump information about the top most window during
-//   a crash event.
+/// This structure is used to keep track of stuff nessassary
+/// to dump information about the top most window during
+/// a crash event.
 typedef struct _BOINC_WINDOWCAPTURE {
     HWND         hwnd;
     char         window_name[256];
@@ -1219,8 +1211,8 @@ static HANDLE hExceptionQuitEvent = NULL;
 static HANDLE hExceptionQuitFinishedEvent = NULL;
 static CRITICAL_SECTION csExceptionMonitorFallback; 
 
-// Initialize the needed structures and startup the unhandled exception
-//   monitor thread.
+/// Initialize the needed structures and startup the unhandled exception
+/// monitor thread.
 int diagnostics_init_unhandled_exception_monitor() {
     int retval = 0;
 
@@ -1308,8 +1300,8 @@ int diagnostics_init_unhandled_exception_monitor() {
 }
 
 
-// Shutdown the unhandled exception monitoring thread and cleanup any
-//   of the in memory structures.
+/// Shutdown the unhandled exception monitoring thread and cleanup any
+/// of the in memory structures.
 int diagnostics_finish_unhandled_exception_monitor() {
 
     // Begin the cleanup process by means of shutting down the
@@ -1335,8 +1327,7 @@ int diagnostics_finish_unhandled_exception_monitor() {
 }
 
 
-// Dump crash header information
-//
+/// Dump crash header information
 int diagnostics_unhandled_exception_dump_banner() {
     char szDate[64];
     char szTime[64];
@@ -1359,8 +1350,7 @@ int diagnostics_unhandled_exception_dump_banner() {
     return 0;
 }
 
-// Capture the foreground window details for future use.
-//
+/// Capture the foreground window details for future use.
 int diagnostics_capture_foreground_window(PBOINC_WINDOWCAPTURE window_info) {
     DWORD dwType;
     DWORD dwSize;
@@ -1423,8 +1413,7 @@ int diagnostics_capture_foreground_window(PBOINC_WINDOWCAPTURE window_info) {
 }
 
 
-// Dump the foreground window details to stderr.
-//
+/// Dump the foreground window details to stderr.
 int diagnostics_foreground_window_dump(PBOINC_WINDOWCAPTURE window_info) {
 
     fprintf(
@@ -1444,8 +1433,7 @@ int diagnostics_foreground_window_dump(PBOINC_WINDOWCAPTURE window_info) {
 }
 
 
-// Dump the captured information for a the current process.
-//
+/// Dump the captured information for a the current process.
 int diagnostics_dump_process_information() {
     // Header
     fprintf(
@@ -1503,8 +1491,7 @@ int diagnostics_dump_process_information() {
 }
 
 
-// Dump the captured information for a given thread.
-//
+/// Dump the captured information for a given thread.
 int diagnostics_dump_thread_information(PBOINC_THREADLISTENTRY pThreadEntry) {
     std::string strStatusExtra;
 
@@ -1542,8 +1529,7 @@ int diagnostics_dump_thread_information(PBOINC_THREADLISTENTRY pThreadEntry) {
 }
 
 
-// Provide a generic way to format exceptions
-//
+/// Provide a generic way to format exceptions
 int diagnostics_dump_generic_exception(char* exception_desc, DWORD exception_code, PVOID exception_address) {
     fprintf(
         stderr, 
@@ -1555,8 +1541,7 @@ int diagnostics_dump_generic_exception(char* exception_desc, DWORD exception_cod
     return 0;
 }
 
-// Dump the exception code record to stderr in a human readable form.
-//
+/// Dump the exception code record to stderr in a human readable form.
 int diagnostics_dump_exception_record(PEXCEPTION_POINTERS pExPtrs) {
     char           status[256];
     char           substatus[256];
@@ -1684,9 +1669,9 @@ int diagnostics_dump_exception_record(PEXCEPTION_POINTERS pExPtrs) {
 }
 
 
-// Priority is given to the worker threads exception code, and then the
-//   graphics thread.  If neither of those two threw the exception grab
-//   the exception code of the thread that did.
+/// Priority is given to the worker threads exception code, and then the
+/// graphics thread.  If neither of those two threw the exception grab
+/// the exception code of the thread that did.
 UINT diagnostics_determine_exit_code() {
     UINT   uiReturn = 0;
     UINT   uiIndex = 0;
@@ -1944,9 +1929,9 @@ LONG pass_to_signal_handler(int signum) {
 }
 
 
-// Allow apps to install signal handlers for some exceptions that bypass
-// the boinc diagnostics.  This translates the Windows exceptions into
-// standard signals.
+/// Allow apps to install signal handlers for some exceptions that bypass
+/// the boinc diagnostics.  This translates the Windows exceptions into
+/// standard signals.
 LONG diagnostics_check_signal_handlers(PEXCEPTION_POINTERS pExPtrs) {
     switch (pExPtrs->ExceptionRecord->ExceptionCode) {
       case CONTROL_C_EXIT:                
@@ -2002,9 +1987,9 @@ LONG diagnostics_check_signal_handlers(PEXCEPTION_POINTERS pExPtrs) {
 }
 
 
-// Let the unhandled exception monitor take care of logging the exception data.
-//   Store the exception pointers and then singal the exception monitor to start
-//   partying on the data.
+/// Let the unhandled exception monitor take care of logging the exception data.
+/// Store the exception pointers and then singal the exception monitor to start
+/// partying on the data.
 LONG CALLBACK boinc_catch_signal(PEXCEPTION_POINTERS pExPtrs) {
 
     // Check whether somone has installed a standard C signal handler to
@@ -2057,15 +2042,16 @@ LONG CALLBACK boinc_catch_signal(PEXCEPTION_POINTERS pExPtrs) {
 }
 
 
-// Starting with Visual Studio 2005 the C Runtime Library has really started to
-//   enforce parameter validation. Problem is that the parameter validation code
-//   uses its own structured exception handler and terminates without writing
-//   any useful output to stderr. Microsoft has created a hook an application
-//   developer can use to get more debugging information which is the purpose
-//   of this function. When an invalid parameter is passed to the C Runtime
-//   library this function will write whatever trace information it can and
-//   then throw a breakpoint exception to dump all the rest of the useful
-//   information.
+/// XXX Brief description needed.
+/// Starting with Visual Studio 2005 the C Runtime Library has really started to
+/// enforce parameter validation. Problem is that the parameter validation code
+/// uses its own structured exception handler and terminates without writing
+/// any useful output to stderr. Microsoft has created a hook an application
+/// developer can use to get more debugging information which is the purpose
+/// of this function. When an invalid parameter is passed to the C Runtime
+/// library this function will write whatever trace information it can and
+/// then throw a breakpoint exception to dump all the rest of the useful
+/// information.
 void boinc_catch_signal_invalid_parameter(
     const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line,	uintptr_t /* pReserved */
 ) {

@@ -58,8 +58,7 @@ using std::vector;
 #define EPOCHFILETIME_SEC (11644473600.)
 #define TEN_MILLION 10000000.
 
-// return time of day (seconds since 1970) as a double
-//
+/// return time of day (seconds since 1970) as a double
 double dtime() {
 #ifdef _WIN32
     LARGE_INTEGER time;
@@ -79,15 +78,13 @@ double dtime() {
 #endif
 }
 
-// return time today 0:00 in seconds since 1970 as a double
-//
+/// return time today 0:00 in seconds since 1970 as a double
 double dday() {
     double now=dtime();
     return (now-fmod(now, SECONDS_PER_DAY));
 }
 
-// sleep for a specified number of seconds
-//
+/// sleep for a specified number of seconds
 void boinc_sleep(double seconds) {
 #ifdef _WIN32
     ::Sleep((int)(1000*seconds));
@@ -200,15 +197,14 @@ int boinc_calling_thread_cpu_time(double &cpu_t) {
 #endif
 
 
-// Update an estimate of "units per day" of something (credit or CPU time).
-// The estimate is exponentially averaged with a given half-life
-// (i.e. if no new work is done, the average will decline by 50% in this time).
-// This function can be called either with new work,
-// or with zero work to decay an existing average.
-//
-// NOTE: if you change this, also change update_average in
-// html/inc/credit.inc
-//
+/// Update an estimate of "units per day" of something (credit or CPU time).
+/// The estimate is exponentially averaged with a given half-life
+/// (i.e. if no new work is done, the average will decline by 50% in this time).
+/// This function can be called either with new work,
+/// or with zero work to decay an existing average.
+///
+/// NOTE: if you change this, also change update_average in
+/// html/inc/credit.inc
 void update_average(
     double work_start_time,       // when new work was started
                                     // (or zero if no new work)
@@ -263,8 +259,7 @@ void update_average(
 }
 
 #ifndef _WIN32
-// (linux) return current CPU time of the given process
-//
+/// (linux) return current CPU time of the given process
 double linux_cpu_time(int pid) {
     FILE *file;
     char file_name[24];
@@ -289,8 +284,7 @@ void boinc_crash() {
 #endif
 }
 
-// read file (at most max_len chars, if nonzero) into malloc'd buf
-//
+/// read file (at most max_len chars, if nonzero) into malloc'd buf
 int read_file_malloc(const char* path, char*& buf, int max_len, bool tail) {
     FILE* f;
     int retval, isize;
@@ -316,8 +310,7 @@ int read_file_malloc(const char* path, char*& buf, int max_len, bool tail) {
     return 0;
 }
 
-// read file (at most max_len chars, if nonzero) into string
-//
+/// read file (at most max_len chars, if nonzero) into string
 int read_file_string(const char* path, string& result, int max_len, bool tail) {
     result.erase();
     int retval;
@@ -330,13 +323,12 @@ int read_file_string(const char* path, string& result, int max_len, bool tail) {
     return 0;
 }
 
-// chdir into the given directory, and run a program there.
-// If nsecs is nonzero, make sure it's still running after that many seconds.
-//
-// argv is set up Unix-style, i.e. argv[0] is the program name
-//
-
 #ifdef _WIN32
+
+/// chdir into the given directory, and run a program there.
+/// If nsecs is nonzero, make sure it's still running after that many seconds.
+///
+/// argv is set up Unix-style, i.e. argv[0] is the program name
 int run_program(
     const char* dir, const char* file, int argc, char *const argv[], double nsecs, HANDLE& id
 ) {
@@ -389,6 +381,11 @@ int run_program(
     return 0;
 }
 #else
+
+/// chdir into the given directory, and run a program there.
+/// If nsecs is nonzero, make sure it's still running after that many seconds.
+///
+/// argv is set up Unix-style, i.e. argv[0] is the program name
 int run_program(
     const char* dir, const char* file, int , char *const argv[], double nsecs, int& id
 ) {
