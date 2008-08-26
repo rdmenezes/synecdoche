@@ -48,19 +48,19 @@ extern "C" {
 #define MAX_RSA_PRIME_LEN ((MAX_RSA_PRIME_BITS + 7) / 8)
 
 typedef struct {
-  unsigned short int bits;                     /* length in bits of modulus */
-  unsigned char modulus[MAX_RSA_MODULUS_LEN];  /* modulus */
-  unsigned char exponent[MAX_RSA_MODULUS_LEN]; /* public exponent */
+  unsigned short int bits;                     ///< length in bits of modulus
+  unsigned char modulus[MAX_RSA_MODULUS_LEN];  ///< modulus
+  unsigned char exponent[MAX_RSA_MODULUS_LEN]; ///< public exponent
 } R_RSA_PUBLIC_KEY;
 
 typedef struct {
-  unsigned short int bits;                     /* length in bits of modulus */
-  unsigned char modulus[MAX_RSA_MODULUS_LEN];  /* modulus */
-  unsigned char publicExponent[MAX_RSA_MODULUS_LEN];     /* public exponent */
-  unsigned char exponent[MAX_RSA_MODULUS_LEN]; /* private exponent */
-  unsigned char prime[2][MAX_RSA_PRIME_LEN];   /* prime factors */
-  unsigned char primeExponent[2][MAX_RSA_PRIME_LEN];     /* exponents for CRT */
-  unsigned char coefficient[MAX_RSA_PRIME_LEN];          /* CRT coefficient */
+  unsigned short int bits;                     ///< length in bits of modulus
+  unsigned char modulus[MAX_RSA_MODULUS_LEN];  ///< modulus
+  unsigned char publicExponent[MAX_RSA_MODULUS_LEN];     ///< public exponent
+  unsigned char exponent[MAX_RSA_MODULUS_LEN]; ///< private exponent
+  unsigned char prime[2][MAX_RSA_PRIME_LEN];   ///< prime factors
+  unsigned char primeExponent[2][MAX_RSA_PRIME_LEN];     ///< exponents for CRT
+  unsigned char coefficient[MAX_RSA_PRIME_LEN];          ///< CRT coefficient
 } R_RSA_PRIVATE_KEY;
 
 // functions to convert between OpenSSL's keys (using BIGNUMs)
@@ -86,11 +86,10 @@ struct DATA_BLOCK {
 
 #define MIN_OUT_BUFFER_SIZE MAX_RSA_MODULUS_LEN+1
 
-// the size of a binary signature (encrypted MD5)
-//
+/// the size of a binary signature (encrypted MD5)
 #define SIGNATURE_SIZE_BINARY MIN_OUT_BUFFER_SIZE
 
-// size of text-encoded signature
+/// size of text-encoded signature
 #define SIGNATURE_SIZE_TEXT (SIGNATURE_SIZE_BINARY*2+20)
 
 extern int print_hex_data(FILE* f, DATA_BLOCK&);

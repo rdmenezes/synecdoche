@@ -157,8 +157,7 @@ const char* COPROC_CUDA::get(COPROCS& coprocs) {
     return 0;
 }
 
-// add a non-existent CUDA coproc (for debugging)
-//
+/// add a non-existent CUDA coproc (for debugging)
 void fake_cuda(COPROCS& coprocs) {
    COPROC_CUDA* cc = new COPROC_CUDA;
    strcpy(cc->type, "CUDA");
