@@ -46,23 +46,26 @@
 class GUI_RPC_CONN {
 public:
     int sock;
-    char nonce[256];
-    bool auth_needed; ///< If true, don't allow operations other than authentication
-    bool got_auth1;
-    bool got_auth2;
-        // keep track of whether we've got the 2 authentication msgs;
-        // don't accept more than one of each (to prevent DoS)
-    bool is_local; ///< Connection is from local host
+    bool auth_needed; ///< If true, don't allow operations other than authentication.
+    bool is_local; ///< Connection is from local host.
     int au_ss_state;
     int au_mgr_state;
     GUI_HTTP gui_http;
-    GET_PROJECT_CONFIG_OP get_project_config_op;
-    LOOKUP_ACCOUNT_OP lookup_account_op;
-    CREATE_ACCOUNT_OP create_account_op;
 
     GUI_RPC_CONN(int);
     ~GUI_RPC_CONN();
     int handle_rpc();
+private:
+    char nonce[256];
+	// keep track of whether we've got the 2 authentication msgs;
+	// don't accept more than one of each (to prevent DoS)
+    bool got_auth1;
+    bool got_auth2;
+
+    GET_PROJECT_CONFIG_OP get_project_config_op;
+    LOOKUP_ACCOUNT_OP lookup_account_op;
+    CREATE_ACCOUNT_OP create_account_op;
+
     void handle_auth1(MIOFILE&);
     int handle_auth2(const char*, MIOFILE&);
     void handle_get_project_config(const char* buf, MIOFILE& fout);
