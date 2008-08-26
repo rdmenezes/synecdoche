@@ -55,7 +55,7 @@
 /// \param[in] src Pointer to a char array which will be copied to \a dst.
 /// \param[in] size Size of the destination buffer pointed to by \a dst.
 /// \return The number of characters written to the destination buffer \a
-///         without the terminating '\0'-character.
+///         without the terminating null character.
 size_t strlcpy(char* dst, const char* src, size_t size) {
     size_t ret = strlen(src);
 
@@ -79,7 +79,7 @@ size_t strlcpy(char* dst, const char* src, size_t size) {
 /// \param[in] src Pointer to a char array which will be appended to \a dst
 /// \param[in] size Size of the destination buffer pointed to by \a dst
 /// \return The number of characters in the destination buffer \a
-///         without the terminating '\0'-character.
+///         without the terminating null character.
 size_t strlcat(char* dst, const char* src, size_t size) {
     size_t dst_len = strlen(dst);
     size_t src_len = strlen(src);
