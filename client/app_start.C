@@ -92,13 +92,13 @@ typedef BOOL (WINAPI *tDEB)(LPVOID lpEnvironment);
 ///
 /// \param[in] argv The list of strings that should get printed.
 #ifndef _WIN32
-static void debug_print_argv(std::list<std::string> argv) {
+static void debug_print_argv(const std::list<std::string>& argv) {
     msg_printf(0, MSG_INFO, "[task_debug] Arguments:");
     int count = 0;
     for (std::list<std::string>::const_iterator it = argv.begin();
             it != argv.end(); ++it) {
         msg_printf(0, MSG_INFO,
-            "[task_debug]    argv[%d]: %s\n", count++, *it
+            "[task_debug]    argv[%d]: %s\n", count++, (*it).c_str()
         );
     }
 }
@@ -362,6 +362,11 @@ int ACTIVE_TASK::start(bool first_time) {
 
     get_sandbox_account_service_token();
         // do this first because it affects how we create shmem seg
+#else
+    // Needs to be defined here because those gotos would skip the
+    // initialization of 'cmdline' and 'argv' if it would be defined later.
+    std::ostringstream cmdline;
+    std::list<std::string> argv;
 #endif
     if (first_time && log_flags.task) {
         msg_printf(result->project, MSG_INFO,
@@ -729,6 +734,17 @@ int ACTIVE_TASK::start(bool first_time) {
         set_task_state(PROCESS_EXECUTING, "start");
         return 0;
     }
+
+    // Prepare command line for the science app:
+    cmdline << wup->command_line;
+    if (strlen(app_version->cmdline)) {
+        cmdline << ' ' << app_version->cmdline;
+    }
+    argv = parse_command_line(cmdline.str().c_str());
+    if (log_flags.task_debug) {
+        debug_print_argv(argv);
+    }
+
     pid = fork();
     if (pid == -1) {
         err_stream << "fork() failed: " << strerror(errno);
@@ -762,7 +778,6 @@ int ACTIVE_TASK::start(bool first_time) {
             libpath << env_lib_path << ':';
         }
         libpath << "../../" << pdir << ":.:../..";
-        fprintf(stderr, "LD PATH: %s\n", libpath.str().c_str());
         setenv("LD_LIBRARY_PATH", libpath.str().c_str(), 1);
 
         retval = chdir(slot_dir);
@@ -801,30 +816,19 @@ int ACTIVE_TASK::start(bool first_time) {
             perror("setpriority");
         }
 #endif
-        char cmdline[8192];
-        strcpy(cmdline, wup->command_line.c_str());
-        if (strlen(app_version->cmdline)) {
-            strcat(cmdline, " ");
-            strcat(cmdline, app_version->cmdline);
-        }
         char buf[270];
-        sprintf(buf, "../../%s", exec_path );
+        sprintf(buf, "../../%s", exec_path);
         if (g_use_sandbox) {
             char switcher_path[100];
             sprintf(switcher_path, "../../%s/%s", SWITCHER_DIR, SWITCHER_FILE_NAME);
-            std::list<std::string> argv = parse_command_line(cmdline);
             argv.push_front(exec_name);
             argv.push_front(buf);
             argv.push_front(SWITCHER_FILE_NAME);
-            if (log_flags.task_debug) {
-                debug_print_argv(argv);
-            }
             // Files written by projects have user boinc_project and group boinc_project, 
             // so they must be world-readable so BOINC CLient can read them 
             umask(2);
             retval = do_execv(switcher_path, argv);
         } else {
-            std::list<std::string> argv = parse_command_line(cmdline);
             argv.push_front(exec_name);
             retval = do_execv(buf, argv);
         }

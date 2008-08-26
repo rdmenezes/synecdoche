@@ -329,7 +329,17 @@ std::list<std::string> parse_command_line(const char* p) {
             }
             break;
         }
-        ++p;
+        // We need this double check here as p may already be moved to
+        // the next position. If we now advance it once more without checking
+        // the value p points at we might miss the terminating '\0'.
+        if (!p++) {
+            break;
+        }
+    }
+
+    // There may be one argument left:
+    if ((state == IN_UNQUOTED_TOKEN) && ((p - start) > 1)) {
+        result.push_back(std::string(start, p));
     }
     return result;
 }
