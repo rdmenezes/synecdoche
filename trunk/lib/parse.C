@@ -15,12 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// A very crude interface for parsing XML files;
-// assumes all elements are either single-line or
-// have start and end tags on separate lines.
-// This is meant to be used ONLY for parsing XML files produced
-// by the BOINC scheduling server or client.
-// Could replace this with a more general parser.
+/// \file
+/// A very crude interface for parsing XML files;
+/// assumes all elements are either single-line or
+/// have start and end tags on separate lines.
+/// This is meant to be used ONLY for parsing XML files produced
+/// by the BOINC scheduling server or client.
+/// Could replace this with a more general parser.
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -43,9 +44,8 @@
 
 using std::string;
 
-// Parse a boolean; tag is of form "foobar"
-// Accept either <foobar/> or <foobar>0|1</foobar>
-//
+/// Parse a boolean; tag is of form "foobar".
+/// Accept either <foobar/> or <foobar>0|1</foobar>
 bool parse_bool(const char* buf, const char* tag, bool& result) {
     char single_tag[256], start_tag[256];
     int x;
@@ -63,13 +63,12 @@ bool parse_bool(const char* buf, const char* tag, bool& result) {
     return false;
 }
 
-// parse a string of the form ...<tag attrs>string</tag>...;
-// returns the "string" part.
-// Does XML unescaping (replace &lt; with <)
-// "string" may not include '<'
-// Strips white space from ends.
-// Use "<tag", not "<tag>", if there might be attributes
-//
+/// Rarse a string of the form <tag attrs>string</tag>.
+/// Returns the "string" part.
+/// Does XML unescaping (replace &lt; with <).
+/// "string" may not include '<'.
+/// Strips white space from ends.
+/// Use "<tag", not "<tag>", if there might be attributes.
 bool parse_str(const char* buf, const char* tag, char* dest, int destlen) {
     string str;
     const char* p;
@@ -98,9 +97,8 @@ bool parse_str(const char* buf, const char* tag, string& dest) {
     return true;
 }
 
-// parse a string of the form 'xxx name="value" xxx';
-// returns value in dest
-//
+/// parse a string of the form 'xxx name="value" xxx'.
+/// returns value in dest
 void parse_attr(const char* buf, const char* name, char* dest, int len) {
     const char* p;
     const char *q;
@@ -128,8 +126,7 @@ int copy_stream(FILE* in, FILE* out) {
     return 0;
 }
 
-// append to a malloc'd string
-//
+/// append to a malloc'd string
 int strcatdup(char*& p, char* buf) {
     p = (char*)realloc(p, strlen(p) + strlen(buf)+1);
     if (!p) {
@@ -139,8 +136,7 @@ int strcatdup(char*& p, char* buf) {
     return 0;
 }
 
-// copy from a file to a malloc'd string until the end tag is reached
-//
+/// copy from a file to a malloc'd string until the end tag is reached
 int dup_element_contents(FILE* in, const char* end_tag, char** pp) {
     char buf[256];
     int retval;
@@ -157,8 +153,7 @@ int dup_element_contents(FILE* in, const char* end_tag, char** pp) {
     return ERR_XML_PARSE;
 }
 
-// copy from a file to static buffer
-//
+/// copy from a file to static buffer
 int copy_element_contents(FILE* in, const char* end_tag, char* p, int len) {
     char buf[256];
     int n;
@@ -189,8 +184,7 @@ int copy_element_contents(FILE* in, const char* end_tag, string& str) {
     return ERR_XML_PARSE;
 }
 
-// replace XML element contents (element must be present)
-//
+/// replace XML element contents (element must be present)
 void replace_element_contents(
     char* buf, const char* start, const char* end, const char* replacement
 ) {
@@ -204,8 +198,8 @@ void replace_element_contents(
     strcat(p, temp);
 }
 
-// if the string contains a substring of the form X...Y,
-// remove the first such.
+/// if the string contains a substring of the form X...Y,
+/// remove the first such.
 bool remove_element(char* buf, const char* start, const char* end) {
     char* p, *q;
     p = strstr(buf, start);
@@ -216,8 +210,7 @@ bool remove_element(char* buf, const char* start, const char* end) {
     return true;
 }
 
-// replace a substring.  Do at most one instance.
-//
+/// replace a substring.  Do at most one instance.
 bool str_replace(char* str, const char* substr, const char* replacement) {
     char temp[4096], *p;
 
@@ -230,13 +223,12 @@ bool str_replace(char* str, const char* substr, const char* replacement) {
     return true;
 }
     
-// if the given XML has an element of the form
-// <venue name="venue_name">
-//   ...
-// </venue>
-// then return the contents of that element.
-// Otherwise strip out all <venue> elements
-//
+/// if the given XML has an element of the form
+/// <venue name="venue_name">
+/// ...
+/// </venue>
+/// then return the contents of that element.
+/// Otherwise strip out all <venue> elements
 void extract_venue(const char* in, const char* venue_name, char* out) {
     const char* p, *q;
     char* wp;
@@ -269,9 +261,8 @@ void extract_venue(const char* in, const char* venue_name, char* out) {
     }
 }
 
-// copy a line from the given string.
-// kinda like fgets() when you're reading from a string
-//
+/// copy a line from the given string.
+/// kinda like fgets() when you're reading from a string
 char* sgets(char* buf, int len, char*& in) {
     char* p;
 
@@ -284,11 +275,14 @@ char* sgets(char* buf, int len, char*& in) {
     return buf;
 }
 
-// NOTE: these used to take std::string instead of char* args.
-// But this performed poorly.
-//
-// NOTE: output buffer should be 6X size of input
-//
+/// Escape XML.
+/// \if maint
+/// This description badly needs expanding
+/// \endif
+/// NOTE: these used to take std::string instead of char* args.
+/// But this performed poorly.
+/// 
+/// NOTE: output buffer should be 6X size of input
 void xml_escape(const char* in, char* out) {
     char buf[256], *p;
 
@@ -324,8 +318,11 @@ void xml_escape(const char* in, char* out) {
     *p = 0;
 }
 
-// output buffer need not be larger than input
-//
+/// Unescape XML.
+/// \if maint
+/// This description badly needs expanding
+/// \endif
+/// output buffer need not be larger than input
 void xml_unescape(const char* in, char* out) {
     char* p = out;
     while (*in) {
@@ -348,12 +345,15 @@ void xml_unescape(const char* in, char* out) {
     *p = 0;
 }
 
-// we got an unrecognized line.
-// If it has two <'s (e.g. <foo>xx</foo>) return 0.
-// If it's of the form <foo/> return 0.
-// If it's of the form <foo> then scan for </foo> and return 0.
-// Otherwise return ERR_XML_PARSE
-//
+/// Skip unrecognized line.
+/// \if maint
+/// This description badly needs expanding
+/// \endif
+/// we got an unrecognized line.
+/// If it has two <'s (e.g. <foo>xx</foo>) return 0.
+/// If it's of the form <foo/> return 0.
+/// If it's of the form <foo> then scan for </foo> and return 0.
+/// Otherwise return ERR_XML_PARSE
 int skip_unrecognized(char* buf, MIOFILE& fin) {
     char* p, *q, buf2[256];
     std::string close_tag;
@@ -385,10 +385,9 @@ XML_PARSER::XML_PARSER(MIOFILE* _f) {
     f = _f;
 }
 
-// read until find non-whitespace char.
-// Return the char in the reference param
-// Return true iff reached EOF
-//
+/// Read until find non-whitespace char.
+/// Return the char in the reference param
+/// Return true iff reached EOF
 bool XML_PARSER::scan_nonws(int& first_char) {
     int c;
     while (1) {
@@ -418,14 +417,13 @@ int XML_PARSER::scan_comment() {
     }
 }
 
-// we just read a <; read until we find a >,
-// and copy intervening text to buf.
-// Return:
-// 0 if got a tag
-// 1 if got a comment (ignore)
-// 2 if reached EOF
-// TODO: parse attributes too
-//
+/// we just read a <; read until we find a >,
+/// and copy intervening text to buf.
+/// Return:
+/// 0 if got a tag
+/// 1 if got a comment (ignore)
+/// 2 if reached EOF
+/// TODO: parse attributes too
 int XML_PARSER::scan_tag(char* buf, int len) {
     int c;
     char* buf_start = buf;
@@ -448,10 +446,9 @@ int XML_PARSER::scan_tag(char* buf, int len) {
     }
 }
 
-// read and copy text to buf; stop when find a <;
-// ungetc() that so we read it again
-// Return true iff reached EOF
-//
+/// read and copy text to buf; stop when find a <.
+/// ungetc() that so we read it again
+/// Return true iff reached EOF
 bool XML_PARSER::copy_until_tag(char* buf, int len) {
     int c;
     while (1) {
@@ -468,10 +465,9 @@ bool XML_PARSER::copy_until_tag(char* buf, int len) {
     }
 }
 
-// Scan something, either tag or text.
-// Strip whitespace at start and end.
-// Return true iff reached EOF
-//
+/// Scan something, either tag or text.
+/// Strip whitespace at start and end.
+/// Return true iff reached EOF
 bool XML_PARSER::get(char* buf, int len, bool& is_tag) {
     bool eof;
     int c;
@@ -495,11 +491,10 @@ bool XML_PARSER::get(char* buf, int len, bool& is_tag) {
     }
 }
 
-// We just parsed "parsed_tag".
-// If it matches "start_tag", and is followed by a string
-// and by the matching close tag, return the string in "buf",
-// and return true.
-//
+/// We just parsed "parsed_tag".
+/// If it matches "start_tag", and is followed by a string
+/// and by the matching close tag, return the string in "buf",
+/// and return true.
 bool XML_PARSER::parse_str(
     char* parsed_tag, const char* start_tag, char* buf, int len
 ) {
@@ -556,8 +551,7 @@ bool XML_PARSER::parse_string(
     return true;
 }
 
-// Same, for integers
-//
+/// Same, for integers
 bool XML_PARSER::parse_int(char* parsed_tag, const char* start_tag, int& i) {
     char buf[256], *end;
     bool is_tag, eof;
@@ -588,8 +582,7 @@ bool XML_PARSER::parse_int(char* parsed_tag, const char* start_tag, int& i) {
     return true;
 }
 
-// Same, for doubles
-//
+/// Same, for doubles
 bool XML_PARSER::parse_double(char* parsed_tag, const char* start_tag, double& x) {
     char buf[256], *end;
     bool is_tag, eof;
@@ -620,8 +613,7 @@ bool XML_PARSER::parse_double(char* parsed_tag, const char* start_tag, double& x
     return true;
 }
 
-// Same, for bools
-//
+/// Same, for bools
 bool XML_PARSER::parse_bool(char* parsed_tag, const char* start_tag, bool& b) {
     char buf[256], *end;
     bool is_tag, eof;
@@ -655,8 +647,7 @@ bool XML_PARSER::parse_bool(char* parsed_tag, const char* start_tag, bool& b) {
     return true;
 }
 
-// parse a start tag (optionally preceded by <?xml>)
-//
+/// parse a start tag (optionally preceded by <?xml>)
 bool XML_PARSER::parse_start(const char* start_tag) {
     char tag[256];
     bool eof, is_tag;
@@ -677,10 +668,9 @@ bool XML_PARSER::parse_start(const char* start_tag) {
     return true;
 }
 
-// copy everything up to (but not including) the given end tag.
-// The copied text may include XML tags.
-// strips whitespace.
-//
+/// copy everything up to (but not including) the given end tag.
+/// The copied text may include XML tags.
+/// strips whitespace.
 int XML_PARSER::element_contents(const char* end_tag, char* buf, int buflen) {
 	int n=0;
 	int retval=0;
@@ -707,10 +697,9 @@ int XML_PARSER::element_contents(const char* end_tag, char* buf, int buflen) {
     return retval;
 }
 
-// We got an unexpected tag.
-// If it's an end tag, do nothing.
-// Otherwise skip until the end tag, if any
-//
+/// We got an unexpected tag.
+/// If it's an end tag, do nothing.
+/// Otherwise skip until the end tag, if any
 void XML_PARSER::skip_unexpected(
     const char* start_tag, bool verbose, const char* where
 ) {
