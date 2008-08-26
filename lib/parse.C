@@ -63,7 +63,7 @@ bool parse_bool(const char* buf, const char* tag, bool& result) {
     return false;
 }
 
-/// Rarse a string of the form \<tag attrs>string</tag>.
+/// Parse a string of the form \<tag attrs>string</tag>.
 /// Returns the "string" part.
 /// Does XML unescaping (replace &lt; with <).
 /// "string" may not include '<'.
