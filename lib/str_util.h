@@ -33,18 +33,18 @@
 #define MEGA (1048576.0)
 #define GIGA (1024.*1048576.0)
 
-/// Use this instead of strncpy().
 #if !defined(HAVE_STRLCPY)
+/// Use this instead of strncpy().
 extern size_t strlcpy(char* dst, const char* src, size_t size);
 #endif
 
-/// Use this instead of strncat().
 #if !defined(HAVE_STRLCAT)
+/// Use this instead of strncat().
 extern size_t strlcat(char* dst, const char* src, size_t size);
 #endif
 
-/// Search for a substring while ignoring upper-/lowercase.
 #if !defined(HAVE_STRCASESTR)
+/// Search for a substring while ignoring upper-/lowercase.
 extern char* strcasestr(const char* s1, const char* s2);
 #endif
 
