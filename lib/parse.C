@@ -63,7 +63,7 @@ bool parse_bool(const char* buf, const char* tag, bool& result) {
     return false;
 }
 
-/// Rarse a string of the form <tag attrs>string</tag>.
+/// Rarse a string of the form \<tag attrs>string</tag>.
 /// Returns the "string" part.
 /// Does XML unescaping (replace &lt; with <).
 /// "string" may not include '<'.
@@ -223,12 +223,16 @@ bool str_replace(char* str, const char* substr, const char* replacement) {
     return true;
 }
     
-/// if the given XML has an element of the form
+/// Extract venue from XML.
+///
+/// If the given XML has an element of the form
+/// \code
 /// <venue name="venue_name">
 /// ...
 /// </venue>
+/// \endcode
 /// then return the contents of that element.
-/// Otherwise strip out all <venue> elements
+/// Otherwise strip out all <code><venue></code> elements
 void extract_venue(const char* in, const char* venue_name, char* out) {
     const char* p, *q;
     char* wp;
