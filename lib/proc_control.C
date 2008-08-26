@@ -17,8 +17,9 @@
 // or write to the Free Software Foundation, Inc.,
 // 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-// Code to run a BOINC application (main or graphics) under Windows
-// Don't include this in applications
+/// \file
+/// Code to run a BOINC application (main or graphics) under Windows
+/// Don't include this in applications
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -171,17 +172,15 @@ void get_sandbox_account_service_token() {
     }
 }
 
-// Run application, Windows.
-// chdir into the given directory, and run a program there.
-// argv is set up Unix-style, i.e. argv[0] is the program name
-//
 
 // CreateEnvironmentBlock
 typedef BOOL (WINAPI *tCEB)(LPVOID *lpEnvironment, HANDLE hToken, BOOL bInherit);
 // DestroyEnvironmentBlock
 typedef BOOL (WINAPI *tDEB)(LPVOID lpEnvironment);
 
-
+/// Run application, Windows.
+/// chdir into the given directory, and run a program there.
+/// argv is set up Unix-style, i.e. argv[0] is the program name
 int run_app_windows(
     const char* dir, const char* file, int argc, char *const argv[], HANDLE& id
 ) {
