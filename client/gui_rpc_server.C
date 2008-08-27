@@ -303,7 +303,7 @@ static void show_connect_error(in_addr ia) {
 
 void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
     unsigned int i;
-    GUI_RPC_CONN* gr;
+    const GUI_RPC_CONN* gr;
 
     if (lsock < 0) return;
     for (i=0; i<gui_rpcs.size(); i++) {
