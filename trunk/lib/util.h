@@ -86,7 +86,7 @@ extern int get_exit_status(int);
 extern bool process_exists(int);
 
 /// Prepare arguments for execv and call that function.
-extern int do_execv(const char* path, const std::list<std::string>& argv);
+extern int do_execv(const std::string& path, const std::list<std::string>& argv);
 #endif
 
 extern int wait_client_mutex(const char* dir, double timeout);

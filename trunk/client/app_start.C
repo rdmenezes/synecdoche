@@ -659,9 +659,8 @@ int ACTIVE_TASK::start(bool first_time) {
     if (log_flags.task_debug) {
         debug_print_argv(argv);
     }
-    char buf[270];
-    sprintf(buf, "../../%s", exec_path);
-    pid = do_execv(buf, argv);
+    std::string path = std::string("../../") + std::string(exec_path);
+    pid = do_execv(path, argv);
     if (pid == -1) {
         err_stream << "Process creation failed: "
                    << " The error message was: " << boincerror(retval);
@@ -816,24 +815,23 @@ int ACTIVE_TASK::start(bool first_time) {
             perror("setpriority");
         }
 #endif
-        char buf[270];
-        sprintf(buf, "../../%s", exec_path);
+        std::string path = std::string("../../") + std::string(exec_path);
         if (g_use_sandbox) {
-            char switcher_path[100];
-            sprintf(switcher_path, "../../%s/%s", SWITCHER_DIR, SWITCHER_FILE_NAME);
+            std::ostringstream switcher_path;
+            switcher_path << "../../" << SWITCHER_DIR << '/' << SWITCHER_FILE_NAME;
             argv.push_front(exec_name);
-            argv.push_front(buf);
+            argv.push_front(path);
             argv.push_front(SWITCHER_FILE_NAME);
             // Files written by projects have user boinc_project and group boinc_project, 
             // so they must be world-readable so BOINC CLient can read them 
             umask(2);
-            retval = do_execv(switcher_path, argv);
+            retval = do_execv(switcher_path.str(), argv);
         } else {
             argv.push_front(exec_name);
-            retval = do_execv(buf, argv);
+            retval = do_execv(path, argv);
         }
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
-            "Process creation (%s) failed: %s, errno=%d\n", buf, boincerror(retval), errno
+            "Process creation (%s) failed: %s, errno=%d\n", path, boincerror(retval), errno
         );
         perror("execv");
         fflush(NULL);
