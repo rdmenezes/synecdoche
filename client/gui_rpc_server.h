@@ -57,17 +57,13 @@ public:
     int handle_rpc();
 private:
     char nonce[256];
-    // keep track of whether we've got the 2 authentication msgs;
-    // don't accept more than one of each (to prevent DoS)
-    bool got_auth1;
-    bool got_auth2;
 
     GET_PROJECT_CONFIG_OP get_project_config_op;
     LOOKUP_ACCOUNT_OP lookup_account_op;
     CREATE_ACCOUNT_OP create_account_op;
 
     void handle_auth1(MIOFILE&);
-    int handle_auth2(const char*, MIOFILE&);
+    void handle_auth2(const char*, MIOFILE&);
     void handle_get_project_config(const char* buf, MIOFILE& fout);
     void handle_get_project_config_poll(const char*, MIOFILE& fout);
     void handle_lookup_account(const char* buf, MIOFILE& fout);
