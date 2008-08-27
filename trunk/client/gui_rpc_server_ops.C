@@ -1181,10 +1181,10 @@ int GUI_RPC_CONN::handle_rpc() {
     mf.printf("</boinc_gui_rpc_reply>\n\003");
     m.get_buf(p, n);
     if (p) {
-        write_buffer.append(p, n);
         if (write_buffer.length() > MAX_WRITE_BUFFER) {
             return ERR_BUFFER_OVERFLOW;
         }
+        write_buffer.append(p, n);
         p[n-1]=0;   // replace 003 with NULL
         if (log_flags.guirpc_debug) {
             if (n > 50) p[50] = 0;
