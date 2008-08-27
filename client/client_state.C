@@ -402,8 +402,7 @@ FDSET_GROUP curl_fds;
 FDSET_GROUP gui_rpc_fds;
 FDSET_GROUP all_fds;
 
-// Spend x seconds either doing I/O (if possible) or sleeping.
-//
+/// Spend x seconds either doing I/O (if possible) or sleeping.
 void CLIENT_STATE::do_io_or_sleep(double x) {
     int n;
     struct timeval tv;
@@ -458,11 +457,10 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
             } \
         } } while(0)
 
-// Poll the client's finite-state machines
-// possibly triggering state transitions.
-// Returns true if something happened
-// (in which case should call this again immediately)
-//
+/// Poll the client's finite-state machines
+/// possibly triggering state transitions.
+/// Returns true if something happened
+/// (in which case should call this again immediately)
 bool CLIENT_STATE::poll_slow_events() {
     int actions = 0, retval;
     static int last_suspend_reason=0;
@@ -639,9 +637,8 @@ bool CLIENT_STATE::poll_slow_events() {
     }
 }
 
-// See if the project specified by master_url already exists
-// in the client state record.  Ignore any trailing "/" characters
-//
+/// See if the project specified by master_url already exists
+/// in the client state record.  Ignore any trailing "/" characters
 PROJECT* CLIENT_STATE::lookup_project(const char* master_url) {
     int len1, len2;
     char *mu;
@@ -844,9 +841,8 @@ int CLIENT_STATE::link_result(PROJECT* p, RESULT* rp) {
     return 0;
 }
 
-// Print debugging information about how many projects/files/etc
-// are currently in the client state record
-//
+/// Print debugging information about how many projects/files/etc
+/// are currently in the client state record.
 void CLIENT_STATE::print_summary() const {
     unsigned int i;
     double t;
@@ -920,8 +916,7 @@ bool CLIENT_STATE::garbage_collect() {
     return action;
 }
 
-// delete unneeded records and files
-//
+/// delete unneeded records and files
 bool CLIENT_STATE::garbage_collect_always() {
     unsigned int i, j;
     int failnum;
@@ -1161,11 +1156,10 @@ bool CLIENT_STATE::garbage_collect_always() {
     return action;
 }
 
-// For results that are waiting for file transfer,
-// check if the transfer is done,
-// and if so switch to new state and take other actions.
-// Also set some fields for newly-aborted results.
-//
+/// For results that are waiting for file transfer,
+/// check if the transfer is done,
+/// and if so switch to new state and take other actions.
+/// Also set some fields for newly-aborted results.
 bool CLIENT_STATE::update_results() {
     RESULT* rp;
     vector<RESULT*>::iterator result_iter;
@@ -1225,9 +1219,8 @@ bool CLIENT_STATE::update_results() {
     return action;
 }
 
-// Returns true if client should exit because of debugging criteria
-// (timeout or idle)
-//
+/// Returns true if client should exit because of debugging criteria
+/// (timeout or idle)
 bool CLIENT_STATE::time_to_exit() const {
     if (exit_after_app_start_secs
         && (app_started>0)
@@ -1261,13 +1254,12 @@ bool CLIENT_STATE::time_to_exit() const {
     return false;
 }
 
-// Call this when a result has a nonrecoverable error.
-// - back off on contacting the project's scheduler
-//   (so don't crash over and over)
-// - Append a description of the error to result.stderr_out
-// - If result state is FILES_DOWNLOADED, change it to COMPUTE_ERROR
-//   so that we don't try to run it again.
-//
+/// Call this when a result has a nonrecoverable error.
+/// - back off on contacting the project's scheduler
+///   (so don't crash over and over)
+/// - Append a description of the error to result.stderr_out
+/// - If result state is FILES_DOWNLOADED, change it to COMPUTE_ERROR
+///   so that we don't try to run it again.
 int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     char buf[4096],  err_msg[4096];
         // The above store 1-line messages and short XML snippets.
@@ -1353,17 +1345,16 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     return 0;
 }
 
-// "Reset" a project: (clear error conditions)
-// - stop all active tasks
-// - stop all file transfers
-// - stop scheduler RPC if any
-// - delete all workunits and results
-// - delete all apps and app_versions
-// - garbage collect to delete unneeded files
-//
-// Note: does NOT delete persistent files or user-supplied files;
-// does not delete project dir
-//
+/// "Reset" a project: (clear error conditions)
+/// - stop all active tasks
+/// - stop all file transfers
+/// - stop scheduler RPC if any
+/// - delete all workunits and results
+/// - delete all apps and app_versions
+/// - garbage collect to delete unneeded files
+///
+/// Note: does NOT delete persistent files or user-supplied files;
+/// does not delete project dir
 int CLIENT_STATE::reset_project(PROJECT* project, bool detaching) {
     unsigned int i;
     APP_VERSION* avp;
@@ -1447,12 +1438,11 @@ int CLIENT_STATE::reset_project(PROJECT* project, bool detaching) {
     return 0;
 }
 
-// "Detach" a project:
-// - Reset (see above)
-// - delete all file infos
-// - delete account file
-// - delete account directory
-//
+/// "Detach" a project:
+/// - Reset (see above)
+/// - delete all file infos
+/// - delete account file
+/// - delete account directory
 int CLIENT_STATE::detach_project(PROJECT* project) {
     vector<PROJECT*>::iterator project_iter;
     vector<FILE_INFO*>::iterator fi_iter;
@@ -1540,11 +1530,10 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     return 0;
 }
 
-// Quit running applications, quit benchmarks,
-// write the client_state.xml file
-// (in principle we could also terminate net_xfers here,
-// e.g. flush buffers, but why bother)
-//
+/// Quit running applications, quit benchmarks,
+/// write the client_state.xml file
+/// (in principle we could also terminate net_xfers here,
+/// e.g. flush buffers, but why bother)
 int CLIENT_STATE::quit_activities() {
     int retval;
 
@@ -1565,7 +1554,7 @@ int CLIENT_STATE::quit_activities() {
     return 0;
 }
 
-// return a random double in the range [rmin,rmax)
+/// return a random double in the range [rmin,rmax)
 static inline double rand_range(double rmin, double rmax) {
     if (rmin < rmax) {
         return drand() * (rmax-rmin) + rmin;
@@ -1574,18 +1563,16 @@ static inline double rand_range(double rmin, double rmax) {
     }
 }
 
-// return a random double in the range [MIN,min(e^n,MAX))
-//
+/// return a random double in the range [MIN,min(e^n,MAX))
 double calculate_exponential_backoff( int n, double MIN, double MAX) {
     double rmax = std::min(MAX, exp((double)n));
     return rand_range(MIN, rmax);
 }
 
-// See if a timestamp in the client state file
-// is later than the current time.
-// If so, the user must have decremented the system clock.
-// Clear all timeout variables.
-//
+/// See if a timestamp in the client state file
+/// is later than the current time.
+/// If so, the user must have decremented the system clock.
+/// Clear all timeout variables.
 void CLIENT_STATE::check_clock_reset() {
     now = time(0);
     if (!time_stats.last_update) return;
