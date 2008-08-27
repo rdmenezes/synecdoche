@@ -398,8 +398,6 @@ static void double_to_timeval(double x, timeval& t) {
     t.tv_usec = (int)(1000000*(x - (int)x));
 }
 
-FDSET_GROUP curl_fds;
-FDSET_GROUP gui_rpc_fds;
 FDSET_GROUP all_fds;
 
 /// Spend x seconds either doing I/O (if possible) or sleeping.
@@ -411,11 +409,8 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
     int loops = 0;
 
     while (1) {
-        curl_fds.zero();
-        gui_rpc_fds.zero();
-		http_ops->get_fdset(curl_fds);
-        all_fds = curl_fds;
-        gui_rpcs.get_fdset(gui_rpc_fds, all_fds);
+        http_ops->get_fdset(all_fds);
+        gui_rpcs.get_fdset(all_fds);
         double_to_timeval(x, tv);
         n = select(
             all_fds.max_fd+1,
