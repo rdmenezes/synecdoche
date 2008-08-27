@@ -398,7 +398,6 @@ static void double_to_timeval(double x, timeval& t) {
     t.tv_usec = (int)(1000000*(x - (int)x));
 }
 
-FDSET_GROUP all_fds;
 
 /// Spend x seconds either doing I/O (if possible) or sleeping.
 void CLIENT_STATE::do_io_or_sleep(double x) {
@@ -407,8 +406,10 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
     now = dtime();
     double end_time = now + x;
     int loops = 0;
+    FDSET_GROUP all_fds;
 
     while (1) {
+        all_fds.zero();
         http_ops->get_fdset(all_fds);
         gui_rpcs.get_fdset(all_fds);
         double_to_timeval(x, tv);
