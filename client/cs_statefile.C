@@ -65,8 +65,7 @@ static bool valid_state_file(const char* fname) {
     return false;
 }
 
-// Parse the client_state.xml file
-//
+/// Parse the client_state.xml file.
 int CLIENT_STATE::parse_state_file() {
     PROJECT *project=NULL;
     char buf[256];
@@ -462,8 +461,7 @@ int CLIENT_STATE::parse_state_file() {
 }
 
 
-// Write the client_state.xml file
-//
+/// Write the client_state.xml file.
 int CLIENT_STATE::write_state_file() const {
     MFILE mf;
     int retval, ret1, ret2, attempt;
@@ -674,9 +672,8 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
     return 0;
 }
 
-// Write the client_state.xml file if necessary
-// TODO: write no more often than X seconds
-//
+/// Write the client_state.xml file if necessary.
+/// TODO: write no more often than X seconds.
 int CLIENT_STATE::write_state_file_if_needed() {
     int retval;
     if (client_state_dirty) {
@@ -687,10 +684,9 @@ int CLIENT_STATE::write_state_file_if_needed() {
     return 0;
 }
 
-// look for app_versions.xml file in project dir.
-// If find, get app versions from there,
-// and use "anonymous platform" mechanism for this project
-//
+/// look for app_versions.xml file in project dir.
+/// If find, get app versions from there,
+/// and use "anonymous platform" mechanism for this project
 void CLIENT_STATE::check_anonymous() {
     unsigned int i;
     char dir[256], path[256];
