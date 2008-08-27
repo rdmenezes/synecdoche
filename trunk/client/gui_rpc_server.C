@@ -60,10 +60,10 @@
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
     sock(s),
     auth_needed(false),
-    got_auth1(false),
-    got_auth2(false),
     au_ss_state(AU_SS_INIT),
     au_mgr_state(AU_MGR_INIT),
+    got_auth1(false),
+    got_auth2(false),
 
     get_project_config_op(&gui_http),
     lookup_account_op(&gui_http),
