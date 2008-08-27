@@ -47,8 +47,7 @@
 
 using std::vector;
 
-// clean up after finished apps
-//
+/// clean up after finished apps.
 bool CLIENT_STATE::handle_finished_apps() {
     ACTIVE_TASK* atp;
     bool action = false;
@@ -91,11 +90,10 @@ bool CLIENT_STATE::handle_finished_apps() {
     return action;
 }
 
-// Handle a task that has finished.
-// Mark its output files as present, and delete scratch files.
-// Don't delete input files because they might be shared with other WUs.
-// Update state of result record.
-//
+/// Handle a task that has finished.
+/// Mark its output files as present, and delete scratch files.
+/// Don't delete input files because they might be shared with other WUs.
+/// Update state of result record.
 int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
     RESULT* rp = at.result;
     bool had_error = false;
@@ -212,15 +210,14 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
 
 #ifndef SIM
 
-// Returns true iff all the input files for a result are present
-// (both WU and app version)
-// Called from CLIENT_STATE::update_results (with verify=false)
-// to transition result from DOWNLOADING to DOWNLOADED.
-// Called from ACTIVE_TASK::start() (with verify=true)
-// when project has verify_files_on_app_start set.
-//
-// If fipp is nonzero, return a pointer to offending FILE_INFO on error
-//
+/// Returns true iff all the input files for a result are present
+/// (both WU and app version).
+/// Called from CLIENT_STATE::update_results (with verify=false)
+/// to transition result from DOWNLOADING to DOWNLOADED.
+/// Called from ACTIVE_TASK::start() (with verify=true)
+/// when project has verify_files_on_app_start set.
+///
+/// If fipp is nonzero, return a pointer to offending FILE_INFO on error.
 int CLIENT_STATE::input_files_available(
     RESULT* rp, bool verify, FILE_INFO** fipp
 ) {
@@ -279,9 +276,8 @@ double CLIENT_STATE::get_fraction_done(RESULT* result) {
     return atp ? force_fraction(atp->fraction_done) : 0.0;
 }
 
-// Find latest version of app for given platform
-// or -1 if can't find one
-//
+/// Find latest version of app for given platform
+/// or -1 if can't find one.
 int CLIENT_STATE::latest_version(APP* app, char* platform) {
     unsigned int i;
     int best = -1;
@@ -296,8 +292,7 @@ int CLIENT_STATE::latest_version(APP* app, char* platform) {
     return best;
 }
 
-// Find the ACTIVE_TASK in the current set with the matching PID
-//
+// Find the ACTIVE_TASK in the current set with the matching PID.
 ACTIVE_TASK* ACTIVE_TASK_SET::lookup_pid(int pid) {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -309,8 +304,7 @@ ACTIVE_TASK* ACTIVE_TASK_SET::lookup_pid(int pid) {
     return NULL;
 }
 
-// Find the ACTIVE_TASK in the current set with the matching result
-//
+// Find the ACTIVE_TASK in the current set with the matching result.
 ACTIVE_TASK* ACTIVE_TASK_SET::lookup_result(const RESULT* result) {
     unsigned int i;
     ACTIVE_TASK* atp;
