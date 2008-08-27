@@ -170,7 +170,7 @@ int write_init_data_file(FILE* f, APP_INIT_DATA& ai) {
 int parse_init_data_file(FILE* f, APP_INIT_DATA& ai) {
     char tag[1024];
     int retval;
-    bool flag, is_tag;
+    bool is_tag;
 
     MIOFILE mf;
     mf.init_file(f);
@@ -201,8 +201,7 @@ int parse_init_data_file(FILE* f, APP_INIT_DATA& ai) {
             continue;
         }
         if (!strcmp(tag, "global_preferences")) {
-            GLOBAL_PREFS_MASK mask;
-            retval = ai.global_prefs.parse(xp, "", flag, mask);
+            retval = ai.global_prefs.parse(xp);
             if (retval) return retval;
             continue;
         }

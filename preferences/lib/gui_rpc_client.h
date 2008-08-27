@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -610,16 +611,22 @@ public:
     int acct_mgr_rpc_poll(ACCT_MGR_RPC_REPLY&);
 
     int get_newer_version(std::string&);
+    int get_venue(VENUE&);
+    int get_venue_list(std::vector<VENUE>& venues);
+    int get_prefs_for_venue(const std::string& venue, GLOBAL_PREFS& prefs);
+    int set_venue(const std::string& venue);
+    int set_prefs_for_venue(const std::string& venue, const GLOBAL_PREFS& prefs);
+    int delete_prefs_for_venue(const std::string& venue);
     int read_global_prefs_override();
     int read_cc_config();
     int get_cc_status(CC_STATUS&);
     int get_global_prefs_file(std::string&);
     int get_global_prefs_working(std::string&);
-    int get_global_prefs_working_struct(GLOBAL_PREFS&, GLOBAL_PREFS_MASK&);
+    int get_global_prefs_working_struct(GLOBAL_PREFS&);
     int get_global_prefs_override(std::string&);
     int set_global_prefs_override(const std::string&);
-    int get_global_prefs_override_struct(GLOBAL_PREFS&, GLOBAL_PREFS_MASK&);
-    int set_global_prefs_override_struct(GLOBAL_PREFS&, GLOBAL_PREFS_MASK&);
+    int get_global_prefs_override_struct(GLOBAL_PREFS&);
+    int set_global_prefs_override_struct(GLOBAL_PREFS&);
     int set_debts(const std::vector<PROJECT>&);
 };
 

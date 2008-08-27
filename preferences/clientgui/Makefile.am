@@ -48,9 +48,7 @@ boinc_gui_SOURCES = \
     CompletionPage.cpp \
     common/wxPieCtrl.cpp \
     common/wxFlatNotebook.cpp \
-    DlgAbout.cpp 		\
-    DlgAdvPreferences.cpp \
-    DlgAdvPreferencesBase.cpp \
+    DlgAbout.cpp \
     DlgGenericMessage.cpp \
     DlgOptions.cpp \
     DlgSelectComputer.cpp \
@@ -83,7 +81,6 @@ boinc_gui_SOURCES = \
     sg_ClientStateIndicator.cpp \
     sg_CustomControls.cpp \
     sg_DlgMessages.cpp \
-    sg_DlgPreferences.cpp \
     sg_ImageButton.cpp \
     sg_ImageLoader.cpp \
     sg_ProgressBar.cpp \
