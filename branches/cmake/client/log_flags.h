@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// flags determining what is written to standard out.
-// (errors go to stderr)
-//
+/// \file
+/// flags determining what is written to standard out.
+/// (errors go to stderr)
+
 // NOTE: all writes to stdout should have an if (log_flags.*) {} around them.
-//
 
 #ifndef _LOGFLAGS_H_
 #define _LOGFLAGS_H_

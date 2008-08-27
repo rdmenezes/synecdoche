@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// GUI RPC server side (the actual RPCs)
+/// \file
+/// GUI RPC server side (the actual RPCs)
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -69,21 +70,20 @@ void GUI_RPC_CONN::handle_auth1(MIOFILE& fout) {
     fout.printf("<nonce>%s</nonce>\n", nonce);
 }
 
-int GUI_RPC_CONN::handle_auth2(const char* buf, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_auth2(const char* buf, MIOFILE& fout) {
     char nonce_hash[256], nonce_hash_correct[256], buf2[256];
     if (!parse_str(buf, "<nonce_hash>", nonce_hash, 256)) {
         auth_failure(fout);
-        return ERR_AUTHENTICATOR;
+        return;
     }
     sprintf(buf2, "%s%s", nonce, gstate.gui_rpcs.password);
     md5_block((const unsigned char*)buf2, (int)strlen(buf2), nonce_hash_correct);
     if (strcmp(nonce_hash, nonce_hash_correct)) {
         auth_failure(fout);
-        return ERR_AUTHENTICATOR;
+        return;
     }
     fout.printf("<authorized/>\n");
     auth_needed = false;
-    return 0;
 }
 
 // client passes its version, but ignore it for now
@@ -990,7 +990,7 @@ static void handle_set_cc_config(/* const */ char* buf, MIOFILE& fout) {
 
 int GUI_RPC_CONN::handle_rpc() {
     char request_msg[4096];
-    int n, retval=0;
+    int n;
     MIOFILE mf;
     MFILE m;
     char* p;
@@ -1016,16 +1016,11 @@ int GUI_RPC_CONN::handle_rpc() {
 
     mf.printf("<boinc_gui_rpc_reply>\n");
     if (match_tag(request_msg, "<auth1")) {
-        if (got_auth1) return ERR_AUTHENTICATOR;
         handle_auth1(mf);
-        got_auth1 = true;
     } else if (match_tag(request_msg, "<auth2")) {
-        if (!got_auth1 || got_auth2) return ERR_AUTHENTICATOR;
-        retval = handle_auth2(request_msg, mf);
-        got_auth2 = true;
+        handle_auth2(request_msg, mf);
     } else if (auth_needed && !is_local) {
         auth_failure(mf);
-        retval = ERR_AUTHENTICATOR;
 
     // operations that require authentication only for non-local clients start here.
     // Use this only for information that should be available to people
@@ -1067,7 +1062,6 @@ int GUI_RPC_CONN::handle_rpc() {
 
     } else if (auth_needed) {
         auth_failure(mf);
-        retval = ERR_AUTHENTICATOR;
     } else if (match_tag(request_msg, "<project_nomorework")) {
          handle_project_op(request_msg, mf, "nomorework");
      } else if (match_tag(request_msg, "<project_allowmorework")) {
@@ -1193,5 +1187,5 @@ int GUI_RPC_CONN::handle_rpc() {
         }
         free(p);
     }
-    return retval;
+    return 0;
 }

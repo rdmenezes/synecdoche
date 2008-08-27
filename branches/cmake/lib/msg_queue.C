@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// interfaces for accessing message queues
+/// \file
+/// interfaces for accessing message queues
 
 #include "config.h"
 #include <cstdio>

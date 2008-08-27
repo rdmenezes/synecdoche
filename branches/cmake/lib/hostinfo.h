@@ -18,21 +18,22 @@
 #ifndef _HOSTINFO_
 #define _HOSTINFO_
 
-// Description of a host's hardware and software.
-// This is used a few places:
-// - it's part of the client's state file, client_state.xml
-// - it's passed in the reply to the get_host_info GUI RPC
-// - it's included in scheduler RPC requests
-//
-// Other host-specific info is kept in
-// TIME_STATS (on/connected/active fractions)
-// NET_STATS (average network bandwidths)
+/// \file
+/// Description of a host's hardware and software.
+/// This is used a few places:
+/// - it's part of the client's state file, client_state.xml
+/// - it's passed in the reply to the get_host_info GUI RPC
+/// - it's included in scheduler RPC requests
+/// 
+/// Other host-specific info is kept in
+/// - TIME_STATS (on/connected/active fractions)
+/// - NET_STATS (average network bandwidths)
 
 #include "miofile.h"
 
 class HOST_INFO {
 public:
-    int timezone;                 // local STANDARD time - UTC time (in seconds)
+    int timezone;                 ///< local STANDARD time - UTC time (in seconds)
     char domain_name[256];
     char serialnum[256];
     char ip_addr[256];
@@ -45,20 +46,19 @@ public:
     double p_fpops;
     double p_iops;
     double p_membw;
-    double p_calculated;          // when benchmarks were last run, or zero
+    double p_calculated;          ///< when benchmarks were last run, or zero
 
-    double m_nbytes;              // Total amount of memory in bytes
+    double m_nbytes;              ///< Total amount of memory in bytes
     double m_cache;
-    double m_swap;                // Total amount of swap space in bytes
+    double m_swap;                ///< Total amount of swap space in bytes
 
-    double d_total;               // Total amount of disk in bytes
-    double d_free;                // Total amount of free disk in bytes
+    double d_total;               ///< Total amount of disk in bytes
+    double d_free;                ///< Total amount of free disk in bytes
 
     char os_name[256];
     char os_version[256];
 
-    char accelerators[256];
-        // text description of graphics coprocessors or other accelerators
+    char accelerators[256];       ///< text description of graphics coprocessors or other accelerators
 
     HOST_INFO();
     int parse(MIOFILE&);

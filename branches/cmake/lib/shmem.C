@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// interfaces for accessing shared memory segments
+/// \file
+/// interfaces for accessing shared memory segments
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -295,7 +296,7 @@ int detach_shmem(void* p) {
 
 // V6 mmap() shared memory for Unix/Linux/Mac
 //
-int create_shmem_mmap(char *path, size_t size, void** pp) {
+int create_shmem_mmap(const char *path, size_t size, void** pp) {
     int fd, retval;
     struct stat sbuf;
     

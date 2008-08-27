@@ -87,12 +87,11 @@ int set_to_project_group(const char* path) {
 // or setprojectgrp utilities, so we must do a fork() and execv().
 //
 int switcher_exec(const char *util_filename, const char* cmdline) {
-    char* argv[100];
     char util_path[1024];
 
     sprintf(util_path, "%s/%s", SWITCHER_DIR, util_filename);
-    argv[0] = (char*)util_filename;
-    parse_command_line((char*)cmdline, argv+1);
+    std::list<std::string> argv = parse_command_line(cmdline);
+    argv.push_front(util_filename);
     int pid = fork();
     if (pid == -1) {
         perror("fork() failed in switcher_exec");
@@ -100,7 +99,7 @@ int switcher_exec(const char *util_filename, const char* cmdline) {
     }
     if (pid == 0) {
         // This is the new (forked) process
-        execv(util_path, argv);
+        do_execv(util_path, argv);
         perror("execv failed in switcher_exec");
         return ERR_EXEC;
     }

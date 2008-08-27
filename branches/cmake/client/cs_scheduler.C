@@ -15,10 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// High-level logic for communicating with scheduling servers,
-// and for merging the result of a scheduler RPC into the client state
-
-// The scheduler RPC mechanism is in scheduler_op.C
+/// \file
+/// High-level logic for communicating with scheduling servers,
+/// and for merging the result of a scheduler RPC into the client state.
+///
+/// The scheduler RPC mechanism is in scheduler_op.C
 
 #include "cpp.h"
 

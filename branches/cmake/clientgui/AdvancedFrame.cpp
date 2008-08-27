@@ -1144,6 +1144,7 @@ void CAdvancedFrame::OnClientShutdown(wxCommandEvent& WXUNUSED(event)) {
     CDlgGenericMessage dlg(this);
     wxString           strDialogTitle = wxEmptyString;
     wxString           strDialogMessage = wxEmptyString;
+    bool               shutdown = true;
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnClientShutdown - Function Begin"));
 
@@ -1156,44 +1157,49 @@ void CAdvancedFrame::OnClientShutdown(wxCommandEvent& WXUNUSED(event)) {
     // Stop all timers
     StopTimers();
 
+    if (m_bDisplayShutdownClientWarning) {
 
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strDialogTitle.Printf(
-        _("%s - Shutdown the current client..."),
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
+        // %s is the application name
+        //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+        strDialogTitle.Printf(
+            _("%s - Shutdown the current client..."),
+            pSkinAdvanced->GetApplicationName().c_str()
+        );
 
-    // 1st %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    // 2nd %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
-    strDialogMessage.Printf(
-        _("%s will shut down the currently connected client,\n"
-          "and prompt you for another host to connect to.\n"),
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
+        // 1st %s is the application name
+        //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+        strDialogMessage.Printf(
+            _("%s will shut down the currently connected client,\n"
+              "and prompt you for another host to connect to.\n"),
+            pSkinAdvanced->GetApplicationName().c_str()
+        );
 
-    dlg.SetTitle(strDialogTitle);
-    dlg.m_DialogMessage->SetLabel(strDialogMessage);
-    dlg.Fit();
-    dlg.Centre();
+        dlg.SetTitle(strDialogTitle);
+        dlg.m_DialogMessage->SetLabel(strDialogMessage);
+        dlg.Fit();
+        dlg.Centre();
 
-    if (wxID_OK == dlg.ShowModal()) {
-        if (dlg.m_DialogDisableMessage->GetValue()) {
-            m_bDisplayShutdownClientWarning = false;
+        if (wxID_OK == dlg.ShowModal()) {
+            if (dlg.m_DialogDisableMessage->GetValue()) {
+                m_bDisplayShutdownClientWarning = false;
+            }
+        } else {
+            shutdown = false;
         }
-
-        pDoc->CoreClientQuit();
-        pDoc->ForceDisconnect();
-        
-        // Since the core cliet we were connected to just shutdown, prompt for a new one.
-        ProcessEvent(evtSelectNewComputer);
     }
 
+    StartTimers();
+
+    if (shutdown) {
+        pDoc->CoreClientQuit();
+        pDoc->ForceDisconnect();
+
+        // Since the core client we were connected to just shutdown, prompt for a new one.
+        AddPendingEvent(evtSelectNewComputer);
+    }
 
     // Restart timers
-    StartTimers();
+
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnClientShutdown - Function End"));
 }

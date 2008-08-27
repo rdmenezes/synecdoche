@@ -23,24 +23,21 @@
  * Includes
  */
 
-////@begin includes
 #include "wx/valtext.h"
 #include "wx/valgen.h"
-////@end includes
 
 /*!
  * Forward declarations
  */
 
-////@begin forward declarations
 class CTransparentCheckBox;
-////@end forward declarations
 
 /*!
  * Control identifiers
  */
 
-////@begin control identifiers
+/// @name Control identifiers
+/// @{
 #define ID_DLGPREFERENCES 10000
 #define SYMBOL_CDLGPREFERENCES_STYLE wxDEFAULT_DIALOG_STYLE
 #define SYMBOL_CDLGPREFERENCES_TITLE wxT("")
@@ -57,7 +54,7 @@ class CTransparentCheckBox;
 #define ID_MAXCPUUSAGE 10011
 #define ID_WORKWHILEONBATTERY 10005
 #define ID_WORKWHENIDLE 10012
-////@end control identifiers
+/// @}
 
 /*!
  * Compatibility
@@ -90,7 +87,8 @@ public:
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CPanelPreferences event handler declarations
+	/// @name Event handler declarations
+	/// @{
     /// wxEVT_ERASE_BACKGROUND event handler for ID_DLGPREFERENCES
     void OnEraseBackground( wxEraseEvent& event );
 
@@ -106,9 +104,10 @@ public:
     /// wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_SIMPLE_HELP
     void OnButtonHelp( wxCommandEvent& event );
 
-////@end CPanelPreferences event handler declarations
+	/// @}
 
-////@begin CPanelPreferences member function declarations
+    /// @name Member function declarations
+    /// @{
     wxString GetSkinSelector() const { return m_strSkinSelector ; }
     void SetSkinSelector(wxString value) { m_strSkinSelector = value ; }
 
@@ -138,7 +137,7 @@ public:
 
     bool GetCustomizedPreferences() const { return m_bCustomizedPreferences ; }
     void SetCustomizedPreferences(bool value) { m_bCustomizedPreferences = value ; }
-////@end CPanelPreferences member function declarations
+	/// @}
 
     void OnOK();
 
@@ -151,7 +150,6 @@ public:
     bool SaveSkinSettings();
 
 private:
-////@begin CPanelPreferences member variables
     wxComboBox* m_SkinSelectorCtrl;
     wxCheckBox* m_CustomizePreferencesCtrl;
     wxComboBox* m_WorkBetweenBeginCtrl;
@@ -172,7 +170,7 @@ private:
     wxString m_strMaxCPUUsage;
     bool m_bWorkWhileOnBattery;
     wxString m_strWorkWhenIdle;
-////@end CPanelPreferences member variables
+
     GLOBAL_PREFS      global_preferences_working;
     GLOBAL_PREFS_MASK global_preferences_mask;
     GLOBAL_PREFS_MASK global_preferences_override_mask;
@@ -203,7 +201,6 @@ public:
     void OnOK( wxCommandEvent& event );
 
 private:
-////@begin CDlgPreferences member variables
 
     CPanelPreferences* m_pBackgroundPanel;
 };

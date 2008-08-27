@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Graphics-related interaction with running apps.
-//
-// NOTE: This code is deprecated.
-// We're keeping it in so that "Show Graphics" will work
-// when pre-V6 apps run on a V6 client.
-// At some point (when all projects have V6 apps,
-// and all old CPDN jobs are finished) we can remove this.
+/// \file
+/// Graphics-related interaction with running apps.
+///
+/// NOTE: This code is deprecated.
+/// We're keeping it in so that "Show Graphics" will work
+/// when pre-V6 apps run on a V6 client.
+/// At some point (when all projects have V6 apps,
+/// and all old CPDN jobs are finished) we can remove this.
 
 #include "cpp.h"
 

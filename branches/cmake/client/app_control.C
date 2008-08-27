@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -16,7 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// monitoring and process control of running apps
+/// \file
+/// monitoring and process control of running apps
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -96,8 +97,10 @@ bool ACTIVE_TASK::kill_all_children() {
 }
 #endif
 
-// Send a quit message.
-//
+/// Ask the process to exit gracefully,
+/// i.e. by sending a <quit> message
+///
+/// \return 1 if shared memory is not set up, 0 on success.
 int ACTIVE_TASK::request_exit() {
     if (!app_client_shm.shm) return 1;
     process_control_queue.msg_queue_send(
@@ -119,8 +122,13 @@ int ACTIVE_TASK::request_abort() {
     return 0;
 }
 
-// Kill the task by OS-specific means.
-//
+/// Kill process forcibly,
+/// Unix: send a SIGKILL signal, Windows: TerminateProcess()
+/// If \a restart is true, arrange for resulted to get restarted;
+/// otherwise it ends with an error
+///
+/// \param[in] restart If true arrange for restart
+/// \return Always returns 0.
 int ACTIVE_TASK::kill_task(bool restart) {
 #ifdef _WIN32
     TerminateProcessById(pid);
@@ -143,10 +151,11 @@ int ACTIVE_TASK::kill_task(bool restart) {
     return 0;
 }
 
-// We have sent a quit request to the process; see if it's exited.
-// This is called when the core client exits,
-// or when a project is detached or reset
-//
+/// We have sent a quit request to the process; see if it's exited.
+/// This is called when the core client exits,
+/// or when a project is detached or reset
+///
+/// \return True if the task has exited, false otherwise.
 bool ACTIVE_TASK::has_task_exited() {
     bool exited = false;
 
@@ -196,8 +205,10 @@ static void limbo_message(ACTIVE_TASK& at) {
 #endif
 }
 
-// handle a task that exited prematurely (i.e. the job isn't done)
-//
+/// Handle a task that exited prematurely (i.e. the job isn't done).
+///
+/// \param[out] will_restart Reference to a bool-variable that will be set
+///                          to true if the task should get restarted.
 void ACTIVE_TASK::handle_premature_exit(bool& will_restart) {
     // if it exited because we sent it a quit message, don't count
     //
@@ -444,8 +455,9 @@ void ACTIVE_TASK_SET::process_control_poll() {
     }
 }
 
-// See if any processes have exited
-//
+/// See if any processes have exited.
+///
+/// \return True if at least one process has exited, false otherwise.
 bool ACTIVE_TASK_SET::check_app_exited() {
     ACTIVE_TASK* atp;
     bool found = false;
@@ -586,12 +598,16 @@ bool ACTIVE_TASK_SET::check_rsc_limits_exceeded() {
     return did_anything;
 }
 
-// If process is running, send it an "abort" message,
-// Set a flag so that if it doesn't exit within 5 seconds,
-// kill it by OS-specific mechanism (e.g. KILL signal).
-// This is done when app has exceeded CPU, disk, or mem limits,
-// or when the user has requested it.
-//
+/// Abort a task.
+/// If process is running, send it an "abort" message,
+/// Set a flag so that if it doesn't exit within 5 seconds,
+/// kill it by OS-specific mechanism (e.g. KILL signal).
+/// This is done when app has exceeded CPU, disk, or mem limits,
+/// or when the user has requested it.
+///
+/// \param[in] exit_status The exit status that should get reported.
+/// \param[in] msg Message explaining why the tast was aborted.
+/// \return Always returns 0.
 int ACTIVE_TASK::abort_task(int exit_status, const char* msg) {
     if (task_state() == PROCESS_EXECUTING || task_state() == PROCESS_SUSPENDED) {
         set_task_state(PROCESS_ABORT_PENDING, "abort_task");
@@ -606,19 +622,20 @@ int ACTIVE_TASK::abort_task(int exit_status, const char* msg) {
     return 0;
 }
 
-// check for the stderr file, copy to result record
-//
+/// Check for the stderr file, copy to result record.
+///
+/// \return True on success, false otherwise.
 bool ACTIVE_TASK::read_stderr_file() {
     std::string stderr_file;
-    char path[256];
 
     // truncate stderr output to the last 63KB;
     // it's unlikely that more than that will be useful
     //
     int max_len = 63*1024;
-    sprintf(path, "%s/%s", slot_dir, STDERR_FILE);
-    if (!boinc_file_exists(path)) return false;
-    if (read_file_string(path, stderr_file, max_len, true)) return false;
+    std::string path = std::string(slot_dir) + std::string("/")
+                                             + std::string(STDERR_FILE);
+    if (!boinc_file_exists(path.c_str())) return false;
+    if (read_file_string(path.c_str(), stderr_file, max_len, true)) return false;
 
     result->stderr_out += "<stderr_txt>\n";
     result->stderr_out += stderr_file;
@@ -830,8 +847,10 @@ void ACTIVE_TASK_SET::kill_tasks(PROJECT* proj) {
     }
 }
 
-// send a <suspend> message
-//
+/// Ask a process to stop executing (but stay in mem).
+/// Done by sending it a <suspend> message.
+///
+/// \return Always returns 0.
 int ACTIVE_TASK::suspend() {
     if (!app_client_shm.shm) return 0;
 	if (task_state() != PROCESS_EXECUTING) {
@@ -848,8 +867,9 @@ int ACTIVE_TASK::suspend() {
     return 0;
 }
 
-// resume a suspended task
-//
+/// Undo a suspend: send a <resume> message
+///
+/// \return Always returns 0.
 int ACTIVE_TASK::unsuspend() {
     if (!app_client_shm.shm) return 0;
 	if (task_state() != PROCESS_SUSPENDED) {

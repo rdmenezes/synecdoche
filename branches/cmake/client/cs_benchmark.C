@@ -15,18 +15,20 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Manage a (perhaps multi-processor) benchmark.
-// Because of hyperthreaded CPUs we can't just benchmark 1 CPU;
-// we must run parallel benchmarks
-// and ensure that they run more or less concurrently.
-// Here's our scheme:
-// - the main program forks N benchmarks threads or processes
-// - after FP_START seconds it creates a file "do_fp"
-// - after FP_END seconds it deletes do_fp
-// - after INT_START seconds it creates do_int
-// - after INT_END seconds it deletes do_int and starts waiting for processes
-// Each thread/process checks for the relevant file before
-//  starting or stopping each benchmark
+/// \file
+/// Manage a (perhaps multi-processor) benchmark.
+///
+/// Because of hyperthreaded CPUs we can't just benchmark 1 CPU;
+/// we must run parallel benchmarks
+/// and ensure that they run more or less concurrently.
+/// Here's our scheme:
+/// - the main program forks N benchmarks threads or processes
+/// - after FP_START seconds it creates a file "do_fp"
+/// - after FP_END seconds it deletes do_fp
+/// - after INT_START seconds it creates do_int
+/// - after INT_END seconds it deletes do_int and starts waiting for processes
+/// Each thread/process checks for the relevant file before
+///  starting or stopping each benchmark
 
 #include "cpp.h"
 

@@ -85,7 +85,8 @@ public:
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CPanelMessages event handler declarations
+    /// @name CPanelMessages event handler declarations
+    /// @{
     /// wxEVT_ERASE_BACKGROUND event handler for ID_DLGMESSAGES
     void OnEraseBackground( wxEraseEvent& event );
 
@@ -104,10 +105,7 @@ public:
     /// wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_SIMPLE_HELP
     void OnButtonHelp( wxCommandEvent& event );
 
-////@end CPanelMessages event handler declarations
-
-////@begin CPanelMessages member function declarations
-////@end CPanelMessages member function declarations
+    /// @}
 
     virtual wxString        OnListGetItemText( long item, long column ) const;
 	virtual wxListItemAttr* OnListGetItemAttr( long item ) const;
@@ -176,9 +174,10 @@ private:
     bool RestoreState();
     void RestoreWindowDimensions();
 
-////@begin CDlgMessages member variables
+    /// @name CDlgMessages member variables
+    /// @{
     CPanelMessages* m_pBackgroundPanel;
-////@end CDlgMessages member variables
+    /// @}
 };
 
 
