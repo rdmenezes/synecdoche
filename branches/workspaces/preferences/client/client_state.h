@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -66,6 +67,7 @@ public:
     std::vector<APP_VERSION*> app_versions;
     std::vector<WORKUNIT*> workunits;
     std::vector<RESULT*> results;
+    std::deque<GLOBAL_PREFS*> venues;
 
     PERS_FILE_XFER_SET* pers_file_xfers;
     HTTP_OP_SET* http_ops;
@@ -383,7 +385,9 @@ public:
     int suspend_network(int reason);
     int resume_network();
     void read_global_prefs();
+    void change_global_prefs(const char* venue);
     int save_global_prefs(char* prefs, char* url, char* sched);
+    GLOBAL_PREFS* lookup_venue(const char* venue);
     double available_ram();
     double max_available_ram();
 private:

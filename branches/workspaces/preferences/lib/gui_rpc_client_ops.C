@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -1107,12 +1108,11 @@ int RPC_CLIENT::get_state(CC_STATE& state) {
                 continue;
             }
             if (match_tag(buf, "<global_preferences>")) {
-                bool flag = false;
-                GLOBAL_PREFS_MASK mask;
                 XML_PARSER xp(&rpc.fin);
-                state.global_prefs.parse(xp, "", flag, mask);
+                state.global_prefs.parse(xp);
                 continue;
             }
+            
         }
     }
     return retval;
@@ -2051,6 +2051,105 @@ int RPC_CLIENT::get_newer_version(std::string& version) {
     return retval;
 }
 
+int RPC_CLIENT::get_venue(VENUE& venue) {
+    int retval;
+    SET_LOCALE sl;
+    RPC rpc(this);
+
+    retval = rpc.do_rpc("<get_venue/>\n");
+    if (!retval) {
+        XML_PARSER xp(&rpc.fin);
+        return venue.parse(xp);
+    }
+    return retval;
+}
+
+int RPC_CLIENT::get_venue_list(std::vector<VENUE>& venues) {
+    int retval;
+    SET_LOCALE sl;
+    RPC rpc(this);
+
+    venues.clear();
+    retval = rpc.do_rpc("<get_venue_list/>\n");
+    if (!retval) {
+        XML_PARSER xp(&rpc.fin);
+        while (!retval) {
+            VENUE venue;
+            retval = venue.parse(xp);
+            if (!retval) {
+                venues.push_back(venue);
+            }
+        }
+        return 0;
+    }
+    return retval;
+}
+
+int RPC_CLIENT::get_prefs_for_venue(const std::string& venue, GLOBAL_PREFS& prefs) {
+    int retval;
+    RPC rpc(this);
+    char buf[256];
+
+    sprintf(buf,
+        "<get_prefs_for_venue>\n"
+        "<name>%s</name>\n"
+        "</get_prefs_for_venue>\n",
+        venue.c_str()
+    );
+    retval = rpc.do_rpc(buf);
+    if (!retval) {
+        XML_PARSER xp(&rpc.fin);
+        return prefs.parse(xp);
+    }
+    return retval;
+}
+
+int RPC_CLIENT::set_venue(const std::string& venue) {
+    int retval;
+    RPC rpc(this);
+    char buf[256];
+
+    sprintf(buf,
+        "<set_venue>\n"
+        "<name>%s</name>\n"
+        "</set_venue>\n",
+        venue.c_str()
+    );
+    retval = rpc.do_rpc(buf);
+    return retval;
+}
+
+int RPC_CLIENT::set_prefs_for_venue(const std::string& venue, const GLOBAL_PREFS& prefs) {
+    SET_LOCALE sl;
+    char buf[64000];
+    MIOFILE mf;
+    std::string s;
+    RPC rpc(this);
+
+    mf.init_buf_write(buf, sizeof(buf));
+    prefs.write(mf);
+
+    s = std::string("<set_prefs_for_venue>\n")
+      + "<name>" + venue + "</name>\n"
+      + buf
+      + "</set_prefs_for_venue>\n";
+
+    return rpc.do_rpc(s.c_str());
+}
+
+int RPC_CLIENT::delete_prefs_for_venue(const std::string& venue) {
+    RPC rpc(this);
+    char buf[256];
+
+    sprintf(buf,
+        "<delete_prefs_for_venue>\n"
+        "<name>%s</name>\n"
+        "</delete_prefs_for_venue>\n",
+        venue.c_str()
+    );
+    return rpc.do_rpc(buf);
+}
+
 int RPC_CLIENT::read_global_prefs_override() {
     SET_LOCALE sl;
     RPC rpc(this);
@@ -2116,22 +2215,18 @@ int RPC_CLIENT::get_global_prefs_working(string& s) {
 }
 
 
-int RPC_CLIENT::get_global_prefs_working_struct(GLOBAL_PREFS& prefs, GLOBAL_PREFS_MASK& mask) {
+int RPC_CLIENT::get_global_prefs_working_struct(GLOBAL_PREFS& prefs) {
     int retval;
     SET_LOCALE sl;
     string s;
     MIOFILE mf;
-    bool found_venue;
 
     retval = get_global_prefs_working(s);
     if (retval) return retval;
     mf.init_buf_read(s.c_str());
     XML_PARSER xp(&mf);
-    prefs.parse(xp, "", found_venue, mask);
+    prefs.parse(xp);
 
-    if (!mask.are_prefs_set()) {
-        return ERR_FILE_NOT_FOUND;
-    }
     return 0;
 }
 
@@ -2179,33 +2274,29 @@ int RPC_CLIENT::set_global_prefs_override(const string& s) {
     return retval;
 }
 
-int RPC_CLIENT::get_global_prefs_override_struct(GLOBAL_PREFS& prefs, GLOBAL_PREFS_MASK& mask) {
+int RPC_CLIENT::get_global_prefs_override_struct(GLOBAL_PREFS& prefs) {
     int retval;
     SET_LOCALE sl;
     string s;
     MIOFILE mf;
-    bool found_venue;
 
     retval = get_global_prefs_override(s);
     if (retval) return retval;
     mf.init_buf_read(s.c_str());
     XML_PARSER xp(&mf);
-    prefs.parse(xp, "", found_venue, mask);
+    prefs.parse(xp);
 
-    if (!mask.are_prefs_set()) {
-        return ERR_FILE_NOT_FOUND;
-    }
     return 0;
 }
 
-int RPC_CLIENT::set_global_prefs_override_struct(GLOBAL_PREFS& prefs, GLOBAL_PREFS_MASK& mask) {
+int RPC_CLIENT::set_global_prefs_override_struct(GLOBAL_PREFS& prefs) {
     SET_LOCALE sl;
     char buf[64000];
     MIOFILE mf;
     string s;
 
     mf.init_buf_write(buf, sizeof(buf));
-    prefs.write_subset(mf, mask);
+    prefs.write(mf);
     s = buf;
     return set_global_prefs_override(s);
 }
@@ -2245,6 +2336,3 @@ int RPC_CLIENT::set_debts(const vector<PROJECT>& projects) {
     retval = rpc.do_rpc(s.c_str());
     return retval;
 }
-
-
-const char *BOINC_RCSID_90e8b8d168="$Id: gui_rpc_client_ops.C 15190 2008-05-13 19:52:35Z davea $";

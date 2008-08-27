@@ -41,8 +41,7 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     wxASSERT(pDoc);
 
-    GLOBAL_PREFS_MASK mask;
-    pDoc->rpc.get_global_prefs_working_struct(m_preferences, mask);
+    pDoc->rpc.get_global_prefs_working_struct(m_preferences);
 
     m_helpSource = 0;
 
@@ -261,10 +260,7 @@ void PrefTreeBook::SavePreferences() {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     wxASSERT(pDoc);
 
-    GLOBAL_PREFS_MASK mask;
-    mask.set_all();
-
-    pDoc->rpc.set_global_prefs_override_struct(m_preferences, mask);
+    pDoc->rpc.set_global_prefs_override_struct(m_preferences);
     pDoc->rpc.read_global_prefs_override();
 
 }

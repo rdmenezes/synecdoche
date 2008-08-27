@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -27,47 +28,8 @@
 //      it's maintained by communication with scheduling servers
 //      or project managers
 // 2) a "global_prefs_override.xml" file, which can be edited manually
-//      or via a GUI.
+//      (it should be used for testing only).
 //      For the prefs that it specifies, it overrides the network prefs.
-
-// A struct with one bool per pref.
-// This is passed in GUI RPCs (get/set_global_prefs_override_struct)
-// to indicate which prefs are (or should be) specified in the override file
-//
-struct GLOBAL_PREFS_MASK {
-    bool run_on_batteries;
-    bool run_if_user_active;
-    bool idle_time_to_run;
-    bool suspend_if_no_recent_input;
-    bool start_hour;
-    bool end_hour;
-    bool net_start_hour;
-    bool net_end_hour;
-    bool leave_apps_in_memory;
-    bool confirm_before_connecting;
-    bool hangup_if_dialed;
-    bool dont_verify_images;
-    bool work_buf_min_days;
-    bool work_buf_additional_days;
-    bool max_ncpus_pct;
-    bool cpu_scheduling_period_minutes;
-    bool disk_interval;
-    bool disk_max_used_gb;
-    bool disk_max_used_pct;
-    bool disk_min_free_gb;
-    bool vm_max_used_frac;
-	bool ram_max_used_busy_frac;
-	bool ram_max_used_idle_frac;
-    bool max_bytes_sec_up;
-    bool max_bytes_sec_down;
-    bool cpu_usage_limit;
-
-    GLOBAL_PREFS_MASK();
-    void clear();
-    bool are_prefs_set();
-    bool are_simple_prefs_set();
-    void set_all();
-};
 
 
 // 0..24
@@ -127,7 +89,22 @@ public:
 };
 
 
-struct GLOBAL_PREFS {
+class VENUE {
+public:
+    VENUE(char* name = "", char* description = "");
+
+    char venue_name[32]; // immutable
+    char venue_description[256]; // localisable, renamable, UTF-8?
+
+    int parse(XML_PARSER& xp);
+    std::string get_venue_description() const;
+};
+
+
+class GLOBAL_PREFS : public VENUE {
+public:
+    GLOBAL_PREFS();
+
     double mod_time;
     bool run_on_batteries;
         // poorly named; what it really means is:
@@ -150,8 +127,8 @@ struct GLOBAL_PREFS {
     double disk_max_used_pct;
     double disk_min_free_gb;
     double vm_max_used_frac;
-	double ram_max_used_busy_frac;
-	double ram_max_used_idle_frac;
+    double ram_max_used_busy_frac;
+    double ram_max_used_idle_frac;
     double max_bytes_sec_up;
     double max_bytes_sec_down;
     double cpu_usage_limit;
@@ -159,18 +136,22 @@ struct GLOBAL_PREFS {
     char source_scheduler[256];
     bool host_specific;
 
-    GLOBAL_PREFS();
     void defaults();
     void clear_bools();
-    int parse(XML_PARSER&, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
+    int parse(XML_PARSER&);
     int parse_day(XML_PARSER&);
-    int parse_override(XML_PARSER&, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
-    int parse_file(const char* filename, const char* venue, bool& found_venue);
-    int write(MIOFILE&);
-    int write_subset(MIOFILE&, GLOBAL_PREFS_MASK&);
+    int parse_override(XML_PARSER&);
+    int parse_file(const char* filename);
+    int parse_preference_tags(XML_PARSER&);
+    int write(MIOFILE&) const;
     inline double cpu_scheduling_period() {
         return cpu_scheduling_period_minutes*60;
     }
+    static int parse_file(const char* filename, std::deque<GLOBAL_PREFS*>& venues);
+    static int parse_venues(XML_PARSER& xp, std::deque<GLOBAL_PREFS*>& venues);
+
+private:
+    static int recursive_parse_venue(XML_PARSER& xp, GLOBAL_PREFS* const prefs, std::deque<GLOBAL_PREFS*>* venues);
 };
 
 #endif

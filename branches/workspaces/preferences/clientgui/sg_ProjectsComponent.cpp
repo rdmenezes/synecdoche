@@ -33,7 +33,7 @@
 #include "sg_CustomControls.h" 
 #include "sg_StatImageLoader.h" 
 #include "sg_DlgMessages.h"
-#include "sg_DlgPreferences.h"
+#include "PrefFrame.h"
 #include "sg_ProjectsComponent.h"
 #include "wizardex.h"
 #include "BOINCWizards.h"
@@ -470,7 +470,7 @@ void CProjectsComponent::OnPreferences(wxCommandEvent& /*event*/) {
 
 	pPanel->SetDlgOpen(true);
 
-	CDlgPreferences dlg(GetParent());
+    PrefFrame dlg(GetParent());
     dlg.ShowModal();
 
     pPanel->SetDlgOpen(false);
