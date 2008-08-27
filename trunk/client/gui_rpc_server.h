@@ -57,8 +57,8 @@ public:
     int handle_rpc();
 private:
     char nonce[256];
-	// keep track of whether we've got the 2 authentication msgs;
-	// don't accept more than one of each (to prevent DoS)
+    // keep track of whether we've got the 2 authentication msgs;
+    // don't accept more than one of each (to prevent DoS)
     bool got_auth1;
     bool got_auth2;
 
