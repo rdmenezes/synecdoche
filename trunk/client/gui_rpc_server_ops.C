@@ -58,6 +58,10 @@
 #include "client_msgs.h"
 #include "client_state.h"
 
+/// Maximum size of the write buffer. If this size is exceeded, the connection
+/// will be dropped.
+#define MAX_WRITE_BUFFER 16384
+
 using std::string;
 using std::vector;
 
@@ -1177,7 +1181,10 @@ int GUI_RPC_CONN::handle_rpc() {
     mf.printf("</boinc_gui_rpc_reply>\n\003");
     m.get_buf(p, n);
     if (p) {
-        send(sock, p, n, 0);
+        write_buffer.append(p, n);
+        if (write_buffer.length() > MAX_WRITE_BUFFER) {
+            return ERR_BUFFER_OVERFLOW;
+        }
         p[n-1]=0;   // replace 003 with NULL
         if (log_flags.guirpc_debug) {
             if (n > 50) p[50] = 0;
@@ -1186,6 +1193,19 @@ int GUI_RPC_CONN::handle_rpc() {
             );
         }
         free(p);
+    }
+    return 0;
+}
+
+/// Writes as much as possible from the send buffer. The remaining data (if
+/// any) is left in the buffer. If send returns an error, this function returns
+/// -1.
+int GUI_RPC_CONN::handle_write() {
+    int retval = send(sock, &write_buffer[0], write_buffer.length(), 0);
+    if (retval < 0) {
+        return retval;
+    } else {
+        write_buffer.erase(0, retval);
     }
     return 0;
 }
