@@ -301,7 +301,7 @@ static void show_connect_error(in_addr ia) {
     count = 0;
 }
 
-void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
+void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg) const {
     unsigned int i;
     const GUI_RPC_CONN* gr;
 
@@ -312,15 +312,9 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) const {
         FD_SET(s, &fg.read_fds);
         FD_SET(s, &fg.exc_fds);
         if (s > fg.max_fd) fg.max_fd = s;
-
-        FD_SET(s, &all.read_fds);
-        FD_SET(s, &all.exc_fds);
-        if (s > all.max_fd) all.max_fd = s;
     }
     FD_SET(lsock, &fg.read_fds);
     if (lsock > fg.max_fd) fg.max_fd = lsock;
-    FD_SET(lsock, &all.read_fds);
-    if (lsock > all.max_fd) all.max_fd = lsock;
 }
 
 bool GUI_RPC_CONN_SET::check_allowed_list(unsigned long peer_ip) const {

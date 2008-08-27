@@ -91,7 +91,7 @@ public:
 
     GUI_RPC_CONN_SET();
     char password[256];
-    void get_fdset(FDSET_GROUP&, FDSET_GROUP&) const;
+    void get_fdset(FDSET_GROUP&) const;
     void got_select(const FDSET_GROUP&);
     int init(bool last_time);
     void close();
