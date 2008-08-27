@@ -395,7 +395,7 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
             iter = gui_rpcs.erase(iter);
             continue;
         }
-        iter++;
+        ++iter;
     }
     iter = gui_rpcs.begin();
     while (iter != gui_rpcs.end()) {
@@ -414,7 +414,7 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
                 continue;
             }
         }
-        iter++;
+        ++iter;
     }
 }
 
