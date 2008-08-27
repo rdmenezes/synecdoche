@@ -55,10 +55,10 @@ static char g_user_agent_string[256] = {""};
 static const char g_content_type[] = {"Content-Type: application/x-www-form-urlencoded"};
 
 
-// Breaks a HTTP URL down into its server, port and file components
-// format of url:
-// [http[s]://]host.dom.dom[:port][/dir/file]
-//
+/// Breaks a HTTP URL down into its server, port and file components
+/// format of url:
+/// [http[s]://]host.dom.dom[:port][/dir/file]
+///
 void parse_url(const char* url, char* host, int &port, char* file) {
     char* p;
     char buf[256];
@@ -166,9 +166,9 @@ HTTP_OP::~HTTP_OP() {
     close_file();
 }
 
-// Initialize HTTP GET operation;
-// output goes to the given file, starting at given offset
-//
+/// Initialize HTTP GET operation;
+/// output goes to the given file, starting at given offset
+///
 int HTTP_OP::init_get(
     const char* url, const char* out, bool del_old_file, double off
 ) {
@@ -191,11 +191,11 @@ int HTTP_OP::init_get(
     return HTTP_OP::libcurl_exec(url, NULL, out, off, false);
 }
 
-// Initialize HTTP POST operation where
-// the input is a file, and the output is a file,
-// and both are read/written from the beginning (no resumption of partial ops)
-// This is used for scheduler requests and account mgr RPCs.
-//
+/// Initialize HTTP POST operation where
+/// the input is a file, and the output is a file,
+/// and both are read/written from the beginning (no resumption of partial ops)
+/// This is used for scheduler requests and account mgr RPCs.
+///
 int HTTP_OP::init_post(
     const char* url, const char* in, const char* out
 ) {
@@ -219,12 +219,12 @@ int HTTP_OP::init_post(
     return HTTP_OP::libcurl_exec(url, in, out, 0.0, true);
 }
 
-// Initialize an HTTP POST operation,
-// where the input is a memory string (r1) followed by an optional file (in)
-// with optional offset,
-// and the output goes to memory (also r1)
-// This is used for file upload (both get_file_size and file_upload)
-//
+/// Initialize an HTTP POST operation,
+/// where the input is a memory string (r1) followed by an optional file (in)
+/// with optional offset,
+/// and the output goes to memory (also r1)
+/// This is used for file upload (both get_file_size and file_upload)
+///
 int HTTP_OP::init_post2(
     const char* url, char* r1, size_t r1_len, const char* in, double offset
 ) {
@@ -250,8 +250,8 @@ int HTTP_OP::init_post2(
     return HTTP_OP::libcurl_exec(url, in, NULL, offset, true);
 }
 
-// the following will do an HTTP GET or POST using libcurl
-//
+/// the following will do an HTTP GET or POST using libcurl
+///
 int HTTP_OP::libcurl_exec(
     const char* url, const char* in, const char* out, double offset, bool bPost
 ) {
@@ -565,8 +565,8 @@ int HTTP_OP::libcurl_exec(
     return 0;
 }
 
-// Returns true if the HTTP operation is complete
-//
+/// Returns true if the HTTP operation is complete
+///
 bool HTTP_OP::http_op_done() {
     return (http_op_state == HTTP_STATE_DONE);
 }
@@ -576,15 +576,15 @@ HTTP_OP_SET::HTTP_OP_SET() {
     bytes_down = 0;
 }
 
-// Adds an HTTP_OP to the set
-//
+/// Adds an HTTP_OP to the set
+///
 int HTTP_OP_SET::insert(HTTP_OP* ho) {
     http_ops.push_back(ho);
     return 0;
 }
 
-// Remove an HTTP_OP from the set
-//
+/// Remove an HTTP_OP from the set
+///
 int HTTP_OP_SET::remove(HTTP_OP* p) {
     vector<HTTP_OP*>::iterator iter;
 
@@ -762,29 +762,29 @@ int libcurl_debugfunction(
 
 
 void HTTP_OP::setupProxyCurl() {
-// PROXY_INFO pi useful members:
-//  pi.http_server_name
-//  pi.http_server_port
-//  pi.http_user_name
-//  pi.http_user_passwd
-//  pi.socks5_user_name
-//  pi.socks5_user_passwd
-//  pi.socks_server_name
-//  pi.socks_server_port
-//  pi.socks_version
-//  pi.use_http_auth
-//  pi.use_http_proxy
-//  pi.use_socks_proxy
-//
-// Curl self-explanatory setopt params for proxies:
-//    CURLOPT_HTTPPROXYTUNNEL
-//    CURLOPT_PROXYTYPE  (pass in CURLPROXY_HTTP or CURLPROXY_SOCKS5)
-//    CURLOPT_PROXYPORT  -- a long port #
-//    CURLOPT_PROXY - pass in char* of the proxy url
-//    CURLOPT_PROXYUSERPWD -- a char* in the format username:password
-//    CURLOPT_HTTPAUTH -- pass in one of CURLAUTH_BASIC, CURLAUTH_DIGEST, 
-//        CURLAUTH_GSSNEGOTIATE, CURLAUTH_NTLM, CURLAUTH_ANY, CURLAUTH_ANYSAFE
-//    CURLOPT_PROXYAUTH -- "or" | the above bitmasks -- only basic, digest, ntlm work
+/// PROXY_INFO pi useful members:
+///  pi.http_server_name
+///  pi.http_server_port
+///  pi.http_user_name
+///  pi.http_user_passwd
+///  pi.socks5_user_name
+///  pi.socks5_user_passwd
+///  pi.socks_server_name
+///  pi.socks_server_port
+///  pi.socks_version
+///  pi.use_http_auth
+///  pi.use_http_proxy
+///  pi.use_socks_proxy
+///
+/// Curl self-explanatory setopt params for proxies:
+///    CURLOPT_HTTPPROXYTUNNEL
+///    CURLOPT_PROXYTYPE  (pass in CURLPROXY_HTTP or CURLPROXY_SOCKS5)
+///    CURLOPT_PROXYPORT  -- a long port #
+///    CURLOPT_PROXY - pass in char* of the proxy url
+///    CURLOPT_PROXYUSERPWD -- a char* in the format username:password
+///    CURLOPT_HTTPAUTH -- pass in one of CURLAUTH_BASIC, CURLAUTH_DIGEST, 
+///        CURLAUTH_GSSNEGOTIATE, CURLAUTH_NTLM, CURLAUTH_ANY, CURLAUTH_ANYSAFE
+///    CURLOPT_PROXYAUTH -- "or" | the above bitmasks -- only basic, digest, ntlm work
 
     CURLcode curlErr;
 
@@ -835,12 +835,12 @@ void HTTP_OP::setupProxyCurl() {
     }
 }
 
-// the file descriptor sets need to be global so libcurl has access always
-//
+/// the file descriptor sets need to be global so libcurl has access always
+///
 fd_set read_fds, write_fds, error_fds;
 
-// call these once at the start of the program and once at the end
-//
+/// call these once at the start of the program and once at the end
+///
 int curl_init() {
     curl_global_init(CURL_GLOBAL_ALL);
     g_curlMulti = curl_multi_init();
@@ -895,9 +895,9 @@ void HTTP_OP_SET::get_fdset(FDSET_GROUP& fg) {
     );
 }
 
-// we have a message for this HTTP_OP.
-// get the response code for this request
-//
+/// we have a message for this HTTP_OP.
+/// get the response code for this request
+///
 void HTTP_OP::handle_messages(CURLMsg *pcurlMsg) {
     CURLcode curlErr;
     int retval;
@@ -1079,8 +1079,8 @@ void HTTP_OP_SET::got_select(FDSET_GROUP&, double timeout) {
     }
 }
 
-// Return the HTTP_OP object with given Curl object
-//
+/// Return the HTTP_OP object with given Curl object
+///
 HTTP_OP* HTTP_OP_SET::lookup_curl(CURL* pcurl)  {
     for (unsigned int i=0; i<http_ops.size(); i++) {
         if (http_ops[i]->curlEasy == pcurl) {
@@ -1090,9 +1090,9 @@ HTTP_OP* HTTP_OP_SET::lookup_curl(CURL* pcurl)  {
     return 0;
 }
 
-// Update the transfer speed for this HTTP_OP
-// called on every I/O
-//
+/// Update the transfer speed for this HTTP_OP
+/// called on every I/O
+///
 void HTTP_OP::update_speed() {
     double delta_t = dtime() - start_time;
     if (delta_t > 0) {

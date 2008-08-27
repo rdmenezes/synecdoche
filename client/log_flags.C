@@ -83,8 +83,7 @@ void LOG_FLAGS::defaults() {
     checkpoint_debug = false;
 } 
 
-// Parse log flag preferences
-//
+/// Parse log flag preferences
 int LOG_FLAGS::parse(XML_PARSER& xp) {
     char tag[1024];
     bool is_tag;

@@ -110,8 +110,7 @@ int ACTIVE_TASK::request_exit() {
     return 0;
 }
 
-// Send an abort message.
-//
+/// Send an abort message.
 int ACTIVE_TASK::request_abort() {
     if (!app_client_shm.shm) return 1;
     process_control_queue.msg_queue_send(
@@ -233,16 +232,16 @@ void ACTIVE_TASK::handle_premature_exit(bool& will_restart) {
     }
 }
 
-// deal with a process that has exited, for whatever reason:
-// - completion
-// - crash
-// - preemption via quit
-//
+/// deal with a process that has exited, for whatever reason:
+/// - completion
+/// - crash
+/// - preemption via quit
 #ifdef _WIN32
-void ACTIVE_TASK::handle_exited_app(unsigned long exit_code) {
+void ACTIVE_TASK::handle_exited_app(unsigned long exit_code)
 #else
-void ACTIVE_TASK::handle_exited_app(int stat) {
+void ACTIVE_TASK::handle_exited_app(int stat)
 #endif
+{
     bool will_restart = false;
 
     if (log_flags.task_debug) {
@@ -514,8 +513,7 @@ bool ACTIVE_TASK_SET::check_app_exited() {
     return found;
 }
 
-// if an app has exceeded its maximum disk usage, abort it
-//
+/// if an app has exceeded its maximum disk usage, abort it
 bool ACTIVE_TASK::check_max_disk_exceeded() {
     double disk_usage;
     int retval;
@@ -539,9 +537,8 @@ bool ACTIVE_TASK::check_max_disk_exceeded() {
     return false;
 }
 
-// Check if any of the active tasks have exceeded their
-// resource limits on disk, CPU time or memory
-//
+/// Check if any of the active tasks have exceeded their
+/// resource limits on disk, CPU time or memory
 bool ACTIVE_TASK_SET::check_rsc_limits_exceeded() {
     unsigned int i;
     ACTIVE_TASK *atp;
@@ -642,10 +639,9 @@ bool ACTIVE_TASK::read_stderr_file() {
     return true;
 }
 
-// tell a running app to reread project preferences.
-// This is called when project prefs change,
-// or when a user file has finished downloading.
-//
+/// Tell a running app to reread project preferences.
+/// This is called when project prefs change,
+/// or when a user file has finished downloading.
 int ACTIVE_TASK::request_reread_prefs() {
     int retval;
 
@@ -660,9 +656,8 @@ int ACTIVE_TASK::request_reread_prefs() {
     return 0;
 }
 
-// tell a running app to reread the app_info file
-// (e.g. because proxy settings have changed: this is for F@h)
-//
+/// Tell a running app to reread the app_info file
+/// (e.g. because proxy settings have changed)
 int ACTIVE_TASK::request_reread_app_info() {
     int retval = write_app_init_file();
     if (retval) return retval;
@@ -673,8 +668,7 @@ int ACTIVE_TASK::request_reread_app_info() {
     return 0;
 }
 
-// tell all running apps of a project to reread prefs
-//
+/// Tell all running apps of a project to reread prefs.
 void ACTIVE_TASK_SET::request_reread_prefs(PROJECT* project) {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -696,13 +690,12 @@ void ACTIVE_TASK_SET::request_reread_app_info() {
 }
 
 
-// send quit signal to all tasks in the project
-// (or all tasks, if proj==0).
-// If they don't exit in 5 seconds,
-// send them a kill signal and wait up to 5 more seconds to exit.
-// This is called when the core client exits,
-// or when a project is detached or reset
-//
+/// send quit signal to all tasks in the project
+/// (or all tasks, if proj==0).
+/// If they don't exit in 5 seconds,
+/// send them a kill signal and wait up to 5 more seconds to exit.
+/// This is called when the core client exits,
+/// or when a project is detached or reset.
 int ACTIVE_TASK_SET::exit_tasks(PROJECT* proj) {
     request_tasks_exit(proj);
 
@@ -721,10 +714,9 @@ int ACTIVE_TASK_SET::exit_tasks(PROJECT* proj) {
     return 0;
 }
 
-// Wait up to wait_time seconds for processes to exit
-// If proj is zero, wait for all processes, else that project's
-// NOTE: it's bad form to sleep, but it would be complex to avoid it here
-//
+/// Wait up to wait_time seconds for processes to exit.
+/// If proj is zero, wait for all processes, else that project's.
+/// NOTE: it's bad form to sleep, but it would be complex to avoid it here.
 int ACTIVE_TASK_SET::wait_for_exit(double wait_time, PROJECT* proj) {
     bool all_exited;
     unsigned int i,n;
@@ -768,10 +760,9 @@ int ACTIVE_TASK_SET::abort_project(PROJECT* project) {
     return 0;
 }
 
-// suspend all currently running tasks
-// called only from CLIENT_STATE::suspend_tasks(),
-// e.g. because on batteries, time of day, benchmarking, CPU throttle, etc.
-//
+/// suspend all currently running tasks
+/// called only from CLIENT_STATE::suspend_tasks(),
+/// e.g. because on batteries, time of day, benchmarking, CPU throttle, etc.
 void ACTIVE_TASK_SET::suspend_all(bool leave_apps_in_memory) {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -782,8 +773,7 @@ void ACTIVE_TASK_SET::suspend_all(bool leave_apps_in_memory) {
     }
 }
 
-// resume all currently scheduled tasks
-//
+/// resume all currently scheduled tasks
 void ACTIVE_TASK_SET::unsuspend_all() {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -802,9 +792,8 @@ void ACTIVE_TASK_SET::unsuspend_all() {
     }
 }
 
-// Check to see if any tasks are running
-// called if benchmarking and waiting for suspends to happen
-//
+/// Check to see if any tasks are running
+/// called if benchmarking and waiting for suspends to happen
 bool ACTIVE_TASK_SET::is_task_executing() {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -817,10 +806,9 @@ bool ACTIVE_TASK_SET::is_task_executing() {
     return false;
 }
 
-// Send quit message to all app processes
-// This is called when the core client exits,
-// or when a project is detached or reset
-//
+/// Send quit message to all app processes
+/// This is called when the core client exits,
+/// or when a project is detached or reset
 void ACTIVE_TASK_SET::request_tasks_exit(PROJECT* proj) {
     unsigned int i;
     ACTIVE_TASK *atp;
@@ -832,9 +820,8 @@ void ACTIVE_TASK_SET::request_tasks_exit(PROJECT* proj) {
     }
 }
 
-// Send kill signal to all app processes
-// Don't wait for them to exit
-//
+/// Send kill signal to all app processes
+/// Don't wait for them to exit
 void ACTIVE_TASK_SET::kill_tasks(PROJECT* proj) {
     unsigned int i;
     ACTIVE_TASK *atp;
@@ -899,10 +886,9 @@ void ACTIVE_TASK::send_network_available() {
     return;
 }
 
-// See if the app has placed a new message in shared mem
-// (with CPU done, frac done etc.)
-// If so parse it and return true.
-//
+/// See if the app has placed a new message in shared mem
+/// (with CPU done, frac done, etc).
+/// If so parse it and return true.
 bool ACTIVE_TASK::get_app_status_msg() {
     char msg_buf[MSG_CHANNEL_SIZE];
     double fd;
@@ -973,10 +959,9 @@ bool ACTIVE_TASK::get_trickle_up_msg() {
     return found;
 }
 
-// check for msgs from active tasks.
-// Return true if any of them has changed its checkpoint_cpu_time
-// (since in that case we need to write state file)
-//
+/// Check for msgs from active tasks.
+/// Return true if any of them has changed its checkpoint_cpu_time
+/// (since in that case we need to write state file)
 bool ACTIVE_TASK_SET::get_msgs() {
     unsigned int i;
     ACTIVE_TASK *atp;

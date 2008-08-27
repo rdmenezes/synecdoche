@@ -40,38 +40,38 @@ class XML_PARSER;
 struct LOG_FLAGS {
     // on by default, user-readable
     //
-    bool task;              // task start and finish
-    bool file_xfer;         // file transfer start and finish
-    bool sched_ops;         // interactions with schedulers
+    bool task;              ///< task start and finish
+    bool file_xfer;         ///< file transfer start and finish
+    bool sched_ops;         ///< interactions with schedulers
 
     // off by default; intended for developers and testers
     //
-    bool cpu_sched;         // preemption and resumption
-    bool cpu_sched_debug;   // explain scheduler decisions
-    bool rr_simulation;     // results of rr simulator
-    bool debt_debug;        // changes to debt
-    bool task_debug;        // task start and control details
-                            // also prints when apps checkpoint
-    bool work_fetch_debug;  // work fetch policy 
+    bool cpu_sched;         ///< preemption and resumption
+    bool cpu_sched_debug;   ///< explain scheduler decisions
+    bool rr_simulation;     ///< results of rr simulator
+    bool debt_debug;        ///< changes to debt
+    bool task_debug;        ///< task start and control details
+                            ///< also prints when apps checkpoint
+    bool work_fetch_debug;  ///< work fetch policy 
 
-    bool unparsed_xml;      // show unparsed XML lines
-    bool state_debug;       // print textual summary of CLIENT_STATE initially
-                            // and after each scheduler RPC and garbage collect
-                            // also show actions of garbage collector
-                            // also show when state file is read or written
-    bool file_xfer_debug;   // show completion of FILE_XFER
+    bool unparsed_xml;      ///< show unparsed XML lines
+    bool state_debug;       ///< print textual summary of CLIENT_STATE initially
+                            ///< and after each scheduler RPC and garbage collect
+                            ///< also show actions of garbage collector
+                            ///< also show when state file is read or written
+    bool file_xfer_debug;   ///< show completion of FILE_XFER
     bool sched_op_debug;
     bool http_debug;
     bool proxy_debug;
-    bool time_debug;        // changes in on_frac, active_frac, connected_frac
+    bool time_debug;        ///< changes in on_frac, active_frac, connected_frac
     bool http_xfer_debug;
-    bool benchmark_debug;   // debug CPU benchmarks
-    bool poll_debug;        // show what polls are responding
+    bool benchmark_debug;   ///< debug CPU benchmarks
+    bool poll_debug;        ///< show what polls are responding
     bool guirpc_debug;
     bool scrsave_debug;
-    bool app_msg_send;       // show shared-mem message to apps
-    bool app_msg_receive;    // show shared-mem message from apps
-	bool mem_usage_debug;	 // memory usage
+    bool app_msg_send;       ///< show shared-mem message to apps
+    bool app_msg_receive;    ///< show shared-mem message from apps
+	bool mem_usage_debug;	 ///< memory usage
 	bool network_status_debug;
     bool checkpoint_debug;
 
