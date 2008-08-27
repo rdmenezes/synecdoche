@@ -27,27 +27,28 @@
 #include "prefs.h"
 #include "common_defs.h"
 
-// Communication between the core client and the BOINC app library.
-// This code is linked into both core client and app lib.
-//
-// Some apps may involve separate "coordinator" and "worker" programs.
-// The coordinator runs one or more worker programs in sequence,
-// and don't do work themselves.
-//
-// Includes the following:
-// - shared memory (APP_CLIENT_SHM)
-// - main init file
-// - fd init file
-// - graphics init file
-// - conversion of symbolic links
+/// \file
+/// Communication between the core client and the BOINC app library.
+/// This code is linked into both core client and app lib.
+///
+/// Some apps may involve separate "coordinator" and "worker" programs.
+/// The coordinator runs one or more worker programs in sequence,
+/// and don't do work themselves.
+///
+/// Includes the following:
+/// - shared memory (APP_CLIENT_SHM)
+/// - main init file
+/// - fd init file
+/// - graphics init file
+/// - conversion of symbolic links
+///
+/// Shared memory is a set of MSG_CHANNELs.
+/// First byte of a channel is nonzero if
+/// the channel contains an unread data.
+/// This is set by the sender and cleared by the receiver.
+/// The sender doesn't write if the flag is set.
+/// Remaining 1023 bytes contain data.
 
-// Shared memory is a set of MSG_CHANNELs.
-// First byte of a channel is nonzero if
-// the channel contains an unread data.
-// This is set by the sender and cleared by the receiver.
-// The sender doesn't write if the flag is set.
-// Remaining 1023 bytes contain data.
-//
 #define MSG_CHANNEL_SIZE 1024
 
 struct MSG_CHANNEL {
@@ -97,9 +98,9 @@ struct SHARED_MEM {
         // <have_new_trickle_down/>
 };
 
-// MSG_QUEUE provides a queuing mechanism for shared-mem messages
-// (which don't have one otherwise)
-//
+/// MSG_QUEUE provides a queuing mechanism for shared-mem messages
+/// (which don't have one otherwise)
+
 struct MSG_QUEUE {
     std::vector<std::string> msgs;
     char name[256];
@@ -141,8 +142,7 @@ public:
     typedef int SHMEM_SEG_NAME;
 #endif
 
-// parsed version of main init file
-//
+/// parsed version of main init file
 struct APP_INIT_DATA {
     int major_version;
     int minor_version;
@@ -210,8 +210,8 @@ int parse_init_data_file(FILE* f, APP_INIT_DATA&);
 int write_graphics_file(FILE* f, GRAPHICS_INFO* gi);
 int parse_graphics_file(FILE* f, GRAPHICS_INFO* gi);
 
-// filenames used in the slot directory
-//
+/// \name filenames used in the slot directory
+///@{
 #define INIT_DATA_FILE    "init_data.xml"
 #define BOINC_FINISH_CALLED_FILE "boinc_finish_called"
 #define TRICKLE_UP_FILENAME "trickle_up.xml"
@@ -220,9 +220,12 @@ int parse_graphics_file(FILE* f, GRAPHICS_INFO* gi);
 #define LOCKFILE               "boinc_lockfile"
 #define UPLOAD_FILE_REQ_PREFIX      "boinc_ufr_"
 #define UPLOAD_FILE_STATUS_PREFIX   "boinc_ufs_"
+///@}
 
-// other filenames
+/// \name other filenames
+///@{
 #define PROJECT_DIR "projects"
+///@}
 
 extern const char* xml_graphics_modes[NGRAPHICS_MSGS];
 extern int boinc_link(const char* phys_name, const char* logical_name);

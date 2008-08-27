@@ -18,9 +18,9 @@
 #ifndef _GUI_HTTP_
 #define _GUI_HTTP_
 
-// Management of HTTP operations done in response to a GUI RPC,
-// i.e. triggered by the user.
-//
+/// \file
+/// Management of HTTP operations done in response to a GUI RPC,
+/// i.e. triggered by the user.
 
 #include <string>
 

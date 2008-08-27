@@ -47,12 +47,6 @@ using std::string;
 #endif
 
 
-////@begin includes
-////@end includes
-
-////@begin XPM images
-////@end XPM images
-
 // Useful arrays used as templates for arrays created at runtime.
 //
 int iTimeOfDayArraySize = 24;

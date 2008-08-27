@@ -55,13 +55,13 @@ public:
     void skip_unexpected(const char*, bool verbose, const char*);
 };
 
-/////////////// START DEPRECATED XML PARSER
-// Deprecated because it makes assumptions about
-// the format of the XML being parsed
-///////////////
+/// \name DEPRECATED XML PARSER
+/// Deprecated because it makes assumptions about
+/// the format of the XML being parsed
 
-// return true if the tag appears in the line
-//
+/// @{
+
+/// return true if the tag appears in the line
 inline bool match_tag(const char* buf, const char* tag) {
     if (strstr(buf, tag)) return true;
     return false;
@@ -71,10 +71,9 @@ inline bool match_tag(const std::string &s, const char* tag) {
     return match_tag(s.c_str(), tag);
 }
 
-// parse an integer of the form <tag>1234</tag>
-// return true if it's there
-// Note: this doesn't check for the end tag
-//
+/// parse an integer of the form <tag>1234</tag>.
+/// return true if it's there.
+/// Note: this doesn't check for the end tag.
 inline bool parse_int(const char* buf, const char* tag, int& x) {
     const char* p = strstr(buf, tag);
     if (!p) return false;
@@ -82,8 +81,9 @@ inline bool parse_int(const char* buf, const char* tag, int& x) {
     return true;
 }
 
-// Same, for doubles
-//
+/// parse double of the form <tag>1234</tag>.
+/// return true if it's there.
+/// Note: this doesn't check for the end tag.
 inline bool parse_double(const char* buf, const char* tag, double& x) {
     double y;
     const char* p = strstr(buf, tag);
@@ -106,7 +106,9 @@ extern bool parse_str(const char* buf, const char* tag, std::string& dest);
 extern void parse_attr(const char* buf, const char* attrname, char* out, int len);
 extern bool parse_bool(const char*, const char*, bool&);
 
-/////////////// END DEPRECATED XML PARSER
+// END DEPRECATED XML PARSER
+
+/// @}
 
 extern int copy_stream(FILE* in, FILE* out);
 extern int strcatdup(char*& p, char* buf);

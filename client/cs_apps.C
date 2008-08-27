@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// The "policy" part of task execution is here.
-// The "mechanism" part is in app.C
-//
+/// \file
+/// The "policy" part of task execution is here.
+/// The "mechanism" part is in app.C
 
 #include "cpp.h"
 

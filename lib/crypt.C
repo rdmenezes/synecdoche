@@ -36,10 +36,9 @@
 // so some of the following have been modified to use
 // fgets() and sscanf() instead
 
-// write some data in hex notation.
-// NOTE: since length may not be known to the reader,
-// we follow the data with a non-hex character '.'
-//
+/// Write some data in hex notation into a file.
+/// NOTE: since length may not be known to the reader,
+/// we follow the data with a non-hex character '.'
 int print_hex_data(FILE* f, DATA_BLOCK& x) {
     unsigned int i;
 
@@ -52,8 +51,9 @@ int print_hex_data(FILE* f, DATA_BLOCK& x) {
     return 0;
 }
 
-// same, but write to buffer
-//
+/// Write some data in hex notation into a buffer.
+/// NOTE: since length may not be known to the reader,
+/// we follow the data with a non-hex character '.'
 int sprint_hex_data(char* out_buf, DATA_BLOCK& x) {
     unsigned int i;
     const char hex[] = "0123456789abcdef";
@@ -70,10 +70,9 @@ int sprint_hex_data(char* out_buf, DATA_BLOCK& x) {
     return 0;
 }
 
-// scan data in hex notation.
-// stop when you reach a non-parsed character.
-// NOTE: buffer must be big enough; no checking is done.
-//
+/// scan data in hex notation from a file.
+/// stop when you reach a non-parsed character.
+/// NOTE: buffer must be big enough; no checking is done.
 int scan_hex_data(FILE* f, DATA_BLOCK& x) {
     int n;
 
@@ -88,8 +87,9 @@ int scan_hex_data(FILE* f, DATA_BLOCK& x) {
     return 0;
 }
 
-// same, but read from buffer
-//
+/// scan data in hex notation from a buffer.
+/// stop when you reach a non-parsed character.
+/// NOTE: buffer must be big enough; no checking is done.
 static int sscan_hex_data(const char* p, DATA_BLOCK& x) {
     int m, n, nleft=x.len;
 
@@ -112,8 +112,7 @@ static int sscan_hex_data(const char* p, DATA_BLOCK& x) {
     return 0;
 }
 
-// print a key in ASCII form
-//
+/// print a key in ASCII form
 int print_key_hex(FILE* f, KEY* key, int size) {
     int len;
     DATA_BLOCK x;
@@ -140,8 +139,7 @@ int scan_key_hex(FILE* f, KEY* key, int size) {
     return 0;
 }
 
-// parse a text-encoded key from a memory buffer
-//
+/// parse a text-encoded key from a memory buffer
 int sscan_key_hex(const char* buf, KEY* key, int size) {
     int n, retval,num_bits;
     DATA_BLOCK db;
@@ -161,11 +159,10 @@ int sscan_key_hex(const char* buf, KEY* key, int size) {
     return retval;
 }
 
-// encrypt some data.
-// The amount encrypted may be less than what's supplied.
-// The output buffer must be at least MIN_OUT_BUFFER_SIZE.
-// The output block must be decrypted in its entirety.
-//
+/// encrypt some data.
+/// The amount encrypted may be less than what's supplied.
+/// The output buffer must be at least MIN_OUT_BUFFER_SIZE.
+/// The output block must be decrypted in its entirety.
 int encrypt_private(R_RSA_PRIVATE_KEY& key, DATA_BLOCK& in, DATA_BLOCK& out) {
     int n, modulus_len;
 
@@ -221,8 +218,7 @@ int sign_block(DATA_BLOCK& data_block, R_RSA_PRIVATE_KEY& key, DATA_BLOCK& signa
     return 0;
 }
 
-// compute an XML signature element for some text
-//
+/// compute an XML signature element for some text
 int generate_signature(
     char* text_to_sign, char* signature_hex, R_RSA_PRIVATE_KEY& key
 )  {
@@ -285,8 +281,7 @@ int verify_file2(
     return verify_file(path, key, signature, answer);
 }
 
-// verify, where both text and signature are char strings
-//
+/// verify, where both text and signature are char strings
 int verify_string(
     const char* text, const char* signature_text, R_RSA_PUBLIC_KEY& key, bool& answer
 ) {
@@ -311,8 +306,7 @@ int verify_string(
     return 0;
 }
 
-// Same, where public key is also encoded as text
-//
+/// Same, where public key is also encoded as text
 int verify_string2(
     const char* text, const char* signature_text, const char* key_text, bool& answer
 ) {

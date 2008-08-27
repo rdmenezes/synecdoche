@@ -110,9 +110,8 @@ int HOST_INFO::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-// Write the host information, to the client state XML file
-// or in a scheduler request message
-//
+/// Write the host information, to the client state XML file
+/// or in a scheduler request message.
 int HOST_INFO::write(MIOFILE& out, bool suppress_net_info) const {
     out.printf(
         "<host_info>\n"
@@ -167,10 +166,11 @@ int HOST_INFO::write(MIOFILE& out, bool suppress_net_info) const {
     return 0;
 }
 
-// CPU benchmarks are run in a separate process,
-// which communicates its result via a file.
-// The following functions read and write this file.
-//
+/// Parse CPU benchmarks state file.
+///
+/// CPU benchmarks are run in a separate process,
+/// which communicates its result via a file.
+/// The following functions read and write this file.
 int HOST_INFO::parse_cpu_benchmarks(FILE* in) {
     char buf[256];
 
@@ -206,10 +206,9 @@ int HOST_INFO::write_cpu_benchmarks(FILE* out) {
     return 0;
 }
 
-// make a random string using host info.
-// Not recommended for password generation;
-// use as a last resort if more secure methods fail
-//
+/// make a random string using host info.
+/// Not recommended for password generation;
+/// use as a last resort if more secure methods fail
 void HOST_INFO::make_random_string(const char* salt, char* out) {
     char buf[1024];
 
@@ -217,9 +216,8 @@ void HOST_INFO::make_random_string(const char* salt, char* out) {
     md5_block((const unsigned char*) buf, (int)strlen(buf), out);
 }
 
-// make a host cross-project ID.
-// Should be unique across hosts with very high probability
-//
+/// make a host cross-project ID.
+/// Should be unique across hosts with very high probability
 void HOST_INFO::generate_host_cpid() {
     make_random_string("", host_cpid);
 }

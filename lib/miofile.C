@@ -105,8 +105,7 @@ int MIOFILE::_ungetc(int c) {
     return c;
 }
 
-// copy from a file to static buffer
-//
+/// Copy from a file to static buffer.
 int copy_element_contents(MIOFILE& in, const char* end_tag, char* p, int len) {
     char buf[256];
     int n;

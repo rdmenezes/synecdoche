@@ -89,8 +89,7 @@ int is_symlink(const char* path) {
 }
 #endif
 
-// Open a directory
-//
+/// Open a directory
 DIRREF dir_open(const char* p) {
     DIRREF dirp;
 #ifdef _WIN32
@@ -111,8 +110,7 @@ DIRREF dir_open(const char* p) {
     return dirp;
 }
 
-// Scan through a directory and return the next file name in it
-//
+/// Scan through a directory and return the next file name in it
 int dir_scan(char* p, DIRREF dirp, int p_len) {
 #ifdef _WIN32
     WIN32_FIND_DATA data;
@@ -158,8 +156,7 @@ int dir_scan(char* p, DIRREF dirp, int p_len) {
 #endif
 }
 
-// Close a directory
-//
+/// Close a directory
 void dir_close(DIRREF dirp) {
 #ifdef _WIN32
     if (dirp->handle != INVALID_HANDLE_VALUE) {
@@ -187,8 +184,7 @@ DirScanner::DirScanner(string const& path) {
 #endif
 }
 
-// Scan through a directory and return the next file name in it
-//
+/// Scan through a directory and return the next file name in it
 bool DirScanner::scan(string& s) {
 #ifdef _WIN32
     WIN32_FIND_DATA data;
@@ -256,7 +252,6 @@ static int boinc_delete_file_aux(const char* path) {
 }
 
 // Delete the file located at path
-//
 int boinc_delete_file(const char* path) {
     int retval = 0;
 
@@ -279,8 +274,7 @@ int boinc_delete_file(const char* path) {
     return 0;
 }
 
-// get file size
-//
+/// get file size
 int file_size(const char* path, double& size) {
     struct stat sbuf;
     int retval;
@@ -310,8 +304,7 @@ int boinc_truncate(const char* path, double size) {
     return 0;
 }
 
-// remove everything from specified directory
-//
+/// remove everything from specified directory
 int clean_out_dir(const char* dirpath) {
     char filename[256], path[256];
     int retval;
@@ -336,10 +329,9 @@ int clean_out_dir(const char* dirpath) {
     return 0;
 }
 
-// return total size of files in directory and optionally its subdirectories
-// Win: use special version because stat() is slow, can be avoided
-// Unix: follow symbolic links
-//
+/// return total size of files in directory and optionally its subdirectories
+/// Win: use special version because stat() is slow, can be avoided
+/// Unix: follow symbolic links
 int dir_size(const char* dirpath, double& size, bool recurse) {
 #ifdef WIN32
     char path2[_MAX_PATH];
@@ -450,8 +442,7 @@ int boinc_file_exists(const char* path) {
    return true;
 }
 
-// same, but doesn't traverse symlinks
-//
+/// same, but doesn't traverse symlinks
 int boinc_file_or_symlink_exists(const char* path) {
    struct stat buf;
 #ifdef _WIN32
@@ -465,7 +456,6 @@ int boinc_file_or_symlink_exists(const char* path) {
 }
 
 // returns zero on success, nonzero if didn't touch file
-//
 int boinc_touch_file(const char *path) {
     FILE *fp;
 
@@ -522,8 +512,7 @@ int boinc_rename(const char* old, const char* newf) {
     return retval;
 }
 
-// make a dir that's owner and group RWX
-//
+/// make a dir that's owner and group RWX
 int boinc_mkdir(const char* path) {
     if (is_dir(path)) return 0;
 #ifdef _WIN32
@@ -562,9 +551,8 @@ int boinc_chown(const char* path, gid_t gid) {
 }
 #endif
 
-// if "filepath" is of the form a/b/c,
-// create directories dirpath/a, dirpath/a/b etc.
-//
+/// if "filepath" is of the form a/b/c,
+/// create directories dirpath/a, dirpath/a/b etc.
 int boinc_make_dirs(const char* dirpath, const char* filepath) {
     char buf[1024], oldpath[1024], newpath[1024];
     int retval;
@@ -658,8 +646,7 @@ void relative_to_absolute(const char* relname, char* path) {
     }
 }
 
-// get total and free space on current filesystem (in bytes)
-//
+/// get total and free space on current filesystem (in bytes)
 int get_filesystem_info(double &total_space, double &free_space, const char* path) {
 #ifdef _WIN32
     char buf[256];

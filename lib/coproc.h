@@ -27,8 +27,8 @@
 
 struct COPROC {
     char type[256];     // must be unique
-    int count;          // how many are present
-    int used;           // how many are in use (used by client)
+    int count;          ///< how many are present
+    int used;           ///< how many are in use (used by client)
 
     virtual void write_xml(MIOFILE&) const;
     COPROC(const char* t){
