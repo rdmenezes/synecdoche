@@ -21,7 +21,6 @@
 #include "config.h"
 #endif
 
-#include <cstring>
 #include <string>
 
 #include "gui_http.h"
@@ -30,9 +29,7 @@
 #include "filesys.h"
 #include "error_numbers.h"
 
-using std::string;
-
-int GUI_HTTP::do_rpc(GUI_HTTP_OP* op, string url, string output_file) {
+int GUI_HTTP::do_rpc(GUI_HTTP_OP* op, std::string url, std::string output_file) {
     int retval;
 
     if (state != GUI_HTTP_STATE_IDLE) {
@@ -50,7 +47,7 @@ int GUI_HTTP::do_rpc(GUI_HTTP_OP* op, string url, string output_file) {
     return retval;
 }
 
-int GUI_HTTP::do_rpc_post(GUI_HTTP_OP* op, string url, string input_file, string output_file) {
+int GUI_HTTP::do_rpc_post(GUI_HTTP_OP* op, std::string url, std::string input_file, std::string output_file) {
     int retval;
 
     if (state != GUI_HTTP_STATE_IDLE) {
