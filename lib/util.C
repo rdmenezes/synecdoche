@@ -465,7 +465,7 @@ bool process_exists(int pid) {
 ///                 program specified in \a path.
 /// \return Only returns -1, if it returns. On OS/2 the id of the new process
 ///         is returned or -1 in case of an error.
-int do_execv(const char* path, const std::list<std::string>& argv)
+int do_execv(const std::string& path, const std::list<std::string>& argv)
 {
     char** argv_p = new char*[argv.size() + 1];
     int i = 0;
@@ -478,9 +478,9 @@ int do_execv(const char* path, const std::list<std::string>& argv)
     argv_p[i] = 0;
 
 #if defined(__EMX__)
-    int ret_val = spawnv(P_NOWAIT, path, argv_p);
+    int ret_val = spawnv(P_NOWAIT, path.c_str(), argv_p);
 #else
-    int ret_val = execv(path, argv_p);
+    int ret_val = execv(path.c_str(), argv_p);
 #endif
 
     delete[] argv_p;
