@@ -831,7 +831,7 @@ int ACTIVE_TASK::start(bool first_time) {
             retval = do_execv(path, argv);
         }
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
-            "Process creation (%s) failed: %s, errno=%d\n", path, boincerror(retval), errno
+            "Process creation (%s) failed: %s, errno=%d\n", path.c_str(), boincerror(retval), errno
         );
         perror("execv");
         fflush(NULL);
