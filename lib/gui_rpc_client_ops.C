@@ -610,7 +610,7 @@ void CC_STATE::clear() {
     executing_as_daemon = false;
 }
 
-PROJECT* CC_STATE::lookup_project(const string& str) {
+PROJECT* CC_STATE::lookup_project(const std::string& str) {
     unsigned int i;
     for (i=0; i<projects.size(); i++) {
         if (projects[i]->master_url == str) return projects[i];
@@ -619,7 +619,7 @@ PROJECT* CC_STATE::lookup_project(const string& str) {
     return 0;
 }
 
-APP* CC_STATE::lookup_app(const string& project_url, const string& str) {
+APP* CC_STATE::lookup_app(const std::string& project_url, const std::string& str) {
     unsigned int i;
     for (i=0; i<apps.size(); i++) {
         if (apps[i]->project->master_url != project_url) continue;
@@ -629,7 +629,7 @@ APP* CC_STATE::lookup_app(const string& project_url, const string& str) {
     return 0;
 }
 
-APP* CC_STATE::lookup_app(const PROJECT* project, const string& str) {
+APP* CC_STATE::lookup_app(const PROJECT* project, const std::string& str) {
     unsigned int i;
     for (i=0; i<apps.size(); i++) {
         if (apps[i]->project != project) continue;
@@ -640,7 +640,7 @@ APP* CC_STATE::lookup_app(const PROJECT* project, const string& str) {
 }
 
 APP_VERSION* CC_STATE::lookup_app_version(
-    const string& project_url, const string& str, int version_num
+    const std::string& project_url, const std::string& str, int version_num
 ) {
     unsigned int i;
     for (i=0; i<app_versions.size(); i++) {
@@ -653,7 +653,7 @@ APP_VERSION* CC_STATE::lookup_app_version(
 }
 
 APP_VERSION* CC_STATE::lookup_app_version(
-    const PROJECT* project, const string& str, int version_num
+    const PROJECT* project, const std::string& str, int version_num
 ) {
     unsigned int i;
     for (i=0; i<app_versions.size(); i++) {
@@ -665,7 +665,7 @@ APP_VERSION* CC_STATE::lookup_app_version(
     return 0;
 }
 
-WORKUNIT* CC_STATE::lookup_wu(const string& project_url, const string& str) {
+WORKUNIT* CC_STATE::lookup_wu(const std::string& project_url, const std::string& str) {
     unsigned int i;
     for (i=0; i<wus.size(); i++) {
         if (wus[i]->project->master_url != project_url) continue;
@@ -675,7 +675,7 @@ WORKUNIT* CC_STATE::lookup_wu(const string& project_url, const string& str) {
     return 0;
 }
 
-WORKUNIT* CC_STATE::lookup_wu(const PROJECT* project, const string& str) {
+WORKUNIT* CC_STATE::lookup_wu(const PROJECT* project, const std::string& str) {
     unsigned int i;
     for (i=0; i<wus.size(); i++) {
         if (wus[i]->project != project) continue;
@@ -685,7 +685,7 @@ WORKUNIT* CC_STATE::lookup_wu(const PROJECT* project, const string& str) {
     return 0;
 }
 
-RESULT* CC_STATE::lookup_result(const string& project_url, const string& str) {
+RESULT* CC_STATE::lookup_result(const std::string& project_url, const std::string& str) {
     unsigned int i;
     for (i=0; i<results.size(); i++) {
         if (results[i]->project->master_url != project_url) continue;
@@ -695,7 +695,7 @@ RESULT* CC_STATE::lookup_result(const string& project_url, const string& str) {
     return 0;
 }
 
-RESULT* CC_STATE::lookup_result(const PROJECT* project, const string& str) {
+RESULT* CC_STATE::lookup_result(const PROJECT* project, const std::string& str) {
     unsigned int i;
     for (i=0; i<results.size(); i++) {
         if (results[i]->project != project) continue;
@@ -1953,7 +1953,7 @@ int RPC_CLIENT::get_project_config_poll(PROJECT_CONFIG& pc) {
     return retval;
 }
 
-static string get_passwd_hash(const string& passwd, const string& email_addr) {
+static string get_passwd_hash(const std::string& passwd, const std::string& email_addr) {
     return md5_string(passwd+email_addr);
 
 }
@@ -2057,7 +2057,7 @@ int RPC_CLIENT::read_global_prefs_override() {
     return rpc.do_rpc("<read_global_prefs_override/>");
 }
 
-int RPC_CLIENT::get_global_prefs_file(string& s) {
+int RPC_CLIENT::get_global_prefs_file(std::string& s) {
     int retval;
     SET_LOCALE sl;
     RPC rpc(this);
@@ -2086,7 +2086,7 @@ int RPC_CLIENT::get_global_prefs_file(string& s) {
     return 0;
 }
 
-int RPC_CLIENT::get_global_prefs_working(string& s) {
+int RPC_CLIENT::get_global_prefs_working(std::string& s) {
     int retval;
     SET_LOCALE sl;
     RPC rpc(this);
@@ -2135,7 +2135,7 @@ int RPC_CLIENT::get_global_prefs_working_struct(GLOBAL_PREFS& prefs, GLOBAL_PREF
     return 0;
 }
 
-int RPC_CLIENT::get_global_prefs_override(string& s) {
+int RPC_CLIENT::get_global_prefs_override(std::string& s) {
     int retval;
     SET_LOCALE sl;
     RPC rpc(this);
@@ -2164,7 +2164,7 @@ int RPC_CLIENT::get_global_prefs_override(string& s) {
     return 0;
 }
 
-int RPC_CLIENT::set_global_prefs_override(const string& s) {
+int RPC_CLIENT::set_global_prefs_override(const std::string& s) {
     int retval;
     RPC rpc(this);
     char buf[64000];

@@ -90,7 +90,7 @@ bool parse_str(const char* buf, const char* tag, char* dest, int destlen) {
     return true;
 }
 
-bool parse_str(const char* buf, const char* tag, string& dest) {
+bool parse_str(const char* buf, const char* tag, std::string& dest) {
     char tempbuf[1024];
     if (!parse_str(buf, tag, tempbuf, 1024)) return false;
     dest = tempbuf;
@@ -171,7 +171,7 @@ int copy_element_contents(FILE* in, const char* end_tag, char* p, int len) {
     return ERR_XML_PARSE;
 }
 
-int copy_element_contents(FILE* in, const char* end_tag, string& str) {
+int copy_element_contents(FILE* in, const char* end_tag, std::string& str) {
     char buf[256];
 
     str = "";
@@ -546,7 +546,7 @@ bool XML_PARSER::parse_str(
 }
 
 bool XML_PARSER::parse_string(
-    char* parsed_tag, const char* start_tag, string& str
+    char* parsed_tag, const char* start_tag, std::string& str
 ) {
     char buf[8192];
     bool flag = parse_str(parsed_tag, start_tag, buf, sizeof(buf));

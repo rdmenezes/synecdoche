@@ -1024,7 +1024,7 @@ bool FILE_INFO::had_failure(int& failnum) const {
     return false;
 }
 
-void FILE_INFO::failure_message(string& s) const {
+void FILE_INFO::failure_message(std::string& s) const {
     char buf[1024];
     sprintf(buf,
         "<file_xfer_error>\n"
@@ -1175,7 +1175,7 @@ bool APP_VERSION::had_download_failure(int& failnum) const {
     return false;
 }
 
-void APP_VERSION::get_file_errors(string& str) {
+void APP_VERSION::get_file_errors(std::string& str) {
     int errnum;
     unsigned int i;
     FILE_INFO* fip;
@@ -1373,7 +1373,7 @@ bool WORKUNIT::had_download_failure(int& failnum) const {
     return false;
 }
 
-void WORKUNIT::get_file_errors(string& str) const {
+void WORKUNIT::get_file_errors(std::string& str) const {
     int x;
     unsigned int i;
     FILE_INFO* fip;

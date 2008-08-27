@@ -90,7 +90,7 @@ void ACCOUNT_IN::parse(const char* buf) {
     canonicalize_master_url(url);
 }
 
-int GET_PROJECT_CONFIG_OP::do_rpc(const string& master_url) {
+int GET_PROJECT_CONFIG_OP::do_rpc(const std::string& master_url) {
     int retval;
     string url = master_url;
 
