@@ -61,14 +61,13 @@ public:
 
 /// @{
 
-/// return true if the tag appears in the line
-inline bool match_tag(const char* buf, const char* tag) {
-    if (strstr(buf, tag)) return true;
-    return false;
-}
-
-inline bool match_tag(const std::string &s, const char* tag) {
-    return match_tag(s.c_str(), tag);
+/// Check if the given line contains the given tag.
+///
+/// \param[in] s Line of text to search in.
+/// \param[in] tag Tag to search for.
+/// \return True if \a tag exists in \a s.
+inline bool match_tag(const std::string& s, const std::string& tag) {
+    return (s.find(tag) != std::string::npos);
 }
 
 /// parse an integer of the form <tag>1234</tag>.
@@ -124,6 +123,8 @@ extern char* sgets(char* buf, int len, char* &in);
 extern void xml_escape(const char*, char*);
 extern void xml_unescape(const char*, char*);
 extern void extract_venue(const char*, const char*, char*);
-extern int skip_unrecognized(char* buf, MIOFILE&);
+
+/// Skip unrecognized line.
+extern int skip_unrecognized(char* buf, MIOFILE& fin);
 
 #endif

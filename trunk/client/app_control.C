@@ -53,6 +53,7 @@
 #endif
 
 #include <vector>
+#include <sstream>
 
 #include "filesys.h"
 #include "error_numbers.h"
@@ -382,9 +383,9 @@ void ACTIVE_TASK::handle_exited_app(int stat)
 }
 
 bool ACTIVE_TASK::finish_file_present() {
-    char path[256];
-    sprintf(path, "%s/%s", slot_dir, BOINC_FINISH_CALLED_FILE);
-    return (boinc_file_exists(path) != 0);
+    std::ostringstream path;
+    path << slot_dir << '/' << BOINC_FINISH_CALLED_FILE;
+    return (boinc_file_exists(path.str()) != 0);
 }
 
 void ACTIVE_TASK_SET::send_trickle_downs() {

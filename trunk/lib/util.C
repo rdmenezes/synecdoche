@@ -38,11 +38,12 @@
 #include <signal.h>
 #include <sys/resource.h>
 #include <errno.h>
-#include <string>
 #include <cstring>
 #include <list>
 #endif
 
+#include <string>
+#include <sstream>
 #include "error_numbers.h"
 #include "common_defs.h"
 #include "filesys.h"
@@ -52,10 +53,6 @@
 #include "mfile.h"
 #include "miofile.h"
 #include "parse.h"
-
-using std::min;
-using std::string;
-using std::vector;
 
 #define EPOCHFILETIME_SEC (11644473600.)
 #define TEN_MILLION 10000000.
@@ -107,11 +104,10 @@ void boinc_sleep(double seconds) {
 #endif
 }
 
-void push_unique(string s, vector<string>& v) {
-    for (unsigned int i=0; i<v.size();i++) {
-        if (s == v[i]) return;
+void push_unique(std::string s, std::vector<std::string>& v) {
+    if (std::find(v.begin(), v.end(), s) == v.end()) {
+        v.push_back(s);
     }
-    v.push_back(s);
 }
 
 #ifdef _WIN32
@@ -313,7 +309,7 @@ int read_file_malloc(const char* path, char*& buf, int max_len, bool tail) {
 }
 
 /// read file (at most max_len chars, if nonzero) into string
-int read_file_string(const char* path, string& result, int max_len, bool tail) {
+int read_file_string(const char* path, std::string& result, int max_len, bool tail) {
     result.erase();
     int retval;
     char* buf;
@@ -490,27 +486,31 @@ int do_execv(const std::string& path, const std::list<std::string>& argv)
 #endif
 
 #ifdef _WIN32
+/// Check if there is a mutex with a special name.
+/// Used to prevent more than one running instance of the client.
+///
+/// \param[in] dir Directory containing the lockfile (not used on Windows).
+/// \return ERR_ALREADY_RUNNING if the mutex already exists, zero otherwise.
 static int get_client_mutex(const char*) {
-    char buf[MAX_PATH] = "";
-    
-    // Global mutex on Win2k and later
-    //
-    if (IsWindows2000Compatible()) {
-        strcpy(buf, "Global\\");
-    }
-    strcat( buf, RUN_MUTEX);
+    std::string buf;
 
-    HANDLE h = CreateMutex(NULL, true, buf);
-    if ((h==0) || (GetLastError() == ERROR_ALREADY_EXISTS)) {
+    // Global mutex on Win2k and later
+    if (IsWindows2000Compatible()) {
+        buf = "Global\\";
+    }
+    buf += RUN_MUTEX;
+
+    HANDLE h = CreateMutex(NULL, true, buf.c_str());
+    if ((h == 0) || (GetLastError() == ERROR_ALREADY_EXISTS)) {
         return ERR_ALREADY_RUNNING;
     }
 #else
 static int get_client_mutex(const char* dir) {
-    char path[1024];
+    std::ostringstream path;
     static FILE_LOCK file_lock;
 
-    sprintf(path, "%s/%s", dir, LOCK_FILE_NAME);
-    if (file_lock.lock(path)) {
+    path << dir << '/' << LOCK_FILE_NAME;
+    if (file_lock.lock(path.str().c_str())) {
         return ERR_ALREADY_RUNNING;
     }
 #endif
