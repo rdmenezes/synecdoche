@@ -222,7 +222,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         disk_total, disk_project
     );
 
-    if (coprocs.coprocs.size()) {
+    if (!coprocs.coprocs.empty()) {
         fprintf(f, "    <coprocs>\n");
         for (i=0; i<coprocs.coprocs.size(); i++) {
             COPROC* c = coprocs.coprocs[i];

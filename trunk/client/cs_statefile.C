@@ -658,7 +658,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         new_version_check_time,
         all_projects_list_check_time
     );
-    if (newer_version.size()) {
+    if (!newer_version.empty()) {
         f.printf("<newer_version>%s</newer_version>\n", newer_version.c_str());
     }
     for (i=1; i<platforms.size(); i++) {

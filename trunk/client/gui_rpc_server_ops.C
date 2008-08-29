@@ -614,7 +614,7 @@ void GUI_RPC_CONN::handle_lookup_account(const char* buf, MIOFILE& fout) {
     ACCOUNT_IN ai;
 
     ai.parse(buf);
-    if (!ai.url.size() || !ai.email_addr.size() || !ai.passwd_hash.size()) {
+    if (ai.url.empty() || ai.email_addr.empty() || ai.passwd_hash.empty()) {
         fout.printf("<error>missing URL, email address, or password</error>\n");
         return;
     }
@@ -785,7 +785,7 @@ static void handle_acct_mgr_rpc_poll(const char*, MIOFILE& fout) {
     fout.printf(
         "<acct_mgr_rpc_reply>\n"
     );
-    if (gstate.acct_mgr_op.error_str.size()) {
+    if (!gstate.acct_mgr_op.error_str.empty()) {
         fout.printf(
             "    <message>%s</message>\n",
             gstate.acct_mgr_op.error_str.c_str()

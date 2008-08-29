@@ -253,7 +253,7 @@ int CLIENT_STATE::init() {
 #if 0
     fake_cuda(coprocs);
 #endif
-    if (coprocs.coprocs.size() == 0) {
+    if (coprocs.coprocs.empty()) {
         msg_printf(NULL, MSG_INFO, "No coprocessors");
     } else {
         for (i=0; i<coprocs.coprocs.size(); i++) {
@@ -297,7 +297,7 @@ int CLIENT_STATE::init() {
         );
         run_cpu_benchmarks = true;
         if (config.dont_contact_ref_site) {
-            if (projects.size() > 0) {
+            if (!projects.empty()) {
                 projects[0]->master_url_fetch_pending = true;
             }
         } else {
@@ -1179,7 +1179,7 @@ bool CLIENT_STATE::update_results() {
             retval = input_files_available(rp, false);
             if (!retval) {
                 rp->set_state(RESULT_FILES_DOWNLOADED, "CS::update_results");
-                if (rp->avp->app_files.size()==0) {
+                if (rp->avp->app_files.empty()) {
                     // if this is a file-transfer app, start the upload phase
                     //
                     rp->set_state(RESULT_FILES_UPLOADING, "CS::update_results");
@@ -1227,7 +1227,7 @@ bool CLIENT_STATE::time_to_exit() const {
         );
         return true;
     }
-    if (exit_when_idle && (results.size() == 0) && contacted_sched_server) {
+    if (exit_when_idle && results.empty() && contacted_sched_server) {
         msg_printf(NULL, MSG_INFO, "exiting because no more results");
         return true;
     }
