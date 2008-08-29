@@ -521,7 +521,7 @@ void PROJECT::link_project_files(bool recreate_symlink_files) {
 void PROJECT::write_project_files(MIOFILE& f) const {
     unsigned int i;
 
-    if (!project_files.size()) return;
+    if (project_files.empty()) return;
     f.printf("<project_files>\n");
     for (i=0; i<project_files.size(); i++) {
         const FILE_REF& fref = project_files[i];
@@ -905,7 +905,7 @@ int FILE_INFO::delete_file() {
 // NULL return means there is no URL of the requested type
 //
 const char* FILE_INFO::get_init_url(bool is_upload) {
-    if (!urls.size()) {
+    if (urls.empty()) {
         return NULL;
     }
 
@@ -944,7 +944,7 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
 // NULL return means you've tried them all.
 //
 const char* FILE_INFO::get_next_url(bool is_upload) {
-    if (!urls.size()) return NULL;
+    if (urls.empty()) return NULL;
     while(1) {
         current_url = (current_url + 1)%((int)urls.size());
         if (current_url == start_url) {
@@ -1034,7 +1034,7 @@ void FILE_INFO::failure_message(std::string& s) const {
         status
     );
     s = buf;
-    if (error_msg.size()) {
+    if (!error_msg.empty()) {
         sprintf(buf,
             "  <error_message>%s</error_message>\n",
             error_msg.c_str()
@@ -1347,7 +1347,7 @@ int WORKUNIT::write(MIOFILE& out) const {
         rsc_memory_bound,
         rsc_disk_bound
     );
-    if (command_line.size()) {
+    if (!command_line.empty()) {
         out.printf(
             "    <command_line>\n"
             "%s\n"

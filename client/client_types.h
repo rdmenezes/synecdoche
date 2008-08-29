@@ -172,7 +172,7 @@ struct RR_SIM_PROJECT_STATUS {
         pending.push_back(rp);
     }
     inline bool none_active() {
-        return !active.size();
+        return active.empty();
     }
     inline bool can_run(RESULT*, int ncpus) {
         return (int)active.size() < ncpus;
@@ -188,7 +188,7 @@ struct RR_SIM_PROJECT_STATUS {
         }
     }
     inline RESULT* get_pending() {
-        if (!pending.size()) return NULL;
+        if (pending.empty()) return NULL;
         RESULT* rp = pending[0];
         pending.erase(pending.begin());
         return rp;

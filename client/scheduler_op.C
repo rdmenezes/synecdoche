@@ -107,7 +107,7 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
     // if project has no schedulers,
     // skip everything else and just get its master file.
     //
-    if (p->scheduler_urls.size() == 0) {
+    if (p->scheduler_urls.empty()) {
         retval = init_master_fetch(p);
         if (retval) {
             sprintf(err_msg,
@@ -319,7 +319,7 @@ int SCHEDULER_OP::parse_master_file(PROJECT* p, vector<std::string> &urls) {
 
     // couldn't find any scheduler URLs in the master file?
     //
-    if ((int) urls.size() == 0) {
+    if (urls.empty()) {
         return ERR_XML_PARSE;
     }
 
@@ -375,7 +375,7 @@ bool SCHEDULER_OP::poll() {
                     );
                 }
                 retval = parse_master_file(cur_proj, urls);
-                if (retval || (urls.size()==0)) {
+                if (retval || urls.empty()) {
                     // master file parse failed.
                     //
                     cur_proj->master_fetch_failures++;

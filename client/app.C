@@ -670,7 +670,7 @@ void MSG_QUEUE::init(char* n) {
 }
 
 void MSG_QUEUE::msg_queue_send(const char* msg, MSG_CHANNEL& channel) {
-    if ((msgs.size()==0) && channel.send_msg(msg)) {
+    if (msgs.empty() && channel.send_msg(msg)) {
 		if (log_flags.app_msg_send) {
             msg_printf(NULL, MSG_INFO, "[app_msg_send] sent %s to %s", msg, name);
 		}
@@ -685,7 +685,7 @@ void MSG_QUEUE::msg_queue_send(const char* msg, MSG_CHANNEL& channel) {
 }
 
 void MSG_QUEUE::msg_queue_poll(MSG_CHANNEL& channel) {
-    if (msgs.size() > 0) {
+    if (!msgs.empty()) {
 		if (log_flags.app_msg_send) {
 			msg_printf(NULL, MSG_INFO,
 				"[app_msg_send] poll: %d msgs queued for %s:",

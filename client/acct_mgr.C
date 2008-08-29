@@ -362,7 +362,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
     // return a BOINC based error code for password failures or invalid
     // email addresses
     //
-    if (error_str.size()) {
+    if (!error_str.empty()) {
         msg_printf(NULL, MSG_USER_ERROR,
             "Account manager error: %d %s", error_num, error_str.c_str()
         );
@@ -427,7 +427,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                     // BAM! leaves authenticator blank if our request message
                     // had the current account info
                     //
-                    if (acct.authenticator.size() && strcmp(pp->authenticator, acct.authenticator.c_str())) {
+                    if (!acct.authenticator.empty() && strcmp(pp->authenticator, acct.authenticator.c_str())) {
                         msg_printf(pp, MSG_INFO,
                             "Already attached under another account"
                         );

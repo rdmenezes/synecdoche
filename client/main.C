@@ -462,7 +462,7 @@ int boinc_main_loop() {
     //
     gstate.parse_env_vars();
 
-    if (gstate.projects.size() == 0) {
+    if (gstate.projects.empty()) {
         msg_printf(NULL, MSG_INFO,
             "This computer is not attached to any projects"
         );
