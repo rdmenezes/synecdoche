@@ -18,9 +18,9 @@
 #ifndef _FILESYS_
 #define _FILESYS_
 
+/// On Windows, retry for this period of time, since some other program
+/// (virus scan, defrag, index) may have the file open.
 #define FILE_RETRY_INTERVAL 5
-    // On Windows, retry for this period of time, since some other program
-    // (virus scan, defrag, index) may have the file open.
 
 
 #if defined(_WIN32) && !defined(__CYGWIN32__)
@@ -57,8 +57,8 @@ extern "C" {
   extern int is_dir(const char* path);
   extern int is_symlink(const char* path);
   extern int boinc_truncate(const char*, double);
-  extern int boinc_file_exists(const char* path);
-  extern int boinc_file_or_symlink_exists(const char* path);
+  extern int boinc_file_exists(const std::string& path);
+  extern int boinc_file_or_symlink_exists(const std::string& path);
 
 #ifdef __cplusplus
 }
@@ -121,8 +121,7 @@ struct FILE_LOCK {
 
 #ifndef _WIN32
 
-// search PATH, find the directory that a program is in, if any
-//
+/// search PATH, find the directory that a program is in, if any
 extern int get_file_dir(char* filename, char* dir);
 
 #endif

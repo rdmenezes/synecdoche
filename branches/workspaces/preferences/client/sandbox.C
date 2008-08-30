@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2007 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -17,6 +18,7 @@
 
 
 #ifndef _WIN32
+#include <sstream>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <grp.h>
@@ -80,19 +82,24 @@ int set_to_project_group(const char* path) {
     return 0;
 }
 
-// POSIX requires that shells run from an application will use the 
-// real UID and GID if different from the effective UID and GID.  
-// Mac OS 10.4 did not enforce this, but OS 10.5 does.  Since 
-// system() invokes a shell, we can't use it to run the switcher 
-// or setprojectgrp utilities, so we must do a fork() and execv().
-//
-int switcher_exec(const char *util_filename, const char* cmdline) {
-    char* argv[100];
-    char util_path[1024];
+/// Run an utility program.
+/// POSIX requires that shells run from an application will use the 
+/// real UID and GID if different from the effective UID and GID.  
+/// Mac OS 10.4 did not enforce this, but OS 10.5 does.  Since 
+/// system() invokes a shell, we can't use it to run the switcher 
+/// or setprojectgrp utilities, so we must do a fork() and execv().
+///
+/// \param[in] util_filename Name of the utility that should get started.
+/// \param[in] cmdline The command line that should get passed to the utility
+///                    denoted by \a util_filename.
+/// \return BOINC_SUCCESS on success, ERR_FORK or ERR_EXEC if the utility
+///                    denoted by \a util_filename could not be started.
+int switcher_exec(const char* util_filename, const char* cmdline) {
+    std::ostringstream util_path;
+    util_path << SWITCHER_DIR << '/' << util_filename;
 
-    sprintf(util_path, "%s/%s", SWITCHER_DIR, util_filename);
-    argv[0] = (char*)util_filename;
-    parse_command_line((char*)cmdline, argv+1);
+    std::list<std::string> argv = parse_command_line(cmdline);
+    argv.push_front(util_filename);
     int pid = fork();
     if (pid == -1) {
         perror("fork() failed in switcher_exec");
@@ -100,7 +107,7 @@ int switcher_exec(const char *util_filename, const char* cmdline) {
     }
     if (pid == 0) {
         // This is the new (forked) process
-        execv(util_path, argv);
+        do_execv(util_path.str(), argv);
         perror("execv failed in switcher_exec");
         return ERR_EXEC;
     }

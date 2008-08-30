@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -26,6 +27,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <list>
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
@@ -82,6 +84,9 @@ extern int run_program(
 extern void kill_program(int);
 extern int get_exit_status(int);
 extern bool process_exists(int);
+
+/// Prepare arguments for execv and call that function.
+extern int do_execv(const std::string& path, const std::list<std::string>& argv);
 #endif
 
 extern int wait_client_mutex(const char* dir, double timeout);

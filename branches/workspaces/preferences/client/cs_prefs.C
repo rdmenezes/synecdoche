@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Logic related to general (also known as global) preferences:
-// when to compute, how much disk to use, etc.
-//
+/// \file
+/// Logic related to general (also known as global) preferences:
+/// when to compute, how much disk to use, etc.
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -46,10 +46,9 @@
 using std::min;
 using std::string;
 
-// Return the maximum allowed disk usage as determined by user preferences.
-// There are three different settings in the prefs;
-// return the least of the three.
-//
+/// Return the maximum allowed disk usage as determined by user preferences.
+/// There are three different settings in the prefs;
+/// return the least of the three.
 double CLIENT_STATE::allowed_disk_usage() {
     double percent_space, min_val;
 
@@ -101,8 +100,7 @@ int CLIENT_STATE::allowed_project_disk_usage(double& size) {
 }
 #endif
 
-// See if we should suspend processing
-//
+/// See if we should suspend processing
 int CLIENT_STATE::check_suspend_processing() {
     if (are_cpu_benchmarks_running()) {
         return SUSPEND_REASON_BENCHMARKS;
@@ -245,24 +243,24 @@ int CLIENT_STATE::resume_network() {
     return 0;
 }
 
-// call this only after parsing global prefs
-//
+/// call this only after parsing global prefs
 PROJECT* CLIENT_STATE::global_prefs_source_project() {
     return lookup_project(global_prefs.source_project);
 }
 
 void CLIENT_STATE::show_global_prefs_source(bool found_venue) {
     PROJECT* pp = global_prefs_source_project();
+    std::string mod_time_string = time_to_string(global_prefs.mod_time);
     if (pp) {
         msg_printf(NULL, MSG_INFO,
             "General prefs: from %s (last modified %s)",
-            pp->get_project_name(), time_to_string(global_prefs.mod_time)
+            pp->get_project_name(), mod_time_string.c_str()
         );
     } else {
         msg_printf(NULL, MSG_INFO,
             "General prefs: from %s (last modified %s)",
             global_prefs.source_project,
-            time_to_string(global_prefs.mod_time)
+            mod_time_string.c_str()
         );
     }
     if (strlen(main_host_venue)) {
@@ -283,9 +281,8 @@ void CLIENT_STATE::show_global_prefs_source(bool found_venue) {
     }
 }
 
-// parse user's project preferences,
-// generating FILE_REF and FILE_INFO objects for each <app_file> element.
-//
+/// parse user's project preferences,
+/// generating FILE_REF and FILE_INFO objects for each <app_file> element.
 int PROJECT::parse_preferences_for_user_files() {
     size_t start = 0, end;
     string app_file_xml;
@@ -463,8 +460,7 @@ double CLIENT_STATE::available_ram() {
     }
 }
 
-// max amount that will ever be usable
-//
+/// max amount that will ever be usable
 double CLIENT_STATE::max_available_ram() {
     return host_info.m_nbytes*std::max(
         global_prefs.ram_max_used_busy_frac, global_prefs.ram_max_used_idle_frac

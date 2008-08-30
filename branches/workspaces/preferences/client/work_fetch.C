@@ -15,10 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// High-level logic for communicating with scheduling servers,
-// and for merging the result of a scheduler RPC into the client state
-
-// The scheduler RPC mechanism is in scheduler_op.C
+/// \file
+/// High-level logic for communicating with scheduling servers,
+/// and for merging the result of a scheduler RPC into the client state
+///
+/// The scheduler RPC mechanism is in scheduler_op.C
 
 #include "cpp.h"
 
@@ -56,12 +57,12 @@ using std::max;
 using std::vector;
 using std::string;
 
-// quantities like avg CPU time decay by a factor of e every week
-//
+/// quantities like avg CPU time decay by a factor of e every week
+///
 #define EXP_DECAY_RATE  (1./(SECONDS_PER_DAY*7))
 
-// try to report results this much before their deadline
-//
+/// try to report results this much before their deadline
+///
 #define REPORT_DEADLINE_CUSHION ((double)SECONDS_PER_DAY)
 
 static const char* urgency_name(int urgency) {
@@ -74,9 +75,9 @@ static const char* urgency_name(int urgency) {
     return "Unknown";
 }
 
-// how many CPUs should this project occupy on average,
-// based on its resource share relative to a given set
-//
+/// how many CPUs should this project occupy on average,
+/// based on its resource share relative to a given set
+///
 int CLIENT_STATE::proj_min_results(PROJECT* p, double subset_resource_share) {
     if (p->non_cpu_intensive) {
         return 1;
@@ -110,14 +111,14 @@ void PROJECT::set_min_rpc_time(double future_time, const char* reason) {
     }
 }
 
-// Return true if we should not contact the project yet.
-//
+/// Return true if we should not contact the project yet.
+///
 bool PROJECT::waiting_until_min_rpc_time() {
     return (min_rpc_time > gstate.now);
 }
 
-// find a project that needs to have its master file fetched
-//
+/// find a project that needs to have its master file fetched
+///
 PROJECT* CLIENT_STATE::next_project_master_pending() {
     unsigned int i;
     PROJECT* p;
@@ -133,9 +134,9 @@ PROJECT* CLIENT_STATE::next_project_master_pending() {
     return 0;
 }
 
-// find a project for which a scheduler RPC is pending
-// and we're not backed off
-//
+/// find a project for which a scheduler RPC is pending
+/// and we're not backed off
+///
 PROJECT* CLIENT_STATE::next_project_sched_rpc_pending() {
     unsigned int i;
     PROJECT* p;
@@ -173,15 +174,15 @@ PROJECT* CLIENT_STATE::next_project_trickle_up_pending() {
     return 0;
 }
 
-// Return the best project to fetch work from, NULL if none
-//
-// Pick the one with largest (long term debt - amount of current work)
-//
-// PRECONDITIONS:
-//   - work_request_urgency and work_request set for all projects
-//   - CLIENT_STATE::overall_work_fetch_urgency is set
-// (by previous call to compute_work_requests())
-//
+/// Return the best project to fetch work from, NULL if none
+///
+/// Pick the one with largest (long term debt - amount of current work)
+///
+/// PRECONDITIONS:
+///   - work_request_urgency and work_request set for all projects
+///   - CLIENT_STATE::overall_work_fetch_urgency is set
+/// (by previous call to compute_work_requests())
+///
 PROJECT* CLIENT_STATE::next_project_need_work() {
     PROJECT *p, *p_prospect = NULL;
     unsigned int i;
@@ -234,14 +235,14 @@ PROJECT* CLIENT_STATE::next_project_need_work() {
     return p_prospect;
 }
 
-// find a project with finished results that should be reported.
-// This means:
-//    - we're not backing off contacting the project
-//    - the result is ready_to_report (compute done; files uploaded)
-//    - we're within a day of the report deadline,
-//      or at least a day has elapsed since the result was completed,
-//      or we have a sporadic connection
-//
+/// find a project with finished results that should be reported.
+/// This means:
+///    - we're not backing off contacting the project
+///    - the result is ready_to_report (compute done; files uploaded)
+///    - we're within a day of the report deadline,
+///      or at least a day has elapsed since the result was completed,
+///      or we have a sporadic connection
+///
 PROJECT* CLIENT_STATE::find_project_with_overdue_results() {
     unsigned int i;
     RESULT* r;
@@ -274,8 +275,8 @@ PROJECT* CLIENT_STATE::find_project_with_overdue_results() {
     return 0;
 }
 
-// the fraction of time a given CPU is working for BOINC
-//
+/// the fraction of time a given CPU is working for BOINC
+///
 double CLIENT_STATE::overall_cpu_frac() {
     double running_frac = time_stats.on_frac * time_stats.active_frac * time_stats.cpu_efficiency;
     if (running_frac < 0.01) running_frac = 0.01;
@@ -283,18 +284,18 @@ double CLIENT_STATE::overall_cpu_frac() {
 	return running_frac;
 }
 
-// the expected number of CPU seconds completed by the client
-// in a second of wall-clock time.
-// May be > 1 on a multiprocessor.
-//
+/// the expected number of CPU seconds completed by the client
+/// in a second of wall-clock time.
+/// May be > 1 on a multiprocessor.
+///
 double CLIENT_STATE::avg_proc_rate() {
     return ncpus*overall_cpu_frac();
 }
 
-// estimate wall-clock time until the number of uncompleted results
-// for project p will reach k,
-// given the total resource share of a set of competing projects
-//
+/// estimate wall-clock time until the number of uncompleted results
+/// for project p will reach k,
+/// given the total resource share of a set of competing projects
+///
 double CLIENT_STATE::time_until_work_done(
     PROJECT *p, int k, double subset_resource_share
 ) {
@@ -340,22 +341,22 @@ double CLIENT_STATE::time_until_work_done(
     }
 }
 
-// Top-level function for work fetch policy.
-// Outputs:
-// - overall_work_fetch_urgency
-// - for each contactable project:
-//     - work_request and work_request_urgency
-//
-// Notes:
-// - at most 1 CPU-intensive project will have a nonzero work_request
-//      and a work_request_urgency higher than DONT_NEED.
-//      This prevents projects with low LTD from getting work
-//      even though there was a higher LTD project that should get work.
-// - all non-CPU-intensive projects that need work
-//      and are contactable will have a work request of 1.
-//
-// return false
-//
+/// Top-level function for work fetch policy.
+/// Outputs:
+/// - overall_work_fetch_urgency
+/// - for each contactable project:
+///     - work_request and work_request_urgency
+///
+/// Notes:
+/// - at most 1 CPU-intensive project will have a nonzero work_request
+///      and a work_request_urgency higher than DONT_NEED.
+///      This prevents projects with low LTD from getting work
+///      even though there was a higher LTD project that should get work.
+/// - all non-CPU-intensive projects that need work
+///      and are contactable will have a work request of 1.
+///
+/// return false
+///
 bool CLIENT_STATE::compute_work_requests() {
     unsigned int i;
     static double last_time = 0;
@@ -638,8 +639,8 @@ bool CLIENT_STATE::compute_work_requests() {
     return false;
 }
 
-// called when benchmarks change
-//
+/// called when benchmarks change
+///
 void CLIENT_STATE::scale_duration_correction_factors(double factor) {
     if (factor <= 0) return;
     for (unsigned int i=0; i<projects.size(); i++) {
@@ -654,10 +655,10 @@ void CLIENT_STATE::scale_duration_correction_factors(double factor) {
 	}
 }
 
-// Choose a new host CPID.
-// If using account manager, do scheduler RPCs
-// to all acct-mgr-attached projects to propagate the CPID
-//
+/// Choose a new host CPID.
+/// If using account manager, do scheduler RPCs
+/// to all acct-mgr-attached projects to propagate the CPID
+///
 void CLIENT_STATE::generate_new_host_cpid() {
     host_info.generate_host_cpid();
     for (unsigned int i=0; i<projects.size(); i++) {
@@ -748,9 +749,9 @@ bool RESULT::nearly_runnable() const {
     return runnable() || downloading();
 }
 
-// Return true if the result is waiting for its files to download,
-// and nothing prevents this from happening soon
-//
+/// Return true if the result is waiting for its files to download,
+/// and nothing prevents this from happening soon
+///
 bool RESULT::downloading() const {
     if (suspended_via_gui) return false;
     if (project->suspended_via_gui) return false;
@@ -762,8 +763,8 @@ double RESULT::estimated_cpu_time_uncorrected() const {
     return wup->rsc_fpops_est/gstate.host_info.p_fpops;
 }
 
-// estimate how long a result will take on this host
-//
+/// estimate how long a result will take on this host
+///
 double RESULT::estimated_cpu_time(bool for_work_fetch) const {
 #ifdef SIM
     SIM_PROJECT* spp = (SIM_PROJECT*)project;
@@ -783,11 +784,11 @@ double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) const {
     return estimated_cpu_time(for_work_fetch);
 }
 
-// Returns the estimated CPU time to completion (in seconds) of this task.
-// Compute this as a weighted average of estimates based on
-// 1) the workunit's flops count
-// 2) the current reported CPU time and fraction done
-//
+/// Returns the estimated CPU time to completion (in seconds) of this task.
+/// Compute this as a weighted average of estimates based on
+/// -# the workunit's flops count
+/// -# the current reported CPU time and fraction done
+///
 double ACTIVE_TASK::est_cpu_time_to_completion(bool for_work_fetch) {
     if (fraction_done >= 1) return 0;
     double wu_est = result->estimated_cpu_time(for_work_fetch);
@@ -798,8 +799,8 @@ double ACTIVE_TASK::est_cpu_time_to_completion(bool for_work_fetch) {
     return x;
 }
 
-// trigger work fetch
-// 
+/// trigger work fetch
+/// 
 void CLIENT_STATE::request_work_fetch(const char* where) {
     if (log_flags.work_fetch_debug) {
         msg_printf(0, MSG_INFO, "[work_fetch_debug] Request work fetch: %s", where);

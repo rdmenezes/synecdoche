@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// The "policy" part of file transfer is here.
-// The "mechanism" part is in pers_file_xfer.C and file_xfer.C
-//
+/// \file
+/// The "policy" part of file transfer is here.
+/// The "mechanism" part is in pers_file_xfer.C and file_xfer.C
 
 #include "cpp.h"
 
@@ -50,8 +50,7 @@
 
 using std::vector;
 
-// Decide whether to consider starting a new file transfer
-//
+/// Decide whether to consider starting a new file transfer.
 bool CLIENT_STATE::start_new_file_xfer(PERS_FILE_XFER& pfx) {
     unsigned int i;
     int ntotal=0, nproj=0;
@@ -76,8 +75,7 @@ bool CLIENT_STATE::start_new_file_xfer(PERS_FILE_XFER& pfx) {
     return true;
 }
 
-// Make a directory for each of the projects in the client state
-//
+/// Make a directory for each of the projects in the client state.
 int CLIENT_STATE::make_project_dirs() {
     unsigned int i;
     int retval;
@@ -88,24 +86,23 @@ int CLIENT_STATE::make_project_dirs() {
     return 0;
 }
 
-// Check the existence and/or validity of a file
-// If "strict" is true, check either the digital signature of the file
-// (if signature_required is set) or its MD5 checksum.
-// Otherwise check its size.
-//
-// This is called
-// 1) right after download is finished (CLIENT_STATE::handle_pers_file_xfers())
-// 2) if a needed file is already on disk (PERS_FILE_XFER::start_xfer())
-// 3) in checking whether a result's input files are available
-//    (CLIENT_STATE::input_files_available()).
-//    In this case "strict" is false,
-//    and we just check existence and size (no checksum)
-//
-// If a failure occurs, set the file's "status" field.
-// This will cause the app_version or workunit that used the file
-// to error out (via APP_VERSION::had_download_failure()
-// WORKUNIT::had_download_failure())
-//
+/// Check the existence and/or validity of a file.
+/// If "strict" is true, check either the digital signature of the file
+/// (if signature_required is set) or its MD5 checksum.
+/// Otherwise check its size.
+///
+/// This is called:
+/// -# right after download is finished (CLIENT_STATE::handle_pers_file_xfers()).
+/// -# if a needed file is already on disk (PERS_FILE_XFER::start_xfer()).
+/// -# in checking whether a result's input files are available
+///    (CLIENT_STATE::input_files_available()).
+///    In this case "strict" is false,
+///    and we just check existence and size (no checksum).
+///
+/// If a failure occurs, set the file's "status" field.
+/// This will cause the app_version or workunit that used the file
+/// to error out (via APP_VERSION::had_download_failure()
+/// WORKUNIT::had_download_failure())
 int FILE_INFO::verify_file(bool strict, bool show_errors) {
     char cksum[64], pathname[256];
     bool verified;
@@ -197,9 +194,8 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
     return 0;
 }
 
-// scan all FILE_INFOs and PERS_FILE_XFERs.
-// start and finish downloads and uploads as needed.
-//
+/// scan all FILE_INFOs and PERS_FILE_XFERs.
+/// start and finish downloads and uploads as needed.
 bool CLIENT_STATE::handle_pers_file_xfers() {
     unsigned int i;
     FILE_INFO* fip;
@@ -301,9 +297,8 @@ bool CLIENT_STATE::handle_pers_file_xfers() {
     return action;
 }
 
-// called at startup to ensure that if the core client
-// thinks a file is there, it's actually there
-//
+/// called at startup to ensure that if the core client
+/// thinks a file is there, it's actually there.
 void CLIENT_STATE::check_file_existence() {
     unsigned int i;
     char path[1024];

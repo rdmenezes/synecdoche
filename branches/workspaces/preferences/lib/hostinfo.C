@@ -29,6 +29,8 @@
 #endif
 #endif
 
+#include <sstream>
+
 #include "util.h"
 #include "parse.h"
 #include "md5_file.h"
@@ -110,9 +112,8 @@ int HOST_INFO::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-// Write the host information, to the client state XML file
-// or in a scheduler request message
-//
+/// Write the host information, to the client state XML file
+/// or in a scheduler request message.
 int HOST_INFO::write(MIOFILE& out, bool suppress_net_info) const {
     out.printf(
         "<host_info>\n"
@@ -167,10 +168,11 @@ int HOST_INFO::write(MIOFILE& out, bool suppress_net_info) const {
     return 0;
 }
 
-// CPU benchmarks are run in a separate process,
-// which communicates its result via a file.
-// The following functions read and write this file.
-//
+/// Parse CPU benchmarks state file.
+///
+/// CPU benchmarks are run in a separate process,
+/// which communicates its result via a file.
+/// The following functions read and write this file.
 int HOST_INFO::parse_cpu_benchmarks(FILE* in) {
     char buf[256];
 
@@ -206,20 +208,22 @@ int HOST_INFO::write_cpu_benchmarks(FILE* out) {
     return 0;
 }
 
-// make a random string using host info.
-// Not recommended for password generation;
-// use as a last resort if more secure methods fail
-//
+/// Make a random string using host info.
+/// Not recommended for password generation;
+/// use as a last resort if more secure methods fail
+///
+/// \param[in] salt Some salt that will be included into the random string.
+/// \param[out] out Buffer that will receive the generated random string.
 void HOST_INFO::make_random_string(const char* salt, char* out) {
-    char buf[1024];
+    std::ostringstream buf;
 
-    sprintf(buf, "%f%s%s%f%s", dtime(), domain_name, ip_addr, d_free, salt);
-    md5_block((const unsigned char*) buf, (int)strlen(buf), out);
+    buf << dtime() << domain_name << ip_addr << d_free << salt;
+    std::string buf_s = buf.str();
+    md5_block((const unsigned char*)buf_s.c_str(), (int)buf_s.length(), out);
 }
 
-// make a host cross-project ID.
-// Should be unique across hosts with very high probability
-//
+/// Make a host cross-project ID.
+/// Should be unique across hosts with very high probability
 void HOST_INFO::generate_host_cpid() {
     make_random_string("", host_cpid);
 }

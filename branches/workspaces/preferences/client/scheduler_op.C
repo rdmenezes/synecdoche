@@ -52,9 +52,8 @@ SCHEDULER_OP::SCHEDULER_OP(HTTP_OP_SET* h) {
     http_ops = h;
 }
 
-// See if there's a pending master file fetch.
-// If so, start it and return true.
-//
+/// See if there's a pending master file fetch.
+/// If so, start it and return true.
 bool SCHEDULER_OP::check_master_fetch_start() {
     int retval;
 
@@ -73,11 +72,10 @@ bool SCHEDULER_OP::check_master_fetch_start() {
     return true;
 }
 
-// Try to get work from eligible project with biggest long term debt
-// PRECONDITION: compute_work_requests() has been called
-// to fill in PROJECT::work_request
-// and CLIENT_STATE::overall_work_fetch_urgency
-//
+/// Try to get work from eligible project with biggest long term debt.
+/// PRECONDITION: \link CLIENT_STATE::compute_work_requests compute_work_requests()\endlink has been called
+/// to fill in PROJECT::work_request
+/// and CLIENT_STATE::overall_work_fetch_urgency
 int SCHEDULER_OP::init_get_work() {
     int retval;
 
@@ -92,10 +90,9 @@ int SCHEDULER_OP::init_get_work() {
 }
 
 
-// try to initiate an RPC to the given project.
-// If there are multiple schedulers, start with a random one.
-// User messages and backoff() is done at this level.
-//
+/// Try to initiate an RPC to the given project.
+/// If there are multiple schedulers, start with a random one.
+/// User messages and backoff() is done at this level.
 int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
     int retval;
     char err_msg[256];
@@ -110,7 +107,7 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
     // if project has no schedulers,
     // skip everything else and just get its master file.
     //
-    if (p->scheduler_urls.size() == 0) {
+    if (p->scheduler_urls.empty()) {
         retval = init_master_fetch(p);
         if (retval) {
             sprintf(err_msg,
@@ -150,16 +147,15 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
     return retval;
 }
 
-// One of the following errors occurred:
-// - connection failure in fetching master file
-// - connection failure in scheduler RPC
-// - got master file, but it didn't have any <scheduler> elements
-// - tried all schedulers, none responded
-// - sent nonzero work request, got a reply with no work
-//
-// Back off contacting this project's schedulers,
-// and output an error msg if needed
-//
+/// One of the following errors occurred:
+/// - connection failure in fetching master file
+/// - connection failure in scheduler RPC
+/// - got master file, but it didn't have any <scheduler> elements
+/// - tried all schedulers, none responded
+/// - sent nonzero work request, got a reply with no work
+///
+/// Back off contacting this project's schedulers,
+/// and output an error msg if needed.
 void SCHEDULER_OP::backoff(PROJECT* p, const char *reason_msg) {
     char buf[1024];
 
@@ -199,10 +195,9 @@ void SCHEDULER_OP::backoff(PROJECT* p, const char *reason_msg) {
     p->set_min_rpc_time(gstate.now + exp_backoff, reason_msg);
 }
 
-// low-level routine to initiate an RPC
-// If successful, creates an HTTP_OP that must be polled
-// PRECONDITION: the request file has been created
-//
+/// Low-level routine to initiate an RPC.
+/// If successful, creates an HTTP_OP that must be polled.
+/// PRECONDITION: the request file has been created.
 int SCHEDULER_OP::start_rpc(PROJECT* p) {
     int retval;
     char request_file[1024], reply_file[1024];
@@ -251,8 +246,7 @@ int SCHEDULER_OP::start_rpc(PROJECT* p) {
     return 0;
 }
 
-// initiate a fetch of a project's master URL file
-//
+/// Initiate a fetch of a project's master URL file.
 int SCHEDULER_OP::init_master_fetch(PROJECT* p) {
     int retval;
     char master_filename[256];
@@ -272,8 +266,7 @@ int SCHEDULER_OP::init_master_fetch(PROJECT* p) {
     return 0;
 }
 
-// parse a master file.
-//
+/// Parse a master file.
 int SCHEDULER_OP::parse_master_file(PROJECT* p, vector<std::string> &urls) {
     char buf[256], buf2[256];
     char master_filename[256];
@@ -326,17 +319,16 @@ int SCHEDULER_OP::parse_master_file(PROJECT* p, vector<std::string> &urls) {
 
     // couldn't find any scheduler URLs in the master file?
     //
-    if ((int) urls.size() == 0) {
+    if (urls.empty()) {
         return ERR_XML_PARSE;
     }
 
     return 0;
 }
 
-// A master file has just been read.
-// transfer scheduler URLs to project.
-// Return true if any of them is new
-//
+/// A master file has just been read,
+/// transfer scheduler URLs to project.
+/// Return true if any of them is new.
 bool SCHEDULER_OP::update_urls(PROJECT* p, vector<std::string> &urls) {
     unsigned int i, j;
     bool found, any_new;
@@ -361,8 +353,7 @@ bool SCHEDULER_OP::update_urls(PROJECT* p, vector<std::string> &urls) {
     return any_new;
 }
 
-// poll routine.  If an operation is in progress, check for completion
-//
+/// Poll routine.  If an operation is in progress, check for completion.
 bool SCHEDULER_OP::poll() {
     int retval, nresults;
     vector<std::string> urls;
@@ -384,7 +375,7 @@ bool SCHEDULER_OP::poll() {
                     );
                 }
                 retval = parse_master_file(cur_proj, urls);
-                if (retval || (urls.size()==0)) {
+                if (retval || urls.empty()) {
                     // master file parse failed.
                     //
                     cur_proj->master_fetch_failures++;
@@ -497,10 +488,9 @@ SCHEDULER_REPLY::~SCHEDULER_REPLY() {
     if (code_sign_key_signature) free(code_sign_key_signature);
 }
 
-// parse a scheduler reply.
-// Some of the items go into the SCHEDULER_REPLY object.
-// Others are copied straight to the PROJECT
-//
+/// Parse a scheduler reply.
+/// Some of the items go into the SCHEDULER_REPLY object.
+/// Others are copied straight to the PROJECT.
 int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
     char buf[256], msg_buf[1024], pri_buf[256];
     int retval;

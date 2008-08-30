@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// platform-independent interface to shared memory
+/// \file
+/// platform-independent interface to shared memory
 
 #ifndef BOINC_SHMEM_H
 #define BOINC_SHMEM_H
@@ -40,7 +41,7 @@ int detach_shmem(HANDLE hSharedMem, void* p);
 #else
 #ifndef __EMX__
 #define MMAPPED_FILE_NAME    "boinc_mmap_file"
-extern int create_shmem_mmap(char *path, size_t size, void** pp);
+extern int create_shmem_mmap(const char *path, size_t size, void** pp);
 extern int attach_shmem_mmap(char *path, void** pp);
 extern int detach_shmem_mmap(void* p, size_t size);
 #endif

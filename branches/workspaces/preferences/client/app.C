@@ -15,9 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Abstraction of a set of executing applications,
-// connected to I/O files in various ways.
-// Shouldn't depend on CLIENT_STATE.
+/// \file
+/// Abstraction of a set of executing applications,
+/// connected to I/O files in various ways.
+///
+/// Shouldn't depend on CLIENT_STATE.
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -73,12 +75,13 @@
 using std::max;
 using std::min;
 
+/// If we send app <abort> request, wait this long before killing it.
+/// This gives it time to download symbol files (which can be several MB)
+/// and write stack trace to stderr
 #define ABORT_TIMEOUT   60
-    // if we send app <abort> request, wait this long before killing it.
-    // This gives it time to download symbol files (which can be several MB)
-    // and write stack trace to stderr
+/// If we send app <quit> request, wait this long before killing it.
+/// Shorter than ABORT_TIMEOUT because no stack trace is generated.
 #define QUIT_TIMEOUT    10
-    // Same, for <quit>.  Shorter because no stack trace is generated
 
 ACTIVE_TASK::~ACTIVE_TASK() {
 #ifndef SIM
@@ -150,10 +153,9 @@ void ACTIVE_TASK::set_task_state(int val, const char* where) {
 
 #ifdef _WIN32
 
-// call this when a process has exited but will be started again
-// (e.g. suspend via quit, exited but no finish file).
-// In these cases we want to keep the shmem and events
-//
+/// call this when a process has exited but will be started again
+/// (e.g. suspend via quit, exited but no finish file).
+/// In these cases we want to keep the shmem and events
 void ACTIVE_TASK::close_process_handles() {
     if (pid_handle) {
         CloseHandle(pid_handle);
@@ -162,8 +164,7 @@ void ACTIVE_TASK::close_process_handles() {
 }
 #endif
 
-// called when a process has exited
-//
+/// called when a process has exited
 void ACTIVE_TASK::cleanup_task() {
 #ifdef _WIN32
     // detach from shared mem.
@@ -289,11 +290,10 @@ void ACTIVE_TASK_SET::get_memory_usage() {
 #endif
 }
 
-// Do periodic checks on running apps:
-// - get latest CPU time and % done info
-// - check if any has exited, and clean up
-// - see if any has exceeded its CPU or disk space limits, and abort it
-//
+/// Do periodic checks on running apps:
+/// - get latest CPU time and % done info
+/// - check if any has exited, and clean up
+/// - see if any has exceeded its CPU or disk space limits, and abort it
 bool ACTIVE_TASK_SET::poll() {
     bool action;
     unsigned int i;
@@ -330,9 +330,8 @@ bool ACTIVE_TASK_SET::poll() {
     return action;
 }
 
-// There's a new trickle file.
-// Move it from slot dir to project dir
-//
+/// There's a new trickle file.
+/// Move it from slot dir to project dir
 int ACTIVE_TASK::move_trickle_file() {
     char project_dir[256], new_path[1024], old_path[1024];
     int retval;
@@ -354,8 +353,7 @@ int ACTIVE_TASK::move_trickle_file() {
     return 0;
 }
 
-// size of output files and files in slot dir
-//
+/// size of output files and files in slot dir
 int ACTIVE_TASK::current_disk_usage(double& size) const {
     double x;
     unsigned int i;
@@ -394,9 +392,8 @@ bool ACTIVE_TASK_SET::is_slot_dir_in_use(const char* dir) const {
     return false;
 }
 
-// Get a free slot,
-// and make a slot dir if needed
-//
+/// Get a free slot,
+/// and make a slot dir if needed
 int ACTIVE_TASK_SET::get_free_slot() const {
     int j, retval;
     char path[1024];
@@ -619,8 +616,7 @@ void ACTIVE_TASK::free_coprocs() {
     coprocs_reserved = false;
 }
 
-// Write XML information about this active task set
-//
+/// Write XML information about this active task set
 int ACTIVE_TASK_SET::write(MIOFILE& fout) const {
     unsigned int i;
     int retval;
@@ -634,8 +630,7 @@ int ACTIVE_TASK_SET::write(MIOFILE& fout) const {
     return 0;
 }
 
-// Parse XML information about an active task set
-//
+/// Parse XML information about an active task set
 int ACTIVE_TASK_SET::parse(MIOFILE& fin) {
     ACTIVE_TASK* atp;
     char buf[256];
@@ -675,7 +670,7 @@ void MSG_QUEUE::init(char* n) {
 }
 
 void MSG_QUEUE::msg_queue_send(const char* msg, MSG_CHANNEL& channel) {
-    if ((msgs.size()==0) && channel.send_msg(msg)) {
+    if (msgs.empty() && channel.send_msg(msg)) {
 		if (log_flags.app_msg_send) {
             msg_printf(NULL, MSG_INFO, "[app_msg_send] sent %s to %s", msg, name);
 		}
@@ -690,7 +685,7 @@ void MSG_QUEUE::msg_queue_send(const char* msg, MSG_CHANNEL& channel) {
 }
 
 void MSG_QUEUE::msg_queue_poll(MSG_CHANNEL& channel) {
-    if (msgs.size() > 0) {
+    if (!msgs.empty()) {
 		if (log_flags.app_msg_send) {
 			msg_printf(NULL, MSG_INFO,
 				"[app_msg_send] poll: %d msgs queued for %s:",
@@ -712,8 +707,7 @@ void MSG_QUEUE::msg_queue_poll(MSG_CHANNEL& channel) {
     }
 }
 
-// if the last message in the buffer is "msg", remove it and return 1
-//
+/// If the last message in the buffer is "msg", remove it and return 1.
 int MSG_QUEUE::msg_queue_purge(const char* msg) {
 	int count = msgs.size();
 	if (!count) return 0;
@@ -763,10 +757,9 @@ void ACTIVE_TASK_SET::report_overdue() const {
     }
 }
 
-// scan the slot directory, looking for files with names
-// of the form boinc_ufr_X.
-// Then mark file X as being present (and uploadable)
-//
+/// scan the slot directory, looking for files with names
+/// of the form boinc_ufr_X.
+/// Then mark file X as being present (and uploadable)
 int ACTIVE_TASK::handle_upload_files() {
     std::string filename;
     char buf[256], path[1024];
@@ -830,9 +823,8 @@ void ACTIVE_TASK::upload_notify_app(const FILE_INFO* fip, const FILE_REF* frp) {
     send_upload_file_status = true;
 }
 
-// a file upload has finished.
-// If any running apps are waiting for it, notify them
-//
+/// a file upload has finished.
+/// If any running apps are waiting for it, notify them.
 void ACTIVE_TASK_SET::upload_notify_app(const FILE_INFO* fip) {
     for (unsigned int i=0; i<active_tasks.size(); i++) {
         ACTIVE_TASK* atp = active_tasks[i];
