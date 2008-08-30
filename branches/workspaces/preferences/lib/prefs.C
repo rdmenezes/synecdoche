@@ -362,15 +362,16 @@ int GLOBAL_PREFS::parse_override(XML_PARSER& xp) {
         }
         if (!strcmp(tag, "/global_preferences")) {
             return 0;
-        }        
+        }
     }
     return ERR_XML_PARSE;
 }
 
-// Parse global prefs, overriding whatever is currently in the structure.
-// xp must be positioned at the start of the structure to parse.
-// The opening tag is already consumed.
-//
+/// Parse global prefs, overriding whatever is currently in the structure.
+/// \c xp must be positioned at the start of the structure to parse.
+/// The opening tag is already consumed.
+///
+/// \return 0 on success, or ERR_XML_PARSE
 int GLOBAL_PREFS::recursive_parse_venue(XML_PARSER& xp, GLOBAL_PREFS* const prefs, std::deque<GLOBAL_PREFS*>* venues) {
     char tag[256];
     bool is_tag;
@@ -515,8 +516,8 @@ int GLOBAL_PREFS::parse_file(const char* filename) {
 /// Write the global prefs that are actually in force
 /// (our particular venue, modified by overwrite file).
 /// This is used to write
-/// 1) the app init data file
-/// 2) GUI RPC get_state reply
+/// -# the app init data file
+/// -# GUI RPC get_state reply
 /// Not used for scheduler request; there, we just copy the
 /// global_prefs.xml file (which includes all venues).
 int GLOBAL_PREFS::write(MIOFILE& f) const {
@@ -631,7 +632,7 @@ std::string VENUE::get_venue_description() const {
     }
 }
 
-
+/// Parses a <venue> element.
 int VENUE::parse(XML_PARSER& xp) {
     char tag[256];
     bool is_tag;

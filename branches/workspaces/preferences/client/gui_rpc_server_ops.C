@@ -803,8 +803,8 @@ static void handle_get_newer_version(MIOFILE& fout) {
     );
 }
 
-/// Returns the venue name whether it exists or not, and the description if
-/// there are preferences for the venue.
+/// Sends the current venue name whether it exists or not, and the description
+/// if there are preferences for the venue.
 static void handle_get_venue(MIOFILE& fout) {
 
     fout.printf("  <venue>\n");
@@ -818,6 +818,8 @@ static void handle_get_venue(MIOFILE& fout) {
     fout.printf("  </venue>\n");
 }
 
+/// Changes the active preferences to the specified venue, or the default
+/// venue if the specified name isn't found.
 static void handle_set_venue(char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
@@ -838,6 +840,8 @@ static void handle_set_venue(char* buf, MIOFILE& fout) {
     fout.printf("<error>Venue not specified</error>\n");
 }
 
+/// Sends a list of all available venues. This list only includes venues
+/// with preferences available.
 static void handle_get_venue_list(MIOFILE& fout) {
 
     fout.printf("<venue_list>\n");
@@ -853,6 +857,8 @@ static void handle_get_venue_list(MIOFILE& fout) {
     fout.printf("</venue_list>\n");
 }
 
+/// Sends a <global_preferences> element for the specified venue. If the venue
+/// is not found, an error is sent.
 static void handle_get_prefs_for_venue(char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
@@ -876,6 +882,8 @@ static void handle_get_prefs_for_venue(char* buf, MIOFILE& fout) {
     fout.printf("<error>Venue not specified</error>\n");
 }
 
+/// Adds or updates preferences for the specified venue. If the venue is the
+/// current venue, then the active preferences are updated.
 static void handle_set_prefs_for_venue(char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
@@ -915,6 +923,8 @@ static void handle_set_prefs_for_venue(char* buf, MIOFILE& fout) {
     fout.printf("<error>Venue not specified</error>\n");
 }
 
+/// Deletes preferences for the specified venue name. If the venue is the
+/// current venue, then the active preferences are updated.
 static void handle_delete_prefs_for_venue(char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
@@ -940,7 +950,8 @@ static void handle_delete_prefs_for_venue(char* buf, MIOFILE& fout) {
     fout.printf("<error>Venue not specified</error>\n");
 }
 
-// This doesn't do what it says on the tin.
+/// This doesn't do what it says on the tin.
+/// \deprecated Fortunately, I don't think it is used anywhere.
 static void handle_get_global_prefs_file(MIOFILE& fout) {
     GLOBAL_PREFS p;
     int retval = p.parse_file(GLOBAL_PREFS_FILE_NAME);

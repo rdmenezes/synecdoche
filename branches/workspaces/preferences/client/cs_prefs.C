@@ -332,23 +332,25 @@ int PROJECT::parse_preferences_for_user_files() {
     return 0;
 }
 
-// Read global preferences into the venues vector.
-// This is called:
-// - on startup
-// - on completion of a scheduler or AMS RPC, if they sent prefs
-// - in response to read_global_prefs_override GUI RPC
-
+/// Read global preferences into the venues list.
+/// This is called:
+/// - on startup
+/// - on completion of a scheduler or AMS RPC, if they sent prefs
+/// - in response to read_global_prefs_override GUI RPC
+/// This function also updates the active preferences.
 void CLIENT_STATE::read_global_prefs() {
 
     GLOBAL_PREFS::parse_file(GLOBAL_PREFS_FILE_NAME, venues); 
     change_global_prefs(main_host_venue);
 }
 
-// Changes the active global preferences.
-// 1. Copy the global preferences for the specified venue
-// 2. Apply override file (if any)
-// 3. Log new preferences and update state
-
+/// This function handles everything that needs doing when the active
+/// preferences are changed for any reason.
+/// -# Change the current venue to the specified name, whether there
+///    are preferences available for the venue or not.
+/// -# Copy the global preferences for the specified venue (or the default venue)
+/// -# Apply override file (if any)
+/// -# Log new preferences and update state
 void CLIENT_STATE::change_global_prefs(const char* venue) {
 
     FILE* f;
@@ -435,6 +437,9 @@ int CLIENT_STATE::save_global_prefs(
     return 0;
 }
 
+/// \param venue The name of the venue to search for. This is an empty string
+/// for the default venue.
+/// \return A pointer to the matching preferences, or null if none was found.
 GLOBAL_PREFS* CLIENT_STATE::lookup_venue(const char* venue) {
 
     std::deque<GLOBAL_PREFS*>::iterator i = venues.begin();
