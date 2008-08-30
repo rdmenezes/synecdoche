@@ -193,7 +193,6 @@ BEGIN_EVENT_TABLE( CProjectListItemCtrl, wxPanel )
     EVT_LEAVE_WINDOW( CProjectListItemCtrl::OnMouseEnterLeave )
     EVT_LEFT_DOWN( CProjectListItemCtrl::OnMouseClick )
     EVT_LEFT_UP( CProjectListItemCtrl::OnMouseClick )
-    EVT_BUTTON( ID_WEBSITEBUTTON, CProjectListItemCtrl::OnWebsiteButtonClick )
 ////@end CProjectListItemCtrl event table entries
  
 END_EVENT_TABLE()
@@ -255,8 +254,9 @@ void CProjectListItemCtrl::CreateControls()
     m_pTitleStaticCtrl->Create( this, wxID_STATIC, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
     itemFlexGridSizer8->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL, 0);
 
-    m_pWebsiteButtonCtrl = new wxBitmapButton;
+    m_pWebsiteButtonCtrl = new wxStaticBitmap;
     m_pWebsiteButtonCtrl->Create( this, ID_WEBSITEBUTTON, wxBitmap(externalweblink_xpm), wxDefaultPosition, wxSize(12,12), wxNO_BORDER );
+    m_pWebsiteButtonCtrl->Connect(ID_WEBSITEBUTTON, wxEVT_LEFT_UP, wxMouseEventHandler(CProjectListItemCtrl::OnWebsiteButtonClick), 0, this);
     itemFlexGridSizer8->Add(m_pWebsiteButtonCtrl, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 0);
 
     SetSizer(itemBoxSizer7);
@@ -306,7 +306,7 @@ void CProjectListItemCtrl::OnMouseClick( wxMouseEvent& event ) {
  * wxEVT_COMMAND_BUTTON_CLICKED event handler for window
  */
 
-void CProjectListItemCtrl::OnWebsiteButtonClick( wxCommandEvent& /*event*/ ) {
+void CProjectListItemCtrl::OnWebsiteButtonClick( wxMouseEvent& /*event*/ ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectListItemCtrl::OnWebsiteButtonClick - Function Begin"));
 
     if (!m_strURL.IsEmpty()) {

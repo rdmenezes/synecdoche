@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -16,6 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+/// \file
+/// Helper functions for string handling and conversion.
+
 #ifndef STR_UTIL_H
 #define STR_UTIL_H
 
@@ -24,30 +27,44 @@
 #include <cctype>
 #include <cstring>
 #include <string>
-#include <vector>
+#include <list>
 
 #define KILO (1024.0)
 #define MEGA (1048576.0)
 #define GIGA (1024.*1048576.0)
 
 #if !defined(HAVE_STRLCPY)
-extern size_t strlcpy(char*, const char*, size_t);
+/// Use this instead of strncpy().
+extern size_t strlcpy(char* dst, const char* src, size_t size);
 #endif
 
 #if !defined(HAVE_STRLCAT)
-extern size_t strlcat(char *dst, const char *src, size_t size);
+/// Use this instead of strncat().
+extern size_t strlcat(char* dst, const char* src, size_t size);
 #endif
 
 #if !defined(HAVE_STRCASESTR)
-extern char *strcasestr(const char *s1, const char *s2);
+/// Search for a substring while ignoring upper-/lowercase.
+extern char* strcasestr(const char* s1, const char* s2);
 #endif
 
-extern int ndays_to_string(double x, int smallest_timescale, char *buf);
-extern void nbytes_to_string(double nbytes, double total_bytes, char* str, int len);
-extern int parse_command_line(char*, char**);
+/// Convert a double precision time into a string.
+extern int ndays_to_string(double x, int smallest_timescale, char* str, size_t len);
+
+/// Convert \a nbytes into a string.
+extern int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len);
+
+/// Split a string with space separated words into single words.
+extern std::list<std::string> parse_command_line(const char* p);
+
 extern void c2x(char *what);
+
+/// Remove leading and trailing whitespace froma string
 extern void strip_whitespace(char *str);
+
+/// Remove leading and trailing whitespace froma string
 extern void strip_whitespace(std::string&);
+
 extern void unescape_url(std::string& url);
 extern void unescape_url(char *url);
 extern void escape_url(std::string& url);
@@ -55,12 +72,23 @@ extern void escape_url(const char *in, char*out);
 extern void escape_url_readable(const char* in, char* out);
 extern void escape_project_url(const char *in, char* out);
 extern bool valid_master_url(const char*);
+
+/// Canonicalize a master URL.
 extern void canonicalize_master_url(char *url);
+
+/// Canonicalize a master URL.
 extern void canonicalize_master_url(std::string&);
+
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
 #define safe_strcat(x, y) if (strlen(x)+strlen(y)<sizeof(x)) strcat(x, y)
-extern char* time_to_string(double);
-extern char* precision_time_to_string(double);
+
+/// Convert a timestamp into a string.
+extern std::string time_to_string(double t);
+
+/// Convert a timestamp with sub-second precision into a string.
+extern std::string precision_time_to_string(double t);
+
+/// Convert a time difference into a descriptive string.
 extern std::string timediff_format(double);
 
 inline bool ends_with(std::string const& s, std::string const& suffix) {
@@ -79,9 +107,11 @@ inline void downcase_string(std::string& w) {
     }
 }
 
-// convert UNIX time to MySQL timestamp (yyyymmddhhmmss)
-//
-extern void mysql_timestamp(double, char*);
+/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
+extern std::string mysql_timestamp(double dt);
+
+/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
+extern int mysql_timestamp(double dt, char* p, size_t len);
 
 // returns short text description of error corresponding to
 // int errornumber from error_numbers.h

@@ -42,13 +42,12 @@
 
 using std::string;
 
-// write account_*.xml file.
-// NOTE: this is called only when
-// 1) attach to a project, and
-// 2) after a scheduler RPC
-// So in either case PROJECT.project_prefs
-// (which normally is undefined) is valid
-//
+/// Write account_*.xml file.
+/// NOTE: this is called only when
+/// -# attach to a project, and
+/// -# after a scheduler RPC
+/// So in either case PROJECT.project_prefs
+/// (which normally is undefined) is valid.
 int PROJECT::write_account_file() const {
     char path[256];
     FILE* f;
@@ -82,9 +81,8 @@ int PROJECT::write_account_file() const {
     return 0;
 }
 
-// parse an account_*.xml file, ignoring <venue> elements
-// (since we don't know the host venue yet)
-//
+/// Parse an account_*.xml file, ignoring <venue> elements
+/// (since we don't know the host venue yet).
 int PROJECT::parse_account(FILE* in) {
     char buf[256];
     int retval;
@@ -142,12 +140,11 @@ int PROJECT::parse_account(FILE* in) {
     return ERR_XML_PARSE;
 }
 
-// scan an account_*.xml file, looking for a <venue> element
-// that matches this host's venue,
-// and parsing that for resource share and prefs.
-// Call this only after client_state.xml has been read
-// (so that we know the host venue)
-//
+/// Scan an account_*.xml file, looking for a <venue> element
+/// that matches this host's venue,
+/// and parsing that for resource share and prefs.
+/// Call this only after client_state.xml has been read
+/// (so that we know the host venue).
 int PROJECT::parse_account_file_venue() {
     char buf[256], venue[256], path[256];
     int retval;
@@ -290,8 +287,7 @@ bool operator <  (const DAILY_STATS& x1, const DAILY_STATS& x2) {
     return (x1.day < x2.day);
 }
 
-// parse an statistics_*.xml file
-//
+/// parse an statistics_*.xml file
 int PROJECT::parse_statistics(FILE* in) {
     int retval;
     char buf[256];

@@ -37,24 +37,23 @@ class FILE_INFO;
 
 typedef int PROCESS_ID;
 
+/// The stderr output of an application is truncated to this length
+/// before sending to server,
+/// to protect against apps that write unbounded amounts.
 #define MAX_STDERR_LEN  65536
-    // The stderr output of an application is truncated to this length
-    // before sending to server,
-    // to protect against apps that write unbounded amounts.
 
 
-// Represents a task in progress.
-//
-// "CPU time" refers to the sum over all episodes.
-// (not counting the "lost" time after the last checkpoint
-// in episodes before the current one)
-//
-// When an active task is created, it is assigned a "slot"
-// which determines the directory it runs in.
-// This doesn't change over the life of the active task;
-// thus the task can use the slot directory for temp files
-// that BOINC doesn't know about.
-//
+/// Represents a task in progress.
+///
+/// "CPU time" refers to the sum over all episodes.
+/// (not counting the "lost" time after the last checkpoint
+/// in episodes before the current one)
+///
+/// When an active task is created, it is assigned a "slot"
+/// which determines the directory it runs in.
+/// This doesn't change over the life of the active task;
+/// thus the task can use the slot directory for temp files
+/// that BOINC doesn't know about.
 class ACTIVE_TASK {
     int _task_state;
 public:
@@ -69,7 +68,7 @@ public:
     PROCESS_ID pid;
 	PROCINFO procinfo;
 
-    int slot;   // subdirectory of slots/ where this runs
+    int slot;   ///< subdirectory of slots/ where this runs.
     inline int task_state() const {
         return _task_state;
     }
@@ -77,57 +76,72 @@ public:
     int scheduler_state;
     int next_scheduler_state; // temp
     int signal;
+
+    /// App's estimate of how much of the work unit is done.
+    /// Passed from the application via an API call;
+    /// will be zero if the app doesn't use this call.
     double fraction_done;
-        // App's estimate of how much of the work unit is done.
-        // Passed from the application via an API call;
-        // will be zero if the app doesn't use this call
+
+    /// CPU time when adjust_debts() last ran.
     double debt_interval_start_cpu_time;
-        // CPU time when adjust_debts() last ran
+
+    /// CPU time at the start of current episode.
     double episode_start_cpu_time;
-        // CPU time at the start of current episode
+
+    /// Wall time at the start of the current run interval.
     double run_interval_start_wall_time;
-        // Wall time at the start of the current run interval
+
+    /// CPU at the last checkpoint.
     double checkpoint_cpu_time;
-        // CPU at the last checkpoint
+
+    /// Wall time at the last checkpoint.
     double checkpoint_wall_time;
-        // wall time at the last checkpoint
+
+    /// Most recent CPU time reported by app.
     double current_cpu_time;
-        // most recent CPU time reported by app
+
+    /// Disk used by output files and temp files of this task.
     int current_disk_usage(double&) const;
-        // disk used by output files and temp files of this task
-    char slot_dir[256];      // directory where process runs (relative)
-    char slot_path[512];        // same, absolute
-        // This is used only to run graphics apps
-        // (that way don't have to worry about top-level dirs
-        // being non-readable, etc).
-    double max_cpu_time;    // abort if total CPU exceeds this
-    double max_disk_usage;  // abort if disk usage (in+out+temp) exceeds this
-    double max_mem_usage;   // abort if memory usage exceeds this
+
+    /// Directory where process runs (relative).
+    char slot_dir[256];
+
+    /// Directory where process runs (absolute).
+    /// This is used only to run graphics apps
+    /// (that way don't have to worry about top-level dirs
+    /// being non-readable, etc).
+    char slot_path[512];
+
+    double max_cpu_time;    ///< Abort if total CPU exceeds this.
+    double max_disk_usage;  ///< Abort if disk usage (in+out+temp) exceeds this.
+    double max_mem_usage;   ///< Abort if memory usage exceeds this.
     bool have_trickle_down;
     bool send_upload_file_status;
-    bool too_large;                 // working set too large to run now
-    bool needs_shmem;               // waiting for a free shared memory segment
+    bool too_large;                 ///< Working set too large to run now.
+    bool needs_shmem;               ///< Waiting for a free shared memory segment.
+
+    /// This task wants to do network comm.
+    /// This is passed via share-memory message (app_status channel).
     int want_network;
-        // This task wants to do network comm (for F@h)
-        // this is passed via share-memory message (app_status channel)
+
+    /// When we sent an abort message to this app
+    /// kill it 5 seconds later if it doesn't exit.
     double abort_time;
-        // when we sent an abort message to this app
-        // kill it 5 seconds later if it doesn't exit
+
+    /// When we sent a quit message; kill if still there after 10 sec.
     double quit_time;
-        // when we sent a quit message; kill if still there after 10 sec
     int premature_exit_count;
 
-    APP_CLIENT_SHM app_client_shm;        // core/app shared mem
+    APP_CLIENT_SHM app_client_shm;        ///< Core/app shared mem.
     MSG_QUEUE graphics_request_queue;
     MSG_QUEUE process_control_queue;
     bool coprocs_reserved;
     void reserve_coprocs();
     void free_coprocs();
 
-    // info related to app's graphics mode (win, screensaver, etc.)
-    //
-    int graphics_mode_acked;            // mode acked by app
-    int graphics_mode_before_ss;        // mode before last screensaver request
+    /// Info related to app's graphics mode (win, screensaver, etc.).
+    int graphics_mode_acked;            ///< Mode acked by app.
+    int graphics_mode_before_ss;        ///< Mode before last screensaver request.
     double graphics_mode_ack_timeout;
 
 #ifdef SIM
@@ -145,6 +159,8 @@ public:
     int request_reread_app_info();
     void check_graphics_mode_ack();
     int link_user_files();
+
+    /// Make a unique key for core/app shared memory segment.
     int get_shmem_seg_name();
     bool runnable() {
         return _task_state == PROCESS_UNINITIALIZED
@@ -158,26 +174,35 @@ public:
     void close_process_handles();
     void cleanup_task();
 
-    int start(bool first_time);         // start a process
+    /// Start a process.
+    int start(bool first_time);
+
+    /// Ask the process to exit gracefully.
     int request_exit();
-        // ask the process to exit gracefully,
-        // i.e. by sending a <quit> message
-    int request_abort();                // send "abort" message
+
+    /// Send "abort" message.
+    int request_abort();
     bool process_exists();
+
+    /// Kill process forcibly.
     int kill_task(bool restart);
-        // Kill process forcibly,
-        // Unix: send a SIGKILL signal, Windows: TerminateProcess()
-		// if restart is true, arrange for resulted to get restarted;
-		// otherwise it ends with an error
+
+    /// Ask a process to stop executing.
     int suspend();
-        // ask a process to stop executing (but stay in mem)
-        // Done by sending it a <suspend> message
+
+    /// Undo a suspend.
     int unsuspend();
-        // Undo a suspend: send a <resume> message
+
+    /// Abort a task.
     int abort_task(int exit_status, const char*);
-        // can be called whether or not process exists
-    bool has_task_exited();             // return true if this task has exited
-    int preempt(bool quit_task);        // preempt (via suspend or quit) a running task
+
+    /// Return true if this task has exited.
+    bool has_task_exited();
+
+    /// Preempt (via suspend or quit) a running task.
+    int preempt(bool quit_task);
+
+    /// Resume the task if it was previously running; otherwise start it.
     int resume_or_start(bool);
     void send_network_available();
 #ifdef _WIN32
@@ -185,6 +210,8 @@ public:
 #else
     void handle_exited_app(int stat);
 #endif
+
+    /// Handle a task that exited prematurely (i.e. the job isn't done).
     void handle_premature_exit(bool&);
 
     bool check_max_disk_exceeded();
@@ -195,6 +222,8 @@ public:
     bool read_stderr_file();
     bool finish_file_present();
     bool supports_graphics() const;
+
+    /// Write the app init file.
     int write_app_init_file();
     int move_trickle_file();
     int handle_upload_files();
@@ -223,6 +252,8 @@ public:
     void kill_tasks(PROJECT* p=0);
     int abort_project(PROJECT*);
     bool get_msgs();
+
+    /// See if any processes have exited.
     bool check_app_exited();
     bool check_rsc_limits_exceeded();
     bool check_quit_timeout_exceeded();
@@ -234,8 +265,12 @@ public:
     void report_overdue() const;
     void handle_upload_files();
     void upload_notify_app(const FILE_INFO*);
-    bool want_network() const;    // does any task want network?
-    void network_available();   // notify tasks that network is available
+
+    /// Does any task want network?
+    bool want_network() const;
+
+    /// Notify tasks that network is available.
+    void network_available();
     void free_mem();
     bool slot_taken(int) const;
     void get_memory_usage();

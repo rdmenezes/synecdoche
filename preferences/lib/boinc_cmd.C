@@ -15,10 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// boinccmd: command-line interface to a BOINC core client,
-// using GUI RPCs.
-//
-// usage: boinccmd [--host hostname] [--passwd passwd] command
+/// \file
+/// boinccmd: command-line interface to a BOINC core client,
+/// using GUI RPCs.
+///
+/// usage: boinccmd [--host hostname] [--passwd passwd] command
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -123,8 +124,7 @@ char* next_arg(int argc, char** argv, int& i) {
 }
 
 
-// If there's a password file, read it
-//
+/// If there's a password file, read it
 void read_password_from_file(char* buf) {
 	FILE* f = fopen("gui_rpc_auth.cfg", "r");
 	if (!f) return;

@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,8 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// The plumbing of GUI RPC, server side
-// (but not the actual RPCs)
+/// \file
+/// The plumbing of GUI %RPC, server side
+/// (but not the actual RPCs)
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -53,22 +55,18 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
-#include <string>
-
-using std::string;
-using std::vector;
+#include <set>
 
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
+    sock(s),
+    auth_needed(false),
+    au_ss_state(AU_SS_INIT),
+    au_mgr_state(AU_MGR_INIT),
+
     get_project_config_op(&gui_http),
     lookup_account_op(&gui_http),
     create_account_op(&gui_http)
 {
-    sock = s;
-    auth_needed = false;
-    au_ss_state = AU_SS_INIT;
-    au_mgr_state = AU_MGR_INIT;
-    got_auth1 = false;
-    got_auth2 = false;
 }
 
 GUI_RPC_CONN::~GUI_RPC_CONN() {
@@ -84,12 +82,14 @@ bool GUI_RPC_CONN_SET::poll() {
     unsigned int i;
     bool action = false;
     for (i=0; i<gui_rpcs.size(); i++) {
-        action |= gui_rpcs[i]->gui_http.poll();
+        if (gui_rpcs[i]->gui_http.poll()) {
+            action = true;
+        }
     }
     return action;
 }
 
-bool GUI_RPC_CONN_SET::recent_rpc_needs_network(double interval) {
+bool GUI_RPC_CONN_SET::recent_rpc_needs_network(double interval) const {
     if (!time_of_last_rpc_needing_network) return false;
     if (gstate.now < time_of_last_rpc_needing_network + interval) return true;
     return false;
@@ -175,7 +175,7 @@ int GUI_RPC_CONN_SET::get_allowed_hosts() {
                         buf, REMOTEHOST_FILE_NAME
                     );
                 } else {
-                    allowed_remote_ip_addresses.push_back((int)ntohl(ipaddr));
+                    allowed_remote_ip_addresses.insert(ntohl(ipaddr));
                 }
             }
         }
@@ -301,9 +301,9 @@ static void show_connect_error(in_addr ia) {
     count = 0;
 }
 
-void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) {
+void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg) const {
     unsigned int i;
-    GUI_RPC_CONN* gr;
+    const GUI_RPC_CONN* gr;
 
     if (lsock < 0) return;
     for (i=0; i<gui_rpcs.size(); i++) {
@@ -311,33 +311,22 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg, FDSET_GROUP& all) {
         int s = gr->sock;
         FD_SET(s, &fg.read_fds);
         FD_SET(s, &fg.exc_fds);
+        if (gr->needs_write()) {
+            FD_SET(s, &fg.write_fds);
+        }
         if (s > fg.max_fd) fg.max_fd = s;
-
-        FD_SET(s, &all.read_fds);
-        FD_SET(s, &all.exc_fds);
-        if (s > all.max_fd) all.max_fd = s;
     }
     FD_SET(lsock, &fg.read_fds);
     if (lsock > fg.max_fd) fg.max_fd = lsock;
-    FD_SET(lsock, &all.read_fds);
-    if (lsock > all.max_fd) all.max_fd = lsock;
 }
 
-bool GUI_RPC_CONN_SET::check_allowed_list(int peer_ip) {
-    vector<int>::iterator remote_iter = allowed_remote_ip_addresses.begin();
-    while (remote_iter != allowed_remote_ip_addresses.end() ) {
-        int remote_host = *remote_iter;
-        if (peer_ip == remote_host) {
-            return true;
-        }
-        remote_iter++;
-    }
-    return false;
+bool GUI_RPC_CONN_SET::check_allowed_list(unsigned long peer_ip) const {
+    return allowed_remote_ip_addresses.count(peer_ip) == 1;
 }
 
-void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
+void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
     int sock, retval;
-    vector<GUI_RPC_CONN*>::iterator iter;
+    std::vector<GUI_RPC_CONN*>::iterator iter;
     GUI_RPC_CONN* gr;
     bool is_local = false;
 
@@ -409,7 +398,7 @@ void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
             iter = gui_rpcs.erase(iter);
             continue;
         }
-        iter++;
+        ++iter;
     }
     iter = gui_rpcs.begin();
     while (iter != gui_rpcs.end()) {
@@ -428,7 +417,26 @@ void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
                 continue;
             }
         }
-        iter++;
+        ++iter;
+    }
+    iter = gui_rpcs.begin();
+    while (iter != gui_rpcs.end()) {
+        gr = *iter;
+        if (FD_ISSET(gr->sock, &fg.write_fds)) {
+            retval = gr->handle_write();
+            if (retval) {
+                if (log_flags.guirpc_debug) {
+                    msg_printf(NULL, MSG_INFO,
+                        "[guirpc_debug] error %d from write handler, closing socket\n",
+                        retval
+                    );
+                }
+                delete gr;
+                iter = gui_rpcs.erase(iter);
+                continue;
+            }
+        }
+        ++iter;
     }
 }
 
@@ -444,9 +452,8 @@ void GUI_RPC_CONN_SET::close() {
     }
 }
 
-// this is called when we're ready to auto-update;
-// set flags to send quit messages to screensaver and local manager
-//
+/// this is called when we're ready to auto-update;
+/// set flags to send quit messages to screensaver and local manager
 void GUI_RPC_CONN_SET::send_quits() {
     for (unsigned int i=0; i<gui_rpcs.size(); i++) {
         GUI_RPC_CONN* gr = gui_rpcs[i];
@@ -459,11 +466,10 @@ void GUI_RPC_CONN_SET::send_quits() {
     }
 }
 
-// check whether the quit messages have actually been sent
-//
-bool GUI_RPC_CONN_SET::quits_sent() {
+/// check whether the quit messages have actually been sent
+bool GUI_RPC_CONN_SET::quits_sent() const {
     for (unsigned int i=0; i<gui_rpcs.size(); i++) {
-        GUI_RPC_CONN* gr = gui_rpcs[i];
+        const GUI_RPC_CONN* gr = gui_rpcs[i];
         if (gr->au_ss_state == AU_SS_QUIT_REQ) return false;
         if (gr->au_mgr_state == AU_MGR_QUIT_REQ) return false;
     }

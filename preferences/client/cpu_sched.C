@@ -15,25 +15,26 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// CPU scheduling logic.
-//
-// Terminology:
-//
-// Episode
-// The execution of a task is divided into "episodes".
-// An episode starts then the application is executed,
-// and ends when it exits or dies
-// (e.g., because it's preempted and not left in memory,
-// or the user quits BOINC, or the host is turned off).
-// A task may checkpoint now and then.
-// Each episode begins with the state of the last checkpoint.
-//
-// Debt interval
-// The interval between consecutive executions of adjust_debts()
-//
-// Run interval
-// If an app is running (not suspended), the interval
-// during which it's been running.
+/// \file
+/// CPU scheduling logic.
+///
+/// Terminology:
+///
+/// Episode
+/// The execution of a task is divided into "episodes".
+/// An episode starts then the application is executed,
+/// and ends when it exits or dies
+/// (e.g., because it's preempted and not left in memory,
+/// or the user quits BOINC, or the host is turned off).
+/// A task may checkpoint now and then.
+/// Each episode begins with the state of the last checkpoint.
+///
+/// Debt interval
+/// The interval between consecutive executions of adjust_debts()
+///
+/// Run interval
+/// If an app is running (not suspended), the interval
+/// during which it's been running.
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -58,15 +59,15 @@
 
 using std::vector;
 
+/// maximum short-term debt
 #define MAX_STD   (86400)
-    // maximum short-term debt
 
+/// assume actual CPU utilization will be this multiple
+/// of what we've actually measured recently
 #define CPU_PESSIMISM_FACTOR 0.9
-    // assume actual CPU utilization will be this multiple
-    // of what we've actually measured recently
 
+/// try to finish jobs this much in advance of their deadline
 #define DEADLINE_CUSHION    0
-    // try to finish jobs this much in advance of their deadline
 
 bool COPROCS::sufficient_coprocs(COPROCS& needed, bool verbose) {
     for (unsigned int i=0; i<needed.coprocs.size(); i++) {
@@ -139,23 +140,22 @@ static bool more_preemptable(ACTIVE_TASK* t0, ACTIVE_TASK* t1) {
     }
 }
 
-// Choose a "best" runnable result for each project
-//
-// Values are returned in project->next_runnable_result
-// (skip projects for which this is already non-NULL)
-//
-// Don't choose results with already_selected == true;
-// mark chosen results as already_selected.
-//
-// The preference order:
-// 1. results with active tasks that are running
-// 2. results with active tasks that are preempted (but have a process)
-// 3. results with active tasks that have no process
-// 4. results with no active task
-//
-// TODO: this is called in a loop over NCPUs, which is silly. 
-// Should call it once, and have it make an ordered list per project.
-//
+/// Choose a "best" runnable result for each project
+///
+/// Values are returned in \c project->next_runnable_result
+/// (skip projects for which this is already non-NULL)
+///
+/// Don't choose results with <tt>already_selected == true</tt>;
+/// mark chosen results as \c already_selected.
+///
+/// The preference order:
+/// -# results with active tasks that are running
+/// -# results with active tasks that are preempted (but have a process)
+/// -# results with active tasks that have no process
+/// -# results with no active task
+///
+/// \todo this is called in a loop over NCPUs, which is silly. 
+/// Should call it once, and have it make an ordered list per project.
 void CLIENT_STATE::assign_results_to_projects() {
     unsigned int i;
     RESULT* rp;
@@ -214,10 +214,9 @@ void CLIENT_STATE::assign_results_to_projects() {
     }
 }
 
-// Among projects with a "next runnable result",
-// find the project P with the greatest anticipated debt,
-// and return its next runnable result
-//
+/// Among projects with a "next runnable result",
+/// find the project P with the greatest anticipated debt,
+/// and return its next runnable result.
 RESULT* CLIENT_STATE::largest_debt_project_best_result() {
     PROJECT *best_project = NULL;
     double best_debt = -MAX_STD;
@@ -248,8 +247,7 @@ RESULT* CLIENT_STATE::largest_debt_project_best_result() {
     return rp;
 }
 
-// Return earliest-deadline result from a project with deadlines_missed>0
-//
+/// Return earliest-deadline result from a project with <tt>deadlines_missed > 0</tt>
 RESULT* CLIENT_STATE::earliest_deadline_result() {
     RESULT *best_result = NULL;
     ACTIVE_TASK* best_atp = NULL;
@@ -320,8 +318,7 @@ void CLIENT_STATE::reset_debt_accounting() {
     debt_interval_start = now;
 }
 
-// adjust project debts (short, long-term)
-//
+/// Adjust project debts (short, long-term).
 void CLIENT_STATE::adjust_debts() {
     unsigned int i;
     double total_long_term_debt = 0;
@@ -459,17 +456,16 @@ void CLIENT_STATE::adjust_debts() {
 }
 
 
-// Decide whether to run the CPU scheduler.
-// This is called periodically.
-// Scheduled tasks are placed in order of urgency for scheduling
-// in the ordered_scheduled_results vector
-//
+/// Decide whether to run the CPU scheduler.
+/// This is called periodically.
+/// Scheduled tasks are placed in order of urgency for scheduling
+/// in the \ref ordered_scheduled_results vector.
 bool CLIENT_STATE::possibly_schedule_cpus() {
     double elapsed_time;
     static double last_reschedule=0;
 
-    if (projects.size() == 0) return false;
-    if (results.size() == 0) return false;
+    if (projects.empty()) return false;
+    if (results.empty()) return false;
 
     // Reschedule every cpu_sched_period seconds,
     // or if must_schedule_cpus is set
@@ -568,9 +564,8 @@ static bool schedule_if_possible(
     return true;
 }
 
-// CPU scheduler - decide which results to run.
-// output: sets ordered_scheduled_result.
-//
+/// Decide which results to run.
+/// output: sets ordered_scheduled_result.
 void CLIENT_STATE::schedule_cpus() {
     RESULT* rp;
     PROJECT* p;
@@ -647,8 +642,8 @@ void CLIENT_STATE::schedule_cpus() {
     set_client_state_dirty("schedule_cpus");
 }
 
-// make a list of running tasks, ordered by their preemptability.
-//
+/// Make a list of running tasks, ordered by their preemptability.
+///
 void CLIENT_STATE::make_running_task_heap(
     vector<ACTIVE_TASK*> &running_tasks, double& ncpus_used
 ) {
@@ -672,21 +667,21 @@ void CLIENT_STATE::make_running_task_heap(
     );
 }
 
-// Enforce the CPU schedule.
-// Inputs:
-//   ordered_scheduled_results
-//      List of tasks that should (ideally) run, set by schedule_cpus().
-//      Most important tasks (e.g. early deadline) are first
-// Method:
-//   Make a list "running_tasks" of currently running tasks
-//   Most preemptable tasks are first in list.
-// Details:
-//   Initially, each task's scheduler_state is PREEMPTED or SCHEDULED
-//     depending on whether or not it is running.
-//     This function sets each task's next_scheduler_state,
-//     and at the end it starts/resumes and preempts tasks
-//     based on scheduler_state and next_scheduler_state.
-// 
+/// Enforce the CPU schedule.
+/// - Inputs:
+///   - \c ordered_scheduled_results \n
+///      List of tasks that should (ideally) run, set by schedule_cpus().
+///      Most important tasks (e.g. early deadline) are first
+/// - Method:
+///   - Make a list "running_tasks" of currently running tasks
+///     Most preemptable tasks are first in list.
+/// - Details:
+///   - Initially, each task's scheduler_state is \c PREEMPTED or \c SCHEDULED
+///     depending on whether or not it is running.
+///   - This function sets each task's next_scheduler_state,
+///     and at the end it starts/resumes and preempts tasks
+///     based on scheduler_state and next_scheduler_state.
+/// 
 bool CLIENT_STATE::enforce_schedule() {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -837,7 +832,7 @@ bool CLIENT_STATE::enforce_schedule() {
         // Preempt something if needed (and possible).
         //
         bool run_task = false;
-        bool need_to_preempt = (ncpus_used >= ncpus) && running_tasks.size();
+        bool need_to_preempt = (ncpus_used >= ncpus) && !running_tasks.empty();
             // the 2nd half of the above is redundant
         if (need_to_preempt) {
             // examine the most preemptable task.
@@ -1024,8 +1019,8 @@ bool CLIENT_STATE::enforce_schedule() {
     return action;
 }
 
-// return true if we don't have enough runnable tasks to keep all CPUs busy
-//
+/// Return true if we don't have enough runnable tasks to keep all CPUs busy
+///
 bool CLIENT_STATE::no_work_for_a_cpu() {
     unsigned int i;
     int count = 0;
@@ -1039,10 +1034,10 @@ bool CLIENT_STATE::no_work_for_a_cpu() {
     return ncpus > count;
 }
 
-// Set the project's rrsim_proc_rate:
-// the fraction of each CPU that it will get in round-robin mode.
-// Precondition: the project's "active" array is populated
-//
+/// Set the project's rrsim_proc_rate:
+/// the fraction of each CPU that it will get in round-robin mode.
+/// Precondition: the project's "active" array is populated
+///
 void PROJECT::set_rrsim_proc_rate(double rrs) {
     int nactive = (int)rr_sim_status.active.size();
     if (nactive == 0) return;
@@ -1110,30 +1105,30 @@ struct RR_SIM_STATUS {
     }
 };
 
-// Do a simulation of the current workload
-// with weighted round-robin (WRR) scheduling.
-// Include jobs that are downloading.
-//
-// For efficiency, we simulate a crude approximation of WRR.
-// We don't model time-slicing.
-// Instead we use a continuous model where, at a given point,
-// each project has a set of running jobs that uses all CPUs
-// (and obeys coprocessor limits).
-// These jobs are assumed to run at a rate proportionate to their avg_ncpus,
-// and each project gets CPU proportionate to its RRS.
-//
-// Outputs are changes to global state:
-// For each project p:
-//   p->rr_sim_deadlines_missed
-//   p->cpu_shortfall
-// For each result r:
-//   r->rr_sim_misses_deadline
-//   r->last_rr_sim_missed_deadline
-// gstate.cpu_shortfall
-//
-// Deadline misses are not counted for tasks
-// that are too large to run in RAM right now.
-//
+/// Do a simulation of the current workload
+/// with weighted round-robin (WRR) scheduling.
+/// Include jobs that are downloading.
+///
+/// For efficiency, we simulate a crude approximation of WRR.
+/// We don't model time-slicing.
+/// Instead we use a continuous model where, at a given point,
+/// each project has a set of running jobs that uses all CPUs
+/// (and obeys coprocessor limits).
+/// These jobs are assumed to run at a rate proportionate to their avg_ncpus,
+/// and each project gets CPU proportionate to its RRS.
+///
+/// Outputs are changes to global state:
+/// - For each project \c p:
+///   - \c p->rr_sim_deadlines_missed
+///   - \c p->cpu_shortfall
+/// - For each result \c r:
+///   - \c r->rr_sim_misses_deadline
+///   - \c r->last_rr_sim_missed_deadline
+/// - \c gstate.cpu_shortfall
+///
+/// Deadline misses are not counted for tasks
+/// that are too large to run in RAM right now.
+///
 void CLIENT_STATE::rr_simulation() {
     double rrs = nearly_runnable_resource_share();
     double trs = total_resource_share();
@@ -1361,10 +1356,9 @@ void CLIENT_STATE::rr_simulation() {
     }
 }
 
-// trigger CPU schedule enforcement.
-// Called when a new schedule is computed,
-// and when an app checkpoints.
-//
+/// Trigger CPU schedule enforcement.
+/// Called when a new schedule is computed,
+/// and when an app checkpoints.
 void CLIENT_STATE::request_enforce_schedule(const char* where) {
     if (log_flags.cpu_sched_debug) {
         msg_printf(0, MSG_INFO, "[cpu_sched_debug] Request enforce CPU schedule: %s", where);
@@ -1372,12 +1366,12 @@ void CLIENT_STATE::request_enforce_schedule(const char* where) {
     must_enforce_cpu_schedule = true;
 }
 
-// trigger CPU scheduling.
-// Called when a result is completed, 
-// when new results become runnable, 
-// or when the user performs a UI interaction
-// (e.g. suspending or resuming a project or result).
-//
+/// Trigger CPU scheduling.
+/// Called when a result is completed, 
+/// when new results become runnable, 
+/// or when the user performs a UI interaction
+/// (e.g. suspending or resuming a project or result).
+///
 void CLIENT_STATE::request_schedule_cpus(const char* where) {
     if (log_flags.cpu_sched_debug) {
         msg_printf(0, MSG_INFO, "[cpu_sched_debug] Request CPU reschedule: %s", where);
@@ -1385,8 +1379,7 @@ void CLIENT_STATE::request_schedule_cpus(const char* where) {
     must_schedule_cpus = true;
 }
 
-// Find the active task for a given result
-//
+/// Find the active task for a given result.
 ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* rep) {
     for (unsigned int i = 0; i < active_tasks.active_tasks.size(); i ++) {
         if (active_tasks.active_tasks[i]->result == rep) {
@@ -1400,8 +1393,7 @@ bool RESULT::computing_done() const {
     return (state() >= RESULT_COMPUTE_ERROR || ready_to_report);
 }
 
-// find total resource shares of all projects
-//
+/// Find total resource shares of all projects.
 double CLIENT_STATE::total_resource_share() {
     double x = 0;
     for (unsigned int i=0; i<projects.size(); i++) {
@@ -1412,8 +1404,7 @@ double CLIENT_STATE::total_resource_share() {
     return x;
 }
 
-// same, but only runnable projects (can use CPU right now)
-//
+/// Find total resource shares of all runnable projects (can use CPU right now).
 double CLIENT_STATE::runnable_resource_share() {
     double x = 0;
     for (unsigned int i=0; i<projects.size(); i++) {
@@ -1426,8 +1417,7 @@ double CLIENT_STATE::runnable_resource_share() {
     return x;
 }
 
-// same, but potentially runnable (could ask for work right now)
-//
+/// Find total resource shares of all potentially runnable projects (could ask for work right now).
 double CLIENT_STATE::potentially_runnable_resource_share() {
     double x = 0;
     for (unsigned int i=0; i<projects.size(); i++) {
@@ -1453,8 +1443,7 @@ double CLIENT_STATE::fetchable_resource_share() {
     return x;
 }
 
-// same, but nearly runnable (could be downloading work right now)
-//
+/// Find total resource shares of all nearly runnable projects (could be downloading work right now)
 double CLIENT_STATE::nearly_runnable_resource_share() {
     double x = 0;
     for (unsigned int i=0; i<projects.size(); i++) {
@@ -1478,8 +1467,7 @@ bool ACTIVE_TASK::process_exists() {
     return false;
 }
 
-// if there's not an active task for the result, make one
-//
+/// If there's not an active task for the result, make one.
 ACTIVE_TASK* CLIENT_STATE::get_task(RESULT* rp) {
     ACTIVE_TASK *atp = lookup_active_task_by_result(rp);
     if (!atp) {
@@ -1493,7 +1481,6 @@ ACTIVE_TASK* CLIENT_STATE::get_task(RESULT* rp) {
 
 // Results must be complete early enough to report before the report deadline.
 // Not all hosts are connected all of the time.
-//
 double RESULT::computation_deadline() const {
     return report_deadline - (
         gstate.work_buf_min()
@@ -1553,16 +1540,16 @@ void CLIENT_STATE::set_ncpus() {
     }
 }
 
-// preempt this task
-// called from the CLIENT_STATE::schedule_cpus()
-// if quit_task is true do this by quitting
-//
+/// Preempt this task.
+/// Called from the CLIENT_STATE::schedule_cpus().
+/// If quit_task is true, do this by quitting.
+///
+/// \param[in] quit_task If true and app has checkpointed
+///                      it will be removed from memory
+/// \return Always returns 0.
 int ACTIVE_TASK::preempt(bool quit_task) {
-    int retval;
-
     // If the app hasn't checkpoint yet, suspend instead of quit
     // (accommodate apps that never checkpoint)
-    //
     if (quit_task && (checkpoint_cpu_time>0)) {
         if (log_flags.cpu_sched) {
             msg_printf(result->project, MSG_INFO,
@@ -1571,7 +1558,7 @@ int ACTIVE_TASK::preempt(bool quit_task) {
             );
         }
         set_task_state(PROCESS_QUIT_PENDING, "preempt");
-        retval = request_exit();
+        request_exit();
     } else {
         if (log_flags.cpu_sched) {
             if (quit_task) {
@@ -1586,15 +1573,14 @@ int ACTIVE_TASK::preempt(bool quit_task) {
                 );
             }
         }
-        retval = suspend();
+        suspend();
     }
     return 0;
 }
 
-// The given result has just completed successfully.
-// Update the correction factor used to predict
-// completion time for this project's results
-//
+/// The given result has just completed successfully;
+/// update the correction factor used to predict
+/// completion time for this project's results.
 void PROJECT::update_duration_correction_factor(RESULT* rp) {
 #ifdef SIM
     if (dcf_dont_use) {

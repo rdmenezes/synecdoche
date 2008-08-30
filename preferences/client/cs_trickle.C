@@ -34,10 +34,9 @@
 
 using std::string;
 
-// Scan project dir for file names of the form trickle_up_X_Y
-// where X is a result name and Y is a timestamp.
-// Convert them to XML (for sched request message)
-//
+/// Scan project dir for file names of the form trickle_up_X_Y
+/// where X is a result name and Y is a timestamp.
+/// Convert them to XML (for sched request message).
 int CLIENT_STATE::read_trickle_files(PROJECT* project, FILE* f) {
     char project_dir[256], *p, *q, result_name[256], fname[256];
     char* file_contents, path[256], newpath[256];
@@ -86,10 +85,9 @@ int CLIENT_STATE::read_trickle_files(PROJECT* project, FILE* f) {
     return 0;
 }
 
-// Remove files when ack has been received
-// remove only this ending with ".sent"
-// (others arrived from application while RPC was happening)
-//
+/// Remove files when ack has been received.
+/// Remove only this ending with ".sent"
+/// (others arrived from application while RPC was happening)
 int CLIENT_STATE::remove_trickle_files(PROJECT* project) {
     char project_dir[256], path[256], fname[256];
     string fn;
@@ -107,11 +105,10 @@ int CLIENT_STATE::remove_trickle_files(PROJECT* project) {
     return 0;
 }
 
-// parse a trickle-down message in a scheduler reply.
-// Locate the corresponding active task,
-// write a file in the slot directory,
-// and notify the task
-//
+/// Parse a trickle-down message in a scheduler reply.
+/// Locate the corresponding active task,
+/// write a file in the slot directory,
+/// and notify the task.
 int CLIENT_STATE::handle_trickle_down(PROJECT* project, FILE* in) {
     char buf[256];
     char result_name[256], path[256];

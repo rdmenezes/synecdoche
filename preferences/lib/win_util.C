@@ -61,7 +61,7 @@ BOOL IsWindows2000Compatible() {
  * all Win32 platforms.  For the Windows 2000 platform
  * we perform a "lazy" bind to the new product suite
  * APIs that were first introduced on that platform.
- **/
+ */
 BOOL IsTerminalServicesEnabled() {
     BOOL    bResult = FALSE;    // assume Terminal Services is not enabled
 
@@ -125,7 +125,7 @@ BOOL IsTerminalServicesEnabled() {
  * This function compares the passed in "suite name" string
  * to the product suite information stored in the registry.
  * This only works on the Terminal Server 4.0 platform.
- **/
+ */
 BOOL ValidateProductSuite (LPSTR SuiteName) {
     BOOL rVal = FALSE;
     LONG Rslt;
@@ -181,7 +181,7 @@ exit:
 
 /**
  * This function terminates a process by process id instead of a handle.
- **/
+ */
 BOOL TerminateProcessById( DWORD dwProcessID ) {
     HANDLE hProcess;
     BOOL bRetVal = FALSE;
@@ -201,9 +201,9 @@ BOOL TerminateProcessById( DWORD dwProcessID ) {
 /**
  * This function adjusts the specified WindowStation to include the specfied
  *   user.
- *
+
  * See: http://msdn2.microsoft.com/en-us/library/aa379608(VS.85).aspx
- **/
+ */
 BOOL AddAceToWindowStation(HWINSTA hwinsta, PSID psid)
 {
    ACCESS_ALLOWED_ACE   *pace = NULL;
@@ -436,10 +436,10 @@ BOOL AddAceToWindowStation(HWINSTA hwinsta, PSID psid)
 
 /**
  * This function adjusts the specified Desktop to include the specfied
- *   user.
+ * user.
  *
  * See: http://msdn2.microsoft.com/en-us/library/aa379608(VS.85).aspx
- **/
+ */
 BOOL AddAceToDesktop(HDESK hdesk, PSID psid)
 {
    ACL_SIZE_INFORMATION aclSizeInfo;
@@ -633,7 +633,7 @@ BOOL AddAceToDesktop(HDESK hdesk, PSID psid)
 }
 
 
-/*++
+/**
 This function attempts to obtain a SID representing the supplied
 account on the supplied system.
 
@@ -646,10 +646,8 @@ If the function fails, the return value is FALSE. Call GetLastError()
 to obtain extended error information.
 
 Scott Field (sfield)    12-Jul-95
---*/
-
-BOOL
-GetAccountSid(
+*/
+BOOL GetAccountSid(
     LPCTSTR SystemName,
     LPCTSTR AccountName,
     PSID *Sid
@@ -738,15 +736,14 @@ GetAccountSid(
     return bSuccess;
 }
 
-// Suspend or resume the threads in a given process.
-// The only way to do this on Windows is to enumerate
-// all the threads in the entire system,
-// and find those belonging to the process (ugh!!)
-//
-
 // OpenThread
 typedef HANDLE (WINAPI *tOT)(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwThreadId);
 
+
+/// Suspend or resume the threads in a given process.
+/// The only way to do this on Windows is to enumerate
+/// all the threads in the entire system,
+/// and find those belonging to the process (ugh!!)
 int suspend_or_resume_threads(DWORD pid, bool resume) { 
     HANDLE threads, thread;
     HMODULE hKernel32Lib = NULL;

@@ -85,14 +85,14 @@ void MSG_LOG::enter_level(int diff) {
 
 void MSG_LOG::vprintf(int kind, const char* format, va_list va) {
     char buf[256];
-    const char* now_timestamp = precision_time_to_string(dtime());
+    std::string now_timestamp = precision_time_to_string(dtime());
     if (!v_message_wanted(kind)) return;
     if (pid) {
         sprintf(buf, " [PID=%-5d]", pid);
     } else {
         buf[0] = 0;
     }
-    fprintf(output, "%s%s [%s]%s ", now_timestamp, buf, v_format_kind(kind), spaces);
+    fprintf(output, "%s%s [%s]%s ", now_timestamp.c_str(), buf, v_format_kind(kind), spaces);
     vfprintf(output, format, va);
 }
 
@@ -108,13 +108,13 @@ void MSG_LOG::vprintf_multiline(
     if (prefix_format) {
         vsprintf(sprefix, prefix_format, va);
     }
-    const char* now_timestamp = precision_time_to_string(dtime());
+    std::string now_timestamp = precision_time_to_string(dtime());
     const char* skind = v_format_kind(kind);
 
     string line;
     while (*str) {
         if (*str == '\n') {
-            fprintf(output, "%s [%s]%s %s%s\n", now_timestamp, skind, spaces, sprefix, line.c_str());
+            fprintf(output, "%s [%s]%s %s%s\n", now_timestamp.c_str(), skind, spaces, sprefix, line.c_str());
             line.erase();
         } else {
             line += *str;
@@ -122,7 +122,7 @@ void MSG_LOG::vprintf_multiline(
         ++str;
     }
     if (!line.empty()) {
-        fprintf(output, "%s %s[%s] %s%s\n", now_timestamp, spaces, skind, sprefix, line.c_str());
+        fprintf(output, "%s %s[%s] %s%s\n", now_timestamp.c_str(), spaces, skind, sprefix, line.c_str());
     }
 }
 
@@ -135,7 +135,7 @@ void MSG_LOG::vprintf_file(
     if (prefix_format) {
         vsprintf(sprefix, prefix_format, va);
     }
-    const char* now_timestamp = precision_time_to_string(dtime());
+    std::string now_timestamp = precision_time_to_string(dtime());
     const char* skind = v_format_kind(kind);
 
     FILE* f = fopen(filename, "r");
@@ -143,7 +143,7 @@ void MSG_LOG::vprintf_file(
     char buf[256];
 
     while (fgets(buf, 256, f)) {
-        fprintf(output, "%s [%s]%s %s%s\n", now_timestamp, skind, spaces, sprefix, buf);
+        fprintf(output, "%s [%s]%s %s%s\n", now_timestamp.c_str(), skind, spaces, sprefix, buf);
     }
     fclose(f);
 }

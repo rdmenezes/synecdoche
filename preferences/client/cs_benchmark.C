@@ -15,18 +15,20 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Manage a (perhaps multi-processor) benchmark.
-// Because of hyperthreaded CPUs we can't just benchmark 1 CPU;
-// we must run parallel benchmarks
-// and ensure that they run more or less concurrently.
-// Here's our scheme:
-// - the main program forks N benchmarks threads or processes
-// - after FP_START seconds it creates a file "do_fp"
-// - after FP_END seconds it deletes do_fp
-// - after INT_START seconds it creates do_int
-// - after INT_END seconds it deletes do_int and starts waiting for processes
-// Each thread/process checks for the relevant file before
-//  starting or stopping each benchmark
+/// \file
+/// Manage a (perhaps multi-processor) benchmark.
+///
+/// Because of hyperthreaded CPUs we can't just benchmark 1 CPU;
+/// we must run parallel benchmarks
+/// and ensure that they run more or less concurrently.
+/// Here's our scheme:
+/// - the main program forks N benchmarks threads or processes
+/// - after FP_START seconds it creates a file "do_fp"
+/// - after FP_END seconds it deletes do_fp
+/// - after INT_START seconds it creates do_int
+/// - after INT_END seconds it deletes do_int and starts waiting for processes
+/// Each thread/process checks for the relevant file before
+///  starting or stopping each benchmark
 
 #include "cpp.h"
 
@@ -77,9 +79,9 @@
 #define INT_END     27
 #define OVERALL_END 30
 
+/// If the CPU time accumulated during one of the 10-sec segments
+/// is less than this, ignored the benchmark.
 #define MIN_CPU_TIME  2
-    // if the CPU time accumulated during one of the 10-sec segments
-    // is less than this, ignored the benchmark
 
 #define BM_FP_INIT  0
 #define BM_FP       1
@@ -89,11 +91,10 @@
 #define BM_DONE     5
 static int bm_state;
 
+/// rerun CPU benchmarks this often (hardware may have been upgraded)
 #define BENCHMARK_PERIOD        (SECONDS_PER_DAY*5)
-    // rerun CPU benchmarks this often (hardware may have been upgraded)
 
-// represents a benchmark thread/process, in progress or completed
-//
+/// represents a benchmark thread/process, in progress or completed
 struct BENCHMARK_DESC {
     int ordinal;
     HOST_INFO host_info;
@@ -112,11 +113,11 @@ struct BENCHMARK_DESC {
 };
 
 static BENCHMARK_DESC* benchmark_descs=0;
-static bool benchmarks_running=false;    // at least 1 benchmark thread running
+static bool benchmarks_running=false;    ///< at least 1 benchmark thread running
 static double cpu_benchmarks_start;
+/// user might change ncpus during benchmarks.
+/// store starting value here.
 static int bm_ncpus;
-    // user might change ncpus during benchmarks.
-    // store starting value here.
 
 const char *file_names[2] = {"do_fp", "do_int"};
 
@@ -145,8 +146,7 @@ bool benchmark_time_to_stop(int which) {
     return true;
 }
 
-// benchmark a single CPU
-//
+/// benchmark a single CPU
 int cpu_benchmarks(BENCHMARK_DESC* bdp) {
     HOST_INFO host_info;
     int retval;
@@ -263,9 +263,8 @@ void CLIENT_STATE::start_cpu_benchmarks() {
     }
 }
 
-// Returns true if CPU benchmarks should be run:
-// flag is set or it's been 5 days since we last ran
-//
+/// Returns true if CPU benchmarks should be run:
+/// flag is set or it's been 5 days since we last ran
 bool CLIENT_STATE::should_run_cpu_benchmarks() {
     // Note: if skip_cpu_benchmarks we still should "run" cpu benchmarks
     // (we'll just use default values in cpu_benchmarks())
@@ -280,13 +279,12 @@ bool CLIENT_STATE::should_run_cpu_benchmarks() {
 
     // if no projects attached yet, don't run
     //
-    if (projects.size()==0 && !run_cpu_benchmarks) return false;
+    if (projects.empty() && !run_cpu_benchmarks) return false;
 
     return ((run_cpu_benchmarks || diff > BENCHMARK_PERIOD));
 }
 
-// abort a running benchmark thread/process
-//
+/// abort a running benchmark thread/process.
 void abort_benchmark(BENCHMARK_DESC& desc) {
     if (desc.done) return;
 #ifdef _WIN32
@@ -297,8 +295,7 @@ void abort_benchmark(BENCHMARK_DESC& desc) {
 #endif
 }
 
-// check a running benchmark thread/process.
-//
+/// check a running benchmark thread/process.
 void check_benchmark(BENCHMARK_DESC& desc) {
 #ifdef _WIN32
     DWORD exit_code = 0;
@@ -537,8 +534,7 @@ bool CLIENT_STATE::cpu_benchmarks_done() {
 	return (host_info.p_calculated != 0);
 }
 
-// If a benchmark is nonzero, keep it.  Otherwise use default value
-//
+/// If a benchmark is nonzero, keep it.  Otherwise use default value.
 void CLIENT_STATE::cpu_benchmarks_set_defaults() {
     if (!host_info.p_fpops) host_info.p_fpops = DEFAULT_FPOPS;
     if (!host_info.p_iops) host_info.p_iops = DEFAULT_IOPS;
@@ -546,8 +542,7 @@ void CLIENT_STATE::cpu_benchmarks_set_defaults() {
     if (!host_info.m_cache) host_info.m_cache = DEFAULT_CACHE;
 }
 
-// return true if any CPU benchmark thread/process is running
-//
+/// return true if any CPU benchmark thread/process is running.
 bool CLIENT_STATE::are_cpu_benchmarks_running() {
     return benchmarks_running;
 }

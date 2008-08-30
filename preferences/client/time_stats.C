@@ -71,9 +71,9 @@ int get_connected_state() {
 #endif
 #endif
 
-// exponential decay constant.
-// The last 10 days have a weight of 1/e;
-// everything before that has a weight of (1-1/e)
+/// exponential decay constant.
+/// The last 10 days have a weight of 1/e;
+/// everything before that has a weight of (1-1/e)
 
 const float ALPHA = (SECONDS_PER_DAY*10);
 //const float ALPHA = 60;   // for testing
@@ -91,8 +91,8 @@ TIME_STATS::TIME_STATS() {
     time_stats_log = NULL;
 }
 
-// if log file is over a meg, discard everything older than a year
-//
+/// if log file is over a meg, discard everything older than a year
+///
 void TIME_STATS::trim_stats_log() {
 #ifndef SIM
     double size;
@@ -136,19 +136,19 @@ void send_log_after(const char* filename, double t, MIOFILE& mf) {
     fclose(f);
 }
 
-// copy the log file after a given time
-//
+/// copy the log file after a given time
+///
 void TIME_STATS::get_log_after(double t, MIOFILE& mf) {
     fclose(time_stats_log);     // win: can't open twice
     send_log_after(TIME_STATS_LOG, t, mf);
     time_stats_log = fopen(TIME_STATS_LOG, "a");
 }
 
-// Update time statistics based on current activities
-// NOTE: we don't set the state-file dirty flag here,
-// so these get written to disk only when other activities
-// cause this to happen.  Maybe should change this.
-//
+/// Update time statistics based on current activities.
+/// NOTE: we don't set the state-file dirty flag here,
+/// so these get written to disk only when other activities
+/// cause this to happen.  Maybe should change this.
+///
 void TIME_STATS::update(int suspend_reason) {
     double dt, w1, w2;
 
@@ -253,8 +253,8 @@ void TIME_STATS::update_cpu_efficiency(double cpu_wall_time, double cpu_time) {
     }
 }
 
-// Write XML based time statistics
-//
+/// Write XML based time statistics
+///
 int TIME_STATS::write(MIOFILE& out, bool to_server) const {
     out.printf(
         "<time_stats>\n"
@@ -277,8 +277,8 @@ int TIME_STATS::write(MIOFILE& out, bool to_server) const {
     return 0;
 }
 
-// Parse XML based time statistics, usually from client_state.xml
-//
+/// Parse XML based time statistics, usually from client_state.xml
+///
 int TIME_STATS::parse(MIOFILE& in) {
     char buf[256];
 

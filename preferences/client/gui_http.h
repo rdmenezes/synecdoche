@@ -18,9 +18,9 @@
 #ifndef _GUI_HTTP_
 #define _GUI_HTTP_
 
-// Management of HTTP operations done in response to a GUI RPC,
-// i.e. triggered by the user.
-//
+/// \file
+/// Management of HTTP operations done in response to a GUI RPC,
+/// i.e. triggered by the user.
 
 #include <string>
 
@@ -31,10 +31,9 @@
 
 struct GUI_HTTP_OP;
 
-// A "channel" for doing HTTP ops.
-// There's one of these for each GUI RPC connection,
-// and one for the client itself.
-//
+/// A "channel" for doing HTTP ops.
+/// There's one of these for each GUI RPC connection,
+/// and one for the client itself.
 struct GUI_HTTP {
     int state;
     GUI_HTTP_OP* gui_http_op;
@@ -46,8 +45,7 @@ struct GUI_HTTP {
     bool poll();
 };
 
-// base class for various types of ops
-//
+/// base class for various types of ops
 struct GUI_HTTP_OP {
     GUI_HTTP* gui_http;
     virtual void handle_reply(int) {}

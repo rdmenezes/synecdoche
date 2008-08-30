@@ -15,21 +15,22 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// BOINC client simulator.
-//
-// usage:
-// sim [--duration x] [--delta x] [--dirs dir ...]
-//  duration = simulation duration (default 86400)
-//  delta = simulation time step (default 10)
-//
-// If no dirs are specified:
-// reads input files
-//    sim_projects.xml, sim_host.xml, sim_prefs.xml, cc_config.xml
-// and does simulation, generating output files
-//    sim_log.txt, sim_out.html
-//
-// If dirs are specified, chdir into each directory in sequence,
-// do the above for each one, and write summary info to stdout
+/// \file
+/// BOINC client simulator.
+///
+/// usage:
+/// sim [--duration x] [--delta x] [--dirs dir ...]
+///  duration = simulation duration (default 86400)
+///  delta = simulation time step (default 10)
+///
+/// If no dirs are specified:
+/// reads input files
+///    sim_projects.xml, sim_host.xml, sim_prefs.xml, cc_config.xml
+/// and does simulation, generating output files
+///    sim_log.txt, sim_out.html
+///
+/// If dirs are specified, chdir into each directory in sequence,
+/// do the above for each one, and write summary info to stdout
 
 #include "error_numbers.h"
 #include "str_util.h"

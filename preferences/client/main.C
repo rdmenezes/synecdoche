@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// command-line version of the BOINC core client
-
-// This file contains no GUI-related code.
+/// \file
+/// command-line version of the BOINC core client
+///
+/// This file contains no GUI-related code.
 
 #ifdef WIN32
 #define _CONSOLE 1
@@ -93,7 +94,7 @@ void show_message(const PROJECT *p, const char* msg, int priority) {
     const char* x;
     char message[1024];
     time_t now = time(0);
-    char* time_string = time_to_string((double)now);
+    std::string time_string = time_to_string((double)now);
 #if defined(WIN32) && defined(_CONSOLE)
     char event_message[2048];
 #endif
@@ -119,7 +120,7 @@ void show_message(const PROJECT *p, const char* msg, int priority) {
 
     record_message(p, priority, (int)now, message);
 
-    printf("%s [%s] %s\n", time_string, x, message);
+    printf("%s [%s] %s\n", time_string.c_str(), x, message);
     if (gstate.executing_as_daemon) {
 #if defined(WIN32) && defined(_CONSOLE)
         stprintf(event_message, TEXT("%s [%s] %s\n"), time_string,  x, message);
@@ -461,7 +462,7 @@ int boinc_main_loop() {
     //
     gstate.parse_env_vars();
 
-    if (gstate.projects.size() == 0) {
+    if (gstate.projects.empty()) {
         msg_printf(NULL, MSG_INFO,
             "This computer is not attached to any projects"
         );

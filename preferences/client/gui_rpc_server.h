@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -19,6 +20,8 @@
 #define _GUI_RPC_SERVER_H
 
 #include <vector>
+#include <set>
+#include <string>
 
 #include "network.h"
 #include "gui_http.h"
@@ -27,14 +30,14 @@
 
 // FSM states for auto-update
 
+/// No get_screensaver_mode() yet
 #define AU_SS_INIT          0
-    // no get_screensaver_mode() yet
+/// Got a get_screensaver_mode()
 #define AU_SS_GOT           1
-    // got a get_screensaver_mode()
+/// Send a QUIT next time
 #define AU_SS_QUIT_REQ      2
-    // send a QUIT next time
+/// QUIT sent
 #define AU_SS_QUIT_SENT     3
-    // QUIT sent
 
 #define AU_MGR_INIT         0
 #define AU_MGR_GOT          1
@@ -44,27 +47,29 @@
 class GUI_RPC_CONN {
 public:
     int sock;
-    char nonce[256];
-    bool auth_needed;
-        // if true, don't allow operations other than authentication
-    bool got_auth1;
-    bool got_auth2;
-        // keep track of whether we've got the 2 authentication msgs;
-        // don't accept more than one of each (to prevent DoS)
-    bool is_local;
-        // connection is from local host
+    bool auth_needed; ///< If true, don't allow operations other than authentication.
+    bool is_local; ///< Connection is from local host.
     int au_ss_state;
     int au_mgr_state;
     GUI_HTTP gui_http;
-    GET_PROJECT_CONFIG_OP get_project_config_op;
-    LOOKUP_ACCOUNT_OP lookup_account_op;
-    CREATE_ACCOUNT_OP create_account_op;
 
     GUI_RPC_CONN(int);
     ~GUI_RPC_CONN();
     int handle_rpc();
+    int handle_write();
+    bool needs_write() const {
+        return !write_buffer.empty();
+    }
+private:
+    char nonce[256];
+    std::string write_buffer;
+
+    GET_PROJECT_CONFIG_OP get_project_config_op;
+    LOOKUP_ACCOUNT_OP lookup_account_op;
+    CREATE_ACCOUNT_OP create_account_op;
+
     void handle_auth1(MIOFILE&);
-    int handle_auth2(const char*, MIOFILE&);
+    void handle_auth2(const char*, MIOFILE&);
     void handle_get_project_config(const char* buf, MIOFILE& fout);
     void handle_get_project_config_poll(const char*, MIOFILE& fout);
     void handle_lookup_account(const char* buf, MIOFILE& fout);
@@ -79,26 +84,26 @@ public:
 
 class GUI_RPC_CONN_SET {
     std::vector<GUI_RPC_CONN*> gui_rpcs;
-    std::vector<int> allowed_remote_ip_addresses;
+    std::set<unsigned long> allowed_remote_ip_addresses;
     int get_allowed_hosts();
     int get_password();
     int insert(GUI_RPC_CONN*);
-    bool check_allowed_list(int ip_addr);
+    bool check_allowed_list(unsigned long ip_addr) const;
     bool remote_hosts_file_exists;
 public:
     int lsock;
+    /// Time of the last RPC that needs network access to handle
     double time_of_last_rpc_needing_network;
-        // time of the last RPC that needs network access to handle
 
     GUI_RPC_CONN_SET();
     char password[256];
-    void get_fdset(FDSET_GROUP&, FDSET_GROUP&);
-    void got_select(FDSET_GROUP&);
+    void get_fdset(FDSET_GROUP&) const;
+    void got_select(const FDSET_GROUP&);
     int init(bool last_time);
     void close();
-    bool recent_rpc_needs_network(double interval);
+    bool recent_rpc_needs_network(double interval) const;
     void send_quits();
-    bool quits_sent();
+    bool quits_sent() const;
     bool poll();
 };
 

@@ -21,14 +21,14 @@
 #include <cstdio>
 #include <cstdarg>
 
-// MFILE provides memory-buffered output with a FILE-type interface.
-// BOINC uses this in a couple of places:
-// 1) in the GUI RPC system (since in Windows you can't fdopen a socket)
-// 2) in the API, to support a primitive form of checkpointing:
-//    Write all your output (and restart file) to MFILEs.
-//    The output is buffered in memory.
-//    Then close or flush all the MFILEs;
-//    all the buffers will be flushed to disk, almost atomically.
+/// MFILE provides memory-buffered output with a FILE-type interface.
+/// BOINC uses this in a couple of places:
+/// -# in the GUI RPC system (since in Windows you can't fdopen a socket)
+/// -# in the API, to support a primitive form of checkpointing:
+///    Write all your output (and restart file) to MFILEs.
+///    The output is buffered in memory.
+///    Then close or flush all the MFILEs;
+///    all the buffers will be flushed to disk, almost atomically.
 
 class MFILE {
     char* buf;      // NULL-terminated
@@ -46,10 +46,10 @@ public:
     int close();
     int flush();
     long tell() const;
+    /// Get the MFILE's internal buffer and its length.
+    /// The caller assumes ownership of the buffer and must free() it.
+    /// The MFILE's buffer is set to empty.
     void get_buf(char*&, int&);
-        // get the MFILE's internal buffer and its length.
-        // The caller assumes ownership of the buffer and must free() it.
-        // The MFILE's buffer is set to empty
 };
 
 #endif
