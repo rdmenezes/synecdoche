@@ -820,7 +820,7 @@ static void handle_get_venue(MIOFILE& fout) {
 
 /// Changes the active preferences to the specified venue, or the default
 /// venue if the specified name isn't found.
-static void handle_set_venue(char* buf, MIOFILE& fout) {
+static void handle_set_venue(const char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
     bool is_tag;
@@ -852,14 +852,14 @@ static void handle_get_venue_list(MIOFILE& fout) {
         fout.printf("    <name>%s</name>\n", (*i)->venue_name);
         fout.printf("    <description>%s</description>\n", (*i)->venue_description);
         fout.printf("  </venue>\n");
-        i++;
+        ++i;
     }
     fout.printf("</venue_list>\n");
 }
 
 /// Sends a <global_preferences> element for the specified venue. If the venue
 /// is not found, an error is sent.
-static void handle_get_prefs_for_venue(char* buf, MIOFILE& fout) {
+static void handle_get_prefs_for_venue(const char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
     bool is_tag;
@@ -884,7 +884,7 @@ static void handle_get_prefs_for_venue(char* buf, MIOFILE& fout) {
 
 /// Adds or updates preferences for the specified venue. If the venue is the
 /// current venue, then the active preferences are updated.
-static void handle_set_prefs_for_venue(char* buf, MIOFILE& fout) {
+static void handle_set_prefs_for_venue(const char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
     bool is_tag;
@@ -925,7 +925,7 @@ static void handle_set_prefs_for_venue(char* buf, MIOFILE& fout) {
 
 /// Deletes preferences for the specified venue name. If the venue is the
 /// current venue, then the active preferences are updated.
-static void handle_delete_prefs_for_venue(char* buf, MIOFILE& fout) {
+static void handle_delete_prefs_for_venue(const char* buf, MIOFILE& fout) {
     MIOFILE in;
     XML_PARSER xp(&in);
     bool is_tag;
