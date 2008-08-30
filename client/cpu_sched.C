@@ -342,7 +342,7 @@ void CLIENT_STATE::adjust_debts() {
         if (log_flags.debt_debug) {
             msg_printf(NULL, MSG_INFO,
                 "[debt_debug] adjust_debt: elapsed time (%d) longer than sched period (%d).  Ignoring this period.",
-                (int)wall_cpu_time, (int)global_prefs.cpu_scheduling_period()
+                int(wall_cpu_time), int(global_prefs.cpu_scheduling_period())
             );
         }
         reset_debt_accounting();
