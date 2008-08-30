@@ -448,7 +448,7 @@ GLOBAL_PREFS* CLIENT_STATE::lookup_venue(const char* venue) {
         if (!strcmp(venue, (*i)->venue_name)) {
             return *i;
         }
-        i++;
+        ++i;
     }
     return 0;
 }
