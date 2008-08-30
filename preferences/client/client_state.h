@@ -384,9 +384,12 @@ public:
     int resume_tasks(int reason=0);
     int suspend_network(int reason);
     int resume_network();
+    /// Read and update the global preferences.
     void read_global_prefs();
+    /// Changes the active global preferences.
     void change_global_prefs(const char* venue);
     int save_global_prefs(char* prefs, char* url, char* sched);
+    /// Find preferences for a venue.
     GLOBAL_PREFS* lookup_venue(const char* venue);
     double available_ram();
     double max_available_ram();
