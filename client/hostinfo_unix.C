@@ -157,9 +157,9 @@ char* ip_addr_string(int ip_addr) {
 }
 #endif
 
-// Returns the offset between LOCAL STANDARD TIME and UTC.
-// LOCAL_STANDARD_TIME = UTC_TIME + get_timezone().
-//
+/// Returns the offset between LOCAL STANDARD TIME and UTC.
+/// LOCAL_STANDARD_TIME = UTC_TIME + get_timezone().
+///
 int get_timezone() {
     tzset();
     // TODO: take daylight savings time into account
@@ -185,9 +185,9 @@ int get_timezone() {
     return 0;
 }
 
-// Returns true if the host is currently running off battery power
-// If you can't figure out, return false
-//
+/// Returns true if the host is currently running off battery power
+/// If you can't figure out, return false
+///
 bool HOST_INFO::host_is_running_on_batteries() {
 #if defined(__APPLE__)
     CFDictionaryRef pSource = NULL;
@@ -937,9 +937,9 @@ int HOST_INFO::get_host_info() {
     return 0;
 }
 
-// returns true iff device was last accessed before t
-// or if an error occurred looking at the device.
-//
+/// returns true iff device was last accessed before t
+/// or if an error occurred looking at the device.
+///
 inline bool device_idle(time_t t, const char *device) {
     struct stat sbuf;
     return stat(device, &sbuf) || (sbuf.st_atime < t);
@@ -958,8 +958,8 @@ static const struct dir_dev {
     { NULL, NULL },
 };
 
+/// Create a list of all terminal devices on the system.
 std::vector<std::string> get_tty_list() {
-    // Create a list of all terminal devices on the system.
     char devname[1024];
     char fullname[1024];
     int done,i=0;
@@ -1031,14 +1031,15 @@ inline bool user_idle(time_t t, struct utmp* u) {
   struct utmp *getutent() {
       if (ufp == NULL) {
 #if defined(UTMP_LOCATION)
-          if ((ufp = fopen(UTMP_LOCATION, "r")) == NULL) {
+          if ((ufp = fopen(UTMP_LOCATION, "r")) == NULL)
 #elif defined(UTMP_FILE)
-          if ((ufp = fopen(UTMP_FILE, "r")) == NULL) {
+          if ((ufp = fopen(UTMP_FILE, "r")) == NULL)
 #elif defined(_PATH_UTMP)
-          if ((ufp = fopen(_PATH_UTMP, "r")) == NULL) {
+          if ((ufp = fopen(_PATH_UTMP, "r")) == NULL)
 #else
-          if ((ufp = fopen("/etc/utmp", "r")) == NULL) {
+          if ((ufp = fopen("/etc/utmp", "r")) == NULL)
 #endif
+          {
               return((struct utmp *)NULL);
           }
       }
@@ -1055,8 +1056,8 @@ inline bool user_idle(time_t t, struct utmp* u) {
   }
 #endif
 
-  // scan list of logged-in users, and see if they're all idle
-  //
+  /// scan list of logged-in users, and see if they're all idle
+  ///
   inline bool all_logins_idle(time_t t) {
       struct utmp* u;
       setutent();
