@@ -350,6 +350,8 @@ bool HOST_INFO::host_is_running_on_batteries() {
             // online is 1 if on AC power, 0 if on battery
             return (0 == online);
         }
+    default:
+        return false;
     }
 #else
     return false;
