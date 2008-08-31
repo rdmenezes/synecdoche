@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,42 +16,19 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+/// \file
+/// Class implementing the dialog for selecting a different computer in the Manager.
+
 #ifndef _DLGSELECTCOMPUTER_H_
 #define _DLGSELECTCOMPUTER_H_
 
-/*!
- * Includes
- */
-
-////@begin includes
 #include "wx/valgen.h"
-////@end includes
 
-/*!
- * Forward declarations
- */
-
-////@begin forward declarations
-////@end forward declarations
-
-/*!
- * Control identifiers
- */
-
-////@begin control identifiers
-#define ID_DIALOG 10000
 #define SYMBOL_CDLGSELECTCOMPUTER_STYLE wxDEFAULT_DIALOG_STYLE
 #define SYMBOL_CDLGSELECTCOMPUTER_TITLE wxT("")
-#define SYMBOL_CDLGSELECTCOMPUTER_IDNAME ID_DIALOG
 #define SYMBOL_CDLGSELECTCOMPUTER_SIZE wxSize(400, 300)
 #define SYMBOL_CDLGSELECTCOMPUTER_POSITION wxDefaultPosition
-#define ID_SELECTCOMPUTERNAME 10001
-#define ID_SELECTCOMPUTERPASSWORD 10002
-////@end control identifiers
-
-/*!
- * Compatibility
- */
 
 #ifndef wxCLOSE_BOX
 #define wxCLOSE_BOX 0x1000
@@ -59,58 +37,48 @@
 #define wxFIXED_MINSIZE 0
 #endif
 
-/*!
- * CDlgSelectComputer class declaration
- */
-
 class CDlgSelectComputer: public wxDialog
 {    
-    DECLARE_DYNAMIC_CLASS( CDlgSelectComputer )
+    DECLARE_DYNAMIC_CLASS(CDlgSelectComputer)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CDlgSelectComputer( );
-    CDlgSelectComputer( wxWindow* parent, wxWindowID id = SYMBOL_CDLGSELECTCOMPUTER_IDNAME, const wxString& caption = SYMBOL_CDLGSELECTCOMPUTER_TITLE, const wxPoint& pos = SYMBOL_CDLGSELECTCOMPUTER_POSITION, const wxSize& size = SYMBOL_CDLGSELECTCOMPUTER_SIZE, long style = SYMBOL_CDLGSELECTCOMPUTER_STYLE );
+    CDlgSelectComputer();
+    CDlgSelectComputer(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& caption = SYMBOL_CDLGSELECTCOMPUTER_TITLE, const wxPoint& pos = SYMBOL_CDLGSELECTCOMPUTER_POSITION, const wxSize& size = SYMBOL_CDLGSELECTCOMPUTER_SIZE, long style = SYMBOL_CDLGSELECTCOMPUTER_STYLE);
 
-    /// Creation
-    bool Create( wxWindow* parent, wxWindowID id = SYMBOL_CDLGSELECTCOMPUTER_IDNAME, const wxString& caption = SYMBOL_CDLGSELECTCOMPUTER_TITLE, const wxPoint& pos = SYMBOL_CDLGSELECTCOMPUTER_POSITION, const wxSize& size = SYMBOL_CDLGSELECTCOMPUTER_SIZE, long style = SYMBOL_CDLGSELECTCOMPUTER_STYLE );
+    wxString GetComputerName() const { return m_strComputerName; }
+    void SetComputerName(wxString value) { m_strComputerName = value; }
 
-    /// Creates the controls and sizers
-    void CreateControls();
+    /// Set the list of most recently used computers.
+    void SetMRUList(const wxArrayString& mru_list);
 
-////@begin CDlgSelectComputer event handler declarations
-
-    /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_SELECTCOMPUTERNAME
-    void OnComputerNameUpdated( wxCommandEvent& event );
-
-////@end CDlgSelectComputer event handler declarations
-
-////@begin CDlgSelectComputer member function declarations
-
-    wxString GetComputerName() const { return m_strComputerName ; }
-    void SetComputerName(wxString value) { m_strComputerName = value ; }
-
-    wxString GetComputerPassword() const { return m_strComputerPassword ; }
-    void SetComputerPassword(wxString value) { m_strComputerPassword = value ; }
+    wxString GetComputerPassword() const { return m_strComputerPassword; }
+    void SetComputerPassword(wxString value) { m_strComputerPassword = value; }
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CDlgSelectComputer member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CDlgSelectComputer member variables
+private:
+    /// Creation
+    bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& caption = SYMBOL_CDLGSELECTCOMPUTER_TITLE, const wxPoint& pos = SYMBOL_CDLGSELECTCOMPUTER_POSITION, const wxSize& size = SYMBOL_CDLGSELECTCOMPUTER_SIZE, long style = SYMBOL_CDLGSELECTCOMPUTER_STYLE);
+
+    /// Creates the controls and sizers.
+    void CreateControls();
+
+    void OnComputerNameUpdated(wxCommandEvent& event);
+
+private:
     wxComboBox* m_ComputerNameCtrl;
     wxTextCtrl* m_ComputerPasswordCtrl;
     wxString m_strComputerName;
     wxString m_strComputerPassword;
-////@end CDlgSelectComputer member variables
 };
 
-#endif
-    // _DLGSELECTCOMPUTER_H_
+#endif // _DLGSELECTCOMPUTER_H_

@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -1066,27 +1066,22 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
     CMainDocument*      pDoc = wxGetApp().GetDocument();
     CDlgSelectComputer  dlg(this);
-    size_t              index = 0;
     int                 retVal = -1;
-    wxArrayString       aComputerNames;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
 
     // Lets copy the template store in the system state
-    aComputerNames = m_aSelectedComputerMRU;
+    wxArrayString aComputerNames = m_aSelectedComputerMRU;
 
     // Lets populate the combo control with the MRU list
-    dlg.m_ComputerNameCtrl->Clear();
-    for (index = 0; index < aComputerNames.Count(); index++) {
-        dlg.m_ComputerNameCtrl->Append(aComputerNames.Item(index));
-    }
+    dlg.SetMRUList(aComputerNames);
 
     if (wxID_OK == dlg.ShowModal()) {
 
         // Make a null hostname be the same thing as localhost
-        if (wxEmptyString == dlg.m_ComputerNameCtrl->GetValue()) {
+        if (wxEmptyString == dlg.GetComputerName()) {
             retVal = pDoc->Connect(
                 wxT("localhost"),
                 GUI_RPC_PORT,
@@ -1096,7 +1091,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             );
         } else {
             // Connect to the remote machine
-            wxString sHost = dlg.m_ComputerNameCtrl->GetValue(); 
+            wxString sHost = dlg.GetComputerName(); 
             long lPort = GUI_RPC_PORT; 
             size_t pos = sHost.find(wxT(":")); 
             if (pos != wxString::npos) { 
@@ -1107,7 +1102,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             retVal = pDoc->Connect(
                 sHost,
                 (int)lPort,
-                dlg.m_ComputerPasswordCtrl->GetValue(),
+                dlg.GetComputerPassword(),
                 true,
                 false
             );
@@ -1118,13 +1113,13 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
         // Insert a copy of the current combo box value to the head of the
         //   computer names string array
-        if (wxEmptyString != dlg.m_ComputerNameCtrl->GetValue()) {
-            aComputerNames.Insert(dlg.m_ComputerNameCtrl->GetValue(), 0);
+        if (wxEmptyString != dlg.GetComputerName()) {
+            aComputerNames.Insert(dlg.GetComputerName(), 0);
         }
 
         // Loops through the computer names and remove any duplicates that
         //   might exist with the new head value
-        for (index = aComputerNames.Count() - 1; index > 0; index--) {
+        for (size_t index = aComputerNames.Count() - 1; index > 0; index--) {
             if (aComputerNames.Item(index) == aComputerNames.Item(0))
                 aComputerNames.RemoveAt(index);
         }
