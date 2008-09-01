@@ -18,8 +18,6 @@
 #ifndef _VALIDATENUMBER_H_
 #define _VALIDATENUMBER_H_
 
-#include "stdwx.h"
-
 // Templated validator to handle any numeric type. T must
 // support insertion and extraction operators or it will all fail horribly.
 template<class T>
