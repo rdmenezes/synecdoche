@@ -19,9 +19,10 @@
 #ifndef _PREFS_
 #define _PREFS_
 
-#include <cstdio>
 #include "miofile.h"
 #include "parse.h"
+#include <string>
+#include <deque>
 
 // global prefs are maintained as follows:
 // 1) a "global_prefs.xml" file, which stores the "network" prefs;
