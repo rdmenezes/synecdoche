@@ -601,7 +601,7 @@ int GLOBAL_PREFS::write(MIOFILE& f) const {
     return 0;
 }
 
-VENUE::VENUE(char* name, char* description) {
+VENUE::VENUE(const char* name, const char* description) {
     strncpy(venue_name, name, sizeof(venue_name));
     strncpy(venue_description, description, sizeof(venue_description));
 }
