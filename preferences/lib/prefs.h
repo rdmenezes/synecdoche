@@ -92,7 +92,7 @@ public:
 
 class VENUE {
 public:
-    VENUE(char* name = "", char* description = "");
+    VENUE(const char* name = "", const char* description = "");
 
     char venue_name[32]; // immutable
     char venue_description[256]; // localisable, renamable, UTF-8?
