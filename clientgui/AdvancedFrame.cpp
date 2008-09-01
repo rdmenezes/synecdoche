@@ -1119,9 +1119,11 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
         // Loops through the computer names and remove any duplicates that
         //   might exist with the new head value
-        for (size_t index = aComputerNames.Count() - 1; index > 0; index--) {
-            if (aComputerNames.Item(index) == aComputerNames.Item(0))
-                aComputerNames.RemoveAt(index);
+        if (!aComputerNames.empty()) {
+            for (size_t index = aComputerNames.Count() - 1; index > 0; --index) {
+                if (aComputerNames.Item(index) == aComputerNames.Item(0))
+                    aComputerNames.RemoveAt(index);
+            }
         }
 
         // Store the modified computer name MRU list back to the system state

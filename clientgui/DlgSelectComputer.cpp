@@ -28,11 +28,6 @@
 
 #include "DlgSelectComputer.h"
 
-namespace
-{
-    const int ID_SELECTCOMPUTERNAME = wxNewId();
-}
-
 IMPLEMENT_DYNAMIC_CLASS(CDlgSelectComputer, wxDialog)
 
 BEGIN_EVENT_TABLE(CDlgSelectComputer, wxDialog )
