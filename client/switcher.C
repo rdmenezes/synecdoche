@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
     pw = getpwnam(user_name);
     if (pw) setuid(pw->pw_uid);
 
-    execv(argv[1], argv+2);
+    execv(argv[1], argv+1);
     
     // If we got here execv failed
     fprintf(stderr, "Process creation (%s) failed: errno=%d\n", argv[1], errno);
