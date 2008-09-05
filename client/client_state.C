@@ -186,7 +186,7 @@ int CLIENT_STATE::init() {
     time_stats.start();
 
     msg_printf(
-        NULL, MSG_INFO, "Starting BOINC client version %d.%d.%d for %s%s",
+        NULL, MSG_INFO, "Starting Synecdoche client version %d.%d.%d for %s%s",
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,
@@ -200,7 +200,7 @@ int CLIENT_STATE::init() {
 
     if (core_client_version.prerelease) {
         msg_printf(NULL, MSG_USER_ERROR,
-            "This a development version of BOINC and may not function properly"
+            "This a development version of Synecdoche and may not function properly"
         );
     }
 

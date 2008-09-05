@@ -781,6 +781,7 @@ int suspend_or_resume_threads(DWORD pid, bool resume) {
 } 
 
 void chdir_to_data_dir() {
+    /*
 	LONG    lReturnValue;
 	HKEY    hkSetupHive;
     LPTSTR  lpszRegistryValue = NULL;
@@ -825,4 +826,5 @@ void chdir_to_data_dir() {
 
 	if (hkSetupHive) RegCloseKey(hkSetupHive);
     if (lpszRegistryValue) free(lpszRegistryValue);
+    */
 }

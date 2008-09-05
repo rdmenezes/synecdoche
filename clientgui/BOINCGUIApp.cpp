@@ -106,8 +106,8 @@ bool CBOINCGUIApp::OnInit() {
 #endif
 
     // Setup application and company information
-    SetAppName(wxT("BOINC Manager"));
-    SetVendorName(wxT("Space Sciences Laboratory, U.C. Berkeley"));
+    SetAppName(wxT("Synecdoche"));
+    //SetVendorName(wxT("Space Sciences Laboratory, U.C. Berkeley"));
 
     // Initialize the configuration storage module
     m_pConfig = new wxConfig(GetAppName());
@@ -126,6 +126,7 @@ bool CBOINCGUIApp::OnInit() {
     LPTSTR  lpszRegistryValue = NULL;
     DWORD   dwSize = 0;
 
+    /*
     // change the current directory to the boinc data directory if it exists
     lReturnValue = RegOpenKeyEx(
         HKEY_LOCAL_MACHINE, 
@@ -169,7 +170,7 @@ bool CBOINCGUIApp::OnInit() {
     // Cleanup
     if (hkSetupHive) RegCloseKey(hkSetupHive);
     if (lpszRegistryValue) free(lpszRegistryValue);
-
+*/
 
     //
     // Determine BOINCMgr Root Directory
