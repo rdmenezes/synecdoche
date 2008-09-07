@@ -354,7 +354,7 @@ void CLIENT_STATE::read_global_prefs() {
     );
     if (retval) {
         msg_printf(NULL, MSG_INFO,
-            "No general preferences found - using BOINC defaults"
+            "No general preferences found - using defaults"
         );
     } else {
         // check that the source project's venue matches main_host_venue.
