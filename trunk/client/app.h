@@ -53,7 +53,7 @@ typedef int PROCESS_ID;
 /// which determines the directory it runs in.
 /// This doesn't change over the life of the active task;
 /// thus the task can use the slot directory for temp files
-/// that BOINC doesn't know about.
+/// that aren't tracked directly.
 class ACTIVE_TASK {
     int _task_state;
 public:
