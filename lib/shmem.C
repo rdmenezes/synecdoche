@@ -86,8 +86,7 @@ HANDLE create_shmem(LPCTSTR seg_name, int size, void** pp, bool try_global) {
              0, 0, 0, 0, 0, 0, 0,
              &pEveryoneSID)
         ) {
-            fprintf(stderr, "AllocateAndInitializeSid Error %u\n", GetLastError());
-            throw;
+            throw "AllocateAndInitializeSid";
         }
 
         // Initialize an EXPLICIT_ACCESS structure for an ACE.
@@ -103,22 +102,17 @@ HANDLE create_shmem(LPCTSTR seg_name, int size, void** pp, bool try_global) {
         // Create a new ACL that contains the new ACEs.
         dwRes = SetEntriesInAcl(1, &ea, NULL, &pACL);
         if (ERROR_SUCCESS != dwRes) {
-            fprintf(stderr, "SetEntriesInAcl Error %u\n", GetLastError());
-            throw;
+            throw "SetEntriesInAcl";
         }
 
         // Initialize a security descriptor.  
         pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
         if (NULL == pSD) { 
-            fprintf(stderr, "LocalAlloc Error %u\n", GetLastError());
-            throw;
+            throw "LocalAlloc";
         } 
      
         if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {
-            fprintf(stderr, "InitializeSecurityDescriptor Error %u\n",
-                GetLastError()
-            );
-            throw;
+            throw "InitializeSecurityDescriptor";
         } 
      
         // Add the ACL to the security descriptor. 
@@ -127,10 +121,7 @@ HANDLE create_shmem(LPCTSTR seg_name, int size, void** pp, bool try_global) {
                 pACL, 
                 FALSE) // not a default DACL 
         ) {  
-            fprintf(stderr,
-                "SetSecurityDescriptorDacl Error %u\n", GetLastError()
-            );
-            throw;
+            throw "SetSecurityDescriptorDacl";
         } 
 
         // Initialize a security attributes structure.
@@ -173,7 +164,9 @@ HANDLE create_shmem(LPCTSTR seg_name, int size, void** pp, bool try_global) {
                 *pp = MapViewOfFile( hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0 );
             }
         }
-    } catch (...) {}
+    } catch (const char* e) {
+        fprintf(stderr, "%s Error %u\n", e, GetLastError());
+    }
 
     if (pEveryoneSID) 
         FreeSid(pEveryoneSID);
