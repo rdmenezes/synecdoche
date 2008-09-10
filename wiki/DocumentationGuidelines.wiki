@@ -30,4 +30,4 @@ int var; ///< Detailed description after the member.
 
  * State the obvious. It may not be obvious to other readers.
  * Avoid writing [http://www.codinghorror.com/blog/archives/000451.html undocumentation].
- * Keep documentation up to date. No documentation is better than inaccurate documentation.
+ * Keep documentation up to date. Inaccurate documentation is worse than no documentation at all.
