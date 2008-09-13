@@ -71,7 +71,7 @@ void parse_url(const char* url, char* host, int &port, char* file) {
     //if (strncmp(url, (bSSL ? "https://" : "http://"), csiLen) == 0) {
     if (strncmp(url, "http://", 7) == 0) {
         safe_strcpy(buf, url+7);
-    } else { 
+    } else {
         // wait, may be https://
         if (strncmp(url, "https://", 8) == 0) {
             safe_strcpy(buf, url+8);
@@ -99,10 +99,10 @@ void parse_url(const char* url, char* host, int &port, char* file) {
         port = atol(p+1);
         *p = 0;
     } else {
-        // CMC note:  if they didn't pass in a port #, 
+        // CMC note:  if they didn't pass in a port #,
         //    but the url starts with https://, assume they
         //    want a secure port (HTTPS, port 443)
-        port = (bSSL ? 443 : 80);  
+        port = (bSSL ? 443 : 80);
     }
 
     // what remains is the host
@@ -308,7 +308,7 @@ int HTTP_OP::libcurl_exec(
     // The default, since 7.10, is 2.
     // The checking this option controls is of the identity that
     // the server claims. The server could be lying.
-    // To control lying, see CURLOPT_SSL_VERIFYPEER. 
+    // To control lying, see CURLOPT_SSL_VERIFYPEER.
     //
     curlErr = curl_easy_setopt(curlEasy, CURLOPT_SSL_VERIFYHOST, 2L);
 
@@ -333,12 +333,12 @@ int HTTP_OP::libcurl_exec(
 
             strncat(
                 m_curl_ca_bundle_location,
-                szPath, 
+                szPath,
                 sizeof(m_curl_ca_bundle_location)-strlen(m_curl_ca_bundle_location)
             );
             strncat(
                 m_curl_ca_bundle_location,
-                CA_BUNDLE_FILENAME, 
+                CA_BUNDLE_FILENAME,
                 sizeof(m_curl_ca_bundle_location)-strlen(m_curl_ca_bundle_location)
             );
 
@@ -391,7 +391,7 @@ int HTTP_OP::libcurl_exec(
     curlErr = curl_easy_setopt(curlEasy, CURLOPT_LOW_SPEED_LIMIT, 10L);
     curlErr = curl_easy_setopt(curlEasy, CURLOPT_LOW_SPEED_TIME, 300L);
     curlErr = curl_easy_setopt(curlEasy, CURLOPT_CONNECTTIMEOUT, 120L);
-    
+
     // force curl to use HTTP/1.0 if config specifies it
     // (curl uses 1.1 by default)
     //
@@ -430,14 +430,14 @@ int HTTP_OP::libcurl_exec(
 
     // set up an output file for the reply
     //
-    if (strlen(outfile)) {  
+    if (strlen(outfile)) {
         if (file_offset>0.0) {
             fileOut = boinc_fopen(outfile, "ab+");
         } else {
             fileOut = boinc_fopen(outfile, "wb+");
         }
         if (!fileOut) {
-            msg_printf(NULL, MSG_INTERNAL_ERROR, 
+            msg_printf(NULL, MSG_INTERNAL_ERROR,
                 "Can't create HTTP response output file %s", outfile
             );
             http_op_retval = ERR_FOPEN;
@@ -465,7 +465,7 @@ int HTTP_OP::libcurl_exec(
                 http_op_state = HTTP_STATE_DONE;
                 return ERR_FOPEN;
             }
-        }        
+        }
 
         if (pcurlList) { // send custom headers if required
             curlErr = curl_easy_setopt(curlEasy, CURLOPT_HTTPHEADER, pcurlList);
@@ -476,7 +476,7 @@ int HTTP_OP::libcurl_exec(
 
 #if 0
         // HTTP PUT method
-        curl_off_t fs = (curl_off_t) content_length; 
+        curl_off_t fs = (curl_off_t) content_length;
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_POSTFIELDS, NULL);
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_INFILESIZE, content_length);
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_READDATA, fileIn);
@@ -487,16 +487,16 @@ int HTTP_OP::libcurl_exec(
         // HTTP POST method
         // set the multipart form for the file --
         // boinc just has the one section (file)
-        
+
 #if 0
-        //  if we ever want to do POST as multipart forms someday 
+        // if we ever want to do POST as multipart forms some day
         // (many seem to prefer it that way, i.e. libcurl)
         //
         pcurlFormStart = pcurlFormEnd = NULL;
-        curl_formadd(&pcurlFormStart, &pcurlFormEnd, 
+        curl_formadd(&pcurlFormStart, &pcurlFormEnd,
                CURLFORM_FILECONTENT, infile,
                CURLFORM_CONTENTSLENGTH, content_length,
-               CURLFORM_CONTENTTYPE, g_content_type, 
+               CURLFORM_CONTENTTYPE, g_content_type,
                CURLFORM_END);
         curl_formadd(&post, &last,
                CURLFORM_COPYNAME, "logotype-image",
@@ -504,7 +504,7 @@ int HTTP_OP::libcurl_exec(
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_HTTPPOST, pcurlFormStart);
 #endif
 
-        curl_off_t fs = (curl_off_t) content_length; 
+        curl_off_t fs = (curl_off_t) content_length;
 
         pByte = NULL;
         lSeek = 0;    // initialize the vars we're going to use for byte transfers
@@ -519,7 +519,7 @@ int HTTP_OP::libcurl_exec(
         //
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_READDATA, this);
 
-        // callback function to rewind input file 
+        // callback function to rewind input file
         //
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_IOCTLFUNCTION, libcurl_ioctl);
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_IOCTLDATA, this);
@@ -546,7 +546,7 @@ int HTTP_OP::libcurl_exec(
         static int trace_count = 0;
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_DEBUGFUNCTION, libcurl_debugfunction);
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_DEBUGDATA, this );
-        curlErr = curl_easy_setopt(curlEasy, CURLOPT_VERBOSE, 1L); 
+        curlErr = curl_easy_setopt(curlEasy, CURLOPT_VERBOSE, 1L);
         trace_id = trace_count++;
     }
 
@@ -601,7 +601,7 @@ int HTTP_OP_SET::remove(HTTP_OP* p) {
 }
 
 int HTTP_OP_SET::nops() {
-    return (int)http_ops.size();  
+    return (int)http_ops.size();
 }
 
 
@@ -641,14 +641,14 @@ size_t libcurl_write(void *ptr, size_t size, size_t nmemb, HTTP_OP* phop) {
 
 size_t libcurl_read( void *ptr, size_t size, size_t nmemb, HTTP_OP* phop) {
     // OK here's the deal -- phop points to the calling object,
-    // which has already pre-opened the file.  we'll want to
+    // which has already pre-opened the file. We'll want to
     // use pByte as a pointer for fseek calls into the file, and
     // write out size*nmemb # of bytes to ptr
 
     // take the stream param as a FILE* and write to disk
     // if (pByte) delete [] pByte;
     // pByte = new unsigned char[content_length];
-    // memset(pByte, 0x00, content_length); // may as will initialize it!
+    // memset(pByte, 0x00, content_length); // may as well initialize it!
 
     // note that fileIn was opened earlier,
     // go to lSeek from the top and read from there
@@ -660,7 +660,7 @@ size_t libcurl_read( void *ptr, size_t size, size_t nmemb, HTTP_OP* phop) {
         // need to send headers first, then data file
         // so requests from 0 to strlen(req1)-1 are from memory,
         // and from strlen(req1) to content_length are from the file
-        if (phop->lSeek < (long) strlen(phop->req1)) {  
+        if (phop->lSeek < (long) strlen(phop->req1)) {
             // need to read header, either just starting to read
             // (i.e. this is the first time in this function for this phop)
             // or the last read didn't ask for the entire header
@@ -683,21 +683,21 @@ size_t libcurl_read( void *ptr, size_t size, size_t nmemb, HTTP_OP* phop) {
             // see if we're done with headers
             if (phop->lSeek >= (long) strlen(phop->req1)) {
                 phop->bSentHeader = true;
-                phop->lSeek = 0; 
+                phop->lSeek = 0;
             }
             return stRead;
         } else {
             // shouldn't happen
             phop->bSentHeader = true;
-            phop->lSeek = 0; 
+            phop->lSeek = 0;
         }
     }
-    if (phop->fileIn) { 
+    if (phop->fileIn) {
         long lFileSeek = phop->lSeek + (long) phop->file_offset;
         fseek(phop->fileIn, lFileSeek, SEEK_SET);
         if (!feof(phop->fileIn)) {
-            stRead = (int)fread(ptr, 1, stSend, phop->fileIn); 
-        }    
+            stRead = (int)fread(ptr, 1, stSend, phop->fileIn);
+        }
         phop->lSeek += (long) stRead;
         phop->bytes_xferred += (double)(stRead);
     }
@@ -729,7 +729,7 @@ int libcurl_debugfunction(
     char hdr[100];
     char buf[1024];
     size_t mysize;
-    
+
     switch (type) {
     case CURLINFO_TEXT:
         if (log_flags.http_debug) {
@@ -782,7 +782,7 @@ void HTTP_OP::setupProxyCurl() {
 ///    CURLOPT_PROXYPORT  -- a long port #
 ///    CURLOPT_PROXY - pass in char* of the proxy url
 ///    CURLOPT_PROXYUSERPWD -- a char* in the format username:password
-///    CURLOPT_HTTPAUTH -- pass in one of CURLAUTH_BASIC, CURLAUTH_DIGEST, 
+///    CURLOPT_HTTPAUTH -- pass in one of CURLAUTH_BASIC, CURLAUTH_DIGEST,
 ///        CURLAUTH_GSSNEGOTIATE, CURLAUTH_NTLM, CURLAUTH_ANY, CURLAUTH_ANYSAFE
 ///    CURLOPT_PROXYAUTH -- "or" | the above bitmasks -- only basic, digest, ntlm work
 
@@ -814,7 +814,7 @@ void HTTP_OP::setupProxyCurl() {
             sprintf(szCurlProxyUserPwd, "%s:%s", pi.http_user_name, pi.http_user_passwd);
             curlErr = curl_easy_setopt(curlEasy, CURLOPT_PROXYUSERPWD, szCurlProxyUserPwd);
         }
-    } else {    
+    } else {
         if (pi.use_socks_proxy) {
             //pi.socks_version -- picks between socks5 & socks4 -- but libcurl only socks5!
             curlErr = curl_easy_setopt(curlEasy, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
@@ -902,14 +902,14 @@ void HTTP_OP::handle_messages(CURLMsg *pcurlMsg) {
     CURLcode curlErr;
     int retval;
 
-    curlErr = curl_easy_getinfo(curlEasy, 
+    curlErr = curl_easy_getinfo(curlEasy,
         CURLINFO_RESPONSE_CODE, &response
     );
 
     // CURLINFO_LONG+25 is a workaround for a bug in the gcc version
     // included with Mac OS X 10.3.9
     //
-    curlErr = curl_easy_getinfo(curlEasy, 
+    curlErr = curl_easy_getinfo(curlEasy,
         (CURLINFO)(CURLINFO_LONG+25) /*CURLINFO_OS_ERRNO*/, &connect_error
     );
 
@@ -925,13 +925,13 @@ void HTTP_OP::handle_messages(CURLMsg *pcurlMsg) {
         // (we don't use it)
         //
         double size_download, total_time, starttransfer_time;
-        curlErr = curl_easy_getinfo(curlEasy, 
+        curlErr = curl_easy_getinfo(curlEasy,
             CURLINFO_SIZE_DOWNLOAD, &size_download
         );
-        curlErr = curl_easy_getinfo(curlEasy, 
+        curlErr = curl_easy_getinfo(curlEasy,
             CURLINFO_TOTAL_TIME, &total_time
         );
-        curlErr = curl_easy_getinfo(curlEasy, 
+        curlErr = curl_easy_getinfo(curlEasy,
             CURLINFO_STARTTRANSFER_TIME, &starttransfer_time
         );
         double dt = total_time - starttransfer_time;
@@ -941,13 +941,13 @@ void HTTP_OP::handle_messages(CURLMsg *pcurlMsg) {
     }
     if (want_upload) {
         double size_upload, total_time, starttransfer_time;
-        curlErr = curl_easy_getinfo(curlEasy, 
+        curlErr = curl_easy_getinfo(curlEasy,
             CURLINFO_SIZE_UPLOAD, &size_upload
         );
-        curlErr = curl_easy_getinfo(curlEasy, 
+        curlErr = curl_easy_getinfo(curlEasy,
             CURLINFO_TOTAL_TIME, &total_time
         );
-        curlErr = curl_easy_getinfo(curlEasy, 
+        curlErr = curl_easy_getinfo(curlEasy,
             CURLINFO_STARTTRANSFER_TIME, &starttransfer_time
         );
         double dt = total_time - starttransfer_time;
@@ -958,12 +958,12 @@ void HTTP_OP::handle_messages(CURLMsg *pcurlMsg) {
 
     // the op is done if curl_multi_msg_read gave us a msg for this http_op
     //
-    http_op_state = HTTP_STATE_DONE;        
+    http_op_state = HTTP_STATE_DONE;
     CurlResult = pcurlMsg->data.result;
 
     if (CurlResult == CURLE_OK) {
         if ((response/100)*100 == HTTP_STATUS_OK) {
-            http_op_retval = 0;  
+            http_op_retval = 0;
         } else if ((response/100)*100 == HTTP_STATUS_CONTINUE) {
             return;
         } else {
@@ -1022,7 +1022,7 @@ void HTTP_OP::handle_messages(CURLMsg *pcurlMsg) {
             if (dSize > req1_len) {
                 dSize = req1_len;
             }
-            size_t nread = fread(req1, 1, dSize, fileOut); 
+            size_t nread = fread(req1, 1, dSize, fileOut);
             if (nread != dSize) {
                 if (log_flags.http_debug) {
                     msg_printf(NULL, MSG_INFO,
@@ -1081,7 +1081,7 @@ void HTTP_OP_SET::got_select(FDSET_GROUP&, double timeout) {
 
 /// Return the HTTP_OP object with given Curl object
 ///
-HTTP_OP* HTTP_OP_SET::lookup_curl(CURL* pcurl)  {
+HTTP_OP* HTTP_OP_SET::lookup_curl(CURL* pcurl) {
     for (unsigned int i=0; i<http_ops.size(); i++) {
         if (http_ops[i]->curlEasy == pcurl) {
             return http_ops[i];
