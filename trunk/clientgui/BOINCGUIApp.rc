@@ -29,7 +29,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-APP_ICON                ICON                    "res\\boincguiApp.ico"
+APP_ICON                ICON                    "..\\graphics\\icons\\synecdoche.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 
