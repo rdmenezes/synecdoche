@@ -1773,20 +1773,22 @@ VOID CScreensaver::DoPaint(HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps) {
 	// Draw text in the center of the frame
 	SetBkColor(hdc, RGB(0,0,0));           // Black
 	SetTextColor(hdc, RGB(255,255,255));   // Red
-   
-	// Set font
-	HFONT hf;
+
+    // Set font
+    HFONT hf;
     hf = CreateFont(0, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, "Arial Narrow");
-	
+    
     if(hf)
     {
         SelectObject(hdc, hf);
+
+        rc2 = rc;
+        iTextHeight = DrawText(hdc, szError, -1, &rc, DT_CENTER | DT_CALCRECT);
+        rc = rc2;
+        rc2.top+=bm.bmHeight+20;
+        DrawText(hdc, szError, -1, &rc2, DT_CENTER);
+        DeleteObject(hf);
     }
-	rc2 = rc;
-    iTextHeight = DrawText(hdc, szError, -1, &rc, DT_CENTER | DT_CALCRECT);
-	rc = rc2;
-	rc2.top+=bm.bmHeight+20;
-    DrawText(hdc, szError, -1, &rc2, DT_CENTER);
 }
 
 
