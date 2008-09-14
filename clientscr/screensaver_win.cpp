@@ -1651,8 +1651,9 @@ VOID CScreensaver::UpdateErrorBox() {
                 InvalidateRect(hwnd, NULL, FALSE);    // Invalidate the hwnd so it gets drawn
                 UpdateWindow(hwnd);
             } else {
-                pMonitorInfo->widthError = 454;
-                pMonitorInfo->heightError = 320;
+                // TODO: This should not be hardcoded.
+                pMonitorInfo->widthError = 517;
+                pMonitorInfo->heightError = 280;
                 pMonitorInfo->xError = (rcBounds.right + rcBounds.left - pMonitorInfo->widthError) / 2.0f;
                 pMonitorInfo->yError = (rcBounds.bottom + rcBounds.top - pMonitorInfo->heightError) / 2.0f;
                 pMonitorInfo->xVelError = (rcBounds.right - rcBounds.left) / 10.0f;
@@ -1759,14 +1760,12 @@ VOID CScreensaver::DoPaint(HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps) {
 
 
     // Draw the bitmap rectangle and copy the bitmap into 
-    // it. the bitmap is centered in the rectangle by adding 2
-	// to the left and top coordinates of the bitmap rectangle,
-	// and subtracting 4 from the right and bottom coordinates.
+    // it. the bitmap is centered in the rectangle.
     BITMAP     bm;
     GetObject(hbmp, sizeof(BITMAP), (LPSTR)&bm);
 
-	long left = rc.left + (pMonitorInfo->widthError - 4 - bm.bmWidth)/2;
-	long top = rc.top + 2;
+	long left = rc.left + (pMonitorInfo->widthError - bm.bmWidth)/2;
+	long top = rc.top;
 
     POINT      ptSize;
 
@@ -1785,7 +1784,7 @@ VOID CScreensaver::DoPaint(HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps) {
 
 	// Draw text in the center of the frame
 	SetBkColor(hdc, RGB(0,0,0));           // Black
-	SetTextColor(hdc, RGB(255,255,255));   // Red
+	SetTextColor(hdc, RGB(255,255,255));   // White
 
     // Set font
     HFONT hf;
