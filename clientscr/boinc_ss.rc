@@ -141,7 +141,7 @@ END
 //
 // Bitmap
 //
-IDB_BOINCSPLAT          BITMAP                  "res\\boinc.bmp"
+IDB_BOINCSPLAT          BITMAP                  "..\\graphics\\screensaver.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
