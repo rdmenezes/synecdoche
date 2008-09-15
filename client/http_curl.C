@@ -1026,7 +1026,7 @@ void HTTP_OP::handle_messages(CURLMsg *pcurlMsg) {
             if (nread != dSize) {
                 if (log_flags.http_debug) {
                     msg_printf(NULL, MSG_INFO,
-                        "[http_debug] post output file read failed %ld",
+                        "[http_debug] post output file read failed %zu",
                         nread
                     );
                 }
