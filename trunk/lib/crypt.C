@@ -78,7 +78,7 @@ int scan_hex_data(FILE* f, DATA_BLOCK& x) {
 
     x.len = 0;
     while (1) {
-        int j;
+        unsigned int j;
         n = fscanf(f, "%2x", &j);
         if (n <= 0) break;
         x.data[x.len] = j;
@@ -91,7 +91,8 @@ int scan_hex_data(FILE* f, DATA_BLOCK& x) {
 /// stop when you reach a non-parsed character.
 /// NOTE: buffer must be big enough; no checking is done.
 static int sscan_hex_data(const char* p, DATA_BLOCK& x) {
-    int m, n, nleft=x.len;
+    unsigned int m;
+    int n, nleft=x.len;
 
     x.len = 0;
     while (1) {
@@ -125,7 +126,8 @@ int print_key_hex(FILE* f, KEY* key, int size) {
 }
 
 int scan_key_hex(FILE* f, KEY* key, int size) {
-    int len, i, n;
+    unsigned int n;
+    int len, i;
     int num_bits;
 
     fscanf(f, "%d", &num_bits);

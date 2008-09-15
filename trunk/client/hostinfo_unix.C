@@ -301,11 +301,11 @@ bool HOST_INFO::host_is_running_on_batteries() {
             FILE* fapm = fopen("/proc/apm", "r");
             if (!fapm) return false;
 
-            char    apm_driver_version[11];
-            int     apm_major_version;
-            int     apm_minor_version;
-            int     apm_flags;
-            int     apm_ac_line_status=1;
+            char         apm_driver_version[11];
+            int          apm_major_version;
+            int          apm_minor_version;
+            unsigned int apm_flags;
+            unsigned int apm_ac_line_status=1;
 
             // supposedly we're on batteries if the 5th entry is zero.
             (void) fscanf(fapm, "%10s %d.%d %x %x",
@@ -394,7 +394,9 @@ static void parse_cpuinfo_linux(HOST_INFO& host) {
     char buf[256], features[1024], model_buf[1024];
     bool vendor_found=false, model_found=false;
     bool cache_found=false, features_found=false;
+#ifdef __hppa__
     bool icache_found=false,dcache_found=false;
+#endif
     bool model_hack=false, vendor_hack=false;
     int n;
     int family=-1, model=-1, stepping=-1;
