@@ -1365,8 +1365,13 @@ LRESULT CScreensaver::SaverProc(
                     RECT rc;
                     GetClientRect(hWnd,&rc);
                     FillRect(ps.hdc, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
-                    DrawIcon(ps.hdc, (rc.right / 2) - 16, (rc.bottom / 2) - 16,
-                        LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_MAIN_ICON)));
+                    HICON icon = (HICON)LoadImage(m_hInstance,
+                        MAKEINTRESOURCE(IDI_MAIN_ICON),
+                        IMAGE_ICON,
+                        64, 64,
+                        LR_DEFAULTCOLOR);
+                    DrawIconEx(ps.hdc, (rc.right / 2) - 32, (rc.bottom / 2) - 32, icon, 64, 64, 0, NULL, DI_NORMAL);
+                    DestroyIcon(icon);
                 } else {
                     DoPaint(hWnd, ps.hdc, &ps);
                 }
