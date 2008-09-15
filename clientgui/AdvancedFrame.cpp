@@ -143,7 +143,7 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     icons.AddIcon(*icon);
     icons.AddIcon(*icon32);
     SetIcons(icons);
-	RestoreState();
+	
     // Create UI elements
     wxCHECK_RET(CreateMenu(), _T("Failed to create menu bar."));
     wxCHECK_RET(CreateNotebook(), _T("Failed to create notebook."));
@@ -174,7 +174,7 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     Connect(wxEVT_IDLE, wxIdleEventHandler(CAdvancedFrame::OnIdleInit));
 
     // Restore main application frame settings
-    //RestoreState();
+    RestoreState();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CAdvancedFrame - Function End"));
 }
