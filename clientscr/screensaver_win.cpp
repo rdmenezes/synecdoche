@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -231,23 +232,23 @@ HRESULT CScreensaver::Create(HINSTANCE hInstance) {
 
     // Retrieve the blank screen flag so we can determine if we are
     // suppose to actually blank the screen at some point.
-	bReturnValue = UtilGetRegKey(REG_BLANK_NAME, m_dwBlankScreen);
+    bReturnValue = UtilGetRegKey(REG_BLANK_NAME, m_dwBlankScreen);
     BOINCTRACE("CScreensaver::Create - Get Reg Key REG_BLANK_NAME return value '%d'\n", bReturnValue);
-	if (bReturnValue != 0) m_dwBlankScreen = 0;
+    if (bReturnValue != 0) m_dwBlankScreen = 0;
 
     // Retrieve the blank screen timeout
-	// make sure you check return value of registry queries
-	// in case the item in question doesn't happen to exist.
-	bReturnValue = UtilGetRegKey(REG_BLANK_TIME, m_dwBlankTime);
+    // make sure you check return value of registry queries
+    // in case the item in question doesn't happen to exist.
+    bReturnValue = UtilGetRegKey(REG_BLANK_TIME, m_dwBlankTime);
     BOINCTRACE("CScreensaver::Create - Get Reg Key REG_BLANK_TIME return value '%d'\n", bReturnValue);
-	if (bReturnValue != 0) m_dwBlankTime = 5;
+    if (bReturnValue != 0) m_dwBlankTime = 5;
 
     // Save the value back to the registry in case this is the first
     // execution and so we need the default value later.
-	bReturnValue = UtilSetRegKey(REG_BLANK_NAME, m_dwBlankScreen);
+    bReturnValue = UtilSetRegKey(REG_BLANK_NAME, m_dwBlankScreen);
     BOINCTRACE("CScreensaver::Create - Set Reg Key REG_BLANK_NAME return value '%d'\n", bReturnValue);
 
-	bReturnValue = UtilSetRegKey(REG_BLANK_TIME, m_dwBlankTime);
+    bReturnValue = UtilSetRegKey(REG_BLANK_TIME, m_dwBlankTime);
     BOINCTRACE("CScreensaver::Create - Set Reg Key REG_BLANK_TIME return value '%d'\n", bReturnValue);
 
     // Calculate the estimated blank time by adding the current time
@@ -260,9 +261,9 @@ HRESULT CScreensaver::Create(HINSTANCE hInstance) {
         return E_FAIL;
     }
 
-	if (rpc == NULL) rpc = new RPC_CLIENT;
+    if (rpc == NULL) rpc = new RPC_CLIENT;
 
-			// Create the screen saver window(s)
+            // Create the screen saver window(s)
     if (m_SaverMode == sm_preview || 
         m_SaverMode == sm_full
     ) {
@@ -380,7 +381,7 @@ HRESULT CScreensaver::DisplayErrorMsg(HRESULT hr) {
 SaverMode CScreensaver::ParseCommandLine(TCHAR* pstrCommandLine) {
     m_hWndParent = NULL;
 
-	BOINCTRACE("ParseCommandLine: '%s'\n", pstrCommandLine);
+    BOINCTRACE("ParseCommandLine: '%s'\n", pstrCommandLine);
 
     // Skip the first part of the command line, which is the full path 
     // to the exe.  If it contains spaces, it will be contained in quotes.
@@ -536,14 +537,14 @@ VOID CScreensaver::EnumMonitors(VOID) {
 // function:	reads string value in specified key
 //
 int CScreensaver::UtilSetRegKey(LPCTSTR name, DWORD value) {
-	LONG error;
-	HKEY boinc_key;
+    LONG error;
+    HKEY boinc_key;
 
-	if (m_bIs9x) {
-		error = RegCreateKeyEx(
+    if (m_bIs9x) {
+        error = RegCreateKeyEx(
             HKEY_LOCAL_MACHINE, 
             _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Screensaver"),  
-			0,
+            0,
             NULL,
             REG_OPTION_NON_VOLATILE,
             KEY_READ | KEY_WRITE,
@@ -551,12 +552,12 @@ int CScreensaver::UtilSetRegKey(LPCTSTR name, DWORD value) {
             &boinc_key,
             NULL
         );
-		if (error != ERROR_SUCCESS) return -1;
-	} else {
-		error = RegCreateKeyEx(
+        if (error != ERROR_SUCCESS) return -1;
+    } else {
+        error = RegCreateKeyEx(
             HKEY_CURRENT_USER,
             _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Screensaver"),  
-			0,
+            0,
             NULL,
             REG_OPTION_NON_VOLATILE,
             KEY_READ | KEY_WRITE,
@@ -564,14 +565,14 @@ int CScreensaver::UtilSetRegKey(LPCTSTR name, DWORD value) {
             &boinc_key,
             NULL
         );
-		if (error != ERROR_SUCCESS) return -1;
-	}
+        if (error != ERROR_SUCCESS) return -1;
+    }
 
-	error = RegSetValueEx(boinc_key, name, 0, REG_DWORD, (CONST BYTE *)&value, 4);
+    error = RegSetValueEx(boinc_key, name, 0, REG_DWORD, (CONST BYTE *)&value, 4);
 
-	RegCloseKey(boinc_key);
+    RegCloseKey(boinc_key);
 
-	return 0;
+    return 0;
 }
 
 
@@ -582,41 +583,41 @@ int CScreensaver::UtilSetRegKey(LPCTSTR name, DWORD value) {
 // function:	reads string value in specified key
 //
 int CScreensaver::UtilGetRegKey(LPCTSTR name, DWORD &keyval) {
-	LONG  error;
-	DWORD type = REG_DWORD;
-	DWORD size = sizeof(DWORD);
-	DWORD value;
-	HKEY  boinc_key;
+    LONG  error;
+    DWORD type = REG_DWORD;
+    DWORD size = sizeof(DWORD);
+    DWORD value;
+    HKEY  boinc_key;
 
-	if (m_bIs9x) {
-		error = RegOpenKeyEx(
+    if (m_bIs9x) {
+        error = RegOpenKeyEx(
             HKEY_LOCAL_MACHINE, 
             _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Screensaver"),  
-			0, 
+            0, 
             KEY_ALL_ACCESS,
             &boinc_key
         );
-		if (error != ERROR_SUCCESS) return -1;
-	} else {
-		error = RegOpenKeyEx(
+        if (error != ERROR_SUCCESS) return -1;
+    } else {
+        error = RegOpenKeyEx(
             HKEY_CURRENT_USER,
             _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Screensaver"),  
-			0,
+            0,
             KEY_ALL_ACCESS,
             &boinc_key
         );
-		if (error != ERROR_SUCCESS) return -1;
-	}
+        if (error != ERROR_SUCCESS) return -1;
+    }
 
-	error = RegQueryValueEx(boinc_key, name, NULL, &type, (BYTE *)&value, &size);
+    error = RegQueryValueEx(boinc_key, name, NULL, &type, (BYTE *)&value, &size);
 
-	keyval = value;
+    keyval = value;
 
-	RegCloseKey(boinc_key);
+    RegCloseKey(boinc_key);
 
-	if (error != ERROR_SUCCESS) return -1;
+    if (error != ERROR_SUCCESS) return -1;
 
-	return 0;
+    return 0;
 }
 
 
@@ -628,40 +629,40 @@ int CScreensaver::UtilGetRegKey(LPCTSTR name, DWORD &keyval) {
 // function:	sets string value in specified key in windows startup dir
 //
 int CScreensaver::UtilGetRegStartupStr(LPCTSTR name, LPTSTR str) {
-	LONG error;
-	DWORD type = REG_SZ;
-	DWORD size = 128;
-	HKEY boinc_key;
+    LONG error;
+    DWORD type = REG_SZ;
+    DWORD size = 128;
+    HKEY boinc_key;
 
-	*str = 0;
+    *str = 0;
 
-	if (m_bIs9x) {
-		error = RegOpenKeyEx(
+    if (m_bIs9x) {
+        error = RegOpenKeyEx(
             HKEY_LOCAL_MACHINE, 
             _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
-			0, 
+            0, 
             KEY_ALL_ACCESS,
             &boinc_key
         );
-		if (error != ERROR_SUCCESS) return -1;
-	} else {
-		error = RegOpenKeyEx(
+        if (error != ERROR_SUCCESS) return -1;
+    } else {
+        error = RegOpenKeyEx(
             HKEY_CURRENT_USER, 
             _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
-			0, 
+            0, 
             KEY_ALL_ACCESS, 
             &boinc_key
         );
-		if (error != ERROR_SUCCESS) return -1;
-	}
+        if (error != ERROR_SUCCESS) return -1;
+    }
 
-	error = RegQueryValueEx(boinc_key, name, NULL, &type, (BYTE*)str, &size);
+    error = RegQueryValueEx(boinc_key, name, NULL, &type, (BYTE*)str, &size);
 
-	RegCloseKey(boinc_key);
+    RegCloseKey(boinc_key);
 
-	if (error != ERROR_SUCCESS) return -1;
+    if (error != ERROR_SUCCESS) return -1;
 
-	return ERROR_SUCCESS;
+    return ERROR_SUCCESS;
 }
 
 
@@ -670,113 +671,113 @@ int CScreensaver::UtilGetRegStartupStr(LPCTSTR name, LPTSTR str) {
 // Determine if BOINC is configured to automatically start at logon/startup.
 //
 BOOL CScreensaver::IsConfigStartupBOINC() {
-	BOOL				bRetVal;
-	BOOL				bCheckFileExists;
-	TCHAR				szBuffer[MAX_PATH];
-	TCHAR				szShortcutBuffer[MAX_PATH];
-	HANDLE				hFileHandle;
+    BOOL				bRetVal;
+    BOOL				bCheckFileExists;
+    TCHAR				szBuffer[MAX_PATH];
+    TCHAR				szShortcutBuffer[MAX_PATH];
+    HANDLE				hFileHandle;
     HMODULE				hShell32;
-	MYSHGETFOLDERPATH	pfnMySHGetFolderPath = NULL;
+    MYSHGETFOLDERPATH	pfnMySHGetFolderPath = NULL;
 
 
-	// Lets set the default value to FALSE
-	bRetVal = FALSE;
+    // Lets set the default value to FALSE
+    bRetVal = FALSE;
 
     // Load the shortcut filename into the shortcut buffer.
     LoadString(NULL, IDS_SHORTCUTNAME, szShortcutBuffer, sizeof(szShortcutBuffer)/sizeof(TCHAR));
 
-	// Attempt to link to dynamic function if it exists
+    // Attempt to link to dynamic function if it exists
     hShell32 = LoadLibrary(_T("SHELL32.DLL"));
-	if (NULL != hShell32)
-		pfnMySHGetFolderPath = (MYSHGETFOLDERPATH) GetProcAddress(hShell32, _T("SHGetFolderPathA"));
+    if (NULL != hShell32)
+        pfnMySHGetFolderPath = (MYSHGETFOLDERPATH) GetProcAddress(hShell32, _T("SHGetFolderPathA"));
 
 
-	// Now lets begin looking in the registry
-	if (ERROR_SUCCESS == UtilGetRegStartupStr(REG_STARTUP_NAME, szBuffer)) {
-		bRetVal = TRUE;
-	} else {
-		// It could be in the global startup group
-		ZeroMemory(szBuffer, sizeof(szBuffer));
-		bCheckFileExists = FALSE;
-		if (NULL != pfnMySHGetFolderPath) {
-			if (SUCCEEDED((pfnMySHGetFolderPath)(NULL, CSIDL_STARTUP|CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szBuffer))) {
-				BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: pfnMySHGetFolderPath - CSIDL_STARTUP - '%s'\n"), szBuffer);
+    // Now lets begin looking in the registry
+    if (ERROR_SUCCESS == UtilGetRegStartupStr(REG_STARTUP_NAME, szBuffer)) {
+        bRetVal = TRUE;
+    } else {
+        // It could be in the global startup group
+        ZeroMemory(szBuffer, sizeof(szBuffer));
+        bCheckFileExists = FALSE;
+        if (NULL != pfnMySHGetFolderPath) {
+            if (SUCCEEDED((pfnMySHGetFolderPath)(NULL, CSIDL_STARTUP|CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szBuffer))) {
+                BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: pfnMySHGetFolderPath - CSIDL_STARTUP - '%s'\n"), szBuffer);
                 StringCchCatN(szBuffer, sizeof(szBuffer), _T("\\"), sizeof(_T("\\"))/sizeof(TCHAR));
-				if (SUCCEEDED(StringCchCatN(szBuffer, sizeof(szBuffer), szShortcutBuffer, sizeof(szShortcutBuffer)/sizeof(TCHAR)))) {
-					BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: Final pfnMySHGetFolderPath - CSIDL_STARTUP - '%s'\n"), szBuffer);
-					bCheckFileExists = TRUE;
-				} else {
-					BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: FAILED pfnMySHGetFolderPath - CSIDL_STARTUP Append Operation\n"));
-				}
-			} else {
-				BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: FAILED pfnMySHGetFolderPath - CSIDL_STARTUP\n"));
-			}
-		}
+                if (SUCCEEDED(StringCchCatN(szBuffer, sizeof(szBuffer), szShortcutBuffer, sizeof(szShortcutBuffer)/sizeof(TCHAR)))) {
+                    BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: Final pfnMySHGetFolderPath - CSIDL_STARTUP - '%s'\n"), szBuffer);
+                    bCheckFileExists = TRUE;
+                } else {
+                    BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: FAILED pfnMySHGetFolderPath - CSIDL_STARTUP Append Operation\n"));
+                }
+            } else {
+                BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: FAILED pfnMySHGetFolderPath - CSIDL_STARTUP\n"));
+            }
+        }
 
 
-		if (bCheckFileExists) {
-			hFileHandle = CreateFile(
-				szBuffer,
-				GENERIC_READ,
-				FILE_SHARE_READ,
-				NULL,
-				OPEN_EXISTING,
-				FILE_ATTRIBUTE_NORMAL,
-				NULL);
+        if (bCheckFileExists) {
+            hFileHandle = CreateFile(
+                szBuffer,
+                GENERIC_READ,
+                FILE_SHARE_READ,
+                NULL,
+                OPEN_EXISTING,
+                FILE_ATTRIBUTE_NORMAL,
+                NULL);
 
-			if (INVALID_HANDLE_VALUE != hFileHandle) {
-				BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: CreateFile returned a valid handle '%d'\n"), hFileHandle);
-				CloseHandle(hFileHandle);
-				bRetVal = TRUE;
-			} else {
-				BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: CreateFile returned INVALID_HANDLE_VALUE - GetLastError() '%d'\n"), GetLastError());
+            if (INVALID_HANDLE_VALUE != hFileHandle) {
+                BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: CreateFile returned a valid handle '%d'\n"), hFileHandle);
+                CloseHandle(hFileHandle);
+                bRetVal = TRUE;
+            } else {
+                BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: CreateFile returned INVALID_HANDLE_VALUE - GetLastError() '%d'\n"), GetLastError());
 
-				// It could be in the global startup group
-        		ZeroMemory(szBuffer, sizeof(szBuffer));
-				bCheckFileExists = FALSE;
-				if (NULL != pfnMySHGetFolderPath) {
-					if (SUCCEEDED((pfnMySHGetFolderPath)(NULL, CSIDL_COMMON_STARTUP|CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szBuffer))) {
-						BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: pfnMySHGetFolderPath - CSIDL_COMMON_STARTUP - '%s'\n"), szBuffer);
+                // It could be in the global startup group
+                ZeroMemory(szBuffer, sizeof(szBuffer));
+                bCheckFileExists = FALSE;
+                if (NULL != pfnMySHGetFolderPath) {
+                    if (SUCCEEDED((pfnMySHGetFolderPath)(NULL, CSIDL_COMMON_STARTUP|CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szBuffer))) {
+                        BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: pfnMySHGetFolderPath - CSIDL_COMMON_STARTUP - '%s'\n"), szBuffer);
                             StringCchCatN(szBuffer, sizeof(szBuffer), _T("\\"), sizeof(_T("\\"))/sizeof(TCHAR));
-				            if (SUCCEEDED(StringCchCatN(szBuffer, sizeof(szBuffer), szShortcutBuffer, sizeof(szShortcutBuffer)/sizeof(TCHAR)))) {
-							BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: Final pfnMySHGetFolderPath - CSIDL_COMMON_STARTUP - '%s'\n"), szBuffer);
-							bCheckFileExists = TRUE;
-						} else {
-							BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: FAILED pfnMySHGetFolderPath - CSIDL_COMMON_STARTUP Append Operation\n"));
-						}
-					} else {
-						BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: FAILED pfnMySHGetFolderPath - CSIDL_COMMON_STARTUP\n"));
-					}
-				}
+                            if (SUCCEEDED(StringCchCatN(szBuffer, sizeof(szBuffer), szShortcutBuffer, sizeof(szShortcutBuffer)/sizeof(TCHAR)))) {
+                            BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: Final pfnMySHGetFolderPath - CSIDL_COMMON_STARTUP - '%s'\n"), szBuffer);
+                            bCheckFileExists = TRUE;
+                        } else {
+                            BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: FAILED pfnMySHGetFolderPath - CSIDL_COMMON_STARTUP Append Operation\n"));
+                        }
+                    } else {
+                        BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: FAILED pfnMySHGetFolderPath - CSIDL_COMMON_STARTUP\n"));
+                    }
+                }
 
 
-				if (bCheckFileExists) {
-					hFileHandle = CreateFile(
-						szBuffer,
-						GENERIC_READ,
-						FILE_SHARE_READ,
-						NULL,
-						OPEN_EXISTING,
-						FILE_ATTRIBUTE_NORMAL,
-						NULL);
+                if (bCheckFileExists) {
+                    hFileHandle = CreateFile(
+                        szBuffer,
+                        GENERIC_READ,
+                        FILE_SHARE_READ,
+                        NULL,
+                        OPEN_EXISTING,
+                        FILE_ATTRIBUTE_NORMAL,
+                        NULL);
 
-					if (INVALID_HANDLE_VALUE != hFileHandle) {
-						BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: CreateFile returned a valid handle '%d'\n"), hFileHandle);
-						CloseHandle(hFileHandle);
-						bRetVal = TRUE;
-					} else {
-						BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: CreateFile returned INVALID_HANDLE_VALUE - GetLastError() '%d'\n"), GetLastError());
-					}
-				}
-			}
-		}
-	}
+                    if (INVALID_HANDLE_VALUE != hFileHandle) {
+                        BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: CreateFile returned a valid handle '%d'\n"), hFileHandle);
+                        CloseHandle(hFileHandle);
+                        bRetVal = TRUE;
+                    } else {
+                        BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: CreateFile returned INVALID_HANDLE_VALUE - GetLastError() '%d'\n"), GetLastError());
+                    }
+                }
+            }
+        }
+    }
 
-	// Free the dynamically linked to library
-	FreeLibrary(hShell32);
+    // Free the dynamically linked to library
+    FreeLibrary(hShell32);
 
-	BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: Returning '%d'\n"), bRetVal);
-	return bRetVal;
+    BOINCTRACE(_T("CScreensaver::IsConfigStartupBOINC: Returning '%d'\n"), bRetVal);
+    return bRetVal;
 }
 
 
@@ -788,7 +789,7 @@ BOOL CScreensaver::IsConfigStartupBOINC() {
 BOOL CScreensaver::CreateInfrastructureMutexes() {
     m_hErrorManagementMutex = CreateMutex(NULL, FALSE, NULL);
     if (NULL == m_hErrorManagementMutex) {
-    	BOINCTRACE(_T("CScreensaver::CreateInfrastructureMutexes: Failed to create m_hErrorManagementMutex '%d'\n"), GetLastError());
+        BOINCTRACE(_T("CScreensaver::CreateInfrastructureMutexes: Failed to create m_hErrorManagementMutex '%d'\n"), GetLastError());
         return FALSE;
     }
     return TRUE;
@@ -895,38 +896,38 @@ VOID CScreensaver::UpdateErrorBoxText() {
         if (m_updating_results) return;     // results vector is currently being updated by rpc
         
         iResultCount = results.results.size();
-		int iModIndex;
+        int iModIndex;
         for (iIndex = 0; iIndex < iResultCount; iIndex++) {
-			// cycle through the active results starting from the last one
-			iModIndex = (iIndex + m_iLastResultShown+1) % iResultCount;
+            // cycle through the active results starting from the last one
+            iModIndex = (iIndex + m_iLastResultShown+1) % iResultCount;
             bIsDownloaded = (RESULT_FILES_DOWNLOADED == results.results.at(iModIndex)->state);
             bIsActive     = (results.results.at(iModIndex)->active_task);
             bIsExecuting  = (CPU_SCHED_SCHEDULED == results.results.at(iModIndex)->scheduler_state);
             if (!(bIsActive) || !(bIsDownloaded) || !(bIsExecuting)) continue;
             pProject = state.lookup_project(results.results.at(iModIndex)->project_url);
             if (NULL != pProject) {
-				RESULT* pResult = state.lookup_result(pProject, results.results.at(iModIndex)->name);
-				if ( pResult != NULL ) {
-					BOINCTRACE(_T("CScreensaver::UpdateErrorBoxText - Display result. iIndex=%d, iModIndex=%d, lastResult=%d\n"), iIndex, iModIndex, m_iLastResultShown);
-					StringCbPrintf(m_szError, sizeof(m_szError) / sizeof(TCHAR),
-						_T("\nComputing for %s\nApplication: %s\nTask: %s\n%.2f%% complete\n"),
-						pProject->project_name.c_str(),
-						pResult->app->user_friendly_name.c_str(),
-						pResult->wu_name.c_str(),
-						results.results.at(iModIndex)->fraction_done*100 
-					);
-					if ( m_tLastResultChangeTime+10 < time(0) ) {
-						m_iLastResultShown = iModIndex;
-						m_tLastResultChangeTime = time(0);
-					}
-					break;
-	            } else {
-	                m_bResetCoreState = TRUE;
-					GetTextForError(IDS_ERR_GENERIC, m_szError, sizeof(m_szError) / sizeof(TCHAR));
-	            }
+                RESULT* pResult = state.lookup_result(pProject, results.results.at(iModIndex)->name);
+                if ( pResult != NULL ) {
+                    BOINCTRACE(_T("CScreensaver::UpdateErrorBoxText - Display result. iIndex=%d, iModIndex=%d, lastResult=%d\n"), iIndex, iModIndex, m_iLastResultShown);
+                    StringCbPrintf(m_szError, sizeof(m_szError) / sizeof(TCHAR),
+                        _T("\nComputing for %s\nApplication: %s\nTask: %s\n%.2f%% complete\n"),
+                        pProject->project_name.c_str(),
+                        pResult->app->user_friendly_name.c_str(),
+                        pResult->wu_name.c_str(),
+                        results.results.at(iModIndex)->fraction_done*100 
+                    );
+                    if ( m_tLastResultChangeTime+10 < time(0) ) {
+                        m_iLastResultShown = iModIndex;
+                        m_tLastResultChangeTime = time(0);
+                    }
+                    break;
+                } else {
+                    m_bResetCoreState = TRUE;
+                    GetTextForError(IDS_ERR_GENERIC, m_szError, sizeof(m_szError) / sizeof(TCHAR));
+                }
             } else {
                 m_bResetCoreState = TRUE;
-				GetTextForError(IDS_ERR_GENERIC, m_szError, sizeof(m_szError) / sizeof(TCHAR));
+                GetTextForError(IDS_ERR_GENERIC, m_szError, sizeof(m_szError) / sizeof(TCHAR));
             }
         }
         m_szError[ sizeof(m_szError) -1 ] = '\0';
@@ -955,16 +956,16 @@ BOOL CScreensaver::GetTextForError(
     //  HRESULT, stringID
         E_FAIL, IDS_ERR_GENERIC,
         E_OUTOFMEMORY, IDS_ERR_OUTOFMEMORY,
-		SCRAPPERR_BOINCNOTDETECTED, IDS_ERR_BOINCNOTDETECTED,
-		SCRAPPERR_BOINCNOTDETECTEDSTARTUP, IDS_ERR_BOINCNOTDETECTEDSTARTUP,
-		SCRAPPERR_BOINCSUSPENDED, IDS_ERR_BOINCSUSPENDED,
-		SCRAPPERR_BOINCNOAPPSEXECUTING, IDS_ERR_BOINCNOAPPSEXECUTING,
+        SCRAPPERR_BOINCNOTDETECTED, IDS_ERR_BOINCNOTDETECTED,
+        SCRAPPERR_BOINCNOTDETECTEDSTARTUP, IDS_ERR_BOINCNOTDETECTEDSTARTUP,
+        SCRAPPERR_BOINCSUSPENDED, IDS_ERR_BOINCSUSPENDED,
+        SCRAPPERR_BOINCNOAPPSEXECUTING, IDS_ERR_BOINCNOAPPSEXECUTING,
         SCRAPPERR_BOINCNOPROJECTSDETECTED, IDS_ERR_BOINCNOAPPSEXECUTINGNOPROJECTSDETECTED,
-		SCRAPPERR_BOINCNOGRAPHICSAPPSEXECUTING, IDS_ERR_BOINCNOGRAPHICSAPPSEXECUTING,
-		SCRAPPERR_BOINCSCREENSAVERLOADING, IDS_ERR_BOINCSCREENSAVERLOADING,
-		SCRAPPERR_BOINCAPPFOUNDGRAPHICSLOADING, IDS_ERR_BOINCAPPFOUNDGRAPHICSLOADING,
-		SCRAPPERR_BOINCSHUTDOWNEVENT, IDS_ERR_BOINCSHUTDOWNEVENT,
-		SCRAPPERR_NOPREVIEW, IDS_ERR_NOPREVIEW,
+        SCRAPPERR_BOINCNOGRAPHICSAPPSEXECUTING, IDS_ERR_BOINCNOGRAPHICSAPPSEXECUTING,
+        SCRAPPERR_BOINCSCREENSAVERLOADING, IDS_ERR_BOINCSCREENSAVERLOADING,
+        SCRAPPERR_BOINCAPPFOUNDGRAPHICSLOADING, IDS_ERR_BOINCAPPFOUNDGRAPHICSLOADING,
+        SCRAPPERR_BOINCSHUTDOWNEVENT, IDS_ERR_BOINCSHUTDOWNEVENT,
+        SCRAPPERR_NOPREVIEW, IDS_ERR_NOPREVIEW,
         SCRAPPERR_DAEMONALLOWSNOGRAPHICS, IDS_ERR_DAEMONALLOWSNOGRAPHICS
     };
     const DWORD dwErrorMapSize = sizeof(dwErrorMap) / sizeof(DWORD[2]);
@@ -997,7 +998,7 @@ BOOL CScreensaver::GetTextForError(
 BOOL CScreensaver::CreateDataManagementThread() {
     DWORD dwThreadID = 0;
     BOINCTRACE(_T("CScreensaver::CreateDataManagementThread Start\n"));
-	m_QuitDataManagementProc = FALSE;
+    m_QuitDataManagementProc = FALSE;
     m_hDataManagementThread = CreateThread(
         NULL,                        // default security attributes 
         0,                           // use default stack size  
@@ -1007,7 +1008,7 @@ BOOL CScreensaver::CreateDataManagementThread() {
         &dwThreadID );               // returns the thread identifier 
  
    if (m_hDataManagementThread == NULL) {
-    	BOINCTRACE(_T("CScreensaver::CreateDataManagementThread: Failed to create data management thread '%d'\n"), GetLastError());
+        BOINCTRACE(_T("CScreensaver::CreateDataManagementThread: Failed to create data management thread '%d'\n"), GetLastError());
         return FALSE;
    }
    return TRUE;
@@ -1230,7 +1231,7 @@ HRESULT CScreensaver::CreateSaverWindow() {
             m_Monitors[0].hWnd = m_hWnd;
             GetClientRect(m_hWnd, &m_rcRenderTotal);
             GetClientRect(m_hWnd, &m_rcRenderCurDevice);
-			SetTimer(m_hWnd, 2, 60000, NULL);
+            SetTimer(m_hWnd, 2, 60000, NULL);
             break;
 
         case sm_full:
@@ -1239,29 +1240,29 @@ HRESULT CScreensaver::CreateSaverWindow() {
             for(DWORD iMonitor = 0; iMonitor < m_dwNumMonitors; iMonitor++) {
                 INTERNALMONITORINFO* pMonitorInfo;
                 pMonitorInfo = &m_Monitors[iMonitor];
-				if (pMonitorInfo->hWnd == NULL) {
-					if (pMonitorInfo->hMonitor == NULL)
-						continue;
-					rc = pMonitorInfo->rcScreen;
-					if (0 == iMonitor) {
-						pMonitorInfo->hWnd = CreateWindowEx(NULL, _T("BOINCPrimarySaverWndClass"), 
-							m_strWindowTitle, dwStyle, rc.left, rc.top, rc.right - rc.left, 
-							rc.bottom - rc.top, NULL, NULL, m_hInstance, this);
-					} else {
-						pMonitorInfo->hWnd = CreateWindowEx(NULL, _T("BOINCGenericSaverWndClass"), 
-							m_strWindowTitle, dwStyle, rc.left, rc.top, rc.right - rc.left, 
-							rc.bottom - rc.top, NULL, NULL, m_hInstance, this);
-					}
-					if (pMonitorInfo->hWnd == NULL) {
-						return E_FAIL;
+                if (pMonitorInfo->hWnd == NULL) {
+                    if (pMonitorInfo->hMonitor == NULL)
+                        continue;
+                    rc = pMonitorInfo->rcScreen;
+                    if (0 == iMonitor) {
+                        pMonitorInfo->hWnd = CreateWindowEx(NULL, _T("BOINCPrimarySaverWndClass"), 
+                            m_strWindowTitle, dwStyle, rc.left, rc.top, rc.right - rc.left, 
+                            rc.bottom - rc.top, NULL, NULL, m_hInstance, this);
+                    } else {
+                        pMonitorInfo->hWnd = CreateWindowEx(NULL, _T("BOINCGenericSaverWndClass"), 
+                            m_strWindowTitle, dwStyle, rc.left, rc.top, rc.right - rc.left, 
+                            rc.bottom - rc.top, NULL, NULL, m_hInstance, this);
                     }
-					
+                    if (pMonitorInfo->hWnd == NULL) {
+                        return E_FAIL;
+                    }
+                    
                     if (m_hWnd == NULL) {
-						m_hWnd = pMonitorInfo->hWnd;
+                        m_hWnd = pMonitorInfo->hWnd;
                     }
 
-					SetTimer(pMonitorInfo->hWnd, 2, 250, NULL);
-				}
+                    SetTimer(pMonitorInfo->hWnd, 2, 250, NULL);
+                }
             }
     }
     if (m_hWnd == NULL) {
@@ -1317,7 +1318,7 @@ LRESULT CScreensaver::SaverProc(
     DWORD dwMonitor = 0;
 #ifdef _DEBUG
     for(DWORD iIndex = 0; iIndex < m_dwNumMonitors; iIndex++) {
-		if (hWnd == m_Monitors[iIndex].hWnd ) {
+        if (hWnd == m_Monitors[iIndex].hWnd ) {
             dwMonitor = iIndex;
         }
     }
@@ -1328,33 +1329,33 @@ LRESULT CScreensaver::SaverProc(
     switch (uMsg) {
         case WM_TIMER:
             BOINCTRACE(_T("CScreensaver::SaverProc Received WM_TIMER\n"));
-			switch (wParam) { 
-				case 1: 
-					// Initial idle time is done, proceed with initialization.
-					m_bWaitForInputIdle = FALSE;
-					KillTimer(hWnd, 1);
+            switch (wParam) { 
+                case 1: 
+                    // Initial idle time is done, proceed with initialization.
+                    m_bWaitForInputIdle = FALSE;
+                    KillTimer(hWnd, 1);
                     return 0;
                     break;
-				case 2:
+                case 2:
                     // Create a screen saver window on the primary display if 
                     //   the boinc client crashes
-	                CreateSaverWindow();
+                    CreateSaverWindow();
 
                     // Update the position of the box every second so that it
                     //   does not end up off the visible area of the screen.
-				    UpdateErrorBox();
+                    UpdateErrorBox();
                     return 0;
                     break;
             }
             break;
         case WM_PAINT:
             {
-				BOOL    bErrorMode;
-				HRESULT hrError;
-				TCHAR	szError[400];
-				GetError(bErrorMode, hrError, szError, sizeof(szError)/sizeof(TCHAR));
+                BOOL    bErrorMode;
+                HRESULT hrError;
+                TCHAR	szError[400];
+                GetError(bErrorMode, hrError, szError, sizeof(szError)/sizeof(TCHAR));
 
-				// Show error message, if there is one
+                // Show error message, if there is one
                 PAINTSTRUCT ps;
                 BeginPaint(hWnd, &ps);
 
@@ -1363,9 +1364,9 @@ LRESULT CScreensaver::SaverProc(
                 if (!bErrorMode && m_SaverMode == sm_preview) {
                     RECT rc;
                     GetClientRect(hWnd,&rc);
-				    FillRect(ps.hdc, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
-				    DrawIcon(ps.hdc, (rc.right / 2) - 16, (rc.bottom / 2) - 16,
-					    LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_MAIN_ICON)));
+                    FillRect(ps.hdc, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
+                    DrawIcon(ps.hdc, (rc.right / 2) - 16, (rc.bottom / 2) - 16,
+                        LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_MAIN_ICON)));
                 } else {
                     DoPaint(hWnd, ps.hdc, &ps);
                 }
@@ -1467,44 +1468,44 @@ LRESULT CScreensaver::SaverProc(
 
 
 INT_PTR CScreensaver::ConfigureDialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM UNUSED(lParam)) {
-	DWORD screen_blank=0, blank_time=0;
-	char buf[256];
-	int retval;
+    DWORD screen_blank=0, blank_time=0;
+    char buf[256];
+    int retval;
 
-	switch (msg) {
-		case WM_INITDIALOG:
-			// make sure you check return value of registry queries
-			// in case the item in question doesn't happen to exist.
-			retval = UtilGetRegKey(REG_BLANK_NAME, screen_blank);
-			if (retval < 0) {
+    switch (msg) {
+        case WM_INITDIALOG:
+            // make sure you check return value of registry queries
+            // in case the item in question doesn't happen to exist.
+            retval = UtilGetRegKey(REG_BLANK_NAME, screen_blank);
+            if (retval < 0) {
                 screen_blank=0;
             }
-			CheckDlgButton(hwnd, IDC_BLANK, screen_blank);
+            CheckDlgButton(hwnd, IDC_BLANK, screen_blank);
 
-			retval = UtilGetRegKey(REG_BLANK_TIME, blank_time);
-			if (retval < 0) { blank_time=0; }
-			_ltot(blank_time, buf, 10);
-			SetDlgItemText(hwnd, IDC_BLANK_TIME, buf);
+            retval = UtilGetRegKey(REG_BLANK_TIME, blank_time);
+            if (retval < 0) { blank_time=0; }
+            _ltot(blank_time, buf, 10);
+            SetDlgItemText(hwnd, IDC_BLANK_TIME, buf);
 
-			return TRUE;
-		case WM_COMMAND:
-			int id=LOWORD(wParam);
-			if (id==IDOK) {
+            return TRUE;
+        case WM_COMMAND:
+            int id=LOWORD(wParam);
+            if (id==IDOK) {
 
-				screen_blank = (IsDlgButtonChecked(hwnd, IDC_BLANK) == BST_CHECKED);
-				UtilSetRegKey(REG_BLANK_NAME, screen_blank);
+                screen_blank = (IsDlgButtonChecked(hwnd, IDC_BLANK) == BST_CHECKED);
+                UtilSetRegKey(REG_BLANK_NAME, screen_blank);
 
-				GetDlgItemText(hwnd, IDC_BLANK_TIME, buf, 256);
-				blank_time = atoi(buf);
-				UtilSetRegKey(REG_BLANK_TIME, blank_time);
+                GetDlgItemText(hwnd, IDC_BLANK_TIME, buf, 256);
+                blank_time = atoi(buf);
+                UtilSetRegKey(REG_BLANK_TIME, blank_time);
 
-			}
-			if (id == IDOK || id == IDCANCEL) {
-				EndDialog(hwnd, id);
             }
-			break;
-	}
-	return FALSE;
+            if (id == IDOK || id == IDCANCEL) {
+                EndDialog(hwnd, id);
+            }
+            break;
+    }
+    return FALSE;
 }
 
 
@@ -1691,13 +1692,13 @@ VOID CScreensaver::UpdateErrorBox() {
                     (INT)(pMonitorInfo->xError + pMonitorInfo->widthError),
                     (INT)(pMonitorInfo->yError + pMonitorInfo->heightError));
 
-				if ((dwTimeNow - pMonitorInfo->dwTimeLastUpdate) > 1000)
-				{
-					pMonitorInfo->dwTimeLastUpdate = dwTimeNow;
+                if ((dwTimeNow - pMonitorInfo->dwTimeLastUpdate) > 1000)
+                {
+                    pMonitorInfo->dwTimeLastUpdate = dwTimeNow;
 
                     InvalidateRect(hwnd, NULL, TRUE);
                     UpdateWindow(hwnd);
-				}
+                }
             }
         }
     }
@@ -1724,7 +1725,7 @@ VOID CScreensaver::DoPaint(HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps) {
     // Retrieve the latest piece of error information 
     BOOL    bErrorMode;
     HRESULT hrError;
-    TCHAR	szError[400];
+    TCHAR   szError[400];
     GetError(bErrorMode, hrError, szError, sizeof(szError)/sizeof(TCHAR));
 
 
@@ -1732,15 +1733,15 @@ VOID CScreensaver::DoPaint(HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps) {
     RECT    rc;
     RECT    rc2;
     RECT    rcOrginal;
-	int		iTextHeight;
+    int     iTextHeight;
 
-	static HBRUSH	hbrushBlack = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	static HBRUSH	hbrushRed = (HBRUSH)CreateSolidBrush(RGB(255,0,0));
-	static HBITMAP  hbmp = LoadBitmap(m_hInstance, MAKEINTRESOURCE(IDB_BOINCSPLAT));
+    static HBRUSH   hbrushBlack = (HBRUSH)GetStockObject(BLACK_BRUSH);
+    static HBRUSH   hbrushRed = (HBRUSH)CreateSolidBrush(RGB(255,0,0));
+    static HBITMAP  hbmp = LoadBitmap(m_hInstance, MAKEINTRESOURCE(IDB_BOINCSPLAT));
 
 
-	// Start off with a black screen and then draw on top of it.
-	FillRect(hdc, &lpps->rcPaint, hbrushBlack);
+    // Start off with a black screen and then draw on top of it.
+    FillRect(hdc, &lpps->rcPaint, hbrushBlack);
 
 
     // If the screensaver has switched to a blanked state or not in an error mode,
@@ -1754,9 +1755,9 @@ VOID CScreensaver::DoPaint(HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps) {
         (INT)(pMonitorInfo->xError + pMonitorInfo->widthError),
         (INT)(pMonitorInfo->yError + pMonitorInfo->heightError)
     );
-//  This fill rect is useful when testing
-//	FillRect(hdc, &rc, hbrushRed);
-	rcOrginal = rc;
+    //This fill rect is useful when testing
+    //FillRect(hdc, &rc, hbrushRed);
+    rcOrginal = rc;
 
 
     // Draw the bitmap rectangle and copy the bitmap into 
@@ -1764,8 +1765,8 @@ VOID CScreensaver::DoPaint(HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps) {
     BITMAP     bm;
     GetObject(hbmp, sizeof(BITMAP), (LPSTR)&bm);
 
-	long left = rc.left + (pMonitorInfo->widthError - bm.bmWidth)/2;
-	long top = rc.top;
+    long left = rc.left + (pMonitorInfo->widthError - bm.bmWidth)/2;
+    long top = rc.top;
 
     POINT      ptSize;
 
@@ -1782,9 +1783,9 @@ VOID CScreensaver::DoPaint(HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps) {
     BitBlt(hdc, left, top, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCCOPY);
     DeleteDC(hdcTemp);
 
-	// Draw text in the center of the frame
-	SetBkColor(hdc, RGB(0,0,0));           // Black
-	SetTextColor(hdc, RGB(255,255,255));   // White
+    // Draw text in the center of the frame
+    SetBkColor(hdc, RGB(0,0,0));           // Black
+    SetTextColor(hdc, RGB(255,255,255));   // White
 
     // Set font
     HFONT hf;
@@ -1822,8 +1823,3 @@ VOID CScreensaver::ChangePassword() {
         FreeLibrary(mpr);
     }
 }
-
-
-
-
-const char *BOINC_RCSID_116268c72f = "$Id: screensaver_win.cpp 15227 2008-05-15 21:39:40Z romw $";
