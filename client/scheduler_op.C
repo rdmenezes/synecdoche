@@ -312,7 +312,7 @@ int SCHEDULER_OP::parse_master_file(PROJECT* p, vector<std::string> &urls) {
     fclose(f);
     if (log_flags.sched_op_debug) {
         msg_printf(p, MSG_INFO,
-            "[sched_op_debug] Found %zu scheduler URLs in master file\n",
+            "[sched_op_debug] Found %lu scheduler URLs in master file\n",
             urls.size()
         );
     }

@@ -688,7 +688,7 @@ void MSG_QUEUE::msg_queue_poll(MSG_CHANNEL& channel) {
     if (!msgs.empty()) {
 		if (log_flags.app_msg_send) {
 			msg_printf(NULL, MSG_INFO,
-				"[app_msg_send] poll: %zu msgs queued for %s:",
+				"[app_msg_send] poll: %lu msgs queued for %s:",
 				msgs.size(), name
 			);
 		}
