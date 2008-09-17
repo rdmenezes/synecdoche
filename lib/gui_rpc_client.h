@@ -65,7 +65,6 @@ public:
     std::string description;
     std::string home;
     std::string image;
-    double rand;
 
     PROJECT_LIST_ENTRY();
     ~PROJECT_LIST_ENTRY();
@@ -335,7 +334,6 @@ public:
     ~ALL_PROJECTS_LIST();
 
     void clear();
-    void shuffle();
 };
 
 class PROJECTS {
