@@ -72,8 +72,11 @@ public:
     int parse(XML_PARSER&);
     void clear();
 
-    bool operator<(const PROJECT_LIST_ENTRY& compare) const;
+    static bool compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second);
 };
+inline bool PROJECT_LIST_ENTRY::compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second) {
+	return first->name < second->name;
+}
 
 class PROJECT {
 public:

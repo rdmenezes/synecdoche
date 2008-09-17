@@ -126,11 +126,7 @@ void PROJECT_LIST_ENTRY::clear() {
     home.clear();
     image.clear();
 }
-/*
-bool PROJECT_LIST_ENTRY::operator<(const PROJECT_LIST_ENTRY& compare) const {
-    return rand < compare.rand;
-}
-*/
+
 PROJECT::PROJECT() {
     clear();
 }
