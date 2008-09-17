@@ -179,8 +179,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DESCRIPTION         "BOINC"
-    IDS_SHORTCUTNAME        "BOINC Manager.lnk"
+    IDS_DESCRIPTION         "Synecdoche"
+    IDS_SHORTCUTNAME        "Synecdoche.lnk"
 END
 
 #endif    // English (U.S.) resources

@@ -540,33 +540,18 @@ int CScreensaver::UtilSetRegKey(LPCTSTR name, DWORD value) {
     LONG error;
     HKEY boinc_key;
 
-    if (m_bIs9x) {
-        error = RegCreateKeyEx(
-            HKEY_LOCAL_MACHINE, 
-            _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Screensaver"),  
-            0,
-            NULL,
-            REG_OPTION_NON_VOLATILE,
-            KEY_READ | KEY_WRITE,
-            NULL,
-            &boinc_key,
-            NULL
-        );
-        if (error != ERROR_SUCCESS) return -1;
-    } else {
-        error = RegCreateKeyEx(
-            HKEY_CURRENT_USER,
-            _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Screensaver"),  
-            0,
-            NULL,
-            REG_OPTION_NON_VOLATILE,
-            KEY_READ | KEY_WRITE,
-            NULL,
-            &boinc_key,
-            NULL
-        );
-        if (error != ERROR_SUCCESS) return -1;
-    }
+    error = RegCreateKeyEx(
+        HKEY_CURRENT_USER,
+        _T("SOFTWARE\\Synecdoche\\Screensaver"),
+        0,
+        NULL,
+        REG_OPTION_NON_VOLATILE,
+        KEY_READ | KEY_WRITE,
+        NULL,
+        &boinc_key,
+        NULL
+    );
+    if (error != ERROR_SUCCESS) return -1;
 
     error = RegSetValueEx(boinc_key, name, 0, REG_DWORD, (CONST BYTE *)&value, 4);
 
@@ -589,25 +574,14 @@ int CScreensaver::UtilGetRegKey(LPCTSTR name, DWORD &keyval) {
     DWORD value;
     HKEY  boinc_key;
 
-    if (m_bIs9x) {
-        error = RegOpenKeyEx(
-            HKEY_LOCAL_MACHINE, 
-            _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Screensaver"),  
-            0, 
-            KEY_ALL_ACCESS,
-            &boinc_key
-        );
-        if (error != ERROR_SUCCESS) return -1;
-    } else {
-        error = RegOpenKeyEx(
-            HKEY_CURRENT_USER,
-            _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Screensaver"),  
-            0,
-            KEY_ALL_ACCESS,
-            &boinc_key
-        );
-        if (error != ERROR_SUCCESS) return -1;
-    }
+    error = RegOpenKeyEx(
+        HKEY_CURRENT_USER,
+        _T("SOFTWARE\\Synecdoche\\Screensaver"),
+        0,
+        KEY_ALL_ACCESS,
+        &boinc_key
+    );
+    if (error != ERROR_SUCCESS) return -1;
 
     error = RegQueryValueEx(boinc_key, name, NULL, &type, (BYTE *)&value, &size);
 
@@ -1123,7 +1097,7 @@ void CScreensaver::CheckForegroundWindow()
             // window just takes on the background of the previous window which happens to be
             // the black screensaver window owned by this process.
             //
-            // Verify that their hasn't been any keyboard or mouse activity.  If there has
+            // Verify that there hasn't been any keyboard or mouse activity.  If there has
             // we should hide the window from this process and exit out of the screensaver to
             // return control back to the user as quickly as possible.
             BOINCTRACE(_T("CScreensaver::CheckForegroundWindow - Graphics Window Detected and is the foreground window.\n"));
@@ -1360,7 +1334,7 @@ LRESULT CScreensaver::SaverProc(
                 BeginPaint(hWnd, &ps);
 
                 // In preview mode, just fill 
-                // the preview window with black, and the BOINC icon. 
+                // the preview window with black, and the Synecdoche icon.
                 if (!bErrorMode && m_SaverMode == sm_preview) {
                     RECT rc;
                     GetClientRect(hWnd,&rc);

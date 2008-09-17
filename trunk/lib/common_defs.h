@@ -206,7 +206,7 @@ struct VERSION_INFO {
 #ifdef _WIN32
 #define RUN_MUTEX           "BoincSingleInstance"
 #define REG_BLANK_NAME      "Blank"
-#define REG_BLANK_TIME      "Blank Time"
+#define REG_BLANK_TIME      "BlankTime"
 #define REG_STARTUP_NAME    "BOINC"
 #define CLIENT_AUTH_FILENAME    "client_auth.xml"
 #else
