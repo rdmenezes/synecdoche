@@ -371,7 +371,7 @@ private:
 /// @name cs_prefs.C
 public:
     int project_disk_usage(PROJECT*, double&);
-    int total_disk_usage(double&); ///< returns the total disk usage of BOINC on this host
+    int total_disk_usage(double&); ///< returns the total disk usage of Synecdoche on this host
     double allowed_disk_usage();
     int allowed_project_disk_usage(double&);
     int suspend_tasks(int reason);

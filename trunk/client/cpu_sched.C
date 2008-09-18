@@ -25,7 +25,7 @@
 /// An episode starts then the application is executed,
 /// and ends when it exits or dies
 /// (e.g., because it's preempted and not left in memory,
-/// or the user quits BOINC, or the host is turned off).
+/// or the user quits Synecdoche, or the host is turned off).
 /// A task may checkpoint now and then.
 /// Each episode begins with the state of the last checkpoint.
 ///

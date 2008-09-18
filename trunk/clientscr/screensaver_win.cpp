@@ -84,8 +84,8 @@ INT WINAPI WinMain(
         "stderrscr"
     );
     if (retval) {
-        BOINCTRACE("WinMain - BOINC Screensaver Diagnostic Error '%d'\n", retval);
-        MessageBox(NULL, NULL, "BOINC Screensaver Diagnostic Error", MB_OK);
+        BOINCTRACE("WinMain - Synecdoche Screensaver Diagnostic Error '%d'\n", retval);
+        MessageBox(NULL, NULL, "Synecdoche Screensaver Diagnostic Error", MB_OK);
     }
 #endif
 
@@ -322,7 +322,7 @@ INT CScreensaver::Run() {
         break;
     case sm_preview:
         // In Windows, preview mode is for the mini-view of the screensaver.
-        //   For BOINC we just display the icon, so there is no need to
+        //   For Synecdoche we just display the icon, so there is no need to
         //   startup the data management thread which in turn will
         //   launch a graphics application.
         if (FAILED(hr = DoSaver())) {
@@ -642,7 +642,7 @@ int CScreensaver::UtilGetRegStartupStr(LPCTSTR name, LPTSTR str) {
 
 
 
-// Determine if BOINC is configured to automatically start at logon/startup.
+// Determine if Synecdoche is configured to automatically start at logon/startup.
 //
 BOOL CScreensaver::IsConfigStartupBOINC() {
     BOOL				bRetVal;
