@@ -205,7 +205,7 @@ void delete_old_slot_dirs() {
             char init_data_path[1024];
             SHMEM_SEG_NAME shmem_seg_name;
 
-            // If BOINC crashes or exits suddenly (e.g., due to 
+            // If Synecdoche crashes or exits suddenly (e.g., due to 
             // being called with --exit_after_finish) it may leave 
             // orphan shared memory segments in the system.
             // Clean these up here. (We must do this before deleting the

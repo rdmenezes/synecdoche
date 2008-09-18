@@ -676,7 +676,7 @@ int FILE_INFO::set_permissions() {
         }
     } else {
         // give read/exec permissions for user, group and others
-        // in case someone runs BOINC from different user
+        // in case someone runs Synecdoche from different user
         if (executable) {
             retval = chmod(pathname,
                 S_IRUSR|S_IWUSR|S_IXUSR

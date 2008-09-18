@@ -22,7 +22,7 @@
 #include <cstdarg>
 
 /// MFILE provides memory-buffered output with a FILE-type interface.
-/// BOINC uses this in a couple of places:
+/// Synecdoche uses this in a couple of places:
 /// -# in the GUI RPC system (since in Windows you can't fdopen a socket)
 /// -# in the API, to support a primitive form of checkpointing:
 ///    Write all your output (and restart file) to MFILEs.

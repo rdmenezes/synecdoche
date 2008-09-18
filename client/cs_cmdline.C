@@ -55,7 +55,7 @@ static void print_options(char* prog) {
         "    --gui_rpc_port <port>           port for GUI RPCs\n"
         "    --redirectio                    redirect stdout and stderr to log files\n"
         "    --detach                        detach from console (Windows)\n"
-        "    --dir <path>                    use given dir as BOINC home\n"
+        "    --dir <path>                    use given dir as Synecdoche home\n"
         "    --no_gui_rpc                    don't allow GUI RPC, don't make socket\n"
         "    --daemon                        run as daemon (Unix)\n"
         "    --exit_before_start             exit right before starting a job\n"
