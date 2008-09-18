@@ -45,13 +45,13 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Space Sciences Laboratory"
-            VALUE "FileDescription", "BOINC System Tray for Windows"
+            VALUE "CompanyName", "Synecdoche"
+            VALUE "FileDescription", "Synecdoche Idle Status Monitor"
             VALUE "FileVersion", BOINC_VERSION_STRING "\0"
-            VALUE "InternalName", "boincmgr"
-            VALUE "LegalCopyright", "© 2003-2007 University of California"
-            VALUE "OriginalFilename", "boincmgr.exe"
-            VALUE "ProductName", "BOINC client"
+            VALUE "InternalName", "idlemon"
+            VALUE "LegalCopyright", "© 2008 Synecdoche contributors"
+            VALUE "OriginalFilename", "idlemon.exe"
+            VALUE "ProductName", "Synecdoche"
             VALUE "ProductVersion", BOINC_VERSION_STRING "\0"
         END
     END
