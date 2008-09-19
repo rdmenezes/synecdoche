@@ -7,17 +7,15 @@ include $(top_srcdir)/Makefile.incl
 # now)
 #STATIC_FLAGS=@STATIC_FLAGS@
 
-client-bin: @CLIENT_BIN_FILENAME@
-
 LIBS += @CLIENTLIBS@
 
 if OS_DARWIN
    LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa
 endif
 
-bin_PROGRAMS = boinc_client switcher
+bin_PROGRAMS = synecd switcher
 
-boinc_client_SOURCES = \
+synecd_SOURCES = \
     acct_mgr.C \
     acct_setup.C \
     app.C \
@@ -60,25 +58,17 @@ boinc_client_SOURCES = \
     whetstone.C \
     work_fetch.C
 
-boinc_client_DEPENDENCIES =
-boinc_client_CPPFLAGS = -O3 -fomit-frame-pointer -fforce-addr -ffast-math $(AM_CPPFLAGS)
-boinc_client_LDFLAGS = -static-libgcc
-boinc_client_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
+synecd_DEPENDENCIES =
+synecd_CPPFLAGS = -O3 -fomit-frame-pointer -fforce-addr -ffast-math $(AM_CPPFLAGS)
+synecd_LDFLAGS = -static-libgcc
+synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
 
-boinc_clientdir = $(bindir)
-boinc_client_DATA = ../curl/ca-bundle.crt
+synecddir = $(bindir)
+synecd_DATA = ../curl/ca-bundle.crt
 
 switcher_SOURCES = switcher.C
 
-all-local: client-bin
-
-# make a hard link to the client name.
-@CLIENT_BIN_FILENAME@: boinc_client
-	rm -f $@
-	rm -f $@.unmodified
-	cp $? $@.unmodified
-	@LN@ $? $@
-	@STRIP@ $@
+all-local: synecd
 
 ## these source files need to be specified because no rule uses them.
 
@@ -86,7 +76,3 @@ EXTRA_DIST = *.h \
     mac \
     translation \
     win
-
-clean-local:
-	rm -f @CLIENT_BIN_FILENAME@
-	rm -f @CLIENT_BIN_FILENAME@.unmodified
