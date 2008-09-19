@@ -621,8 +621,8 @@ int CBOINCGUIApp::StartBOINCScreensaverTest() {
         (sizeof(szExecutableDirectory) / sizeof(wxChar))
     );
 
-    // Append boinc.scr to the end of the strExecute string and get ready to rock
-    strExecute = wxT("\"") + wxString(szExecutableDirectory) + wxT("\\boinc.scr\" /t");
+    // Append synecdoche.scr to the end of the strExecute string and get ready to rock
+    strExecute = wxT("\"") + wxString(szExecutableDirectory) + wxT("\\synecdoche.scr\" /t");
     ::wxExecute(strExecute);
 #endif
     return 0;
