@@ -94,7 +94,6 @@ synecmgr_SOURCES = \
     WelcomePage.cpp \
     WizardAccountManager.cpp \
     WizardAttachProject.cpp \
-    wizardex.cpp \
     $(mac_sources)
 
 EXTRA_DIST = *.h \

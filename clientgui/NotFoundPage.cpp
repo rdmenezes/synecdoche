@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,75 +16,47 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
-#include "error_numbers.h"
+
+#include <wx/wizard.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
-#include "MainDocument.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "NotFoundPage.h"
 
+IMPLEMENT_DYNAMIC_CLASS(CErrNotFoundPage, wxWizardPage)
 
-/*!
- * CErrNotFoundPage type definition
- */
- 
-IMPLEMENT_DYNAMIC_CLASS( CErrNotFoundPage, wxWizardPageEx )
- 
-/*!
- * CErrNotFoundPage event table definition
- */
- 
-BEGIN_EVENT_TABLE( CErrNotFoundPage, wxWizardPageEx )
-
-////@begin CErrNotFoundPage event table entries
-    EVT_WIZARDEX_PAGE_CHANGED( -1, CErrNotFoundPage::OnPageChanged )
-    EVT_WIZARDEX_CANCEL( -1, CErrNotFoundPage::OnCancel )
-
-////@end CErrNotFoundPage event table entries
- 
+BEGIN_EVENT_TABLE(CErrNotFoundPage, wxWizardPage)
+    EVT_WIZARD_PAGE_CHANGED(-1, CErrNotFoundPage::OnPageChanged)
+    EVT_WIZARD_CANCEL(-1, CErrNotFoundPage::OnCancel)
 END_EVENT_TABLE()
  
 /*!
  * CErrNotFoundPage constructors
  */
  
-CErrNotFoundPage::CErrNotFoundPage( )
-{
+CErrNotFoundPage::CErrNotFoundPage() {
 }
- 
-CErrNotFoundPage::CErrNotFoundPage( CBOINCBaseWizard* parent )
-{
-    Create( parent );
+
+CErrNotFoundPage::CErrNotFoundPage(CBOINCBaseWizard* parent) {
+    Create(parent);
 }
- 
+
 /*!
  * CErrNoInternetConnection creator
  */
  
-bool CErrNotFoundPage::Create( CBOINCBaseWizard* parent )
-{
-////@begin CErrNotFoundPage member initialisation
+bool CErrNotFoundPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pDirectionsStaticCtrl = NULL;
-////@end CErrNotFoundPage member initialisation
- 
-////@begin CErrNotFoundPage creation
+
     wxBitmap wizardBitmap(wxNullBitmap);
-    wxWizardPageEx::Create( parent, ID_ERRNOTFOUNDPAGE, wizardBitmap );
+    wxWizardPage::Create(parent, wizardBitmap);
 
     CreateControls();
     GetSizer()->Fit(this);
-////@end CErrNotFoundPage creation
-
     return TRUE;
 }
  
@@ -91,51 +64,45 @@ bool CErrNotFoundPage::Create( CBOINCBaseWizard* parent )
  * Control creation for CErrNoInternetConnection
  */
  
-void CErrNotFoundPage::CreateControls()
-{    
-////@begin CErrNotFoundPage content construction
+void CErrNotFoundPage::CreateControls() {    
     CErrNotFoundPage* itemWizardPage96 = this;
 
     wxBoxSizer* itemBoxSizer97 = new wxBoxSizer(wxVERTICAL);
     itemWizardPage96->SetSizer(itemBoxSizer97);
 
     m_pTitleStaticCtrl = new wxStaticText;
-    m_pTitleStaticCtrl->Create( itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pTitleStaticCtrl->Create(itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pTitleStaticCtrl->SetFont(wxFont(10, wxSWISS, wxNORMAL, wxBOLD, FALSE, _T("Verdana")));
     itemBoxSizer97->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     itemBoxSizer97->Add(5, 5, 0, wxALIGN_LEFT|wxALL, 5);
 
     m_pDirectionsStaticCtrl = new wxStaticText;
-    m_pDirectionsStaticCtrl->Create( itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pDirectionsStaticCtrl->Create(itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemBoxSizer97->Add(m_pDirectionsStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
-////@end CErrNotFoundPage content construction
 }
  
 /*!
  * Gets the previous page.
  */
  
-wxWizardPageEx* CErrNotFoundPage::GetPrev() const
-{
+wxWizardPage* CErrNotFoundPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
- 
+
 /*!
  * Gets the next page.
  */
 
-wxWizardPageEx* CErrNotFoundPage::GetNext() const
-{
+wxWizardPage* CErrNotFoundPage::GetNext() const {
     return PAGE_TRANSITION_NEXT(ID_ACCOUNTINFOPAGE);
 }
- 
+
 /*!
  * Should we show tooltips?
  */
  
-bool CErrNotFoundPage::ShowToolTips()
-{
+bool CErrNotFoundPage::ShowToolTips() {
     return TRUE;
 }
  
@@ -143,48 +110,33 @@ bool CErrNotFoundPage::ShowToolTips()
  * Get bitmap resources
  */
  
-wxBitmap CErrNotFoundPage::GetBitmapResource( const wxString& WXUNUSED(name) )
-{
-    // Bitmap retrieval
-////@begin CErrNotFoundPage bitmap retrieval
+wxBitmap CErrNotFoundPage::GetBitmapResource(const wxString& WXUNUSED(name)) {
     return wxNullBitmap;
-////@end CErrNotFoundPage bitmap retrieval
 }
  
 /*!
  * Get icon resources
  */
 
-wxIcon CErrNotFoundPage::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CErrNotFoundPage icon retrieval
+wxIcon CErrNotFoundPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CErrNotFoundPage icon retrieval
 }
   
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRNACCOUNTDOESNOTEXISTPAGE
  */
 
-void CErrNotFoundPage::OnPageChanged( wxWizardExEvent& event ) {
+void CErrNotFoundPage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
-
 
     wxASSERT(m_pTitleStaticCtrl);
     wxASSERT(m_pDirectionsStaticCtrl);
 
-    m_pTitleStaticCtrl->SetLabel(
-        _("Login Failed.")
-    );
-    if (((CBOINCBaseWizard*)GetParent())->project_config.uses_username) {
-        m_pDirectionsStaticCtrl->SetLabel(
-            _("Check the username and password, and try again.")
-        );
+    m_pTitleStaticCtrl->SetLabel(_("Login Failed."));
+    if (((CBOINCBaseWizard*)GetParent())->GetProjectConfig()->uses_username) {
+        m_pDirectionsStaticCtrl->SetLabel(_("Check the username and password, and try again."));
     } else {
-        m_pDirectionsStaticCtrl->SetLabel(
-            _("Check the email address and password, and try again.")
-        );
+        m_pDirectionsStaticCtrl->SetLabel(_("Check the email address and password, and try again."));
     }
 
     Fit();
@@ -194,7 +146,6 @@ void CErrNotFoundPage::OnPageChanged( wxWizardExEvent& event ) {
  * wxEVT_WIZARD_CANCEL event handler for ID_ERRNACCOUNTDOESNOTEXISTPAGE
  */
 
-void CErrNotFoundPage::OnCancel( wxWizardExEvent& event ) {
+void CErrNotFoundPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
-

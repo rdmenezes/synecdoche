@@ -46,7 +46,6 @@
 #include "DlgOptions.h"
 #include "DlgSelectComputer.h"
 #include "DlgGenericMessage.h"
-#include "wizardex.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"

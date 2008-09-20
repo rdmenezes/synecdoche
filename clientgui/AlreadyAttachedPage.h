@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,62 +16,53 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_ALREADYATTACHEDPAGE_H_
-#define _WIZ_ALREADYATTACHEDPAGE_H_
+#ifndef WIZ_ALREADYATTACHEDPAGE_H
+#define WIZ_ALREADYATTACHEDPAGE_H
 
-/*!
- * CErrAlreadyAttachedPage class declaration
- */
+#include <wx/wizard.h>
 
-class CErrAlreadyAttachedPage: public wxWizardPageEx
+class CBOINCBaseWizard;
+
+class CErrAlreadyAttachedPage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CErrAlreadyAttachedPage )
+    DECLARE_DYNAMIC_CLASS(CErrAlreadyAttachedPage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CErrAlreadyAttachedPage( );
-
-    CErrAlreadyAttachedPage( CBOINCBaseWizard* parent );
+    CErrAlreadyAttachedPage();
+    CErrAlreadyAttachedPage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CErrAlreadyAttachedPage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRPROJECTALREADYATTACHEDPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_ERRPROJECTALREADYATTACHEDPAGE
-    void OnCancel( wxWizardExEvent& event );
-
-////@end CErrAlreadyAttachedPage event handler declarations
-
-////@begin CErrAlreadyAttachedPage member function declarations
+    void OnCancel(wxWizardEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CErrAlreadyAttachedPage member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CErrAlreadyAttachedPage member variables
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticText* m_pDirectionsStaticCtrl;
-////@end CErrAlreadyAttachedPage member variables
 };
 
-#endif // _WIZ_ALREADYATTACHEDPAGE_H_
+#endif // WIZ_ALREADYATTACHEDPAGE_H

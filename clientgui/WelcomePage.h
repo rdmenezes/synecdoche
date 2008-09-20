@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,68 +16,64 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_WELCOMEPAGE_H_
-#define _WIZ_WELCOMEPAGE_H_
+#ifndef WIZ_WELCOMEPAGE_H
+#define WIZ_WELCOMEPAGE_H
 
-/*!
- * CWelcomePage class declaration
- */
+#include <wx/wizard.h>
 
-class CWelcomePage: public wxWizardPageEx
+class wxStaticText;
+class wxStaticBox;
+class wxCheckBox;
+class CBOINCBaseWizard;
+
+class CWelcomePage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CWelcomePage )
+    DECLARE_DYNAMIC_CLASS(CWelcomePage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CWelcomePage( );
-
-    CWelcomePage( CBOINCBaseWizard* parent );
+    CWelcomePage();
+    CWelcomePage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CWelcomePage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_WELCOMEPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_PAGE_CHANGING event handler for ID_WELCOMEPAGE
-    void OnPageChanging( wxWizardExEvent& event );
+    void OnPageChanging(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_WELCOMEPAGE
-    void OnCancel( wxWizardExEvent& event );
+    void OnCancel(wxWizardEvent& event);
 
     /// wxEVT_SET_FOCUS event handler for ID_WELCOMEPAGE
-    void OnSetFocus( wxFocusEvent& event );
+    void OnSetFocus(wxFocusEvent& event);
 
     /// wxEVT_SHOW event handler for ID_WELCOMEPAGE
-    void OnShow( wxShowEvent& event );
-
-////@end CWelcomePage event handler declarations
-
-////@begin CWelcomePage member function declarations
+    void OnShow(wxShowEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
+    wxIcon GetIconResource(const wxString& name);
 ////@end CWelcomePage member function declarations
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CWelcomePage member variables
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticText* m_pDescriptionStaticCtrl;
     wxStaticText* m_pDirectionsStaticCtrl;
@@ -93,7 +90,6 @@ public:
     wxCheckBox* m_pErrGoogleCommCtrl;
     wxCheckBox* m_pErrNetDetectionCtrl;
 #endif
-////@end CWelcomePage member variables
 };
 
-#endif // _WIZ_WELCOMEPAGE_H_
+#endif // WIZ_WELCOMEPAGE_H
