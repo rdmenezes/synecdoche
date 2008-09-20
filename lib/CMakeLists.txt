@@ -39,5 +39,5 @@ IF(WIN32)
 	TARGET_LINK_LIBRARIES(boinc wsock32)
 ENDIF(WIN32)
 
-ADD_EXECUTABLE(boinc_cmd boinc_cmd.C)
-TARGET_LINK_LIBRARIES(boinc_cmd boinc)
+ADD_EXECUTABLE(syneccmd boinc_cmd.C)
+TARGET_LINK_LIBRARIES(syneccmd boinc)
