@@ -22,14 +22,12 @@
 #include "common_defs.h"
 #include "prefs.h"
 
-// get the pathname (relative to client home dir) of a project file
-//
+/// get the pathname (relative to client home dir) of a project file.
 extern void get_pathname(const FILE_INFO* fip, char* path, int len);
 extern void get_project_dir(const PROJECT*, char*, int);
 
-// get the pathname (relative to client home dir) of the
-// directory used for a particular application "slot"
-//
+/// get the pathname (relative to client home dir) of the
+/// directory used for a particular application "slot".
 extern void get_slot_dir(int slot, char* path, int len);
 
 extern int make_project_dir(const PROJECT&);

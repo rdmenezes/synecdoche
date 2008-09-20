@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// a C++ interface to BOINC GUI RPC
+// a C++ interface to Synecdoche GUI RPC
 
 #if !defined(_WIN32) || defined (__CYGWIN__)
 #include <stdio.h>
@@ -65,7 +65,6 @@ public:
     std::string description;
     std::string home;
     std::string image;
-    double rand;
 
     PROJECT_LIST_ENTRY();
     ~PROJECT_LIST_ENTRY();
@@ -73,8 +72,11 @@ public:
     int parse(XML_PARSER&);
     void clear();
 
-    bool operator<(const PROJECT_LIST_ENTRY& compare) const;
+    static bool compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second);
 };
+inline bool PROJECT_LIST_ENTRY::compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second) {
+	return first->name < second->name;
+}
 
 class PROJECT {
 public:
@@ -335,7 +337,6 @@ public:
     ~ALL_PROJECTS_LIST();
 
     void clear();
-    void shuffle();
 };
 
 class PROJECTS {
@@ -353,8 +354,8 @@ struct DISK_USAGE {
     std::vector<PROJECT*> projects;
     double d_total;
     double d_free;
-    double d_boinc;     // amount used by BOINC itself, not projects
-    double d_allowed;   // amount BOINC is allowed to use, total
+    double d_boinc;     // amount used by Synecdoche itself, not projects
+    double d_allowed;   // amount Synecdoche is allowed to use, total
 
     DISK_USAGE(){clear();}
     ~DISK_USAGE();
@@ -541,7 +542,7 @@ public:
         const char* host, double timeout, bool retry, int port=GUI_RPC_PORT
     );
         // timeout == how long to wait until give up
-        //    If the caller (i.e. BOINC Manager) just launched the core client,
+        //    If the caller (i.e. Synecdoche Manager) just launched the core client,
         //    this should be large enough to allow the process to
         //    run and open its listening socket (e.g. 60 sec)
         //    If connecting to a remote client, it should be large enough

@@ -122,7 +122,7 @@ enum SUSPEND_REASON {
     SUSPEND_REASON_DISK_SIZE = 32,
     SUSPEND_REASON_CPU_USAGE_LIMIT = 64,
     SUSPEND_REASON_NO_RECENT_INPUT = 128,
-    SUSPEND_REASON_INITIAL_DELAY = 256,
+    SUSPEND_REASON_INITIAL_DELAY = 256
 };
 
 /// \name Result states
@@ -206,7 +206,7 @@ struct VERSION_INFO {
 #ifdef _WIN32
 #define RUN_MUTEX           "BoincSingleInstance"
 #define REG_BLANK_NAME      "Blank"
-#define REG_BLANK_TIME      "Blank Time"
+#define REG_BLANK_TIME      "BlankTime"
 #define REG_STARTUP_NAME    "BOINC"
 #define CLIENT_AUTH_FILENAME    "client_auth.xml"
 #else

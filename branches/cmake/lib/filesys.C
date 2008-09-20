@@ -434,21 +434,21 @@ FILE* boinc_fopen(const char* path, const char* mode) {
 }
 
 
-int boinc_file_exists(const char* path) {
+int boinc_file_exists(const std::string& path) {
    struct stat buf;
-   if (stat(path, &buf)) {
+   if (stat(path.c_str(), &buf)) {
        return false;     // stat() returns zero on success
    }
    return true;
 }
 
 /// same, but doesn't traverse symlinks
-int boinc_file_or_symlink_exists(const char* path) {
+int boinc_file_or_symlink_exists(const std::string& path) {
    struct stat buf;
 #ifdef _WIN32
-   if (stat(path, &buf)) {
+   if (stat(path.c_str(), &buf)) {
 #else
-   if (lstat(path, &buf)) {
+   if (lstat(path.c_str(), &buf)) {
 #endif
        return false;     // stat() returns zero on success
    }

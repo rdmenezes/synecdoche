@@ -58,6 +58,10 @@
 #include "client_msgs.h"
 #include "client_state.h"
 
+/// Maximum size of the write buffer. If this size is exceeded, the connection
+/// will be dropped.
+#define MAX_WRITE_BUFFER 16384
+
 using std::string;
 using std::vector;
 
@@ -610,7 +614,7 @@ void GUI_RPC_CONN::handle_lookup_account(const char* buf, MIOFILE& fout) {
     ACCOUNT_IN ai;
 
     ai.parse(buf);
-    if (!ai.url.size() || !ai.email_addr.size() || !ai.passwd_hash.size()) {
+    if (ai.url.empty() || ai.email_addr.empty() || ai.passwd_hash.empty()) {
         fout.printf("<error>missing URL, email address, or password</error>\n");
         return;
     }
@@ -781,7 +785,7 @@ static void handle_acct_mgr_rpc_poll(const char*, MIOFILE& fout) {
     fout.printf(
         "<acct_mgr_rpc_reply>\n"
     );
-    if (gstate.acct_mgr_op.error_str.size()) {
+    if (!gstate.acct_mgr_op.error_str.empty()) {
         fout.printf(
             "    <message>%s</message>\n",
             gstate.acct_mgr_op.error_str.c_str()
@@ -1177,7 +1181,10 @@ int GUI_RPC_CONN::handle_rpc() {
     mf.printf("</boinc_gui_rpc_reply>\n\003");
     m.get_buf(p, n);
     if (p) {
-        send(sock, p, n, 0);
+        if (write_buffer.length() > MAX_WRITE_BUFFER) {
+            return ERR_BUFFER_OVERFLOW;
+        }
+        write_buffer.append(p, n);
         p[n-1]=0;   // replace 003 with NULL
         if (log_flags.guirpc_debug) {
             if (n > 50) p[50] = 0;
@@ -1186,6 +1193,19 @@ int GUI_RPC_CONN::handle_rpc() {
             );
         }
         free(p);
+    }
+    return 0;
+}
+
+/// Writes as much as possible from the send buffer. The remaining data (if
+/// any) is left in the buffer. If send returns an error, this function returns
+/// -1.
+int GUI_RPC_CONN::handle_write() {
+    int retval = send(sock, &write_buffer[0], write_buffer.length(), 0);
+    if (retval < 0) {
+        return retval;
+    } else {
+        write_buffer.erase(0, retval);
     }
     return 0;
 }

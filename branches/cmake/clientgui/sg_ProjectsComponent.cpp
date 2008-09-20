@@ -390,13 +390,10 @@ void CProjectsComponent::UpdateDisplayedProjects() {
 void CProjectsComponent::OnHelp(wxCommandEvent& /*event*/) {
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectsComponent::OnHelp - Function Begin"));
 
-	std::string url;
-	url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite().mb_str();
-	canonicalize_master_url(url);
+    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite();
+    url.append(wxT("/manager_links.php?target=simple"));
 
-	wxString wxurl;
-	wxurl.Printf(wxT("%smanager_links.php?target=simple"), url.c_str());
-    HyperLink::ExecuteLink(wxurl);
+    HyperLink::ExecuteLink(url);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectsComponent::OnHelp - Function End"));
 }

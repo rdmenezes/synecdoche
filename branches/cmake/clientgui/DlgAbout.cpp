@@ -98,7 +98,7 @@ void CDlgAbout::CreateControls(CSkinAdvanced* pSkinAdvanced) {
     copyrightSizer->Add(copyrightText, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
     // Unbranded about info:
-    wxStaticText* itemStaticText13 = new wxStaticText(this, wxID_STATIC, wxT("Synecdoche Open Infrastructure for Network Computing"));
+    wxStaticText* itemStaticText13 = new wxStaticText(this, wxID_STATIC, wxT("Synecdoche Open Infrastructure for Distributed Computing"));
     verticalSizer->Add(itemStaticText13, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 
     wxHyperlinkCtrl* SynecHyperLink = new wxHyperlinkCtrl(this, wxID_ANY, wxT("http://synecdoche.googlecode.com/"),

@@ -80,8 +80,7 @@ int PERS_FILE_XFER::start_xfer() {
     }
 }
 
-// Possibly create and start a file transfer
-//
+/// Possibly create and start a file transfer.
 int PERS_FILE_XFER::create_xfer() {
     FILE_XFER *file_xfer;
     int retval;
@@ -157,10 +156,9 @@ int PERS_FILE_XFER::create_xfer() {
     return 0;
 }
 
-// Poll the status of this persistent file transfer.
-// If it's time to start it, then attempt to start it.
-// If it has finished or failed, then deal with it appropriately
-//
+/// Poll the status of this persistent file transfer.
+/// If it's time to start it, then attempt to start it.
+/// If it has finished or failed, then deal with it appropriately
 bool PERS_FILE_XFER::poll() {
     int retval;
 
@@ -222,8 +220,8 @@ bool PERS_FILE_XFER::poll() {
                     msg_printf(fip->project, MSG_INFO, "[file_xfer_debug] No data transferred");
                 } else {
                     msg_printf(
-                        fip->project, MSG_INFO, "[file_xfer_debug] Throughput %d bytes/sec",
-                        (int)fxp->xfer_speed
+                        fip->project, MSG_INFO, "[file_xfer_debug] Throughput %.0f bytes/sec",
+                        fxp->xfer_speed
                     );
                 }
             }
@@ -287,8 +285,7 @@ void PERS_FILE_XFER::permanent_failure(int retval) {
     fip->error_msg = boincerror(retval);
 }
 
-// Handle a transient failure
-//
+/// Handle a transient failure.
 void PERS_FILE_XFER::transient_failure(int retval) {
 
     // If it was a bad range request, delete the file and start over
@@ -316,8 +313,7 @@ void PERS_FILE_XFER::transient_failure(int retval) {
     }
 }
 
-// per-file backoff policy: sets next_request_time
-//
+/// Per-file backoff policy: sets next_request_time.
 void PERS_FILE_XFER::do_backoff() {
     double backoff = 0;
 
@@ -358,8 +354,7 @@ void PERS_FILE_XFER::abort() {
     pers_xfer_done = true;
 }
 
-// Parse XML information about a persistent file transfer
-//
+/// Parse XML information about a persistent file transfer
 int PERS_FILE_XFER::parse(MIOFILE& fin) {
     char buf[256];
 
@@ -385,8 +380,7 @@ int PERS_FILE_XFER::parse(MIOFILE& fin) {
     return ERR_XML_PARSE;
 }
 
-// Write XML information about a persistent file transfer
-//
+/// Write XML information about a persistent file transfer
 int PERS_FILE_XFER::write(MIOFILE& fout) {
     fout.printf(
         "    <persistent_file_xfer>\n"
@@ -415,9 +409,8 @@ int PERS_FILE_XFER::write(MIOFILE& fout) {
     return 0;
 }
 
-// suspend file transfers by killing them.
-// They'll restart automatically later.
-//
+/// Suspend file transfers by killing them.
+/// They'll restart automatically later.
 void PERS_FILE_XFER::suspend() {
     if (fxp) {
         last_bytes_xferred = fxp->bytes_xferred;  // save bytes transferred
@@ -434,9 +427,8 @@ PERS_FILE_XFER_SET::PERS_FILE_XFER_SET(FILE_XFER_SET* p) {
     file_xfers = p;
 }
 
-// Run through the set, starting any transfers that need to be
-// started and deleting any that have finished
-//
+/// Run through the set, starting any transfers that need to be
+/// started and deleting any that have finished
 bool PERS_FILE_XFER_SET::poll() {
     unsigned int i;
     bool action = false;
@@ -454,17 +446,15 @@ bool PERS_FILE_XFER_SET::poll() {
     return action;
 }
 
-// Insert a PERS_FILE_XFER object into the set.
-// We will decide which ones to start when we hit the polling loop
-//
+/// Insert a PERS_FILE_XFER object into the set.
+/// We will decide which ones to start when we hit the polling loop
 int PERS_FILE_XFER_SET::insert(PERS_FILE_XFER* pfx) {
     pers_file_xfers.push_back(pfx);
     return 0;
 }
 
-// Remove a PERS_FILE_XFER object from the set.
-// What should the action here be?
-//
+/// Remove a PERS_FILE_XFER object from the set.
+/// What should the action here be?
 int PERS_FILE_XFER_SET::remove(PERS_FILE_XFER* pfx) {
     vector<PERS_FILE_XFER*>::iterator iter;
 
@@ -483,8 +473,7 @@ int PERS_FILE_XFER_SET::remove(PERS_FILE_XFER* pfx) {
     return ERR_NOT_FOUND;
 }
 
-// suspend all PERS_FILE_XFERs
-//
+/// suspend all PERS_FILE_XFERs
 void PERS_FILE_XFER_SET::suspend() {
     unsigned int i;
 

@@ -55,7 +55,7 @@ static void print_options(char* prog) {
         "    --gui_rpc_port <port>           port for GUI RPCs\n"
         "    --redirectio                    redirect stdout and stderr to log files\n"
         "    --detach                        detach from console (Windows)\n"
-        "    --dir <path>                    use given dir as BOINC home\n"
+        "    --dir <path>                    use given dir as Synecdoche home\n"
         "    --no_gui_rpc                    don't allow GUI RPC, don't make socket\n"
         "    --daemon                        run as daemon (Unix)\n"
         "    --exit_before_start             exit right before starting a job\n"
@@ -71,17 +71,17 @@ static void print_options(char* prog) {
     );
 }
 
-// Parse the command line arguments passed to the client
-// NOTE: init() has not been called at this point
-// (i.e. client_state.xml has not been parsed)
-// So just record the args here.
-// The actions get done in do_cmdline_actions()
-//
-// Check for both -X (deprecated) and --X
-//
 #define ARGX2(s1,s2) (!strcmp(argv[i], s1)||!strcmp(argv[i], s2))
 #define ARG(S) ARGX2("-"#S, "--"#S)
 
+/// Parse the command line arguments passed to the client.
+/// NOTE: init() has not been called at this point
+/// (i.e. client_state.xml has not been parsed),
+/// so just record the args here.
+/// The actions get done in do_cmdline_actions().
+///
+/// Check for both -X (deprecated) and --X
+///
 void CLIENT_STATE::parse_cmdline(int argc, char** argv) {
     int i;
     bool show_options = false;

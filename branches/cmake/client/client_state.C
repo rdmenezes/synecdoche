@@ -186,7 +186,7 @@ int CLIENT_STATE::init() {
     time_stats.start();
 
     msg_printf(
-        NULL, MSG_INFO, "Starting BOINC client version %d.%d.%d for %s%s",
+        NULL, MSG_INFO, "Starting Synecdoche client version %d.%d.%d for %s%s",
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,
@@ -200,7 +200,7 @@ int CLIENT_STATE::init() {
 
     if (core_client_version.prerelease) {
         msg_printf(NULL, MSG_USER_ERROR,
-            "This a development version of BOINC and may not function properly"
+            "This a development version of Synecdoche and may not function properly"
         );
     }
 
@@ -253,7 +253,7 @@ int CLIENT_STATE::init() {
 #if 0
     fake_cuda(coprocs);
 #endif
-    if (coprocs.coprocs.size() == 0) {
+    if (coprocs.coprocs.empty()) {
         msg_printf(NULL, MSG_INFO, "No coprocessors");
     } else {
         for (i=0; i<coprocs.coprocs.size(); i++) {
@@ -297,7 +297,7 @@ int CLIENT_STATE::init() {
         );
         run_cpu_benchmarks = true;
         if (config.dont_contact_ref_site) {
-            if (projects.size() > 0) {
+            if (!projects.empty()) {
                 projects[0]->master_url_fetch_pending = true;
             }
         } else {
@@ -845,7 +845,7 @@ void CLIENT_STATE::print_summary() const {
     if (!log_flags.state_debug) return;
 
     msg_printf(0, MSG_INFO, "[state_debug] CLIENT_STATE::print_summary(): Client state summary:\n");
-    msg_printf(0, MSG_INFO, "%d projects:\n", (int)projects.size());
+    msg_printf(0, MSG_INFO, "%lu projects:\n", projects.size());
     for (i=0; i<projects.size(); i++) {
         t = projects[i]->min_rpc_time;
         if (t) {
@@ -854,27 +854,27 @@ void CLIENT_STATE::print_summary() const {
             msg_printf(0, MSG_INFO, "    %s\n", projects[i]->master_url);
         }
     }
-    msg_printf(0, MSG_INFO, "%d file_infos:\n", (int)file_infos.size());
+    msg_printf(0, MSG_INFO, "%lu file_infos:\n", file_infos.size());
     for (i=0; i<file_infos.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s status:%d %s\n", file_infos[i]->name, file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
     }
-    msg_printf(0, MSG_INFO, "%d app_versions\n", (int)app_versions.size());
+    msg_printf(0, MSG_INFO, "%lu app_versions\n", app_versions.size());
     for (i=0; i<app_versions.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s %d\n", app_versions[i]->app_name, app_versions[i]->version_num);
     }
-    msg_printf(0, MSG_INFO, "%d workunits\n", (int)workunits.size());
+    msg_printf(0, MSG_INFO, "%lu workunits\n", workunits.size());
     for (i=0; i<workunits.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s\n", workunits[i]->name);
     }
-    msg_printf(0, MSG_INFO, "%d results\n", (int)results.size());
+    msg_printf(0, MSG_INFO, "%lu results\n", results.size());
     for (i=0; i<results.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s state:%d\n", results[i]->name, results[i]->state());
     }
-    msg_printf(0, MSG_INFO, "%d persistent file xfers\n", (int)pers_file_xfers->pers_file_xfers.size());
+    msg_printf(0, MSG_INFO, "%lu persistent file xfers\n", pers_file_xfers->pers_file_xfers.size());
     for (i=0; i<pers_file_xfers->pers_file_xfers.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s http op state: %d\n", pers_file_xfers->pers_file_xfers[i]->fip->name, (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
     }
-    msg_printf(0, MSG_INFO, "%d active tasks\n", (int)active_tasks.active_tasks.size());
+    msg_printf(0, MSG_INFO, "%lu active tasks\n", active_tasks.active_tasks.size());
     for (i=0; i<active_tasks.active_tasks.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s\n", active_tasks.active_tasks[i]->result->name);
     }
@@ -1179,7 +1179,7 @@ bool CLIENT_STATE::update_results() {
             retval = input_files_available(rp, false);
             if (!retval) {
                 rp->set_state(RESULT_FILES_DOWNLOADED, "CS::update_results");
-                if (rp->avp->app_files.size()==0) {
+                if (rp->avp->app_files.empty()) {
                     // if this is a file-transfer app, start the upload phase
                     //
                     rp->set_state(RESULT_FILES_UPLOADING, "CS::update_results");
@@ -1227,7 +1227,7 @@ bool CLIENT_STATE::time_to_exit() const {
         );
         return true;
     }
-    if (exit_when_idle && (results.size() == 0) && contacted_sched_server) {
+    if (exit_when_idle && results.empty() && contacted_sched_server) {
         msg_printf(NULL, MSG_INFO, "exiting because no more results");
         return true;
     }

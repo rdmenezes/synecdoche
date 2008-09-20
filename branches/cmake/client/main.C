@@ -17,7 +17,7 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 /// \file
-/// command-line version of the BOINC core client
+/// Synecdoche daemon, also called the core client.
 ///
 /// This file contains no GUI-related code.
 
@@ -194,7 +194,7 @@ DWORD WINAPI Win9xMonitorSystemThread( LPVOID  ) {
     /* Create an invisible window */
     hwndMain = CreateWindow(
         wc.lpszClassName,
-        "BOINC Monitor System",
+        "Synecdoche Monitor System",
         WS_OVERLAPPEDWINDOW & ~WS_VISIBLE,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
@@ -352,11 +352,11 @@ int initialize() {
     int retval;
 
 #ifdef _WIN32
-    g_hClientLibraryDll = LoadLibrary("boinc.dll");
+    g_hClientLibraryDll = LoadLibrary("synecdoche.dll");
     if(!g_hClientLibraryDll) {
         stprintf(event_message, 
-            TEXT("BOINC Core Client Error Message\n"
-                 "Failed to initialize the BOINC Client Library.\n"
+            TEXT("Synecdoche Daemon Error Message\n"
+                 "Failed to initialize the Synecdoche Client Library.\n"
                  "Load failed: %s\n"), windows_error_string(event_message, sizeof(event_message))
         );
         if (!gstate.executing_as_daemon) {
@@ -371,12 +371,12 @@ int initialize() {
         retval = wait_client_mutex(".", 10);
         if (retval) {
             fprintf(stderr, 
-                "Another instance of BOINC is running\n"
+                "Another instance of Synecdoche is running\n"
             );
 #ifdef _WIN32
             if (!gstate.executing_as_daemon) {
                 LogEventErrorMessage(
-                    TEXT("Another instance of BOINC is running")
+                    TEXT("Another instance of Synecdoche is running")
                 );
             }
 #endif
@@ -390,13 +390,13 @@ int initialize() {
     if ( WinsockInitialize() != 0 ) {
         if (!gstate.executing_as_daemon) {
             fprintf(stderr,
-                TEXT("BOINC Core Client Error Message\n"
+                TEXT("Synecdoche Daemon Error Message\n"
                      "Failed to initialize the Windows Sockets interface\n"
                      "Terminating Application...\n")
             );
         } else {
             LogEventErrorMessage(
-                TEXT("BOINC Core Client Error Message\n"
+                TEXT("Synecdoche Daemon Error Message\n"
                      "Failed to initialize the Windows Sockets interface\n"
                      "Terminating Application...\n")
             );
@@ -414,9 +414,9 @@ int initialize() {
         if(fnClientLibraryStartup) {
             if(!fnClientLibraryStartup()) {
                 stprintf(event_message, 
-                    TEXT("BOINC Core Client Error Message\n"
-                        "Failed to initialize the BOINC Idle Detection Interface.\n"
-                        "BOINC will not be able to determine if the user is idle or not...\n"
+                    TEXT("Synecdoche Daemon Error Message\n"
+                        "Failed to initialize the Synecdoche Idle Detection Interface.\n"
+                        "Synecdoche will not be able to determine if the user is idle or not...\n"
                         "Load failed: %s\n"), windows_error_string(event_message, sizeof(event_message))
                 );
                 if (!gstate.executing_as_daemon) {
@@ -452,7 +452,7 @@ int boinc_main_loop() {
 #ifdef _WIN32
     if (gstate.executing_as_daemon) {
         LogEventInfoMessage(
-            TEXT("BOINC service is initialization completed, now begining process execution...\n")
+            TEXT("Synecdoche service is initialization completed, now begining process execution...\n")
         );
     }
 #endif
@@ -462,7 +462,7 @@ int boinc_main_loop() {
     //
     gstate.parse_env_vars();
 
-    if (gstate.projects.size() == 0) {
+    if (gstate.projects.empty()) {
         msg_printf(NULL, MSG_INFO,
             "This computer is not attached to any projects"
         );
@@ -521,8 +521,8 @@ int finalize() {
         }
         if(!FreeLibrary(g_hClientLibraryDll)) {
             stprintf(event_message, 
-                TEXT("BOINC Core Client Error Message\n"
-                    "Failed to cleanup the BOINC Idle Detection Interface\n"
+                TEXT("Synecdoche Daemon Error Message\n"
+                    "Failed to cleanup the Synecdoche Idle Detection Interface\n"
                     "Unload failed: %s\n"
                 ),
                 windows_error_string(event_message, sizeof(event_message))
@@ -539,7 +539,7 @@ int finalize() {
 #ifdef USE_WINSOCK
     if (WinsockCleanup()) {
         stprintf(event_message, 
-            TEXT("BOINC Core Client Error Message\n"
+            TEXT("Synecdoche Daemon Error Message\n"
                 "Failed to cleanup the Windows Sockets interface\n"
                 "Unload failed: %s\n"
             ),
@@ -582,7 +582,7 @@ int main(int argc, char** argv) {
         if ( stricmp( "daemon", argv[1]+1 ) == 0 ) {
             gstate.executing_as_daemon = true;
             LogEventInfoMessage(
-                TEXT("BOINC service is initializing...\n")
+                TEXT("Synecdoche service is initializing...\n")
             );
         }
     }
@@ -721,9 +721,9 @@ int main(int argc, char** argv) {
     if (i) {
         printf(
             "File ownership or permissions are set in a way that\n"
-            "does not allow sandboxed execution of BOINC applications.\n"
+            "does not allow sandboxed execution of Synecdoche applications.\n"
             "To use BOINC anyway, use the -insecure command line option.\n"
-            "To change ownership/permission, reinstall BOINC"
+            "To change ownership/permission, reinstall Synecdoche"
 #ifdef __APPLE__
             " or run\n the shell script Mac_SA_Secure.sh"
 #else

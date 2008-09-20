@@ -48,8 +48,7 @@ void get_project_dir(const PROJECT* p, char* path, int len) {
     snprintf(path, len, "%s/%s", PROJECTS_DIR, buf);
 }
 
-// Gets the pathname of a file
-//
+/// Gets the pathname of a file
 void get_pathname(const FILE_INFO* fip, char* path, int len) {
     const PROJECT* p = fip->project;
     char buf[1024];
@@ -97,14 +96,12 @@ void job_log_filename(const PROJECT& project, char* buf, int len) {
     snprintf(buf, len, "%s%s.txt", JOB_LOG_BASE, url);
 }
 
-// Returns the location of a numbered slot directory
-//
+/// Returns the location of a numbered slot directory
 void get_slot_dir(int slot, char* path, int len) {
     snprintf(path, len, "%s/%d", SLOTS_DIR, slot);
 }
 
-// Create the directory for the project p
-//
+/// Create the directory for the project p
 int make_project_dir(const PROJECT& p) {
     char buf[1024];
     int retval;
@@ -152,8 +149,7 @@ int remove_project_dir(const PROJECT& p) {
     return remove_project_owned_dir(buf);
 }
 
-// Create the slot directory for the specified slot #
-//
+/// Create the slot directory for the specified slot #
 int make_slot_dir(int slot) {
     char buf[1024];
 
@@ -191,8 +187,7 @@ int make_slot_dir(int slot) {
     return retval;
 }
 
-// delete unused stuff in the slots/ directory
-//
+/// delete unused stuff in the slots/ directory
 void delete_old_slot_dirs() {
     char filename[1024], path[1024];
     DIRREF dirp;
@@ -210,7 +205,7 @@ void delete_old_slot_dirs() {
             char init_data_path[1024];
             SHMEM_SEG_NAME shmem_seg_name;
 
-            // If BOINC crashes or exits suddenly (e.g., due to 
+            // If Synecdoche crashes or exits suddenly (e.g., due to 
             // being called with --exit_after_finish) it may leave 
             // orphan shared memory segments in the system.
             // Clean these up here. (We must do this before deleting the
@@ -244,10 +239,9 @@ static bool bad_account_filename(const char* filename) {
     return false;
 }
 
-// account filenames are of the form
-// account_URL.xml
-// where URL is master URL with slashes replaced by underscores
-//
+/// Account filenames are of the form
+/// "account_URL.xml",
+/// where URL is master URL with slashes replaced by underscores.
 bool is_account_file(const char* filename) {
     const char* p, *q;
     p = strstr(filename, "account_");
@@ -263,10 +257,9 @@ bool is_account_file(const char* filename) {
     return true;
 }
 
-// statistics filenames are of the form
-// statistics_URL.xml
-// where URL is master URL with slashes replaced by underscores
-//
+/// statistics filenames are of the form
+/// "statistics_URL.xml",
+/// where URL is master URL with slashes replaced by underscores.
 bool is_statistics_file(const char* filename) {
     const char* p, *q;
     p = strstr(filename, "statistics_");

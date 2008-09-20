@@ -33,7 +33,7 @@
 *
 */
 
-// Slightly modified for BOINC.
+// Slightly modified for Synecdoche.
 // e.g.: no global variables, since we run this multithreaded
 
 #ifdef _WIN32

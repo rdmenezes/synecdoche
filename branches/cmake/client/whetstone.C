@@ -17,7 +17,7 @@
 *      Happy 25th birthday Whetstone, 21 November 1997
 */
 
-// Modified a little to work with BOINC
+// Modified a little to work with Synecdoche
 //
 
 #ifdef _WIN32

@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <set>
+#include <string>
 
 #include "network.h"
 #include "gui_http.h"
@@ -55,8 +56,13 @@ public:
     GUI_RPC_CONN(int);
     ~GUI_RPC_CONN();
     int handle_rpc();
+    int handle_write();
+    bool needs_write() const {
+        return !write_buffer.empty();
+    }
 private:
     char nonce[256];
+    std::string write_buffer;
 
     GET_PROJECT_CONFIG_OP get_project_config_op;
     LOOKUP_ACCOUNT_OP lookup_account_op;

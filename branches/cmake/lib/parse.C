@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -31,32 +32,33 @@
 #include "config.h"
 #include <cstring>
 #include <cstdlib>
-#include <string>
 #include <math.h>
 #if HAVE_IEEEFP_H
 #include <ieeefp.h>
 #endif
 #endif
 
+#include <string>
+#include <sstream>
+
 #include "error_numbers.h"
 #include "str_util.h"
 #include "parse.h"
 
-using std::string;
-
 /// Parse a boolean; tag is of form "foobar".
 /// Accept either <foobar/> or <foobar>0|1</foobar>
 bool parse_bool(const char* buf, const char* tag, bool& result) {
-    char single_tag[256], start_tag[256];
-    int x;
-
-    sprintf(single_tag, "<%s/>", tag);
-    if (match_tag(buf, single_tag)) {
+    std::ostringstream single_tag;
+    single_tag << '<' << tag << "/>";
+    if (match_tag(buf, single_tag.str())) {
         result = true;
         return true;
     }
-    sprintf(start_tag, "<%s>", tag);
-    if (parse_int(buf, start_tag, x)) {
+
+    int x;
+    std::ostringstream start_tag;
+    start_tag << '<' << tag << '>';
+    if (parse_int(buf, start_tag.str().c_str(), x)) {
         result = (x != 0);
         return true;
     }
@@ -70,7 +72,7 @@ bool parse_bool(const char* buf, const char* tag, bool& result) {
 /// Strips white space from ends.
 /// Use "<tag", not "<tag>", if there might be attributes.
 bool parse_str(const char* buf, const char* tag, char* dest, int destlen) {
-    string str;
+    std::string str;
     const char* p;
     char tempbuf[1024];
     int len;
@@ -90,7 +92,7 @@ bool parse_str(const char* buf, const char* tag, char* dest, int destlen) {
     return true;
 }
 
-bool parse_str(const char* buf, const char* tag, string& dest) {
+bool parse_str(const char* buf, const char* tag, std::string& dest) {
     char tempbuf[1024];
     if (!parse_str(buf, tag, tempbuf, 1024)) return false;
     dest = tempbuf;
@@ -171,7 +173,7 @@ int copy_element_contents(FILE* in, const char* end_tag, char* p, int len) {
     return ERR_XML_PARSE;
 }
 
-int copy_element_contents(FILE* in, const char* end_tag, string& str) {
+int copy_element_contents(FILE* in, const char* end_tag, std::string& str) {
     char buf[256];
 
     str = "";
@@ -360,7 +362,6 @@ void xml_unescape(const char* in, char* out) {
 /// Otherwise return ERR_XML_PARSE
 int skip_unrecognized(char* buf, MIOFILE& fin) {
     char* p, *q, buf2[256];
-    std::string close_tag;
 
     p = strchr(buf, '<');
     if (!p) {
@@ -375,9 +376,10 @@ int skip_unrecognized(char* buf, MIOFILE& fin) {
     }
     if (q[-1] == '/') return 0;
     *q = 0;
-    close_tag = string("</") + string(p+1) + string(">");
+    std::ostringstream close_tag;
+    close_tag << "</" << (p + 1) << '>';
     while (fin.fgets(buf2, 256)) {
-        if (strstr(buf2, close_tag.c_str())) {
+        if (strstr(buf2, close_tag.str().c_str())) {
             return 0;
         }
         
@@ -546,7 +548,7 @@ bool XML_PARSER::parse_str(
 }
 
 bool XML_PARSER::parse_string(
-    char* parsed_tag, const char* start_tag, string& str
+    char* parsed_tag, const char* start_tag, std::string& str
 ) {
     char buf[8192];
     bool flag = parse_str(parsed_tag, start_tag, buf, sizeof(buf));

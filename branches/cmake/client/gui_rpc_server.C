@@ -311,6 +311,9 @@ void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg) const {
         int s = gr->sock;
         FD_SET(s, &fg.read_fds);
         FD_SET(s, &fg.exc_fds);
+        if (gr->needs_write()) {
+            FD_SET(s, &fg.write_fds);
+        }
         if (s > fg.max_fd) fg.max_fd = s;
     }
     FD_SET(lsock, &fg.read_fds);
@@ -406,6 +409,25 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
                 if (log_flags.guirpc_debug) {
                     msg_printf(NULL, MSG_INFO,
                         "[guirpc_debug] error %d from handler, closing socket\n",
+                        retval
+                    );
+                }
+                delete gr;
+                iter = gui_rpcs.erase(iter);
+                continue;
+            }
+        }
+        ++iter;
+    }
+    iter = gui_rpcs.begin();
+    while (iter != gui_rpcs.end()) {
+        gr = *iter;
+        if (FD_ISSET(gr->sock, &fg.write_fds)) {
+            retval = gr->handle_write();
+            if (retval) {
+                if (log_flags.guirpc_debug) {
+                    msg_printf(NULL, MSG_INFO,
+                        "[guirpc_debug] error %d from write handler, closing socket\n",
                         retval
                     );
                 }

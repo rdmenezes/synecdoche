@@ -19,7 +19,7 @@
 #include "stdafx.h"
 
 /**
- * Find out if BOINC has been installed as a service.
+ * Find out if Synecdoche has been installed as a service.
  **/
 EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceInstalled()
 {
@@ -36,7 +36,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceInstalled()
     {
         schService = OpenService( 
             schSCManager,            // SCM database 
-            _T("BOINC"),             // service name
+            _T("Synecdoche"),             // service name
             GENERIC_READ); 
      
         if (schService) 
@@ -56,7 +56,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceInstalled()
 
 
 /**
- * Find out if BOINC has been told to start.
+ * Find out if Synecdoche has been told to start.
  **/
 EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStarting()
 {
@@ -74,7 +74,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStarting()
     {
         schService = OpenService( 
             schSCManager,            // SCM database 
-            _T("BOINC"),             // service name
+            _T("Synecdoche"),             // service name
             GENERIC_READ); 
      
         if (schService) 
@@ -98,7 +98,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStarting()
 
 
 /**
- * Find out if BOINC is executing as a service.
+ * Find out if Synecdoche is executing as a service.
  **/
 EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceRunning()
 {
@@ -116,7 +116,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceRunning()
     {
         schService = OpenService( 
             schSCManager,            // SCM database 
-            _T("BOINC"),             // service name
+            _T("Synecdoche"),             // service name
             GENERIC_READ); 
      
         if (schService) 
@@ -140,7 +140,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceRunning()
 
 
 /**
- * Find out if BOINC has been told to stop.
+ * Find out if Synecdoche has been told to stop.
  **/
 EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStopping()
 {
@@ -158,7 +158,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStopping()
     {
         schService = OpenService( 
             schSCManager,            // SCM database 
-            _T("BOINC"),             // service name
+            _T("Synecdoche"),             // service name
             GENERIC_READ); 
      
         if (schService) 
@@ -182,7 +182,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStopping()
 
 
 /**
- * Find out if BOINC has stopped executing as a service.
+ * Find out if Synecdoche has stopped executing as a service.
  **/
 EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStopped()
 {
@@ -200,7 +200,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStopped()
     {
         schService = OpenService( 
             schSCManager,            // SCM database 
-            _T("BOINC"),             // service name
+            _T("Synecdoche"),             // service name
             GENERIC_READ); 
      
         if (schService) 
@@ -224,7 +224,7 @@ EXTERN_C __declspec(dllexport) BOOL IsBOINCServiceStopped()
 
 
 /**
- * Start the BOINC Service.
+ * Start the Synecdoche Service.
  **/
 EXTERN_C __declspec(dllexport) BOOL StartBOINCService()
 {
@@ -241,7 +241,7 @@ EXTERN_C __declspec(dllexport) BOOL StartBOINCService()
     {
         schService = OpenService( 
             schSCManager,            // SCM database 
-            _T("BOINC"),             // service name
+            _T("Synecdoche"),             // service name
             GENERIC_READ | GENERIC_EXECUTE); 
      
         if (schService) 
@@ -264,7 +264,7 @@ EXTERN_C __declspec(dllexport) BOOL StartBOINCService()
 
 
 /**
- * Stop the BOINC Service.
+ * Stop the Synecdoche Service.
  **/
 EXTERN_C __declspec(dllexport) BOOL StopBOINCService()
 {
@@ -282,7 +282,7 @@ EXTERN_C __declspec(dllexport) BOOL StopBOINCService()
     {
         schService = OpenService( 
             schSCManager,            // SCM database 
-            _T("BOINC"),             // service name
+            _T("Synecdoche"),             // service name
             GENERIC_READ | GENERIC_EXECUTE); 
      
         if (schService) 

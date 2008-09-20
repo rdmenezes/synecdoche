@@ -76,7 +76,11 @@ public:
     int get_host_info();
     int get_local_network_info();
     void clear_host_info();
+
+    /// Make a random string using host info.
     void make_random_string(const char* salt, char* out);
+
+    /// Make a host cross-project ID.
     void generate_host_cpid();
 };
 

@@ -86,8 +86,7 @@ void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
 }
 
 
-// handle messages on the "graphics_reply" channel
-//
+/// handle messages on the "graphics_reply" channel
 void ACTIVE_TASK::check_graphics_mode_ack() {
     GRAPHICS_MSG gm;
     char buf[MSG_CHANNEL_SIZE];

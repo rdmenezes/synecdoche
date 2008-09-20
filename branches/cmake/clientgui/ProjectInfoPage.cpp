@@ -34,6 +34,8 @@
 #include "ProjectInfoPage.h"
 #include "ProjectListCtrl.h"
 
+#include <algorithm>
+
 
 /*!
  * CProjectInfoPage type definition
@@ -246,6 +248,7 @@ void CProjectInfoPage::OnPageChanged( wxWizardExEvent& event ) {
     //
     if (!bProjectListPopulated) {
         pDoc->rpc.get_all_projects_list(pl);
+        std::sort(pl.projects.begin(), pl.projects.end(), PROJECT_LIST_ENTRY::compare_name);
         for (i=0; i<pl.projects.size(); i++) {
             m_pProjectListCtrl->Append(
                 wxString(pl.projects[i]->name.c_str(), wxConvUTF8),

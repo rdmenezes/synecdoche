@@ -18,11 +18,6 @@
 #ifndef _FILE_XFER_
 #define _FILE_XFER_
 
-// A FILE_XFER object represents a file transfer "episode"
-// (see pers_file_xfer.h), i.e. an HTTP transaction with a
-// particular data server.
-// 
-
 #include <vector>
 
 #include "client_types.h"
@@ -30,6 +25,9 @@
 
 #define MIN_DOWNLOAD_INCREMENT  5000
 
+/// A FILE_XFER object represents a file transfer "episode"
+/// (see pers_file_xfer.h), i.e.\ an HTTP transaction with a
+/// particular data server.
 class FILE_XFER : public HTTP_OP {
 public:
     FILE_INFO* fip;
@@ -37,13 +35,14 @@ public:
     char header[4096];
     bool file_size_query;
     bool is_upload;
+    /// File size at start of transfer, used for:
+    ///
+    /// -# A "minimum download increment"
+    ///   that rejects partial downloads of less than 5K,
+    ///   since these may be error messages from proxies.
+    /// -# Lets us recover when server ignored Range request
+    ///   and sent us whole file.
     double starting_size;
-        // File size at start of transfer, used for:
-        // 1) a "minimum download increment"
-        // that rejects partial downloads of less than 5K,
-        // since these may be error messages from proxies.
-        // 2) lets us recover when server ignored Range request
-        // and sent us whole file
 
     FILE_XFER();
     ~FILE_XFER();

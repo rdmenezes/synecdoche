@@ -21,6 +21,11 @@
 #include "boinc_tray.h"
 #include "tray_win.h"
 
+/// \file
+/// It's not BOINC, and it's not a tray application. The sole purpose of
+/// this process is to run in the current user's context and report user
+/// idle information to Synecdoche. It is dangerously similar to a keylogger,
+/// so security is of paramount importance.
 
          BOOL           IdleTrackerStartup();
 EXTERN_C DWORD          BOINCGetIdleTickCount();
@@ -57,7 +62,7 @@ INT CBOINCTray::Run( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         cls.hCursor        = NULL;
         cls.hIcon          = NULL; 
         cls.lpszMenuName   = NULL;
-        cls.lpszClassName  = _T("BOINCTrayWndClass");
+        cls.lpszClassName  = _T("IdleDetectWndClass");
         cls.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
         cls.hInstance      = hInstance; 
         cls.style          = CS_OWNDC|CS_VREDRAW|CS_HREDRAW;
@@ -72,8 +77,8 @@ INT CBOINCTray::Run( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     HWND hWnd;
 
     hWnd = CreateWindow(
-        _T("BOINCTrayWndClass"),
-        _T("BOINC SystemTray Applet"),
+        _T("IdleDetectWndClass"),
+        _T("Synecdoche idle status monitor"),
         WS_OVERLAPPEDWINDOW|WS_HSCROLL|WS_VSCROLL,
         0, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL
     );

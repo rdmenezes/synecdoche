@@ -161,7 +161,7 @@ private:
     bool skip_cpu_benchmarks; ///< if set, use hardwired numbers rather than running benchmarks
     bool run_cpu_benchmarks; ///< if set, run benchmarks on client startup
     /// Set if a benchmark fails to start because of a process that doesn't stop.
-    /// Persists so that the next start of BOINC runs the benchmarks.
+    /// Persists so that benchmarks are run at the next start.
     bool cpu_benchmarks_pending;
 
     int exit_after_app_start_secs; ///< if nonzero, exit this many seconds after starting an app
@@ -371,7 +371,7 @@ private:
 /// @name cs_prefs.C
 public:
     int project_disk_usage(PROJECT*, double&);
-    int total_disk_usage(double&); ///< returns the total disk usage of BOINC on this host
+    int total_disk_usage(double&); ///< returns the total disk usage of Synecdoche on this host
     double allowed_disk_usage();
     int allowed_project_disk_usage(double&);
     int suspend_tasks(int reason);

@@ -16,7 +16,7 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 // This file is code to print (in ASCII) the stuff returned by GUI RPC.
-// Used only by boinccmd.
+// Used only by syneccmd.
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"

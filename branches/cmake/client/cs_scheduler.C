@@ -54,18 +54,15 @@ using std::max;
 using std::vector;
 using std::string;
 
-// quantities like avg CPU time decay by a factor of e every week
-//
+/// quantities like avg CPU time decay by a factor of e every week
 #define EXP_DECAY_RATE  (1./(SECONDS_PER_DAY*7))
 
-// try to report results this much before their deadline
-//
+/// try to report results this much before their deadline
 #define REPORT_DEADLINE_CUSHION ((double)SECONDS_PER_DAY)
 
 
-// Write a scheduler request to a disk file,
-// to be sent to a scheduling server
-//
+/// Write a scheduler request to a disk file,
+/// to be sent to a scheduling server.
 int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     char buf[1024];
     MIOFILE mf;
@@ -225,7 +222,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         disk_total, disk_project
     );
 
-    if (coprocs.coprocs.size()) {
+    if (!coprocs.coprocs.empty()) {
         fprintf(f, "    <coprocs>\n");
         for (i=0; i<coprocs.coprocs.size(); i++) {
             COPROC* c = coprocs.coprocs[i];
@@ -321,9 +318,8 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     return 0;
 }
 
-// called from the client's polling loop.
-// initiate scheduler RPC activity if needed and possible
-//
+/// initiate scheduler RPC activity if needed and possible.
+/// called from the client's polling loop.
 bool CLIENT_STATE::scheduler_rpc_poll() {
     PROJECT *p;
     bool action=false;
@@ -380,8 +376,7 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
     return action;
 }
 
-// Handle the reply from a scheduler
-//
+/// Handle the reply from a scheduler
 int CLIENT_STATE::handle_scheduler_reply(
     PROJECT* project, char* scheduler_url, int& nresults
 ) {
@@ -407,7 +402,7 @@ int CLIENT_STATE::handle_scheduler_reply(
     if (retval) return retval;
 
     if (log_flags.sched_ops) {
-        msg_printf(project, MSG_INFO, "Scheduler request completed: got %d new tasks", (int)sr.results.size());
+        msg_printf(project, MSG_INFO, "Scheduler request completed: got %lu new tasks", sr.results.size());
     }
     if (log_flags.sched_op_debug) {
         if (sr.scheduler_version) {
