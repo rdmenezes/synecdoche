@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,110 +16,90 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_PROJECTPROCESSINGPAGE_H_
-#define _WIZ_PROJECTPROCESSINGPAGE_H_
+#ifndef WIZ_PROJECTPROCESSINGPAGE_H
+#define WIZ_PROJECTPROCESSINGPAGE_H
 
-/*!
- * CProjectProcessingPage custom events
- */
+#include <wx/event.h>
+#include <wx/wizard.h>
 
+class wxStaticText;
+class wxStaticBitmap;
+class CBOINCBaseWizard;
+
+/// CProjectProcessingPage custom event.
 class CProjectProcessingPageEvent : public wxEvent
 {
 public:
-    CProjectProcessingPageEvent(wxEventType evtType, wxWizardPageEx *parent)
-        : wxEvent(-1, evtType)
-        {
-            SetEventObject(parent);
-        }
+    CProjectProcessingPageEvent(wxEventType evtType, wxWizardPage *parent) : wxEvent(-1, evtType) {
+        SetEventObject(parent);
+    }
 
     virtual wxEvent *Clone() const { return new CProjectProcessingPageEvent(*this); }
 };
 
 
 BEGIN_DECLARE_EVENT_TYPES()
-DECLARE_EVENT_TYPE( wxEVT_PROJECTPROCESSING_STATECHANGE, 11100 )
+DECLARE_EVENT_TYPE(wxEVT_PROJECTPROCESSING_STATECHANGE, 11100)
 END_DECLARE_EVENT_TYPES()
 
 #define EVT_PROJECTPROCESSING_STATECHANGE(fn) \
     DECLARE_EVENT_TABLE_ENTRY(wxEVT_PROJECTPROCESSING_STATECHANGE, -1, -1, (wxObjectEventFunction) (wxEventFunction) &fn, NULL),
 
-/*!
- * CProjectProcessingPage states
- */
 
-#define ATTACHPROJECT_INIT                              0
-#define ATTACHPROJECT_ACCOUNTQUERY_BEGIN                1
-#define ATTACHPROJECT_ACCOUNTQUERY_EXECUTE              2
-#define ATTACHPROJECT_ATTACHPROJECT_BEGIN               3
-#define ATTACHPROJECT_ATTACHPROJECT_EXECUTE             4
-#define ATTACHPROJECT_CLEANUP                           5
-#define ATTACHPROJECT_END                               6
-
-/*!
- * CProjectProcessingPage class declaration
- */
-
-class CProjectProcessingPage: public wxWizardPageEx
+class CProjectProcessingPage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CProjectProcessingPage )
+    DECLARE_DYNAMIC_CLASS(CProjectProcessingPage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CProjectProcessingPage( );
+    CProjectProcessingPage();
 
-    CProjectProcessingPage( CBOINCBaseWizard* parent );
+    CProjectProcessingPage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CProjectProcessingPage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ATTACHPROJECTPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_ATTACHPROJECTPAGE
-    void OnCancel( wxWizardExEvent& event );
+    void OnCancel(wxWizardEvent& event);
 
-////@end CProjectProcessingPage event handler declarations
-
-    void OnStateChange( CProjectProcessingPageEvent& event );
-
-////@begin CProjectProcessingPage member function declarations
+    void OnStateChange(CProjectProcessingPageEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CProjectProcessingPage member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
-    bool GetProjectCommunitcationsSucceeded() const { return m_bProjectCommunitcationsSucceeded ; }
-    void SetProjectCommunitcationsSucceeded(bool value) { m_bProjectCommunitcationsSucceeded = value ; }
+    bool GetProjectCommunitcationsSucceeded() const { return m_bProjectCommunitcationsSucceeded; }
+    void SetProjectCommunitcationsSucceeded(bool value) { m_bProjectCommunitcationsSucceeded = value; }
 
-    bool GetProjectUnavailable() const { return m_bProjectUnavailable ; }
-    void SetProjectUnavailable(bool value) { m_bProjectUnavailable = value ; }
+    bool GetProjectUnavailable() const { return m_bProjectUnavailable; }
+    void SetProjectUnavailable(bool value) { m_bProjectUnavailable = value; }
 
-    bool GetProjectAccountAlreadyExists() const { return m_bProjectAccountAlreadyExists ; }
-    void SetProjectAccountAlreadyExists(bool value) { m_bProjectAccountAlreadyExists = value ; }
+    bool GetProjectAccountAlreadyExists() const { return m_bProjectAccountAlreadyExists; }
+    void SetProjectAccountAlreadyExists(bool value) { m_bProjectAccountAlreadyExists = value; }
 
-    bool GetProjectAccountNotFound() const { return m_bProjectAccountNotFound ; }
-    void SetProjectAccountNotFound(bool value) { m_bProjectAccountNotFound = value ; }
+    bool GetProjectAccountNotFound() const { return m_bProjectAccountNotFound; }
+    void SetProjectAccountNotFound(bool value) { m_bProjectAccountNotFound = value; }
 
-    bool GetProjectAttachSucceeded() const { return m_bProjectAttachSucceeded ; }
-    void SetProjectAttachSucceeded(bool value) { m_bProjectAttachSucceeded = value ; }
+    bool GetProjectAttachSucceeded() const { return m_bProjectAttachSucceeded; }
+    void SetProjectAttachSucceeded(bool value) { m_bProjectAttachSucceeded = value; }
 
-    wxInt32 GetCurrentState() const { return m_iCurrentState ; }
-    void SetNextState(wxInt32 value) { m_iCurrentState = value ; }
+    wxInt32 GetCurrentState() const { return m_iCurrentState; }
+    void SetNextState(wxInt32 value) { m_iCurrentState = value; }
 
     /// Should we show tooltips?
     static bool ShowToolTips();
@@ -128,10 +109,9 @@ public:
     void IncrementProgress(wxStaticBitmap* pBitmap);
     void FinishProgress(wxStaticBitmap* pBitmap);
 
-////@begin CProjectProcessingPage member variables
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticBitmap* m_pProgressIndicator;
-////@end CProjectProcessingPage member variables
     bool m_bProjectCommunitcationsSucceeded;
     bool m_bProjectUnavailable;
     bool m_bProjectAccountNotFound;
@@ -141,4 +121,4 @@ public:
     int m_iCurrentState;
 };
 
-#endif // _WIZ_PROJECTPROCESSINGPAGE_H_
+#endif // WIZ_PROJECTPROCESSINGPAGE_H

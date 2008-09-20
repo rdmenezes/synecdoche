@@ -15,8 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BOINCBASEFRAME_H_
-#define _BOINCBASEFRAME_H_
+#ifndef BOINCBASEFRAME_H
+#define BOINCBASEFRAME_H
+
+#include <wx/frame.h>
+#include <wx/string.h>
+#include <wx/timer.h>
 
 class CFrameEvent;
 class CFrameAlertEvent;

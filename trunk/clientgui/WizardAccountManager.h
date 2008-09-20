@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,90 +16,100 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_ACCOUNTMANAGER_H_
-#define _WIZ_ACCOUNTMANAGER_H_
+#ifndef WIZ_ACCOUNTMANAGER_H
+#define WIZ_ACCOUNTMANAGER_H
 
-/*!
- * Forward declarations
- */
+#include "BOINCBaseWizard.h"
 
-////@begin forward declarations
+/// Forward declarations of all used pages:
+class CAccountInfoPage;
 class CAccountManagerInfoPage;
 class CAccountManagerPropertiesPage;
 class CAccountManagerProcessingPage;
-////@end forward declarations
+class CCompletionErrorPage;
+class CCompletionPage;
+class CErrNotDetectedPage;
+class CErrUnavailablePage;
+class CErrNoInternetConnectionPage;
+class CErrNotFoundPage;
+class CErrProxyInfoPage;
+class CErrProxyPage;
+class CWelcomePage;
 
 #define ACCOUNTMANAGER_ATTACH       0
 #define ACCOUNTMANAGER_UPDATE       1
 #define ACCOUNTMANAGER_DETACH       2
 
-/*!
- * CWizardAccountManager class declaration
- */
-
 class CWizardAccountManager: public CBOINCBaseWizard
 {    
-    DECLARE_DYNAMIC_CLASS( CWizardAccountManager )
+    DECLARE_DYNAMIC_CLASS(CWizardAccountManager)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CWizardAccountManager( );
-    CWizardAccountManager( wxWindow* parent, wxWindowID id = SYMBOL_CWIZARDACCOUNTMANAGER_IDNAME, const wxPoint& pos = wxDefaultPosition );
+    CWizardAccountManager();
+    CWizardAccountManager(wxWindow* parent, wxWindowID id = SYMBOL_CWIZARDACCOUNTMANAGER_IDNAME, const wxPoint& pos = wxDefaultPosition);
 
     /// Creation
-    bool Create( wxWindow* parent, wxWindowID id = SYMBOL_CWIZARDACCOUNTMANAGER_IDNAME, const wxPoint& pos = wxDefaultPosition );
+    bool Create(wxWindow* parent, wxWindowID id = SYMBOL_CWIZARDACCOUNTMANAGER_IDNAME, const wxPoint& pos = wxDefaultPosition);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CWizardAccountManager event handler declarations
-
     /// wxEVT_WIZARD_FINISHED event handler for ID_ATTACHACCOUNTMANAGERWIZARD
-    void OnFinished( wxWizardEvent& event );
-
-////@end CWizardAccountManager event handler declarations
-
-////@begin CWizardAccountManager member function declarations
+    void OnFinished(wxWizardEvent& event);
 
     /// Runs the wizard.
     bool Run(int action = ACCOUNTMANAGER_ATTACH);
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CWizardAccountManager member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
     /// Overrides
-    virtual bool HasNextPage( wxWizardPageEx* page );
-    virtual bool HasPrevPage( wxWizardPageEx* page );
+    virtual bool HasNextPage(wxWizardPage* page);
+    virtual bool HasPrevPage(wxWizardPage* page);
 
     /// Track page transitions
-    wxWizardPageEx* _PopPageTransition();
-    wxWizardPageEx* _PushPageTransition( wxWizardPageEx* pCurrentPage, unsigned long ulPageID );
+    wxWizardPage* _PopPageTransition();
+    wxWizardPage* _PushPageTransition(wxWizardPage* pCurrentPage, unsigned long ulPageID);
 
     /// Cancel Event Infrastructure
-    void _ProcessCancelEvent( wxWizardExEvent& event );
-
-    /// Finish Button Environment
-    bool GetAccountCreatedSuccessfully() const { return account_created_successfully ; }
-    void SetAccountCreatedSuccessfully(bool value) { account_created_successfully = value ; }
-
-    bool GetAttachedToProjectSuccessfully() const { return attached_to_project_successfully ; }
-    void SetAttachedToProjectSuccessfully(bool value) { attached_to_project_successfully = value ; }
-
-    wxString GetProjectURL() const { return project_url ; }
-    void SetProjectURL(wxString value) { project_url = value ; }
-
-    wxString GetProjectAuthenticator() const { return project_authenticator ; }
-    void SetProjectAuthenticator(wxString value) { project_authenticator = value ; }
+    void _ProcessCancelEvent(wxWizardEvent& event);
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CWizardAccountManager member variables
+    /// Get the name of the project.
+    wxString GetProjectName() const;
+
+    /// Set the name of the project.
+    void SetProjectName(const wxString& pr_name);
+
+    /// Return a pointer to the current account info page.
+    CAccountInfoPage* GetAccountInfoPage() const;
+
+    /// Return a pointer to the current account manager info page.
+    CAccountManagerInfoPage* GetAccountManagerInfoPage() const;
+
+    /// Return a pointer to the current completion error page.
+    CCompletionErrorPage* GetCompletionErrorPage() const;
+
+    /// Return credentials cache status.
+    bool GetCredentialsCached() const;
+
+    /// Set credentials cache status.
+    void SetCredentialsCached(bool credentials_cached);
+
+    /// Check if the wizard is currently in update mode.
+    bool IsUpdateWizard() const;
+
+    /// Check if the wizard is currently in remove mode.
+    bool IsRemoveWizard() const;
+
+private:
     CWelcomePage* m_WelcomePage;
     CAccountManagerInfoPage* m_AccountManagerInfoPage;
     CAccountManagerPropertiesPage* m_AccountManagerPropertiesPage;
@@ -112,9 +123,10 @@ public:
     CErrNotFoundPage* m_ErrNotFoundPage;
     CErrProxyInfoPage* m_ErrProxyInfoPage;
     CErrProxyPage* m_ErrProxyPage;
-////@end CWizardAccountManager member variables
     wxString m_strProjectName;
     bool m_bCredentialsCached;
+    bool m_IsUpdateWizard;
+    bool m_IsRemoveWizard;
 };
 
-#endif // _WIZ_ACCOUNTMANAGER_H_
+#endif // WIZ_ACCOUNTMANAGER_H

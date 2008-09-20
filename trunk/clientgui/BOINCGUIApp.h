@@ -15,8 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BOINCGUIAPP_H_
-#define _BOINCGUIAPP_H_
+#ifndef BOINCGUIAPP_H
+#define BOINCGUIAPP_H
+
+#include <wx/app.h>
 
 #ifdef __WXMAC__
 #include "mac/MacSysMenu.h"     // Must be included before MainDocument.h
@@ -27,11 +29,12 @@
 
 
 class wxLogBOINC;
+class wxCmdLineParser;
+class wxConfig;
 class CBOINCBaseFrame;
 class CMainDocument;
 class CTaskBarIcon;
 class CSkinManager;
-
 
 class CBOINCGUIApp : public wxApp {
     DECLARE_DYNAMIC_CLASS(CBOINCGUIApp)

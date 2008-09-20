@@ -16,8 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _HYPERLINK_H_
-#define _HYPERLINK_H_
+#ifndef HYPERLINK_H
+#define HYPERLINK_H
+
+#include <wx/string.h>
 
 class HyperLink {
 
@@ -26,4 +28,4 @@ public:
     static void ExecuteLink (const wxString &link);
 };
 
-#endif // _HYPERLINK_H_
+#endif // HYPERLINK_H
