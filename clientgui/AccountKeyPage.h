@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,62 +16,59 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_ACCOUNTKEYPAGE_H_
-#define _WIZ_ACCOUNTKEYPAGE_H_
+#ifndef WIZ_ACCOUNTKEYPAGE_H
+#define WIZ_ACCOUNTKEYPAGE_H
 
-/*!
- * CAccountKeyPage class declaration
- */
+#include <wx/wizard.h>
 
-class CAccountKeyPage: public wxWizardPageEx
+class CBOINCBaseWizard;
+class wxStaticText;
+class wxTextCtrl;
+
+class CAccountKeyPage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CAccountKeyPage )
+    DECLARE_DYNAMIC_CLASS(CAccountKeyPage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CAccountKeyPage( );
-
-    CAccountKeyPage( CBOINCBaseWizard* parent );
+    CAccountKeyPage();
+    CAccountKeyPage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CAccountKeyPage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ACCOUNTKEYPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_ACCOUNTKEYPAGE
-    void OnCancel( wxWizardExEvent& event );
-
-////@end CAccountKeyPage event handler declarations
-
-////@begin CAccountKeyPage member function declarations
+    void OnCancel(wxWizardEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
-    wxString GetAccountKey() const { return m_strAccountKey ; }
-    void SetAccountKey(wxString value) { m_strAccountKey = value ; }
+    wxString GetAccountKey() const { return m_strAccountKey; }
+    void SetAccountKey(wxString value) { m_strAccountKey = value; }
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CAccountKeyPage member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CAccountKeyPage member variables
+    /// Disables the validators for all controls on this page.
+    void DisableValidators();
+
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticText* m_pDirectionsStaticCtrl;
     wxStaticText* m_pAccountKeyExampleDescriptionStaticCtrl;
@@ -78,7 +76,6 @@ public:
     wxStaticText* m_pAccountKeyStaticCtrl;
     wxTextCtrl* m_pAccountKeyCtrl;
     wxString m_strAccountKey;
-////@end CAccountKeyPage member variables
 };
 
-#endif // _WIZ_ACCOUNTKEYPAGE_H_
+#endif // WIZ_ACCOUNTKEYPAGE_H
