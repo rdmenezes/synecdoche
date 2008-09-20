@@ -15,8 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _SKINMANAGER_H_
-#define _SKINMANAGER_H_
+#ifndef SKINMANAGER_H
+#define SKINMANAGER_H
+
+#include <wx/string.h>
+#include <wx/bitmap.h>
+#include <wx/icon.h>
 
 class MIOFILE;
 

@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,14 +16,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
+
+#include <wx/wizard.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/statbmp.h>
 #include "error_numbers.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
@@ -36,8 +34,6 @@
 #include "AccountInfoPage.h"
 #include "CompletionErrorPage.h"
 
-
-////@begin XPM images
 #include "res/wizprogress01.xpm"
 #include "res/wizprogress02.xpm"
 #include "res/wizprogress03.xpm"
@@ -50,60 +46,46 @@
 #include "res/wizprogress10.xpm"
 #include "res/wizprogress11.xpm"
 #include "res/wizprogress12.xpm"
-////@end XPM images
 
-/*!
- * CProjectPropertiesPage custom event definition
- */
+/// CProjectProcessingPage states.
+enum {
+    ATTACHPROJECT_INIT,
+    ATTACHPROJECT_ACCOUNTQUERY_BEGIN,
+    ATTACHPROJECT_ACCOUNTQUERY_EXECUTE,
+    ATTACHPROJECT_ATTACHPROJECT_BEGIN,
+    ATTACHPROJECT_ATTACHPROJECT_EXECUTE,
+    ATTACHPROJECT_CLEANUP,
+    ATTACHPROJECT_END
+};
 
 DEFINE_EVENT_TYPE(wxEVT_PROJECTPROCESSING_STATECHANGE)
   
-/*!
- * CProjectProcessingPage type definition
- */
- 
-IMPLEMENT_DYNAMIC_CLASS( CProjectProcessingPage, wxWizardPageEx )
+IMPLEMENT_DYNAMIC_CLASS(CProjectProcessingPage, wxWizardPage)
   
-/*!
- * CProjectProcessingPage event table definition
- */
- 
-BEGIN_EVENT_TABLE( CProjectProcessingPage, wxWizardPageEx )
- 
-    EVT_PROJECTPROCESSING_STATECHANGE( CProjectProcessingPage::OnStateChange )
- 
-////@begin CProjectProcessingPage event table entries
-    EVT_WIZARDEX_PAGE_CHANGED( -1, CProjectProcessingPage::OnPageChanged )
-    EVT_WIZARDEX_CANCEL( -1, CProjectProcessingPage::OnCancel )
-
-////@end CProjectProcessingPage event table entries
- 
+BEGIN_EVENT_TABLE(CProjectProcessingPage, wxWizardPage)
+    EVT_PROJECTPROCESSING_STATECHANGE(CProjectProcessingPage::OnStateChange)
+    EVT_WIZARD_PAGE_CHANGED(-1, CProjectProcessingPage::OnPageChanged)
+    EVT_WIZARD_CANCEL(-1, CProjectProcessingPage::OnCancel) 
 END_EVENT_TABLE()
   
 /*!
  * CProjectProcessingPage constructors
  */
  
-CProjectProcessingPage::CProjectProcessingPage( )
-{
+CProjectProcessingPage::CProjectProcessingPage() {
 }
   
-CProjectProcessingPage::CProjectProcessingPage( CBOINCBaseWizard* parent )
-{
-    Create( parent );
+CProjectProcessingPage::CProjectProcessingPage(CBOINCBaseWizard* parent) {
+    Create(parent);
 }
   
 /*!
  * CProjectPropertiesPage creator
  */
  
-bool CProjectProcessingPage::Create( CBOINCBaseWizard* parent )
-{
- 
-////@begin CProjectProcessingPage member initialisation
+bool CProjectProcessingPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pProgressIndicator = NULL;
-////@end CProjectProcessingPage member initialisation
  
     m_bProjectCommunitcationsSucceeded = false;
     m_bProjectUnavailable = false;
@@ -112,14 +94,11 @@ bool CProjectProcessingPage::Create( CBOINCBaseWizard* parent )
     m_iBitmapIndex = 0;
     m_iCurrentState = ATTACHPROJECT_INIT;
  
-////@begin CProjectProcessingPage creation
     wxBitmap wizardBitmap(wxNullBitmap);
-    wxWizardPageEx::Create( parent, ID_PROJECTPROCESSINGPAGE, wizardBitmap );
+    wxWizardPage::Create(parent, wizardBitmap);
 
     CreateControls();
     GetSizer()->Fit(this);
-////@end CProjectProcessingPage creation
- 
     return TRUE;
 }
  
@@ -127,16 +106,14 @@ bool CProjectProcessingPage::Create( CBOINCBaseWizard* parent )
  * Control creation for CProjectPropertiesPage
  */
  
-void CProjectProcessingPage::CreateControls()
-{    
-////@begin CProjectProcessingPage content construction
+void CProjectProcessingPage::CreateControls() {    
     CProjectProcessingPage* itemWizardPage36 = this;
 
     wxBoxSizer* itemBoxSizer37 = new wxBoxSizer(wxVERTICAL);
     itemWizardPage36->SetSizer(itemBoxSizer37);
 
     m_pTitleStaticCtrl = new wxStaticText;
-    m_pTitleStaticCtrl->Create( itemWizardPage36, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pTitleStaticCtrl->Create(itemWizardPage36, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pTitleStaticCtrl->SetFont(wxFont(10, wxSWISS, wxNORMAL, wxBOLD, FALSE, _T("Verdana")));
     itemBoxSizer37->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
@@ -153,19 +130,17 @@ void CProjectProcessingPage::CreateControls()
 
     wxBitmap itemBitmap41(GetBitmapResource(wxT("res/wizprogress01.xpm")));
     m_pProgressIndicator = new wxStaticBitmap;
-    m_pProgressIndicator->Create( itemWizardPage36, ID_PROGRESSCTRL, itemBitmap41, wxDefaultPosition, wxSize(184, 48), 0 );
+    m_pProgressIndicator->Create(itemWizardPage36, ID_PROGRESSCTRL, itemBitmap41, wxDefaultPosition, wxSize(184, 48), 0);
     itemFlexGridSizer40->Add(m_pProgressIndicator, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     itemFlexGridSizer40->Add(5, 5, 0, wxGROW|wxGROW|wxALL, 5);
-////@end CProjectProcessingPage content construction
 }
   
 /*!
  * Gets the previous page.
  */
  
-wxWizardPageEx* CProjectProcessingPage::GetPrev() const
-{
+wxWizardPage* CProjectProcessingPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
   
@@ -173,8 +148,7 @@ wxWizardPageEx* CProjectProcessingPage::GetPrev() const
  * Gets the next page.
  */
  
-wxWizardPageEx* CProjectProcessingPage::GetNext() const
-{
+wxWizardPage* CProjectProcessingPage::GetNext() const {
     if (CHECK_CLOSINGINPROGRESS()) {
         // Cancel Event Detected
         return PAGE_TRANSITION_NEXT(ID_COMPLETIONERRORPAGE);
@@ -197,8 +171,7 @@ wxWizardPageEx* CProjectProcessingPage::GetNext() const
  * Should we show tooltips?
  */
  
-bool CProjectProcessingPage::ShowToolTips()
-{
+bool CProjectProcessingPage::ShowToolTips() {
     return TRUE;
 }
  
@@ -227,68 +200,31 @@ void CProjectProcessingPage::FinishProgress(wxStaticBitmap* pBitmap) {
  * Get bitmap resources
  */
  
-wxBitmap CProjectProcessingPage::GetBitmapResource( const wxString& name )
-{
-    // Bitmap retrieval
-    if (name == wxT("res/wizprogress01.xpm"))
-    {
-        wxBitmap bitmap(wizprogress01_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress02.xpm"))
-    {
-        wxBitmap bitmap(wizprogress02_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress03.xpm"))
-    {
-        wxBitmap bitmap(wizprogress03_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress04.xpm"))
-    {
-        wxBitmap bitmap(wizprogress04_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress05.xpm"))
-    {
-        wxBitmap bitmap(wizprogress05_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress06.xpm"))
-    {
-        wxBitmap bitmap(wizprogress06_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress07.xpm"))
-    {
-        wxBitmap bitmap(wizprogress07_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress08.xpm"))
-    {
-        wxBitmap bitmap(wizprogress08_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress09.xpm"))
-    {
-        wxBitmap bitmap(wizprogress09_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress10.xpm"))
-    {
-        wxBitmap bitmap(wizprogress10_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress11.xpm"))
-    {
-        wxBitmap bitmap(wizprogress11_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress12.xpm"))
-    {
-        wxBitmap bitmap(wizprogress12_xpm);
-        return bitmap;
+wxBitmap CProjectProcessingPage::GetBitmapResource(const wxString& name) {
+    if (name == wxT("res/wizprogress01.xpm")) {
+        return wxBitmap(wizprogress01_xpm);
+    } else if (name == wxT("res/wizprogress02.xpm")) {
+        return wxBitmap(wizprogress02_xpm);
+    } else if (name == wxT("res/wizprogress03.xpm")) {
+        return wxBitmap(wizprogress03_xpm);
+    } else if (name == wxT("res/wizprogress04.xpm")) {
+        return wxBitmap(wizprogress04_xpm);
+    } else if (name == wxT("res/wizprogress05.xpm")) {
+        return wxBitmap(wizprogress05_xpm);
+    } else if (name == wxT("res/wizprogress06.xpm")) {
+        return wxBitmap(wizprogress06_xpm);
+    } else if (name == wxT("res/wizprogress07.xpm")) {
+        return wxBitmap(wizprogress07_xpm);
+    } else if (name == wxT("res/wizprogress08.xpm")) {
+        return wxBitmap(wizprogress08_xpm);
+    } else if (name == wxT("res/wizprogress09.xpm")) {
+        return wxBitmap(wizprogress09_xpm);
+    } else if (name == wxT("res/wizprogress10.xpm")) {
+        return wxBitmap(wizprogress10_xpm);
+    } else if (name == wxT("res/wizprogress11.xpm")) {
+        return wxBitmap(wizprogress11_xpm);
+    } else if (name == wxT("res/wizprogress12.xpm")) {
+        return wxBitmap(wizprogress12_xpm);
     }
     return wxNullBitmap;
 }
@@ -297,27 +233,21 @@ wxBitmap CProjectProcessingPage::GetBitmapResource( const wxString& name )
  * Get icon resources
  */
  
-wxIcon CProjectProcessingPage::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CProjectProcessingPage icon retrieval
+wxIcon CProjectProcessingPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CProjectProcessingPage icon retrieval
 }
   
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ATTACHPROJECTPAGE
  */
  
-void CProjectProcessingPage::OnPageChanged( wxWizardExEvent& event ) {
+void CProjectProcessingPage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
  
     wxASSERT(m_pTitleStaticCtrl);
     wxASSERT(m_pProgressIndicator);
 
-    m_pTitleStaticCtrl->SetLabel(
-        _("Communicating with project\nPlease wait...")
-    );
+    m_pTitleStaticCtrl->SetLabel(_("Communicating with project\nPlease wait..."));
 
     SetProjectCommunitcationsSucceeded(false);
     SetProjectUnavailable(false);
@@ -334,7 +264,7 @@ void CProjectProcessingPage::OnPageChanged( wxWizardExEvent& event ) {
  * wxEVT_WIZARD_CANCEL event handler for ID_ACCOUNTCREATIONPAGE
  */
  
-void CProjectProcessingPage::OnCancel( wxWizardExEvent& event ) {
+void CProjectProcessingPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
  
@@ -342,12 +272,11 @@ void CProjectProcessingPage::OnCancel( wxWizardExEvent& event ) {
  * wxEVT_ACCOUNTCREATION_STATECHANGE event handler for ID_ACCOUNTCREATIONPAGE
  */
  
-void CProjectProcessingPage::OnStateChange( CProjectProcessingPageEvent& WXUNUSED(event) )
-{
+void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED(event)) {
     CMainDocument* pDoc        = wxGetApp().GetDocument();
     CWizardAttachProject* pWAP = ((CWizardAttachProject*)GetParent());
-    ACCOUNT_IN* ai             = &pWAP->account_in;
-    ACCOUNT_OUT* ao            = &pWAP->account_out;
+    ACCOUNT_IN* ai             = pWAP->GetAccountIn();
+    ACCOUNT_OUT* ao            = pWAP->GetAccountOut();
     unsigned int i;
     PROJECT_ATTACH_REPLY reply;
     wxString strBuffer = wxEmptyString;
@@ -377,26 +306,25 @@ void CProjectProcessingPage::OnStateChange( CProjectProcessingPageEvent& WXUNUSE
             ai->clear();
             ao->clear();
 
-            ai->url = (const char*)pWAP->m_ProjectInfoPage->GetProjectURL().mb_str();
+            ai->url = (const char*)pWAP->GetProjectInfoPage()->GetProjectURL().mb_str();
 
-            if (!pWAP->m_AccountKeyPage->m_strAccountKey.IsEmpty() || 
-                pWAP->m_bCredentialsCached || 
-                pWAP->m_bCredentialsDetected
-            ) {
-                if (!pWAP->m_bCredentialsCached || pWAP->m_bCredentialsDetected) {
-                    ao->authenticator = (const char*)pWAP->m_AccountKeyPage->m_strAccountKey.mb_str();
+            if (!pWAP->GetAccountKeyPage()->GetAccountKey().IsEmpty() || 
+                    pWAP->GetCredentialsCached() || pWAP->GetCretentialsDetected()) {
+                if (!pWAP->GetCredentialsCached() || pWAP->GetCretentialsDetected()) {
+                    ao->authenticator = (const char*)pWAP->GetAccountKeyPage()->GetAccountKey().mb_str();
                 }
                 SetProjectCommunitcationsSucceeded(true);
             } else {
                 // Setup initial values for both the create and lookup API
-                ai->email_addr = (const char*)pWAP->m_AccountInfoPage->GetAccountEmailAddress().mb_str();
-                ai->passwd = (const char*)pWAP->m_AccountInfoPage->GetAccountPassword().mb_str();
+                CAccountInfoPage* acc_info_page = pWAP->GetAccountInfoPage();
+                ai->email_addr = (const char*)acc_info_page->GetAccountEmailAddress().mb_str();
+                ai->passwd = (const char*)acc_info_page->GetAccountPassword().mb_str();
                 ai->user_name = (const char*)::wxGetUserName().mb_str();
                 if (ai->user_name.empty()) {
                     ai->user_name = (const char*)::wxGetUserId().mb_str();
                 }
 
-                if (pWAP->m_AccountInfoPage->m_pAccountCreateCtrl->GetValue()) {
+                if (acc_info_page->CreateNewAccount()) {
                     pDoc->rpc.create_account(*ai);
 					creating_account = true;
 
@@ -474,7 +402,7 @@ void CProjectProcessingPage::OnStateChange( CProjectProcessingPageEvent& WXUNUSE
                         SetProjectAccountNotFound(false);
                     }
 
-                    strBuffer = pWAP->m_CompletionErrorPage->m_pServerMessagesCtrl->GetLabel();
+                    strBuffer = pWAP->GetCompletionErrorPage()->GetErrorMessage();
                     if ((HTTP_STATUS_NOT_FOUND == ao->error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
                         strBuffer += 
                             _("Required wizard file(s) are missing from the target server.\n"
@@ -487,7 +415,7 @@ void CProjectProcessingPage::OnStateChange( CProjectProcessingPageEvent& WXUNUSE
                             strBuffer += wxString(ao->error_msg.c_str(), wxConvUTF8) + wxString(wxT("\n"));
                         }
                     }
-                    pWAP->m_CompletionErrorPage->m_pServerMessagesCtrl->SetLabel(strBuffer);
+                    pWAP->GetCompletionErrorPage()->SetErrorMessage(strBuffer);
                 }
             }
             SetNextState(ATTACHPROJECT_ATTACHPROJECT_BEGIN);
@@ -497,13 +425,13 @@ void CProjectProcessingPage::OnStateChange( CProjectProcessingPageEvent& WXUNUSE
             break;
         case ATTACHPROJECT_ATTACHPROJECT_EXECUTE:
             if (GetProjectCommunitcationsSucceeded()) {
-                if (pWAP->m_bCredentialsCached) {
+                if (pWAP->GetCredentialsCached()) {
                     pDoc->rpc.project_attach_from_file();
                 } else {
                     pDoc->rpc.project_attach(
                         ai->url.c_str(),
                         ao->authenticator.c_str(),
-                        pWAP->project_config.name.c_str()
+                        pWAP->GetProjectConfig()->name.c_str()
                     );
                 }
      
@@ -536,7 +464,7 @@ void CProjectProcessingPage::OnStateChange( CProjectProcessingPageEvent& WXUNUSE
                 } else {
                     SetProjectAttachSucceeded(false);
 
-                    strBuffer = pWAP->m_CompletionErrorPage->m_pServerMessagesCtrl->GetLabel();
+                    strBuffer = pWAP->GetCompletionErrorPage()->GetErrorMessage();
                     if ((HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
                         strBuffer += 
                             _("An internal server error has occurred.\n");
@@ -545,7 +473,7 @@ void CProjectProcessingPage::OnStateChange( CProjectProcessingPageEvent& WXUNUSE
                             strBuffer += wxString(reply.messages[i].c_str(), wxConvUTF8) + wxString(wxT("\n"));
                         }
                     }
-                    pWAP->m_CompletionErrorPage->m_pServerMessagesCtrl->SetLabel(wxString(strBuffer, wxConvUTF8));
+                    pWAP->GetCompletionErrorPage()->SetErrorMessage(wxString(strBuffer, wxConvUTF8));
                 }
             } else {
                 SetProjectAttachSucceeded(false);
@@ -573,4 +501,3 @@ void CProjectProcessingPage::OnStateChange( CProjectProcessingPageEvent& WXUNUSE
         AddPendingEvent(TransitionEvent);
     }
 }
-

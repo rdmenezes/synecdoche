@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,15 +16,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
-#include "error_numbers.h"
+
+#include <wx/wizard.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/statbox.h>
+#include <wx/valtext.h>
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
@@ -36,43 +35,30 @@
  * CErrProxyPage type definition
  */
  
-IMPLEMENT_DYNAMIC_CLASS( CErrProxyPage, wxWizardPageEx )
+IMPLEMENT_DYNAMIC_CLASS(CErrProxyPage, wxWizardPage)
  
-/*!
- * CErrProxyPage event table definition
- */
- 
-BEGIN_EVENT_TABLE( CErrProxyPage, wxWizardPageEx )
- 
-////@begin CErrProxyPage event table entries
-    EVT_WIZARDEX_PAGE_CHANGED( -1, CErrProxyPage::OnPageChanged )
-    EVT_WIZARDEX_PAGE_CHANGING( -1, CErrProxyPage::OnPageChanging )
-    EVT_WIZARDEX_CANCEL( -1, CErrProxyPage::OnCancel )
-
-////@end CErrProxyPage event table entries
- 
+BEGIN_EVENT_TABLE(CErrProxyPage, wxWizardPage)
+    EVT_WIZARD_PAGE_CHANGED(-1, CErrProxyPage::OnPageChanged)
+    EVT_WIZARD_PAGE_CHANGING(-1, CErrProxyPage::OnPageChanging)
+    EVT_WIZARD_CANCEL(-1, CErrProxyPage::OnCancel) 
 END_EVENT_TABLE()
  
 /*!
  * CErrProxyPage constructors
  */
  
-CErrProxyPage::CErrProxyPage( )
-{
+CErrProxyPage::CErrProxyPage() {
 }
  
-CErrProxyPage::CErrProxyPage( CBOINCBaseWizard* parent )
-{
-    Create( parent );
+CErrProxyPage::CErrProxyPage(CBOINCBaseWizard* parent) {
+    Create(parent);
 }
  
 /*!
  * CErrProxyComplationPage creator
  */
  
-bool CErrProxyPage::Create( CBOINCBaseWizard* parent )
-{
-////@begin CErrProxyPage member initialisation
+bool CErrProxyPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pProxyHTTPDescriptionCtrl = NULL; 
     m_pProxyHTTPServerStaticCtrl = NULL;
@@ -95,16 +81,12 @@ bool CErrProxyPage::Create( CBOINCBaseWizard* parent )
     m_pProxySOCKSUsernameCtrl = NULL;
     m_pProxySOCKSPasswordStaticCtrl = NULL;
     m_pProxySOCKSPasswordCtrl = NULL;
-////@end CErrProxyPage member initialisation
  
-////@begin CErrProxyPage creation
     wxBitmap wizardBitmap(wxNullBitmap);
-    wxWizardPageEx::Create( parent, ID_ERRPROXYPAGE, wizardBitmap );
+    wxWizardPage::Create(parent, wizardBitmap);
 
     CreateControls();
     GetSizer()->Fit(this);
-////@end CErrProxyPage creation
- 
     return TRUE;
 }
  
@@ -112,16 +94,14 @@ bool CErrProxyPage::Create( CBOINCBaseWizard* parent )
  * Control creation for CErrProxyComplationPage
  */
  
-void CErrProxyPage::CreateControls()
-{    
-////@begin CErrProxyPage content construction
+void CErrProxyPage::CreateControls() {
     CErrProxyPage* itemWizardPage121 = this;
 
     wxBoxSizer* itemBoxSizer122 = new wxBoxSizer(wxVERTICAL);
     itemWizardPage121->SetSizer(itemBoxSizer122);
 
     m_pTitleStaticCtrl = new wxStaticText;
-    m_pTitleStaticCtrl->Create( itemWizardPage121, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pTitleStaticCtrl->Create(itemWizardPage121, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pTitleStaticCtrl->SetFont(wxFont(10, wxSWISS, wxNORMAL, wxBOLD, FALSE, _T("Verdana")));
     itemBoxSizer122->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
@@ -136,7 +116,7 @@ void CErrProxyPage::CreateControls()
     itemStaticBoxSizer125->Add(itemFlexGridSizer126, 0, wxGROW|wxALL, 2);
 
     m_pProxyHTTPServerStaticCtrl = new wxStaticText;
-    m_pProxyHTTPServerStaticCtrl->Create( itemWizardPage121, ID_PROXYHTTPSERVERSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxyHTTPServerStaticCtrl->Create(itemWizardPage121, ID_PROXYHTTPSERVERSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer126->Add(m_pProxyHTTPServerStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     wxFlexGridSizer* itemFlexGridSizer128 = new wxFlexGridSizer(1, 3, 0, 0);
@@ -144,36 +124,36 @@ void CErrProxyPage::CreateControls()
     itemFlexGridSizer126->Add(itemFlexGridSizer128, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 0);
 
     m_pProxyHTTPServerCtrl = new wxTextCtrl;
-    m_pProxyHTTPServerCtrl->Create( itemWizardPage121, ID_PROXYHTTPSERVERCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxyHTTPServerCtrl->Create(itemWizardPage121, ID_PROXYHTTPSERVERCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer128->Add(m_pProxyHTTPServerCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxyHTTPPortStaticCtrl = new wxStaticText;
-    m_pProxyHTTPPortStaticCtrl->Create( itemWizardPage121, ID_PROXYHTTPPORTSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxyHTTPPortStaticCtrl->Create(itemWizardPage121, ID_PROXYHTTPPORTSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer128->Add(m_pProxyHTTPPortStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxyHTTPPortCtrl = new wxTextCtrl;
-    m_pProxyHTTPPortCtrl->Create( itemWizardPage121, ID_PROXYHTTPPORTCTRL, wxEmptyString, wxDefaultPosition, wxSize(50, -1), 0 );
+    m_pProxyHTTPPortCtrl->Create(itemWizardPage121, ID_PROXYHTTPPORTCTRL, wxEmptyString, wxDefaultPosition, wxSize(50, -1), 0);
     itemFlexGridSizer128->Add(m_pProxyHTTPPortCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxyHTTPUsernameStaticCtrl = new wxStaticText;
-    m_pProxyHTTPUsernameStaticCtrl->Create( itemWizardPage121, ID_PROXYHTTPUSERNAMESTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxyHTTPUsernameStaticCtrl->Create(itemWizardPage121, ID_PROXYHTTPUSERNAMESTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer126->Add(m_pProxyHTTPUsernameStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxyHTTPUsernameCtrl = new wxTextCtrl;
-    m_pProxyHTTPUsernameCtrl->Create( itemWizardPage121, ID_PROXYHTTPUSERNAMECTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxyHTTPUsernameCtrl->Create(itemWizardPage121, ID_PROXYHTTPUSERNAMECTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer126->Add(m_pProxyHTTPUsernameCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxyHTTPPasswordStaticCtrl = new wxStaticText;
-    m_pProxyHTTPPasswordStaticCtrl->Create( itemWizardPage121, ID_PROXYHTTPPASSWORDSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxyHTTPPasswordStaticCtrl->Create(itemWizardPage121, ID_PROXYHTTPPASSWORDSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer126->Add(m_pProxyHTTPPasswordStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxyHTTPPasswordCtrl = new wxTextCtrl;
-    m_pProxyHTTPPasswordCtrl->Create( itemWizardPage121, ID_PROXYHTTPPASSWORDCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    m_pProxyHTTPPasswordCtrl->Create(itemWizardPage121, ID_PROXYHTTPPASSWORDCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
     itemFlexGridSizer126->Add(m_pProxyHTTPPasswordCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
 #if 0
     m_pProxyHTTPAutodetectCtrl = new wxButton;
-    m_pProxyHTTPAutodetectCtrl->Create( itemWizardPage121, ID_PROXYHTTPAUTODETECTCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxyHTTPAutodetectCtrl->Create(itemWizardPage121, ID_PROXYHTTPAUTODETECTCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemStaticBoxSizer125->Add(m_pProxyHTTPAutodetectCtrl, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 2);
 #endif
 
@@ -186,7 +166,7 @@ void CErrProxyPage::CreateControls()
     itemStaticBoxSizer137->Add(itemFlexGridSizer138, 0, wxGROW|wxALL, 2);
 
     m_pProxySOCKSServerStaticCtrl = new wxStaticText;
-    m_pProxySOCKSServerStaticCtrl->Create( itemWizardPage121, ID_PROXYSOCKSSERVERSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxySOCKSServerStaticCtrl->Create(itemWizardPage121, ID_PROXYSOCKSSERVERSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer138->Add(m_pProxySOCKSServerStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     wxFlexGridSizer* itemFlexGridSizer140 = new wxFlexGridSizer(1, 3, 0, 0);
@@ -194,51 +174,49 @@ void CErrProxyPage::CreateControls()
     itemFlexGridSizer138->Add(itemFlexGridSizer140, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 0);
 
     m_pProxySOCKSServerCtrl = new wxTextCtrl;
-    m_pProxySOCKSServerCtrl->Create( itemWizardPage121, ID_PROXYSOCKSSERVERCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxySOCKSServerCtrl->Create(itemWizardPage121, ID_PROXYSOCKSSERVERCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer140->Add(m_pProxySOCKSServerCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxySOCKSPortStaticCtrl = new wxStaticText;
-    m_pProxySOCKSPortStaticCtrl->Create( itemWizardPage121, ID_PROXYSOCKSPORTSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxySOCKSPortStaticCtrl->Create(itemWizardPage121, ID_PROXYSOCKSPORTSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer140->Add(m_pProxySOCKSPortStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxySOCKSPortCtrl = new wxTextCtrl;
-    m_pProxySOCKSPortCtrl->Create( itemWizardPage121, ID_PROXYSOCKSPORTCTRL, wxEmptyString, wxDefaultPosition, wxSize(50, -1), 0 );
+    m_pProxySOCKSPortCtrl->Create(itemWizardPage121, ID_PROXYSOCKSPORTCTRL, wxEmptyString, wxDefaultPosition, wxSize(50, -1), 0);
     itemFlexGridSizer140->Add(m_pProxySOCKSPortCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxySOCKSUsernameStaticCtrl = new wxStaticText;
-    m_pProxySOCKSUsernameStaticCtrl->Create( itemWizardPage121, ID_PROXYSOCKSUSERNAMESTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxySOCKSUsernameStaticCtrl->Create(itemWizardPage121, ID_PROXYSOCKSUSERNAMESTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer138->Add(m_pProxySOCKSUsernameStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxySOCKSUsernameCtrl = new wxTextCtrl;
-    m_pProxySOCKSUsernameCtrl->Create( itemWizardPage121, ID_PROXYSOCKSUSERNAMECTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxySOCKSUsernameCtrl->Create(itemWizardPage121, ID_PROXYSOCKSUSERNAMECTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer138->Add(m_pProxySOCKSUsernameCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxySOCKSPasswordStaticCtrl = new wxStaticText;
-    m_pProxySOCKSPasswordStaticCtrl->Create( itemWizardPage121, ID_PROXYSOCKSPASSWORDSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pProxySOCKSPasswordStaticCtrl->Create(itemWizardPage121, ID_PROXYSOCKSPASSWORDSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer138->Add(m_pProxySOCKSPasswordStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     m_pProxySOCKSPasswordCtrl = new wxTextCtrl;
-    m_pProxySOCKSPasswordCtrl->Create( itemWizardPage121, ID_PROXYSOCKSPASSWORDCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    m_pProxySOCKSPasswordCtrl->Create(itemWizardPage121, ID_PROXYSOCKSPASSWORDCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
     itemFlexGridSizer138->Add(m_pProxySOCKSPasswordCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     // Set validators
-    m_pProxyHTTPServerCtrl->SetValidator( wxTextValidator(wxFILTER_NONE, & m_strProxyHTTPServer) );
-    m_pProxyHTTPPortCtrl->SetValidator( wxTextValidator(wxFILTER_NUMERIC, & m_strProxyHTTPPort) );
-    m_pProxyHTTPUsernameCtrl->SetValidator( wxTextValidator(wxFILTER_NONE, & m_strProxyHTTPUsername) );
-    m_pProxyHTTPPasswordCtrl->SetValidator( wxTextValidator(wxFILTER_NONE, & m_strProxyHTTPPassword) );
-    m_pProxySOCKSServerCtrl->SetValidator( wxTextValidator(wxFILTER_NONE, & m_strProxySOCKSServer) );
-    m_pProxySOCKSPortCtrl->SetValidator( wxTextValidator(wxFILTER_NUMERIC, & m_strProxySOCKSPort) );
-    m_pProxySOCKSUsernameCtrl->SetValidator( wxTextValidator(wxFILTER_NONE, & m_strProxySOCKSUsername) );
-    m_pProxySOCKSPasswordCtrl->SetValidator( wxTextValidator(wxFILTER_NONE, & m_strProxySOCKSPassword) );
-////@end CErrProxyPage content construction
+    m_pProxyHTTPServerCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_strProxyHTTPServer));
+    m_pProxyHTTPPortCtrl->SetValidator(wxTextValidator(wxFILTER_NUMERIC, &m_strProxyHTTPPort));
+    m_pProxyHTTPUsernameCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_strProxyHTTPUsername));
+    m_pProxyHTTPPasswordCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_strProxyHTTPPassword));
+    m_pProxySOCKSServerCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_strProxySOCKSServer));
+    m_pProxySOCKSPortCtrl->SetValidator(wxTextValidator(wxFILTER_NUMERIC, &m_strProxySOCKSPort));
+    m_pProxySOCKSUsernameCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_strProxySOCKSUsername));
+    m_pProxySOCKSPasswordCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_strProxySOCKSPassword));
 }
   
 /*!
  * Gets the previous page.
  */
  
-wxWizardPageEx* CErrProxyPage::GetPrev() const
-{
+wxWizardPage* CErrProxyPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
   
@@ -246,14 +224,13 @@ wxWizardPageEx* CErrProxyPage::GetPrev() const
  * Gets the next page.
  */
  
-wxWizardPageEx* CErrProxyPage::GetNext() const
-{
+wxWizardPage* CErrProxyPage::GetNext() const {
     if (CHECK_CLOSINGINPROGRESS()) {
         // Cancel Event Detected
         return PAGE_TRANSITION_NEXT(ID_COMPLETIONERRORPAGE);
-    } else if (IS_ATTACHTOPROJECTWIZARD()) {
+    } else if (CheckWizardTypeByPage<CWizardAttachProject>(this)) {
         return PAGE_TRANSITION_NEXT(ID_PROJECTPROPERTIESPAGE);
-    } else if (IS_ACCOUNTMANAGERWIZARD()) {
+    } else if (CheckWizardTypeByPage<CWizardAccountManager>(this)) {
         return PAGE_TRANSITION_NEXT(ID_ACCOUNTMANAGERPROPERTIESPAGE);
     }
     return NULL;
@@ -263,8 +240,7 @@ wxWizardPageEx* CErrProxyPage::GetNext() const
  * Should we show tooltips?
  */
  
-bool CErrProxyPage::ShowToolTips()
-{
+bool CErrProxyPage::ShowToolTips() {
     return TRUE;
 }
  
@@ -272,31 +248,23 @@ bool CErrProxyPage::ShowToolTips()
  * Get bitmap resources
  */
  
-wxBitmap CErrProxyPage::GetBitmapResource( const wxString& WXUNUSED(name) )
-{
-    // Bitmap retrieval
-////@begin CErrProxyPage bitmap retrieval
+wxBitmap CErrProxyPage::GetBitmapResource(const wxString& WXUNUSED(name)) {
     return wxNullBitmap;
-////@end CErrProxyPage bitmap retrieval
 }
   
 /*!
  * Get icon resources
  */
  
-wxIcon CErrProxyPage::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CErrProxyPage icon retrieval
+wxIcon CErrProxyPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CErrProxyPage icon retrieval
 }
  
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRPROXYCOMPLETIONPAGE
  */
  
-void CErrProxyPage::OnPageChanged( wxWizardExEvent& WXUNUSED(event) ) {
+void CErrProxyPage::OnPageChanged(wxWizardEvent& WXUNUSED(event)) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     wxString       strBuffer = wxEmptyString;
 
@@ -327,44 +295,20 @@ void CErrProxyPage::OnPageChanged( wxWizardExEvent& WXUNUSED(event) ) {
 
     // Moving from the previous page, update text and get state
 
-    m_pTitleStaticCtrl->SetLabel(
-        _("Proxy configuration")
-    );
-    m_pProxyHTTPDescriptionCtrl->SetLabel(
-        _("HTTP proxy")
-    );
-    m_pProxyHTTPServerStaticCtrl->SetLabel(
-        _("Server:")
-    );
-    m_pProxyHTTPPortStaticCtrl->SetLabel(
-        _("Port:")
-    );
-    m_pProxyHTTPUsernameStaticCtrl->SetLabel(
-        _("User Name:")
-    );
-    m_pProxyHTTPPasswordStaticCtrl->SetLabel(
-        _("Password:")
-    );
+    m_pTitleStaticCtrl->SetLabel(_("Proxy configuration"));
+    m_pProxyHTTPDescriptionCtrl->SetLabel(_("HTTP proxy"));
+    m_pProxyHTTPServerStaticCtrl->SetLabel(_("Server:"));
+    m_pProxyHTTPPortStaticCtrl->SetLabel(_("Port:"));
+    m_pProxyHTTPUsernameStaticCtrl->SetLabel(_("User Name:"));
+    m_pProxyHTTPPasswordStaticCtrl->SetLabel(_("Password:"));
 #if 0
-    m_pProxyHTTPAutodetectCtrl->SetLabel(
-        _("Autodetect")
-    );
+    m_pProxyHTTPAutodetectCtrl->SetLabel(_("Autodetect"));
 #endif
-    m_pProxySOCKSDescriptionCtrl->SetLabel(
-        _("SOCKS proxy")
-    );
-    m_pProxySOCKSServerStaticCtrl->SetLabel(
-        _("Server:")
-    );
-    m_pProxySOCKSPortStaticCtrl->SetLabel(
-        _("Port:")
-    );
-    m_pProxySOCKSUsernameStaticCtrl->SetLabel(
-        _("User Name:")
-    );
-    m_pProxySOCKSPasswordStaticCtrl->SetLabel(
-        _("Password:")
-    );
+    m_pProxySOCKSDescriptionCtrl->SetLabel(_("SOCKS proxy"));
+    m_pProxySOCKSServerStaticCtrl->SetLabel(_("Server:"));
+    m_pProxySOCKSPortStaticCtrl->SetLabel(_("Port:"));
+    m_pProxySOCKSUsernameStaticCtrl->SetLabel(_("User Name:"));
+    m_pProxySOCKSPasswordStaticCtrl->SetLabel(_("Password:"));
 
     pDoc->GetProxyConfiguration();
     m_pProxyHTTPServerCtrl->SetValue(wxString(pDoc->proxy_info.http_server_name.c_str(), wxConvUTF8));
@@ -389,7 +333,7 @@ void CErrProxyPage::OnPageChanged( wxWizardExEvent& WXUNUSED(event) ) {
  * wxEVT_WIZARD_PAGE_CHANGING event handler for ID_ERRPROXYPAGE
  */
 
-void CErrProxyPage::OnPageChanging( wxWizardExEvent& event ) {
+void CErrProxyPage::OnPageChanging(wxWizardEvent& event) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     wxString       strBuffer = wxEmptyString;
     int            iBuffer = 0;
@@ -425,7 +369,18 @@ void CErrProxyPage::OnPageChanging( wxWizardExEvent& event ) {
  * wxEVT_WIZARD_CANCEL event handler for ID_ERRPROXYCOMPLETIONPAGE
  */
  
-void CErrProxyPage::OnCancel( wxWizardExEvent& event ) {
+void CErrProxyPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
 
+/// Disables the validators for all controls on this page.
+void CErrProxyPage::DisableValidators() {
+    m_pProxyHTTPServerCtrl->SetValidator(wxDefaultValidator);
+    m_pProxyHTTPPortCtrl->SetValidator(wxDefaultValidator);
+    m_pProxyHTTPUsernameCtrl->SetValidator(wxDefaultValidator);
+    m_pProxyHTTPPasswordCtrl->SetValidator(wxDefaultValidator);
+    m_pProxySOCKSServerCtrl->SetValidator(wxDefaultValidator);
+    m_pProxySOCKSPortCtrl->SetValidator(wxDefaultValidator);
+    m_pProxySOCKSUsernameCtrl->SetValidator(wxDefaultValidator);
+    m_pProxySOCKSPasswordCtrl->SetValidator(wxDefaultValidator);
+}

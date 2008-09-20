@@ -15,7 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// a C++ interface to Synecdoche GUI RPC
+/// \file
+/// A C++ interface to BOINC GUI RPC.
+
+#ifndef GUI_RPC_CLIENT_H
+#define GUI_RPC_CLIENT_H
 
 #if !defined(_WIN32) || defined (__CYGWIN__)
 #include <stdio.h>
@@ -645,3 +649,5 @@ struct SET_LOCALE {
         setlocale(LC_ALL, locale.c_str());
     }
 };
+
+#endif // GUI_RPC_CLIENT_H

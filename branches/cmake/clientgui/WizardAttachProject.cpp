@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,15 +16,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
-#include "error_numbers.h"
+
+#include <wx/wizard.h>
+#include <wx/sizer.h>
+#include <wx/msgdlg.h>
+#include <wx/log.h>
 #include "hyperlink.h"
 #include "browser.h"
 #include "BOINCGUIApp.h"
@@ -55,35 +52,20 @@
 EXTERN_C BOOL DetectSetupAuthenticator(LPCSTR szProjectURL, LPSTR szAuthenticator, LPDWORD lpdwSize);
 #endif
 
-/*!
- * CWizardAttachProject type definition
- */
+IMPLEMENT_DYNAMIC_CLASS(CWizardAttachProject, CBOINCBaseWizard)
  
-IMPLEMENT_DYNAMIC_CLASS( CWizardAttachProject, CBOINCBaseWizard )
- 
-/*!
- * CWizardAttachProject event table definition
- */
- 
-BEGIN_EVENT_TABLE( CWizardAttachProject, CBOINCBaseWizard )
-
-////@begin CWizardAttachProject event table entries
-    EVT_WIZARDEX_FINISHED( ID_ATTACHPROJECTWIZARD, CWizardAttachProject::OnFinished )
-
-////@end CWizardAttachProject event table entries
- 
+BEGIN_EVENT_TABLE(CWizardAttachProject, CBOINCBaseWizard)
+    EVT_WIZARD_FINISHED(ID_ATTACHPROJECTWIZARD, CWizardAttachProject::OnFinished)
 END_EVENT_TABLE()
  
 /*!
  * CWizardAttachProject constructors
  */
  
-CWizardAttachProject::CWizardAttachProject()
-{
+CWizardAttachProject::CWizardAttachProject() {
 }
  
-CWizardAttachProject::CWizardAttachProject( wxWindow* parent, wxWindowID id, const wxPoint& pos )
-{
+CWizardAttachProject::CWizardAttachProject(wxWindow* parent, wxWindowID id, const wxPoint& pos) {
     Create(parent, id, pos);
 }
  
@@ -91,10 +73,7 @@ CWizardAttachProject::CWizardAttachProject( wxWindow* parent, wxWindowID id, con
  * CWizardAttachProject creator
  */
  
-bool CWizardAttachProject::Create( wxWindow* parent, wxWindowID id, const wxPoint& pos )
-{
-
-////@begin CWizardAttachProject member initialisation
+bool CWizardAttachProject::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos) {
     m_WelcomePage = NULL;
     m_ProjectInfoPage = NULL;
     m_ProjectPropertiesPage = NULL;
@@ -111,31 +90,9 @@ bool CWizardAttachProject::Create( wxWindow* parent, wxWindowID id, const wxPoin
     m_ErrAlreadyExistsPage = NULL;
     m_ErrProxyInfoPage = NULL;
     m_ErrProxyPage = NULL;
-////@end CWizardAttachProject member initialisation
-  
-    // Wizard support
-    m_ulDiagFlags = 0;
-
-    // Cancel Checking
-    m_bCancelInProgress = false;
  
-    // Wizard Detection
-    IsAttachToProjectWizard = true;
-    IsAccountManagerWizard = false;
-    IsAccountManagerUpdateWizard = false;
-    IsAccountManagerRemoveWizard = false;
-
-    // Global wizard status
-    project_config.clear();
-    account_in.clear();
-    account_out.clear();
-    account_created_successfully = false;
-    attached_to_project_successfully = false;
-    project_url = wxEmptyString;
-    project_authenticator = wxEmptyString;
     m_bCredentialsCached = false;
     m_bCredentialsDetected = false;
-
 
     CSkinAdvanced*  pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
     CSkinWizardATP* pSkinWizardATP = wxGetApp().GetSkinManager()->GetWizards()->GetWizardATP();
@@ -155,12 +112,9 @@ bool CWizardAttachProject::Create( wxWindow* parent, wxWindowID id, const wxPoin
 
     wxBitmap wizardBitmap = wxBitmap(*(pSkinWizardATP->GetWizardBitmap()));
 
-////@begin CWizardAttachProject creation
-    CBOINCBaseWizard::Create( parent, id, strTitle, wizardBitmap, pos );
+    CBOINCBaseWizard::Create(parent, id, strTitle, wizardBitmap, pos);
 
     CreateControls();
-////@end CWizardAttachProject creation
-
     return TRUE;
 }
  
@@ -168,79 +122,75 @@ bool CWizardAttachProject::Create( wxWindow* parent, wxWindowID id, const wxPoin
  * Control creation for CWizardAttachProject
  */
 
-void CWizardAttachProject::CreateControls()
-{    
+void CWizardAttachProject::CreateControls() {    
     wxLogTrace(wxT("Function Start/End"), wxT("CWizardAttachProject::CreateControls - Function Begin"));
- 
-////@begin CWizardAttachProject content construction
+
     CBOINCBaseWizard* itemWizard1 = this;
 
     m_WelcomePage = new CWelcomePage;
-    m_WelcomePage->Create( itemWizard1 );
+    m_WelcomePage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_WelcomePage);
 
     m_ProjectInfoPage = new CProjectInfoPage;
-    m_ProjectInfoPage->Create( itemWizard1 );
+    m_ProjectInfoPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ProjectInfoPage);
 
     m_ProjectPropertiesPage = new CProjectPropertiesPage;
-    m_ProjectPropertiesPage->Create( itemWizard1 );
+    m_ProjectPropertiesPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ProjectPropertiesPage);
 
     m_AccountKeyPage = new CAccountKeyPage;
-    m_AccountKeyPage->Create( itemWizard1 );
+    m_AccountKeyPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_AccountKeyPage);
 
     m_AccountInfoPage = new CAccountInfoPage;
-    m_AccountInfoPage->Create( itemWizard1 );
+    m_AccountInfoPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_AccountInfoPage);
 
     m_ProjectProcessingPage = new CProjectProcessingPage;
-    m_ProjectProcessingPage->Create( itemWizard1 );
+    m_ProjectProcessingPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ProjectProcessingPage);
 
     m_CompletionPage = new CCompletionPage;
-    m_CompletionPage->Create( itemWizard1 );
+    m_CompletionPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_CompletionPage);
 
     m_CompletionErrorPage = new CCompletionErrorPage;
-    m_CompletionErrorPage->Create( itemWizard1 );
+    m_CompletionErrorPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_CompletionErrorPage);
 
     m_ErrNotDetectedPage = new CErrNotDetectedPage;
-    m_ErrNotDetectedPage->Create( itemWizard1 );
+    m_ErrNotDetectedPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrNotDetectedPage);
 
     m_ErrUnavailablePage = new CErrUnavailablePage;
-    m_ErrUnavailablePage->Create( itemWizard1 );
+    m_ErrUnavailablePage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrUnavailablePage);
 
     m_ErrAlreadyAttachedPage = new CErrAlreadyAttachedPage;
-    m_ErrAlreadyAttachedPage->Create( itemWizard1 );
+    m_ErrAlreadyAttachedPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrAlreadyAttachedPage);
 
     m_ErrNoInternetConnectionPage = new CErrNoInternetConnectionPage;
-    m_ErrNoInternetConnectionPage->Create( itemWizard1 );
+    m_ErrNoInternetConnectionPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrNoInternetConnectionPage);
 
     m_ErrNotFoundPage = new CErrNotFoundPage;
-    m_ErrNotFoundPage->Create( itemWizard1 );
+    m_ErrNotFoundPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrNotFoundPage);
 
     m_ErrAlreadyExistsPage = new CErrAlreadyExistsPage;
-    m_ErrAlreadyExistsPage->Create( itemWizard1 );
+    m_ErrAlreadyExistsPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrAlreadyExistsPage);
 
     m_ErrProxyInfoPage = new CErrProxyInfoPage;
-    m_ErrProxyInfoPage->Create( itemWizard1 );
+    m_ErrProxyInfoPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrProxyInfoPage);
 
     m_ErrProxyPage = new CErrProxyPage;
-    m_ErrProxyPage->Create( itemWizard1 );
+    m_ErrProxyPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrProxyPage);
 
-////@end CWizardAttachProject content construction
- 
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls - Begin Page Map"));
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_WelcomePage = id: '%d', location: '%p'"), m_WelcomePage->GetId(), m_WelcomePage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ProjectInfoPage = id: '%d', location: '%p'"), m_ProjectInfoPage->GetId(), m_ProjectInfoPage);
@@ -266,7 +216,7 @@ void CWizardAttachProject::CreateControls()
  * Runs the wizard.
  */
  
-bool CWizardAttachProject::Run( wxString& WXUNUSED(strName), wxString& strURL, bool bCredentialsCached ) {
+bool CWizardAttachProject::Run(wxString& WXUNUSED(strName), wxString& strURL, bool bCredentialsCached) {
     if (strURL.Length()) {
         m_ProjectInfoPage->SetProjectURL( strURL );
         m_bCredentialsCached = bCredentialsCached;
@@ -282,8 +232,8 @@ bool CWizardAttachProject::Run( wxString& WXUNUSED(strName), wxString& strURL, b
 
         if (detect_setup_authenticator(url, authenticator)) {
             m_bCredentialsDetected = true;
-            close_when_completed = true;
-            m_AccountKeyPage->m_strAccountKey = wxString(authenticator.c_str(), wxConvUTF8);
+            SetCloseWhenCompleted(true);
+            m_AccountKeyPage->SetAccountKey(wxString(authenticator.c_str(), wxConvUTF8));
         }
     }
 
@@ -302,41 +252,73 @@ bool CWizardAttachProject::Run( wxString& WXUNUSED(strName), wxString& strURL, b
  * Should we show tooltips?
  */
  
-bool CWizardAttachProject::ShowToolTips()
-{
+bool CWizardAttachProject::ShowToolTips() {
     return TRUE;
 }
- 
+
+/// Return a pointer to the current account info page.
+///
+/// \return a pointer to the current account info page.
+CAccountInfoPage* CWizardAttachProject::GetAccountInfoPage() const {
+    return m_AccountInfoPage;
+}
+
+/// Return a pointer to the current account key page.
+///
+/// \return a pointer to the current account key page.
+CAccountKeyPage* CWizardAttachProject::GetAccountKeyPage() const {
+    return m_AccountKeyPage;
+}
+
+/// Return a pointer to the current completion error page.
+///
+/// \return a pointer to the current completion error page.
+CCompletionErrorPage* CWizardAttachProject::GetCompletionErrorPage() const {
+    return m_CompletionErrorPage;
+}
+
+/// Return a pointer to the current project info page.
+///
+/// \return a pointer to the current project info page.
+CProjectInfoPage* CWizardAttachProject::GetProjectInfoPage() const {
+    return m_ProjectInfoPage;
+}
+
+/// Return credentials cache status.
+///
+/// \return True if the credentials are cached, false otherwise.
+bool CWizardAttachProject::GetCredentialsCached() const {
+    return m_bCredentialsCached;
+}
+
+/// Tell whether the credentials were detected or not.
+///
+/// \return True if the credentials were detected, false otherwise.
+bool CWizardAttachProject::GetCretentialsDetected() const {
+    return m_bCredentialsDetected;
+}
+
 /*!
  * Get bitmap resources
  */
  
-wxBitmap CWizardAttachProject::GetBitmapResource( const wxString& WXUNUSED(name) )
-{
-    // Bitmap retrieval
-////@begin CWizardAttachProject bitmap retrieval
+wxBitmap CWizardAttachProject::GetBitmapResource(const wxString& WXUNUSED(name)) {
     return wxNullBitmap;
-////@end CWizardAttachProject bitmap retrieval
 }
  
 /*!
  * Get icon resources
  */
  
-wxIcon CWizardAttachProject::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CWizardAttachProject icon retrieval
+wxIcon CWizardAttachProject::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CWizardAttachProject icon retrieval
 }
  
 /*!
  * Determine if the wizard page has a next page
  */
 
-bool CWizardAttachProject::HasNextPage( wxWizardPageEx* page )
-{
+bool CWizardAttachProject::HasNextPage(wxWizardPage* page) {
     bool bNoNextPageDetected = false;
 
     bNoNextPageDetected |= (page == m_CompletionPage);
@@ -356,8 +338,7 @@ bool CWizardAttachProject::HasNextPage( wxWizardPageEx* page )
  * Determine if the wizard page has a previous page
  */
  
-bool CWizardAttachProject::HasPrevPage( wxWizardPageEx* page )
-{
+bool CWizardAttachProject::HasPrevPage(wxWizardPage* page) {
     if ((page == m_WelcomePage) || (page == m_CompletionPage) || (page == m_CompletionErrorPage))
         return false;
     return true;
@@ -366,8 +347,8 @@ bool CWizardAttachProject::HasPrevPage( wxWizardPageEx* page )
 /*!
  * Remove the page transition to the stack.
  */
-wxWizardPageEx* CWizardAttachProject::_PopPageTransition() {
-    wxWizardPageEx* pPage = NULL;
+wxWizardPage* CWizardAttachProject::_PopPageTransition() {
+    wxWizardPage* pPage = NULL;
     if (GetCurrentPage()) {
         if (m_PageTransition.size() > 0) {
             pPage = m_PageTransition.top();
@@ -388,58 +369,60 @@ wxWizardPageEx* CWizardAttachProject::_PopPageTransition() {
 /*!
  * Add the page transition to the stack.
  */
-wxWizardPageEx* CWizardAttachProject::_PushPageTransition( wxWizardPageEx* pCurrentPage, unsigned long ulPageID ) {
+wxWizardPage* CWizardAttachProject::_PushPageTransition(wxWizardPage* pCurrentPage, unsigned long ulPageID) {
     if (GetCurrentPage()) {
-        wxWizardPageEx* pPage = NULL;
+        wxWizardPage* pPage = NULL;
+        switch (ulPageID) {
+            case ID_WELCOMEPAGE:
+                pPage = m_WelcomePage;
+                break;
+            case ID_PROJECTINFOPAGE:
+                pPage = m_ProjectInfoPage;
+                break;
+            case ID_PROJECTPROPERTIESPAGE:
+                pPage = m_ProjectPropertiesPage;
+                break;
+            case ID_ACCOUNTINFOPAGE:
+                pPage = m_AccountInfoPage;
+                break;
+            case ID_ACCOUNTKEYPAGE:
+                pPage = m_AccountKeyPage;
+                break;
+            case ID_PROJECTPROCESSINGPAGE:
+                pPage = m_ProjectProcessingPage;
+                break;
+            case ID_COMPLETIONPAGE:
+                pPage = m_CompletionPage;
+                break;
+            case ID_COMPLETIONERRORPAGE:
+                pPage = m_CompletionErrorPage;
+                break;
+            case ID_ERRNOTDETECTEDPAGE:
+                pPage = m_ErrNotDetectedPage;
+                break;
+            case ID_ERRUNAVAILABLEPAGE:
+                pPage = m_ErrUnavailablePage;
+                break;
+            case ID_ERRALREADYATTACHEDPAGE:
+                pPage = m_ErrAlreadyAttachedPage;
+                break;
+            case ID_ERRNOINTERNETCONNECTIONPAGE:
+                pPage = m_ErrNoInternetConnectionPage;
+                break;
+            case ID_ERRNOTFOUNDPAGE:
+                pPage = m_ErrNotFoundPage;
+                break;
+            case ID_ERRALREADYEXISTSPAGE:
+                pPage = m_ErrAlreadyExistsPage;
+                break;
+            case ID_ERRPROXYINFOPAGE:
+                pPage = m_ErrProxyInfoPage;
+                break;
+            case ID_ERRPROXYPAGE:
+                pPage = m_ErrProxyPage;
+                break;
+        }
 
-        if (ID_WELCOMEPAGE == ulPageID)
-            pPage = m_WelcomePage;
- 
-        if (ID_PROJECTINFOPAGE == ulPageID)
-            pPage = m_ProjectInfoPage;
- 
-        if (ID_PROJECTPROPERTIESPAGE == ulPageID)
-            pPage = m_ProjectPropertiesPage;
- 
-        if (ID_ACCOUNTINFOPAGE == ulPageID)
-            pPage = m_AccountInfoPage;
- 
-        if (ID_ACCOUNTKEYPAGE == ulPageID)
-            pPage = m_AccountKeyPage;
- 
-        if (ID_PROJECTPROCESSINGPAGE == ulPageID)
-            pPage = m_ProjectProcessingPage;
- 
-        if (ID_COMPLETIONPAGE == ulPageID)
-            pPage = m_CompletionPage;
- 
-        if (ID_COMPLETIONERRORPAGE == ulPageID)
-            pPage = m_CompletionErrorPage;
- 
-        if (ID_ERRNOTDETECTEDPAGE == ulPageID)
-            pPage = m_ErrNotDetectedPage;
- 
-        if (ID_ERRUNAVAILABLEPAGE == ulPageID)
-            pPage = m_ErrUnavailablePage;
- 
-        if (ID_ERRALREADYATTACHEDPAGE == ulPageID)
-            pPage = m_ErrAlreadyAttachedPage;
- 
-        if (ID_ERRNOINTERNETCONNECTIONPAGE == ulPageID)
-            pPage = m_ErrNoInternetConnectionPage;
- 
-        if (ID_ERRNOTFOUNDPAGE == ulPageID)
-            pPage = m_ErrNotFoundPage;
- 
-        if (ID_ERRALREADYEXISTSPAGE == ulPageID)
-            pPage = m_ErrAlreadyExistsPage;
- 
-        if (ID_ERRPROXYINFOPAGE == ulPageID)
-            pPage = m_ErrProxyInfoPage;
- 
-        if (ID_ERRPROXYPAGE == ulPageID)
-            pPage = m_ErrProxyPage;
- 
         if (pPage) {
             if (m_PageTransition.size() == 0) {
                 m_PageTransition.push(NULL);
@@ -453,73 +436,36 @@ wxWizardPageEx* CWizardAttachProject::_PushPageTransition( wxWizardPageEx* pCurr
     return NULL;
 }
   
-void CWizardAttachProject::_ProcessCancelEvent( wxWizardExEvent& event ) {
+void CWizardAttachProject::_ProcessCancelEvent(wxWizardEvent& event) {
+    wxWizardPage* page = GetCurrentPage();
 
-    bool bCancelWithoutNextPage = false;
-    wxWizardPageEx* page = GetCurrentPage();
-
-    int iRetVal = ::wxMessageBox(
-        _("Do you really want to cancel?"), 
-        _("Question"),
-        wxICON_QUESTION | wxYES_NO,
-        this
-    );
+    int iRetVal = ::wxMessageBox(_("Do you really want to cancel?"), _("Question"), wxICON_QUESTION | wxYES_NO, this);
 
     // Reenable the next and back buttons if they have been disabled
-    GetNextButton()->Enable();
-    GetBackButton()->Enable();
+    EnableNextButton();
+    EnableBackButton();
 
     // Page specific rules - Disable the validator(s)
     if (wxYES == iRetVal) {
         if (page == m_ProjectInfoPage) {
-            m_ProjectInfoPage->m_pProjectUrlCtrl->SetValidator(wxDefaultValidator);
+            m_ProjectInfoPage->DisableValidators();
         } else if (page == m_AccountKeyPage) {
-            m_AccountKeyPage->m_pAccountKeyCtrl->SetValidator(wxDefaultValidator);
+            m_AccountKeyPage->DisableValidators();
         } else if (page == m_AccountInfoPage) {
-            m_AccountInfoPage->m_pAccountEmailAddressCtrl->SetValidator(wxDefaultValidator);
-            m_AccountInfoPage->m_pAccountPasswordCtrl->SetValidator(wxDefaultValidator);
-            m_AccountInfoPage->m_pAccountConfirmPasswordCtrl->SetValidator(wxDefaultValidator);
+            m_AccountInfoPage->DisableValidators();
         } else if (page == m_ErrProxyPage) {
-            m_ErrProxyPage->m_pProxyHTTPServerCtrl->SetValidator(wxDefaultValidator);
-            m_ErrProxyPage->m_pProxyHTTPPortCtrl->SetValidator(wxDefaultValidator);
-            m_ErrProxyPage->m_pProxyHTTPUsernameCtrl->SetValidator(wxDefaultValidator);
-            m_ErrProxyPage->m_pProxyHTTPPasswordCtrl->SetValidator(wxDefaultValidator);
-            m_ErrProxyPage->m_pProxySOCKSServerCtrl->SetValidator(wxDefaultValidator);
-            m_ErrProxyPage->m_pProxySOCKSPortCtrl->SetValidator(wxDefaultValidator);
-            m_ErrProxyPage->m_pProxySOCKSUsernameCtrl->SetValidator(wxDefaultValidator);
-            m_ErrProxyPage->m_pProxySOCKSPasswordCtrl->SetValidator(wxDefaultValidator);
-        }
-    }
-
-    // Generic rules
-    bCancelWithoutNextPage |= (page == m_ErrNotDetectedPage);
-    bCancelWithoutNextPage |= (page == m_ErrUnavailablePage);
-    bCancelWithoutNextPage |= (page == m_ErrAlreadyAttachedPage);
-    bCancelWithoutNextPage |= (page == m_ErrNoInternetConnectionPage);
-    bCancelWithoutNextPage |= (page == m_ErrAlreadyExistsPage);
-    if (wxYES != iRetVal) {
-        event.Veto();
-    }
-/*
-    if (!bCancelWithoutNextPage) {
-        event.Veto();
-        if (wxYES == iRetVal) {
-            m_bCancelInProgress = true;
-            SimulateNextButton();
+            m_ErrProxyPage->DisableValidators();
         }
     } else {
-        if (wxYES != iRetVal) {
-            event.Veto();
-        }
+        event.Veto();
     }
-*/
 }
 
 /*!
  * wxEVT_WIZARD_FINISHED event handler for ID_ATTACHPROJECTWIZARD
  */
 
-void CWizardAttachProject::OnFinished( wxWizardExEvent& event ) {
+void CWizardAttachProject::OnFinished(wxWizardEvent& event) {
     CBOINCBaseFrame* pFrame = wxGetApp().GetFrame();
 
     if (GetAccountCreatedSuccessfully() && GetAttachedToProjectSuccessfully()) {
@@ -529,4 +475,3 @@ void CWizardAttachProject::OnFinished( wxWizardExEvent& event ) {
     // Let the framework clean things up.
     event.Skip();
 }
-

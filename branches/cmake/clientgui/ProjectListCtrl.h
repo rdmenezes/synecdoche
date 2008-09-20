@@ -15,20 +15,17 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_PROJECTLISTCTRL_H_
-#define _WIZ_PROJECTLISTCTRL_H_
+#ifndef WIZ_PROJECTLISTCTRL_H
+#define WIZ_PROJECTLISTCTRL_H
 
+#include <wx/scrolwin.h>
 
 class CProjectListItemCtrl;
 class CProjectListItemStaticCtrl;
 class ProjectListCtrlEvent;
 class ProjectListItemCtrlEvent;
 
-
-////@begin control identifiers
 #define ID_WEBSITEBUTTON 10001
-////@end control identifiers
-
 
 /*!
  * CProjectListCtrl class declaration
@@ -51,12 +48,8 @@ public:
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CProjectListCtrl event handler declarations
-
     /// wxEVT_PROJECTLISTITEMCTRL_CLICKED event handler for window
     void OnItemClicked( ProjectListItemCtrlEvent& event );
-
-////@end CProjectListCtrl event handler declarations
 
     /// Methods
     bool Append(
@@ -135,8 +128,6 @@ public:
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CProjectListItemCtrl event handler declarations
-
     /// wxEVT_ENTER_WINDOW, wxEVT_LEAVE_WINDOW event handler for window
     void OnMouseEnterLeave( wxMouseEvent& event );
 
@@ -145,8 +136,6 @@ public:
 
     /// wxEVT_COMMAND_BUTTON_CLICKED event handler for window
     void OnWebsiteButtonClick( wxMouseEvent& event );
-
-////@end CProjectListItemCtrl event handler declarations
 
     /// Methods
     wxString GetTitle() { return m_strTitle; };
@@ -240,16 +229,12 @@ public:
         const wxString &name = _T("ProjectListItemStaticCtrl")
     );
 
-////@begin CProjectListItemCtrl event handler declarations
-
     /// wxEVT_ENTER_WINDOW, wxEVT_LEAVE_WINDOW event handler for window
     void OnMouseEnterLeave( wxMouseEvent& event );
 
     /// wxEVT_LEFT_DOWN, wxEVT_LEFT_UP event handler for window
     void OnMouseClick( wxMouseEvent& event );
-
-////@end CProjectListItemCtrl event handler declarations
 };
 
 
-#endif // _WIZ_PROJECTLISTCTRL_H_
+#endif // WIZ_PROJECTLISTCTRL_H

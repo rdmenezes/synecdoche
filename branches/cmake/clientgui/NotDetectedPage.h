@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,63 +16,54 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_NOTDETECTEDPAGE_H_
-#define _WIZ_NOTDETECTEDPAGE_H_
+#ifndef WIZ_NOTDETECTEDPAGE_H
+#define WIZ_NOTDETECTEDPAGE_H
 
-/*!
- * CErrNotDetectedPage class declaration
- */
+#include <wx/wizard.h>
 
-class CErrNotDetectedPage: public wxWizardPageEx
+class CBOINCBaseWizard;
+
+class CErrNotDetectedPage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CErrNotDetectedPage )
+    DECLARE_DYNAMIC_CLASS(CErrNotDetectedPage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CErrNotDetectedPage( );
-
-    CErrNotDetectedPage( CBOINCBaseWizard* parent );
+    CErrNotDetectedPage();
+    CErrNotDetectedPage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CErrNotDetectedPage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRPROJECTNOTDETECTEDPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_ERRPROJECTNOTDETECTEDPAGE
-    void OnCancel( wxWizardExEvent& event );
-
-////@end CErrNotDetectedPage event handler declarations
-
-////@begin CErrNotDetectedPage member function declarations
+    void OnCancel(wxWizardEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CErrNotDetectedPage member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CErrNotDetectedPage member variables
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticText* m_pDirectionsStaticCtrl;
-////@end CErrNotDetectedPage member variables
 };
 
 #endif
-    // _WIZ_NOTDETECTEDPAGE_H_
+    // WIZ_NOTDETECTEDPAGE_H

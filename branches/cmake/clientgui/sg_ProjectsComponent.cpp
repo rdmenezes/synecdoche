@@ -35,7 +35,6 @@
 #include "sg_DlgMessages.h"
 #include "sg_DlgPreferences.h"
 #include "sg_ProjectsComponent.h"
-#include "wizardex.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
