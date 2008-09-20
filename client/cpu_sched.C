@@ -25,7 +25,7 @@
 /// An episode starts then the application is executed,
 /// and ends when it exits or dies
 /// (e.g., because it's preempted and not left in memory,
-/// or the user quits BOINC, or the host is turned off).
+/// or the user quits Synecdoche, or the host is turned off).
 /// A task may checkpoint now and then.
 /// Each episode begins with the state of the last checkpoint.
 ///
@@ -342,7 +342,7 @@ void CLIENT_STATE::adjust_debts() {
         if (log_flags.debt_debug) {
             msg_printf(NULL, MSG_INFO,
                 "[debt_debug] adjust_debt: elapsed time (%d) longer than sched period (%d).  Ignoring this period.",
-                (int)wall_cpu_time, (int)global_prefs.cpu_scheduling_period()
+                int(wall_cpu_time), int(global_prefs.cpu_scheduling_period())
             );
         }
         reset_debt_accounting();
@@ -464,8 +464,8 @@ bool CLIENT_STATE::possibly_schedule_cpus() {
     double elapsed_time;
     static double last_reschedule=0;
 
-    if (projects.size() == 0) return false;
-    if (results.size() == 0) return false;
+    if (projects.empty()) return false;
+    if (results.empty()) return false;
 
     // Reschedule every cpu_sched_period seconds,
     // or if must_schedule_cpus is set
@@ -832,7 +832,7 @@ bool CLIENT_STATE::enforce_schedule() {
         // Preempt something if needed (and possible).
         //
         bool run_task = false;
-        bool need_to_preempt = (ncpus_used >= ncpus) && running_tasks.size();
+        bool need_to_preempt = (ncpus_used >= ncpus) && !running_tasks.empty();
             // the 2nd half of the above is redundant
         if (need_to_preempt) {
             // examine the most preemptable task.

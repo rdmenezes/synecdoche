@@ -32,15 +32,13 @@ using std::deque;
 
 #define MAX_SAVED_MESSAGES 1000
 
-// a dequeue of up to MAX_SAVED_MESSAGES most recent messages,
-// stored in newest-first order
-//
+/// a dequeue of up to MAX_SAVED_MESSAGES most recent messages,
+/// stored in newest-first order.
 deque<MESSAGE_DESC*> message_descs;
 
-// Takes a printf style formatted string, inserts the proper values,
-// and passes it to show_message
-// TODO: add translation functionality
-//
+/// Takes a printf style formatted string, inserts the proper values,
+/// and passes it to show_message.
+/// TODO: add translation functionality
 void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) {
     char        buf[8192];  // output can be much longer than format
     va_list     ap;
@@ -54,8 +52,7 @@ void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) {
     show_message(p, buf, priority);
 }
 
-// stash message in memory
-//
+/// stash message in memory
 void record_message(const PROJECT* p, int priority, int now, const char* message) {
     MESSAGE_DESC* mdp = new MESSAGE_DESC;
     static int seqno = 1;

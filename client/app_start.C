@@ -242,8 +242,7 @@ static int make_soft_link(PROJECT* project, const char* link_path, const char* r
 /// Set up a file reference, given a slot dir and project dir.
 /// This means:
 /// -# copy the file to slot dir, if reference is by copy
-/// -# (Unix) make a symbolic link
-/// -# (Windows) make a 
+/// -# else make a soft link
 static int setup_file(
     PROJECT* project, FILE_INFO* fip, FILE_REF& fref,
     char* file_path, char* slot_dir, bool input
@@ -338,7 +337,7 @@ int ACTIVE_TASK::copy_output_files() {
 /// This includes setting up soft links,
 /// passing preferences, and starting the process.
 ///
-/// Current dir is top-level BOINC dir.
+/// Current dir is top-level Synecdoche dir.
 ///
 /// Postcondition:
 /// - If any error occurs
@@ -659,9 +658,8 @@ int ACTIVE_TASK::start(bool first_time) {
     if (log_flags.task_debug) {
         debug_print_argv(argv);
     }
-    char buf[270];
-    sprintf(buf, "../../%s", exec_path);
-    pid = do_execv(buf, argv);
+    std::string path = std::string("../../") + std::string(exec_path);
+    pid = do_execv(path, argv);
     if (pid == -1) {
         err_stream << "Process creation failed: "
                    << " The error message was: " << boincerror(retval);
@@ -765,7 +763,7 @@ int ACTIVE_TASK::start(bool first_time) {
         // add to library path:
         // - the project dir (../../projects/X)
         // - the slot dir (.)
-        // - the BOINC dir (../..)
+        // - the Synecdoche dir (../..)
         // We use relative paths in case higher-level dirs
         // are not readable to the account under which app runs
         //
@@ -816,24 +814,23 @@ int ACTIVE_TASK::start(bool first_time) {
             perror("setpriority");
         }
 #endif
-        char buf[270];
-        sprintf(buf, "../../%s", exec_path);
+        std::string path = std::string("../../") + std::string(exec_path);
         if (g_use_sandbox) {
-            char switcher_path[100];
-            sprintf(switcher_path, "../../%s/%s", SWITCHER_DIR, SWITCHER_FILE_NAME);
+            std::ostringstream switcher_path;
+            switcher_path << "../../" << SWITCHER_DIR << '/' << SWITCHER_FILE_NAME;
             argv.push_front(exec_name);
-            argv.push_front(buf);
+            argv.push_front(path);
             argv.push_front(SWITCHER_FILE_NAME);
-            // Files written by projects have user boinc_project and group boinc_project, 
-            // so they must be world-readable so BOINC CLient can read them 
+            // Files written by projects have user boinc_project and group boinc_project,
+            // so they must be world-readable so Synecdoche can read them.
             umask(2);
-            retval = do_execv(switcher_path, argv);
+            retval = do_execv(switcher_path.str(), argv);
         } else {
             argv.push_front(exec_name);
-            retval = do_execv(buf, argv);
+            retval = do_execv(path, argv);
         }
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
-            "Process creation (%s) failed: %s, errno=%d\n", buf, boincerror(retval), errno
+            "Process creation (%s) failed: %s, errno=%d\n", path.c_str(), boincerror(retval), errno
         );
         perror("execv");
         fflush(NULL);
@@ -926,10 +923,9 @@ union headeru {
     mach_header mach;
 };
 
-// Read the mach-o headers to determine the architectures
-// supported by executable file.
-// Returns 1 if application can run natively on i386 / x86_64 Macs, else returns 0.
-//
+/// Read the mach-o headers to determine the architectures
+/// supported by executable file.
+/// Returns 1 if application can run natively on i386 / x86_64 Macs, else returns 0.
 int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     FILE *f;
     int result = 0;

@@ -336,53 +336,35 @@ void CBOINCBaseFrame::FireReloadSkin() {
 
 void CBOINCBaseFrame::ShowConnectionBadPasswordAlert( bool bUsedDefaultPassword, int m_iReadGUIRPCAuthFailure ) {
     CSkinAdvanced*      pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
-    wxString            strDialogTitle = wxEmptyString;
-
+    wxString            title;
+    wxString            passwordErrorReason;
 
     wxASSERT(pSkinAdvanced);
     wxASSERT(wxDynamicCast(pSkinAdvanced, CSkinAdvanced));
-
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::ShowConnectionBadPasswordAlert - Function Begin"));
 
     // %s is the application name
     //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strDialogTitle.Printf(
+    title.Printf(
         _("%s - Connection Error"),
         pSkinAdvanced->GetApplicationName().c_str()
     );
 
-    if ( bUsedDefaultPassword ) {
-#ifdef __WXMSW__
-        if ( EACCES == m_iReadGUIRPCAuthFailure || ENOENT == m_iReadGUIRPCAuthFailure ) {
-            ShowAlert(
-                strDialogTitle,
-                _("You currently are not authorized to manage the client.\n"
-                  "Please contact your administrator to add you to the 'boinc_users' local user group."),
-                wxOK | wxICON_ERROR
-            );
-        } else 
-#endif
-        {
-            ShowAlert(
-                strDialogTitle,
-#ifndef __WXMAC__
-                _("Authorization failed connecting to running client."
-                  "\nMake sure you start this program in the same directory as the client."
-                ),
-#else
-                _("Authorization failed connecting to running client."),
-#endif
-                wxOK | wxICON_ERROR
-            );
+    if (bUsedDefaultPassword) {
+        passwordErrorReason = _("Authorization failed connecting to running client.");
+        if (m_iReadGUIRPCAuthFailure) {
+            passwordErrorReason << wxT("\n") << _("Could not read gui_rpc_auth.cfg");
         }
     } else {
-        ShowAlert(
-            strDialogTitle,
-            _("The password you have provided is incorrect, please try again."),
-            wxOK | wxICON_ERROR
-        );
+        passwordErrorReason = _("The password you have provided is incorrect, please try again.");
     }
+
+    ShowAlert(
+        title,
+        passwordErrorReason,
+        wxOK | wxICON_ERROR
+    );
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::ShowConnectionBadPasswordAlert - Function End"));
 }

@@ -591,7 +591,7 @@ static void GetPathToThisProcess(char* outbuf, size_t maxLen) {
 
     *outbuf = '\0';
     
-    sprintf(buf, "ps -xwo command -p %d", (int)aPID);
+    sprintf(buf, "ps -xwo command -p %u", aPID);
     f = popen(buf, "r");
     if (f == NULL)
         return;

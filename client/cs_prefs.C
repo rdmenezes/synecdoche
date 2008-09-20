@@ -46,10 +46,9 @@
 using std::min;
 using std::string;
 
-// Return the maximum allowed disk usage as determined by user preferences.
-// There are three different settings in the prefs;
-// return the least of the three.
-//
+/// Return the maximum allowed disk usage as determined by user preferences.
+/// There are three different settings in the prefs;
+/// return the least of the three.
 double CLIENT_STATE::allowed_disk_usage() {
     double percent_space, min_val;
 
@@ -101,8 +100,7 @@ int CLIENT_STATE::allowed_project_disk_usage(double& size) {
 }
 #endif
 
-// See if we should suspend processing
-//
+/// See if we should suspend processing
 int CLIENT_STATE::check_suspend_processing() {
     if (are_cpu_benchmarks_running()) {
         return SUSPEND_REASON_BENCHMARKS;
@@ -245,8 +243,7 @@ int CLIENT_STATE::resume_network() {
     return 0;
 }
 
-// call this only after parsing global prefs
-//
+/// call this only after parsing global prefs
 PROJECT* CLIENT_STATE::global_prefs_source_project() {
     return lookup_project(global_prefs.source_project);
 }
@@ -284,9 +281,8 @@ void CLIENT_STATE::show_global_prefs_source(bool found_venue) {
     }
 }
 
-// parse user's project preferences,
-// generating FILE_REF and FILE_INFO objects for each <app_file> element.
-//
+/// parse user's project preferences,
+/// generating FILE_REF and FILE_INFO objects for each <app_file> element.
 int PROJECT::parse_preferences_for_user_files() {
     size_t start = 0, end;
     string app_file_xml;
@@ -333,16 +329,15 @@ int PROJECT::parse_preferences_for_user_files() {
     return 0;
 }
 
-// Read global preferences into the global_prefs structure.
-// 1) read the override file to get venue in case it's there
-// 2) read global_prefs.xml
-// 3) read the override file again
-//
-// This is called:
-// - on startup
-// - on completion of a scheduler or AMS RPC, if they sent prefs
-// - in response to read_global_prefs_override GUI RPC
-//
+/// Read global preferences into the global_prefs structure.
+/// -# read the override file to get venue in case it's there
+/// -# read global_prefs.xml
+/// -# read the override file again
+///
+/// This is called:
+/// - on startup
+/// - on completion of a scheduler or AMS RPC, if they sent prefs
+/// - in response to read_global_prefs_override GUI RPC
 void CLIENT_STATE::read_global_prefs() {
     bool found_venue;
     int retval;
@@ -359,7 +354,7 @@ void CLIENT_STATE::read_global_prefs() {
     );
     if (retval) {
         msg_printf(NULL, MSG_INFO,
-            "No general preferences found - using BOINC defaults"
+            "No general preferences found - using defaults"
         );
     } else {
         // check that the source project's venue matches main_host_venue.
@@ -437,8 +432,7 @@ int CLIENT_STATE::save_global_prefs(
     return 0;
 }
 
-// amount of RAM usable now
-//
+/// amount of RAM usable now
 double CLIENT_STATE::available_ram() {
     if (user_active) {
         return host_info.m_nbytes * global_prefs.ram_max_used_busy_frac;
@@ -447,8 +441,7 @@ double CLIENT_STATE::available_ram() {
     }
 }
 
-// max amount that will ever be usable
-//
+/// max amount that will ever be usable
 double CLIENT_STATE::max_available_ram() {
     return host_info.m_nbytes*std::max(
         global_prefs.ram_max_used_busy_frac, global_prefs.ram_max_used_idle_frac

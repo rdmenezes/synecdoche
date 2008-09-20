@@ -157,9 +157,9 @@ char* ip_addr_string(int ip_addr) {
 }
 #endif
 
-// Returns the offset between LOCAL STANDARD TIME and UTC.
-// LOCAL_STANDARD_TIME = UTC_TIME + get_timezone().
-//
+/// Returns the offset between LOCAL STANDARD TIME and UTC.
+/// LOCAL_STANDARD_TIME = UTC_TIME + get_timezone().
+///
 int get_timezone() {
     tzset();
     // TODO: take daylight savings time into account
@@ -185,9 +185,9 @@ int get_timezone() {
     return 0;
 }
 
-// Returns true if the host is currently running off battery power
-// If you can't figure out, return false
-//
+/// Returns true if the host is currently running off battery power
+/// If you can't figure out, return false
+///
 bool HOST_INFO::host_is_running_on_batteries() {
 #if defined(__APPLE__)
     CFDictionaryRef pSource = NULL;
@@ -301,11 +301,11 @@ bool HOST_INFO::host_is_running_on_batteries() {
             FILE* fapm = fopen("/proc/apm", "r");
             if (!fapm) return false;
 
-            char    apm_driver_version[11];
-            int     apm_major_version;
-            int     apm_minor_version;
-            int     apm_flags;
-            int     apm_ac_line_status=1;
+            char         apm_driver_version[11];
+            int          apm_major_version;
+            int          apm_minor_version;
+            unsigned int apm_flags;
+            unsigned int apm_ac_line_status=1;
 
             // supposedly we're on batteries if the 5th entry is zero.
             (void) fscanf(fapm, "%10s %d.%d %x %x",
@@ -350,6 +350,8 @@ bool HOST_INFO::host_is_running_on_batteries() {
             // online is 1 if on AC power, 0 if on battery
             return (0 == online);
         }
+    default:
+        return false;
     }
 #else
     return false;
@@ -392,7 +394,9 @@ static void parse_cpuinfo_linux(HOST_INFO& host) {
     char buf[256], features[1024], model_buf[1024];
     bool vendor_found=false, model_found=false;
     bool cache_found=false, features_found=false;
+#ifdef __hppa__
     bool icache_found=false,dcache_found=false;
+#endif
     bool model_hack=false, vendor_hack=false;
     int n;
     int family=-1, model=-1, stepping=-1;
@@ -937,9 +941,9 @@ int HOST_INFO::get_host_info() {
     return 0;
 }
 
-// returns true iff device was last accessed before t
-// or if an error occurred looking at the device.
-//
+/// returns true iff device was last accessed before t
+/// or if an error occurred looking at the device.
+///
 inline bool device_idle(time_t t, const char *device) {
     struct stat sbuf;
     return stat(device, &sbuf) || (sbuf.st_atime < t);
@@ -958,8 +962,8 @@ static const struct dir_dev {
     { NULL, NULL },
 };
 
+/// Create a list of all terminal devices on the system.
 std::vector<std::string> get_tty_list() {
-    // Create a list of all terminal devices on the system.
     char devname[1024];
     char fullname[1024];
     int done,i=0;
@@ -992,7 +996,7 @@ inline bool all_tty_idle(time_t t) {
     struct stat sbuf;
     unsigned int i;
 
-    if (tty_list.size()==0) tty_list=get_tty_list();
+    if (tty_list.empty()) tty_list=get_tty_list();
     for (i=0; i<tty_list.size(); i++) {
         // ignore errors
         if (!stat(tty_list[i].c_str(), &sbuf)) {
@@ -1031,14 +1035,15 @@ inline bool user_idle(time_t t, struct utmp* u) {
   struct utmp *getutent() {
       if (ufp == NULL) {
 #if defined(UTMP_LOCATION)
-          if ((ufp = fopen(UTMP_LOCATION, "r")) == NULL) {
+          if ((ufp = fopen(UTMP_LOCATION, "r")) == NULL)
 #elif defined(UTMP_FILE)
-          if ((ufp = fopen(UTMP_FILE, "r")) == NULL) {
+          if ((ufp = fopen(UTMP_FILE, "r")) == NULL)
 #elif defined(_PATH_UTMP)
-          if ((ufp = fopen(_PATH_UTMP, "r")) == NULL) {
+          if ((ufp = fopen(_PATH_UTMP, "r")) == NULL)
 #else
-          if ((ufp = fopen("/etc/utmp", "r")) == NULL) {
+          if ((ufp = fopen("/etc/utmp", "r")) == NULL)
 #endif
+          {
               return((struct utmp *)NULL);
           }
       }
@@ -1055,8 +1060,8 @@ inline bool user_idle(time_t t, struct utmp* u) {
   }
 #endif
 
-  // scan list of logged-in users, and see if they're all idle
-  //
+  /// scan list of logged-in users, and see if they're all idle
+  ///
   inline bool all_logins_idle(time_t t) {
       struct utmp* u;
       setutent();

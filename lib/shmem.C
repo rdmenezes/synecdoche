@@ -76,29 +76,17 @@ HANDLE create_shmem(LPCTSTR seg_name, int size, void** pp, bool try_global) {
     EXPLICIT_ACCESS ea;
     SID_IDENTIFIER_AUTHORITY SIDAuthWorld = SECURITY_WORLD_SID_AUTHORITY;
     SECURITY_ATTRIBUTES sa;
-    OSVERSIONINFO osvi; 
     char global_seg_name[256];
 
-    // Win9X doesn't like any reference to a security descriptor.
-    // So if we detect that we are running on the Win9X platform pass
-    // a NULL value for it.
-    //
-    osvi.dwOSVersionInfoSize = sizeof(osvi);
-    GetVersionEx(&osvi);
-    if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
 
-        hMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, size, seg_name);
-        dwError = GetLastError();
-
-    } else {
+    try {
         // Create a well-known SID for the Everyone group.
         if(!AllocateAndInitializeSid(&SIDAuthWorld, 1,
              SECURITY_WORLD_RID,
              0, 0, 0, 0, 0, 0, 0,
              &pEveryoneSID)
         ) {
-            fprintf(stderr, "AllocateAndInitializeSid Error %u\n", GetLastError());
-            goto Cleanup;
+            throw "AllocateAndInitializeSid";
         }
 
         // Initialize an EXPLICIT_ACCESS structure for an ACE.
@@ -114,22 +102,17 @@ HANDLE create_shmem(LPCTSTR seg_name, int size, void** pp, bool try_global) {
         // Create a new ACL that contains the new ACEs.
         dwRes = SetEntriesInAcl(1, &ea, NULL, &pACL);
         if (ERROR_SUCCESS != dwRes) {
-            fprintf(stderr, "SetEntriesInAcl Error %u\n", GetLastError());
-            goto Cleanup;
+            throw "SetEntriesInAcl";
         }
 
         // Initialize a security descriptor.  
         pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
         if (NULL == pSD) { 
-            fprintf(stderr, "LocalAlloc Error %u\n", GetLastError());
-            goto Cleanup; 
+            throw "LocalAlloc";
         } 
      
         if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {
-            fprintf(stderr, "InitializeSecurityDescriptor Error %u\n",
-                GetLastError()
-            );
-            goto Cleanup; 
+            throw "InitializeSecurityDescriptor";
         } 
      
         // Add the ACL to the security descriptor. 
@@ -138,10 +121,7 @@ HANDLE create_shmem(LPCTSTR seg_name, int size, void** pp, bool try_global) {
                 pACL, 
                 FALSE) // not a default DACL 
         ) {  
-            fprintf(stderr,
-                "SetSecurityDescriptorDacl Error %u\n", GetLastError()
-            );
-            goto Cleanup; 
+            throw "SetSecurityDescriptorDacl";
         } 
 
         // Initialize a security attributes structure.
@@ -173,29 +153,27 @@ HANDLE create_shmem(LPCTSTR seg_name, int size, void** pp, bool try_global) {
             hMap = CreateFileMapping(
                 INVALID_HANDLE_VALUE, &sa, PAGE_READWRITE, 0, size, seg_name
             );
-            dwError = GetLastError();
+            dwError = GetLastError(); // This value isn't used.
         }
-    }
 
-    if (hMap) {
-        if (GetLastError() == ERROR_ALREADY_EXISTS) {
-            CloseHandle(hMap);
-            hMap = NULL;
-        } else {
-            *pp = MapViewOfFile( hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0 );
+        if (hMap) {
+            if (GetLastError() == ERROR_ALREADY_EXISTS) {
+                CloseHandle(hMap);
+                hMap = NULL;
+            } else {
+                *pp = MapViewOfFile( hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0 );
+            }
         }
+    } catch (const char* e) {
+        fprintf(stderr, "%s Error %u\n", e, GetLastError());
     }
 
-Cleanup:
-
-    if (osvi.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-        if (pEveryoneSID) 
-            FreeSid(pEveryoneSID);
-        if (pACL) 
-            LocalFree(pACL);
-        if (pSD) 
-            LocalFree(pSD);
-    }
+    if (pEveryoneSID) 
+        FreeSid(pEveryoneSID);
+    if (pACL) 
+        LocalFree(pACL);
+    if (pSD) 
+        LocalFree(pSD);
 
     return hMap;
 }

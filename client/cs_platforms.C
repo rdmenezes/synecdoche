@@ -39,15 +39,13 @@
 #include "util.h"
 
 
-// return the primary platform id.
-//
+/// return the primary platform id.
 const char* CLIENT_STATE::get_primary_platform() const {
     return platforms[0].name.c_str();
 }
 
 
-// add a platform to the vector.
-//
+/// add a platform to the vector.
 void CLIENT_STATE::add_platform(const char* platform) {
     PLATFORM pp;
     pp.name = platform;
@@ -55,8 +53,7 @@ void CLIENT_STATE::add_platform(const char* platform) {
 }
 
 
-// determine the list of supported platforms.
-//
+/// determine the list of supported platforms.
 void CLIENT_STATE::detect_platforms() {
 
 #if defined(_WIN32) && !defined(__CYGWIN32__)
@@ -111,8 +108,7 @@ void CLIENT_STATE::detect_platforms() {
 }
 
 
-// write XML list of supported platforms
-//
+/// write XML list of supported platforms
 void CLIENT_STATE::write_platforms(PROJECT* p, MIOFILE& mf) {
 
     mf.printf(

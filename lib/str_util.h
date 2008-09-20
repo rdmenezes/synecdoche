@@ -29,6 +29,10 @@
 #include <string>
 #include <list>
 
+#ifndef _WIN32
+#include "config.h"
+#endif
+
 #define KILO (1024.0)
 #define MEGA (1048576.0)
 #define GIGA (1024.*1048576.0)
@@ -59,10 +63,10 @@ extern std::list<std::string> parse_command_line(const char* p);
 
 extern void c2x(char *what);
 
-/// Remove leading and trailing whitespace froma string
+/// Remove leading and trailing whitespace from a string
 extern void strip_whitespace(char *str);
 
-/// Remove leading and trailing whitespace froma string
+/// Remove leading and trailing whitespace from a string
 extern void strip_whitespace(std::string&);
 
 extern void unescape_url(std::string& url);
