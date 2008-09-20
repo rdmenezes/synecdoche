@@ -25,7 +25,7 @@ ELSEIF(UNIX)
 	SET(PLATFORM_CLIENT_SOURCES hostinfo_unix.C)
 ENDIF(WIN32)
 
-ADD_EXECUTABLE(boinc_client main.C
+ADD_EXECUTABLE(synecd main.C
 	client_state.C acct_setup.C app_control.C check_state.C cpu_sched.C cs_account.C cs_apps.C cs_benchmark.C cs_cmdline.C cs_files.C cs_platforms.C cs_prefs.C cs_scheduler.C cs_statefile.C cs_trickle.C scheduler_op.C work_fetch.C
 	client_types.C app.C file_names.C app_start.C acct_mgr.C
 	gui_rpc_server.C gui_rpc_server_ops.C
@@ -37,10 +37,10 @@ ADD_EXECUTABLE(boinc_client main.C
 	app_graphics.C
 	${PLATFORM_CLIENT_SOURCES}
 	)
-TARGET_LINK_LIBRARIES(boinc_client boinc)
+TARGET_LINK_LIBRARIES(synecd boinc)
 
-TARGET_LINK_LIBRARIES(boinc_client ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES})
+TARGET_LINK_LIBRARIES(synecd ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES})
 
 IF(WIN32)
-	TARGET_LINK_LIBRARIES(boinc_client sensapi.lib)
+	TARGET_LINK_LIBRARIES(synecd sensapi.lib)
 ENDIF(WIN32)
