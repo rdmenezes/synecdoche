@@ -66,18 +66,17 @@ int main() {
 	MESSAGE(STATUS "Checking for struct tm.tm_zone")
 	CHECK_C_SOURCE_COMPILES("
 #include <${struct_tm_inc}>
-#include <time.h>
 
 int main() {
 	static struct tm obj;
 	if (obj.tm_zone) {
 		return 0;
 	}
-	return 0
+	return 0;
 }
 " struct_tm_check)
 	IF(struct_tm_check)
-		SET(HAVE_STRUCT_TM_TM_ZONE "${type}" CACHE INTERNAL "1 if 'tm_zone' is member of 'struct tm'")
+		SET(HAVE_STRUCT_TM_TM_ZONE 1 CACHE INTERNAL "1 if 'tm_zone' is member of 'struct tm'")
 	ENDIF(struct_tm_check)
 ENDMACRO(AC_STRUCT_TIMEZONE)
 
