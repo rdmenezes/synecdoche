@@ -1034,6 +1034,24 @@ static int PowerPCHandleLeaf(QBTContext *context, QTMAddr *pcPtr, QTMAddr *frame
 	// Get the pc and lr from the thread state.
 	
     err = 0;
+#ifdef __DARWIN_UNIX03
+    switch (context->threadStateFlavor) {
+        case PPC_THREAD_STATE:
+            pc = ((const ppc_thread_state_t *) context->threadState)->__srr0;
+            lr = ((const ppc_thread_state_t *) context->threadState)->__lr;
+            r1 = ((const ppc_thread_state_t *) context->threadState)->__r1;
+            break;
+        case PPC_THREAD_STATE64:
+            pc = ((const ppc_thread_state64_t *) context->threadState)->__srr0;
+            lr = ((const ppc_thread_state64_t *) context->threadState)->__lr;
+            r1 = ((const ppc_thread_state64_t *) context->threadState)->__r1;
+            break;
+
+        default:
+            err = EINVAL;
+            break;
+    }
+#else
     switch (context->threadStateFlavor) {
         case PPC_THREAD_STATE:
             pc = ((const ppc_thread_state_t *) context->threadState)->srr0;
@@ -1050,6 +1068,7 @@ static int PowerPCHandleLeaf(QBTContext *context, QTMAddr *pcPtr, QTMAddr *frame
             err = EINVAL;
             break;
     }
+#endif
 
 	// If we find that we're in a system call frameless leaf routine, 
 	// add a dummy stack frame (with no frame, because the frame actually 
@@ -1570,7 +1589,7 @@ static int IntelHandleLeaf(QBTContext *context, QTMAddr *pcPtr, QTMAddr *framePt
 	
     err = 0;
     switch (context->threadStateFlavor) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__DARWIN_UNIX03)
         case x86_THREAD_STATE64:
 
             pc = ((const x86_thread_state64_t *) context->threadState)->__rip;
@@ -2474,8 +2493,13 @@ extern int QBTCreateThreadStateSelf(
         flavor = x86_THREAD_STATE32;
         state = (x86_thread_state32_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
+#ifdef __DARWIN_UNIX03
+            state->__eip = (uintptr_t) pc;
+            state->__ebp = (uintptr_t) fp;
+#else
             state->eip = (uintptr_t) pc;
             state->ebp = (uintptr_t) fp;
+#endif
         }
     #elif TARGET_CPU_X86_64
         x86_thread_state64_t *  state;
@@ -2483,7 +2507,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = x86_THREAD_STATE64;
         state = (x86_thread_state64_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__DARWIN_UNIX03)
             state->__rip = (uintptr_t) pc;
             state->__rbp = (uintptr_t) fp;
 #else
