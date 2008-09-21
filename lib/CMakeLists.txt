@@ -16,7 +16,13 @@
 # License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 IF(WIN32)
-	SET(PLATFORM_LIB_SOURCES procinfo_win.C win_util.C proc_control.C diagnostics_win.C stackwalker_win.cpp)
+	SET(PLATFORM_LIB_SOURCES
+		diagnostics_win.C
+		proc_control.C
+		procinfo_win.C
+		stackwalker_win.cpp
+		win_util.C
+	)
 ELSEIF(APPLE)
 	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/mac)
 	SET(PLATFORM_LIB_SOURCES procinfo_mac.C)
@@ -25,14 +31,29 @@ ELSEIF(UNIX)
 ENDIF(WIN32)
 
 ADD_LIBRARY(boinc STATIC
-	util.C str_util.C
-	shmem.C app_ipc.C
-	coproc.C diagnostics.C proxy_info.C
-	filesys.C mfile.C miofile.C network.C
-	parse.C hostinfo.C prefs.C
-	md5.c md5_file.C base64.C crypt.C
-	gui_rpc_client.C gui_rpc_client_ops.C gui_rpc_client_print.C
-	${PLATFORM_LIB_SOURCES})
+	app_ipc.C
+	base64.C
+	coproc.C
+	crypt.C
+	diagnostics.C
+	filesys.C
+	gui_rpc_client.C
+	gui_rpc_client_ops.C
+	gui_rpc_client_print.C
+	hostinfo.C
+	md5.c
+	md5_file.C
+	mfile.C
+	miofile.C
+	network.C
+	parse.C
+	prefs.C
+	proxy_info.C
+	shmem.C
+	str_util.C
+	util.C
+	${PLATFORM_LIB_SOURCES}
+)
 
 IF(WIN32)
 	TARGET_LINK_LIBRARIES(boinc wsock32)
