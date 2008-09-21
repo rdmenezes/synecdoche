@@ -25,7 +25,16 @@ IF(WIN32)
 	)
 ELSEIF(APPLE)
 	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/mac)
-	SET(PLATFORM_LIB_SOURCES procinfo_mac.C)
+	SET(PLATFORM_LIB_SOURCES
+		procinfo_mac.C
+		mac/mac_backtrace.C
+		mac/QBacktrace.c
+		mac/QCrashReport.c
+		mac/QMachOImage.c
+		mac/QMachOImageList.c
+		mac/QSymbols.c
+		mac/QTaskMemory.c
+	)
 ELSEIF(UNIX)
 	SET(PLATFORM_LIB_SOURCES procinfo_unix.C)
 ENDIF(WIN32)
