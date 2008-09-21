@@ -24,6 +24,8 @@
 #cmakedefine HAVE_SYS_SYSCTL_H 1
 #cmakedefine HAVE_SYS_UTSNAME_H 1
 
+#cmakedefine HAVE_STRUCT_TM_TM_ZONE 1
+
 /* XXX gotta define other stuff from str_util.h too */
 #cmakedefine HAVE_STRCASESTR
 
