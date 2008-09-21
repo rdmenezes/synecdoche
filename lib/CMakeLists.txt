@@ -18,6 +18,7 @@
 IF(WIN32)
 	SET(PLATFORM_LIB_SOURCES procinfo_win.C win_util.C proc_control.C diagnostics_win.C stackwalker_win.cpp)
 ELSEIF(APPLE)
+	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/mac)
 	SET(PLATFORM_LIB_SOURCES procinfo_mac.C)
 ELSEIF(UNIX)
 	SET(PLATFORM_LIB_SOURCES procinfo_unix.C)
