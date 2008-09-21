@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="synecmgr"
 	ProjectGUID="{06113715-AC51-4E91-8B9D-C987CABE0920}"
 	RootNamespace="boincmgr"
@@ -619,10 +619,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\clientgui\res\BOINCGUIApp.ico"
-				>
-			</File>
-			<File
 				RelativePath="..\clientgui\BOINCGUIApp.rc"
 				>
 				<FileConfiguration
@@ -651,22 +647,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\clientgui\res\gridrepublic.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\gridrepublic.xpm"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\gridrepublic2.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\gridrepublicamwizard.xpm"
-				>
-			</File>
-			<File
 				RelativePath="..\clientgui\res\mess.xpm"
 				>
 			</File>
@@ -676,22 +656,6 @@
 			</File>
 			<File
 				RelativePath="..\clientgui\res\result.xpm"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\seed16.xpm"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\seed32.xpm"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\seedamwizard.xpm"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\seedapwizard.xpm"
 				>
 			</File>
 			<File
