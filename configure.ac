@@ -9,7 +9,9 @@ dnl not sure exactly what the minimum version is (but 2.13 wont work)
 AC_PREREQ(2.57)
 
 dnl Set the Synecdoche version here.
-AC_INIT(Synecdoche, 6.3.4)
+AC_INIT(Synecdoche, 0.1.1)
+AC_SUBST([SYNEC_PRERELEASE], [1])
+
 LIBBOINC_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\./:/g'`
 AC_SUBST([LIBBOINC_VERSION])
 
