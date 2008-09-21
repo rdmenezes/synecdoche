@@ -1016,9 +1016,9 @@ int RPC_CLIENT::exchange_versions(VERSION_INFO& server) {
         "   <minor>%d</minor>\n"
         "   <release>%d</release>\n"
         "</exchange_versions>\n",
-        BOINC_MAJOR_VERSION,
-        BOINC_MINOR_VERSION,
-        BOINC_RELEASE
+        SYNEC_MAJOR_VERSION,
+        SYNEC_MINOR_VERSION,
+        SYNEC_RELEASE
     );
 
     retval = rpc.do_rpc(buf);

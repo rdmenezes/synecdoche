@@ -80,6 +80,7 @@ public:
     COPROCS coprocs;
 
     VERSION_INFO core_client_version;
+    VERSION_INFO boinc_compat_version;
     std::string statefile_platform_name;
     int file_xfer_giveup_period;
     MODE run_mode;

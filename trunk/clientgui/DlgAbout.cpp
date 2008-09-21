@@ -87,7 +87,7 @@ void CDlgAbout::CreateControls(CSkinAdvanced* pSkinAdvanced) {
     wxStaticText* versionLabel = new wxStaticText(this, wxID_STATIC, _("Version:"));
     copyrightSizer->Add(versionLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
-    wxStaticText* versionText = new wxStaticText(this, wxID_STATIC, wxT(BOINC_VERSION_STRING));
+    wxStaticText* versionText = new wxStaticText(this, wxID_STATIC, wxT(SYNEC_VERSION_STRING));
     copyrightSizer->Add(versionText, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
     wxStaticText* copyrightLabel = new wxStaticText(this, wxID_STATIC, _("Copyright:"));
