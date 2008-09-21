@@ -43,6 +43,45 @@ MACRO(AC_CHECK_TYPE_SIZE TYPE)
 	CHECK_TYPE_SIZE(${TYPE} ${l_type_varname})
 ENDMACRO(AC_CHECK_TYPE_SIZE)
 
+# Taken almost straight from autoconf
+MACRO(AC_STRUCT_TIMEZONE)
+	MESSAGE(STATUS "Checking whether struct tm is in sys/time.h or time.h")
+	SET(struct_tm_check "UNKNOWN")
+	CHECK_C_SOURCE_COMPILES("
+#include <sys/types.h>
+#include <time.h>
+
+int main() {
+	struct tm tm;
+	int *p = &tm.tm_sec;
+	return !p;
+}
+" struct_tm_check)
+	IF(struct_tm_check)
+		SET(struct_tm_inc "time.h")
+	ELSE(struct_tm_check)
+		SET(struct_tm_inc "sys/time.h")
+	ENDIF(struct_tm_check)
+
+	MESSAGE(STATUS "Checking for struct tm.tm_zone")
+	CHECK_C_SOURCE_COMPILES("
+#include <${struct_tm_inc}>
+#include <time.h>
+
+int main() {
+	static struct tm obj;
+	if (obj.tm_zone) {
+		return 0;
+	}
+	return 0
+}
+" struct_tm_check)
+	IF(struct_tm_check)
+		SET(HAVE_STRUCT_TM_TM_ZONE "${type}" CACHE INTERNAL "1 if 'tm_zone' is member of 'struct tm'")
+	ENDIF(struct_tm_check)
+ENDMACRO(AC_STRUCT_TIMEZONE)
+
+
 FOREACH(inc "csignal" "signal.h" "malloc.h" "unistd.h" "netdb.h" "arpa/inet.h" "netinet/in.h")
 	AC_CHECK_INCLUDE_FILE(${inc})
 ENDFOREACH(inc)
@@ -74,10 +113,12 @@ FOREACH(type "socklen_t" "size_t" "int")
 			return getsockopt(0,0,0,(void *)0,&l);
 		}" getsockopt_type_test)
 		IF(getsockopt_type_test)
-			SET(BOINC_SOCKLEN_T "${type}" CACHE STRING "type pointed to by the 5th parameter of getsockopt")
+			SET(BOINC_SOCKLEN_T "${type}" CACHE INTERNAL "type pointed to by the 5th parameter of getsockopt")
 		ENDIF(getsockopt_type_test)
 	ENDIF (NOT DEFINED BOINC_SOCKLEN_T)
 ENDFOREACH(type)
+
+AC_STRUCT_TIMEZONE()
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib ${CMAKE_SOURCE_DIR}/client)
