@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -49,10 +50,8 @@ int ACCT_MGR_OP::do_rpc(
 ) {
     int retval;
     unsigned int i;
-    char url[256], password[256], buf[256];
+    std::string url(_url);
     FILE *pwdf;
-
-    strlcpy(url, _url.c_str(), sizeof(url));
 
     error_num = ERR_IN_PROGRESS;
     via_gui = _via_gui;
@@ -63,7 +62,7 @@ int ACCT_MGR_OP::do_rpc(
 
     // if null URL, detach from current AMS
     //
-    if (!strlen(url) && strlen(gstate.acct_mgr_info.acct_mgr_url)) {
+    if ((url.empty()) && (strlen(gstate.acct_mgr_info.acct_mgr_url))) {
         msg_printf(NULL, MSG_INFO, "Removing account manager info");
         gstate.acct_mgr_info.clear();
         boinc_delete_file(ACCT_MGR_URL_FILENAME);
@@ -78,12 +77,12 @@ int ACCT_MGR_OP::do_rpc(
     }
 
     canonicalize_master_url(url);
-    if (!valid_master_url(url)) {
+    if (!valid_master_url(url.c_str())) {
         error_num = ERR_INVALID_URL;
         return 0;
     }
 
-    strlcpy(ami.acct_mgr_url, url, sizeof(ami.acct_mgr_url));
+    strlcpy(ami.acct_mgr_url, url.c_str(), sizeof(ami.acct_mgr_url));
     strlcpy(ami.acct_mgr_name, "", sizeof(ami.acct_mgr_name));
     strlcpy(ami.login_name, name.c_str(), sizeof(ami.login_name));
     strlcpy(ami.password_hash, password_hash.c_str(), sizeof(ami.password_hash));
@@ -125,6 +124,7 @@ int ACCT_MGR_OP::do_rpc(
             fprintf(f,"   <gui_rpc_port>%d</gui_rpc_port>\n", GUI_RPC_PORT);
         }
         if (boinc_file_exists(GUI_RPC_PASSWD_FILE)) {
+            char password[256];
             strcpy(password, "");
             pwdf = fopen(GUI_RPC_PASSWD_FILE, "r");
             if (pwdf) {
@@ -171,7 +171,7 @@ int ACCT_MGR_OP::do_rpc(
 	}
     fprintf(f, "</acct_mgr_request>\n");
     fclose(f);
-    sprintf(buf, "%srpc.php", url);
+    std::string buf = url + std::string("rpc.php");
     retval = gstate.gui_http.do_rpc_post(
         this, buf, ACCT_MGR_REQUEST_FILENAME, ACCT_MGR_REPLY_FILENAME
     );
@@ -179,7 +179,7 @@ int ACCT_MGR_OP::do_rpc(
         error_num = retval;
         return retval;
     }
-    msg_printf(NULL, MSG_INFO, "Contacting account manager at %s", url);
+    msg_printf(NULL, MSG_INFO, "Contacting account manager at %s", url.c_str());
 
     return 0;
 }

@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -33,8 +33,6 @@
 #include "str_util.h"
 #include "util.h"
 #include "client_msgs.h"
-
-using std::string;
 
 #include "acct_setup.h"
 
@@ -92,7 +90,7 @@ void ACCOUNT_IN::parse(const char* buf) {
 
 int GET_PROJECT_CONFIG_OP::do_rpc(const std::string& master_url) {
     int retval;
-    string url = master_url;
+    std::string url = master_url;
 
     canonicalize_master_url(url);
 
@@ -121,14 +119,12 @@ void GET_PROJECT_CONFIG_OP::handle_reply(int http_op_retval) {
 
 int LOOKUP_ACCOUNT_OP::do_rpc(const ACCOUNT_IN& ai) {
     int retval;
-    string url;
-    string parameter;
+    std::string url(ai.url);
+    std::string parameter(ai.email_addr);
 
-    url = ai.url;
     canonicalize_master_url(url);
 
     url += "lookup_account.php?email_addr=";
-    parameter = ai.email_addr;
     escape_url(parameter);
     url += parameter;
 
@@ -156,14 +152,12 @@ void LOOKUP_ACCOUNT_OP::handle_reply(int http_op_retval) {
 
 int CREATE_ACCOUNT_OP::do_rpc(const ACCOUNT_IN& ai) {
     int retval;
-    string url;
-    string parameter;
+    std::string url(ai.url);
+    std::string parameter(ai.email_addr);
 
-    url = ai.url;
     canonicalize_master_url(url);
 
     url += "create_account.php?email_addr=";
-    parameter = ai.email_addr;
     escape_url(parameter);
     url += parameter;
 
@@ -196,11 +190,10 @@ void CREATE_ACCOUNT_OP::handle_reply(int http_op_retval) {
 
 int GET_CURRENT_VERSION_OP::do_rpc() {
     int retval;
-    char buf[256];
 
-    sprintf(buf, "http://boinc.berkeley.edu/download.php?xml=1");
+    const std::string download_list_url("http://boinc.berkeley.edu/download.php?xml=1");
     retval = gui_http->do_rpc(
-        this, string(buf), GET_CURRENT_VERSION_FILENAME
+        this, download_list_url, GET_CURRENT_VERSION_FILENAME
     );
     if (retval) {
         error_num = retval;
@@ -259,7 +252,7 @@ void GET_CURRENT_VERSION_OP::handle_reply(int http_op_retval) {
                     msg_printf(0, MSG_USER_ERROR,
                         "Visit http://boinc.berkeley.edu/download.php to get it."
                     );
-                    gstate.newer_version = string(new_version);
+                    gstate.newer_version = std::string(new_version);
                     break;
                 }
             }
