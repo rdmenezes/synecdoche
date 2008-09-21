@@ -85,8 +85,8 @@ END
 // Version
 //
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION BOINC_MAJOR_VERSION,BOINC_MINOR_VERSION,BOINC_RELEASE,0
- PRODUCTVERSION BOINC_MAJOR_VERSION,BOINC_MINOR_VERSION,BOINC_RELEASE,0
+ FILEVERSION SYNEC_MAJOR_VERSION,SYNEC_MINOR_VERSION,SYNEC_RELEASE,0
+ PRODUCTVERSION SYNEC_MAJOR_VERSION,SYNEC_MINOR_VERSION,SYNEC_RELEASE,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -103,12 +103,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Synecdoche"
             VALUE "FileDescription", "Synecdoche Screensaver"
-            VALUE "FileVersion", BOINC_VERSION_STRING "\0"
+            VALUE "FileVersion", SYNEC_VERSION_STRING "\0"
             VALUE "InternalName", "synecdoche"
             VALUE "LegalCopyright", "© 2008 Synecdoche contributors"
             VALUE "OriginalFilename", "synecdoche.scr"
             VALUE "ProductName", "Synecdoche"
-            VALUE "ProductVersion", BOINC_VERSION_STRING "\0"
+            VALUE "ProductVersion", SYNEC_VERSION_STRING "\0"
         END
     END
     BLOCK "VarFileInfo"

@@ -99,9 +99,9 @@ static void handle_exchange_versions(MIOFILE& fout) {
         "   <minor>%d</minor>\n"
         "   <release>%d</release>\n"
         "</server_version>\n",
-        BOINC_MAJOR_VERSION,
-        BOINC_MINOR_VERSION,
-        BOINC_RELEASE
+        SYNEC_MAJOR_VERSION,
+        SYNEC_MINOR_VERSION,
+        SYNEC_RELEASE
     );
 }
 
