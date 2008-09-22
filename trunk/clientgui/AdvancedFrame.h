@@ -63,8 +63,6 @@ public:
     void Onread_prefs( wxCommandEvent& event );
     void Onread_config( wxCommandEvent& event );
 
-    void OnHelp( wxHelpEvent& event );
-    void OnHelpBOINC( wxCommandEvent& event );
     void OnHelpAbout( wxCommandEvent& event );
 
     void OnShow( wxShowEvent& event );

@@ -17,6 +17,7 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdwx.h"
+#include "version.h"
 #include "diagnostics.h"
 #include "util.h"
 #include "mfile.h"
@@ -286,7 +287,7 @@ void CBOINCBaseFrame::OnCloseWindow(wxCommandEvent& WXUNUSED(event)) {
 
 
 void CBOINCBaseFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnExit - Function Begin"));
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnExit - Function Begin"));
 
     if (wxGetApp().ConfirmExit()) {
         // Under wxWidgets 2.8.0, the task bar icons must be deleted for app to exit its main loop
@@ -306,7 +307,36 @@ void CBOINCBaseFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
         Close(true);
 
     }
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnExit - Function End"));
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnExit - Function End"));
+}
+
+
+void CBOINCBaseFrame::OnHelp(wxHelpEvent& event) {
+    OnHelp(static_cast<wxEvent&>(event));
+}
+
+
+void CBOINCBaseFrame::OnHelp(wxCommandEvent& event) {
+    OnHelp(static_cast<wxEvent&>(event));
+}
+
+
+void CBOINCBaseFrame::OnHelp(wxEvent& event) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnHelp - Function Begin"));
+
+    if (IsShown()) {
+        CSkinAdvanced* skin = wxGetApp().GetSkinManager()->GetAdvanced();
+        if (event.GetId() == ID_HELPBOINCWEBSITE) {
+            HyperLink::ExecuteLink(skin->GetOrganizationWebsite());
+        } else {
+            wxString url = skin->GetOrganizationHelpUrl();
+
+            url << wxT("?version=") << wxT(SYNEC_VERSION_STRING);
+            HyperLink::ExecuteLink(url);
+        }
+    }
+
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnHelp - Function End"));
 }
 
 
@@ -558,7 +588,7 @@ void CBOINCBaseFrame::ShowAlert( const wxString title, const wxString message, c
     AddPendingEvent(event);
 }
 
-
+/// \deprecated
 void CBOINCBaseFrame::ExecuteBrowserLink(const wxString &strLink) {
     HyperLink::ExecuteLink(strLink);
 }

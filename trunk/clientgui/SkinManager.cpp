@@ -1010,21 +1010,21 @@ bool CSkinAdvanced::InitializeDelayedValidation() {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Organization name was not defined. Using default.\n");
         }
-        m_strOrganizationName = wxT("Space Sciences Laboratory, U.C. Berkeley");
+        m_strOrganizationName = wxT("Synecdoche");
         wxASSERT(!m_strOrganizationName.IsEmpty());
     }
     if (m_strOrganizationWebsite.IsEmpty()) {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Organization web site was not defined. Using default.\n");
         }
-        m_strOrganizationWebsite = wxT("http://boinc.berkeley.edu");
+        m_strOrganizationWebsite = wxT("http://synecdoche.googlecode.com/");
         wxASSERT(!m_strOrganizationWebsite.IsEmpty());
     }
     if (m_strOrganizationHelpUrl.IsEmpty()) {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Organization help url was not defined. Using default.\n");
         }
-        m_strOrganizationHelpUrl = wxT("http://boinc.berkeley.edu/manager_links.php");
+        m_strOrganizationHelpUrl = wxT("http://groups.google.com/group/synecdoche");
         wxASSERT(!m_strOrganizationHelpUrl.IsEmpty());
     }
     if (!m_bDefaultTabSpecified) {
