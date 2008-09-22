@@ -2475,8 +2475,13 @@ extern int QBTCreateThreadStateSelf(
         flavor = PPC_THREAD_STATE;
         state = (ppc_thread_state_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
+#ifdef __DARWIN_UNIX03
+            state->__srr0 = (uintptr_t) pc;
+            state->__r1   = (uintptr_t) fp;
+#else
             state->srr0 = (uintptr_t) pc;
             state->r1   = (uintptr_t) fp;
+#endif
         }
     #elif TARGET_CPU_PPC64
         ppc_thread_state64_t *  state;
@@ -2484,8 +2489,13 @@ extern int QBTCreateThreadStateSelf(
         flavor = PPC_THREAD_STATE64;
         state = (ppc_thread_state64_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
+#ifdef __DARWIN_UNIX03
+            state->__srr0 = (uintptr_t) pc;
+            state->__r1   = (uintptr_t) fp;
+#else
             state->srr0 = (uintptr_t) pc;
-            state->r1    = (uintptr_t) fp;
+            state->r1   = (uintptr_t) fp;
+#endif
         }
     #elif TARGET_CPU_X86
         x86_thread_state32_t *  state;
