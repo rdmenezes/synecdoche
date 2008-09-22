@@ -389,8 +389,7 @@ void CProjectsComponent::UpdateDisplayedProjects() {
 void CProjectsComponent::OnHelp(wxCommandEvent& /*event*/) {
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectsComponent::OnHelp - Function Begin"));
 
-    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite();
-    url.append(wxT("/manager_links.php?target=simple"));
+    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
 
     HyperLink::ExecuteLink(url);
 

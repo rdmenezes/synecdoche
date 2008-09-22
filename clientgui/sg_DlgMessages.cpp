@@ -451,12 +451,10 @@ void CPanelMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
  * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_SIMPLE_HELP
  */
 
-void CPanelMessages::OnButtonHelp( wxCommandEvent& event ) {
+void CPanelMessages::OnButtonHelp(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CPanelMessages::OnHelp - Function Begin"));
 
     wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
-
-    url << wxT("?target=simple_messages&version=") << wxT(BOINC_VERSION_STRING) << wxT("&controlid=") << event.GetId();
     HyperLink::ExecuteLink(url);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CPanelMessages::OnHelp - Function End"));
@@ -835,13 +833,12 @@ void CDlgMessages::OnShow(wxShowEvent& event) {
  * wxEVT_HELP event handler for ID_DLGMESSAGES
  */
 
-void CDlgMessages::OnHelp(wxHelpEvent& event) {
+void CDlgMessages::OnHelp(wxHelpEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgMessages::OnHelp - Function Begin"));
 
     if (IsShown()) {
-        wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite();
+        wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
 
-        url << wxT("/manager_links.php?target=simple_messages&controlid=") << event.GetId();
         HyperLink::ExecuteLink(url);
     }
 

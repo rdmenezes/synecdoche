@@ -553,8 +553,7 @@ void CPanelPreferences::OnConnectBetweenBeginSelected( wxCommandEvent& /*event*/
 void CPanelPreferences::OnButtonHelp( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CPanelPreferences::OnHelp - Function Begin"));
 
-    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite();
-    url.append(wxT("/manager_links.php?target=simple"));
+    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
 
     HyperLink::ExecuteLink(url);
 
@@ -1048,13 +1047,11 @@ bool CDlgPreferences::Create( wxWindow* parent, wxWindowID id, const wxString& c
  * wxEVT_HELP event handler for ID_DLGPREFERENCES
  */
 
-void CDlgPreferences::OnHelp(wxHelpEvent& event) {
+void CDlgPreferences::OnHelp(wxHelpEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgPreferences::OnHelp - Function Begin"));
 
     if (IsShown()) {
         wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
-
-        url << wxT("?target=simple_preferences&version=") << wxT(BOINC_VERSION_STRING) << wxT("&controlid=") << event.GetId();
         HyperLink::ExecuteLink(url);
     }
 
