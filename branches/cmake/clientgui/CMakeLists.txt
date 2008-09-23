@@ -16,14 +16,19 @@
 # License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 
-FIND_PACKAGE(wxWidgets)
+FIND_PACKAGE(wxWidgets COMPONENTS base core adv net)
 
 INCLUDE_DIRECTORIES(${wxWidgets_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
 ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${wxWidgets_CXX_FLAGS}")
 
-ADD_EXECUTABLE(synecmgr
+IF(WIN32)
+	SET(PLATFORM_GUI_SOURCES msw/taskbarex.cpp)
+ENDIF(WIN32)
+
+ADD_EXECUTABLE(synecmgr WIN32
+# {{{ source list
 	AccountInfoPage.cpp
 	AccountKeyPage.cpp
 	AccountManagerInfoPage.cpp
@@ -93,7 +98,14 @@ ADD_EXECUTABLE(synecmgr
 
 	common/wxPieCtrl.cpp
 	common/wxFlatNotebook.cpp
+
+	${PLATFORM_GUI_SOURCES}
+# }}}
 )
 TARGET_LINK_LIBRARIES(synecmgr boinc)
 TARGET_LINK_LIBRARIES(synecmgr ${wxWidgets_LIBRARIES})
 
+IF(WIN32)
+	TARGET_LINK_LIBRARIES(synecmgr clientlib)
+	TARGET_LINK_LIBRARIES(synecmgr wininet.lib)
+ENDIF(WIN32)

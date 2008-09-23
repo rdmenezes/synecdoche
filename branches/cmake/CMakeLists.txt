@@ -134,3 +134,6 @@ INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/config.h.cmakein ${CMAKE_BINARY_DIR}/config.h)
 
 SUBDIRS(lib api client clientgui)
+IF(WIN32)
+	SUBDIRS(clientlib)
+ENDIF(WIN32)
