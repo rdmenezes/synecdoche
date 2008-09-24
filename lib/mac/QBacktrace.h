@@ -128,6 +128,13 @@ First checked in.
 #include "QTaskMemory.h"
 #include "QSymbols.h"
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1050
+# define __UNIX03_SYMBOLS
+#else
+# undef __UNIX03_SYMBOLS
+#endif
+
+
 /////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus

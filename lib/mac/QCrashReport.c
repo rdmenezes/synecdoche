@@ -869,7 +869,7 @@ Thread 0 crashed with PPC Thread State:
    r28: 0x0188d650  r29: 0x01be92d8  r30: 0xbffff900  r31: 0x01be92e0
 */
         fprintf(f, "%s crashed with PPC Thread State:\n", threadID);
-#if !defined(__LP64__) && !defined(__DARWIN_UNIX03)
+#if !defined(__LP64__) && !defined(__UNIX03_SYMBOLS)
         fprintf(f, "  srr0: 0x%08x srr1: 0x%08x                vrsave: 0x%08x\n", state->srr0, state->srr1, state->vrsave);
         fprintf(f, "   xer: 0x%08x   lr: 0x%08x  ctr: 0x%08x   mq: 0x%08x\n", state->xer, state->lr, state->ctr, state->mq);
 
@@ -933,7 +933,7 @@ Thread 0 crashed with PPC Thread State 64:
 */
 
         fprintf(f, "%s crashed with PPC Thread State:\n", threadID);
-#if !defined(__LP64__) && !defined(__DARWIN_UNIX03)
+#if !defined(__LP64__) && !defined(__UNIX03_SYMBOLS)
         fprintf(f, "  srr0: 0x%016llx srr1: 0x%016llx                        vrsave: 0x%016x\n", state->srr0, state->srr1, state->vrsave);
         fprintf(f, "    cr: 0x%08x          xer: 0x%016llx   lr: 0x%016llx  ctr: 0x%016llx\n", state->cr, state->xer, state->lr, state->ctr);
 
@@ -997,7 +997,7 @@ Thread 0 crashed with X86 Thread State (32-bit):
    ds: 0x0000001f     es: 0x0000001f  fs: 0x00000000  gs: 0x00000037
 */
         fprintf(f, "%s crashed with X86 Thread State (32-bit):\n", threadID);
-#if !defined(__LP64__) && !defined(__DARWIN_UNIX03)
+#if !defined(__LP64__) && !defined(__UNIX03_SYMBOLS)
         regBase = (const unsigned int *) &state->eax;
 #else
         regBase = (const unsigned int *) &state->__eax;
@@ -1053,7 +1053,7 @@ Unknown thread crashed with X86 Thread State (64-bit):
   rip: 0x000000010000f1fe  rfl: 0x0000000000010202
 */
         fprintf(f, "%s crashed with X86 Thread State (64-bit):\n", threadID);
-#if !defined(__LP64__) && !defined(__DARWIN_UNIX03)
+#if !defined(__LP64__) && !defined(__UNIX03_SYMBOLS)
         regBase = (const unsigned long long *) &state->rax;
 #else
         regBase = (const unsigned long long *) &state->__rax;
