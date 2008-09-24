@@ -18,20 +18,17 @@
 #ifndef _DLGOPTIONS_H_
 #define _DLGOPTIONS_H_
 
-/*!
- * Includes
- */
+#include <wx/dialog.h>
+#include <wx/notebook.h>
 
-////@begin includes
-#include "wx/notebook.h"
-////@end includes
-
-/*!
- * Forward declarations
- */
-
-////@begin forward declarations
-////@end forward declarations
+class wxButton;
+class wxCheckBox;
+class wxComboBox;
+class wxListBox;
+class wxSlider;
+class wxStaticBoxSizer;
+class wxStaticText;
+class wxTextCtrl;
 
 /*!
  * Control identifiers

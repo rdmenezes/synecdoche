@@ -23,7 +23,11 @@
 #ifndef _DLGSELECTCOMPUTER_H_
 #define _DLGSELECTCOMPUTER_H_
 
-#include "wx/valgen.h"
+#include <wx/dialog.h>
+#include <wx/valgen.h>
+
+class wxComboBox;
+class wxTextCtrl;
 
 #define SYMBOL_CDLGSELECTCOMPUTER_STYLE wxDEFAULT_DIALOG_STYLE
 #define SYMBOL_CDLGSELECTCOMPUTER_TITLE wxT("")

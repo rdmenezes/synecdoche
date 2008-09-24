@@ -16,16 +16,10 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "stdwx.h"
-#include "BOINCGUIApp.h"
-
-////@begin includes
-////@end includes
-
 #include "DlgGenericMessage.h"
 
-////@begin XPM images
-////@end XPM images
+#include "stdwx.h"
+#include "BOINCGUIApp.h"
 
 /*!
  * CDlgGenericMessage type definition
