@@ -25,6 +25,14 @@ ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
 
 IF(WIN32)
 	SET(PLATFORM_GUI_SOURCES msw/taskbarex.cpp)
+ELSE(APPLE)
+	SET(PLATFORM_GUI_SOURCES mac/browser_safari.mm
+	mac/Mac_GUI.cpp
+	mac/MacSysMenu.cpp
+	mac/SecurityUtility.cpp
+	mac/SetupSecurity.cpp
+	mac/SetVersion.C
+	mac/SystemMenu.m)
 ENDIF(WIN32)
 
 ADD_EXECUTABLE(synecmgr WIN32
