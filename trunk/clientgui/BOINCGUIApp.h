@@ -20,6 +20,7 @@
 
 #include <wx/app.h>
 #include <wx/string.h>
+#include <wx/config.h> // can't forward declare wxConfig because of #defines
 
 #if defined(_WIN32) && !defined(__CYGWIN32__)
 // Visual Studio 2005 has extended the C Run-Time Library by including "secure"
@@ -53,7 +54,6 @@
 
 class wxLogBOINC;
 class wxCmdLineParser;
-class wxConfig;
 class wxLocale;
 class CBOINCBaseFrame;
 class CMainDocument;

@@ -18,6 +18,7 @@
 #ifndef _BOINCCLIENTMANAGER_H_
 #define _BOINCCLIENTMANAGER_H_
 
+#include <wx/object.h>
 
 class CBOINCClientManager : public wxObject
 {

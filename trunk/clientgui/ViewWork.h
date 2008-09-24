@@ -19,6 +19,8 @@
 #ifndef _VIEWWORK_H_
 #define _VIEWWORK_H_
 
+#include <wx/object.h>
+#include <wx/dialog.h>
 
 #include "TaskViewBase.h"
 
