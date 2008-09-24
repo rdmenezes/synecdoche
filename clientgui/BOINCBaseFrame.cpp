@@ -311,12 +311,12 @@ void CBOINCBaseFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
 }
 
 
-void CBOINCBaseFrame::OnHelp(wxHelpEvent& event) {
+void CBOINCBaseFrame::OnHelpH(wxHelpEvent& event) {
     OnHelp(static_cast<wxEvent&>(event));
 }
 
 
-void CBOINCBaseFrame::OnHelp(wxCommandEvent& event) {
+void CBOINCBaseFrame::OnHelpC(wxCommandEvent& event) {
     OnHelp(static_cast<wxEvent&>(event));
 }
 

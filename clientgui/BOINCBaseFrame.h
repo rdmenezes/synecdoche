@@ -60,8 +60,8 @@ public:
     virtual void        OnCloseWindow( wxCommandEvent& event );
     virtual void        OnExit( wxCommandEvent& event );
 
-    void                OnHelp(wxHelpEvent& event);
-    void                OnHelp(wxCommandEvent& event);
+    void                OnHelpH(wxHelpEvent& event);
+    void                OnHelpC(wxCommandEvent& event);
     void                OnHelp(wxEvent& event);
 
     int                 GetReminderFrequency() { return m_iReminderFrequency; }
