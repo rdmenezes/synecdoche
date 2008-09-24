@@ -20,13 +20,13 @@
 /// \file
 /// Class implementing the dialog for selecting a different computer in the Manager.
 
+#include "DlgSelectComputer.h"
+
 #include "stdwx.h"
 #include "LogBOINC.h"
 #include "BOINCGUIApp.h"
 #include "MainDocument.h"
 #include "SkinManager.h"
-
-#include "DlgSelectComputer.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CDlgSelectComputer, wxDialog)
 

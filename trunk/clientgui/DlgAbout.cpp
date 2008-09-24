@@ -16,12 +16,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+#include "DlgAbout.h"
+
 #include "stdwx.h"
 #include <wx/hyperlink.h>
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
-
-#include "DlgAbout.h"
 
 #ifdef __WXMSW__
 #include "version.h"
