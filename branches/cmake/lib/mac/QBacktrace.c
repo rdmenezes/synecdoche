@@ -1034,7 +1034,7 @@ static int PowerPCHandleLeaf(QBTContext *context, QTMAddr *pcPtr, QTMAddr *frame
 	// Get the pc and lr from the thread state.
 	
     err = 0;
-#ifdef __DARWIN_UNIX03
+#ifdef __UNIX03_SYMBOLS
     switch (context->threadStateFlavor) {
         case PPC_THREAD_STATE:
             pc = ((const ppc_thread_state_t *) context->threadState)->__srr0;
@@ -1589,7 +1589,7 @@ static int IntelHandleLeaf(QBTContext *context, QTMAddr *pcPtr, QTMAddr *framePt
 	
     err = 0;
     switch (context->threadStateFlavor) {
-#if defined(__LP64__) || defined(__DARWIN_UNIX03)
+#if defined(__LP64__) || defined(__UNIX03_SYMBOLS)
         case x86_THREAD_STATE64:
 
             pc = ((const x86_thread_state64_t *) context->threadState)->__rip;
@@ -2475,7 +2475,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = PPC_THREAD_STATE;
         state = (ppc_thread_state_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#ifdef __DARWIN_UNIX03
+#ifdef __UNIX03_SYMBOLS
             state->__srr0 = (uintptr_t) pc;
             state->__r1   = (uintptr_t) fp;
 #else
@@ -2489,7 +2489,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = PPC_THREAD_STATE64;
         state = (ppc_thread_state64_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#ifdef __DARWIN_UNIX03
+#ifdef __UNIX03_SYMBOLS
             state->__srr0 = (uintptr_t) pc;
             state->__r1   = (uintptr_t) fp;
 #else
@@ -2503,7 +2503,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = x86_THREAD_STATE32;
         state = (x86_thread_state32_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#ifdef __DARWIN_UNIX03
+#ifdef __UNIX03_SYMBOLS
             state->__eip = (uintptr_t) pc;
             state->__ebp = (uintptr_t) fp;
 #else
@@ -2517,7 +2517,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = x86_THREAD_STATE64;
         state = (x86_thread_state64_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#if defined(__LP64__) || defined(__DARWIN_UNIX03)
+#if defined(__LP64__) || defined(__UNIX03_SYMBOLS)
             state->__rip = (uintptr_t) pc;
             state->__rbp = (uintptr_t) fp;
 #else
