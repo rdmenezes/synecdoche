@@ -20,6 +20,8 @@
 #include "mac/MacGUI.pch"
 #endif
 
+#include "AdvancedFrame.h"
+
 #include "stdwx.h"
 #include "version.h"
 #include "diagnostics.h"
@@ -35,7 +37,6 @@
 #include "BOINCBaseView.h"
 #include "BOINCTaskBar.h"
 #include "BOINCDialupManager.h"
-#include "AdvancedFrame.h"
 #include "ViewProjects.h"
 #include "ViewWork.h"
 #include "ViewTransfers.h"

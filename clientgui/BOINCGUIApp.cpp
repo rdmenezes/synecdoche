@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "BOINCGUIApp.h"
+
 #ifdef __WXMAC__
 #include <Carbon/Carbon.h>
 #include "filesys.h"
@@ -43,7 +45,6 @@
 #include "AdvancedFrame.h"
 #include "sg_BoincSimpleGUI.h"
 #include "DlgGenericMessage.h"
-#include "BOINCGUIApp.h"
 
 static bool s_bSkipExitConfirmation = false;
 

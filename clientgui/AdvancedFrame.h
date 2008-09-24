@@ -23,6 +23,8 @@
 #include <wx/statusbr.h>
 #include "BOINCBaseFrame.h"
 
+class CC_STATUS;
+
 class wxMenuBar;
 class wxNotebook;
 class wxNotebookEvent;

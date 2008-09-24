@@ -18,6 +18,8 @@
 
 #include "stdwx.h"
 
+#include "MainDocument.h"
+
 #include "error_numbers.h"
 #include "util.h"
 #ifdef _WIN32
@@ -26,7 +28,6 @@
 
 #include "BOINCGUIApp.h"
 #include "BOINCBaseFrame.h"
-#include "MainDocument.h"
 #include "BOINCClientManager.h"
 
 #ifndef _WIN32

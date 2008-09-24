@@ -16,13 +16,16 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+#include "ProjectListCtrl.h"
+
 #include <wx/sizer.h>
 #include <wx/settings.h>
 #include <wx/statbmp.h>
 #include <wx/log.h>
+
 #include "BOINCGUIApp.h"
 #include "hyperlink.h"
-#include "ProjectListCtrl.h"
 
 #include "res/externalweblink.xpm"
 

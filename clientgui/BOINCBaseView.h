@@ -19,10 +19,19 @@
 #ifndef _BOINCBASEVIEW_H_
 #define _BOINCBASEVIEW_H_
 
+#include <wx/panel.h>
+
 #define DEFAULT_TASK_FLAGS             wxTAB_TRAVERSAL | wxADJUST_MINSIZE
 #define DEFAULT_LIST_SINGLE_SEL_FLAGS  wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL
 #define DEFAULT_LIST_MULTI_SEL_FLAGS   wxLC_REPORT | wxLC_VIRTUAL
 
+class wxNotebook;
+class wxConfigBase;
+class wxListEvent;
+class wxTimerEvent;
+class wxListItemAttr;
+class wxGridEvent;
+class wxGridRangeSelectEvent;
 
 class CBOINCListCtrl;
 

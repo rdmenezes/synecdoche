@@ -19,8 +19,18 @@
 #ifndef _VIEWSTATISTICS_H_
 #define _VIEWSTATISTICS_H_
 
+#include <vector>
+#include <set>
+
+#include <wx/window.h>
+#include <wx/bitmap.h>
 
 #include "TaskViewBase.h"
+
+class PROJECT;
+class PROJECTS;
+
+class CMainDocument;
 
 class CPaintStatistics : public wxWindow
 {
