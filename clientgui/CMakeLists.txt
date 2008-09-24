@@ -15,24 +15,24 @@
 # You should have received a copy of the GNU Lesser General Public
 # License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-
 FIND_PACKAGE(wxWidgets COMPONENTS base core adv net)
 
 INCLUDE_DIRECTORIES(${wxWidgets_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
 ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${wxWidgets_CXX_FLAGS}")
 
 IF(WIN32)
 	SET(PLATFORM_GUI_SOURCES msw/taskbarex.cpp)
-ELSE(APPLE)
-	SET(PLATFORM_GUI_SOURCES mac/browser_safari.mm
-	mac/Mac_GUI.cpp
-	mac/MacSysMenu.cpp
-	mac/SecurityUtility.cpp
-	mac/SetupSecurity.cpp
-	mac/SetVersion.C
-	mac/SystemMenu.m)
+ELSEIF(APPLE)
+	SET(PLATFORM_GUI_SOURCES
+		mac/browser_safari.mm
+		mac/Mac_GUI.cpp
+		mac/MacSysMenu.cpp
+		mac/SecurityUtility.cpp
+		mac/SetupSecurity.cpp
+		mac/SetVersion.C
+		mac/SystemMenu.m
+	)
 ENDIF(WIN32)
 
 ADD_EXECUTABLE(synecmgr WIN32
