@@ -17,6 +17,8 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "ProjectInfoPage.h"
+
 #include <algorithm>
 #include <wx/wizard.h>
 #include <wx/sizer.h>
@@ -29,7 +31,6 @@
 #include "ValidateURL.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "ProjectInfoPage.h"
 #include "ProjectListCtrl.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CProjectInfoPage, wxWizardPage)

@@ -17,6 +17,8 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "ProjectProcessingPage.h"
+
 #include <wx/wizard.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -28,7 +30,6 @@
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
-#include "ProjectProcessingPage.h"
 #include "ProjectInfoPage.h"
 #include "AccountKeyPage.h"
 #include "AccountInfoPage.h"
