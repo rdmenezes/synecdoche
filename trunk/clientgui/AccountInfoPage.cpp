@@ -34,6 +34,7 @@
 #include "WizardAccountManager.h"
 #include "ProjectInfoPage.h"
 #include "AccountManagerInfoPage.h"
+#include "gui_rpc_client.h"
 #include "AccountInfoPage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CAccountInfoPage, wxWizardPage)

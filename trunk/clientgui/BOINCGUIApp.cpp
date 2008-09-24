@@ -26,27 +26,24 @@
 #include "sandbox.h"
 #endif
 
-#include "stdwx.h"
-#include "diagnostics.h"
-#include "network.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "Events.h"
-#include "common/wxFlatNotebook.h"
-#include "LogBOINC.h"
-#include "BOINCGUIApp.h"
-#include "SkinManager.h"
-#include "MainDocument.h"
-#include "BOINCClientManager.h"
+// For some obscure reason BOINCTaskBar.h needs to be included before any wx-header.
 #include "BOINCTaskBar.h"
+#include <wx/app.h>
+#include <wx/image.h>
+#include <wx/config.h>
+#include <wx/cshelp.h>
+#include <wx/cmdline.h>
+#include "diagnostics.h"
+#include "common/wxFlatNotebook.h"
+#include "MainDocument.h"
+#include "LogBOINC.h"
+#include "SkinManager.h"
+#include "BOINCClientManager.h"
 #include "BOINCBaseFrame.h"
 #include "AdvancedFrame.h"
-#include "sg_ImageLoader.h"
-#include "sg_StatImageLoader.h"
 #include "sg_BoincSimpleGUI.h"
 #include "DlgGenericMessage.h"
+#include "BOINCGUIApp.h"
 
 static bool s_bSkipExitConfirmation = false;
 
