@@ -17,6 +17,8 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "CompletionErrorPage.h"
+
 #include <wx/wizard.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -25,7 +27,6 @@
 #include "SkinManager.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "CompletionErrorPage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CCompletionErrorPage, wxWizardPage)
 

@@ -17,6 +17,8 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "AccountManagerProcessingPage.h"
+
 #include <wx/wizard.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -28,7 +30,6 @@
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAccountManager.h"
-#include "AccountManagerProcessingPage.h"
 #include "AccountManagerInfoPage.h"
 #include "AccountInfoPage.h"
 #include "CompletionErrorPage.h"

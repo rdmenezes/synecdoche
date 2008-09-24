@@ -17,6 +17,8 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "AccountInfoPage.h"
+
 #include <wx/wizard.h>
 #include <wx/valgen.h>
 #include <wx/valtext.h>
@@ -35,7 +37,6 @@
 #include "ProjectInfoPage.h"
 #include "AccountManagerInfoPage.h"
 #include "gui_rpc_client.h"
-#include "AccountInfoPage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CAccountInfoPage, wxWizardPage)
 

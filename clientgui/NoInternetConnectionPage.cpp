@@ -17,6 +17,8 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "NoInternetConnectionPage.h"
+
 #include <wx/wizard.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -24,7 +26,6 @@
 #include "SkinManager.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "NoInternetConnectionPage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CErrNoInternetConnectionPage, wxWizardPage)
 

@@ -17,6 +17,8 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "AccountManagerInfoPage.h"
+
 #include <wx/wizard.h>
 #include <wx/sizer.h>
 #include <wx/hyperlink.h>
@@ -27,7 +29,6 @@
 #include "ValidateURL.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "AccountManagerInfoPage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CAccountManagerInfoPage, wxWizardPage)
 
