@@ -51,12 +51,12 @@ BEGIN_EVENT_TABLE(CSimpleFrame, CBOINCBaseFrame)
     EVT_SIZE(CSimpleFrame::OnSize)
     EVT_MENU(wxID_EXIT, CSimpleFrame::OnExit)
     EVT_FRAME_CONNECT(CSimpleFrame::OnConnect)
-    EVT_HELP(wxID_ANY, CBOINCBaseFrame::OnHelpH)
+    EVT_HELP(wxID_ANY, CBOINCBaseFrame::OnContextHelp)
     EVT_FRAME_RELOADSKIN(CSimpleFrame::OnReloadSkin)
     // We can't eliminate the Mac Help menu, so we might as well make it useful.
-    EVT_MENU(ID_HELPBOINC, CBOINCBaseFrame::OnHelpC)
-    EVT_MENU(ID_HELPBOINCMANAGER, CBOINCBaseFrame::OnHelpC)
-    EVT_MENU(ID_HELPBOINCWEBSITE, CBOINCBaseFrame::OnHelpC)
+    EVT_MENU(ID_HELPBOINC, CBOINCBaseFrame::OnHelp)
+    EVT_MENU(ID_HELPBOINCMANAGER, CBOINCBaseFrame::OnHelp)
+    EVT_MENU(ID_HELPBOINCWEBSITE, CBOINCBaseFrame::OnHelp)
 END_EVENT_TABLE()
 
 CSimpleFrame::CSimpleFrame() {
