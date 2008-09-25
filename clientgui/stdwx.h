@@ -107,6 +107,9 @@
 #include <wx/sysopt.h>
 #include <wx/cshelp.h>
 #include <wx/grid.h>
+#include <wx/button.h>
+#include <wx/valgen.h>
+#include <wx/valtext.h>
 
 #if wxCHECK_VERSION(2,8,0)
 #include <wx/imaglist.h>

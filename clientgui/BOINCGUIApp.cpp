@@ -28,18 +28,14 @@
 #include "sandbox.h"
 #endif
 
-// For some obscure reason BOINCTaskBar.h needs to be included before any wx-header.
-#include "BOINCTaskBar.h"
+#include "stdwx.h"
 #include <wx/app.h>
-#include <wx/image.h>
-#include <wx/config.h>
-#include <wx/cshelp.h>
-#include <wx/cmdline.h>
 #include "diagnostics.h"
 #include "common/wxFlatNotebook.h"
 #include "MainDocument.h"
 #include "LogBOINC.h"
 #include "SkinManager.h"
+#include "BOINCTaskBar.h"
 #include "BOINCClientManager.h"
 #include "BOINCBaseFrame.h"
 #include "AdvancedFrame.h"

@@ -22,29 +22,6 @@
 #include <wx/string.h>
 #include <wx/config.h> // can't forward declare wxConfig because of #defines
 
-#if defined(_WIN32) && !defined(__CYGWIN32__)
-// Visual Studio 2005 has extended the C Run-Time Library by including "secure"
-// runtime functions and deprecating the previous function prototypes.  Since
-// we need to use the previous prototypes to maintain compatibility with other
-// platforms we are going to disable the deprecation warnings if we are compiling
-// on Visual Studio 2005
-#if _MSC_VER >= 1400
-#ifndef _CRT_SECURE_NO_DEPRECATE
-#define _CRT_SECURE_NO_DEPRECATE
-#endif
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN     // This trims down the windows libraries.
-#endif
-
-#ifndef WIN32_EXTRA_LEAN
-#define WIN32_EXTRA_LEAN        // Trims even farther.
-#endif
-
-#include <windows.h>
-#endif
-
 #ifdef __WXMAC__
 #include "mac/MacSysMenu.h"     // Must be included before MainDocument.h
 #endif

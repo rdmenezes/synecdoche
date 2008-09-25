@@ -1,6 +1,5 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -18,11 +17,7 @@
 //
 
 #include "ProjectListCtrl.h"
-
-#include <wx/sizer.h>
-#include <wx/settings.h>
-#include <wx/statbmp.h>
-#include <wx/log.h>
+#include "stdwx.h"
 
 #include "BOINCGUIApp.h"
 #include "hyperlink.h"
