@@ -18,7 +18,7 @@
 //
 
 #include "AccountInfoPage.h"
-
+#include "stdwx.h"
 #include <wx/wizard.h>
 #include <wx/valgen.h>
 #include <wx/valtext.h>

@@ -12,8 +12,6 @@
 #ifndef WXFLATNOTEBOOK_H
 #define WXFLATNOTEBOOK_H
 
-#include <wx/dcbuffer.h>
-#include <vector>
 
 #include "common/wxFNBDropTarget.h"
 
