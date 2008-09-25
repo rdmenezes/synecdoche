@@ -500,7 +500,8 @@ struct ACCOUNT_OUT {
     void print() const;
 };
 
-struct CC_STATUS {
+class CC_STATUS {
+public:
     int network_status;         // values: NETWORK_STATUS_*
     bool ams_password_error;
     bool manager_must_quit;
