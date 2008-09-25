@@ -15,31 +15,34 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _CUSTOMCONTROLS_H_
-#define _CUSTOMCONTROLS_H_ 
+#ifndef CUSTOMCONTROLS_H
+#define CUSTOMCONTROLS_H
 
+#include <wx/bmpbuttn.h>
+#include <wx/panel.h>
+#include <wx/stattext.h>
 
-class CTransparentStaticLine : public wxPanel 
-{ 
+class CTransparentStaticLine : public wxPanel
+{
     DECLARE_DYNAMIC_CLASS (CTransparentStaticLine)
 
-public: 
+public:
     CTransparentStaticLine();
     CTransparentStaticLine(
-        wxWindow* parent, 
-        wxWindowID id, 
-        const wxPoint& pos = wxDefaultPosition, 
+        wxWindow* parent,
+        wxWindowID id,
+        const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = 0, 
+        long style = 0,
         const wxString& name= wxStaticTextNameStr
     );
 
     bool Create(
-        wxWindow* parent, 
-        wxWindowID id, 
-        const wxPoint& pos = wxDefaultPosition, 
+        wxWindow* parent,
+        wxWindowID id,
+        const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = 0, 
+        long style = 0,
         const wxString& name= wxStaticTextNameStr
     );
 
@@ -54,32 +57,32 @@ public:
 
 private:
     wxColour m_LineColor;
-}; 
+};
 
 
 class CTransparentStaticText : public wxStaticText
-{ 
+{
     DECLARE_DYNAMIC_CLASS (CTransparentStaticText)
 
 public:
     CTransparentStaticText();
     CTransparentStaticText(
-        wxWindow* parent, 
-        wxWindowID id, 
-        const wxString& label, 
-        const wxPoint& pos = wxDefaultPosition, 
+        wxWindow* parent,
+        wxWindowID id,
+        const wxString& label,
+        const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = 0, 
+        long style = 0,
         const wxString& name= wxStaticTextNameStr
     );
 
     bool Create(
-        wxWindow* parent, 
-        wxWindowID id, 
-        const wxString& label, 
-        const wxPoint& pos = wxDefaultPosition, 
+        wxWindow* parent,
+        wxWindowID id,
+        const wxString& label,
+        const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = 0, 
+        long style = 0,
         const wxString& name= wxStaticTextNameStr
     );
 
@@ -91,32 +94,32 @@ public:
     virtual void OnPaint(wxPaintEvent& event);
 
     DECLARE_EVENT_TABLE()
-}; 
+};
 
 
 class CTransparentStaticTextAssociate : public wxPanel
-{ 
+{
     DECLARE_DYNAMIC_CLASS (CTransparentStaticTextAssociate)
 
 public:
     CTransparentStaticTextAssociate();
     CTransparentStaticTextAssociate(
-        wxWindow* parent, 
-        wxWindowID id, 
-        const wxString& label, 
-        const wxPoint& pos = wxDefaultPosition, 
+        wxWindow* parent,
+        wxWindowID id,
+        const wxString& label,
+        const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = 0, 
+        long style = 0,
         const wxString& name= wxStaticTextNameStr
     );
 
     bool Create(
-        wxWindow* parent, 
-        wxWindowID id, 
-        const wxString& label, 
-        const wxPoint& pos = wxDefaultPosition, 
+        wxWindow* parent,
+        wxWindowID id,
+        const wxString& label,
+        const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = 0, 
+        long style = 0,
         const wxString& name= wxStaticTextNameStr
     );
 
@@ -132,33 +135,33 @@ public:
     DECLARE_EVENT_TABLE()
 private:
     wxWindow*   m_pWnd;
-}; 
+};
 
 
 class CLinkButton : public wxBitmapButton
-{ 
+{
     DECLARE_DYNAMIC_CLASS (CLinkButton)
 
 public:
     CLinkButton();
     CLinkButton(
-        wxWindow* parent, 
-        wxWindowID id, 
+        wxWindow* parent,
+        wxWindowID id,
         const wxBitmap& bitmap,
-        const wxPoint& pos = wxDefaultPosition, 
+        const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = 0, 
+        long style = 0,
         const wxValidator& validator = wxDefaultValidator,
         const wxString& name= wxButtonNameStr
     );
 
     bool Create(
-        wxWindow* parent, 
-        wxWindowID id, 
+        wxWindow* parent,
+        wxWindowID id,
         const wxBitmap& bitmap,
-        const wxPoint& pos = wxDefaultPosition, 
+        const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = 0, 
+        long style = 0,
         const wxValidator& validator = wxDefaultValidator,
         const wxString& name= wxButtonNameStr
     );
@@ -168,8 +171,8 @@ public:
     DECLARE_EVENT_TABLE()
 private:
     wxCursor m_HandCursor;
-}; 
+};
 
 
-#endif 
+#endif
 

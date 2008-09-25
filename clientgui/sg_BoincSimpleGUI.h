@@ -15,15 +15,24 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef SIMPLEFRAME_H
+#define SIMPLEFRAME_H
 
-#ifndef _SIMPLEFRAME_H_
-#define _SIMPLEFRAME_H_
+#include <wx/bitmap.h>
+#include <wx/panel.h>
 
-class CViewTabPage;
-class StatImageLoader;
-class ImageLoader;
-class CProjectsComponent;
+#include "BOINCBaseFrame.h"
+
+class wxFlexGridSizer;
+class wxTimer;
+class wxTimerEvent;
+
+class CFrameEvent;
 class ClientStateIndicator;
+class CProjectsComponent;
+class CViewTabPage;
+class ImageLoader;
+class StatImageLoader;
 class WorkunitNotebook;
 
 class CSimplePanel : public wxPanel

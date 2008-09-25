@@ -15,23 +15,26 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _IMAGELOADER_H_
-#define _IMAGELOADER_H_ 
+#ifndef IMAGELOADER_H
+#define IMAGELOADER_H
 
-class ImageLoader : public wxWindow 
-{ 
-public: 
-	    /// Constructors
-	    ImageLoader(wxWindow* parent, bool center = false); 
-        void LoadImage(wxBitmap image); 
-        void OnPaint(wxPaintEvent& event); 
-private: 
-        //static const int MaxWidth = 320; 
-        //static const int MaxHeight = 240; 
-        wxBitmap Bitmap; 
-		bool centerOnParent;
-        DECLARE_EVENT_TABLE() 
-}; 
+#include <wx/bitmap.h>
+#include <wx/window.h>
 
-#endif 
+class ImageLoader : public wxWindow
+{
+public:
+    /// Constructors
+    ImageLoader(wxWindow* parent, bool center = false);
+    void LoadImage(wxBitmap image);
+    void OnPaint(wxPaintEvent& event);
+private:
+    //static const int MaxWidth = 320;
+    //static const int MaxHeight = 240;
+    wxBitmap Bitmap;
+    bool centerOnParent;
+    DECLARE_EVENT_TABLE()
+};
+
+#endif
 

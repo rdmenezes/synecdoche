@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_DlgPreferences.h"
+
 #include "stdwx.h"
 #include "diagnostics.h"
 #include "str_util.h"
@@ -30,7 +32,6 @@
 #include "version.h"
 
 #include "sg_CustomControls.h"
-#include "sg_DlgPreferences.h"
 
 using std::string;
 

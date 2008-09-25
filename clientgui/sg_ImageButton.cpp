@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_ImageButton.h"
+
 #include "stdwx.h"
 #include "diagnostics.h"
 #include "util.h"
@@ -27,7 +29,6 @@
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
-#include "sg_ImageButton.h"
 #include "sg_ImageLoader.h"
 #include "sg_ViewTabPage.h"
 
