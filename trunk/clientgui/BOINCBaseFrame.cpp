@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "BOINCBaseFrame.h"
+
 #include "stdwx.h"
 #include "version.h"
 #include "diagnostics.h"
@@ -30,7 +32,6 @@
 #include "MainDocument.h"
 #include "BOINCClientManager.h"
 #include "BOINCTaskBar.h"
-#include "BOINCBaseFrame.h"
 #include "BOINCDialupManager.h"
 #include "Events.h"
 

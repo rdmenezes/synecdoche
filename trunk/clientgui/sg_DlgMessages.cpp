@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_DlgMessages.h"
+
 #include "stdwx.h"
 #include "common_defs.h"
 #include "diagnostics.h"
@@ -30,17 +32,7 @@
 #include "hyperlink.h"
 #include "version.h"
 
-#include "sg_DlgMessages.h"
 #include "sg_SGUIListControl.h"
-
-
-
-////@begin includes
-////@end includes
-
-////@begin XPM images
-////@end XPM images
-
 
 #define COLUMN_PROJECT              0
 #define COLUMN_TIME                 1
