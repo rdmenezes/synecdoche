@@ -312,17 +312,17 @@ void CBOINCBaseFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
 }
 
 
-void CBOINCBaseFrame::OnHelpH(wxHelpEvent& event) {
-    OnHelp(static_cast<wxEvent&>(event));
+void CBOINCBaseFrame::OnContextHelp(wxHelpEvent& event) {
+    ShowHelp(event);
 }
 
 
-void CBOINCBaseFrame::OnHelpC(wxCommandEvent& event) {
-    OnHelp(static_cast<wxEvent&>(event));
+void CBOINCBaseFrame::OnHelp(wxCommandEvent& event) {
+    ShowHelp(event);
 }
 
 
-void CBOINCBaseFrame::OnHelp(wxEvent& event) {
+void CBOINCBaseFrame::ShowHelp(wxEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnHelp - Function Begin"));
 
     if (IsShown()) {

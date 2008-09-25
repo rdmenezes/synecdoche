@@ -60,9 +60,8 @@ public:
     virtual void        OnCloseWindow( wxCommandEvent& event );
     virtual void        OnExit( wxCommandEvent& event );
 
-    void                OnHelpH(wxHelpEvent& event);
-    void                OnHelpC(wxCommandEvent& event);
-    void                OnHelp(wxEvent& event);
+    void                OnContextHelp(wxHelpEvent& event);
+    void                OnHelp(wxCommandEvent& event);
 
     int                 GetReminderFrequency() { return m_iReminderFrequency; }
     wxString            GetDialupConnectionName() { return m_strNetworkDialupConnectionName; }
@@ -114,6 +113,7 @@ protected:
 
     virtual bool        SaveState();
     virtual bool        RestoreState();
+    void                ShowHelp(wxEvent& event);
 
     DECLARE_EVENT_TABLE()
 };
