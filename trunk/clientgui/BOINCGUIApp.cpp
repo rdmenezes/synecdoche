@@ -119,12 +119,12 @@ bool CBOINCGUIApp::OnInit() {
     //
     // Determine BOINCMgr Data Directory
     //
+    /*
     LONG    lReturnValue;
     HKEY    hkSetupHive;
     LPTSTR  lpszRegistryValue = NULL;
     DWORD   dwSize = 0;
 
-    /*
     // change the current directory to the boinc data directory if it exists
     lReturnValue = RegOpenKeyEx(
         HKEY_LOCAL_MACHINE, 
