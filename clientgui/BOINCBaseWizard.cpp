@@ -149,9 +149,9 @@ void CBOINCBaseWizard::DisableBackButton() {
     GetBackButton()->Disable();
 }
 
-/// Check if account creation was successfull or not.
+/// Check if account creation was successful or not.
 ///
-/// \return True if account creation was successfull, false otherwise.
+/// \return True if account creation was successful, false otherwise.
 bool CBOINCBaseWizard::GetAccountCreatedSuccessfully() const {
     return account_created_successfully;
 }
@@ -163,7 +163,7 @@ void CBOINCBaseWizard::SetAccountCreatedSuccessfully(const bool value) {
     account_created_successfully = value;
 }
 
-/// Check if attaching to the project was successfull.
+/// Check if attaching to the project was successful.
 ///
 /// \return True if the client successfully attached to the project, false otherwise.
 bool CBOINCBaseWizard::GetAttachedToProjectSuccessfully() const {
@@ -251,7 +251,7 @@ ACCOUNT_OUT* CBOINCBaseWizard::GetAccountOut() {
 /// Normally this is done by wxWizard but the standard behaviour is to call
 /// the validators of the current page no matter which button is clicked.
 /// This means that the user has to enter valid data before he is able to
-/// click any of the two buttons. This is undesired if the user want's to
+/// click any of the two buttons. This is undesired if the user wants to
 /// go back to the previous page so this version of the event handler just
 /// skips the validation of the page's data in case the back button was clicked.
 ///
@@ -267,7 +267,7 @@ void CBOINCBaseWizard::OnBackOrNext(wxCommandEvent& event) {
     // Ask the current page first: notice that we do it before calling
     // GetNext/Prev() because the data transfered from the controls of the page
     // may change the value returned by these methods.
-    // Only do this in case of the next button. This differes from standard
+    // Only do this in case of the next button. This differs from standard
     // wxWizard behaviour!
     if (button_id == wxID_FORWARD) {
         if ((!cur_page->Validate()) || (!cur_page->TransferDataFromWindow())) {

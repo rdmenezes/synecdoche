@@ -75,7 +75,7 @@ public:
     /// Set or reset the success flag for account creation.
     void SetAccountCreatedSuccessfully(const bool value);
 
-    /// Check if attaching to the project was successfull.
+    /// Check if attaching to the project was successful.
     bool GetAttachedToProjectSuccessfully() const;
 
     /// Set or reset the success flag for project attachment.
