@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -50,70 +51,69 @@
 #endif
 
 #include <wx/wx.h>
-#include <wx/config.h>          // configuration support
-#include <wx/debug.h>           // diagnostics support
-#include <wx/log.h>             // logging support
+
 #include <wx/accel.h>           // accelerator support
-#include <wx/regex.h>           // regular expression support
-#include <wx/cmdline.h>         // command line support
-#include <wx/settings.h>        // system settings support
-#include <wx/intl.h>            // internationalization support
-#include <wx/timer.h>           // timer support
-#include <wx/filename.h>        // filesystem support
 #include <wx/bitmap.h>          // bitmap modification support
-#include <wx/toolbar.h>         // toolbars support
-#include <wx/listctrl.h>        // list control support
-#include <wx/msgdlg.h>          // messagebox dialog support
-#include <wx/panel.h>           // panel support
-#include <wx/notebook.h>        // notebook support
-#include <wx/statline.h>        // static line support
-#include <wx/statbmp.h>         // static bitmap support
-#include <wx/stattext.h>        // static text support
+#include <wx/button.h>
 #include <wx/clipbrd.h>         // clipboard support
-#include <wx/datetime.h>        // date/time support
-#include <wx/taskbar.h>         // taskbar support
-#include <wx/image.h>
-#include <wx/url.h>
-#include <wx/textdlg.h>
-#include <wx/mimetype.h>
-#include <wx/event.h>
-#include <wx/list.h>
-#include <wx/icon.h>
-#include <wx/utils.h>
-#include <wx/process.h>
-#include <wx/dynlib.h>
-#include <wx/dialup.h>
+#include <wx/cmdline.h>         // command line support
+#include <wx/colour.h>
+#include <wx/combo.h>
+#include <wx/config.h>          // configuration support
+#include <wx/control.h>
 #include <wx/cshelp.h>
-#include <wx/sizer.h>
-#include <wx/wizard.h>
-#include <wx/tooltip.h>
-#include <wx/tipwin.h>
+#include <wx/datetime.h>        // date/time support
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include <wx/dcbuffer.h>
-#include <wx/string.h>
-#include <wx/gdicmn.h>
-#include <wx/list.h>
-#include <wx/timer.h>
-#include <wx/colour.h>
-#include <wx/control.h>
-#include <wx/wfstream.h>
-#include <wx/gifdecod.h>
-#include <wx/xml/xml.h>
-#include <wx/tokenzr.h>
+#include <wx/debug.h>           // diagnostics support
+#include <wx/dialup.h>
 #include <wx/dir.h>
-#include <wx/filename.h>
-#include <wx/sysopt.h>
-#include <wx/cshelp.h>
+#include <wx/dynlib.h>
+#include <wx/event.h>
+#include <wx/filename.h>        // filesystem support
+#include <wx/gbsizer.h>
+#include <wx/gdicmn.h>
+#include <wx/gifdecod.h>
 #include <wx/grid.h>
-#include <wx/button.h>
+#include <wx/hyperlink.h>
+#include <wx/icon.h>
+#include <wx/image.h>
+#include <wx/imaglist.h>
+#include <wx/intl.h>            // internationalization support
+#include <wx/list.h>
+#include <wx/listctrl.h>        // list control support
+#include <wx/log.h>             // logging support
+#include <wx/mimetype.h>
+#include <wx/msgdlg.h>          // messagebox dialog support
+#include <wx/notebook.h>        // notebook support
+#include <wx/odcombo.h>
+#include <wx/panel.h>           // panel support
+#include <wx/process.h>
+#include <wx/regex.h>           // regular expression support
+#include <wx/settings.h>        // system settings support
+#include <wx/sizer.h>
+#include <wx/statline.h>        // static line support
+#include <wx/statbmp.h>         // static bitmap support
+#include <wx/stattext.h>        // static text support
+#include <wx/string.h>
+#include <wx/sysopt.h>
+#include <wx/taskbar.h>         // taskbar support
+#include <wx/textdlg.h>
+#include <wx/timer.h>           // timer support
+#include <wx/tipwin.h>
+#include <wx/tokenzr.h>
+#include <wx/toolbar.h>         // toolbars support
+#include <wx/tooltip.h>
+#include <wx/treectrl.h>
+#include <wx/url.h>
+#include <wx/utils.h>
 #include <wx/valgen.h>
 #include <wx/valtext.h>
-
-#if wxCHECK_VERSION(2,8,0)
-#include <wx/imaglist.h>
-#endif
+#include <wx/wfstream.h>
+#include <wx/wizard.h>
+#include <wx/xml/xml.h>
 
 #ifdef _WIN32
 
