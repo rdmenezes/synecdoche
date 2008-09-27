@@ -74,7 +74,7 @@
 #include "res/boinc32.xpm"
 #include "res/boincdisconnect.xpm"
 #include "res/boincsnooze.xpm"
-#include "res/boinc_logo.xpm"
+#include "res/synecdoche_logo.xpm"
 #include "res/wizard_bitmap.xpm"
 ////@end XPM images
 
@@ -1003,7 +1003,7 @@ bool CSkinAdvanced::InitializeDelayedValidation() {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Failed to load application logo. Using default.\n");
         }
-        m_bitmapApplicationLogo = wxBitmap((const char**)boinc_logo_xpm);
+        m_bitmapApplicationLogo = wxBitmap((const char**)synecdoche_logo_xpm);
         wxASSERT(m_bitmapApplicationLogo.Ok());
     }
     if (m_strOrganizationName.IsEmpty()) {
