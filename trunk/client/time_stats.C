@@ -191,7 +191,7 @@ void TIME_STATS::update(int suspend_reason) {
             sprintf(buf, "platform %s", gstate.get_primary_platform());
             log_append(buf, gstate.now);
 #endif
-            sprintf(buf, "version %d.%d.%d", BOINC_MAJOR_VERSION, BOINC_MINOR_VERSION, BOINC_RELEASE);
+            sprintf(buf, "version %s", SYNEC_VERSION_STRING);
             log_append(buf, gstate.now);
             log_append("power_on", gstate.now);
         } else {

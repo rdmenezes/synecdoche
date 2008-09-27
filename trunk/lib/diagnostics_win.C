@@ -1338,7 +1338,7 @@ int diagnostics_unhandled_exception_dump_banner() {
     fprintf(stderr, "\n\n");
     fprintf(stderr, "********************\n");
     fprintf(stderr, "\n\n");
-    fprintf(stderr, "Synecdoche Windows Runtime Debugger Version %s\n", BOINC_VERSION_STRING);
+    fprintf(stderr, "Synecdoche Windows Runtime Debugger Version %s\n", SYNEC_VERSION_STRING);
     fprintf(stderr, "\n\n");
     fprintf(stderr, "Dump Timestamp    : %s %s\n", szDate, szTime);
     if (diagnostics_is_flag_set(BOINC_DIAG_BOINCAPPLICATION)) {
