@@ -18,10 +18,9 @@
 //
 //#define __WIZ_DEBUG__
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/log.h>
+#include "WelcomePage.h"
+
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
@@ -29,7 +28,6 @@
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
 #include "WizardAccountManager.h"
-#include "WelcomePage.h"
  
 IMPLEMENT_DYNAMIC_CLASS(CWelcomePage, wxWizardPage)
  

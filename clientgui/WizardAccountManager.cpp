@@ -17,18 +17,16 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/msgdlg.h>
-#include <wx/log.h>
+#include "BOINCWizards.h"
+#include "WizardAccountManager.h"
+
+#include "stdwx.h"
 #include "hyperlink.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
-#include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "BOINCBaseFrame.h"
-#include "WizardAccountManager.h"
 #include "WelcomePage.h"
 #include "AccountManagerInfoPage.h"
 #include "AccountManagerPropertiesPage.h"
