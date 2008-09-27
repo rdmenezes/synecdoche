@@ -91,15 +91,18 @@
 #include <wx/odcombo.h>
 #include <wx/panel.h>           // panel support
 #include <wx/process.h>
+#include <wx/radiobut.h>
 #include <wx/regex.h>           // regular expression support
 #include <wx/settings.h>        // system settings support
 #include <wx/sizer.h>
 #include <wx/statline.h>        // static line support
 #include <wx/statbmp.h>         // static bitmap support
+#include <wx/statbox.h>
 #include <wx/stattext.h>        // static text support
 #include <wx/string.h>
 #include <wx/sysopt.h>
 #include <wx/taskbar.h>         // taskbar support
+#include <wx/textctrl.h>
 #include <wx/textdlg.h>
 #include <wx/timer.h>           // timer support
 #include <wx/tipwin.h>

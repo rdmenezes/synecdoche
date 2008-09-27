@@ -19,10 +19,7 @@
 
 #include "ProjectProcessingPage.h"
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/statbmp.h>
+#include "stdwx.h"
 #include "error_numbers.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"

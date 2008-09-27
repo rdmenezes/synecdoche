@@ -19,11 +19,7 @@
 
 #include "AccountManagerInfoPage.h"
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/hyperlink.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "ValidateURL.h"

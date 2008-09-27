@@ -19,9 +19,7 @@
 
 #include "CompletionPage.h"
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"

@@ -18,15 +18,8 @@
 //
 
 #include "AccountInfoPage.h"
+
 #include "stdwx.h"
-#include <wx/wizard.h>
-#include <wx/valgen.h>
-#include <wx/valtext.h>
-#include <wx/hyperlink.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/msgdlg.h>
-#include <wx/radiobut.h>
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "ValidateEmailAddress.h"
