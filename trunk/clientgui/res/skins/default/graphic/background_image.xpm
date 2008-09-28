@@ -1,3 +1,4 @@
+/* XPM */
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2005 University of California
@@ -17,7 +18,6 @@
 
 #ifndef BACKGROUND_IMAGE_XPM
 #define BACKGROUND_IMAGE_XPM
-/* XPM */
 static const char * background_image_xpm[] = {
 "410 540 256 2",
 "  	c #C15500",
