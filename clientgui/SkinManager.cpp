@@ -70,10 +70,10 @@
 #include "res/skins/default/graphic/preferences_link_image.xpm"
 #include "res/skins/default/graphic/advanced_link_image.xpm"
 #include "res/skins/default/graphic/dialog_background_image.xpm"
-#include "res/boinc.xpm"
-#include "res/boinc32.xpm"
-#include "res/boincdisconnect.xpm"
-#include "res/boincsnooze.xpm"
+#include "res/synecdoche16x16x8.xpm"
+#include "res/synecdoche32x32x8.xpm"
+#include "res/disconnected.xpm"
+#include "res/snooze.xpm"
 #include "res/synecdoche_logo.xpm"
 #include "res/wizard_bitmap.xpm"
 ////@end XPM images
@@ -257,6 +257,11 @@ int CSkinIcon::Parse(MIOFILE& in) {
 wxIcon* CSkinIcon::GetIcon() {
     Validate();
     return &m_icoIcon;
+}
+
+
+void CSkinIcon::SetIcon(const wxIcon& icon) {
+    m_icoIcon = icon;
 }
 
 
@@ -995,10 +1000,23 @@ bool CSkinAdvanced::InitializeDelayedValidation() {
         m_strApplicationShortName = wxT("Synecdoche");
         wxASSERT(!m_strApplicationShortName.IsEmpty());
     }
-    m_iconApplicationIcon.SetDefaults(wxT("application"), (const char**)boinc_xpm);
-    m_iconApplicationIcon32.SetDefaults(wxT("application"), (const char**)boinc32_xpm);
-    m_iconApplicationDisconnectedIcon.SetDefaults(wxT("application disconnected"), (const char**)boincdisconnect_xpm);
-    m_iconApplicationSnoozeIcon.SetDefaults(wxT("application snooze"), (const char**)boincsnooze_xpm);
+
+#ifdef __WXMSW__
+    // Use the embedded icon resource under Windows.
+    // This gives us the best quality icon automatically.
+    wxIcon icon16(wxIcon(wxT("mainicon"), wxBITMAP_TYPE_ICO_RESOURCE,
+        wxSystemSettings::GetMetric(wxSYS_SMALLICON_X),
+        wxSystemSettings::GetMetric(wxSYS_SMALLICON_Y))
+        );
+    wxIcon icon32(wxICON(mainicon));
+    m_iconApplicationIcon.SetIcon(icon16);
+    m_iconApplicationIcon32.SetIcon(icon32);
+#endif
+
+    m_iconApplicationIcon.SetDefaults(wxT("application"), (const char**)synecdoche16x16x8_xpm);
+    m_iconApplicationIcon32.SetDefaults(wxT("application"), (const char**)synecdoche32x32x8_xpm);
+    m_iconApplicationDisconnectedIcon.SetDefaults(wxT("application disconnected"), (const char**)disconnected_xpm);
+    m_iconApplicationSnoozeIcon.SetDefaults(wxT("application snooze"), (const char**)snooze_xpm);
     if (!m_bitmapApplicationLogo.Ok()) {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Failed to load application logo. Using default.\n");

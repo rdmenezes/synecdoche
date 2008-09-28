@@ -603,22 +603,6 @@
 			UniqueIdentifier="{08DB1F42-8D4B-491a-870C-2A991D5ED0DB}"
 			>
 			<File
-				RelativePath="..\clientgui\res\boinc.xpm"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\boinc32.xpm"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\boinc_logo.xpm"
-				>
-			</File>
-			<File
-				RelativePath="..\clientgui\res\boincdisconnect.xpm"
-				>
-			</File>
-			<File
 				RelativePath="..\clientgui\BOINCGUIApp.rc"
 				>
 				<FileConfiguration
@@ -639,7 +623,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\clientgui\res\boincsnooze.xpm"
+				RelativePath="..\clientgui\res\disconnected.xpm"
 				>
 			</File>
 			<File
@@ -659,7 +643,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\clientgui\res\snooze.xpm"
+				>
+			</File>
+			<File
 				RelativePath="..\clientgui\res\stats.xpm"
+				>
+			</File>
+			<File
+				RelativePath="..\clientgui\res\synecdoche16x16x8.xpm"
+				>
+			</File>
+			<File
+				RelativePath="..\clientgui\res\synecdoche32x32x8.xpm"
+				>
+			</File>
+			<File
+				RelativePath="..\clientgui\res\synecdoche_logo.xpm"
 				>
 			</File>
 			<File
