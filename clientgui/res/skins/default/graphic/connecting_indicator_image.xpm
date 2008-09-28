@@ -1,3 +1,4 @@
+/* XPM */
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2005 University of California
@@ -17,7 +18,6 @@
 
 #ifndef CONNECTING_INDICATOR_IMAGE_XPM
 #define CONNECTING_INDICATOR_IMAGE_XPM
-/* XPM */
 static const char *connecting_indicator_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "14 15 14 1",

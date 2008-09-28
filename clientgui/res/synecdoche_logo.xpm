@@ -1,3 +1,4 @@
+/* XPM */
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 David Barnard
@@ -17,7 +18,6 @@
 
 #ifndef SYNECDOCHE_LOGO_XPM
 #define SYNECDOCHE_LOGO_XPM
-/* XPM */
 static const char * synecdoche_logo_xpm[] = {
 "250 59 248 2",
 "  	c None",
