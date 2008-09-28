@@ -18,7 +18,7 @@
 #ifndef SYNECDOCHE_LOGO_XPM
 #define SYNECDOCHE_LOGO_XPM
 /* XPM */
-static char * synecdoche_logo_xpm[] = {
+static const char * synecdoche_logo_xpm[] = {
 "250 59 248 2",
 "  	c None",
 ". 	c #FF00FF",

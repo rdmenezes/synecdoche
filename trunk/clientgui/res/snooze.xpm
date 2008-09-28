@@ -1,0 +1,100 @@
+// This file is part of Synecdoche.
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
+//
+// Synecdoche is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Synecdoche is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef SNOOZE_XPM
+#define SNOOZE_XPM
+/* XPM */
+static const char * snooze_xpm[] = {
+"16 16 61 1",
+" 	c None",
+".	c #0041FF",
+"+	c #3380FF",
+"@	c #AB7D1C",
+"#	c #A28720",
+"$	c #C0802A",
+"%	c #55B72B",
+"&	c #47BA47",
+"*	c #42C22D",
+"=	c #5DB044",
+"-	c #43C22D",
+";	c #43C22E",
+">	c #45C42B",
+",	c #8F9F29",
+"'	c #68AD4C",
+")	c #4AC232",
+"!	c #A59926",
+"~	c #D08910",
+"{	c #A89A28",
+"]	c #CF8923",
+"^	c #37D240",
+"/	c #14EB22",
+"(	c #B19A2C",
+"_	c #2ADE36",
+":	c #22E52F",
+"<	c #D99215",
+"[	c #24EB31",
+"}	c #24EC32",
+"|	c #25EC32",
+"1	c #25EC33",
+"2	c #26EC33",
+"3	c #32E53A",
+"4	c #27ED33",
+"5	c #27ED34",
+"6	c #28ED35",
+"7	c #29ED36",
+"8	c #33EA3F",
+"9	c #DC9C2A",
+"0	c #DD9D2D",
+"a	c #D2A61F",
+"b	c #DF9E31",
+"c	c #80B0FF",
+"d	c #EFAC18",
+"e	c #ECB32A",
+"f	c #ECB42C",
+"g	c #ECB52E",
+"h	c #ECB632",
+"i	c #ECB634",
+"j	c #ECB63B",
+"k	c #F7BA21",
+"l	c #F8BB25",
+"m	c #FFC10B",
+"n	c #FFC20D",
+"o	c #FEC318",
+"p	c #FFC413",
+"q	c #FFC417",
+"r	c #FEC41B",
+"s	c #FFC51A",
+"t	c #FFC61D",
+"u	c #FDC72E",
+"v	c #FFC92B",
+"                ",
+"    $*          ",
+"  <@'           ",
+" <#&            ",
+" ]*             ",
+"<{*       **    ",
+"0![*      *^*   ",
+"9a>:*******/_*  ",
+"bv(32}6771|458* ",
+" ccc,%ccc**-;;)=",
+" c+.rlc+.efghij~",
+" c+.onc+.pqstu~ ",
+" c+.<~c+.~~mk~  ",
+" c+.  c+. ~d~   ",
+" c+.  c+. ~~    ",
+" c..  c..       "};
+#endif

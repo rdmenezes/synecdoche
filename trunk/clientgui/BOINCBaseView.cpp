@@ -24,8 +24,6 @@
 #include "BOINCListCtrl.h"
 #include "Events.h"
 
-#include "res/boinc.xpm"
-
 
 IMPLEMENT_DYNAMIC_CLASS(CBOINCBaseView, wxPanel)
 
@@ -78,11 +76,9 @@ wxString& CBOINCBaseView::GetViewDisplayName() {
 
 
 // The user friendly icon of the view.
-//   If it has not been defined by the view the BOINC icon is returned.
 //
 const char** CBOINCBaseView::GetViewIcon() {
-    wxASSERT(boinc_xpm);
-    return boinc_xpm;
+    return 0;
 }
 
 

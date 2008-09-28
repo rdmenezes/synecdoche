@@ -86,6 +86,7 @@ public:
     int  Parse(MIOFILE& in);
 
     wxIcon* GetIcon();
+    void SetIcon(const wxIcon& icon);
 
     bool SetDefaults(
         wxString strComponentName,
