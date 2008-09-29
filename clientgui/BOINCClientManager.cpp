@@ -156,9 +156,9 @@ bool CBOINCClientManager::StartupBOINCCore() {
         return (StartBOINCService());
     }
 
-    // Append boinc.exe to the end of the strExecute string and get ready to rock
+    // Append synecd.exe to the end of the strExecute string
     strExecute.Printf(
-        wxT("\"%s\\boinc.exe\" --redirectio --launched_by_manager %s"),
+        wxT("\"%ssynecd.exe\" --redirectio --launched_by_manager %s"),
         wxGetApp().GetRootDirectory().c_str(),
         wxGetApp().GetArguments().c_str()
     );
