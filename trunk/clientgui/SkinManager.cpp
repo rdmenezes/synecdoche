@@ -16,9 +16,7 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdwx.h"
-#include "diagnostics.h"
 #include "parse.h"
-#include "util.h"
 #include "error_numbers.h"
 #include "miofile.h"
 #include "BOINCGUIApp.h"
@@ -26,8 +24,6 @@
 #include "SkinManager.h"
 #include "version.h"
 
-
-////@begin XPM images
 #include "res/skins/default/graphic/background_image.xpm"
 #include "res/skins/default/graphic/spacer_image.xpm"
 #include "res/skins/default/graphic/state_indicator_background_image.xpm"
@@ -76,8 +72,6 @@
 #include "res/snooze.xpm"
 #include "res/synecdoche_logo.xpm"
 #include "res/wizard_bitmap.xpm"
-////@end XPM images
-
 
 // Flag to disable the various error messages when the default skin
 // is used.
@@ -1487,5 +1481,3 @@ bool CSkinManager::InitializeDelayedValidation() {
            m_AdvancedSkin.InitializeDelayedValidation() && 
            m_WizardsSkin.InitializeDelayedValidation();
 }
-
-

@@ -20,7 +20,6 @@
 #include "DlgAbout.h"
 
 #include "stdwx.h"
-#include <wx/hyperlink.h>
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 

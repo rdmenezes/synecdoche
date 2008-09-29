@@ -53,6 +53,7 @@
 #include <wx/wx.h>
 
 #include <wx/accel.h>           // accelerator support
+#include <wx/app.h>
 #include <wx/bitmap.h>          // bitmap modification support
 #include <wx/button.h>
 #include <wx/clipbrd.h>         // clipboard support
@@ -173,6 +174,7 @@
 #include <cassert>
 #include <cctype>
 #include <cerrno>
+#include <cfloat>
 #include <cmath>
 #include <csetjmp>
 #include <cstdarg>
@@ -181,7 +183,6 @@
 #include <cstring>
 #include <ctime>
 #include <locale>
-#include <cfloat>
 
 
 // C++ headers
@@ -189,15 +190,15 @@
 #include <xdebug>
 #endif
 #include <algorithm>
-#include <stdexcept>
-#include <string>
-#include <iostream>
 #include <fstream>
-#include <sstream>
-#include <vector>
-#include <stack>
+#include <iostream>
 #include <list>
 #include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <stdexcept>
+#include <vector>
 
 
 #ifdef _WIN32

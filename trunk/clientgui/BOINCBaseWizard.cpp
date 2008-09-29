@@ -21,7 +21,6 @@
 /// Base class for manager's wizards
 
 #include "stdwx.h"
-#include <stack>
 #include "BOINCBaseWizard.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CBOINCBaseWizard, wxWizard)
