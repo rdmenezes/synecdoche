@@ -21,33 +21,19 @@
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 
-/*!
- * CDlgGenericMessage type definition
- */
+IMPLEMENT_DYNAMIC_CLASS(CDlgGenericMessage, wxDialog)
 
-IMPLEMENT_DYNAMIC_CLASS( CDlgGenericMessage, wxDialog )
-
-/*!
- * CDlgGenericMessage event table definition
- */
-
-BEGIN_EVENT_TABLE( CDlgGenericMessage, wxDialog )
-
-////@begin CDlgGenericMessage event table entries
-////@end CDlgGenericMessage event table entries
-
+BEGIN_EVENT_TABLE(CDlgGenericMessage, wxDialog)
 END_EVENT_TABLE()
 
 /*!
  * CDlgGenericMessage constructors
  */
 
-CDlgGenericMessage::CDlgGenericMessage( )
-{
+CDlgGenericMessage::CDlgGenericMessage() {
 }
 
-CDlgGenericMessage::CDlgGenericMessage( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
-{
+CDlgGenericMessage::CDlgGenericMessage(wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style) {
     Create(parent, id, caption, pos, size, style);
 }
 
@@ -55,22 +41,17 @@ CDlgGenericMessage::CDlgGenericMessage( wxWindow* parent, wxWindowID id, const w
  * CDlgFileExit creator
  */
 
-bool CDlgGenericMessage::Create( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
-{
-////@begin CDlgGenericMessage member initialisation
+bool CDlgGenericMessage::Create(wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style) {
     m_DialogMessage = NULL;
     m_DialogDisableMessage = NULL;
-////@end CDlgGenericMessage member initialisation
 
-////@begin CDlgGenericMessage creation
     SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
-    wxDialog::Create( parent, id, caption, pos, size, style );
+    wxDialog::Create(parent, id, caption, pos, size, style);
 
     CreateControls();
     GetSizer()->Fit(this);
     GetSizer()->SetSizeHints(this);
     Centre();
-////@end CDlgGenericMessage creation
     return true;
 }
 
@@ -78,9 +59,7 @@ bool CDlgGenericMessage::Create( wxWindow* parent, wxWindowID id, const wxString
  * Control creation for CDlgFileExit
  */
 
-void CDlgGenericMessage::CreateControls()
-{    
-////@begin CDlgGenericMessage content construction
+void CDlgGenericMessage::CreateControls() {    
     CDlgGenericMessage* itemDialog1 = this;
 
     wxFlexGridSizer* itemFlexGridSizer2 = new wxFlexGridSizer(1, 2, 0, 0);
@@ -93,13 +72,13 @@ void CDlgGenericMessage::CreateControls()
     itemBoxSizer3->Add(itemFlexGridSizer4, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 
     m_DialogMessage = new wxStaticText;
-    m_DialogMessage->Create( itemDialog1, wxID_STATIC, _T(""), wxDefaultPosition, wxDefaultSize, 0);
+    m_DialogMessage->Create(itemDialog1, wxID_STATIC, _T(""), wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer4->Add(m_DialogMessage, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     itemFlexGridSizer4->Add(5, 5, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     m_DialogDisableMessage = new wxCheckBox;
-    m_DialogDisableMessage->Create( itemDialog1, ID_DISABLEDIALOG, _("Click here to disable displaying this message in the future."), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE );
+    m_DialogDisableMessage->Create(itemDialog1, ID_DISABLEDIALOG, _("Click here to disable displaying this message in the future."), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE);
     m_DialogDisableMessage->SetValue(false);
     itemFlexGridSizer4->Add(m_DialogDisableMessage, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
@@ -107,23 +86,20 @@ void CDlgGenericMessage::CreateControls()
     itemFlexGridSizer2->Add(itemFlexGridSizer8, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_TOP|wxALL, 5);
 
     wxButton* itemButton9 = new wxButton;
-    itemButton9->Create( itemDialog1, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+    itemButton9->Create(itemDialog1, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0);
     itemButton9->SetDefault();
     itemFlexGridSizer8->Add(itemButton9, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     wxButton* itemButton10 = new wxButton;
-    itemButton10->Create( itemDialog1, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+    itemButton10->Create(itemDialog1, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer8->Add(itemButton10, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5);
-
-////@end CDlgGenericMessage content construction
 }
 
 /*!
  * Should we show tooltips?
  */
 
-bool CDlgGenericMessage::ShowToolTips()
-{
+bool CDlgGenericMessage::ShowToolTips() {
     return true;
 }
 
@@ -131,24 +107,16 @@ bool CDlgGenericMessage::ShowToolTips()
  * Get bitmap resources
  */
 
-wxBitmap CDlgGenericMessage::GetBitmapResource( const wxString& name )
-{
-    // Bitmap retrieval
-////@begin CDlgGenericMessage bitmap retrieval
+wxBitmap CDlgGenericMessage::GetBitmapResource(const wxString& name) {
     wxUnusedVar(name);
     return wxNullBitmap;
-////@end CDlgGenericMessage bitmap retrieval
 }
 
 /*!
  * Get icon resources
  */
 
-wxIcon CDlgGenericMessage::GetIconResource( const wxString& name )
-{
-    // Icon retrieval
-////@begin CDlgGenericMessage icon retrieval
+wxIcon CDlgGenericMessage::GetIconResource(const wxString& name) {
     wxUnusedVar(name);
     return wxNullIcon;
-////@end CDlgGenericMessage icon retrieval
 }

@@ -19,12 +19,6 @@
 #include "sg_BoincSimpleGUI.h"
 
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "str_util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
 #include "common/wxFlatNotebook.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"

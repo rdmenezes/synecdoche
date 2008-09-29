@@ -18,11 +18,6 @@
 #include "sg_DlgPreferences.h"
 
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "str_util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
 #include "error_numbers.h"
 #include "Events.h"
 #include "BOINCGUIApp.h"
@@ -32,8 +27,6 @@
 #include "version.h"
 
 #include "sg_CustomControls.h"
-
-using std::string;
 
 #ifdef __WXMAC__
 #define TINY_FONT 12

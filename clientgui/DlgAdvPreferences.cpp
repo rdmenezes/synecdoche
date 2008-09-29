@@ -29,8 +29,6 @@
 #include "Events.h"
 #include "error_numbers.h"
 
-using std::string;
-
 IMPLEMENT_DYNAMIC_CLASS(CDlgAdvPreferences, wxDialog)
 
 BEGIN_EVENT_TABLE(CDlgAdvPreferences, wxDialog)

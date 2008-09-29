@@ -29,7 +29,6 @@
 #endif
 
 #include "stdwx.h"
-#include <wx/app.h>
 #include "diagnostics.h"
 #include "common/wxFlatNotebook.h"
 #include "MainDocument.h"

@@ -40,8 +40,6 @@
 
 bool g_use_sandbox = false;
 
-using std::string;
-
 CNetworkConnection::CNetworkConnection(CMainDocument* pDocument) :
     wxObject() {
     m_pDocument = pDocument;
