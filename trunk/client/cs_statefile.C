@@ -91,9 +91,9 @@ int CLIENT_STATE::parse_state_file() {
 
         // avoid warning messages about version
         //
-        old_major_version = BOINC_MAJOR_VERSION;
-        old_minor_version = BOINC_MINOR_VERSION;
-        old_release = BOINC_RELEASE;
+        old_major_version = SYNEC_MAJOR_VERSION;
+        old_minor_version = SYNEC_MINOR_VERSION;
+        old_release = SYNEC_RELEASE;
         return ERR_FOPEN;
     }
 
