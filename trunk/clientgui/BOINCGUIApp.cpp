@@ -170,9 +170,9 @@ bool CBOINCGUIApp::OnInit() {
     //
     TCHAR   szPath[MAX_PATH-1];
 
-    // change the current directory to the boinc install directory
     GetModuleFileName(NULL, szPath, (sizeof(szPath)/sizeof(TCHAR)));
-        
+
+    // Remove executable name from path, retaining trailing backslash.
     TCHAR *pszProg = strrchr(szPath, '\\');
     if (pszProg) {
         szPath[pszProg - szPath + 1] = 0;
