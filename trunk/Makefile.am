@@ -8,7 +8,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 API_SUBDIRS = api lib
 
-CLIENT_SUBDIRS = client client/scripts
+CLIENT_SUBDIRS = client # client/scripts
 
 if BUILD_CLIENTGUI
    CLIENTGUI_SUBDIRS = clientgui clientgui/res locale/client 
