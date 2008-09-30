@@ -100,9 +100,9 @@ void AUTO_UPDATE::write(MIOFILE& out) const {
     );
 }
 
-// Check whether this <auto_update> is valid,
-// and if so link it up.
-//
+/// Check whether this <auto_update> is valid,
+/// and if so link it up.
+///
 int AUTO_UPDATE::validate_and_link(PROJECT* proj) {
     char dir[256];
     int retval;
