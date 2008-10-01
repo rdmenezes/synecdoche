@@ -800,11 +800,13 @@ static void handle_acct_mgr_rpc_poll(const char*, MIOFILE& fout) {
     );
 }
 
+#ifdef ENABLE_UPDATE_CHECK
 static void handle_get_newer_version(MIOFILE& fout) {
     fout.printf("<newer_version>%s</newer_version>\n",
         gstate.newer_version.c_str()
     );
 }
+#endif
 
 static void handle_get_global_prefs_file(MIOFILE& fout) {
     GLOBAL_PREFS p;
@@ -1057,8 +1059,10 @@ int GUI_RPC_CONN::handle_rpc() {
         handle_get_host_info(request_msg, mf);
     } else if (match_tag(request_msg, "<get_statistics")) {
         handle_get_statistics(request_msg, mf);
+#ifdef ENABLE_UPDATE_CHECK
     } else if (match_tag(request_msg, "<get_newer_version>")) {
         handle_get_newer_version(mf);
+#endif
     } else if (match_tag(request_msg, "<get_cc_status")) {
         handle_get_cc_status(this, mf);
 

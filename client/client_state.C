@@ -57,7 +57,9 @@ CLIENT_STATE gstate;
 
 CLIENT_STATE::CLIENT_STATE():
     lookup_website_op(&gui_http),
+#ifdef ENABLE_UPDATE_CHECK
     get_current_version_op(&gui_http),
+#endif
     get_project_list_op(&gui_http)
 {
     http_ops = new HTTP_OP_SET();
@@ -121,7 +123,9 @@ CLIENT_STATE::CLIENT_STATE():
     must_schedule_cpus = true;
     must_enforce_cpu_schedule = true;
     no_gui_rpc = false;
+#ifdef ENABLE_UPDATE_CHECK
     new_version_check_time = 0;
+#endif
     all_projects_list_check_time = 0;
     detach_console = false;
 #ifdef SANDBOX
@@ -1581,7 +1585,9 @@ void CLIENT_STATE::check_clock_reset() {
     msg_printf(NULL, MSG_INFO,
         "System clock was turned backwards; clearing timeouts"
     );
+#ifdef ENABLE_UPDATE_CHECK
     new_version_check_time = now;
+#endif
     all_projects_list_check_time = now;
 
     unsigned int i;
