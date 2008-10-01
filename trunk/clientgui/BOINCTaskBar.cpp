@@ -280,99 +280,101 @@ void CTaskBarIcon::OnShutdown(wxTaskBarIconExEvent& event) {
 }
 
 
-// Note: tooltip must not have a trailing linebreak. 
+/// Construct a tooltip to display when the mouse is hovered over the icon.
+/// The tooltip is shown automatically; this function merely updates it.
+/// Normal tooltips merely provide the name of the application. We also attempt
+/// to provide some minimal status information as well.
+/// Note: tooltip must not have a trailing linebreak.
 void CTaskBarIcon::OnMouseMove(wxTaskBarIconEvent& WXUNUSED(event)) {
 
     wxTimeSpan tsLastHover(wxDateTime::Now() - m_dtLastHoverDetected);
     if (tsLastHover.GetSeconds() >= 2) {
         m_dtLastHoverDetected = wxDateTime::Now();
 
-        CMainDocument* pDoc                 = wxGetApp().GetDocument();
-        CSkinAdvanced* pSkinAdvanced        = wxGetApp().GetSkinManager()->GetAdvanced();
-        wxString       strTitle             = wxEmptyString;
-        wxString       strMachineName       = wxEmptyString;
-        wxString       strMessage           = wxEmptyString;
-        wxString       strProjectName       = wxEmptyString;
-        wxString       strBuffer            = wxEmptyString;
-        wxString       strActiveTaskBuffer  = wxEmptyString;
-        float          fProgress            = 0;
-        CC_STATUS      status;
+        CMainDocument*  pDoc            = wxGetApp().GetDocument();
+        CSkinAdvanced*  pSkinAdvanced   = wxGetApp().GetSkinManager()->GetAdvanced();
+        wxString        title;
+        wxString        machineName;
+        wxString        message;
+        CC_STATUS       status;
+        bool            suspended       = false;
 
         wxASSERT(pDoc);
         wxASSERT(pSkinAdvanced);
-        wxASSERT(wxDynamicCast(pDoc, CMainDocument));
-        wxASSERT(wxDynamicCast(pSkinAdvanced, CSkinAdvanced));
 
         // Construct tooltip title using branded name.
-        strTitle = pSkinAdvanced->GetApplicationName();
+        title = pSkinAdvanced->GetApplicationName();
 
         // Only show machine name if connected to remote machine.
         if (!pDoc->IsLocalClient()) {
-            pDoc->GetConnectedComputerName(strMachineName);
-            strTitle = strTitle + wxT(" - (") + strMachineName + wxT(")");
+            pDoc->GetConnectedComputerName(machineName);
+            title << wxT(" - (") << machineName << wxT(")");
         }
 
-        strMessage += strTitle;
+        message += title;
 
         if (pDoc->IsConnected()) {
             pDoc->GetCoreClientStatus(status);
-            if (status.task_suspend_reason && !(status.task_suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT)) {
-                strBuffer.Printf(
-                    _("Computation is suspended.")
-                );
-                if (strMessage.Length() > 0) strMessage += wxT("\n");
-                strMessage += strBuffer;
-            }
 
+            if (status.task_suspend_reason && !(status.task_suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT)) {
+                message << wxT("\n") << _("Computation is suspended.");
+                suspended = true;
+            }
             if (status.network_suspend_reason && !(status.network_suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT)) {
-                strBuffer.Printf(
-                    _("Network activity is suspended.")
-                );
-                if (strMessage.Length() > 0) strMessage += wxT("\n");
-                strMessage += strBuffer;
+                message << wxT("\n") << _("Network activity is suspended.");
             }
 
             // Construct a status summary:
             std::vector<RESULT*> tasks = GetRunningTasks(pDoc);
 
-            if (tasks.size() == 0) {
-                strMessage += _("\nNo running tasks.");
+            if ((tasks.size() == 0) || suspended) {
+                message << wxT("\n") << _("No running tasks.");
             } else if (tasks.size() < 3) {
                 // Limit list of running tasks to 2, to avoid overflow.
-                std::vector<RESULT*>::iterator i = tasks.begin();
-                while (i != tasks.end()) {
-                    RESULT* task = *i;
-                    std::string app_name;
-                    if (task) {
-                        RESULT* state_result = pDoc->state.lookup_result(task->project_url, task->name);
-                        if (state_result) {
-                            app_name = state_result->app->user_friendly_name;
+
+                // Max tip size is 128 characters. Progress percentage and line break takes up 8.
+                int spaceForName = (128 - static_cast<int>(message.Length()))
+                    / static_cast<int>(tasks.size()) - 8;
+
+                // Arbitrary restriction on truncated name size:
+                if (spaceForName > 5) {
+
+                    std::vector<RESULT*>::iterator i = tasks.begin();
+                    while (i != tasks.end()) {
+                        RESULT* task = *i;
+                        wxString appName;
+                        float progress = 0;
+                        if (task) {
+                            RESULT* result = pDoc->state.lookup_result(task->project_url, task->name);
+                            if (result) {
+                                appName = wxString(result->app->user_friendly_name.c_str(), wxConvUTF8);
+                                if (static_cast<int>(appName.Length()) > spaceForName) {
+                                    // Truncate name to fit into available space.
+                                    appName = appName.Left(spaceForName - 3) + wxT("...");
+                                }
+                            }
                         }
+                        progress = task->fraction_done * 100;
+                        message << wxT("\n")
+                                << wxString::Format(wxT("%s %.2f%%"), appName.c_str(), progress);
+                        ++i;
                     }
-                    fProgress = floor(task->fraction_done*10000)/100;
-                
-                    strBuffer.Printf(wxT("\n%s: %.2f%%"), app_name.c_str(), fProgress );
-                    strMessage += strBuffer;
-                    ++i;
-                 }
+                }
             } else {
                 // More than two active tasks are running on the system, we don't have
-                //   enough room to display them all, so just tell the user how many are
-                //   currently running.
-                strBuffer.Printf(_("\n%d running tasks."), tasks.size());
-                strMessage += strBuffer;
+                // enough room to display them all, so just tell the user how many are
+                // currently running.
+                message << wxT("\n") << wxString::Format(_("%lu running tasks."), tasks.size());
             }
 
         } else if (pDoc->IsReconnecting()) {
-            strBuffer.Printf(_("\nReconnecting to client."));
-            strMessage += strBuffer;
+            message << wxT("\n") << _("Reconnecting to client.");
         } else {
-            strBuffer.Printf(_("\nNot connected to a client."));
-            strMessage += strBuffer;
+            message << wxT("\n") << _("Not connected to a client.");
         }
 
         // Update the text without affecting the icon:
-        SetTooltip(strMessage);
+        SetTooltip(message);
     }
 }
 
@@ -582,7 +584,7 @@ wxMenu *CTaskBarIcon::BuildContextMenu() {
 
     menuName.Printf(
         _("Open %s..."),
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     pMenu->Append(wxID_OPEN, menuName, wxEmptyString);
 
@@ -594,7 +596,7 @@ wxMenu *CTaskBarIcon::BuildContextMenu() {
 
     menuName.Printf(
         _("&About %s..."),
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
 
     pMenu->Append(wxID_ABOUT, menuName, wxEmptyString);
