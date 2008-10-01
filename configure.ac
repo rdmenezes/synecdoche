@@ -595,7 +595,6 @@ AC_CONFIG_FILES([
                  lib/Makefile
                  locale/client/Makefile
                  Makefile
-                 sea/Makefile
                  m4/Makefile
                  ])
 
