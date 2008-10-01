@@ -2022,6 +2022,7 @@ int RPC_CLIENT::create_account_poll(ACCOUNT_OUT& ao) {
     return retval;
 }
 
+#ifdef ENABLE_UPDATE_CHECK
 int RPC_CLIENT::get_newer_version(std::string& version) {
     int retval;
     SET_LOCALE sl;
@@ -2037,6 +2038,7 @@ int RPC_CLIENT::get_newer_version(std::string& version) {
     }
     return retval;
 }
+#endif
 
 int RPC_CLIENT::read_global_prefs_override() {
     SET_LOCALE sl;

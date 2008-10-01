@@ -615,7 +615,9 @@ public:
     );
     int acct_mgr_rpc_poll(ACCT_MGR_RPC_REPLY&);
 
+#ifdef ENABLE_UPDATE_CHECK
     int get_newer_version(std::string&);
+#endif
     int read_global_prefs_override();
     int read_cc_config();
     int get_cc_status(CC_STATUS&);

@@ -141,7 +141,9 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
         // Now's a good time to check for new BOINC versions
         // and project list
         //
+#ifdef ENABLE_UPDATE_CHECK
         gstate.new_version_check();
+#endif
         gstate.all_projects_list_check();
     }
     return retval;

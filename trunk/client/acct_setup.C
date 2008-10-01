@@ -187,7 +187,7 @@ void CREATE_ACCOUNT_OP::handle_reply(int http_op_retval) {
         error_num = read_file_string(CREATE_ACCOUNT_FILENAME, reply);
     }
 }
-
+#ifdef ENABLE_UPDATE_CHECK
 int GET_CURRENT_VERSION_OP::do_rpc() {
     int retval;
 
@@ -270,7 +270,7 @@ void CLIENT_STATE::new_version_check() {
             get_current_version_op.do_rpc();
         }
 }
-
+#endif
 int GET_PROJECT_LIST_OP::do_rpc() {
     int retval;
     const std::string project_list_url("http://boinc.berkeley.edu/project_list.php");
