@@ -45,7 +45,7 @@ StatImageLoader::StatImageLoader(wxWindow* parent, std::string url) :
 	project_files_downloaded_time = 1;
 	project_last_rpc_time = 1;
 	BuildUserStatToolTip();
-	statPopUpMenu = new wxMenu(wxSIMPLE_BORDER);
+	statPopUpMenu = new wxMenu();
     AddMenuItems();
 }
 
@@ -115,9 +115,6 @@ void StatImageLoader::AddMenuItems()
 
 	// Add the home page link
     wxMenuItem *urlItem = new wxMenuItem(statPopUpMenu, WEBSITE_URL_MENU_ID_HOMEPAGE,wxString(project->project_name.c_str(), wxConvUTF8));
-#ifdef __WXMSW__
-    urlItem->SetBackgroundColour(*pSkinSimple->GetBackgroundImage()->GetBackgroundColor());
-#endif
 	Connect( WEBSITE_URL_MENU_ID_HOMEPAGE,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(StatImageLoader::OnMenuLinkClicked) );
 	statPopUpMenu->Append(urlItem);
 
@@ -125,9 +122,6 @@ void StatImageLoader::AddMenuItems()
 	// Add any GUI urls
 	for(unsigned int i = 0; i < urlCount; i++){
         urlItem = new wxMenuItem(statPopUpMenu, WEBSITE_URL_MENU_ID + i, wxGetTranslation(wxString(project->gui_urls[i].name.c_str(), wxConvUTF8)));
-#ifdef __WXMSW__
-		urlItem->SetBackgroundColour(*pSkinSimple->GetBackgroundImage()->GetBackgroundColor());
-#endif
 	    Connect( WEBSITE_URL_MENU_ID + i,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(StatImageLoader::OnMenuLinkClicked) );
  
 		statPopUpMenu->Append(urlItem);
@@ -136,14 +130,9 @@ void StatImageLoader::AddMenuItems()
 	//  Add the 'remove project' option
 	statPopUpMenu->AppendSeparator();
 	wxMenuItemList menuList = statPopUpMenu->GetMenuItems();
-#ifdef __WXMSW__
-	menuList[statPopUpMenu->GetMenuItemCount()-1]->SetBackgroundColour(wxColour("RED"));
-#endif
 
 	urlItem = new wxMenuItem(statPopUpMenu, WEBSITE_URL_MENU_ID_REMOVE_PROJECT, _("Remove Project"));
-#ifdef __WXMSW__
-	urlItem->SetBackgroundColour(*pSkinSimple->GetBackgroundImage()->GetBackgroundColor());
-#endif
+
 	Connect( WEBSITE_URL_MENU_ID_REMOVE_PROJECT,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(StatImageLoader::OnMenuLinkClicked) );
 	statPopUpMenu->Append(urlItem);
 
