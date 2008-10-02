@@ -242,8 +242,7 @@ static int make_soft_link(PROJECT* project, const char* link_path, const char* r
 /// Set up a file reference, given a slot dir and project dir.
 /// This means:
 /// -# copy the file to slot dir, if reference is by copy
-/// -# (Unix) make a symbolic link
-/// -# (Windows) make a 
+/// -# else make a soft link
 static int setup_file(
     PROJECT* project, FILE_INFO* fip, FILE_REF& fref,
     char* file_path, char* slot_dir, bool input
@@ -338,7 +337,7 @@ int ACTIVE_TASK::copy_output_files() {
 /// This includes setting up soft links,
 /// passing preferences, and starting the process.
 ///
-/// Current dir is top-level BOINC dir.
+/// Current dir is top-level Synecdoche dir.
 ///
 /// Postcondition:
 /// - If any error occurs
@@ -764,7 +763,7 @@ int ACTIVE_TASK::start(bool first_time) {
         // add to library path:
         // - the project dir (../../projects/X)
         // - the slot dir (.)
-        // - the BOINC dir (../..)
+        // - the Synecdoche dir (../..)
         // We use relative paths in case higher-level dirs
         // are not readable to the account under which app runs
         //
@@ -822,8 +821,8 @@ int ACTIVE_TASK::start(bool first_time) {
             argv.push_front(exec_name);
             argv.push_front(path);
             argv.push_front(SWITCHER_FILE_NAME);
-            // Files written by projects have user boinc_project and group boinc_project, 
-            // so they must be world-readable so BOINC CLient can read them 
+            // Files written by projects have user boinc_project and group boinc_project,
+            // so they must be world-readable so Synecdoche can read them.
             umask(2);
             retval = do_execv(switcher_path.str(), argv);
         } else {

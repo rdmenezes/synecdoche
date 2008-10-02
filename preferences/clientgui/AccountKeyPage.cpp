@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,113 +16,81 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+#include "AccountKeyPage.h"
+
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
-#include "error_numbers.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
-#include "MainDocument.h"
 #include "ValidateAccountKey.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "AccountKeyPage.h"
 
+IMPLEMENT_DYNAMIC_CLASS(CAccountKeyPage, wxWizardPage)
 
-/*!
- * CAccountKeyPage type definition
- */
- 
-IMPLEMENT_DYNAMIC_CLASS( CAccountKeyPage, wxWizardPageEx )
- 
-/*!
- * CAccountKeyPage event table definition
- */
- 
-BEGIN_EVENT_TABLE( CAccountKeyPage, wxWizardPageEx )
- 
-////@begin CAccountKeyPage event table entries
-    EVT_WIZARDEX_PAGE_CHANGED( -1, CAccountKeyPage::OnPageChanged )
-    EVT_WIZARDEX_CANCEL( -1, CAccountKeyPage::OnCancel )
-
-////@end CAccountKeyPage event table entries
- 
+BEGIN_EVENT_TABLE(CAccountKeyPage, wxWizardPage)
+    EVT_WIZARD_PAGE_CHANGED(-1, CAccountKeyPage::OnPageChanged)
+    EVT_WIZARD_CANCEL(-1, CAccountKeyPage::OnCancel)
 END_EVENT_TABLE()
-  
+
 /*!
  * CAccountKeyPage constructors
  */
  
-CAccountKeyPage::CAccountKeyPage( )
-{
+CAccountKeyPage::CAccountKeyPage() {
 }
-  
-CAccountKeyPage::CAccountKeyPage( CBOINCBaseWizard* parent )
-{
-    Create( parent );
+
+CAccountKeyPage::CAccountKeyPage(CBOINCBaseWizard* parent) {
+    Create(parent);
 }
-  
+
 /*!
  * CAuthenticatorPage creator
  */
  
-bool CAccountKeyPage::Create( CBOINCBaseWizard* parent )
-{
-////@begin CAccountKeyPage member initialisation
+bool CAccountKeyPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pDirectionsStaticCtrl = NULL;
     m_pAccountKeyExampleDescriptionStaticCtrl = NULL;
     m_pAccountKeyExampleStaticCtrl = NULL;
     m_pAccountKeyStaticCtrl = NULL;
     m_pAccountKeyCtrl = NULL;
-////@end CAccountKeyPage member initialisation
- 
-////@begin CAccountKeyPage creation
+
     wxBitmap wizardBitmap(wxNullBitmap);
-    wxWizardPageEx::Create( parent, ID_ACCOUNTKEYPAGE, wizardBitmap );
+    wxWizardPage::Create(parent, wizardBitmap);
 
     CreateControls();
     GetSizer()->Fit(this);
-////@end CAccountKeyPage creation
-
     return TRUE;
 }
-  
+
 /*!
  * Control creation for CAuthenticatorPage
  */
- 
-void CAccountKeyPage::CreateControls()
-{    
- 
-////@begin CAccountKeyPage content construction
+
+void CAccountKeyPage::CreateControls() {    
     CAccountKeyPage* itemWizardPage44 = this;
 
     wxBoxSizer* itemBoxSizer45 = new wxBoxSizer(wxVERTICAL);
     itemWizardPage44->SetSizer(itemBoxSizer45);
 
     m_pTitleStaticCtrl = new wxStaticText;
-    m_pTitleStaticCtrl->Create( itemWizardPage44, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pTitleStaticCtrl->Create(itemWizardPage44, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pTitleStaticCtrl->SetFont(wxFont(10, wxSWISS, wxNORMAL, wxBOLD, FALSE, _T("Verdana")));
     itemBoxSizer45->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     itemBoxSizer45->Add(5, 5, 0, wxALIGN_LEFT|wxALL, 5);
 
     m_pDirectionsStaticCtrl = new wxStaticText;
-    m_pDirectionsStaticCtrl->Create( itemWizardPage44, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pDirectionsStaticCtrl->Create(itemWizardPage44, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemBoxSizer45->Add(m_pDirectionsStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     m_pAccountKeyExampleDescriptionStaticCtrl = new wxStaticText;
-    m_pAccountKeyExampleDescriptionStaticCtrl->Create( itemWizardPage44, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pAccountKeyExampleDescriptionStaticCtrl->Create(itemWizardPage44, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemBoxSizer45->Add(m_pAccountKeyExampleDescriptionStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     m_pAccountKeyExampleStaticCtrl = new wxStaticText;
-    m_pAccountKeyExampleStaticCtrl->Create( itemWizardPage44, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pAccountKeyExampleStaticCtrl->Create(itemWizardPage44, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pAccountKeyExampleStaticCtrl->SetFont(wxFont(8, wxSWISS, wxNORMAL, wxNORMAL, FALSE, _T("Courier New")));
     itemBoxSizer45->Add(m_pAccountKeyExampleStaticCtrl, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 0);
 
@@ -132,24 +101,22 @@ void CAccountKeyPage::CreateControls()
     itemBoxSizer45->Add(itemFlexGridSizer53, 0, wxGROW|wxALL, 5);
 
     m_pAccountKeyStaticCtrl = new wxStaticText;
-    m_pAccountKeyStaticCtrl->Create( itemWizardPage44, ID_ACCOUNTKEYSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pAccountKeyStaticCtrl->Create(itemWizardPage44, ID_ACCOUNTKEYSTATICCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer53->Add(m_pAccountKeyStaticCtrl, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     m_pAccountKeyCtrl = new wxTextCtrl;
-    m_pAccountKeyCtrl->Create( itemWizardPage44, ID_ACCOUNTKEYCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pAccountKeyCtrl->Create(itemWizardPage44, ID_ACCOUNTKEYCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemFlexGridSizer53->Add(m_pAccountKeyCtrl, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     // Set validators
-    m_pAccountKeyCtrl->SetValidator( CValidateAccountKey( & m_strAccountKey) );
-////@end CAccountKeyPage content construction
+    m_pAccountKeyCtrl->SetValidator(CValidateAccountKey(&m_strAccountKey));
 }
   
 /*!
  * Gets the previous page.
  */
  
-wxWizardPageEx* CAccountKeyPage::GetPrev() const
-{
+wxWizardPage* CAccountKeyPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
   
@@ -157,8 +124,7 @@ wxWizardPageEx* CAccountKeyPage::GetPrev() const
  * Gets the next page.
  */
  
-wxWizardPageEx* CAccountKeyPage::GetNext() const
-{
+wxWizardPage* CAccountKeyPage::GetNext() const {
     if (CHECK_CLOSINGINPROGRESS()) {
         // Cancel Event Detected
         return PAGE_TRANSITION_NEXT(ID_COMPLETIONERRORPAGE);
@@ -171,40 +137,36 @@ wxWizardPageEx* CAccountKeyPage::GetNext() const
  * Should we show tooltips?
  */
  
-bool CAccountKeyPage::ShowToolTips()
-{
+bool CAccountKeyPage::ShowToolTips() {
     return TRUE;
 }
-  
+
+/// Disables the validators for all controls on this page.
+void CAccountKeyPage::DisableValidators() {
+    m_pAccountKeyCtrl->SetValidator(wxDefaultValidator);
+}
+
 /*!
  * Get bitmap resources
  */
  
-wxBitmap CAccountKeyPage::GetBitmapResource( const wxString& WXUNUSED(name) )
-{
-    // Bitmap retrieval
-////@begin CAccountKeyPage bitmap retrieval
+wxBitmap CAccountKeyPage::GetBitmapResource(const wxString& WXUNUSED(name)) {
     return wxNullBitmap;
-////@end CAccountKeyPage bitmap retrieval
 }
   
 /*!
  * Get icon resources
  */
 
-wxIcon CAccountKeyPage::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CAccountKeyPage icon retrieval
+wxIcon CAccountKeyPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CAccountKeyPage icon retrieval
 }
   
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ACCOUNTKEYPAGE
  */
  
-void CAccountKeyPage::OnPageChanged( wxWizardExEvent& event ) {
+void CAccountKeyPage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
 
     wxASSERT(m_pTitleStaticCtrl);
@@ -214,24 +176,11 @@ void CAccountKeyPage::OnPageChanged( wxWizardExEvent& event ) {
     wxASSERT(m_pAccountKeyStaticCtrl);
     wxASSERT(m_pAccountKeyCtrl);
 
-    m_pTitleStaticCtrl->SetLabel(
-        _("Enter account key")
-    );
-    m_pDirectionsStaticCtrl->SetLabel(
-        _("This project uses an \"account key\" to identify you.\n"
-          "\n"
-          "Go to the project's web site to create an account. Your account\n"
-          "key will be emailed to you.")
-    );
-    m_pAccountKeyExampleDescriptionStaticCtrl->SetLabel(
-        _("An account key looks like:")
-    );
-    m_pAccountKeyExampleStaticCtrl->SetLabel(
-        _("82412313ac88e9a3638f66ea82186948")
-    );
-    m_pAccountKeyStaticCtrl->SetLabel(
-        _("Account key:")
-    );
+    m_pTitleStaticCtrl->SetLabel(_("Enter account key"));
+    m_pDirectionsStaticCtrl->SetLabel(_("This project uses an \"account key\" to identify you.\n\nGo to the project's web site to create an account. Your account\nkey will be emailed to you."));
+    m_pAccountKeyExampleDescriptionStaticCtrl->SetLabel(_("An account key looks like:"));
+    m_pAccountKeyExampleStaticCtrl->SetLabel(_("82412313ac88e9a3638f66ea82186948"));
+    m_pAccountKeyStaticCtrl->SetLabel(_("Account key:"));
 
     Fit();
     m_pAccountKeyCtrl->SetFocus();
@@ -241,7 +190,6 @@ void CAccountKeyPage::OnPageChanged( wxWizardExEvent& event ) {
  * wxEVT_WIZARD_CANCEL event handler for ID_ACCOUNTKEYPAGE
  */
  
-void CAccountKeyPage::OnCancel( wxWizardExEvent& event ) {
+void CAccountKeyPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
-

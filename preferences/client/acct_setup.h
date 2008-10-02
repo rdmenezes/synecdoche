@@ -87,7 +87,7 @@ struct CREATE_ACCOUNT_OP: public GUI_HTTP_OP {
     int do_rpc(const ACCOUNT_IN&);
     virtual void handle_reply(int http_op_retval);
 };
-
+#ifdef ENABLE_UPDATE_CHECK
 struct GET_CURRENT_VERSION_OP: public GUI_HTTP_OP {
     int error_num;
 
@@ -99,7 +99,7 @@ struct GET_CURRENT_VERSION_OP: public GUI_HTTP_OP {
     int do_rpc();
     virtual void handle_reply(int http_op_retval);
 };
-
+#endif
 struct GET_PROJECT_LIST_OP: public GUI_HTTP_OP {
     int error_num;
 

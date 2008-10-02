@@ -204,7 +204,7 @@ BOOL IdleTrackerStartup()
 			    PAGE_READWRITE,
 			    0,
 			    4096,
-			    "Global\\BoincIdleTracker"
+			    "Global\\IdleMonitor"
             );
 
  	    if( NULL != g_hMemoryMappedData )

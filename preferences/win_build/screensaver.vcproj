@@ -86,7 +86,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libcmtd.lib libcpmtd.lib wsock32.lib wininet.lib winmm.lib kernel32.lib user32.lib gdi32.lib advapi32.lib userenv.lib"
-				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc.scr"
+				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\synecdoche.scr"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
 				IgnoreAllDefaultLibraries="true"
@@ -194,7 +194,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="libcmt.lib libcpmt.lib wsock32.lib wininet.lib winmm.lib kernel32.lib user32.lib gdi32.lib advapi32.lib userenv.lib"
 				ShowProgress="0"
-				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc.scr"
+				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\synecdoche.scr"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreAllDefaultLibraries="true"
@@ -300,7 +300,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="libcmt.lib libcpmt.lib wsock32.lib wininet.lib winmm.lib kernel32.lib user32.lib gdi32.lib advapi32.lib userenv.lib"
 				ShowProgress="0"
-				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc.scr"
+				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\synecdoche.scr"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreAllDefaultLibraries="true"
@@ -841,31 +841,11 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath="..\clientscr\res\boinc.bmp"
-				>
-			</File>
-			<File
 				RelativePath="..\clientscr\boinc_ss.rc"
 				>
 			</File>
 			<File
-				RelativePath="..\client\win\res\gridrepublic.bmp"
-				>
-			</File>
-			<File
-				RelativePath="..\client\win\res\gridrepublic.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\clientscr\res\icon.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\client\win\res\Scricon3.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\client\win\res\seed.bmp"
+				RelativePath="..\graphics\screensaver.bmp"
 				>
 			</File>
 		</Filter>

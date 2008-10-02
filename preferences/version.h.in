@@ -1,7 +1,20 @@
 /* Platform independent version definitions... */
 
-#ifndef BOINC_VERSION_H
-#define BOINC_VERSION_H
+#ifndef SYNECDOCHE_VERSION_H
+#define SYNECDOCHE_VERSION_H
+
+/* Major part of Synecdoche version number */
+#define SYNEC_MAJOR_VERSION @SYNEC_MAJOR_VERSION@
+
+/* Minor part of Synecdoche version number */
+#define SYNEC_MINOR_VERSION @SYNEC_MINOR_VERSION@
+
+/* Release part of Synecdoche version number */
+#define SYNEC_RELEASE @SYNEC_RELEASE@
+
+/* String representation of Synecdoche version number */
+#define SYNEC_VERSION_STRING "@SYNEC_VERSION_STRING@"
+
 
 /* Major part of BOINC version number */
 #define BOINC_MAJOR_VERSION @BOINC_MAJOR_VERSION@
@@ -15,8 +28,9 @@
 /* String representation of BOINC version number */
 #define BOINC_VERSION_STRING "@BOINC_VERSION_STRING@"
 
+
 /* Package is a pre-release (Alpha/Beta) package */
-#define BOINC_PRERELEASE 1
+#define SYNEC_PRERELEASE @SYNEC_PRERELEASE@
 
 #if (defined(_WIN32) || defined(__APPLE__))
 /* Name of package */
@@ -39,5 +53,4 @@
 
 #endif /* #if (defined(_WIN32) || defined(__APPLE__)) */
 
-#endif /* #ifndef BOINC_VERSION_H */
-
+#endif /* #ifndef SYNECDOCHE_VERSION_H */

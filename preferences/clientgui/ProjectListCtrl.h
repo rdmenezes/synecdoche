@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,20 +16,23 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_PROJECTLISTCTRL_H_
-#define _WIZ_PROJECTLISTCTRL_H_
+#ifndef WIZ_PROJECTLISTCTRL_H
+#define WIZ_PROJECTLISTCTRL_H
 
+#include <wx/scrolwin.h>
+#include <wx/string.h>
+#include <wx/event.h>
+#include <wx/stattext.h>
+#include <wx/panel.h>
 
+class wxBoxSizer;
+class wxStaticBitmap;
 class CProjectListItemCtrl;
 class CProjectListItemStaticCtrl;
 class ProjectListCtrlEvent;
 class ProjectListItemCtrlEvent;
 
-
-////@begin control identifiers
 #define ID_WEBSITEBUTTON 10001
-////@end control identifiers
-
 
 /*!
  * CProjectListCtrl class declaration
@@ -36,33 +40,26 @@ class ProjectListItemCtrlEvent;
 
 class CProjectListCtrl: public wxScrolledWindow
 {    
-    DECLARE_DYNAMIC_CLASS( CProjectListCtrl )
+    DECLARE_DYNAMIC_CLASS(CProjectListCtrl)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CProjectListCtrl( );
+    CProjectListCtrl();
 
-    CProjectListCtrl( wxWindow* parent );
+    CProjectListCtrl(wxWindow* parent);
 
     /// Creation
-    bool Create( wxWindow* parent );
+    bool Create(wxWindow* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CProjectListCtrl event handler declarations
-
     /// wxEVT_PROJECTLISTITEMCTRL_CLICKED event handler for window
-    void OnItemClicked( ProjectListItemCtrlEvent& event );
-
-////@end CProjectListCtrl event handler declarations
+    void OnItemClicked(ProjectListItemCtrlEvent& event);
 
     /// Methods
-    bool Append(
-        wxString strTitle,
-        wxString strURL
-    );
+    bool Append(wxString strTitle, wxString strURL);
 
 private:
     wxBoxSizer* m_pMainSizer;
@@ -76,9 +73,8 @@ private:
 class ProjectListCtrlEvent : public wxNotifyEvent
 {
 public:
-    ProjectListCtrlEvent( wxEventType evtType = wxEVT_NULL, wxString strName = wxEmptyString, wxString strURL = wxEmptyString ) :
-      wxNotifyEvent( evtType, wxID_ANY )
-    {
+    ProjectListCtrlEvent(wxEventType evtType = wxEVT_NULL, wxString strName = wxEmptyString, wxString strURL = wxEmptyString) :
+      wxNotifyEvent(evtType, wxID_ANY) {
         m_strName = strName;
         m_strURL = strURL;
     } 
@@ -100,7 +96,7 @@ private:
 // ----------------------------------------------------------------------------
 
 BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EVENT_TYPE( wxEVT_PROJECTLISTCTRL_SELECTION_CHANGED, 100000 )
+    DECLARE_EVENT_TYPE(wxEVT_PROJECTLISTCTRL_SELECTION_CHANGED, 100000)
 END_DECLARE_EVENT_TYPES()
 
 typedef void (wxEvtHandler::*ProjectListCtrlEventFunction)(ProjectListCtrlEvent&);
@@ -120,40 +116,36 @@ typedef void (wxEvtHandler::*ProjectListCtrlEventFunction)(ProjectListCtrlEvent&
 
 class CProjectListItemCtrl: public wxPanel
 {    
-    DECLARE_DYNAMIC_CLASS( CProjectListItemCtrl )
+    DECLARE_DYNAMIC_CLASS(CProjectListItemCtrl)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CProjectListItemCtrl( );
+    CProjectListItemCtrl();
 
-    CProjectListItemCtrl( wxWindow* parent );
+    CProjectListItemCtrl(wxWindow* parent);
 
     /// Creation
-    bool Create( wxWindow* parent );
+    bool Create(wxWindow* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CProjectListItemCtrl event handler declarations
-
     /// wxEVT_ENTER_WINDOW, wxEVT_LEAVE_WINDOW event handler for window
-    void OnMouseEnterLeave( wxMouseEvent& event );
+    void OnMouseEnterLeave(wxMouseEvent& event);
 
     /// wxEVT_LEFT_DOWN, wxEVT_LEFT_UP event handler for window
-    void OnMouseClick( wxMouseEvent& event );
+    void OnMouseClick(wxMouseEvent& event);
 
     /// wxEVT_COMMAND_BUTTON_CLICKED event handler for window
-    void OnWebsiteButtonClick( wxMouseEvent& event );
-
-////@end CProjectListItemCtrl event handler declarations
+    void OnWebsiteButtonClick(wxMouseEvent& event);
 
     /// Methods
     wxString GetTitle() { return m_strTitle; };
     wxString GetURL() { return m_strURL; };
 
-    bool SetTitle( wxString strTitle );
-    bool SetURL( wxString strURL );
+    bool SetTitle(wxString strTitle);
+    bool SetURL(wxString strURL);
 
 private:
     CProjectListItemStaticCtrl* m_pTitleStaticCtrl;
@@ -171,9 +163,8 @@ private:
 class ProjectListItemCtrlEvent : public wxNotifyEvent
 {
 public:
-    ProjectListItemCtrlEvent( wxEventType evtType = wxEVT_NULL, int iControlId = 0 ) :
-      wxNotifyEvent( evtType, wxID_ANY )
-    {
+    ProjectListItemCtrlEvent(wxEventType evtType = wxEVT_NULL, int iControlId = 0) :
+      wxNotifyEvent(evtType, wxID_ANY) {
         m_iControlId = iControlId;
     } 
 
@@ -192,7 +183,7 @@ private:
 // ----------------------------------------------------------------------------
 
 BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EVENT_TYPE( wxEVT_PROJECTLISTITEMCTRL_CLICKED, 110000 )
+    DECLARE_EVENT_TYPE(wxEVT_PROJECTLISTITEMCTRL_CLICKED, 110000)
 END_DECLARE_EVENT_TYPES()
 
 typedef void (wxEvtHandler::*ProjectListItemCtrlEventFunction)(ProjectListItemCtrlEvent&);
@@ -212,7 +203,7 @@ typedef void (wxEvtHandler::*ProjectListItemCtrlEventFunction)(ProjectListItemCt
 
 class CProjectListItemStaticCtrl: public wxStaticText
 {    
-    DECLARE_DYNAMIC_CLASS( CProjectListItemCtrl )
+    DECLARE_DYNAMIC_CLASS(CProjectListItemCtrl)
     DECLARE_EVENT_TABLE()
 
 public:
@@ -240,16 +231,12 @@ public:
         const wxString &name = _T("ProjectListItemStaticCtrl")
     );
 
-////@begin CProjectListItemCtrl event handler declarations
-
     /// wxEVT_ENTER_WINDOW, wxEVT_LEAVE_WINDOW event handler for window
-    void OnMouseEnterLeave( wxMouseEvent& event );
+    void OnMouseEnterLeave(wxMouseEvent& event);
 
     /// wxEVT_LEFT_DOWN, wxEVT_LEFT_UP event handler for window
-    void OnMouseClick( wxMouseEvent& event );
-
-////@end CProjectListItemCtrl event handler declarations
+    void OnMouseClick(wxMouseEvent& event);
 };
 
 
-#endif // _WIZ_PROJECTLISTCTRL_H_
+#endif // WIZ_PROJECTLISTCTRL_H

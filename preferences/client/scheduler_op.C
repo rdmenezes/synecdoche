@@ -141,7 +141,9 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
         // Now's a good time to check for new BOINC versions
         // and project list
         //
+#ifdef ENABLE_UPDATE_CHECK
         gstate.new_version_check();
+#endif
         gstate.all_projects_list_check();
     }
     return retval;
@@ -312,8 +314,8 @@ int SCHEDULER_OP::parse_master_file(PROJECT* p, vector<std::string> &urls) {
     fclose(f);
     if (log_flags.sched_op_debug) {
         msg_printf(p, MSG_INFO,
-            "[sched_op_debug] Found %d scheduler URLs in master file\n",
-            (int)urls.size()
+            "[sched_op_debug] Found %lu scheduler URLs in master file\n",
+            urls.size()
         );
     }
 

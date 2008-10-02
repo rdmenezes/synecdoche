@@ -15,14 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_DlgMessages.h"
+
 #include "stdwx.h"
 #include "common_defs.h"
-#include "diagnostics.h"
-#include "str_util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
 #include "Events.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
@@ -30,17 +26,7 @@
 #include "hyperlink.h"
 #include "version.h"
 
-#include "sg_DlgMessages.h"
 #include "sg_SGUIListControl.h"
-
-
-
-////@begin includes
-////@end includes
-
-////@begin XPM images
-////@end XPM images
-
 
 #define COLUMN_PROJECT              0
 #define COLUMN_TIME                 1
@@ -451,20 +437,11 @@ void CPanelMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
  * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_SIMPLE_HELP
  */
 
-void CPanelMessages::OnButtonHelp( wxCommandEvent& event ) {
+void CPanelMessages::OnButtonHelp(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CPanelMessages::OnHelp - Function Begin"));
 
-	std::string url;
-	url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
-
-	wxString wxurl;
-	wxurl.Printf(
-        wxT("%s?target=simple_messages&version=%s&controlid=%d"),
-        url.c_str(),
-        BOINC_VERSION_STRING,
-        event.GetId()
-    );
-    HyperLink::ExecuteLink(wxurl);
+    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
+    HyperLink::ExecuteLink(url);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CPanelMessages::OnHelp - Function End"));
 }
@@ -842,17 +819,13 @@ void CDlgMessages::OnShow(wxShowEvent& event) {
  * wxEVT_HELP event handler for ID_DLGMESSAGES
  */
 
-void CDlgMessages::OnHelp(wxHelpEvent& event) {
+void CDlgMessages::OnHelp(wxHelpEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgMessages::OnHelp - Function Begin"));
 
     if (IsShown()) {
-		std::string url;
-		url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite().mb_str();
-		canonicalize_master_url(url);
+        wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
 
-		wxString wxurl;
-		wxurl.Printf(wxT("%smanager_links.php?target=simple_messages&controlid=%d"), url.c_str(), event.GetId());
-        HyperLink::ExecuteLink(wxurl);
+        HyperLink::ExecuteLink(url);
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgMessages::OnHelp - Function End"));

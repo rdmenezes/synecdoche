@@ -1,3 +1,4 @@
+/* XPM */
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2005 University of California
@@ -17,7 +18,6 @@
 
 #ifndef WORKUNIT_AREA_BACKGROUND_IMAGE_XPM
 #define WORKUNIT_AREA_BACKGROUND_IMAGE_XPM
-/* XPM */
 static const char *workunit_area_background_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "343 314 32 1",

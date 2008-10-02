@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -24,6 +25,10 @@
 #define ID_ATTACHACCOUNTMANAGERWIZARD 10001
 #define SYMBOL_CWIZARDATTACHPROJECT_IDNAME ID_ATTACHPROJECTWIZARD
 #define SYMBOL_CWIZARDACCOUNTMANAGER_IDNAME ID_ATTACHACCOUNTMANAGERWIZARD
+
+// The following includes are needed by the wizard detection:
+#include "WizardAccountManager.h"
+#include "WizardAttachProject.h"
 
 // Page Identifiers
 //
@@ -125,24 +130,6 @@
 #define ID_ACCTMANAGERUPDATECTRL 11602
 #define ID_ACCTMANAGERREMOVECTRL 11603
 
-
-// Forward declare the generic page classes
-//
-class CWelcomePage;
-class CAccountKeyPage;
-class CAccountInfoPage;
-class CCompletionPage;
-class CCompletionErrorPage;
-class CErrNotDetectedPage;
-class CErrUnavailablePage;
-class CErrAlreadyAttachedPage;
-class CErrNoInternetConnectionPage;
-class CErrNotFoundPage;
-class CErrAlreadyExistsPage;
-class CErrProxyInfoPage;
-class CErrProxyPage;
-
-
 // Diagnostics Tools
 //
 #define WIZDEBUG_ERRPROJECTPROPERTIES                 0x00000001
@@ -163,25 +150,23 @@ class CErrProxyPage;
 #define CHECK_DEBUG_FLAG(id) \
     ((CBOINCBaseWizard*)GetParent())->IsDiagFlagsSet(id)
 
-// Wizard Detection
-//
-#define IS_ATTACHTOPROJECTWIZARD() \
-    ((CBOINCBaseWizard*)GetParent())->IsAttachToProjectWizard
-
-#define IS_ACCOUNTMANAGERWIZARD() \
-    ((CBOINCBaseWizard*)GetParent())->IsAccountManagerWizard
-
-#define IS_ACCOUNTMANAGERUPDATEWIZARD() \
-    ((CBOINCBaseWizard*)GetParent())->IsAccountManagerUpdateWizard
-
-#define IS_ACCOUNTMANAGERREMOVEWIZARD() \
-    ((CBOINCBaseWizard*)GetParent())->IsAccountManagerRemoveWizard
-
+/// Check to which wizard a page belongs.
+/// The header files for all existing wizards need to be included in this file
+/// because dynamic_cast needs the class to be defined.
+///
+/// \param[in] wiz The class name of the wizard that should be checked.
+/// \param[in] cur_page A pointer to the wizard's page for which the wizard type
+///                     should be checked.
+/// \return True if the wizard is of the same class as specified by \a wiz,
+///         false otherwise.
+template<typename wiz> bool CheckWizardTypeByPage(const wxWizardPage* cur_page) {
+    return !!(dynamic_cast<wiz*>(cur_page->GetParent()));
+}
 
 // Commonly defined macros
 //
 #define PAGE_TRANSITION_NEXT(id) \
-    ((CBOINCBaseWizard*)GetParent())->PushPageTransition((wxWizardPageEx*)this, id)
+    ((CBOINCBaseWizard*)GetParent())->PushPageTransition((wxWizardPage*)this, id)
  
 #define PAGE_TRANSITION_BACK \
     ((CBOINCBaseWizard*)GetParent())->PopPageTransition()

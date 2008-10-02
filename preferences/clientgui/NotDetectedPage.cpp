@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,75 +16,46 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
-#include "error_numbers.h"
-#include "BOINCGUIApp.h"
-#include "SkinManager.h"
-#include "MainDocument.h"
-#include "BOINCWizards.h"
-#include "BOINCBaseWizard.h"
+
 #include "NotDetectedPage.h"
 
+#include "stdwx.h"
+#include "BOINCGUIApp.h"
+#include "SkinManager.h"
+#include "BOINCWizards.h"
+#include "BOINCBaseWizard.h"
 
-/*!
- * CErrNotDetectedPage type definition
- */
- 
-IMPLEMENT_DYNAMIC_CLASS( CErrNotDetectedPage, wxWizardPageEx )
- 
-/*!
- * CErrNotDetectedPage event table definition
- */
- 
-BEGIN_EVENT_TABLE( CErrNotDetectedPage, wxWizardPageEx )
- 
-////@begin CErrNotDetectedPage event table entries
-    EVT_WIZARDEX_PAGE_CHANGED( -1, CErrNotDetectedPage::OnPageChanged )
-    EVT_WIZARDEX_CANCEL( -1, CErrNotDetectedPage::OnCancel )
+IMPLEMENT_DYNAMIC_CLASS(CErrNotDetectedPage, wxWizardPage)
 
-////@end CErrNotDetectedPage event table entries
- 
+BEGIN_EVENT_TABLE(CErrNotDetectedPage, wxWizardPage)
+    EVT_WIZARD_PAGE_CHANGED(-1, CErrNotDetectedPage::OnPageChanged)
+    EVT_WIZARD_CANCEL(-1, CErrNotDetectedPage::OnCancel)
 END_EVENT_TABLE()
- 
+
 /*!
  * CErrNotDetectedPage constructors
  */
- 
-CErrNotDetectedPage::CErrNotDetectedPage( )
-{
+
+CErrNotDetectedPage::CErrNotDetectedPage() {
 }
- 
-CErrNotDetectedPage::CErrNotDetectedPage( CBOINCBaseWizard* parent )
-{
-    Create( parent );
+
+CErrNotDetectedPage::CErrNotDetectedPage(CBOINCBaseWizard* parent) {
+    Create(parent);
 }
- 
+
 /*!
  * CErrProjectUnavailable creator
  */
  
-bool CErrNotDetectedPage::Create( CBOINCBaseWizard* parent )
-{
-////@begin CErrNotDetectedPage member initialisation
+bool CErrNotDetectedPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pDirectionsStaticCtrl = NULL;
-////@end CErrNotDetectedPage member initialisation
- 
-////@begin CErrNotDetectedPage creation
+
     wxBitmap wizardBitmap(wxNullBitmap);
-    wxWizardPageEx::Create( parent, ID_ERRNOTDETECTEDPAGE, wizardBitmap );
+    wxWizardPage::Create(parent, wizardBitmap);
 
     CreateControls();
     GetSizer()->Fit(this);
-////@end CErrNotDetectedPage creation
-
     return TRUE;
 }
  
@@ -91,111 +63,83 @@ bool CErrNotDetectedPage::Create( CBOINCBaseWizard* parent )
  * Control creation for CErrProjectUnavailable
  */
  
-void CErrNotDetectedPage::CreateControls()
-{    
-////@begin CErrNotDetectedPage content construction
+void CErrNotDetectedPage::CreateControls() {    
     CErrNotDetectedPage* itemWizardPage96 = this;
 
     wxBoxSizer* itemBoxSizer97 = new wxBoxSizer(wxVERTICAL);
     itemWizardPage96->SetSizer(itemBoxSizer97);
 
     m_pTitleStaticCtrl = new wxStaticText;
-    m_pTitleStaticCtrl->Create( itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pTitleStaticCtrl->Create(itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pTitleStaticCtrl->SetFont(wxFont(10, wxSWISS, wxNORMAL, wxBOLD, FALSE, _T("Verdana")));
     itemBoxSizer97->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     itemBoxSizer97->Add(5, 5, 0, wxALIGN_LEFT|wxALL, 5);
 
     m_pDirectionsStaticCtrl = new wxStaticText;
-    m_pDirectionsStaticCtrl->Create( itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pDirectionsStaticCtrl->Create(itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemBoxSizer97->Add(m_pDirectionsStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
-////@end CErrNotDetectedPage content construction
 }
  
 /*!
  * Gets the previous page.
  */
  
-wxWizardPageEx* CErrNotDetectedPage::GetPrev() const
-{
+wxWizardPage* CErrNotDetectedPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
- 
+
 /*!
  * Gets the next page.
  */
  
-wxWizardPageEx* CErrNotDetectedPage::GetNext() const
-{
+wxWizardPage* CErrNotDetectedPage::GetNext() const {
     return NULL;
 }
- 
+
 /*!
  * Should we show tooltips?
  */
  
-bool CErrNotDetectedPage::ShowToolTips()
-{
+bool CErrNotDetectedPage::ShowToolTips() {
     return TRUE;
 }
- 
+
 /*!
  * Get bitmap resources
  */
  
-wxBitmap CErrNotDetectedPage::GetBitmapResource( const wxString& WXUNUSED(name) )
-{
-    // Bitmap retrieval
-////@begin CErrNotDetectedPage bitmap retrieval
+wxBitmap CErrNotDetectedPage::GetBitmapResource(const wxString& WXUNUSED(name)) {
     return wxNullBitmap;
-////@end CErrNotDetectedPage bitmap retrieval
 }
  
 /*!
  * Get icon resources
  */
  
-wxIcon CErrNotDetectedPage::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CErrNotDetectedPage icon retrieval
+wxIcon CErrNotDetectedPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CErrNotDetectedPage icon retrieval
 }
   
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRPROJECTNOTDETECTEDPAGE
  */
  
-void CErrNotDetectedPage::OnPageChanged( wxWizardExEvent& event ) {
+void CErrNotDetectedPage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
 
     wxASSERT(m_pTitleStaticCtrl);
     wxASSERT(m_pDirectionsStaticCtrl);
 
-    if (IS_ATTACHTOPROJECTWIZARD()) {
-        m_pTitleStaticCtrl->SetLabel(
-            _("Project not found")
-        );
-        m_pDirectionsStaticCtrl->SetLabel(
-            _("The URL you supplied is not that of a BOINC-based project.\n"
-              "\n"
-              "Please check the URL and try again.")
-        );
-    } else if (IS_ACCOUNTMANAGERWIZARD()) {
-        m_pTitleStaticCtrl->SetLabel(
-            _("Account manager not found")
-        );
-        m_pDirectionsStaticCtrl->SetLabel(
-            _("The URL you supplied is not that of a BOINC-based account\n"
-              "manager.\n"
-              "\n"
-              "Please check the URL and try again.")
-        );
+    if (CheckWizardTypeByPage<CWizardAttachProject>(this)) {
+        m_pTitleStaticCtrl->SetLabel(_("Project not found"));
+        m_pDirectionsStaticCtrl->SetLabel(_("The URL you supplied is not that of a BOINC-based project.\n\nPlease check the URL and try again."));
+    } else if (CheckWizardTypeByPage<CWizardAccountManager>(this)) {
+        m_pTitleStaticCtrl->SetLabel(_("Account manager not found"));
+        m_pDirectionsStaticCtrl->SetLabel(_("The URL you supplied is not that of a BOINC-based account\nmanager.\n\nPlease check the URL and try again."));
     } else {
         wxASSERT(FALSE);
     }
-
     Fit();
 }
   
@@ -203,7 +147,6 @@ void CErrNotDetectedPage::OnPageChanged( wxWizardExEvent& event ) {
  * wxEVT_WIZARD_CANCEL event handler for ID_ERRPROJECTNOTDETECTEDPAGE
  */
  
-void CErrNotDetectedPage::OnCancel( wxWizardExEvent& event ) {
+void CErrNotDetectedPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
-

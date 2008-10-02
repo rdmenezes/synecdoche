@@ -15,8 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BOINCBASEFRAME_H_
-#define _BOINCBASEFRAME_H_
+#ifndef BOINCBASEFRAME_H
+#define BOINCBASEFRAME_H
+
+#include <wx/frame.h>
+#include <wx/string.h>
+#include <wx/timer.h>
 
 class CFrameEvent;
 class CFrameAlertEvent;
@@ -55,7 +59,10 @@ public:
     virtual void        OnClose( wxCloseEvent& event );
     virtual void        OnCloseWindow( wxCommandEvent& event );
     virtual void        OnExit( wxCommandEvent& event );
-    
+
+    void                OnContextHelp(wxHelpEvent& event);
+    void                OnHelp(wxCommandEvent& event);
+
     int                 GetReminderFrequency() { return m_iReminderFrequency; }
     wxString            GetDialupConnectionName() { return m_strNetworkDialupConnectionName; }
 
@@ -106,6 +113,7 @@ protected:
 
     virtual bool        SaveState();
     virtual bool        RestoreState();
+    void                ShowHelp(wxEvent& event);
 
     DECLARE_EVENT_TABLE()
 };

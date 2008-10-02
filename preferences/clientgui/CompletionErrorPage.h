@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,65 +16,66 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_COMPLETIONERRORPAGE_H_
-#define _WIZ_COMPLETIONERRORPAGE_H_
+#ifndef WIZ_COMPLETIONERRORPAGE_H
+#define WIZ_COMPLETIONERRORPAGE_H
 
-/*!
- * CCompletionErrorPage class declaration
- */
+#include <wx/wizard.h>
 
-class CCompletionErrorPage: public wxWizardPageEx
+class wxStaticText;
+class wxStaticBox;
+class wxStaticBoxSizer;
+class CBOINCBaseWizard;
+
+class CCompletionErrorPage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CCompletionErrorPage )
+    DECLARE_DYNAMIC_CLASS(CCompletionErrorPage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CCompletionErrorPage( );
+    CCompletionErrorPage();
 
-    CCompletionErrorPage( CBOINCBaseWizard* parent );
+    CCompletionErrorPage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CCompletionErrorPage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_COMPLETIONERRORPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_COMPLETIONERRORPAGE
-    void OnCancel( wxWizardExEvent& event );
-
-////@end CCompletionErrorPage event handler declarations
-
-////@begin CCompletionErrorPage member function declarations
+    void OnCancel(wxWizardEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CCompletionErrorPage member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CCompletionErrorPage member variables
+    /// Get the current error message.
+    wxString GetErrorMessage() const;
+
+    /// Set the current error message.
+    void SetErrorMessage(const wxString& msg);
+
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticText* m_pDirectionsStaticCtrl;
     wxStaticBox* m_pServerMessagesDescriptionCtrl;
     wxStaticBoxSizer* m_pServerMessagesStaticBoxSizerCtrl;
     wxStaticText* m_pServerMessagesCtrl;
-////@end CCompletionErrorPage member variables
 };
 
-#endif // _WIZ_COMPLETIONERRORPAGE_H_
+#endif // WIZ_COMPLETIONERRORPAGE_H

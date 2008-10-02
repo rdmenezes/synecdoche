@@ -1,3 +1,4 @@
+/* XPM */
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2005 University of California
@@ -17,7 +18,6 @@
 
 #ifndef SPACER_IMAGE_XPM
 #define SPACER_IMAGE_XPM
-/* XPM */
 static const char *spacer_image_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "2 11 8 1",

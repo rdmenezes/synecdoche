@@ -8,8 +8,10 @@ dnl directory; the _autosetup script does this.
 dnl not sure exactly what the minimum version is (but 2.13 wont work)
 AC_PREREQ(2.57)
 
-dnl Set the BOINC version here.  You can also use the set-version script.
-AC_INIT(BOINC, 6.3.4)
+dnl Set the Synecdoche version here.
+AC_INIT(Synecdoche, 0.1.1)
+AC_SUBST([SYNEC_PRERELEASE], [1])
+
 LIBBOINC_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\./:/g'`
 AC_SUBST([LIBBOINC_VERSION])
 
@@ -46,7 +48,7 @@ else
     build_state='Release'
 fi
 
-echo "--- Configuring BOINC AC_PACKAGE_VERSION (${build_state}) ---"
+echo "--- Configuring AC_PACKAGE_NAME AC_PACKAGE_VERSION (${build_state}) ---"
 
 AC_CANONICAL_TARGET
 
@@ -77,18 +79,22 @@ You should have received a copy of the GNU Lesser General Public
 License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 ])
 
-AC_REVISION([$Revision: 15490 $])
+AC_REVISION([$Revision$])
 
 AC_DEFUN([KC_STRIP_LEADING_ZEROS],[m4_bregexp([$*],[^0*\(..*\)],\1)])
 
-AC_DEFUN([BOINC_SET_VERSION],[dnl
-AC_SUBST([BOINC_MAJOR_VERSION],KC_STRIP_LEADING_ZEROS([$1]))
-AC_SUBST([BOINC_MINOR_VERSION],KC_STRIP_LEADING_ZEROS([$2]))
-AC_SUBST([BOINC_RELEASE],KC_STRIP_LEADING_ZEROS([$3]))
-AC_SUBST([BOINC_VERSION_STRING],AC_PACKAGE_VERSION)
+AC_DEFUN([SET_VERSION_HLPR],[dnl
+AC_SUBST([$1_MAJOR_VERSION],KC_STRIP_LEADING_ZEROS([$3]))
+AC_SUBST([$1_MINOR_VERSION],KC_STRIP_LEADING_ZEROS([$4]))
+AC_SUBST([$1_RELEASE],KC_STRIP_LEADING_ZEROS([$5]))
+AC_SUBST([$1_VERSION_STRING],[$2])
+])
+AC_DEFUN([SET_VERSION],[dnl
+SET_VERSION_HLPR([$1], [$2], translit([$2], [.], [,]))
 ])
 
-BOINC_SET_VERSION(translit(AC_PACKAGE_VERSION, [.], [,]))
+SET_VERSION(SYNEC, AC_PACKAGE_VERSION)
+SET_VERSION(BOINC, [6.2.18])
 
 dnl Version information moved to version.h so removed from config.h
 dnl AC_DEFINE_UNQUOTED([BOINC_VERSION_STRING], "$BOINC_VERSION_STRING", [String representation of BOINC version number])
@@ -96,19 +102,8 @@ dnl AC_DEFINE_UNQUOTED([BOINC_MAJOR_VERSION], $BOINC_MAJOR_VERSION, [Major part 
 dnl AC_DEFINE_UNQUOTED([BOINC_MINOR_VERSION], $BOINC_MINOR_VERSION, [Minor part of BOINC version number])
 dnl AC_DEFINE_UNQUOTED([BOINC_RELEASE], $BOINC_RELEASE, [Release part of BOINC version number])
 
-dnl Need to duplicate these AC_SUBST because some versions of autoconf wont 
-dnl find AC_SUBST in a macro unless subsequently used in a DEFINE or SUBST
-dnl outside of a macro.  Dont ask me why.
-AC_SUBST([BOINC_VERSION_STRING])
-AC_SUBST([BOINC_MAJOR_VERSION])
-AC_SUBST([BOINC_MINOR_VERSION])
-
 AC_SUBST([TOP_BUILD_DIR], [`pwd`])
 AC_SUBST([TOP_SOURCE_DIR], [`(cd \`dirname "$0"\` && pwd)`])
-
-## commented this out to turn all maintainer-mode features ON by default,
-## such as automatic reconfiguring on changes in Makefile.am's and configure.ac
-## AM_MAINTAINER_MODE
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -124,10 +119,6 @@ dnl doc/manpages, and set the conditional HAVE_DOCBOOK2X_MAN to build
 dnl the manpages only if docbook2x-man is available.
 AC_PATH_PROG(DOCBOOK2X_MAN, docbook2x-man)
 AM_CONDITIONAL(HAVE_DOCBOOK2X_MAN, [test -n "${DOCBOOK2X_MAN}"])
-
-AC_SUBST([CLIENT_BIN_FILENAME],[boinc${EXEEXT}])
-AC_SUBST([CLIENT_CMD_BIN_FILENAME],[boinccmd${EXEEXT}])
-AC_SUBST([CLIENT_GUI_BIN_FILENAME],[boincmgr${EXEEXT}])
 
 dnl If we're running under cygwin, check whether we want to use X11 or WIN32
 dnl GUI
@@ -604,7 +595,6 @@ AC_CONFIG_FILES([
                  lib/Makefile
                  locale/client/Makefile
                  Makefile
-                 sea/Makefile
                  m4/Makefile
                  ])
 

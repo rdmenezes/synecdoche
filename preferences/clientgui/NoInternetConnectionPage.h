@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,62 +16,56 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_NOINTERNETCONNECTIONPAGE_H_
-#define _WIZ_NOINTERNETCONNECTIONPAGE_H_
+#ifndef WIZ_NOINTERNETCONNECTIONPAGE_H
+#define WIZ_NOINTERNETCONNECTIONPAGE_H
 
-/*!
- * CErrNoInternetConnectionPage class declaration
- */
+#include <wx/wizard.h>
 
-class CErrNoInternetConnectionPage: public wxWizardPageEx
+class wxStaticText;
+
+class CBOINCBaseWizard;
+
+class CErrNoInternetConnectionPage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CErrNoInternetConnectionPage )
+    DECLARE_DYNAMIC_CLASS(CErrNoInternetConnectionPage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CErrNoInternetConnectionPage( );
+    CErrNoInternetConnectionPage();
 
-    CErrNoInternetConnectionPage( CBOINCBaseWizard* parent );
+    CErrNoInternetConnectionPage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CErrNoInternetConnectionPage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRNOINTERNETCONNECTIONPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_ERRNOINTERNETCONNECTIONPAGE
-    void OnCancel( wxWizardExEvent& event );
-
-////@end CErrNoInternetConnectionPage event handler declarations
-
-////@begin CErrNoInternetConnectionPage member function declarations
+    void OnCancel(wxWizardEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CErrNoInternetConnectionPage member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CErrNoInternetConnectionPage member variables
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticText* m_pDirectionsStaticCtrl;
-////@end CErrNoInternetConnectionPage member variables
 };
 
-#endif // _WIZ_NOINTERNETCONNECTIONPAGE_H_
+#endif // WIZ_NOINTERNETCONNECTIONPAGE_H

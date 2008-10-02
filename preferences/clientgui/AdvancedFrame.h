@@ -17,9 +17,18 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _ADVANCEDFRAME_H_
-#define _ADVANCEDFRAME_H_
+#ifndef ADVANCEDFRAME_H
+#define ADVANCEDFRAME_H
 
+#include <wx/statusbr.h>
+#include "BOINCBaseFrame.h"
+
+class CC_STATUS;
+
+class wxMenuBar;
+class wxNotebook;
+class wxNotebookEvent;
+class CStatusBar;
 class CBOINCBaseView;
 
 class CStatusBar : public wxStatusBar
@@ -63,8 +72,6 @@ public:
     void Onread_prefs( wxCommandEvent& event );
     void Onread_config( wxCommandEvent& event );
 
-    void OnHelp( wxHelpEvent& event );
-    void OnHelpBOINC( wxCommandEvent& event );
     void OnHelpAbout( wxCommandEvent& event );
 
     void OnShow( wxShowEvent& event );
@@ -139,4 +146,4 @@ protected:
 };
 
 
-#endif
+#endif // ADVANCEDFRAME_H

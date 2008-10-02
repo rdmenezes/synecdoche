@@ -357,7 +357,7 @@ void CLIENT_STATE::change_global_prefs(const char* venue) {
     if (venues.size() == 0) {
         global_prefs.defaults();
         msg_printf(NULL, MSG_INFO,
-            "No general preferences found - using BOINC defaults"
+            "No general preferences found - using defaults"
         );
     } else {
         GLOBAL_PREFS* p_venue = lookup_venue(venue);

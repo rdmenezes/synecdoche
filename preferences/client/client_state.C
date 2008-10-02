@@ -57,7 +57,9 @@ CLIENT_STATE gstate;
 
 CLIENT_STATE::CLIENT_STATE():
     lookup_website_op(&gui_http),
+#ifdef ENABLE_UPDATE_CHECK
     get_current_version_op(&gui_http),
+#endif
     get_project_list_op(&gui_http)
 {
     http_ops = new HTTP_OP_SET();
@@ -79,10 +81,14 @@ CLIENT_STATE::CLIENT_STATE():
     network_suspended = false;
     suspend_reason = 0;
     network_suspend_reason = 0;
-    core_client_version.major = BOINC_MAJOR_VERSION;
-    core_client_version.minor = BOINC_MINOR_VERSION;
-    core_client_version.release = BOINC_RELEASE;
-    core_client_version.prerelease = BOINC_PRERELEASE;
+    core_client_version.major = SYNEC_MAJOR_VERSION;
+    core_client_version.minor = SYNEC_MINOR_VERSION;
+    core_client_version.release = SYNEC_RELEASE;
+    core_client_version.prerelease = SYNEC_PRERELEASE;
+    boinc_compat_version.major = BOINC_MAJOR_VERSION;
+    boinc_compat_version.minor = BOINC_MINOR_VERSION;
+    boinc_compat_version.release = BOINC_RELEASE;
+    boinc_compat_version.prerelease = 0;
     exit_after_app_start_secs = 0;
     app_started = 0;
     exit_before_upload = false;
@@ -117,7 +123,9 @@ CLIENT_STATE::CLIENT_STATE():
     must_schedule_cpus = true;
     must_enforce_cpu_schedule = true;
     no_gui_rpc = false;
+#ifdef ENABLE_UPDATE_CHECK
     new_version_check_time = 0;
+#endif
     all_projects_list_check_time = 0;
     detach_console = false;
 #ifdef SANDBOX
@@ -186,7 +194,7 @@ int CLIENT_STATE::init() {
     time_stats.start();
 
     msg_printf(
-        NULL, MSG_INFO, "Starting BOINC client version %d.%d.%d for %s%s",
+        NULL, MSG_INFO, "Starting Synecdoche client version %d.%d.%d for %s%s",
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,
@@ -200,7 +208,7 @@ int CLIENT_STATE::init() {
 
     if (core_client_version.prerelease) {
         msg_printf(NULL, MSG_USER_ERROR,
-            "This a development version of BOINC and may not function properly"
+            "This a development version of Synecdoche and may not function properly"
         );
     }
 
@@ -845,7 +853,7 @@ void CLIENT_STATE::print_summary() const {
     if (!log_flags.state_debug) return;
 
     msg_printf(0, MSG_INFO, "[state_debug] CLIENT_STATE::print_summary(): Client state summary:\n");
-    msg_printf(0, MSG_INFO, "%d projects:\n", (int)projects.size());
+    msg_printf(0, MSG_INFO, "%lu projects:\n", projects.size());
     for (i=0; i<projects.size(); i++) {
         t = projects[i]->min_rpc_time;
         if (t) {
@@ -854,27 +862,27 @@ void CLIENT_STATE::print_summary() const {
             msg_printf(0, MSG_INFO, "    %s\n", projects[i]->master_url);
         }
     }
-    msg_printf(0, MSG_INFO, "%d file_infos:\n", (int)file_infos.size());
+    msg_printf(0, MSG_INFO, "%lu file_infos:\n", file_infos.size());
     for (i=0; i<file_infos.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s status:%d %s\n", file_infos[i]->name, file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
     }
-    msg_printf(0, MSG_INFO, "%d app_versions\n", (int)app_versions.size());
+    msg_printf(0, MSG_INFO, "%lu app_versions\n", app_versions.size());
     for (i=0; i<app_versions.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s %d\n", app_versions[i]->app_name, app_versions[i]->version_num);
     }
-    msg_printf(0, MSG_INFO, "%d workunits\n", (int)workunits.size());
+    msg_printf(0, MSG_INFO, "%lu workunits\n", workunits.size());
     for (i=0; i<workunits.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s\n", workunits[i]->name);
     }
-    msg_printf(0, MSG_INFO, "%d results\n", (int)results.size());
+    msg_printf(0, MSG_INFO, "%lu results\n", results.size());
     for (i=0; i<results.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s state:%d\n", results[i]->name, results[i]->state());
     }
-    msg_printf(0, MSG_INFO, "%d persistent file xfers\n", (int)pers_file_xfers->pers_file_xfers.size());
+    msg_printf(0, MSG_INFO, "%lu persistent file xfers\n", pers_file_xfers->pers_file_xfers.size());
     for (i=0; i<pers_file_xfers->pers_file_xfers.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s http op state: %d\n", pers_file_xfers->pers_file_xfers[i]->fip->name, (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
     }
-    msg_printf(0, MSG_INFO, "%d active tasks\n", (int)active_tasks.active_tasks.size());
+    msg_printf(0, MSG_INFO, "%lu active tasks\n", active_tasks.active_tasks.size());
     for (i=0; i<active_tasks.active_tasks.size(); i++) {
         msg_printf(0, MSG_INFO, "    %s\n", active_tasks.active_tasks[i]->result->name);
     }
@@ -1577,7 +1585,9 @@ void CLIENT_STATE::check_clock_reset() {
     msg_printf(NULL, MSG_INFO,
         "System clock was turned backwards; clearing timeouts"
     );
+#ifdef ENABLE_UPDATE_CHECK
     new_version_check_time = now;
+#endif
     all_projects_list_check_time = now;
 
     unsigned int i;

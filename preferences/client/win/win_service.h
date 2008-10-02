@@ -13,13 +13,13 @@ extern "C" {
 
 
 // internal name of the service
-#define SZSERVICENAME        "BOINC"
+#define SZSERVICENAME        "Synecdoche"
 
 // displayed name of the service
-#define SZSERVICEDISPLAYNAME "BOINC"
+#define SZSERVICEDISPLAYNAME "Synecdoche"
 
 // displayed description of the service
-#define SZSERVICEDESCRIPTION "Berkeley Open Infrastructure for Network Computing"
+#define SZSERVICEDESCRIPTION "Open Infrastructure for Distributed Computing"
 
 // Service Accepted Actions
 #define SERVICE_ACCEPTED_ACTIONS  ( \

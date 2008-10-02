@@ -47,13 +47,13 @@ using std::string;
 #include "common_defs.h"
 
 void version(){
-    printf("boinccmd,  built from %s \n", PACKAGE_STRING );
+    printf("syneccmd,  built from %s \n", PACKAGE_STRING );
     exit(0);
 }
 
 void usage() {
     fprintf(stderr, "\n\
-usage: boinccmd [--host hostname] [--passwd passwd] command\n\n\
+usage: syneccmd [--host hostname] [--passwd passwd] command\n\n\
 Commands:\n\
  --lookup_account URL email passwd\n\
  --create_account URL email passwd name\n\

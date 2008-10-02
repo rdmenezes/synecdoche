@@ -27,7 +27,6 @@
 #include "BOINCListCtrl.h"
 #include "Events.h"
 
-#include "res/boinc.xpm"
 #include "res/sortascending.xpm"
 #include "res/sortdescending.xpm"
 

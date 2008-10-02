@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,63 +16,55 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_UNAVAILABLEPAGE_H_
-#define _WIZ_UNAVAILABLEPAGE_H_
+#ifndef WIZ_UNAVAILABLEPAGE_H
+#define WIZ_UNAVAILABLEPAGE_H
 
-/*!
- * CErrUnavailablePage class declaration
- */
+#include <wx/wizard.h>
 
-class CErrUnavailablePage: public wxWizardPageEx
+class wxStaticText;
+
+class CBOINCBaseWizard;
+
+class CErrUnavailablePage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CErrUnavailablePage )
+    DECLARE_DYNAMIC_CLASS(CErrUnavailablePage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CErrUnavailablePage( );
-
-    CErrUnavailablePage( CBOINCBaseWizard* parent );
+    CErrUnavailablePage();
+    CErrUnavailablePage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CErrUnavailablePage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRPROJECTUNAVAILABLEPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_ERRPROJECTUNAVAILABLEPAGE
-    void OnCancel( wxWizardExEvent& event );
-
-////@end CErrUnavailablePage event handler declarations
-
-////@begin CErrUnavailablePage member function declarations
+    void OnCancel(wxWizardEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CErrUnavailablePage member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin CErrUnavailablePage member variables
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticText* m_pDirectionsStaticCtrl;
-////@end CErrUnavailablePage member variables
 };
 
-#endif
-    // _DLGABOUT_H_
+#endif // WIZ_UNAVAILABLEPAGE_H

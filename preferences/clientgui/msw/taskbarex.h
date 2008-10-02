@@ -10,13 +10,20 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////
 
-#ifndef _TASKBAREX_H_
-#define _TASKBAREX_H_
+#ifndef TASKBAREX_H
+#define TASKBAREX_H
+
+#include <shellapi.h>
+#include <wx/string.h>
+#include <wx/event.h>
 
 // ----------------------------------------------------------------------------
 // wxTaskBarIconEx 
 // ----------------------------------------------------------------------------
 
+class wxCloseEvent;
+class wxIcon;
+class wxMenu;
 class wxTaskBarIconExEvent;
 
 class wxTaskBarIconEx: public wxEvtHandler {
@@ -123,10 +130,4 @@ typedef void (wxEvtHandler::*wxTaskBarIconExEventFunction)(wxTaskBarIconExEvent&
 #define EVT_TASKBAR_SHUTDOWN(fn)             wx__DECLARE_TASKBAREXEVT(SHUTDOWN, fn)
 
 
-#endif
-    // _TASKBAR_H_
-
-
-
-
-
+#endif // TASKBAR_H

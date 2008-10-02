@@ -16,20 +16,17 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "BOINCBaseFrame.h"
+
 #include "stdwx.h"
-#include "diagnostics.h"
+#include "version.h"
 #include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
 #include "hyperlink.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
 #include "BOINCClientManager.h"
 #include "BOINCTaskBar.h"
-#include "BOINCBaseFrame.h"
 #include "BOINCDialupManager.h"
 #include "Events.h"
 
@@ -286,7 +283,7 @@ void CBOINCBaseFrame::OnCloseWindow(wxCommandEvent& WXUNUSED(event)) {
 
 
 void CBOINCBaseFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnExit - Function Begin"));
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnExit - Function Begin"));
 
     if (wxGetApp().ConfirmExit()) {
         // Under wxWidgets 2.8.0, the task bar icons must be deleted for app to exit its main loop
@@ -306,7 +303,36 @@ void CBOINCBaseFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
         Close(true);
 
     }
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnExit - Function End"));
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnExit - Function End"));
+}
+
+
+void CBOINCBaseFrame::OnContextHelp(wxHelpEvent& event) {
+    ShowHelp(event);
+}
+
+
+void CBOINCBaseFrame::OnHelp(wxCommandEvent& event) {
+    ShowHelp(event);
+}
+
+
+void CBOINCBaseFrame::ShowHelp(wxEvent& event) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnHelp - Function Begin"));
+
+    if (IsShown()) {
+        CSkinAdvanced* skin = wxGetApp().GetSkinManager()->GetAdvanced();
+        if (event.GetId() == ID_HELPBOINCWEBSITE) {
+            HyperLink::ExecuteLink(skin->GetOrganizationWebsite());
+        } else {
+            wxString url = skin->GetOrganizationHelpUrl();
+
+            url << wxT("?version=") << wxT(SYNEC_VERSION_STRING);
+            HyperLink::ExecuteLink(url);
+        }
+    }
+
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnHelp - Function End"));
 }
 
 
@@ -336,53 +362,35 @@ void CBOINCBaseFrame::FireReloadSkin() {
 
 void CBOINCBaseFrame::ShowConnectionBadPasswordAlert( bool bUsedDefaultPassword, int m_iReadGUIRPCAuthFailure ) {
     CSkinAdvanced*      pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
-    wxString            strDialogTitle = wxEmptyString;
-
+    wxString            title;
+    wxString            passwordErrorReason;
 
     wxASSERT(pSkinAdvanced);
     wxASSERT(wxDynamicCast(pSkinAdvanced, CSkinAdvanced));
-
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::ShowConnectionBadPasswordAlert - Function Begin"));
 
     // %s is the application name
     //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strDialogTitle.Printf(
+    title.Printf(
         _("%s - Connection Error"),
         pSkinAdvanced->GetApplicationName().c_str()
     );
 
-    if ( bUsedDefaultPassword ) {
-#ifdef __WXMSW__
-        if ( EACCES == m_iReadGUIRPCAuthFailure || ENOENT == m_iReadGUIRPCAuthFailure ) {
-            ShowAlert(
-                strDialogTitle,
-                _("You currently are not authorized to manage the client.\n"
-                  "Please contact your administrator to add you to the 'boinc_users' local user group."),
-                wxOK | wxICON_ERROR
-            );
-        } else 
-#endif
-        {
-            ShowAlert(
-                strDialogTitle,
-#ifndef __WXMAC__
-                _("Authorization failed connecting to running client."
-                  "\nMake sure you start this program in the same directory as the client."
-                ),
-#else
-                _("Authorization failed connecting to running client."),
-#endif
-                wxOK | wxICON_ERROR
-            );
+    if (bUsedDefaultPassword) {
+        passwordErrorReason = _("Authorization failed connecting to running client.");
+        if (m_iReadGUIRPCAuthFailure) {
+            passwordErrorReason << wxT("\n") << _("Could not read gui_rpc_auth.cfg");
         }
     } else {
-        ShowAlert(
-            strDialogTitle,
-            _("The password you have provided is incorrect, please try again."),
-            wxOK | wxICON_ERROR
-        );
+        passwordErrorReason = _("The password you have provided is incorrect, please try again.");
     }
+
+    ShowAlert(
+        title,
+        passwordErrorReason,
+        wxOK | wxICON_ERROR
+    );
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::ShowConnectionBadPasswordAlert - Function End"));
 }
@@ -576,7 +584,7 @@ void CBOINCBaseFrame::ShowAlert( const wxString title, const wxString message, c
     AddPendingEvent(event);
 }
 
-
+/// \deprecated
 void CBOINCBaseFrame::ExecuteBrowserLink(const wxString &strLink) {
     HyperLink::ExecuteLink(strLink);
 }

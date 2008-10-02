@@ -28,14 +28,10 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <grp.h>
-
-#ifdef __cplusplus
-#include <string>
-#endif
-
 #endif /* !WIN32 */
 
 #ifdef __cplusplus
+#include <string>
 extern "C" {
 #endif
   extern int boinc_delete_file(const char*);

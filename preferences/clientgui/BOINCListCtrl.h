@@ -25,13 +25,17 @@
 #define USE_NATIVE_LISTCONTROL 0
 #endif
 
+#include <wx/listctrl.h>
 #if USE_NATIVE_LISTCONTROL
 #define LISTCTRL_BASE wxListCtrl
-#include "wx/listctrl.h"
 #else
 #define LISTCTRL_BASE wxGenericListCtrl
-#include "wx/generic/listctrl.h"
+#include <wx/generic/listctrl.h>
 #endif
+
+#include <wx/config.h>
+
+class wxScrolledWindow;
 
 class CBOINCBaseView;
 class CDrawBarGraphEvent;

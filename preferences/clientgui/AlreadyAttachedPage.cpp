@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,74 +16,46 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
-#include "error_numbers.h"
-#include "BOINCGUIApp.h"
-#include "SkinManager.h"
-#include "MainDocument.h"
-#include "BOINCWizards.h"
-#include "BOINCBaseWizard.h"
+
 #include "AlreadyAttachedPage.h"
 
+#include "stdwx.h"
+#include "BOINCGUIApp.h"
+#include "SkinManager.h"
+#include "BOINCWizards.h"
+#include "BOINCBaseWizard.h"
 
-/*!
- * CErrAlreadyAttachedPage type definition
- */
+IMPLEMENT_DYNAMIC_CLASS(CErrAlreadyAttachedPage, wxWizardPage)
 
-IMPLEMENT_DYNAMIC_CLASS( CErrAlreadyAttachedPage, wxWizardPageEx )
-
-/*!
- * CErrAlreadyAttachedPage event table definition
- */
-
-BEGIN_EVENT_TABLE( CErrAlreadyAttachedPage, wxWizardPageEx )
-
-////@begin CErrAlreadyAttachedPage event table entries
-    EVT_WIZARDEX_PAGE_CHANGED( -1, CErrAlreadyAttachedPage::OnPageChanged )
-    EVT_WIZARDEX_CANCEL( -1, CErrAlreadyAttachedPage::OnCancel )
-
-////@end CErrAlreadyAttachedPage event table entries
-
+BEGIN_EVENT_TABLE(CErrAlreadyAttachedPage, wxWizardPage)
+    EVT_WIZARD_PAGE_CHANGED(-1, CErrAlreadyAttachedPage::OnPageChanged)
+    EVT_WIZARD_CANCEL(-1, CErrAlreadyAttachedPage::OnCancel)
 END_EVENT_TABLE()
 
 /*!
  * CErrAlreadyAttachedPage constructors
  */
 
-CErrAlreadyAttachedPage::CErrAlreadyAttachedPage( )
-{
+CErrAlreadyAttachedPage::CErrAlreadyAttachedPage() {
 }
 
-CErrAlreadyAttachedPage::CErrAlreadyAttachedPage( CBOINCBaseWizard* parent )
-{
-    Create( parent );
+CErrAlreadyAttachedPage::CErrAlreadyAttachedPage(CBOINCBaseWizard* parent) {
+    Create(parent);
 }
 
 /*!
  * WizardPage creator
  */
 
-bool CErrAlreadyAttachedPage::Create( CBOINCBaseWizard* parent )
-{
-////@begin CErrAlreadyAttachedPage member initialisation
+bool CErrAlreadyAttachedPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pDirectionsStaticCtrl = NULL;
-////@end CErrAlreadyAttachedPage member initialisation
 
-////@begin CErrAlreadyAttachedPage creation
     wxBitmap wizardBitmap(wxNullBitmap);
-    wxWizardPageEx::Create( parent, ID_ERRALREADYATTACHEDPAGE, wizardBitmap );
+    wxWizardPage::Create(parent, wizardBitmap);
 
     CreateControls();
     GetSizer()->Fit(this);
-////@end CErrAlreadyAttachedPage creation
     return TRUE;
 }
 
@@ -90,33 +63,29 @@ bool CErrAlreadyAttachedPage::Create( CBOINCBaseWizard* parent )
  * Control creation for WizardPage
  */
 
-void CErrAlreadyAttachedPage::CreateControls()
-{    
-////@begin CErrAlreadyAttachedPage content construction
+void CErrAlreadyAttachedPage::CreateControls() {    
     CErrAlreadyAttachedPage* itemWizardPage96 = this;
 
     wxBoxSizer* itemBoxSizer97 = new wxBoxSizer(wxVERTICAL);
     itemWizardPage96->SetSizer(itemBoxSizer97);
 
     m_pTitleStaticCtrl = new wxStaticText;
-    m_pTitleStaticCtrl->Create( itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pTitleStaticCtrl->Create(itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pTitleStaticCtrl->SetFont(wxFont(10, wxSWISS, wxNORMAL, wxBOLD, FALSE, _T("Verdana")));
     itemBoxSizer97->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     itemBoxSizer97->Add(5, 5, 0, wxALIGN_LEFT|wxALL, 5);
 
     m_pDirectionsStaticCtrl = new wxStaticText;
-    m_pDirectionsStaticCtrl->Create( itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pDirectionsStaticCtrl->Create(itemWizardPage96, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemBoxSizer97->Add(m_pDirectionsStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
-////@end CErrAlreadyAttachedPage content construction
 }
 
 /*!
  * Gets the previous page.
  */
 
-wxWizardPageEx* CErrAlreadyAttachedPage::GetPrev() const
-{
+wxWizardPage* CErrAlreadyAttachedPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
 
@@ -124,8 +93,7 @@ wxWizardPageEx* CErrAlreadyAttachedPage::GetPrev() const
  * Gets the next page.
  */
 
-wxWizardPageEx* CErrAlreadyAttachedPage::GetNext() const
-{
+wxWizardPage* CErrAlreadyAttachedPage::GetNext() const {
     return NULL;
 }
 
@@ -133,8 +101,7 @@ wxWizardPageEx* CErrAlreadyAttachedPage::GetNext() const
  * Should we show tooltips?
  */
 
-bool CErrAlreadyAttachedPage::ShowToolTips()
-{
+bool CErrAlreadyAttachedPage::ShowToolTips() {
     return TRUE;
 }
 
@@ -142,42 +109,30 @@ bool CErrAlreadyAttachedPage::ShowToolTips()
  * Get bitmap resources
  */
 
-wxBitmap CErrAlreadyAttachedPage::GetBitmapResource( const wxString& WXUNUSED(name) )
-{
-    // Bitmap retrieval
-////@begin CErrAlreadyAttachedPage bitmap retrieval
+wxBitmap CErrAlreadyAttachedPage::GetBitmapResource(const wxString& WXUNUSED(name)) {
     return wxNullBitmap;
-////@end CErrAlreadyAttachedPage bitmap retrieval
 }
 
 /*!
  * Get icon resources
  */
 
-wxIcon CErrAlreadyAttachedPage::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CErrAlreadyAttachedPage icon retrieval
+wxIcon CErrAlreadyAttachedPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CErrAlreadyAttachedPage icon retrieval
 }
 
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRPROJECTALREADYATTACHED
  */
 
-void CErrAlreadyAttachedPage::OnPageChanged( wxWizardExEvent& event ) {
+void CErrAlreadyAttachedPage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
 
     wxASSERT(m_pTitleStaticCtrl);
     wxASSERT(m_pDirectionsStaticCtrl);
 
-    m_pTitleStaticCtrl->SetLabel(
-        _("Already attached to project")
-    );
-    m_pDirectionsStaticCtrl->SetLabel(
-        _("You are already attached to this project.")
-    );
+    m_pTitleStaticCtrl->SetLabel(_("Already attached to project"));
+    m_pDirectionsStaticCtrl->SetLabel(_("You are already attached to this project."));
 
     Fit();
 }
@@ -186,7 +141,6 @@ void CErrAlreadyAttachedPage::OnPageChanged( wxWizardExEvent& event ) {
  * wxEVT_WIZARD_CANCEL event handler for ID_ERRPROJECTALREADYATTACHED
  */
 
-void CErrAlreadyAttachedPage::OnCancel( wxWizardExEvent& event ) {
+void CErrAlreadyAttachedPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
-

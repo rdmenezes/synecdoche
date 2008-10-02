@@ -91,9 +91,9 @@ int CLIENT_STATE::parse_state_file() {
 
         // avoid warning messages about version
         //
-        old_major_version = BOINC_MAJOR_VERSION;
-        old_minor_version = BOINC_MINOR_VERSION;
-        old_release = BOINC_RELEASE;
+        old_major_version = SYNEC_MAJOR_VERSION;
+        old_minor_version = SYNEC_MINOR_VERSION;
+        old_release = SYNEC_RELEASE;
         return ERR_FOPEN;
     }
 
@@ -427,15 +427,17 @@ int CLIENT_STATE::parse_state_file() {
         if (parse_str(buf, "<host_venue>", main_host_venue, sizeof(main_host_venue))) {
             continue;
         }
-        if (parse_double(buf, "<new_version_check_time>", new_version_check_time)) {
+        if (parse_double(buf, "<all_projects_list_check_time>", all_projects_list_check_time)) {
             continue;
         }
-        if (parse_double(buf, "<all_projects_list_check_time>", all_projects_list_check_time)) {
+#ifdef ENABLE_UPDATE_CHECK
+        if (parse_double(buf, "<new_version_check_time>", new_version_check_time)) {
             continue;
         }
         if (parse_str(buf, "<newer_version>", newer_version)) {
             continue;
         }
+#endif
         if (match_tag(buf, "<auto_update>")) {
             if (!project) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR,
@@ -645,22 +647,30 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         "<core_client_release>%d</core_client_release>\n"
         "<user_run_request>%d</user_run_request>\n"
         "<user_network_request>%d</user_network_request>\n"
-        "%s"
-        "<new_version_check_time>%f</new_version_check_time>\n"
-        "<all_projects_list_check_time>%f</all_projects_list_check_time>\n",
+        "%s",
         get_primary_platform(),
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,
         run_mode.get_perm(),
         network_mode.get_perm(),
-        cpu_benchmarks_pending?"<cpu_benchmarks_pending/>\n":"",
-        new_version_check_time,
+        cpu_benchmarks_pending?"<cpu_benchmarks_pending/>\n":""
+    );
+#ifdef ENABLE_UPDATE_CHECK
+    f.printf(
+        "<new_version_check_time>%f</new_version_check_time>\n",
+        new_version_check_time
+    );
+#endif
+    f.printf(
+        "<all_projects_list_check_time>%f</all_projects_list_check_time>\n",
         all_projects_list_check_time
     );
+#ifdef ENABLE_UPDATE_CHECK
     if (!newer_version.empty()) {
         f.printf("<newer_version>%s</newer_version>\n", newer_version.c_str());
     }
+#endif
     for (i=1; i<platforms.size(); i++) {
         f.printf("<alt_platform>%s</alt_platform>\n", platforms[i].name.c_str());
     }

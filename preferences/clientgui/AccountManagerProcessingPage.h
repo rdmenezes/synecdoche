@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,108 +16,88 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _WIZ_ACCOUNTMANAGERPROCESSINGPAGE_H_
-#define _WIZ_ACCOUNTMANAGERPROCESSINGPAGE_H_
+#ifndef WIZ_ACCOUNTMANAGERPROCESSINGPAGE_H
+#define WIZ_ACCOUNTMANAGERPROCESSINGPAGE_H
 
-/*!
- * CAccountManagerProcessingPage custom events
- */
+#include <wx/wizard.h>
+#include <wx/event.h>
 
+class CBOINCBaseWizard;
+class wxStaticText;
+class wxStaticBitmap;
+
+/// CAccountManagerProcessingPage custom events
 class CAccountManagerProcessingPageEvent : public wxEvent
 {
 public:
-    CAccountManagerProcessingPageEvent(wxEventType evtType, wxWizardPageEx *parent)
-        : wxEvent(-1, evtType)
-        {
-            SetEventObject(parent);
-        }
+    CAccountManagerProcessingPageEvent(wxEventType evtType, wxWizardPage *parent) : wxEvent(-1, evtType) {
+        SetEventObject(parent);
+    }
 
     virtual wxEvent *Clone() const { return new CAccountManagerProcessingPageEvent(*this); }
 };
 
 
 BEGIN_DECLARE_EVENT_TYPES()
-DECLARE_EVENT_TYPE( wxEVT_ACCOUNTMANAGERPROCESSING_STATECHANGE, 11100 )
+DECLARE_EVENT_TYPE(wxEVT_ACCOUNTMANAGERPROCESSING_STATECHANGE, 11100)
 END_DECLARE_EVENT_TYPES()
 
 #define EVT_ACCOUNTMANAGERPROCESSING_STATECHANGE(fn) \
     DECLARE_EVENT_TABLE_ENTRY(wxEVT_ACCOUNTMANAGERPROCESSING_STATECHANGE, -1, -1, (wxObjectEventFunction) (wxEventFunction) &fn, NULL),
 
-/*!
- * CAccountManagerProcessingPage states
- */
-
-#define ATTACHACCTMGR_INIT                              0
-#define ATTACHACCTMGR_ATTACHACCTMGR_BEGIN               1
-#define ATTACHACCTMGR_ATTACHACCTMGR_EXECUTE             2
-#define ATTACHACCTMGR_CLEANUP                           3
-#define ATTACHACCTMGR_END                               4
-
-/*!
- * CAccountManagerProcessingPage class declaration
- */
-
-class CAccountManagerProcessingPage: public wxWizardPageEx
+class CAccountManagerProcessingPage: public wxWizardPage
 {    
-    DECLARE_DYNAMIC_CLASS( CAccountManagerProcessingPage )
+    DECLARE_DYNAMIC_CLASS(CAccountManagerProcessingPage)
     DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors
-    CAccountManagerProcessingPage( );
-
-    CAccountManagerProcessingPage( CBOINCBaseWizard* parent );
+    CAccountManagerProcessingPage();
+    CAccountManagerProcessingPage(CBOINCBaseWizard* parent);
 
     /// Creation
-    bool Create( CBOINCBaseWizard* parent );
+    bool Create(CBOINCBaseWizard* parent);
 
     /// Creates the controls and sizers
     void CreateControls();
 
-////@begin CAccountManagerProcessingPage event handler declarations
-
     /// wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ATTACHACCOUNTMANAGERPAGE
-    void OnPageChanged( wxWizardExEvent& event );
+    void OnPageChanged(wxWizardEvent& event);
 
     /// wxEVT_WIZARD_CANCEL event handler for ID_ATTACHACCOUNTMANAGERPAGE
-    void OnCancel( wxWizardExEvent& event );
+    void OnCancel(wxWizardEvent& event);
 
-////@end CAccountManagerProcessingPage event handler declarations
-
-    void OnStateChange( CAccountManagerProcessingPageEvent& event );
-
-////@begin CAccountManagerProcessingPage member function declarations
+    void OnStateChange(CAccountManagerProcessingPageEvent& event);
 
     /// Gets the previous page.
-    virtual wxWizardPageEx* GetPrev() const;
+    virtual wxWizardPage* GetPrev() const;
 
     /// Gets the next page.
-    virtual wxWizardPageEx* GetNext() const;
+    virtual wxWizardPage* GetNext() const;
 
     /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+    wxBitmap GetBitmapResource(const wxString& name);
 
     /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
-////@end CAccountManagerProcessingPage member function declarations
+    wxIcon GetIconResource(const wxString& name);
 
-    bool GetProjectCommunitcationsSucceeded() const { return m_bProjectCommunitcationsSucceeded ; }
-    void SetProjectCommunitcationsSucceeded(bool value) { m_bProjectCommunitcationsSucceeded = value ; }
+    bool GetProjectCommunitcationsSucceeded() const { return m_bProjectCommunitcationsSucceeded; }
+    void SetProjectCommunitcationsSucceeded(bool value) { m_bProjectCommunitcationsSucceeded = value; }
 
-    bool GetProjectUnavailable() const { return m_bProjectUnavailable ; }
-    void SetProjectUnavailable(bool value) { m_bProjectUnavailable = value ; }
+    bool GetProjectUnavailable() const { return m_bProjectUnavailable; }
+    void SetProjectUnavailable(bool value) { m_bProjectUnavailable = value; }
 
-    bool GetProjectAccountAlreadyExists() const { return m_bProjectAccountAlreadyExists ; }
-    void SetProjectAccountAlreadyExists(bool value) { m_bProjectAccountAlreadyExists = value ; }
+    bool GetProjectAccountAlreadyExists() const { return m_bProjectAccountAlreadyExists; }
+    void SetProjectAccountAlreadyExists(bool value) { m_bProjectAccountAlreadyExists = value; }
 
-    bool GetProjectAccountNotFound() const { return m_bProjectAccountNotFound ; }
-    void SetProjectAccountNotFound(bool value) { m_bProjectAccountNotFound = value ; }
+    bool GetProjectAccountNotFound() const { return m_bProjectAccountNotFound; }
+    void SetProjectAccountNotFound(bool value) { m_bProjectAccountNotFound = value; }
 
-    bool GetProjectAttachSucceeded() const { return m_bProjectAttachSucceeded ; }
-    void SetProjectAttachSucceeded(bool value) { m_bProjectAttachSucceeded = value ; }
+    bool GetProjectAttachSucceeded() const { return m_bProjectAttachSucceeded; }
+    void SetProjectAttachSucceeded(bool value) { m_bProjectAttachSucceeded = value; }
 
-    wxInt32 GetCurrentState() const { return m_iCurrentState ; }
-    void SetNextState(wxInt32 value) { m_iCurrentState = value ; }
+    wxInt32 GetCurrentState() const { return m_iCurrentState; }
+    void SetNextState(wxInt32 value) { m_iCurrentState = value; }
 
     /// Should we show tooltips?
     static bool ShowToolTips();
@@ -126,11 +107,10 @@ public:
     void IncrementProgress(wxStaticBitmap* pBitmap);
     void FinishProgress(wxStaticBitmap* pBitmap);
 
-////@begin CAccountManagerProcessingPage member variables
+private:
     wxStaticText* m_pTitleStaticCtrl;
     wxStaticText* m_pPleaseWaitStaticCtrl;
     wxStaticBitmap* m_pProgressIndicator;
-////@end CAccountManagerProcessingPage member variables
     bool m_bProjectCommunitcationsSucceeded;
     bool m_bProjectUnavailable;
     bool m_bProjectAccountNotFound;
@@ -140,4 +120,4 @@ public:
     int m_iCurrentState;
 };
 
-#endif // _WIZ_ACCOUNTMANAGERPROCESSINGPAGE_H_
+#endif // WIZ_ACCOUNTMANAGERPROCESSINGPAGE_H
