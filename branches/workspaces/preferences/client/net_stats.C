@@ -220,7 +220,7 @@ int LOOKUP_WEBSITE_OP::do_rpc(std::string& url) {
         net_status.need_physical_connection = true;
 		net_status.last_comm_time = 0;
         msg_printf(0, MSG_USER_ERROR,
-            "BOINC can't access Internet - check network connection or proxy configuration."
+            "Synecdoche can't access Internet - check network connection or proxy configuration."
         );
     } else {
         error_num = ERR_IN_PROGRESS;
@@ -240,7 +240,7 @@ void LOOKUP_WEBSITE_OP::handle_reply(int http_op_retval) {
         net_status.need_physical_connection = true;
 		net_status.last_comm_time = 0;
         msg_printf(0, MSG_USER_ERROR,
-            "BOINC can't access Internet - check network connection or proxy configuration."
+            "Synecdoche can't access Internet - check network connection or proxy configuration."
         );
     } else {
         if (net_status.show_ref_message) {

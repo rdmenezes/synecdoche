@@ -139,7 +139,7 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
                 "Application file %s missing signature", name
             );
             msg_printf(project, MSG_INTERNAL_ERROR,
-                "BOINC cannot accept this file"
+                "Synecdoche cannot accept this file"
             );
             error_msg = "missing signature";
             status = ERR_NO_SIGNATURE;

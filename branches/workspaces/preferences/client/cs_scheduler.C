@@ -119,9 +119,9 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         p->authenticator,
         p->hostid,
         p->rpc_seqno,
-        core_client_version.major,
-        core_client_version.minor,
-        core_client_version.release,
+        boinc_compat_version.major,
+        boinc_compat_version.minor,
+        boinc_compat_version.release,
         p->work_request,
         resource_share_fraction,
         rrs_fraction,
@@ -402,7 +402,7 @@ int CLIENT_STATE::handle_scheduler_reply(
     if (retval) return retval;
 
     if (log_flags.sched_ops) {
-        msg_printf(project, MSG_INFO, "Scheduler request completed: got %d new tasks", (int)sr.results.size());
+        msg_printf(project, MSG_INFO, "Scheduler request completed: got %lu new tasks", sr.results.size());
     }
     if (log_flags.sched_op_debug) {
         if (sr.scheduler_version) {

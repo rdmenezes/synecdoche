@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
 #include "mac/MacGUI.pch"
 #endif
 
+#include "AdvancedFrame.h"
+
 #include "stdwx.h"
 #include "version.h"
 #include "diagnostics.h"
@@ -35,7 +37,6 @@
 #include "BOINCBaseView.h"
 #include "BOINCTaskBar.h"
 #include "BOINCDialupManager.h"
-#include "AdvancedFrame.h"
 #include "ViewProjects.h"
 #include "ViewWork.h"
 #include "ViewTransfers.h"
@@ -46,12 +47,12 @@
 #include "DlgOptions.h"
 #include "DlgSelectComputer.h"
 #include "DlgGenericMessage.h"
-#include "wizardex.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
 #include "WizardAccountManager.h"
 #include "PrefFrame.h"
+#include "hyperlink.h"
 
 
 enum STATUSBARFIELDS {
@@ -101,10 +102,9 @@ BEGIN_EVENT_TABLE (CAdvancedFrame, CBOINCBaseFrame)
     EVT_MENU(ID_COMMANDSRETRYCOMMUNICATIONS, CAdvancedFrame::OnCommandsRetryCommunications)
     EVT_MENU(ID_OPTIONSOPTIONS, CAdvancedFrame::OnOptionsOptions)
     EVT_MENU(ID_ADVPREFSDLG, CAdvancedFrame::OnDlgPreferences)
-    EVT_HELP(wxID_ANY, CAdvancedFrame::OnHelp)
-    EVT_MENU(ID_HELPBOINC, CAdvancedFrame::OnHelpBOINC)
-    EVT_MENU(ID_HELPBOINCMANAGER, CAdvancedFrame::OnHelpBOINC)
-    EVT_MENU(ID_HELPBOINCWEBSITE, CAdvancedFrame::OnHelpBOINC)
+    EVT_HELP(wxID_ANY, CBOINCBaseFrame::OnContextHelp)
+    EVT_MENU(ID_HELPBOINC, CBOINCBaseFrame::OnHelp)
+    EVT_MENU(ID_HELPBOINCWEBSITE, CBOINCBaseFrame::OnHelp)
     EVT_MENU(wxID_ABOUT, CAdvancedFrame::OnHelpAbout)
     EVT_SHOW(CAdvancedFrame::OnShow)
     EVT_FRAME_REFRESH(CAdvancedFrame::OnRefreshView)
@@ -143,7 +143,7 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     icons.AddIcon(*icon);
     icons.AddIcon(*icon32);
     SetIcons(icons);
-
+	
     // Create UI elements
     wxCHECK_RET(CreateMenu(), _T("Failed to create menu bar."));
     wxCHECK_RET(CreateNotebook(), _T("Failed to create notebook."));
@@ -248,7 +248,7 @@ bool CAdvancedFrame::CreateMenu() {
 
     strMenuDescription.Printf(
         _("Close %s window."), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuFile->Append(
         ID_FILECLOSEWINDOW,
@@ -256,11 +256,11 @@ bool CAdvancedFrame::CreateMenu() {
         strMenuDescription
     );
 
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
         _("Exit %s."), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuFile->Append(
         wxID_EXIT,
@@ -367,9 +367,11 @@ bool CAdvancedFrame::CreateMenu() {
         _("Network activity based on &preferences"),
         _("Allow network activity according to your preferences")
     );
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
         _("Stop %s network activity"), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuActivity->AppendRadioItem(
         ID_FILENETWORKSUSPEND,
@@ -391,7 +393,7 @@ bool CAdvancedFrame::CreateMenu() {
     );
 
     // %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
         _("Connect to another computer running %s"), 
         pSkinAdvanced->GetApplicationShortName().c_str()
@@ -408,7 +410,7 @@ bool CAdvancedFrame::CreateMenu() {
     );
     strMenuDescription.Printf(
         _("Runs %s CPU benchmarks"), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuAdvanced->Append(
         ID_FILERUNBENCHMARKS, 
@@ -452,68 +454,50 @@ bool CAdvancedFrame::CreateMenu() {
     wxMenu *menuHelp = new wxMenu;
 
     // %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuName.Printf(
-        _("%s &help"), 
+        _("%s &help"),
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
     // %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
-        _("Show information about %s"), 
+        _("Get help and support for %s."), 
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuHelp->Append(
         ID_HELPBOINC,
-        strMenuName, 
+        strMenuName,
         strMenuDescription
     );
 
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strMenuName.Printf(
-        _("&%s help"), 
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strMenuDescription.Printf(
-        _("Show information about %s"), 
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
-    menuHelp->Append(
-        ID_HELPBOINCMANAGER,
-        strMenuName, 
-        strMenuDescription
-    );
-
-    /*// %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuName.Printf(
         _("%s &website"), 
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
-        _("Show information about Synecdoche and %s"),
-        pSkinAdvanced->GetApplicationName().c_str()
+        _("Show %s website."),
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuHelp->Append(
         ID_HELPBOINCWEBSITE,
-        strMenuName, 
+        strMenuName,
         strMenuDescription
-    );*/
+    );
 
 #ifndef __WXMAC__
     menuHelp->AppendSeparator();
 #endif
 
     // %s is the project name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuName.Printf(
         _("&About %s..."), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuHelp->Append(
         wxID_ABOUT,
@@ -1066,27 +1050,22 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
     CMainDocument*      pDoc = wxGetApp().GetDocument();
     CDlgSelectComputer  dlg(this);
-    size_t              index = 0;
     int                 retVal = -1;
-    wxArrayString       aComputerNames;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
 
     // Lets copy the template store in the system state
-    aComputerNames = m_aSelectedComputerMRU;
+    wxArrayString aComputerNames = m_aSelectedComputerMRU;
 
     // Lets populate the combo control with the MRU list
-    dlg.m_ComputerNameCtrl->Clear();
-    for (index = 0; index < aComputerNames.Count(); index++) {
-        dlg.m_ComputerNameCtrl->Append(aComputerNames.Item(index));
-    }
+    dlg.SetMRUList(aComputerNames);
 
     if (wxID_OK == dlg.ShowModal()) {
 
         // Make a null hostname be the same thing as localhost
-        if (wxEmptyString == dlg.m_ComputerNameCtrl->GetValue()) {
+        if (wxEmptyString == dlg.GetComputerName()) {
             retVal = pDoc->Connect(
                 wxT("localhost"),
                 GUI_RPC_PORT,
@@ -1096,7 +1075,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             );
         } else {
             // Connect to the remote machine
-            wxString sHost = dlg.m_ComputerNameCtrl->GetValue(); 
+            wxString sHost = dlg.GetComputerName(); 
             long lPort = GUI_RPC_PORT; 
             size_t pos = sHost.find(wxT(":")); 
             if (pos != wxString::npos) { 
@@ -1107,7 +1086,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             retVal = pDoc->Connect(
                 sHost,
                 (int)lPort,
-                dlg.m_ComputerPasswordCtrl->GetValue(),
+                dlg.GetComputerPassword(),
                 true,
                 false
             );
@@ -1118,15 +1097,17 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
 
         // Insert a copy of the current combo box value to the head of the
         //   computer names string array
-        if (wxEmptyString != dlg.m_ComputerNameCtrl->GetValue()) {
-            aComputerNames.Insert(dlg.m_ComputerNameCtrl->GetValue(), 0);
+        if (wxEmptyString != dlg.GetComputerName()) {
+            aComputerNames.Insert(dlg.GetComputerName(), 0);
         }
 
         // Loops through the computer names and remove any duplicates that
         //   might exist with the new head value
-        for (index = aComputerNames.Count() - 1; index > 0; index--) {
-            if (aComputerNames.Item(index) == aComputerNames.Item(0))
-                aComputerNames.RemoveAt(index);
+        if (!aComputerNames.empty()) {
+            for (size_t index = aComputerNames.Count() - 1; index > 0; --index) {
+                if (aComputerNames.Item(index) == aComputerNames.Item(0))
+                    aComputerNames.RemoveAt(index);
+            }
         }
 
         // Store the modified computer name MRU list back to the system state
@@ -1561,48 +1542,6 @@ void CAdvancedFrame::OnOptionsOptions(wxCommandEvent& WXUNUSED(event)) {
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnOptionsOptions - Function End"));
-}
-
-
-void CAdvancedFrame::OnHelp(wxHelpEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINCManager - Function Begin"));
-
-    if (IsShown()) {
-        std::string url;
-        url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
-
-        wxString wxurl;
-        wxurl.Printf(
-            wxT("%s?target=advanced&version=%s&controlid=%d"),
-            wxString(url.c_str(), wxConvUTF8).c_str(),
-            wxString(BOINC_VERSION_STRING, wxConvUTF8).c_str(),
-            event.GetId()
-        );
-        ExecuteBrowserLink(wxurl);
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINCManager - Function End"));
-}
-
-
-void CAdvancedFrame::OnHelpBOINC(wxCommandEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINC - Function Begin"));
-
-    if (IsShown()) {
-        std::string url;
-        url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
-
-        wxString wxurl;
-        wxurl.Printf(
-            wxT("%s?target=advanced&version=%s&controlid=%d"),
-            wxString(url.c_str(), wxConvUTF8).c_str(),
-            wxString(BOINC_VERSION_STRING, wxConvUTF8).c_str(),
-            event.GetId()
-        );
-        ExecuteBrowserLink(wxurl);
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINC - Function End"));
 }
 
 

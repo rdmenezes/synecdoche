@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+#include "DlgOptions.h"
+
 #include "stdwx.h"
 #include "diagnostics.h"
 #include "util.h"
@@ -23,14 +26,7 @@
 #include "parse.h"
 #include "LogBOINC.h"
 #include "BOINCGUIApp.h"
-#include "DlgOptions.h"
 #include "SkinManager.h"
-
-////@begin includes
-////@end includes
-
-////@begin XPM images
-////@end XPM images
 
 /*!
  * CDlgOptions type definition

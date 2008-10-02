@@ -16,21 +16,15 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_BoincSimpleGUI.h"
 
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "str_util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
 #include "common/wxFlatNotebook.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
 #include "Events.h"
 #include "BOINCBaseFrame.h"
-#include "wizardex.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
@@ -38,7 +32,6 @@
 #include "error_numbers.h"
 #include "version.h"
 
-#include "sg_BoincSimpleGUI.h"
 #include "sg_ImageLoader.h"
 #include "sg_ProjectsComponent.h"
 #include "sg_ClientStateIndicator.h"
@@ -52,12 +45,12 @@ BEGIN_EVENT_TABLE(CSimpleFrame, CBOINCBaseFrame)
     EVT_SIZE(CSimpleFrame::OnSize)
     EVT_MENU(wxID_EXIT, CSimpleFrame::OnExit)
     EVT_FRAME_CONNECT(CSimpleFrame::OnConnect)
-    EVT_HELP(wxID_ANY, CSimpleFrame::OnHelp)
+    EVT_HELP(wxID_ANY, CBOINCBaseFrame::OnContextHelp)
     EVT_FRAME_RELOADSKIN(CSimpleFrame::OnReloadSkin)
     // We can't eliminate the Mac Help menu, so we might as well make it useful.
-    EVT_MENU(ID_HELPBOINC, CSimpleFrame::OnHelpBOINC)
-    EVT_MENU(ID_HELPBOINCMANAGER, CSimpleFrame::OnHelpBOINC)
-    EVT_MENU(ID_HELPBOINCWEBSITE, CSimpleFrame::OnHelpBOINC)
+    EVT_MENU(ID_HELPBOINC, CBOINCBaseFrame::OnHelp)
+    EVT_MENU(ID_HELPBOINCMANAGER, CBOINCBaseFrame::OnHelp)
+    EVT_MENU(ID_HELPBOINCWEBSITE, CBOINCBaseFrame::OnHelp)
 END_EVENT_TABLE()
 
 CSimpleFrame::CSimpleFrame() {
@@ -113,58 +106,40 @@ CSimpleFrame::CSimpleFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     wxMenu *menuHelp = new wxMenu;
 
     // %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuName.Printf(
-        _("%s &help"), 
+        _("%s &help"),
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
     // %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
-        _("Show information about %s"), 
+        _("Get help and support for %s."), 
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuHelp->Append(
         ID_HELPBOINC,
-        strMenuName, 
+        strMenuName,
         strMenuDescription
     );
 
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strMenuName.Printf(
-        _("&%s"), 
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strMenuDescription.Printf(
-        _("Show information about the %s"), 
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
-    menuHelp->Append(
-        ID_HELPBOINCMANAGER,
-        strMenuName, 
-        strMenuDescription
-    );
-
-    /*// %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuName.Printf(
         _("%s &website"), 
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
-        _("Show information about Synecdoche and %s"),
-        pSkinAdvanced->GetApplicationName().c_str()
+        _("Show %s website."),
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuHelp->Append(
         ID_HELPBOINCWEBSITE,
-        strMenuName, 
+        strMenuName,
         strMenuDescription
-    );*/
+    );
 
     // Clear menubar
     m_pMenubar = new wxMenuBar;
@@ -296,48 +271,6 @@ bool CSimpleFrame::SaveState() {
 	pConfig->Write(wxT("X_Position"), x);
 	pConfig->Write(wxT("Y_Position"), y);
 	return true;
-}
-
-
-void CSimpleFrame::OnHelp(wxHelpEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CSimpleFrame::OnHelp - Function Begin"));
-
-    if (IsShown()) {
-		std::string url;
-		url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
-
-		wxString wxurl;
-		wxurl.Printf(
-            wxT("%s?target=simple&version=%s&controlid=%d"),
-            url.c_str(),
-            BOINC_VERSION_STRING,
-            event.GetId()
-        );
-        ExecuteBrowserLink(wxurl);
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CSimpleFrame::OnHelp - Function End"));
-}
-
-
-void CSimpleFrame::OnHelpBOINC(wxCommandEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINC - Function Begin"));
-
-    if (IsShown()) {
-		std::string url;
-		url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl().mb_str();
-
-		wxString wxurl;
-		wxurl.Printf(
-            wxT("%s?target=simple&version=%s&controlid=%d"),
-            url.c_str(),
-            BOINC_VERSION_STRING,
-            event.GetId()
-        );
-		ExecuteBrowserLink(wxurl);
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINC - Function End"));
 }
 
 

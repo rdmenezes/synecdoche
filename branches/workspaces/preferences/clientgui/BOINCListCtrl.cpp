@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "BOINCListCtrl.h"
 #include "stdwx.h"
 #include "BOINCBaseView.h"
-#include "BOINCListCtrl.h"
 #include "Events.h"
 
 #include "res/sortascending.xpm"
@@ -323,7 +323,7 @@ void CBOINCListCtrl::DrawBarGraphs()
             r.Inflate(-1, 0);
             dc.DrawRectangle( r );
 
-            r.width = r.width * m_pParentView->GetProgressValue(item);
+            r.width = static_cast<int>(r.width * m_pParentView->GetProgressValue(item));
             dc.SetPen(*wxTRANSPARENT_PEN);
             dc.SetBrush(progressColorLight);
             dc.DrawRectangle( r );
@@ -338,7 +338,7 @@ wxColour CBOINCListCtrl::GetBlendedColour(const wxColour base, const wxColour ac
     float r = base.Red() * blend + accent.Red() * (1.0 - blend);
     float g = base.Green() * blend + accent.Green() * (1.0 - blend);
     float b = base.Blue() * blend + accent.Blue() * (1.0 - blend);
-    return wxColor(r, g, b);
+    return wxColour(static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b));
 }
 
 #if USE_NATIVE_LISTCONTROL

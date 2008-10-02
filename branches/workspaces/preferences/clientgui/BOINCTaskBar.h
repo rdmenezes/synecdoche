@@ -15,10 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BOINCTASKBAR_H_
-#define _BOINCTASKBAR_H_
-
-#include "MainDocument.h"
+#ifndef BOINCTASKBAR_H
+#define BOINCTASKBAR_H
 
 #ifdef __WXMSW__
 #include "msw/taskbarex.h"
@@ -27,7 +25,21 @@
 #define wxTaskBarIconExEvent    wxTaskBarIconEvent
 #endif
 
+#include <vector>
+#include <wx/datetime.h>
+#include <wx/event.h>
+#include <wx/taskbar.h>
+#include <wx/icon.h>
+
+class wxCommandEvent;
+class wxCloseEvent;
+class wxIdleEvent;
+class wxMenu;
+class wxTimer;
+class wxTimerEvent;
+class CMainDocument;
 class CTaskbarEvent;
+class RESULT;
 
 class CTaskBarIcon : public wxTaskBarIconEx {
 public:
@@ -119,5 +131,4 @@ END_DECLARE_EVENT_TYPES()
 #define EVT_TASKBAR_RELOADSKIN(fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_TASKBAR_RELOADSKIN, -1, -1, (wxObjectEventFunction) (wxEventFunction) &fn, NULL),
 
 
-#endif
-
+#endif //BOINCTASKBAR_H

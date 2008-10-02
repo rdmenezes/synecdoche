@@ -16,13 +16,14 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "ViewResources.h"
+
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "BOINCBaseFrame.h"
 #include "MainDocument.h"
 #include "BOINCTaskCtrl.h"
 #include "BOINCListCtrl.h"
-#include "ViewResources.h"
 #include "Events.h"
 #include "SkinManager.h"
 #include <wx/arrimpl.cpp>

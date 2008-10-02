@@ -148,7 +148,7 @@ extern void set_signal_exit_code(int);
 
 // wxWidgets UI Framework
 //
-
+#include <wx/log.h>
 #define BOINCASSERT(expr)   wxASSERT(expr)
 #define BOINCTRACE          wxLogDebug
 

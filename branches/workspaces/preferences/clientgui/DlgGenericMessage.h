@@ -19,19 +19,10 @@
 #ifndef _DLGGENERICMESSAGE_H_
 #define _DLGGENERICMESSAGE_H_
 
-/*!
- * Includes
- */
+#include <wx/dialog.h>
 
-////@begin includes
-////@end includes
-
-/*!
- * Forward declarations
- */
-
-////@begin forward declarations
-////@end forward declarations
+class wxStaticText;
+class wxCheckBox;
 
 /*!
  * Control identifiers
@@ -39,11 +30,7 @@
 
 ////@begin control identifiers
 #define ID_DIALOG 10000
-#ifdef __WXMAC__
 #define SYMBOL_CDLGGENERICMESSAGE_STYLE wxCAPTION|wxSYSTEM_MENU|wxCLOSE_BOX
-#else
-#define SYMBOL_CDLGGENERICMESSAGE_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX
-#endif
 #define SYMBOL_CDLGGENERICMESSAGE_TITLE _T("")
 #define SYMBOL_CDLGGENERICMESSAGE_IDNAME ID_DIALOG
 #define SYMBOL_CDLGGENERICMESSAGE_SIZE wxSize(400, 300)

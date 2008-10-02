@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,15 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+#include "AccountManagerPropertiesPage.h"
+
 #include "stdwx.h"
-#include "network.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
 #include "error_numbers.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
@@ -31,11 +27,8 @@
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAccountManager.h"
-#include "AccountManagerPropertiesPage.h"
 #include "AccountManagerInfoPage.h"
 
-
-////@begin XPM images
 #include "res/wizprogress01.xpm"
 #include "res/wizprogress02.xpm"
 #include "res/wizprogress03.xpm"
@@ -48,61 +41,48 @@
 #include "res/wizprogress10.xpm"
 #include "res/wizprogress11.xpm"
 #include "res/wizprogress12.xpm"
-////@end XPM images
 
-/*!
- * CAccountManagerPropertiesPage custom event definition
- */
- 
+/// CAccountManagerPropertiesPage states
+enum {
+    ACCTMGRPROP_INIT,
+    ACCTMGRPROP_RETRPROJECTPROPERTIES_BEGIN,
+    ACCTMGRPROP_RETRPROJECTPROPERTIES_EXECUTE,
+    ACCTMGRPROP_DETERMINENETWORKSTATUS_BEGIN,
+    ACCTMGRPROP_DETERMINENETWORKSTATUS_EXECUTE,
+    ACCTMGRPROP_CLEANUP,
+    ACCTMGRPROP_END
+};
+
 DEFINE_EVENT_TYPE(wxEVT_ACCOUNTMANAGERPROPERTIES_STATECHANGE)
-  
-/*!
- * CAccountManagerPropertiesPage type definition
- */
 
-IMPLEMENT_DYNAMIC_CLASS( CAccountManagerPropertiesPage, wxWizardPageEx )
+IMPLEMENT_DYNAMIC_CLASS(CAccountManagerPropertiesPage, wxWizardPage)
 
-/*!
- * CAccountManagerPropertiesPage event table definition
- */
-
-BEGIN_EVENT_TABLE( CAccountManagerPropertiesPage, wxWizardPageEx )
- 
-    EVT_ACCOUNTMANAGERPROPERTIES_STATECHANGE( CAccountManagerPropertiesPage::OnStateChange )
- 
-////@begin CAccountManagerPropertiesPage event table entries
-    EVT_WIZARDEX_PAGE_CHANGED( -1, CAccountManagerPropertiesPage::OnPageChanged )
-    EVT_WIZARDEX_CANCEL( -1, CAccountManagerPropertiesPage::OnCancel )
-
-////@end CAccountManagerPropertiesPage event table entries
-
+BEGIN_EVENT_TABLE(CAccountManagerPropertiesPage, wxWizardPage)
+    EVT_ACCOUNTMANAGERPROPERTIES_STATECHANGE(CAccountManagerPropertiesPage::OnStateChange)
+    EVT_WIZARD_PAGE_CHANGED(-1, CAccountManagerPropertiesPage::OnPageChanged)
+    EVT_WIZARD_CANCEL(-1, CAccountManagerPropertiesPage::OnCancel)
 END_EVENT_TABLE()
 
 /*!
  * CAccountManagerPropertiesPage constructors
  */
 
-CAccountManagerPropertiesPage::CAccountManagerPropertiesPage( )
-{
+CAccountManagerPropertiesPage::CAccountManagerPropertiesPage() {
 }
 
-CAccountManagerPropertiesPage::CAccountManagerPropertiesPage( CBOINCBaseWizard* parent )
-{
-    Create( parent );
+CAccountManagerPropertiesPage::CAccountManagerPropertiesPage(CBOINCBaseWizard* parent) {
+    Create(parent);
 }
 
 /*!
  * CProjectPropertiesPage creator
  */
 
-bool CAccountManagerPropertiesPage::Create( CBOINCBaseWizard* parent )
-{
-////@begin CAccountManagerPropertiesPage member initialisation
+bool CAccountManagerPropertiesPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pPleaseWaitStaticCtrl = NULL;
     m_pProgressIndicator = NULL;
-////@end CAccountManagerPropertiesPage member initialisation
- 
+
     m_bProjectPropertiesSucceeded = false;
     m_bProjectPropertiesURLFailure = false;
     m_bProjectAccountCreationDisabled = false;
@@ -110,14 +90,12 @@ bool CAccountManagerPropertiesPage::Create( CBOINCBaseWizard* parent )
     m_bNetworkConnectionDetected = false;
     m_iBitmapIndex = 0;
     m_iCurrentState = ACCTMGRPROP_INIT;
- 
-////@begin CAccountManagerPropertiesPage creation
+
     wxBitmap wizardBitmap(wxNullBitmap);
-    wxWizardPageEx::Create( parent, ID_ACCOUNTMANAGERPROPERTIESPAGE, wizardBitmap );
+    wxWizardPage::Create(parent, wizardBitmap);
 
     CreateControls();
     GetSizer()->Fit(this);
-////@end CAccountManagerPropertiesPage creation
     return TRUE;
 }
 
@@ -125,21 +103,19 @@ bool CAccountManagerPropertiesPage::Create( CBOINCBaseWizard* parent )
  * Control creation for CProjectPropertiesPage
  */
 
-void CAccountManagerPropertiesPage::CreateControls()
-{    
-////@begin CAccountManagerPropertiesPage content construction
+void CAccountManagerPropertiesPage::CreateControls() {    
     CAccountManagerPropertiesPage* itemWizardPage36 = this;
 
     wxBoxSizer* itemBoxSizer37 = new wxBoxSizer(wxVERTICAL);
     itemWizardPage36->SetSizer(itemBoxSizer37);
 
     m_pTitleStaticCtrl = new wxStaticText;
-    m_pTitleStaticCtrl->Create( itemWizardPage36, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pTitleStaticCtrl->Create(itemWizardPage36, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pTitleStaticCtrl->SetFont(wxFont(10, wxSWISS, wxNORMAL, wxBOLD, FALSE, _T("Verdana")));
     itemBoxSizer37->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     m_pPleaseWaitStaticCtrl = new wxStaticText;
-    m_pPleaseWaitStaticCtrl->Create( itemWizardPage36, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pPleaseWaitStaticCtrl->Create(itemWizardPage36, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemBoxSizer37->Add(m_pPleaseWaitStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
     itemBoxSizer37->Add(5, 80, 0, wxALIGN_LEFT|wxALL, 5);
@@ -155,19 +131,17 @@ void CAccountManagerPropertiesPage::CreateControls()
 
     wxBitmap itemBitmap41(GetBitmapResource(wxT("res/wizprogress01.xpm")));
     m_pProgressIndicator = new wxStaticBitmap;
-    m_pProgressIndicator->Create( itemWizardPage36, ID_PROGRESSCTRL, itemBitmap41, wxDefaultPosition, wxSize(184, 48), 0 );
+    m_pProgressIndicator->Create(itemWizardPage36, ID_PROGRESSCTRL, itemBitmap41, wxDefaultPosition, wxSize(184, 48), 0);
     itemFlexGridSizer40->Add(m_pProgressIndicator, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     itemFlexGridSizer40->Add(5, 5, 0, wxGROW|wxGROW|wxALL, 5);
-////@end CAccountManagerPropertiesPage content construction
 }
 
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_PROJECTPROPERTIESPAGE
  */
 
-void CAccountManagerPropertiesPage::OnPageChanged( wxWizardExEvent& event )
-{
+void CAccountManagerPropertiesPage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
  
     CWizardAccountManager* pWAM = ((CWizardAccountManager*)GetParent());
@@ -177,25 +151,19 @@ void CAccountManagerPropertiesPage::OnPageChanged( wxWizardExEvent& event )
     wxASSERT(m_pProgressIndicator);
     wxASSERT(pWAM);
 
-    if (!pWAM->m_strProjectName.IsEmpty()) {
+    if (!pWAM->GetProjectName().IsEmpty()) {
         wxString str;
 
         // %s is the project name
         //    i.e. 'BOINC', 'GridRepublic'
-        str.Printf(_("Communicating with %s."), pWAM->m_strProjectName.c_str());
+        str.Printf(_("Communicating with %s."), pWAM->GetProjectName().c_str());
 
-        m_pTitleStaticCtrl->SetLabel(
-            str
-        );
+        m_pTitleStaticCtrl->SetLabel(str);
     } else {
-        m_pTitleStaticCtrl->SetLabel(
-            _("Communicating with server.")
-        );
+        m_pTitleStaticCtrl->SetLabel(_("Communicating with server."));
     }
 
-    m_pPleaseWaitStaticCtrl->SetLabel(
-        _("Please wait...")
-    );
+    m_pPleaseWaitStaticCtrl->SetLabel(_("Please wait..."));
 
     SetProjectPropertiesSucceeded(false);
     SetProjectPropertiesURLFailure(false);
@@ -214,7 +182,7 @@ void CAccountManagerPropertiesPage::OnPageChanged( wxWizardExEvent& event )
  * wxEVT_WIZARD_CANCEL event handler for ID_PROJECTPROPERTIESPAGE
  */
 
-void CAccountManagerPropertiesPage::OnCancel( wxWizardExEvent& event ) {
+void CAccountManagerPropertiesPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
 
@@ -222,11 +190,10 @@ void CAccountManagerPropertiesPage::OnCancel( wxWizardExEvent& event ) {
  * wxEVT_PROJECTPROPERTIES_STATECHANGE event handler for ID_PROJECTPROPERTIESPAGE
  */
  
-void CAccountManagerPropertiesPage::OnStateChange( CAccountManagerPropertiesPageEvent& WXUNUSED(event) )
-{
+void CAccountManagerPropertiesPage::OnStateChange(CAccountManagerPropertiesPageEvent& WXUNUSED(event)) {
     CMainDocument* pDoc         = wxGetApp().GetDocument();
     CWizardAccountManager* pWAM = ((CWizardAccountManager*)GetParent());
-    PROJECT_CONFIG* pc          = &pWAM->project_config;
+    PROJECT_CONFIG* pc          = pWAM->GetProjectConfig();
     CC_STATUS status;
     wxDateTime dtStartExecutionTime;
     wxDateTime dtCurrentExecutionTime;
@@ -251,7 +218,7 @@ void CAccountManagerPropertiesPage::OnStateChange( CAccountManagerPropertiesPage
         case ACCTMGRPROP_RETRPROJECTPROPERTIES_EXECUTE:
             // Attempt to retrieve the project's account creation policies
             pDoc->rpc.get_project_config(
-                (const char*)pWAM->m_AccountManagerInfoPage->GetProjectURL().mb_str()
+                (const char*)pWAM->GetAccountManagerInfoPage()->GetProjectURL().mb_str()
             );
  
             // Wait until we are done processing the request.
@@ -300,7 +267,7 @@ void CAccountManagerPropertiesPage::OnStateChange( CAccountManagerPropertiesPage
                     SetProjectClientAccountCreationDisabled(false);
                 }
 
-                pWAM->m_strProjectName = wxString(pc->name.c_str(), wxConvUTF8);
+                pWAM->SetProjectName(wxString(pc->name.c_str(), wxConvUTF8));
  
                 SetNextState(ACCTMGRPROP_CLEANUP);
             } else {
@@ -378,8 +345,7 @@ void CAccountManagerPropertiesPage::OnStateChange( CAccountManagerPropertiesPage
  * Gets the previous page.
  */
 
-wxWizardPageEx* CAccountManagerPropertiesPage::GetPrev() const
-{
+wxWizardPage* CAccountManagerPropertiesPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
 
@@ -387,8 +353,7 @@ wxWizardPageEx* CAccountManagerPropertiesPage::GetPrev() const
  * Gets the next page.
  */
 
-wxWizardPageEx* CAccountManagerPropertiesPage::GetNext() const
-{
+wxWizardPage* CAccountManagerPropertiesPage::GetNext() const {
     if (CHECK_CLOSINGINPROGRESS()) {
         // Cancel Event Detected
         return PAGE_TRANSITION_NEXT(ID_COMPLETIONERRORPAGE);
@@ -411,8 +376,7 @@ wxWizardPageEx* CAccountManagerPropertiesPage::GetNext() const
  * Should we show tooltips?
  */
 
-bool CAccountManagerPropertiesPage::ShowToolTips()
-{
+bool CAccountManagerPropertiesPage::ShowToolTips() {
     return TRUE;
 }
 
@@ -442,66 +406,41 @@ void CAccountManagerPropertiesPage::FinishProgress(wxStaticBitmap* pBitmap) {
  * Get bitmap resources
  */
 
-wxBitmap CAccountManagerPropertiesPage::GetBitmapResource( const wxString& name )
-{
-    // Bitmap retrieval
-    if (name == wxT("res/wizprogress01.xpm"))
-    {
+wxBitmap CAccountManagerPropertiesPage::GetBitmapResource(const wxString& name) {
+    if (name == wxT("res/wizprogress01.xpm")) {
         wxBitmap bitmap(wizprogress01_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress02.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress02.xpm")) {
         wxBitmap bitmap(wizprogress02_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress03.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress03.xpm")) {
         wxBitmap bitmap(wizprogress03_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress04.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress04.xpm")) {
         wxBitmap bitmap(wizprogress04_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress05.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress05.xpm")) {
         wxBitmap bitmap(wizprogress05_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress06.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress06.xpm")) {
         wxBitmap bitmap(wizprogress06_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress07.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress07.xpm")) {
         wxBitmap bitmap(wizprogress07_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress08.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress08.xpm")) {
         wxBitmap bitmap(wizprogress08_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress09.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress09.xpm")) {
         wxBitmap bitmap(wizprogress09_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress10.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress10.xpm")) {
         wxBitmap bitmap(wizprogress10_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress11.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress11.xpm")) {
         wxBitmap bitmap(wizprogress11_xpm);
         return bitmap;
-    }
-    else if (name == wxT("res/wizprogress12.xpm"))
-    {
+    } else if (name == wxT("res/wizprogress12.xpm")) {
         wxBitmap bitmap(wizprogress12_xpm);
         return bitmap;
     }
@@ -512,11 +451,6 @@ wxBitmap CAccountManagerPropertiesPage::GetBitmapResource( const wxString& name 
  * Get icon resources
  */
 
-wxIcon CAccountManagerPropertiesPage::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CAccountManagerPropertiesPage icon retrieval
+wxIcon CAccountManagerPropertiesPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CAccountManagerPropertiesPage icon retrieval
 }
-

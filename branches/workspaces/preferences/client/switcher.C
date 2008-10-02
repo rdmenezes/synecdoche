@@ -18,8 +18,12 @@
 // switcher.C
 //
 // When run as
-// switcher Path X1 ... Xn
-// runs program at Path with args X1. ... Xn
+// $ switcher <Path> <arguments...>
+// runs program at <Path> with the given arguments. Note the first argument is
+// given as argv[0] to the application, not argv[1]. Example:
+// switcher /bin/rm rm file1 file2
+//
+// 'rm' is the app name, not a file to be deleted.
 
 #include <unistd.h>
 #include <stdio.h>

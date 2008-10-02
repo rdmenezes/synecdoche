@@ -29,11 +29,11 @@
 #endif
 
 #ifndef _WIN32_WINNT            // Allow use of features specific to Windows NT 4 or later.
-#define _WIN32_WINNT 0x0400		// Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
+#define _WIN32_WINNT 0x0500		// Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
 #endif
 
 #ifndef _WIN32_WINDOWS          // Allow use of features specific to Windows 98 or later.
-#define _WIN32_WINDOWS 0x0400   // Change this to the appropriate value to target Windows Me or later.
+#define _WIN32_WINDOWS 0x0500   // Change this to the appropriate value to target Windows Me or later.
 #endif
 
 #ifndef _WIN32_IE               // Allow use of features specific to IE 5.01 or later.
@@ -53,7 +53,9 @@
 #include <wx/wx.h>
 
 #include <wx/accel.h>           // accelerator support
+#include <wx/app.h>
 #include <wx/bitmap.h>          // bitmap modification support
+#include <wx/button.h>
 #include <wx/clipbrd.h>         // clipboard support
 #include <wx/cmdline.h>         // command line support
 #include <wx/colour.h>
@@ -90,15 +92,18 @@
 #include <wx/odcombo.h>
 #include <wx/panel.h>           // panel support
 #include <wx/process.h>
+#include <wx/radiobut.h>
 #include <wx/regex.h>           // regular expression support
 #include <wx/settings.h>        // system settings support
 #include <wx/sizer.h>
 #include <wx/statline.h>        // static line support
 #include <wx/statbmp.h>         // static bitmap support
+#include <wx/statbox.h>
 #include <wx/stattext.h>        // static text support
 #include <wx/string.h>
 #include <wx/sysopt.h>
 #include <wx/taskbar.h>         // taskbar support
+#include <wx/textctrl.h>
 #include <wx/textdlg.h>
 #include <wx/timer.h>           // timer support
 #include <wx/tipwin.h>
@@ -169,6 +174,7 @@
 #include <cassert>
 #include <cctype>
 #include <cerrno>
+#include <cfloat>
 #include <cmath>
 #include <csetjmp>
 #include <cstdarg>
@@ -177,7 +183,6 @@
 #include <cstring>
 #include <ctime>
 #include <locale>
-#include <cfloat>
 
 
 // C++ headers
@@ -185,15 +190,15 @@
 #include <xdebug>
 #endif
 #include <algorithm>
-#include <stdexcept>
-#include <string>
-#include <iostream>
 #include <fstream>
-#include <sstream>
-#include <vector>
-#include <stack>
+#include <iostream>
 #include <list>
 #include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <stdexcept>
+#include <vector>
 
 
 #ifdef _WIN32

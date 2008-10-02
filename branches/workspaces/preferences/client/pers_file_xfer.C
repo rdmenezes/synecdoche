@@ -220,8 +220,8 @@ bool PERS_FILE_XFER::poll() {
                     msg_printf(fip->project, MSG_INFO, "[file_xfer_debug] No data transferred");
                 } else {
                     msg_printf(
-                        fip->project, MSG_INFO, "[file_xfer_debug] Throughput %d bytes/sec",
-                        (int)fxp->xfer_speed
+                        fip->project, MSG_INFO, "[file_xfer_debug] Throughput %.0f bytes/sec",
+                        fxp->xfer_speed
                     );
                 }
             }

@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,15 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+#include "ProjectPropertiesPage.h"
+
 #include "stdwx.h"
-#include "network.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
-#include "wizardex.h"
 #include "error_numbers.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
@@ -31,11 +27,8 @@
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
-#include "ProjectPropertiesPage.h"
 #include "ProjectInfoPage.h"
 
-
-////@begin XPM images
 #include "res/wizprogress01.xpm"
 #include "res/wizprogress02.xpm"
 #include "res/wizprogress03.xpm"
@@ -48,59 +41,46 @@
 #include "res/wizprogress10.xpm"
 #include "res/wizprogress11.xpm"
 #include "res/wizprogress12.xpm"
-////@end XPM images
 
-/*!
- * CProjectPropertiesPage custom event definition
- */
- 
+/// CProjectPropertiesPage states
+enum {
+    PROJPROP_INIT,
+    PROJPROP_RETRPROJECTPROPERTIES_BEGIN,
+    PROJPROP_RETRPROJECTPROPERTIES_EXECUTE,
+    PROJPROP_DETERMINENETWORKSTATUS_BEGIN,
+    PROJPROP_DETERMINENETWORKSTATUS_EXECUTE,
+    PROJPROP_CLEANUP,
+    PROJPROP_END
+};
+
 DEFINE_EVENT_TYPE(wxEVT_PROJECTPROPERTIES_STATECHANGE)
   
-/*!
- * CProjectPropertiesPage type definition
- */
+IMPLEMENT_DYNAMIC_CLASS(CProjectPropertiesPage, wxWizardPage)
  
-IMPLEMENT_DYNAMIC_CLASS( CProjectPropertiesPage, wxWizardPageEx )
- 
-/*!
- * CProjectPropertiesPage event table definition
- */
- 
-BEGIN_EVENT_TABLE( CProjectPropertiesPage, wxWizardPageEx )
- 
-    EVT_PROJECTPROPERTIES_STATECHANGE( CProjectPropertiesPage::OnStateChange )
- 
-////@begin CProjectPropertiesPage event table entries
-    EVT_WIZARDEX_PAGE_CHANGED( -1, CProjectPropertiesPage::OnPageChanged )
-    EVT_WIZARDEX_CANCEL( -1, CProjectPropertiesPage::OnCancel )
-
-////@end CProjectPropertiesPage event table entries
- 
+BEGIN_EVENT_TABLE(CProjectPropertiesPage, wxWizardPage)
+    EVT_PROJECTPROPERTIES_STATECHANGE(CProjectPropertiesPage::OnStateChange)
+    EVT_WIZARD_PAGE_CHANGED(-1, CProjectPropertiesPage::OnPageChanged)
+    EVT_WIZARD_CANCEL(-1, CProjectPropertiesPage::OnCancel) 
 END_EVENT_TABLE()
  
 /*!
  * CProjectPropertiesPage constructors
  */
  
-CProjectPropertiesPage::CProjectPropertiesPage( )
-{
+CProjectPropertiesPage::CProjectPropertiesPage() {
 }
  
-CProjectPropertiesPage::CProjectPropertiesPage( CBOINCBaseWizard* parent )
-{
-    Create( parent );
+CProjectPropertiesPage::CProjectPropertiesPage(CBOINCBaseWizard* parent) {
+    Create(parent);
 }
  
 /*!
  * WizardPage creator
  */
  
-bool CProjectPropertiesPage::Create( CBOINCBaseWizard* parent )
-{
-////@begin CProjectPropertiesPage member initialisation
+bool CProjectPropertiesPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pProgressIndicator = NULL;
-////@end CProjectPropertiesPage member initialisation
  
     m_bProjectPropertiesSucceeded = false;
     m_bProjectPropertiesURLFailure = false;
@@ -110,14 +90,11 @@ bool CProjectPropertiesPage::Create( CBOINCBaseWizard* parent )
     m_iBitmapIndex = 0;
     m_iCurrentState = PROJPROP_INIT;
  
-////@begin CProjectPropertiesPage creation
     wxBitmap wizardBitmap(wxNullBitmap);
-    wxWizardPageEx::Create( parent, ID_PROJECTPROPERTIESPAGE, wizardBitmap );
+    wxWizardPage::Create(parent, wizardBitmap);
 
     CreateControls();
     GetSizer()->Fit(this);
-////@end CProjectPropertiesPage creation
-
     return TRUE;
 }
  
@@ -125,16 +102,14 @@ bool CProjectPropertiesPage::Create( CBOINCBaseWizard* parent )
  * Control creation for WizardPage
  */
  
-void CProjectPropertiesPage::CreateControls()
-{    
-////@begin CProjectPropertiesPage content construction
+void CProjectPropertiesPage::CreateControls() {    
     CProjectPropertiesPage* itemWizardPage36 = this;
 
     wxBoxSizer* itemBoxSizer37 = new wxBoxSizer(wxVERTICAL);
     itemWizardPage36->SetSizer(itemBoxSizer37);
 
     m_pTitleStaticCtrl = new wxStaticText;
-    m_pTitleStaticCtrl->Create( itemWizardPage36, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_pTitleStaticCtrl->Create(itemWizardPage36, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     m_pTitleStaticCtrl->SetFont(wxFont(10, wxSWISS, wxNORMAL, wxBOLD, FALSE, _T("Verdana")));
     itemBoxSizer37->Add(m_pTitleStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 
@@ -151,19 +126,17 @@ void CProjectPropertiesPage::CreateControls()
 
     wxBitmap itemBitmap41(GetBitmapResource(wxT("res/wizprogress01.xpm")));
     m_pProgressIndicator = new wxStaticBitmap;
-    m_pProgressIndicator->Create( itemWizardPage36, ID_PROGRESSCTRL, itemBitmap41, wxDefaultPosition, wxSize(184, 48), 0 );
+    m_pProgressIndicator->Create(itemWizardPage36, ID_PROGRESSCTRL, itemBitmap41, wxDefaultPosition, wxSize(184, 48), 0);
     itemFlexGridSizer40->Add(m_pProgressIndicator, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     itemFlexGridSizer40->Add(5, 5, 0, wxGROW|wxGROW|wxALL, 5);
-////@end CProjectPropertiesPage content construction
 }
  
 /*!
  * Gets the previous page.
  */
  
-wxWizardPageEx* CProjectPropertiesPage::GetPrev() const
-{
+wxWizardPage* CProjectPropertiesPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
  
@@ -171,8 +144,7 @@ wxWizardPageEx* CProjectPropertiesPage::GetPrev() const
  * Gets the next page.
  */
  
-wxWizardPageEx* CProjectPropertiesPage::GetNext() const
-{
+wxWizardPage* CProjectPropertiesPage::GetNext() const {
     if (CHECK_CLOSINGINPROGRESS()) {
         // Cancel Event Detected
         return PAGE_TRANSITION_NEXT(ID_COMPLETIONERRORPAGE);
@@ -198,8 +170,7 @@ wxWizardPageEx* CProjectPropertiesPage::GetNext() const
  * Should we show tooltips?
  */
  
-bool CProjectPropertiesPage::ShowToolTips()
-{
+bool CProjectPropertiesPage::ShowToolTips() {
     return TRUE;
 }
  
@@ -228,68 +199,31 @@ void CProjectPropertiesPage::FinishProgress(wxStaticBitmap* pBitmap) {
  * Get bitmap resources
  */
  
-wxBitmap CProjectPropertiesPage::GetBitmapResource( const wxString& name )
-{
-    // Bitmap retrieval
-    if (name == wxT("res/wizprogress01.xpm"))
-    {
-        wxBitmap bitmap(wizprogress01_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress02.xpm"))
-    {
-        wxBitmap bitmap(wizprogress02_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress03.xpm"))
-    {
-        wxBitmap bitmap(wizprogress03_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress04.xpm"))
-    {
-        wxBitmap bitmap(wizprogress04_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress05.xpm"))
-    {
-        wxBitmap bitmap(wizprogress05_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress06.xpm"))
-    {
-        wxBitmap bitmap(wizprogress06_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress07.xpm"))
-    {
-        wxBitmap bitmap(wizprogress07_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress08.xpm"))
-    {
-        wxBitmap bitmap(wizprogress08_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress09.xpm"))
-    {
-        wxBitmap bitmap(wizprogress09_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress10.xpm"))
-    {
-        wxBitmap bitmap(wizprogress10_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress11.xpm"))
-    {
-        wxBitmap bitmap(wizprogress11_xpm);
-        return bitmap;
-    }
-    else if (name == wxT("res/wizprogress12.xpm"))
-    {
-        wxBitmap bitmap(wizprogress12_xpm);
-        return bitmap;
+wxBitmap CProjectPropertiesPage::GetBitmapResource(const wxString& name) {
+    if (name == wxT("res/wizprogress01.xpm")) {
+        return wxBitmap(wizprogress01_xpm);
+    } else if (name == wxT("res/wizprogress02.xpm")) {
+        return wxBitmap(wizprogress02_xpm);
+    } else if (name == wxT("res/wizprogress03.xpm")) {
+        return wxBitmap(wizprogress03_xpm);
+    } else if (name == wxT("res/wizprogress04.xpm")) {
+        return wxBitmap(wizprogress04_xpm);
+    } else if (name == wxT("res/wizprogress05.xpm")) {
+        return wxBitmap(wizprogress05_xpm);
+    } else if (name == wxT("res/wizprogress06.xpm")) {
+        return wxBitmap(wizprogress06_xpm);
+    } else if (name == wxT("res/wizprogress07.xpm")) {
+        return wxBitmap(wizprogress07_xpm);
+    } else if (name == wxT("res/wizprogress08.xpm")) {
+        return wxBitmap(wizprogress08_xpm);
+    } else if (name == wxT("res/wizprogress09.xpm")) {
+        return wxBitmap(wizprogress09_xpm);
+    } else if (name == wxT("res/wizprogress10.xpm")) {
+        return wxBitmap(wizprogress10_xpm);
+    } else if (name == wxT("res/wizprogress11.xpm")) {
+        return wxBitmap(wizprogress11_xpm);
+    } else if (name == wxT("res/wizprogress12.xpm")) {
+        return wxBitmap(wizprogress12_xpm);
     }
     return wxNullBitmap;
 }
@@ -298,27 +232,21 @@ wxBitmap CProjectPropertiesPage::GetBitmapResource( const wxString& name )
  * Get icon resources
  */
  
-wxIcon CProjectPropertiesPage::GetIconResource( const wxString& WXUNUSED(name) )
-{
-    // Icon retrieval
-////@begin CProjectPropertiesPage icon retrieval
+wxIcon CProjectPropertiesPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
-////@end CProjectPropertiesPage icon retrieval
 }
  
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_PROJECTPROPERTIESPAGE
  */
  
-void CProjectPropertiesPage::OnPageChanged( wxWizardExEvent& event ) {
+void CProjectPropertiesPage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
  
     wxASSERT(m_pTitleStaticCtrl);
     wxASSERT(m_pProgressIndicator);
 
-    m_pTitleStaticCtrl->SetLabel(
-        _("Communicating with project\nPlease wait...")
-    );
+    m_pTitleStaticCtrl->SetLabel(_("Communicating with project\nPlease wait..."));
 
     SetProjectPropertiesSucceeded(false);
     SetProjectPropertiesURLFailure(false);
@@ -337,7 +265,7 @@ void CProjectPropertiesPage::OnPageChanged( wxWizardExEvent& event ) {
  * wxEVT_WIZARD_CANCEL event handler for ID_PROJECTPROPERTIESPAGE
  */
 
-void CProjectPropertiesPage::OnCancel( wxWizardExEvent& event ) {
+void CProjectPropertiesPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
  
@@ -345,11 +273,10 @@ void CProjectPropertiesPage::OnCancel( wxWizardExEvent& event ) {
  * wxEVT_PROJECTPROPERTIES_STATECHANGE event handler for ID_PROJECTPROPERTIESPAGE
  */
  
-void CProjectPropertiesPage::OnStateChange( CProjectPropertiesPageEvent& WXUNUSED(event) )
-{
+void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED(event)) {
     CMainDocument* pDoc        = wxGetApp().GetDocument();
     CWizardAttachProject* pWAP = ((CWizardAttachProject*)GetParent());
-    PROJECT_CONFIG* pc         = &((CWizardAttachProject*)GetParent())->project_config;
+    PROJECT_CONFIG* pc         = pWAP->GetProjectConfig();
     CC_STATUS status;
     wxDateTime dtStartExecutionTime;
     wxDateTime dtCurrentExecutionTime;
@@ -374,7 +301,7 @@ void CProjectPropertiesPage::OnStateChange( CProjectPropertiesPageEvent& WXUNUSE
         case PROJPROP_RETRPROJECTPROPERTIES_EXECUTE:
             // Attempt to retrieve the project's account creation policies
             pDoc->rpc.get_project_config(
-                (const char*)pWAP->m_ProjectInfoPage->GetProjectURL().mb_str()
+                (const char*)pWAP->GetProjectInfoPage()->GetProjectURL().mb_str()
             );
  
             // Wait until we are done processing the request.
@@ -418,7 +345,7 @@ void CProjectPropertiesPage::OnStateChange( CProjectPropertiesPageEvent& WXUNUSE
 
                 bSuccessfulCondition = 
                     (ERR_ALREADY_ATTACHED == pDoc->rpc.project_attach(
-                        (const char*)pWAP->m_ProjectInfoPage->GetProjectURL().mb_str(),
+                    (const char*)pWAP->GetProjectInfoPage()->GetProjectURL().mb_str(),
                         "", "")
                     );
                 if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTALREADYATTACHED)) {
@@ -505,4 +432,3 @@ void CProjectPropertiesPage::OnStateChange( CProjectPropertiesPageEvent& WXUNUSE
         AddPendingEvent(TransitionEvent);
     }
 }
-

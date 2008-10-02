@@ -21,11 +21,11 @@ else
    mac_sources = 
 endif
 
-bin_PROGRAMS = boinc_gui
+bin_PROGRAMS = synecmgr
 
 # keep the following alphabetic
 
-boinc_gui_SOURCES = \
+synecmgr_SOURCES = \
     AccountInfoPage.cpp \
     AccountKeyPage.cpp \
     AccountManagerInfoPage.cpp \
@@ -107,7 +107,6 @@ boinc_gui_SOURCES = \
     WelcomePage.cpp \
     WizardAccountManager.cpp \
     WizardAttachProject.cpp \
-    wizardex.cpp \
     $(mac_sources)
 
 EXTRA_DIST = *.h \
@@ -116,28 +115,15 @@ EXTRA_DIST = *.h \
     ../lib/error_numbers.h \
     locale $(mac_headers)
 
-boinc_gui_CPPFLAGS = $(AM_CPPFLAGS) $(WX_CPPFLAGS) $(CLIENTGUIFLAGS)
-boinc_gui_CXXFLAGS = $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
-boinc_gui_LDADD = $(LIBBOINC) $(CLIENTGUILIBS)
+synecmgr_CPPFLAGS = $(AM_CPPFLAGS) $(WX_CPPFLAGS) $(CLIENTGUIFLAGS)
+synecmgr_CXXFLAGS = $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
+synecmgr_LDADD = $(LIBBOINC) $(CLIENTGUILIBS)
 
-all-local: client_gui-bin
-client_gui-bin: @CLIENT_GUI_BIN_FILENAME@
+all-local: synecmgr
 
 win_config.h: $(top_srcdir)/config.h
 	grep '#define.*BOINC.*VERSION' $^ > $@
 
 version: win_config.h
-
-# make a hard link to the client name.
-@CLIENT_GUI_BIN_FILENAME@: boinc_gui
-	rm -f $@
-	rm -f $@.unmodified
-	cp $? $@.unmodified
-	@LN@ $? $@
-	@STRIP@ $@
-
-clean-local:
-	rm -f @CLIENT_GUI_BIN_FILENAME@
-	rm -f @CLIENT_GUI_BIN_FILENAME@.unmodified
 
 .PHONY: version

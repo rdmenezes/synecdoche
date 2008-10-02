@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,68 +16,36 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+/// \file
+/// Class implementing the dialog for selecting a different computer in the Manager.
+
+#include "DlgSelectComputer.h"
+
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
 #include "LogBOINC.h"
 #include "BOINCGUIApp.h"
 #include "MainDocument.h"
 #include "SkinManager.h"
 
-////@begin includes
-////@end includes
+IMPLEMENT_DYNAMIC_CLASS(CDlgSelectComputer, wxDialog)
 
-#include "DlgSelectComputer.h"
-
-////@begin XPM images
-////@end XPM images
-
-/*!
- * CDlgSelectComputer type definition
- */
-
-IMPLEMENT_DYNAMIC_CLASS( CDlgSelectComputer, wxDialog )
-
-/*!
- * CDlgSelectComputer event table definition
- */
-
-BEGIN_EVENT_TABLE( CDlgSelectComputer, wxDialog )
-
-////@begin CDlgSelectComputer event table entries
-    EVT_TEXT( ID_SELECTCOMPUTERNAME, CDlgSelectComputer::OnComputerNameUpdated )
-
-////@end CDlgSelectComputer event table entries
-
+BEGIN_EVENT_TABLE(CDlgSelectComputer, wxDialog )
+    EVT_TEXT(ID_SELECTCOMPUTERNAME, CDlgSelectComputer::OnComputerNameUpdated)
 END_EVENT_TABLE()
 
-/*!
- * CDlgSelectComputer constructors
- */
 
-CDlgSelectComputer::CDlgSelectComputer( )
+CDlgSelectComputer::CDlgSelectComputer() : m_ComputerNameCtrl(0), m_ComputerPasswordCtrl(0)
 {
 }
 
-CDlgSelectComputer::CDlgSelectComputer( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
+CDlgSelectComputer::CDlgSelectComputer(wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style) : m_ComputerNameCtrl(0), m_ComputerPasswordCtrl(0)
 {
     Create(parent, id, caption, pos, size, style);
 }
 
-/*!
- * CDlgSelectComputer creator
- */
-
-bool CDlgSelectComputer::Create( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
+bool CDlgSelectComputer::Create(wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style)
 {
-////@begin CDlgSelectComputer member initialisation
-    m_ComputerNameCtrl = NULL;
-    m_ComputerPasswordCtrl = NULL;
-////@end CDlgSelectComputer member initialisation
-
     wxString strCaption = caption;
     if (strCaption.IsEmpty()) {
         CSkinAdvanced* pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
@@ -86,25 +55,19 @@ bool CDlgSelectComputer::Create( wxWindow* parent, wxWindowID id, const wxString
         strCaption.Printf(_("%s - Select Computer"), pSkinAdvanced->GetApplicationName().c_str());
     }
 
-////@begin CDlgSelectComputer creation
     SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
-    wxDialog::Create( parent, id, strCaption, pos, size, style );
+    wxDialog::Create(parent, id, strCaption, pos, size, style);
 
     CreateControls();
     GetSizer()->Fit(this);
     GetSizer()->SetSizeHints(this);
     Centre();
-////@end CDlgSelectComputer creation
     return TRUE;
 }
 
-/*!
- * Control creation for CDlgSelectComputer
- */
-
+/// Creates the controls and sizers.
 void CDlgSelectComputer::CreateControls()
 {    
-////@begin CDlgSelectComputer content construction
     CDlgSelectComputer* itemDialog1 = this;
 
     wxBoxSizer* itemBoxSizer2 = new wxBoxSizer(wxVERTICAL);
@@ -133,7 +96,7 @@ void CDlgSelectComputer::CreateControls()
     itemFlexGridSizer5->Add(itemStaticText8, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     m_ComputerPasswordCtrl = new wxTextCtrl;
-    m_ComputerPasswordCtrl->Create( itemDialog1, ID_SELECTCOMPUTERPASSWORD, _T(""), wxDefaultPosition, wxSize(250, -1), wxTE_PASSWORD );
+    m_ComputerPasswordCtrl->Create( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, wxSize(250, -1), wxTE_PASSWORD );
     itemFlexGridSizer5->Add(m_ComputerPasswordCtrl, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     wxBoxSizer* itemBoxSizer10 = new wxBoxSizer(wxVERTICAL);
@@ -149,48 +112,41 @@ void CDlgSelectComputer::CreateControls()
     itemBoxSizer10->Add(itemButton12, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 
     // Set validators
-    m_ComputerNameCtrl->SetValidator( wxGenericValidator(& m_strComputerName) );
-    m_ComputerPasswordCtrl->SetValidator( wxGenericValidator(& m_strComputerPassword) );
-////@end CDlgSelectComputer content construction
+    m_ComputerNameCtrl->SetValidator(wxGenericValidator(&m_strComputerName));
+    m_ComputerPasswordCtrl->SetValidator(wxGenericValidator(&m_strComputerPassword));
 }
 
-/*!
- * Should we show tooltips?
- */
+/// Set the list of most recently used computers.
+///
+/// \param[in] mru_list An array containing the names of all computers
+///                     that were used recently.
+void CDlgSelectComputer::SetMRUList(const wxArrayString& mru_list)
+{
+    m_ComputerNameCtrl->Clear();
+    for (size_t i = 0; i < mru_list.Count(); ++i) {
+        m_ComputerNameCtrl->Append(mru_list.Item(i));
+    }
+}
 
+/// Should we show tooltips?
 bool CDlgSelectComputer::ShowToolTips(){
     return TRUE;
 }
 
-/*!
- * Get bitmap resources
- */
-
-wxBitmap CDlgSelectComputer::GetBitmapResource( const wxString& WXUNUSED(name) )
+/// Get bitmap resources
+wxBitmap CDlgSelectComputer::GetBitmapResource(const wxString& WXUNUSED(name))
 {
-    // Bitmap retrieval
-////@begin CDlgSelectComputer bitmap retrieval
     return wxNullBitmap;
-////@end CDlgSelectComputer bitmap retrieval
 }
 
-/*!
- * Get icon resources
- */
-
-wxIcon CDlgSelectComputer::GetIconResource( const wxString& WXUNUSED(name) )
+/// Get icon resources
+wxIcon CDlgSelectComputer::GetIconResource(const wxString& WXUNUSED(name))
 {
-    // Icon retrieval
-////@begin CDlgSelectComputer icon retrieval
     return wxNullIcon;
-////@end CDlgSelectComputer icon retrieval
 }
 
-/*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_SELECTCOMPUTERNAME
- */
-
-void CDlgSelectComputer::OnComputerNameUpdated( wxCommandEvent& WXUNUSED(event) )
+/// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_SELECTCOMPUTERNAME
+void CDlgSelectComputer::OnComputerNameUpdated(wxCommandEvent& WXUNUSED(event))
 {
     wxString       strPassword = wxEmptyString;
     CMainDocument* pDoc        = wxGetApp().GetDocument();
@@ -204,5 +160,3 @@ void CDlgSelectComputer::OnComputerNameUpdated( wxCommandEvent& WXUNUSED(event) 
         m_ComputerPasswordCtrl->SetValue(strPassword);
     }
 }
-
-const char *BOINC_RCSID_28d78701f5="$Id: DlgSelectComputer.cpp 13804 2007-10-09 11:35:47Z fthomas $";

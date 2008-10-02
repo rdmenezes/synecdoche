@@ -16,15 +16,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "BOINCBaseView.h"
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "MainDocument.h"
-#include "BOINCBaseView.h"
 #include "BOINCTaskCtrl.h"
 #include "BOINCListCtrl.h"
 #include "Events.h"
-
-#include "res/boinc.xpm"
 
 
 IMPLEMENT_DYNAMIC_CLASS(CBOINCBaseView, wxPanel)
@@ -78,11 +76,9 @@ wxString& CBOINCBaseView::GetViewDisplayName() {
 
 
 // The user friendly icon of the view.
-//   If it has not been defined by the view the BOINC icon is returned.
 //
 const char** CBOINCBaseView::GetViewIcon() {
-    wxASSERT(boinc_xpm);
-    return boinc_xpm;
+    return 0;
 }
 
 

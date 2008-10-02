@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "BOINCGUIApp.h"
+
 #ifdef __WXMAC__
 #include <Carbon/Carbon.h>
 #include "filesys.h"
@@ -28,23 +30,14 @@
 
 #include "stdwx.h"
 #include "diagnostics.h"
-#include "network.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "Events.h"
 #include "common/wxFlatNotebook.h"
-#include "LogBOINC.h"
-#include "BOINCGUIApp.h"
-#include "SkinManager.h"
 #include "MainDocument.h"
-#include "BOINCClientManager.h"
+#include "LogBOINC.h"
+#include "SkinManager.h"
 #include "BOINCTaskBar.h"
+#include "BOINCClientManager.h"
 #include "BOINCBaseFrame.h"
 #include "AdvancedFrame.h"
-#include "sg_ImageLoader.h"
-#include "sg_StatImageLoader.h"
 #include "sg_BoincSimpleGUI.h"
 #include "DlgGenericMessage.h"
 
@@ -106,8 +99,8 @@ bool CBOINCGUIApp::OnInit() {
 #endif
 
     // Setup application and company information
-    SetAppName(wxT("BOINC Manager"));
-    SetVendorName(wxT("Space Sciences Laboratory, U.C. Berkeley"));
+    SetAppName(wxT("Synecdoche"));
+    //SetVendorName(wxT("Space Sciences Laboratory, U.C. Berkeley"));
 
     // Initialize the configuration storage module
     m_pConfig = new wxConfig(GetAppName());
@@ -121,6 +114,7 @@ bool CBOINCGUIApp::OnInit() {
     //
     // Determine BOINCMgr Data Directory
     //
+    /*
     LONG    lReturnValue;
     HKEY    hkSetupHive;
     LPTSTR  lpszRegistryValue = NULL;
@@ -169,16 +163,16 @@ bool CBOINCGUIApp::OnInit() {
     // Cleanup
     if (hkSetupHive) RegCloseKey(hkSetupHive);
     if (lpszRegistryValue) free(lpszRegistryValue);
-
+*/
 
     //
     // Determine BOINCMgr Root Directory
     //
     TCHAR   szPath[MAX_PATH-1];
 
-    // change the current directory to the boinc install directory
     GetModuleFileName(NULL, szPath, (sizeof(szPath)/sizeof(TCHAR)));
-        
+
+    // Remove executable name from path, retaining trailing backslash.
     TCHAR *pszProg = strrchr(szPath, '\\');
     if (pszProg) {
         szPath[pszProg - szPath + 1] = 0;
@@ -620,8 +614,8 @@ int CBOINCGUIApp::StartBOINCScreensaverTest() {
         (sizeof(szExecutableDirectory) / sizeof(wxChar))
     );
 
-    // Append boinc.scr to the end of the strExecute string and get ready to rock
-    strExecute = wxT("\"") + wxString(szExecutableDirectory) + wxT("\\boinc.scr\" /t");
+    // Append synecdoche.scr to the end of the strExecute string and get ready to rock
+    strExecute = wxT("\"") + wxString(szExecutableDirectory) + wxT("\\synecdoche.scr\" /t");
     ::wxExecute(strExecute);
 #endif
     return 0;

@@ -3,31 +3,17 @@
 
 include $(top_srcdir)/Makefile.incl
 
-#if HAVE_NSL
-nslprogs=boinc_cmd$(EXEEXT)
-#endif
+bin_PROGRAMS = crypt_prog syneccmd
 
-bin_PROGRAMS = crypt_prog$(EXEEXT) $(nslprogs)
+EXTRA_PROGRAMS = md5_test shmem_test msg_test
 
-EXTRA_PROGRAMS = md5_test$(EXEEXT) shmem_test$(EXEEXT) msg_test$(EXEEXT)
+all-local: syneccmd$(EXEEXT)
 
-all-local: client-bin
-
-client-bin: @CLIENT_CMD_BIN_FILENAME@
-
-boinc_cmd_SOURCES = \
+syneccmd_SOURCES = \
     boinc_cmd.C \
     gui_rpc_client.h
 
-boinc_cmd_LDADD = $(lib_LIBRARIES) $(PTHREAD_LIBS)
-
-# make a hard link to the client name.
-@CLIENT_CMD_BIN_FILENAME@: boinc_cmd$(EXEEXT)
-	rm -f $@
-	rm -f $@.unmodified
-	cp $? $@.unmodified
-	@LN@ $? $@
-	@STRIP@ $@
+syneccmd_LDADD = $(lib_LIBRARIES) $(PTHREAD_LIBS)
 
 lib_LIBRARIES = libboinc.a 
 EXTRA_DIST = *.h *.C
@@ -77,14 +63,14 @@ libboinc_a_SOURCES = \
     proxy_info.C \
     shmem.C \
     str_util.C \
-    util.C	\
+    util.C \
     unix_util.C \
 	$(mac_sources)
 
 pkginclude_HEADERS = \
     app_ipc.h \
     boinc_win.h \
-	common_defs.h	\
+	common_defs.h \
 	coproc.h \
     crypt.h \
     diagnostics.h \
@@ -109,6 +95,3 @@ crypt_prog_SOURCES = crypt_prog.C crypt.C md5.c md5_file.C
 crypt_prog_DEPENDENCIES =
 crypt_prog_LDADD = $(RSA_LIBS) $(PTHREAD_LIBS)
 
-clean-local:
-	rm -f @CLIENT_CMD_BIN_FILENAME@
-	rm -f @CLIENT_CMD_BIN_FILENAME@.unmodified

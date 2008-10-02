@@ -16,24 +16,19 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _DLG_MESSAGES_H_ 
-#define _DLG_MESSAGES_H_ 
+#ifndef DLG_MESSAGES_H
+#define DLG_MESSAGES_H
 
+#include <wx/dialog.h>
+#include <wx/panel.h>
 
-/*!
- * Includes
- */
+class wxCommandEvent;
+class wxConfigBase;
+class wxListItemAttr;
+class wxTimer;
+class wxTimerEvent;
 
-////@begin includes
-////@end includes
-
-/*!
- * Forward declarations
- */
-
-////@begin forward declarations
 class CSGUIListCtrl;
-////@end forward declarations
 
 /*!
  * Control identifiers
@@ -108,13 +103,13 @@ public:
     /// @}
 
     virtual wxString        OnListGetItemText( long item, long column ) const;
-	virtual wxListItemAttr* OnListGetItemAttr( long item ) const;
+    virtual wxListItemAttr* OnListGetItemAttr( long item ) const;
 
     bool                    OnSaveState(wxConfigBase* pConfig);
     bool                    OnRestoreState(wxConfigBase* pConfig);
 
 private:
-	wxInt32                 m_iPreviousDocCount;
+    wxInt32                 m_iPreviousDocCount;
 
     CSGUIListCtrl*          m_pList;
     wxListItemAttr*         m_pMessageInfoAttr;
@@ -123,10 +118,10 @@ private:
     bool                    m_bProcessingRefreshEvent;
     bool                    m_bForceUpdateSelection;
 
-	wxTimer*                m_pRefreshMessagesTimer;
+    wxTimer*                m_pRefreshMessagesTimer;
 
     bool                    EnsureLastItemVisible();
-	wxInt32                 FormatProjectName( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatProjectName( wxInt32 item, wxString& strBuffer ) const;
     wxInt32                 FormatTime( wxInt32 item, wxString& strBuffer ) const;
     wxInt32                 FormatMessage( wxInt32 item, wxString& strBuffer ) const;
 
@@ -151,7 +146,7 @@ public:
     CDlgMessages( wxWindow* parent, wxWindowID id = SYMBOL_CDLGMESSAGES_IDNAME, const wxString& caption = SYMBOL_CDLGMESSAGES_TITLE, const wxPoint& pos = SYMBOL_CDLGMESSAGES_POSITION, const wxSize& size = SYMBOL_CDLGMESSAGES_SIZE, long style = SYMBOL_CDLGMESSAGES_STYLE );
 
     ~CDlgMessages();
-    
+
     /// Creation
     bool Create( wxWindow* parent, wxWindowID id = SYMBOL_CDLGMESSAGES_IDNAME, const wxString& caption = SYMBOL_CDLGMESSAGES_TITLE, const wxPoint& pos = SYMBOL_CDLGMESSAGES_POSITION, const wxSize& size = SYMBOL_CDLGMESSAGES_SIZE, long style = SYMBOL_CDLGMESSAGES_STYLE );
 

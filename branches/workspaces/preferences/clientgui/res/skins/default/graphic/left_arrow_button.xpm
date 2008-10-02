@@ -1,3 +1,4 @@
+/* XPM */
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2005 University of California
@@ -17,7 +18,6 @@
 
 #ifndef LEFT_ARROW_BUTTON_XPM
 #define LEFT_ARROW_BUTTON_XPM
-/* XPM */
 static const char *left_arrow_button_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 157 2",

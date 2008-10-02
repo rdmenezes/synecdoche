@@ -16,9 +16,7 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdwx.h"
-#include "diagnostics.h"
 #include "parse.h"
-#include "util.h"
 #include "error_numbers.h"
 #include "miofile.h"
 #include "BOINCGUIApp.h"
@@ -26,8 +24,6 @@
 #include "SkinManager.h"
 #include "version.h"
 
-
-////@begin XPM images
 #include "res/skins/default/graphic/background_image.xpm"
 #include "res/skins/default/graphic/spacer_image.xpm"
 #include "res/skins/default/graphic/state_indicator_background_image.xpm"
@@ -70,14 +66,12 @@
 #include "res/skins/default/graphic/preferences_link_image.xpm"
 #include "res/skins/default/graphic/advanced_link_image.xpm"
 #include "res/skins/default/graphic/dialog_background_image.xpm"
-#include "res/boinc.xpm"
-#include "res/boinc32.xpm"
-#include "res/boincdisconnect.xpm"
-#include "res/boincsnooze.xpm"
-#include "res/boinc_logo.xpm"
+#include "res/synecdoche16x16x8.xpm"
+#include "res/synecdoche32x32x8.xpm"
+#include "res/disconnected.xpm"
+#include "res/snooze.xpm"
+#include "res/synecdoche_logo.xpm"
 #include "res/wizard_bitmap.xpm"
-////@end XPM images
-
 
 // Flag to disable the various error messages when the default skin
 // is used.
@@ -257,6 +251,11 @@ int CSkinIcon::Parse(MIOFILE& in) {
 wxIcon* CSkinIcon::GetIcon() {
     Validate();
     return &m_icoIcon;
+}
+
+
+void CSkinIcon::SetIcon(const wxIcon& icon) {
+    m_icoIcon = icon;
 }
 
 
@@ -910,7 +909,7 @@ int CSkinAdvanced::Parse(MIOFILE& in) {
 
 wxString CSkinAdvanced::GetApplicationName() {
     wxString strApplicationName = m_strApplicationName;
-#ifdef BOINC_PRERELEASE
+#ifdef SYNEC_PRERELEASE
         strApplicationName += wxT(" (Pre-release)");
 #endif
     return strApplicationName;
@@ -995,36 +994,49 @@ bool CSkinAdvanced::InitializeDelayedValidation() {
         m_strApplicationShortName = wxT("Synecdoche");
         wxASSERT(!m_strApplicationShortName.IsEmpty());
     }
-    m_iconApplicationIcon.SetDefaults(wxT("application"), (const char**)boinc_xpm);
-    m_iconApplicationIcon32.SetDefaults(wxT("application"), (const char**)boinc32_xpm);
-    m_iconApplicationDisconnectedIcon.SetDefaults(wxT("application disconnected"), (const char**)boincdisconnect_xpm);
-    m_iconApplicationSnoozeIcon.SetDefaults(wxT("application snooze"), (const char**)boincsnooze_xpm);
+
+#ifdef __WXMSW__
+    // Use the embedded icon resource under Windows.
+    // This gives us the best quality icon automatically.
+    wxIcon icon16(wxIcon(wxT("mainicon"), wxBITMAP_TYPE_ICO_RESOURCE,
+        wxSystemSettings::GetMetric(wxSYS_SMALLICON_X),
+        wxSystemSettings::GetMetric(wxSYS_SMALLICON_Y))
+        );
+    wxIcon icon32(wxICON(mainicon));
+    m_iconApplicationIcon.SetIcon(icon16);
+    m_iconApplicationIcon32.SetIcon(icon32);
+#endif
+
+    m_iconApplicationIcon.SetDefaults(wxT("application"), (const char**)synecdoche16x16x8_xpm);
+    m_iconApplicationIcon32.SetDefaults(wxT("application"), (const char**)synecdoche32x32x8_xpm);
+    m_iconApplicationDisconnectedIcon.SetDefaults(wxT("application disconnected"), (const char**)disconnected_xpm);
+    m_iconApplicationSnoozeIcon.SetDefaults(wxT("application snooze"), (const char**)snooze_xpm);
     if (!m_bitmapApplicationLogo.Ok()) {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Failed to load application logo. Using default.\n");
         }
-        m_bitmapApplicationLogo = wxBitmap((const char**)boinc_logo_xpm);
+        m_bitmapApplicationLogo = wxBitmap((const char**)synecdoche_logo_xpm);
         wxASSERT(m_bitmapApplicationLogo.Ok());
     }
     if (m_strOrganizationName.IsEmpty()) {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Organization name was not defined. Using default.\n");
         }
-        m_strOrganizationName = wxT("Space Sciences Laboratory, U.C. Berkeley");
+        m_strOrganizationName = wxT("Synecdoche");
         wxASSERT(!m_strOrganizationName.IsEmpty());
     }
     if (m_strOrganizationWebsite.IsEmpty()) {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Organization web site was not defined. Using default.\n");
         }
-        m_strOrganizationWebsite = wxT("http://boinc.berkeley.edu");
+        m_strOrganizationWebsite = wxT("http://synecdoche.googlecode.com/");
         wxASSERT(!m_strOrganizationWebsite.IsEmpty());
     }
     if (m_strOrganizationHelpUrl.IsEmpty()) {
         if (!disable_error_msgs) {
             fprintf(stderr, "Skin Manager: Organization help url was not defined. Using default.\n");
         }
-        m_strOrganizationHelpUrl = wxT("http://boinc.berkeley.edu/manager_links.php");
+        m_strOrganizationHelpUrl = wxT("http://groups.google.com/group/synecdoche");
         wxASSERT(!m_strOrganizationHelpUrl.IsEmpty());
     }
     if (!m_bDefaultTabSpecified) {
@@ -1469,5 +1481,3 @@ bool CSkinManager::InitializeDelayedValidation() {
            m_AdvancedSkin.InitializeDelayedValidation() && 
            m_WizardsSkin.InitializeDelayedValidation();
 }
-
-

@@ -100,9 +100,9 @@ static void handle_exchange_versions(MIOFILE& fout) {
         "   <minor>%d</minor>\n"
         "   <release>%d</release>\n"
         "</server_version>\n",
-        BOINC_MAJOR_VERSION,
-        BOINC_MINOR_VERSION,
-        BOINC_RELEASE
+        SYNEC_MAJOR_VERSION,
+        SYNEC_MINOR_VERSION,
+        SYNEC_RELEASE
     );
 }
 
@@ -801,11 +801,13 @@ static void handle_acct_mgr_rpc_poll(const char*, MIOFILE& fout) {
     );
 }
 
+#ifdef ENABLE_UPDATE_CHECK
 static void handle_get_newer_version(MIOFILE& fout) {
     fout.printf("<newer_version>%s</newer_version>\n",
         gstate.newer_version.c_str()
     );
 }
+#endif
 
 /// Sends the current venue name whether it exists or not, and the description
 /// if there are preferences for the venue.
@@ -1204,8 +1206,10 @@ int GUI_RPC_CONN::handle_rpc() {
         handle_get_host_info(request_msg, mf);
     } else if (match_tag(request_msg, "<get_statistics")) {
         handle_get_statistics(request_msg, mf);
+#ifdef ENABLE_UPDATE_CHECK
     } else if (match_tag(request_msg, "<get_newer_version>")) {
         handle_get_newer_version(mf);
+#endif
     } else if (match_tag(request_msg, "<get_venue/>")) {
         handle_get_venue(mf);
     } else if (match_tag(request_msg, "<get_cc_status")) {

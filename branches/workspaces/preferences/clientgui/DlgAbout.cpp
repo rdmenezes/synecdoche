@@ -16,11 +16,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+#include "DlgAbout.h"
+
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
-
-#include "DlgAbout.h"
 
 #ifdef __WXMSW__
 #include "version.h"
@@ -86,7 +87,7 @@ void CDlgAbout::CreateControls(CSkinAdvanced* pSkinAdvanced) {
     wxStaticText* versionLabel = new wxStaticText(this, wxID_STATIC, _("Version:"));
     copyrightSizer->Add(versionLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
-    wxStaticText* versionText = new wxStaticText(this, wxID_STATIC, wxT(BOINC_VERSION_STRING));
+    wxStaticText* versionText = new wxStaticText(this, wxID_STATIC, wxT(SYNEC_VERSION_STRING));
     copyrightSizer->Add(versionText, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
     wxStaticText* copyrightLabel = new wxStaticText(this, wxID_STATIC, _("Copyright:"));
@@ -97,7 +98,7 @@ void CDlgAbout::CreateControls(CSkinAdvanced* pSkinAdvanced) {
     copyrightSizer->Add(copyrightText, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
     // Unbranded about info:
-    wxStaticText* itemStaticText13 = new wxStaticText(this, wxID_STATIC, wxT("Synecdoche Open Infrastructure for Network Computing"));
+    wxStaticText* itemStaticText13 = new wxStaticText(this, wxID_STATIC, wxT("Synecdoche Open Infrastructure for Distributed Computing"));
     verticalSizer->Add(itemStaticText13, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 
     wxHyperlinkCtrl* SynecHyperLink = new wxHyperlinkCtrl(this, wxID_ANY, wxT("http://synecdoche.googlecode.com/"),

@@ -16,12 +16,6 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "str_util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
 #include "Events.h"
 #include "hyperlink.h"
 #include "BOINCGUIApp.h"
@@ -35,7 +29,6 @@
 #include "sg_DlgMessages.h"
 #include "PrefFrame.h"
 #include "sg_ProjectsComponent.h"
-#include "wizardex.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
@@ -390,13 +383,9 @@ void CProjectsComponent::UpdateDisplayedProjects() {
 void CProjectsComponent::OnHelp(wxCommandEvent& /*event*/) {
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectsComponent::OnHelp - Function Begin"));
 
-	std::string url;
-	url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite().mb_str();
-	canonicalize_master_url(url);
+    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
 
-	wxString wxurl;
-	wxurl.Printf(wxT("%smanager_links.php?target=simple"), url.c_str());
-    HyperLink::ExecuteLink(wxurl);
+    HyperLink::ExecuteLink(url);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectsComponent::OnHelp - Function End"));
 }

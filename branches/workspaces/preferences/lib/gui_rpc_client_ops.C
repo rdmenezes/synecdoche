@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -72,9 +72,6 @@
 #include "common_defs.h"
 #include "gui_rpc_client.h"
 
-using std::string;
-using std::vector;
-
 DISPLAY_INFO::DISPLAY_INFO() {
     memset(this, 0, sizeof(DISPLAY_INFO));
 }
@@ -126,11 +123,6 @@ void PROJECT_LIST_ENTRY::clear() {
     description.clear();
     home.clear();
     image.clear();
-    rand = 0.0;
-}
-
-bool PROJECT_LIST_ENTRY::operator<(const PROJECT_LIST_ENTRY& compare) const {
-    return rand < compare.rand;
 }
 
 PROJECT::PROJECT() {
@@ -713,10 +705,6 @@ ALL_PROJECTS_LIST::~ALL_PROJECTS_LIST() {
     clear();
 }
 
-void ALL_PROJECTS_LIST::shuffle() {
-    sort(projects.begin(), projects.end());
-}
-
 void ALL_PROJECTS_LIST::clear() {
     unsigned int i;
     for (i=0; i<projects.size(); i++) {
@@ -1026,9 +1014,9 @@ int RPC_CLIENT::exchange_versions(VERSION_INFO& server) {
         "   <minor>%d</minor>\n"
         "   <release>%d</release>\n"
         "</exchange_versions>\n",
-        BOINC_MAJOR_VERSION,
-        BOINC_MINOR_VERSION,
-        BOINC_RELEASE
+        SYNEC_MAJOR_VERSION,
+        SYNEC_MINOR_VERSION,
+        SYNEC_RELEASE
     );
 
     retval = rpc.do_rpc(buf);
@@ -1350,7 +1338,6 @@ int RPC_CLIENT::get_all_projects_list(ALL_PROJECTS_LIST& pl) {
             project = new PROJECT_LIST_ENTRY();
             retval = project->parse(xp);
             if (!retval) {
-                project->rand = drand();
                 pl.projects.push_back(project);
             } else {
                 delete project;
@@ -1358,7 +1345,6 @@ int RPC_CLIENT::get_all_projects_list(ALL_PROJECTS_LIST& pl) {
             continue;
         }
     }
-    pl.shuffle();
     return 0;
 }
 
@@ -1953,7 +1939,7 @@ int RPC_CLIENT::get_project_config_poll(PROJECT_CONFIG& pc) {
     return retval;
 }
 
-static string get_passwd_hash(const std::string& passwd, const std::string& email_addr) {
+static std::string get_passwd_hash(const std::string& passwd, const std::string& email_addr) {
     return md5_string(passwd+email_addr);
 
 }
@@ -1964,7 +1950,7 @@ int RPC_CLIENT::lookup_account(ACCOUNT_IN& ai) {
     RPC rpc(this);
 
     downcase_string(ai.email_addr);
-    string passwd_hash = get_passwd_hash(ai.passwd, ai.email_addr);
+    std::string passwd_hash = get_passwd_hash(ai.passwd, ai.email_addr);
     sprintf(buf,
         "<lookup_account>\n"
         "   <url>%s</url>\n"
@@ -2002,7 +1988,7 @@ int RPC_CLIENT::create_account(ACCOUNT_IN& ai) {
     RPC rpc(this);
 
     downcase_string(ai.email_addr);
-    string passwd_hash = get_passwd_hash(ai.passwd, ai.email_addr);
+    std::string passwd_hash = get_passwd_hash(ai.passwd, ai.email_addr);
     sprintf(buf,
         "<create_account>\n"
         "   <url>%s</url>\n"
@@ -2035,6 +2021,7 @@ int RPC_CLIENT::create_account_poll(ACCOUNT_OUT& ao) {
     return retval;
 }
 
+#ifdef ENABLE_UPDATE_CHECK
 int RPC_CLIENT::get_newer_version(std::string& version) {
     int retval;
     SET_LOCALE sl;
@@ -2050,6 +2037,7 @@ int RPC_CLIENT::get_newer_version(std::string& version) {
     }
     return retval;
 }
+#endif
 
 int RPC_CLIENT::get_venue(VENUE& venue) {
     int retval;
@@ -2218,7 +2206,7 @@ int RPC_CLIENT::get_global_prefs_working(std::string& s) {
 int RPC_CLIENT::get_global_prefs_working_struct(GLOBAL_PREFS& prefs) {
     int retval;
     SET_LOCALE sl;
-    string s;
+    std::string s;
     MIOFILE mf;
 
     retval = get_global_prefs_working(s);
@@ -2277,7 +2265,7 @@ int RPC_CLIENT::set_global_prefs_override(const std::string& s) {
 int RPC_CLIENT::get_global_prefs_override_struct(GLOBAL_PREFS& prefs) {
     int retval;
     SET_LOCALE sl;
-    string s;
+    std::string s;
     MIOFILE mf;
 
     retval = get_global_prefs_override(s);
@@ -2293,11 +2281,10 @@ int RPC_CLIENT::set_global_prefs_override_struct(GLOBAL_PREFS& prefs) {
     SET_LOCALE sl;
     char buf[64000];
     MIOFILE mf;
-    string s;
 
     mf.init_buf_write(buf, sizeof(buf));
     prefs.write(mf);
-    s = buf;
+    std::string s = buf;
     return set_global_prefs_override(s);
 }
 
@@ -2310,14 +2297,13 @@ int RPC_CLIENT::read_cc_config() {
     return retval;
 }
 
-int RPC_CLIENT::set_debts(const vector<PROJECT>& projects) {
+int RPC_CLIENT::set_debts(const std::vector<PROJECT>& projects) {
     int retval;
     SET_LOCALE sl;
     char buf[1024];
     RPC rpc(this);
-    string s;
 
-    s = "<set_debts>\n";
+    std::string s = "<set_debts>\n";
     for (unsigned int i=0; i<projects.size(); i++) {
         const PROJECT& p = projects[i];
         sprintf(buf,
@@ -2330,7 +2316,7 @@ int RPC_CLIENT::set_debts(const vector<PROJECT>& projects) {
             p.short_term_debt,
             p.long_term_debt
         );
-        s += string(buf);
+        s += std::string(buf);
     }
     s += "</set_debts>\n";
     retval = rpc.do_rpc(s.c_str());

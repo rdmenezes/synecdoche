@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "ViewProjects.h"
+
 #include "stdwx.h"
 #include "str_util.h"
 #include "BOINCGUIApp.h"
@@ -24,7 +26,6 @@
 #include "AdvancedFrame.h"
 #include "BOINCTaskCtrl.h"
 #include "BOINCListCtrl.h"
-#include "ViewProjects.h"
 #include "Events.h"
 
 

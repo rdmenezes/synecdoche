@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "BOINCClientManager.h"
+
 #include "stdwx.h"
 #include "diagnostics.h"
 #include "LogBOINC.h"
@@ -23,7 +25,6 @@
 #include "MainDocument.h"
 #include "BOINCBaseFrame.h"
 #include "AdvancedFrame.h"
-#include "BOINCClientManager.h"
 
 #ifdef __WXMAC__
 #include "filesys.h"
@@ -155,9 +156,9 @@ bool CBOINCClientManager::StartupBOINCCore() {
         return (StartBOINCService());
     }
 
-    // Append boinc.exe to the end of the strExecute string and get ready to rock
+    // Append synecd.exe to the end of the strExecute string
     strExecute.Printf(
-        wxT("\"%s\\boinc.exe\" --redirectio --launched_by_manager %s"),
+        wxT("\"%ssynecd.exe\" --redirectio --launched_by_manager %s"),
         wxGetApp().GetRootDirectory().c_str(),
         wxGetApp().GetArguments().c_str()
     );

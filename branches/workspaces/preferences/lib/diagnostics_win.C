@@ -69,7 +69,7 @@ BOOL diagnostics_get_registry_value(LPCTSTR lpName, LPDWORD lpdwType, LPDWORD lp
     if (VER_PLATFORM_WIN32_WINDOWS == osvi.dwPlatformId) {
 		lRetVal = RegOpenKeyEx(
             HKEY_LOCAL_MACHINE, 
-            _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Diagnostics"),  
+            _T("SOFTWARE\\Synecdoche\\Synecdoche Diagnostics"),
 			(DWORD)NULL, 
             KEY_READ,
             &hKey
@@ -78,7 +78,7 @@ BOOL diagnostics_get_registry_value(LPCTSTR lpName, LPDWORD lpdwType, LPDWORD lp
 	} else {
 		lRetVal = RegOpenKeyEx(
             HKEY_CURRENT_USER,
-            _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Diagnostics"),  
+            _T("SOFTWARE\\Synecdoche\\Synecdoche Diagnostics"),
 			(DWORD)NULL,
             KEY_READ,
             &hKey
@@ -1179,7 +1179,7 @@ UINT WINAPI diagnostics_message_monitor(LPVOID /* lpParameter */) {
 //   has happened, to stderr so that project administrators can look at
 //   it and fix whatever bug might have caused the event.
 //
-// To accomplish this BOINC starts up a thread that will handle any
+// To accomplish this Synecdoche starts up a thread that will handle any
 //   unhandled exceptions when one is detected.  By using a separate
 //   thread the runtime debugger can avoid stack corruption issues and
 //   multiple unhandled exceptions.  In a multi-processor system it is
@@ -1285,7 +1285,7 @@ int diagnostics_init_unhandled_exception_monitor() {
 
     if (!hExceptionMonitorThread) {
         fprintf(
-            stderr, "WARNING: BOINC Windows Runtime Debugger has been disabled.\n"
+            stderr, "WARNING: Synecdoche Windows Runtime Debugger has been disabled.\n"
         );
         retval = ERR_THREAD;
     } else {
@@ -1338,7 +1338,7 @@ int diagnostics_unhandled_exception_dump_banner() {
     fprintf(stderr, "\n\n");
     fprintf(stderr, "********************\n");
     fprintf(stderr, "\n\n");
-    fprintf(stderr, "BOINC Windows Runtime Debugger Version %s\n", BOINC_VERSION_STRING);
+    fprintf(stderr, "Synecdoche Windows Runtime Debugger Version %s\n", SYNEC_VERSION_STRING);
     fprintf(stderr, "\n\n");
     fprintf(stderr, "Dump Timestamp    : %s %s\n", szDate, szTime);
     if (diagnostics_is_flag_set(BOINC_DIAG_BOINCAPPLICATION)) {
@@ -1844,7 +1844,7 @@ UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID /* lpParameter */) {
                 // Release the Mutex
                 ReleaseMutex(hThreadListSync);
 
-                // Force terminate the app letting BOINC know an exception has occurred.
+                // Force terminate the app letting Synecdoche know an exception has occurred.
                 if (diagnostics_is_aborted_via_gui()) {
                     TerminateProcess(GetCurrentProcess(), (UINT)ERR_ABORTED_VIA_GUI);
                 } else {
@@ -1930,7 +1930,7 @@ LONG pass_to_signal_handler(int signum) {
 
 
 /// Allow apps to install signal handlers for some exceptions that bypass
-/// the boinc diagnostics.  This translates the Windows exceptions into
+/// the Synecdoche diagnostics.  This translates the Windows exceptions into
 /// standard signals.
 LONG diagnostics_check_signal_handlers(PEXCEPTION_POINTERS pExPtrs) {
     switch (pExPtrs->ExceptionRecord->ExceptionCode) {
@@ -2006,10 +2006,10 @@ LONG CALLBACK boinc_catch_signal(PEXCEPTION_POINTERS pExPtrs) {
 
     if (hExceptionMonitorThread) {
 
-        // Engage the BOINC Windows Runtime Debugger and dump as much diagnostic
+        // Engage the Synecdoche Windows Runtime Debugger and dump as much diagnostic
         //   data as possible.
         //
-        fprintf( stderr, "Engaging BOINC Windows Runtime Debugger...\n\n");
+        fprintf( stderr, "Engaging Synecdoche Windows Runtime Debugger...\n\n");
 
         // Store the exception record pointers.
         diagnostics_set_thread_exception_record(pExPtrs);
@@ -2025,7 +2025,7 @@ LONG CALLBACK boinc_catch_signal(PEXCEPTION_POINTERS pExPtrs) {
         // This is a really bad place to be.  The unhandled exception monitor wasn't
         //   created, so we need to bail out as quickly as possible.
         //
-        fprintf( stderr, "BOINC Windows Runtime Debugger not configured, terminating application...\n");
+        fprintf( stderr, "Synecdoche Windows Runtime Debugger not configured, terminating application...\n");
 
         // Enter the critical section in case multiple threads decide to try and blow
         //   chunks at the same time.  Let the OS decide who gets to determine what
