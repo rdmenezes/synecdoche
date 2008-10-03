@@ -18,7 +18,7 @@
 #ifndef _PREFNODEPRESETS_H_
 #define _PREFNODEPRESETS_H_
 
-struct GLOBAL_PREFS;
+class GLOBAL_PREFS;
 
 class PrefNodePresets : public PrefNodeBase {
 

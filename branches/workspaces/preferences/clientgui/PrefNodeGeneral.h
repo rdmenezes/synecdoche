@@ -20,7 +20,7 @@
 
 #include "PrefGridBase.h"
 
-struct GLOBAL_PREFS;
+class GLOBAL_PREFS;
 
 class PrefNodeGeneral : public PrefGridBase {
 

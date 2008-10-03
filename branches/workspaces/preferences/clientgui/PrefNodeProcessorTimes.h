@@ -18,7 +18,7 @@
 #ifndef _PREFNODEPROCESSORTIMES_H_
 #define _PREFNODEPROCESSORTIMES_H_
 
-struct GLOBAL_PREFS;
+class GLOBAL_PREFS;
 
 class PrefNodeProcessorTimes : public PrefNodeBase {
 
