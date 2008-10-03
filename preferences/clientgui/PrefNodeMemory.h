@@ -18,7 +18,7 @@
 #ifndef _PREFNODEMEMORY_H_
 #define _PREFNODEMEMORY_H_
 
-struct GLOBAL_PREFS;
+class GLOBAL_PREFS;
 
 class PrefNodeMemory : public PrefGridBase {
 

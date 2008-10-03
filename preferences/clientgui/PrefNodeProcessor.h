@@ -18,7 +18,7 @@
 #ifndef _PREFNODEPROCESSOR_H_
 #define _PREFNODEPROCESSOR_H_
 
-struct GLOBAL_PREFS;
+class GLOBAL_PREFS;
 
 class PrefNodeProcessor : public PrefGridBase {
 
