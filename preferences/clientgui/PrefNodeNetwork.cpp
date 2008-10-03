@@ -33,22 +33,22 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
 
     connect->AddPreference(new PrefValueBool(this,
         _("Confirm before connecting to Internet"),
-        _("BOINC will only try and get an Internet connection when it needs one."),
+        _("Synecdoche will only try and get an Internet connection when it needs one."),
         _("Yes"),
         ValidateYesNo(&m_preferences->confirm_before_connecting))
     );
 
     connect->AddPreference(new PrefValueBool(this,
         _("Disconnect when done"),
-        _("BOINC will only disconnect if it initiated the Internet connection."),
+        _("Synecdoche will only disconnect if it initiated the Internet connection."),
         _("No"),
         ValidateYesNo(&m_preferences->hangup_if_dialed))
     );
 
     connect->AddPreference(new PrefValueText(this,
         _("Approximate connection interval (days)"),
-        _("BOINC will use this as a hint for buffering work between connections. "
-        "BOINC will still use the Internet more frequently if a connection "
+        _("Synecdoche will use this as a hint for buffering work between connections. "
+        "Synecdoche will still use the Internet more frequently if a connection "
         "is available."),
         _("0.1 days"),
         ValidateNumber<double>(&m_preferences->work_buf_min_days))
@@ -75,8 +75,7 @@ PrefNodeNetwork::PrefNodeNetwork(wxWindow* parent, GLOBAL_PREFS* preferences)
     errors->AddPreference(new PrefValueBool(this,
         _("Skip image file verification"),
         _("Some dialup Internet Service Providers compress image downloads on the fly. "
-        "If you can't use a better ISP, use this option to ignore the modified images "
-        "until you can switch to a better ISP."),
+        "If you can't use a better ISP, use this option to ignore the modified images."),
         _("No"),
         ValidateYesNo(&m_preferences->dont_verify_images))
     );
