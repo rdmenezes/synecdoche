@@ -29,9 +29,9 @@ PrefNodeProcessorTimes::PrefNodeProcessorTimes(wxWindow* parent, GLOBAL_PREFS* p
 
     PrefGroup* restrict = AddGroup(_("Time Restrictions"));
     PrefValueTime* time = new PrefValueTime(this,
-        _("Allow BOINC to do work during these times:"),
-        _("BOINC will only do work at the specified times. If you set "
-        "the start time after the end time, then BOINC will work during the "
+        _("Allow Synecdoche to do work during these times:"),
+        _("Synecdoche will only do work at the specified times. If you set "
+        "the start time after the end time, then Synecdoche will work during the "
         "night. Times must be specified in HH:MM format. Default: no restrictions."),
         &preferences->cpu_times);
 

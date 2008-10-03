@@ -42,10 +42,10 @@ PrefNodeNetworkTimes::PrefNodeNetworkTimes(wxWindow* parent, GLOBAL_PREFS* prefe
 
     PrefGroup* restrict = AddGroup(_("Time Restrictions"));
     m_time = new PrefValueTime(this,
-        _("Allow BOINC to perform network activity during these times:"),
-        _("BOINC will only perform normal network activity at the specified times. Some user "
-        "actions override this setting. If you set the start time after "
-        "the end time, then BOINC will perform network activity during the "
+        _("Allow network activity during these times:"),
+        _("Synecdoche will only perform normal network activity at the specified times. "
+        "Some user actions override this setting. If you set the start time after "
+        "the end time, then Synecdoche will perform network activity during the "
         "night. Times must be specified in HH:MM format. Default: no restrictions."),
         &preferences->net_times);
 
