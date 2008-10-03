@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODEGENERAL_H_
-#define _PREFNODEGENERAL_H_
+#ifndef PREFNODEGENERAL_H
+#define PREFNODEGENERAL_H
 
 #include "PrefGridBase.h"
 
 class GLOBAL_PREFS;
 
+/// Preferences that don't fit into other categories.
 class PrefNodeGeneral : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeGeneral)
@@ -31,4 +32,4 @@ public:
     virtual ~PrefNodeGeneral() {}
 };
 
-#endif // _PREFNODEGENERAL_H_
+#endif // PREFNODEGENERAL_H

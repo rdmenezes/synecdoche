@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODEBASE_H_
-#define _PREFNODEBASE_H_
+#ifndef PREFNODEBASE_H
+#define PREFNODEBASE_H
 
 #include "prefs.h"
 #include "ValidateBool.h"
@@ -263,4 +263,4 @@ private:
 };
 
 
-#endif // _PREFNODEBASE_H_
+#endif // PREFNODEBASE_H

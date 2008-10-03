@@ -15,11 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODEPRESETS_H_
-#define _PREFNODEPRESETS_H_
+#ifndef PREFNODEPRESETS_H
+#define PREFNODEPRESETS_H
 
 class GLOBAL_PREFS;
 
+/// Allows setting the preferences to built-in preset values.
 class PrefNodePresets : public PrefNodeBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodePresets)
@@ -30,4 +31,4 @@ public:
 
 };
 
-#endif // _PREFNODEPRESETS_H_
+#endif // PREFNODEPRESETS_H

@@ -15,11 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODEMEMORY_H_
-#define _PREFNODEMEMORY_H_
+#ifndef PREFNODEMEMORY_H
+#define PREFNODEMEMORY_H
 
 class GLOBAL_PREFS;
 
+/// Preferences related to memory use.
+/// Note: virtual memory is grouped with the disk preferences.
 class PrefNodeMemory : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeMemory)
@@ -35,4 +37,4 @@ private:
 
 };
 
-#endif // _PREFNODEMEMORY_H_
+#endif // PREFNODEMEMORY_H

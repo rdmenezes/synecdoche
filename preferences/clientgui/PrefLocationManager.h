@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFLOCATIONMANAGER_H_
-#define _PREFLOCATIONMANAGER_H_
+#ifndef PREFLOCATIONMANAGER_H
+#define PREFLOCATIONMANAGER_H
 
 #include "prefs.h"
 #include "PrefTreeBook.h"
@@ -48,5 +48,5 @@ private:
     wxButton*           m_buttonHelp;
 };
 
-#endif // _PREFLOCATIONMANAGER_H_
+#endif // PREFLOCATIONMANAGER_H
 
