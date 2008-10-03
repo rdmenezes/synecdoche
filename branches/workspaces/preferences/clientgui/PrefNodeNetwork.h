@@ -15,13 +15,17 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODENETWORK_H_
-#define _PREFNODENETWORK_H_
+#ifndef PREFNODENETWORK_H
+#define PREFNODENETWORK_H
 
 #include "PrefGridBase.h"
 
 class GLOBAL_PREFS;
 
+/// Preferences relating to network usage.
+/// This includes all the global preferences related to how the
+/// network connection is treated, but not the local preferences that
+/// actually define the connection (dialup, proxy, etc).
 class PrefNodeNetwork : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeNetwork)
@@ -31,4 +35,4 @@ public:
     virtual ~PrefNodeNetwork() {}
 };
 
-#endif // _PREFNODENETWORK_H_
+#endif // PREFNODENETWORK_H

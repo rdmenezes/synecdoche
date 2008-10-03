@@ -15,11 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODEDISK_H_
-#define _PREFNODEDISK_H_
+#ifndef PREFNODEDISK_H
+#define PREFNODEDISK_H
 
 #include "prefs.h"
 
+/// Preferences related to disk use.
+/// This includes virtual memory settings.
 class PrefNodeDisk : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeDisk)
@@ -29,4 +31,4 @@ public:
     virtual ~PrefNodeDisk() {}
 };
 
-#endif // _PREFNODEDISK_H_
+#endif // PREFNODEDISK_H

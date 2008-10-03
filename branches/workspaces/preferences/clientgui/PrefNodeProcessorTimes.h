@@ -15,11 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODEPROCESSORTIMES_H_
-#define _PREFNODEPROCESSORTIMES_H_
+#ifndef PREFNODEPROCESSORTIMES_H
+#define PREFNODEPROCESSORTIMES_H
 
 class GLOBAL_PREFS;
 
+/// Custom time periods for allowing computation.
 class PrefNodeProcessorTimes : public PrefNodeBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeProcessorTimes)
@@ -29,4 +30,4 @@ public:
     virtual ~PrefNodeProcessorTimes() {}
 };
 
-#endif // _PREFNODEPROCESSORTIMES_H_
+#endif // PREFNODEPROCESSORTIMES_H

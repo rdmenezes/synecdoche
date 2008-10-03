@@ -15,18 +15,19 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODEPROCESSOR_H_
-#define _PREFNODEPROCESSOR_H_
+#ifndef PREFNODEPROCESSOR_H
+#define PREFNODEPROCESSOR_H
 
 class GLOBAL_PREFS;
 
+/// Preferences related to how the CPU is used.
 class PrefNodeProcessor : public PrefGridBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeProcessor)
 
 public:
     PrefNodeProcessor(wxWindow* parent = NULL, GLOBAL_PREFS* preferences = NULL);
-    virtual ~PrefNodeProcessor() {};
+    virtual ~PrefNodeProcessor() {}
 
 private:
     void OnRunIdleChanged(wxCommandEvent& event);
@@ -39,4 +40,4 @@ private:
 
 };
 
-#endif // _PREFNODEPROCESSOR_H_
+#endif // PREFNODEPROCESSOR_H

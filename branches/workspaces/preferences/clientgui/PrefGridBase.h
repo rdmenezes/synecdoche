@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFGRIDBASE_H_
-#define _PREFGRIDBASE_H_
+#ifndef PREFGRIDBASE_H
+#define PREFGRIDBASE_H
 
 #include "prefs.h"
 #include "PrefNodeBase.h"
@@ -131,6 +131,10 @@ protected:
     };
 
 
+    /// A class for arbitrary text preferences.
+    /// The validator passed to the constructor handles translating
+    /// the text value to whatever format is required by the
+    /// underlying preference.
     class PrefValueText : public PrefValueBase {
 
         DECLARE_DYNAMIC_CLASS(PrefValueText)
@@ -155,6 +159,9 @@ protected:
     };
 
 
+    /// A class for boolean preferences.
+    /// The preference is presented as a yes/no choice using a
+    /// dropdown box.
     class PrefValueBool : public PrefValueBase {
 
         DECLARE_DYNAMIC_CLASS(PrefValueBool)
@@ -187,4 +194,4 @@ private:
 };
 
 
-#endif // _PREFGRIDBASE_H_
+#endif // PREFGRIDBASE_H

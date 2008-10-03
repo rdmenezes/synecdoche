@@ -15,13 +15,16 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFNODENETWORKTIMES_H_
-#define _PREFNODENETWORKTIMES_H_
+#ifndef PREFNODENETWORKTIMES_H
+#define PREFNODENETWORKTIMES_H
 
 class GLOBAL_PREFS;
 
 #define ID_PREF_COPY_TIMES 7999
 
+/// Custom time periods for allowing network use.
+/// Additionally, there is a button to copy preferences from the
+/// computation settings.
 class PrefNodeNetworkTimes : public PrefNodeBase {
 
     DECLARE_DYNAMIC_CLASS(PrefNodeNetworkTimes)
@@ -38,4 +41,4 @@ private:
     PrefValueWeek* m_week;
 };
 
-#endif // _PREFNODENETWORKTIMES_H_
+#endif // PREFNODENETWORKTIMES_H

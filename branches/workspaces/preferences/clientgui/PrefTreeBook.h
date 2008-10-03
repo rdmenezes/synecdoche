@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFTREEBOOK_H_
-#define _PREFTREEBOOK_H_
+#ifndef PREFTREEBOOK_H
+#define PREFTREEBOOK_H
 
 #include "PrefNodeBase.h"
 
-// Data class to attach NodeType to TreeItem
+/// Data class to attach NodeType to TreeItem.
 class PrefNodeItemData : public wxTreeItemData {
 public:
     PrefNodeItemData(PrefNodeType nodeType) : wxTreeItemData(), m_nodeType(nodeType) {};
@@ -38,18 +38,28 @@ public:
     PrefHelpEvent(const PrefHelpEvent& event)
         : wxCommandEvent(event), m_title(event.m_title), m_default(event.m_default) {}
 
+    /// Gets the title for the help. This is typically the name of the preference.
+    /// \return The help title.
     wxString GetTitle() { return m_title; }
+
+    /// Sets the title for the help. This is typically the name of the preference.
+    /// \param[in] title The help title.
     void SetTitle(const wxString& title) { m_title = title; }
 
+    /// Gets the default value for the preference, as a string.
+    /// \return The default for the preference.
+
     wxString GetDefault() { return m_default; }
+    /// Sets the default value displayed for the preference, as a string.
+    /// \param[in] helpDefault The default for the preference.
     void SetDefault(const wxString& helpDefault) { m_default = helpDefault; }
 
     // Clone required for sending with wxPostEvent()
     wxEvent* Clone() const { return new PrefHelpEvent(*this); }
 
 private:
-    wxString m_title;
-    wxString m_default;
+    wxString m_title;       ///< Field for Title property.
+    wxString m_default;     ///< Field for Default property.
 };
 
 DECLARE_EVENT_TYPE(PREF_EVT_HELP_CMD, -1)
@@ -99,4 +109,4 @@ private:
 
 };
 
-#endif // _PREFTREEBOOK_H_
+#endif // PREFTREEBOOK_H

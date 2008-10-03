@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFFRAME_H_
-#define _PREFFRAME_H_
+#ifndef PREFFRAME_H
+#define PREFFRAME_H
 
 #include "prefs.h"
 #include "PrefTreeBook.h"
@@ -61,4 +61,4 @@ private:
 //    std::vector<VENUE>       m_venues;
 };
 
-#endif // _PREFFRAME_H_
+#endif // PREFFRAME_H
