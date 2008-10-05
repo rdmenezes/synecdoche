@@ -22,6 +22,7 @@
 #include <Carbon/Carbon.h>
 #include "filesys.h"
 #include "util.h"
+#include "Events.h"
 #if (defined(SANDBOX) && defined(_DEBUG))
 #include "SetupSecurity.h"
 #endif
@@ -66,7 +67,7 @@ bool CBOINCGUIApp::OnInit() {
     m_pTaskBarIcon = NULL;
 #ifdef __WXMAC__
     m_pMacSystemMenu = NULL;
-    printf("Using %s.\n", wxVERSION_STRING);    // For debugging
+    printf("Using %s.\n", (char *)wxString(wxVERSION_STRING).char_str());    // For debugging
 #endif
     m_bGUIVisible = true;
     m_strDefaultWindowStation = wxEmptyString;
