@@ -1,23 +1,20 @@
 @echo off
-rem Berkeley Open Infrastructure for Network Computing
-rem http://boinc.berkeley.edu
+rem This file is part of Synecdoche.
+rem http://synecdoche.googlecode.com/
 rem Copyright (C) 2005 University of California
-rem 
-rem This is free software; you can redistribute it and/or
-rem modify it under the terms of the GNU Lesser General Public
-rem License as published by the Free Software Foundation;
-rem either version 2.1 of the License, or (at your option) any later version.
-rem 
-rem This software is distributed in the hope that it will be useful,
+rem
+rem Synecdoche is free software: you can redistribute it and/or modify
+rem it under the terms of the GNU Lesser General Public License as published
+rem by the Free Software Foundation, either version 3 of the License, or
+rem (at your option) any later version.
+rem
+rem Synecdoche is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
 rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 rem See the GNU Lesser General Public License for more details.
-rem 
-rem To view the GNU Lesser General Public License visit
-rem http://www.gnu.org/copyleft/lesser.html
-rem or write to the Free Software Foundation, Inc.,
-rem 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 rem
+rem You should have received a copy of the GNU Lesser General Public
+rem License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 FOR /F "usebackq delims==" %%I IN ('%1') DO set PROJECTROOTDIR=%%~I\..
 FOR /F "usebackq delims==" %%J IN ('%2') DO set OUTPUTDIR=%%~J

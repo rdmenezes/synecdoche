@@ -122,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Checking boinc.exe dependencies"
+				Description="Checking synecd.exe dependencies"
 				CommandLine="boinc_post_bld_rules.cmd &quot;$(SolutionDir)&quot; &quot;$(OutDir)&quot; &quot;$(PlatformName)&quot; &quot;$(ConfigurationName)&quot;"
 			/>
 		</Configuration>
@@ -232,7 +232,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Checking boinc.exe dependencies"
+				Description="Checking synecd.exe dependencies"
 				CommandLine="boinc_post_bld_rules.cmd &quot;$(SolutionDir)&quot; &quot;$(OutDir)&quot; &quot;$(PlatformName)&quot; &quot;$(ConfigurationName)&quot;"
 			/>
 		</Configuration>
