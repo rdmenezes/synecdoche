@@ -27,11 +27,7 @@
 #include "BOINCListCtrl.h"
 #include "Events.h"
 
-#include "res/sortascending.xpm"
-#include "res/sortdescending.xpm"
-
 IMPLEMENT_DYNAMIC_CLASS(CTaskViewBase, CBOINCBaseView)
-
 
 CTaskViewBase::CTaskViewBase() {}
 
