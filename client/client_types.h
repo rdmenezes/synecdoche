@@ -525,14 +525,14 @@ struct RESULT {
     char platform[256];
     APP_VERSION* avp;
     std::vector<FILE_REF> output_files;
+    /// we're ready to report this result to the server;
+    /// either computation is done and all the files have been uploaded
+    /// or there was an error
     bool ready_to_report;
-        // we're ready to report this result to the server;
-        // either computation is done and all the files have been uploaded
-        // or there was an error
+    /// time when ready_to_report was set
     double completed_time;
-        // time when ready_to_report was set
+    /// we're received the ack for this result from the server
     bool got_server_ack;
-        // we're received the ack for this result from the server
     double final_cpu_time;
     double fpops_per_cpu_sec;   // nonzero if reported by app
     double fpops_cumulative;    // nonzero if reported by app
@@ -574,10 +574,10 @@ struct RESULT {
     void clear_uploaded_flags();
     const FILE_REF* lookup_file(const FILE_INFO*) const;
     FILE_INFO* lookup_file_logical(const char*);
+    /// abort the result if it hasn't started computing yet
+    /// Called only for results with no active task
+    /// (otherwise you need to abort the active task)
     void abort_inactive(int);
-        // abort the result if it hasn't started computing yet
-        // Called only for results with no active task
-        // (otherwise you need to abort the active task)
     void append_log_record();
 
     // stuff related to CPU scheduling
@@ -586,25 +586,25 @@ struct RESULT {
     double estimated_cpu_time_uncorrected() const;
     double estimated_cpu_time_remaining(bool for_work_fetch) const;
     bool computing_done() const;
+    /// downloaded, not finished, not suspended, project not suspended
     bool runnable() const;
-        // downloaded, not finished, not suspended, project not suspended
+    /// downloading or downloaded,
+    /// not finished, suspended, project not suspended
     bool nearly_runnable() const;
-        // downloading or downloaded,
-        // not finished, suspended, project not suspended
+    /// downloading, not downloaded, not suspended, project not suspended
     bool downloading() const;
-        // downloading, not downloaded, not suspended, project not suspended
+    /// some input or app file is downloading, and backed off
+    /// i.e. it may be a long time before we can run this result
     bool some_download_stalled() /* XXX const */;
-        // some input or app file is downloading, and backed off
-        // i.e. it may be a long time before we can run this result
 
     // temporaries used in CLIENT_STATE::rr_simulation():
     double rrsim_cpu_left;
     double rrsim_finish_delay;
+    /// used to keep cpu scheduler from scheduling a result twice
+    /// transient; used only within schedule_cpus()
     bool already_selected;
-        // used to keep cpu scheduler from scheduling a result twice
-        // transient; used only within schedule_cpus()
+    /// report deadline - prefs.work_buf_min - time slice
     double computation_deadline() const;
-        // report deadline - prefs.work_buf_min - time slice
     bool rr_sim_misses_deadline;
     bool last_rr_sim_missed_deadline;
 

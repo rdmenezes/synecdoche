@@ -230,7 +230,7 @@ inline double drand() {
     return (double)rand()/(double)RAND_MAX;
 }
 
-// return a random double in the range [rmin,rmax)
+/// return a random double in the range [rmin,rmax)
 
 inline double rand_range(double rmin, double rmax) {
     if (rmin < rmax) {
@@ -240,15 +240,15 @@ inline double rand_range(double rmin, double rmax) {
     }
 }
 
-// return a random double in the range [MIN,min(e^n,MAX))
-//
+/// return a random double in the range [MIN,min(e^n,MAX))
+///
 double calculate_exponential_backoff( int n, double MIN, double MAX) {
     double rmax = std::min(MAX, exp((double)n));
     return rand_range(MIN, rmax);
 }
 
-// amount of RAM usable now
-//
+/// amount of RAM usable now
+///
 double CLIENT_STATE::available_ram() {
     if (user_active) {
         return host_info.m_nbytes * global_prefs.ram_max_used_busy_frac;
@@ -257,8 +257,8 @@ double CLIENT_STATE::available_ram() {
     }
 }
 
-// max amount that will ever be usable
-//
+/// max amount that will ever be usable
+///
 double CLIENT_STATE::max_available_ram() {
     return host_info.m_nbytes*std::max(
         global_prefs.ram_max_used_busy_frac, global_prefs.ram_max_used_idle_frac

@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// check_security.C
-
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -53,10 +50,9 @@ static char         boinc_project_group_name[64];
 static gid_t        boinc_master_gid, boinc_project_gid;
 static uid_t        boinc_master_uid, boinc_project_uid;
 
-// Called from BOINC Manager, BOINC Client and Installer.  
-// The arguments are use only when called from the Installer
-
-// Returns FALSE (0) if owners and permissions are OK, else TRUE (1)
+/// Returns FALSE (0) if owners and permissions are OK, else TRUE (1).
+/// Called from BOINC Manager, BOINC Client and Installer.
+/// The arguments are use only when called from the Installer.
 int check_security(
 #ifdef _MAC_INSTALLER
 char *bundlePath, char *dataPath, 

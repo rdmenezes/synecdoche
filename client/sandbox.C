@@ -151,11 +151,11 @@ static int delete_project_owned_file_aux(const char* path) {
 #endif
 }
 
-// Delete the file located at path.
-// If "retry" is set, do retries for 5 sec in case some
-// other program (e.g. virus checker) has the file locked.
-// Don't do this if deleting directories - it can lock up the Manager.
-//
+/// Delete the file located at path.
+/// If "retry" is set, do retries for 5 sec in case some
+/// other program (e.g. virus checker) has the file locked.
+/// Don't do this if deleting directories - it can lock up the Manager.
+///
 int delete_project_owned_file(const char* path, bool retry) {
     int retval = 0;
 
@@ -178,10 +178,10 @@ int delete_project_owned_file(const char* path, bool retry) {
     return 0;
 }
 
-// recursively delete everything in the specified directory
-// (but not the directory itself).
-// If an error occurs, delete as much as possible.
-//
+/// recursively delete everything in the specified directory
+/// (but not the directory itself).
+/// If an error occurs, delete as much as possible.
+///
 int client_clean_out_dir(const char* dirpath) {
     char filename[256], path[256];
     int retval, final_retval = 0;

@@ -77,7 +77,7 @@ public:
     struct curl_httppost *pcurlFormEnd; ///< a pointer to a form item for POST
     unsigned char* pByte;  ///< pointer to bytes for reading via libcurl_read function
 
-    long lSeek; // offset within the file or memory buffer we're reading,
+    long lSeek; ///< offset within the file or memory buffer we're reading,
     char infile[256];
     char outfile[256];
     char error_msg[256];    ///< put Curl error message here

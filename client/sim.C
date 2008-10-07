@@ -87,9 +87,9 @@ void SIM_PROJECT::update_dcf_stats(RESULT* rp) {
     return;
 }
 
-// generate a job; pick a random app,
-// and pick a FLOP count from its distribution
-//
+/// generate a job; pick a random app,
+/// and pick a FLOP count from its distribution
+///
 void CLIENT_STATE::make_job(SIM_PROJECT* p, WORKUNIT* wup, RESULT* rp) {
     SIM_APP* ap1, *ap=0;
     double net_fpops = host_info.p_fpops;
@@ -120,8 +120,8 @@ void CLIENT_STATE::make_job(SIM_PROJECT* p, WORKUNIT* wup, RESULT* rp) {
     rp->report_deadline = now + ap->latency_bound;
 }
 
-// process ready-to-report results
-//
+/// process ready-to-report results
+///
 void CLIENT_STATE::handle_completed_results() {
     char buf[256];
     vector<RESULT*>::iterator result_iter;
@@ -157,9 +157,9 @@ void CLIENT_STATE::handle_completed_results() {
     }
 }
 
-// convert results in progress to IP_RESULTs,
-// and get an initial schedule for them
-//
+/// convert results in progress to IP_RESULTs,
+/// and get an initial schedule for them
+///
 void CLIENT_STATE::get_workload(vector<IP_RESULT>& ip_results) {
     for (unsigned int i=0; i<results.size(); i++) {
         RESULT* rp = results[i];
@@ -365,10 +365,10 @@ int SIM_APP::parse(XML_PARSER& xp) {
     return ERR_XML_PARSE;
 }
 
-// return the fraction of CPU time that was spent in violation of shares
-// i.e., if a project got X and it should have got Y,
-// add up |X-Y| over all projects, and divide by total CPU
-//
+/// return the fraction of CPU time that was spent in violation of shares
+/// i.e., if a project got X and it should have got Y,
+/// add up |X-Y| over all projects, and divide by total CPU
+///
 double CLIENT_STATE::share_violation() {
     unsigned int i;
 
@@ -417,8 +417,8 @@ double CLIENT_STATE::monotony() {
     return m;
 }
 
-// the CPU totals are there; compute the other fields
-//
+/// the CPU totals are there; compute the other fields
+///
 void SIM_RESULTS::compute() {
     double total = cpu_used + cpu_wasted + cpu_idle;
     cpu_wasted_frac = cpu_wasted/total;
@@ -427,8 +427,8 @@ void SIM_RESULTS::compute() {
     monotony = gstate.monotony();
 }
 
-// top-level results (for aggregating multiple simulations)
-//
+/// print top-level results (for aggregating multiple simulations)
+///
 void SIM_RESULTS::print(FILE* f, const char* title) {
     if (title) {
         fprintf(f, "%s: ", title);
