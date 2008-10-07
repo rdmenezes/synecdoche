@@ -53,8 +53,8 @@
 
 #include "hostinfo.h"
 
-// get domain name and IP address of this host
-//
+/// get domain name and IP address of this host
+///
 int HOST_INFO::get_local_network_info() {
     struct in_addr addr;
     struct hostent* he;

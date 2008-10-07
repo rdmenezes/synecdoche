@@ -118,18 +118,18 @@ int NET_STATS::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-// Return:
-// ONLINE if we have network connections open
-// WANT_CONNECTION  if we need a physical connection
-// WANT_DISCONNECT if we don't have any connections, and don't need any
-// LOOKUP_PENDING if a website lookup is pending (try again later)
-//
-// There's a 10-second slop factor;
-// if we've done network comm in the last 10 seconds,
-// we act as if we're doing it now.
-// (so that polling mechanisms have a chance to start other xfers,
-// in the case of a modem connection waiting to be closed by the mgr)
-//
+/// Return:
+/// - ONLINE if we have network connections open
+/// - WANT_CONNECTION  if we need a physical connection
+/// - WANT_DISCONNECT if we don't have any connections, and don't need any
+/// - LOOKUP_PENDING if a website lookup is pending (try again later)
+///
+/// There's a 10-second slop factor;
+/// if we've done network comm in the last 10 seconds,
+/// we act as if we're doing it now.
+/// (so that polling mechanisms have a chance to start other xfers,
+/// in the case of a modem connection waiting to be closed by the mgr)
+///
 int NET_STATUS::network_status() {
 	int retval;
 
@@ -154,9 +154,9 @@ int NET_STATUS::network_status() {
 	return retval;
 }
 
-// There's now a network connection, after some period of disconnection.
-// Do all communication that we can.
-//
+/// There's now a network connection, after some period of disconnection.
+/// Do all communication that we can.
+///
 void NET_STATUS::network_available() {
     unsigned int i;
 
@@ -175,10 +175,10 @@ void NET_STATUS::network_available() {
     gstate.active_tasks.network_available();
 }
 
-// An HTTP operation failed;
-// it could be because there's no physical network connection.
-// Find out for sure by trying to contact google
-//
+/// An HTTP operation failed;
+/// it could be because there's no physical network connection.
+/// Find out for sure by trying to contact Google.
+///
 void NET_STATUS::got_http_error() {
     if ((gstate.lookup_website_op.error_num != ERR_IN_PROGRESS)
         && !need_physical_connection

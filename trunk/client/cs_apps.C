@@ -292,7 +292,7 @@ int CLIENT_STATE::latest_version(APP* app, char* platform) {
     return best;
 }
 
-// Find the ACTIVE_TASK in the current set with the matching PID.
+/// Find the ACTIVE_TASK in the current set with the matching PID.
 ACTIVE_TASK* ACTIVE_TASK_SET::lookup_pid(int pid) {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -304,7 +304,7 @@ ACTIVE_TASK* ACTIVE_TASK_SET::lookup_pid(int pid) {
     return NULL;
 }
 
-// Find the ACTIVE_TASK in the current set with the matching result.
+/// Find the ACTIVE_TASK in the current set with the matching result.
 ACTIVE_TASK* ACTIVE_TASK_SET::lookup_result(const RESULT* result) {
     unsigned int i;
     ACTIVE_TASK* atp;

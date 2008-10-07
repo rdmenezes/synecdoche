@@ -113,8 +113,8 @@ void PROJECT::init() {
     deadlines_missed = 0;
 }
 
-// parse project fields from client_state.xml
-//
+/// parse project fields from client_state.xml
+///
 int PROJECT::parse_state(MIOFILE& in) {
     char buf[256];
     std::string sched_url;
@@ -195,8 +195,8 @@ int PROJECT::parse_state(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-// Write project information to client state file or GUI RPC reply
-//
+/// Write project information to client state file or GUI RPC reply
+///
 int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
     unsigned int i;
     char un[2048], tn[2048];
@@ -312,9 +312,9 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
     return 0;
 }
 
-// Some project data is stored in account file, other in client_state.xml
-// Copy fields that are stored in client_state.xml from "p" into "this"
-//
+/// Some project data is stored in account file, other in client_state.xml
+/// Copy fields that are stored in client_state.xml from "p" into "this"
+///
 void PROJECT::copy_state_fields(const PROJECT& p) {
     scheduler_urls = p.scheduler_urls;
     safe_strcpy(project_name, p.project_name);
@@ -360,8 +360,8 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
     use_symlinks = p.use_symlinks;
 }
 
-// Write project statistic to project statistics file
-//
+/// Write project statistic to project statistics file
+///
 int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) const {
     out.printf(
         "<project_statistics>\n"
@@ -486,9 +486,9 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
     return ERR_XML_PARSE;
 }
 
-// install pointers from FILE_REFs to FILE_INFOs for project files,
-// and flag FILE_INFOs as being project files.
-//
+/// install pointers from FILE_REFs to FILE_INFOs for project files,
+/// and flag FILE_INFOs as being project files.
+///
 void PROJECT::link_project_files(bool recreate_symlink_files) {
     FILE_INFO* fip;
     vector<FILE_REF>::iterator fref_iter;
@@ -530,10 +530,10 @@ void PROJECT::write_project_files(MIOFILE& f) const {
     f.printf("</project_files>\n");
 }
 
-// write symlinks for project files.
-// Note: it's conceivable that one physical file
-// has several logical names, so try them all
-//
+/// write symlinks for project files.
+/// Note: it's conceivable that one physical file
+/// has several logical names, so try them all
+///
 int PROJECT::write_symlink_for_project_file(FILE_INFO* fip) {
     char project_dir[256], path[256];
     unsigned int i;
@@ -551,9 +551,9 @@ int PROJECT::write_symlink_for_project_file(FILE_INFO* fip) {
     return 0;
 }
 
-// a project file download just finished.
-// If it's the last one, update project_files_downloaded_time
-//
+/// a project file download just finished.
+/// If it's the last one, update project_files_downloaded_time
+///
 void PROJECT::update_project_files_downloaded_time() {
     unsigned int i;
     for (i=0; i<project_files.size(); i++) {
@@ -645,10 +645,10 @@ void FILE_INFO::reset() {
     error_msg = "";
 }
 
-// Set the appropriate permissions depending on whether
-// it's an executable file
-// This doesn't seem to exist in Windows
-//
+/// Set the appropriate permissions depending on whether
+/// it's an executable file.
+/// This doesn't seem to exist in Windows.
+///
 int FILE_INFO::set_permissions() {
 #ifdef _WIN32
     return 0;
@@ -695,9 +695,9 @@ int FILE_INFO::set_permissions() {
 #endif
 }
 
-// If from server, make an exact copy of everything
-// except the start/end tags and the <xml_signature> element.
-//
+/// If from server, make an exact copy of everything
+/// except the start/end tags and the <xml_signature> element.
+///
 int FILE_INFO::parse(MIOFILE& in, bool from_server) {
     char buf[256], buf2[1024];
     std::string url;
@@ -885,8 +885,8 @@ int FILE_INFO::write_gui(MIOFILE& out) const {
     return 0;
 }
 
-// delete physical underlying file associated with FILE_INFO
-//
+/// delete physical underlying file associated with FILE_INFO
+///
 int FILE_INFO::delete_file() {
     char path[256];
 
@@ -899,22 +899,22 @@ int FILE_INFO::delete_file() {
     return retval;
 }
 
-// Files may have URLs for both upload and download.
-// Call this to get the initial url,
-// The is_upload arg says which kind you want.
-// NULL return means there is no URL of the requested type
-//
+/// Files may have URLs for both upload and download.
+/// Call this to get the initial url,
+/// The is_upload arg says which kind you want.
+/// NULL return means there is no URL of the requested type
+///
 const char* FILE_INFO::get_init_url(bool is_upload) {
     if (urls.empty()) {
         return NULL;
     }
 
-// if a project supplies multiple URLs, try them in order
-// (e.g. in Einstein@home they're ordered by proximity to client).
-// The commented-out code tries them starting from random place.
-// This is appropriate if replication is for load-balancing.
-// TODO: add a flag saying which mode to use.
-//
+/// if a project supplies multiple URLs, try them in order
+/// (e.g. in Einstein@home they're ordered by proximity to client).
+/// The commented-out code tries them starting from random place.
+/// This is appropriate if replication is for load-balancing.
+/// TODO: add a flag saying which mode to use.
+///
 #if 1
     current_url = 0;
 #else
@@ -940,9 +940,9 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
     }
 }
 
-// Call this to get the next URL of the indicated type.
-// NULL return means you've tried them all.
-//
+/// Call this to get the next URL of the indicated type.
+/// NULL return means you've tried them all.
+///
 const char* FILE_INFO::get_next_url(bool is_upload) {
     if (urls.empty()) return NULL;
     while(1) {
@@ -969,9 +969,9 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
     return urls[current_url].c_str();
 }
 
-// Checks if the URL includes the phrase "file_upload_handler"
-// This indicates the URL is an upload url
-// 
+/// Checks if the URL includes the phrase "file_upload_handler"
+/// This indicates the URL is an upload url
+/// 
 bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) const {
     const char* has_str = strstr(url.c_str(), "file_upload_handler");
     if ((is_upload && !has_str) || (!is_upload && has_str)) {
@@ -981,10 +981,10 @@ bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) cons
     }
 }
 
-// merges information from a new FILE_INFO that has the same name as one
-// that is already present in the client state file.
-// Potentially changes upload_when_present, max_nbytes, and signed_xml
-//
+/// merges information from a new FILE_INFO that has the same name as one
+/// that is already present in the client state file.
+/// Potentially changes upload_when_present, max_nbytes, and signed_xml
+///
 int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     char buf[256];
     unsigned int i;
@@ -1013,9 +1013,9 @@ int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     return 0;
 }
 
-// Returns true if the file had an unrecoverable error
-// (couldn't download, RSA/MD5 check failed, etc)
-//
+/// Returns true if the file had an unrecoverable error
+/// (couldn't download, RSA/MD5 check failed, etc)
+///
 bool FILE_INFO::had_failure(int& failnum) const {
     if (status != FILE_NOT_PRESENT && status != FILE_PRESENT) {
         failnum = status;
@@ -1389,9 +1389,9 @@ void WORKUNIT::get_file_errors(std::string& str) const {
     }
 }
 
-// if any input files had download error from previous WU,
-// reset them to try download again
-//
+/// if any input files had download error from previous WU,
+/// reset them to try download again
+///
 void WORKUNIT::clear_errors() {
     int x;
     unsigned int i;
@@ -1446,8 +1446,8 @@ void RESULT::clear() {
     strcpy(plan_class, "");
 }
 
-// parse a <result> element from scheduling server.
-//
+/// parse a <result> element from scheduling server.
+///
 int RESULT::parse_server(MIOFILE& in) {
     char buf[256];
     FILE_REF file_ref;
@@ -1475,8 +1475,8 @@ int RESULT::parse_server(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-// parse a <result> element from state file
-//
+/// parse a <result> element from state file
+///
 int RESULT::parse_state(MIOFILE& in) {
     char buf[256];
     FILE_REF file_ref;
@@ -1668,9 +1668,9 @@ int RESULT::write_gui(MIOFILE& out) {
     return 0;
 }
 
-// Returns true if the result's output files are all either
-// successfully uploaded or have unrecoverable errors
-//
+/// Returns true if the result's output files are all either
+/// successfully uploaded or have unrecoverable errors
+///
 bool RESULT::is_upload_done() const {
     unsigned int i;
     FILE_INFO* fip;
@@ -1688,9 +1688,9 @@ bool RESULT::is_upload_done() const {
     return true;
 }
 
-// resets all FILE_INFO's in result to uploaded = false 
-// if upload_when_present is true.
-//
+/// resets all FILE_INFO's in result to uploaded = false 
+/// if upload_when_present is true.
+///
 void RESULT::clear_uploaded_flags() {
     unsigned int i;
     FILE_INFO* fip;
@@ -1714,9 +1714,9 @@ bool PROJECT::some_download_stalled() {
     return false;
 }
 
-// return true if some file needed by this result (input or application)
-// is downloading and backed off
-//
+/// return true if some file needed by this result (input or application)
+/// is downloading and backed off
+///
 bool RESULT::some_download_stalled() {
     unsigned int i;
     FILE_INFO* fip;
@@ -1769,8 +1769,8 @@ void RESULT::append_log_record() {
     fclose(f);
 }
 
-// abort a result that's not currently running
-//
+/// abort a result that's not currently running
+///
 void RESULT::abort_inactive(int status) {
     if (state() >= RESULT_COMPUTE_ERROR) return;
     set_state(RESULT_ABORTED, "RESULT::abort_inactive");

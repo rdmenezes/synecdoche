@@ -69,10 +69,10 @@ int FILE_XFER::init_download(FILE_INFO& file_info) {
     );
 }
 
-// for uploads, we need to build a header with xml_signature etc.
-// (see doc/upload.php)
-// Do this in memory.
-//
+/// for uploads, we need to build a header with xml_signature etc.
+/// (see doc/upload.php)
+/// Do this in memory.
+///
 int FILE_XFER::init_upload(FILE_INFO& file_info) {
     // If upload_offset < 0, we need to query the upload handler
     // for the offset information
@@ -133,8 +133,8 @@ int FILE_XFER::init_upload(FILE_INFO& file_info) {
     }
 }
 
-// Parse the file upload handler response in req1
-//
+/// Parse the file upload handler response in req1.
+///
 int FILE_XFER::parse_upload_response(double &nbytes) {
     int status = ERR_UPLOAD_TRANSIENT, x;
     char buf[256];
@@ -167,17 +167,17 @@ int FILE_XFER::parse_upload_response(double &nbytes) {
     return status;
 }
 
-// Create a new empty FILE_XFER_SET
-//
+/// Create a new empty FILE_XFER_SET.
+///
 FILE_XFER_SET::FILE_XFER_SET(HTTP_OP_SET* p) {
     http_ops = p;
     up_active = false;
     down_active = false;
 }
 
-// start a FILE_XFER going (connect to server etc.)
-// If successful, add to the set
-//
+/// Start a FILE_XFER going (connect to server etc.)
+/// If successful, add to the set.
+///
 int FILE_XFER_SET::insert(FILE_XFER* fxp) {
     int retval;
 
@@ -188,8 +188,8 @@ int FILE_XFER_SET::insert(FILE_XFER* fxp) {
     return 0;
 }
 
-// Remove a FILE_XFER object from the set
-//
+/// Remove a FILE_XFER object from the set.
+///
 int FILE_XFER_SET::remove(FILE_XFER* fxp) {
     vector<FILE_XFER*>::iterator iter;
 
@@ -210,9 +210,9 @@ int FILE_XFER_SET::remove(FILE_XFER* fxp) {
     return ERR_NOT_FOUND;
 }
 
-// Run through the FILE_XFER_SET and determine if any of the file
-// transfers are complete or had an error
-//
+/// Run through the FILE_XFER_SET and determine if any of the file
+/// transfers are complete or had an error.
+///
 bool FILE_XFER_SET::poll() {
     unsigned int i;
     FILE_XFER* fxp;
@@ -351,10 +351,10 @@ bool FILE_XFER_SET::poll() {
     return action;
 }
 
-// return true if an upload is currently in progress
-// or has been since the last call to this.
-// Similar for download.
-//
+/// Return true if an upload is currently in progress
+/// or has been since the last call to this.
+/// Similar for download.
+///
 void FILE_XFER_SET::check_active(bool& up, bool& down) {
     unsigned int i;
     FILE_XFER* fxp;
@@ -369,8 +369,8 @@ void FILE_XFER_SET::check_active(bool& up, bool& down) {
     down_active = false;
 }
 
-// adjust bandwidth limits
-//
+/// Adjust bandwidth limits.
+///
 void FILE_XFER_SET::set_bandwidth_limits(bool is_upload) {
     double max_bytes_sec;
     unsigned int i;

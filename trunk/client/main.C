@@ -87,9 +87,9 @@ static bool boinc_cleanup_completed = false;
     //   the WM_ENDSESSION message handler and allow Windows to finish
     //   cleaning up.
 
-// Display a message to the user.
-// Depending on the priority, the message may be more or less obtrusive
-//
+/// Display a message to the user.
+/// Depending on the priority, the message may be more or less obtrusive
+///
 void show_message(const PROJECT *p, const char* msg, int priority) {
     const char* x;
     char message[1024];
@@ -150,7 +150,7 @@ void resume_client() {
     requested_resume = true;
 }
 
-// Trap logoff and shutdown events on Win9x so we can clean ourselves up.
+/// Trap logoff and shutdown events on Win9x so we can clean ourselves up.
 LRESULT CALLBACK Win9xMonitorSystemWndProc(
     HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 ) {
