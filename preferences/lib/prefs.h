@@ -121,6 +121,7 @@ public:
     TIME_PREFS net_times;
     double work_buf_min_days;
     double work_buf_additional_days;
+    int max_cpus;
     double max_ncpus_pct;
     double cpu_scheduling_period_minutes;
     double disk_interval;
@@ -148,6 +149,8 @@ public:
     inline double cpu_scheduling_period() {
         return cpu_scheduling_period_minutes*60;
     }
+    /// Gets the maximum number of CPUs that may be used.
+    int GetMaxCPUs(int availableCPUs);
     static int parse_file(const char* filename, std::deque<GLOBAL_PREFS*>& venues);
     static int parse_venues(XML_PARSER& xp, std::deque<GLOBAL_PREFS*>& venues);
 
