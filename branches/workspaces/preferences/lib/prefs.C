@@ -238,6 +238,7 @@ void GLOBAL_PREFS::defaults() {
     dont_verify_images = false;
     work_buf_min_days = 0.1;
     work_buf_additional_days = 0.25;
+    max_cpus = 16;
     max_ncpus_pct = 100;
     cpu_scheduling_period_minutes = 60;
     disk_interval = 60;
@@ -377,6 +378,10 @@ int GLOBAL_PREFS::recursive_parse_venue(XML_PARSER& xp, GLOBAL_PREFS* const pref
     bool is_tag;
     double dtemp;
 
+    // Reset max_ncpus_pct to zero, because absence of this preference means use max_cpus,
+    // and not use the default, which is 100%.
+    prefs->max_ncpus_pct = 0;
+
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!is_tag) continue;
         if (!strcmp(tag, "/global_preferences")) {
@@ -443,8 +448,12 @@ int GLOBAL_PREFS::recursive_parse_venue(XML_PARSER& xp, GLOBAL_PREFS* const pref
             if (prefs->work_buf_additional_days < 0) prefs->work_buf_additional_days = 0;
             continue;
         }
+        if (xp.parse_int(tag, "max_cpus", prefs->max_cpus)) {
+            if (prefs->max_cpus < 1) prefs->max_cpus = 1;
+            continue;
+        }
         if (xp.parse_double(tag, "max_ncpus_pct", prefs->max_ncpus_pct)) {
-            if (prefs->max_ncpus_pct <= 0) prefs->max_ncpus_pct = 100;
+            if (prefs->max_ncpus_pct <= 0) prefs->max_ncpus_pct = 0;
             if (prefs->max_ncpus_pct > 100) prefs->max_ncpus_pct = 100;
             continue;
         }
@@ -497,6 +506,24 @@ int GLOBAL_PREFS::recursive_parse_venue(XML_PARSER& xp, GLOBAL_PREFS* const pref
     return ERR_XML_PARSE;
 }
 
+/// The percentage of CPUs is preferred, but if that preference
+/// isn't specified then the exact limit is used. The maximum is never less
+/// than 1.
+/// \param[in] availableCPUs Total number of CPUs available (may be virtual).
+/// \return The maximum number of CPUs that may be used.
+int GLOBAL_PREFS::GetMaxCPUs(int availableCPUs) {
+
+    if (max_ncpus_pct > 0) {
+        availableCPUs = static_cast<int>((availableCPUs * max_ncpus_pct) / 100);
+    } else if (max_cpus < availableCPUs) {
+        availableCPUs = max_cpus;
+    }
+    if (availableCPUs < 1) {
+        availableCPUs = 1;
+    }
+    return availableCPUs;
+}
+
 // Parse global prefs file
 //
 int GLOBAL_PREFS::parse_file(const char* filename) {
@@ -534,6 +561,7 @@ int GLOBAL_PREFS::write(MIOFILE& f) const {
         "%s%s%s%s"
         "   <work_buf_min_days>%f</work_buf_min_days>\n"
         "   <work_buf_additional_days>%f</work_buf_additional_days>\n"
+        "   <max_cpus>%d</max_cpus>\n"
         "   <max_ncpus_pct>%f</max_ncpus_pct>\n"
         "   <cpu_scheduling_period_minutes>%f</cpu_scheduling_period_minutes>\n"
         "   <disk_interval>%f</disk_interval>\n"
@@ -562,6 +590,7 @@ int GLOBAL_PREFS::write(MIOFILE& f) const {
         dont_verify_images?"   <dont_verify_images/>\n":"",
         work_buf_min_days,
         work_buf_additional_days,
+        max_cpus,
         max_ncpus_pct,
         cpu_scheduling_period_minutes,
         disk_interval,
