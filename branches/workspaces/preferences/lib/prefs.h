@@ -150,7 +150,7 @@ public:
         return cpu_scheduling_period_minutes*60;
     }
     /// Gets the maximum number of CPUs that may be used.
-    int GetMaxCPUs(int availableCPUs);
+    int GetMaxCPUs(int availableCPUs) const;
     static int parse_file(const char* filename, std::deque<GLOBAL_PREFS*>& venues);
     static int parse_venues(XML_PARSER& xp, std::deque<GLOBAL_PREFS*>& venues);
 
