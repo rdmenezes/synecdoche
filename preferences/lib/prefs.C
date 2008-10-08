@@ -511,7 +511,7 @@ int GLOBAL_PREFS::recursive_parse_venue(XML_PARSER& xp, GLOBAL_PREFS* const pref
 /// than 1.
 /// \param[in] availableCPUs Total number of CPUs available (may be virtual).
 /// \return The maximum number of CPUs that may be used.
-int GLOBAL_PREFS::GetMaxCPUs(int availableCPUs) {
+int GLOBAL_PREFS::GetMaxCPUs(int availableCPUs) const {
 
     if (max_ncpus_pct > 0) {
         availableCPUs = static_cast<int>((availableCPUs * max_ncpus_pct) / 100);
