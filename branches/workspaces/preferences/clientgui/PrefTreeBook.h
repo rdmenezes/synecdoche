@@ -23,11 +23,14 @@
 /// Data class to attach NodeType to TreeItem.
 class PrefNodeItemData : public wxTreeItemData {
 public:
-    PrefNodeItemData(PrefNodeType nodeType) : wxTreeItemData(), m_nodeType(nodeType) {};
+    PrefNodeItemData(PrefNodeType nodeType, GLOBAL_PREFS* prefs)
+        : wxTreeItemData(), m_nodeType(nodeType), m_preferences(prefs) {};
     inline PrefNodeType GetNodeType() { return m_nodeType; };
+    inline GLOBAL_PREFS* GetPreferences() { return m_preferences; };
 
 private:
-    PrefNodeType m_nodeType;
+    PrefNodeType    m_nodeType;
+    GLOBAL_PREFS*   m_preferences;
 };
 
 
@@ -94,6 +97,7 @@ protected:
     void OnHelp(PrefHelpEvent& event);
 
 private:
+    void BuildGlobalNode(const wxTreeItemId& parent, GLOBAL_PREFS* prefs);
     bool Find(const wxTreeItemId& root, wxTreeItemId& result, PrefNodeType nodeType);
 
     wxTreeCtrl*     m_tree;
@@ -106,6 +110,7 @@ private:
 
     wxWindow*       m_content;
     GLOBAL_PREFS    m_preferences;
+    GLOBAL_PREFS    m_override;
 
 };
 

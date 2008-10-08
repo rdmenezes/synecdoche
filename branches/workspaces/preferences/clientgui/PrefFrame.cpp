@@ -37,6 +37,7 @@ PrefFrame::PrefFrame(wxWindow* parent) : wxDialog(parent, ID_ANYDIALOG, _("Prefe
 {
     SetExtraStyle(GetExtraStyle() | wxWS_EX_VALIDATE_RECURSIVELY);
 
+    // TODO: relative sizes
     SetMinSize(wxSize(500, 400));
 
     RestoreState();
@@ -51,14 +52,14 @@ PrefFrame::PrefFrame(wxWindow* parent) : wxDialog(parent, ID_ANYDIALOG, _("Prefe
 
     CMainDocument* pDoc = wxGetApp().GetDocument();
     wxASSERT(pDoc);
-    //pDoc->rpc.get_venue_list(m_venues);
+    pDoc->rpc.get_venue_list(m_venues);
 
     wxChoice* locationChoice = new wxChoice(this, wxID_ANY);
-    //std::vector<VENUE>::iterator i = m_venues.begin();
-    //while (i != m_venues.end()) {
-    //    locationChoice->AppendString((*i).get_venue_description());
-    //    i++;
-    //}
+    std::vector<VENUE>::iterator i = m_venues.begin();
+    while (i != m_venues.end()) {
+        locationChoice->AppendString((*i).get_venue_description());
+        ++i;
+    }
 
     locationChoice->SetSelection(0);
 

@@ -42,6 +42,7 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
     wxASSERT(pDoc);
 
     pDoc->rpc.get_global_prefs_working_struct(m_preferences);
+    bool haveOverride = (pDoc->rpc.get_global_prefs_override_struct(m_override) == 0);
 
     m_helpSource = 0;
 
@@ -90,20 +91,20 @@ PrefTreeBook::PrefTreeBook(wxWindow* parent) : wxPanel(parent) {
     );
     wxTreeItemId root = m_tree->AddRoot(_("Preferences"));
 
-    wxTreeItemId global = m_tree->AppendItem(root, _("Global Preferences"), -1, -1, new PrefNodeItemData(Presets));
-    m_tree->AppendItem(global, _("Presets"), -1, -1, new PrefNodeItemData(Presets));
-    m_tree->AppendItem(global, _("General Options"), -1, -1, new PrefNodeItemData(General));
-    wxTreeItemId proc = m_tree->AppendItem(global, _("Processor Usage"), -1, -1, new PrefNodeItemData(Processor));
-    m_tree->AppendItem(proc, _("Custom Times"), -1, -1, new PrefNodeItemData(ProcessorTimes));
-    wxTreeItemId net = m_tree->AppendItem(global, _("Network Usage"), -1, -1, new PrefNodeItemData(Network));
-    m_tree->AppendItem(net, _("Custom Times"), -1, -1, new PrefNodeItemData(NetworkTimes));
-    m_tree->AppendItem(global, _("Memory Usage"), -1, -1, new PrefNodeItemData(Memory));
-    m_tree->AppendItem(global, _("Disk Usage"), -1, -1, new PrefNodeItemData(Disk));
+    wxTreeItemId globalRoot = m_tree->AppendItem(
+        root, _("Global Preferences"), -1, -1, new PrefNodeItemData(Presets, &m_preferences));
+    BuildGlobalNode(globalRoot, &m_preferences);
 
-    wxTreeItemId local = m_tree->AppendItem(root, _("Local Preferences"), -1, -1, new PrefNodeItemData(Presets));
-    m_tree->AppendItem(local, _("Manager"), -1, -1, new PrefNodeItemData(Presets));
-    m_tree->AppendItem(local, _("Connection"), -1, -1, new PrefNodeItemData(Presets));
-    m_tree->AppendItem(local, _("Proxy"), -1, -1, new PrefNodeItemData(Presets));
+    if (haveOverride) {
+        wxTreeItemId overrideRoot = m_tree->AppendItem(
+            root, _("Override Preferences"), -1, -1, new PrefNodeItemData(Presets, &m_override));
+        BuildGlobalNode(overrideRoot, &m_override);
+    }
+
+    wxTreeItemId localRoot = m_tree->AppendItem(root, _("Local Preferences"), -1, -1, new PrefNodeItemData(Presets, 0));
+    m_tree->AppendItem(localRoot, _("Manager"), -1, -1, new PrefNodeItemData(Presets, 0));
+    m_tree->AppendItem(localRoot, _("Connection"), -1, -1, new PrefNodeItemData(Presets, 0));
+    m_tree->AppendItem(localRoot, _("Proxy"), -1, -1, new PrefNodeItemData(Presets, 0));
 
     contentRow->Add(m_tree, 1, wxALL | wxEXPAND, 4);
     contentRow->Add(contentBox, 2, wxALL | wxEXPAND, 4);
@@ -120,6 +121,32 @@ PrefTreeBook::~PrefTreeBook() {
 }
 
 
+void PrefTreeBook::BuildGlobalNode(const wxTreeItemId& parent, GLOBAL_PREFS* prefs) {
+
+    m_tree->AppendItem(parent, _("Presets"), -1, -1,
+        new PrefNodeItemData(Presets, prefs));
+
+    m_tree->AppendItem(parent, _("General Options"), -1, -1,
+        new PrefNodeItemData(General, prefs));
+
+    wxTreeItemId proc = m_tree->AppendItem(parent, _("Processor Usage"), -1, -1,
+        new PrefNodeItemData(Processor, prefs));
+    m_tree->AppendItem(proc, _("Custom Times"), -1, -1,
+        new PrefNodeItemData(ProcessorTimes, prefs));
+
+    wxTreeItemId net = m_tree->AppendItem(parent, _("Network Usage"), -1, -1,
+        new PrefNodeItemData(Network, prefs));
+    m_tree->AppendItem(net, _("Custom Times"), -1, -1,
+        new PrefNodeItemData(NetworkTimes, prefs));
+
+    m_tree->AppendItem(parent, _("Memory Usage"), -1, -1,
+        new PrefNodeItemData(Memory, prefs));
+
+    m_tree->AppendItem(parent, _("Disk Usage"), -1, -1,
+        new PrefNodeItemData(Disk, prefs));
+}
+
+
 void PrefTreeBook::OnTreeSelectionChanging(wxTreeEvent& event) {
 
     if (! Validate()) {
@@ -133,7 +160,7 @@ void PrefTreeBook::OnTreeSelectionChanging(wxTreeEvent& event) {
         if (id.IsOk()) {
             Freeze();
             PrefNodeItemData* nodeType = (PrefNodeItemData*) m_tree->GetItemData(id);
-            PrefNodeBase* page = PrefNodeBase::Create(nodeType->GetNodeType(), this, &m_preferences);
+            PrefNodeBase* page = PrefNodeBase::Create(nodeType->GetNodeType(), this, nodeType->GetPreferences());
 
             if (page && m_content) {
                 // Swap pages
