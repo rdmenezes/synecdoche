@@ -427,9 +427,6 @@ int CLIENT_STATE::parse_state_file() {
         if (parse_str(buf, "<host_venue>", main_host_venue, sizeof(main_host_venue))) {
             continue;
         }
-        if (parse_double(buf, "<all_projects_list_check_time>", all_projects_list_check_time)) {
-            continue;
-        }
 #ifdef ENABLE_UPDATE_CHECK
         if (parse_double(buf, "<new_version_check_time>", new_version_check_time)) {
             continue;
@@ -661,12 +658,6 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         "<new_version_check_time>%f</new_version_check_time>\n",
         new_version_check_time
     );
-#endif
-    f.printf(
-        "<all_projects_list_check_time>%f</all_projects_list_check_time>\n",
-        all_projects_list_check_time
-    );
-#ifdef ENABLE_UPDATE_CHECK
     if (!newer_version.empty()) {
         f.printf("<newer_version>%s</newer_version>\n", newer_version.c_str());
     }

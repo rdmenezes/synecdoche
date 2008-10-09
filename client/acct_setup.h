@@ -100,17 +100,6 @@ struct GET_CURRENT_VERSION_OP: public GUI_HTTP_OP {
     virtual void handle_reply(int http_op_retval);
 };
 #endif
-struct GET_PROJECT_LIST_OP: public GUI_HTTP_OP {
-    int error_num;
-
-    GET_PROJECT_LIST_OP(GUI_HTTP* p){
-        error_num = BOINC_SUCCESS;
-        gui_http = p;
-    }
-    virtual ~GET_PROJECT_LIST_OP(){}
-    int do_rpc();
-    virtual void handle_reply(int http_op_retval);
-};
 
 struct PROJECT_ATTACH {
     int error_num;
