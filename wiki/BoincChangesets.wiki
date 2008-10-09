@@ -1,0 +1,11 @@
+#summary Tracking BOINC revisions
+
+Rejected changes
+
+Changesets that are irrelevant to Synecdoche are not shown. Some decisions listed here make subsequent changesets irrelevant.
+
+||Changeset||Comment||
+||15530||||
+||15537||Properties. This feature is nowhere near ready.||
+
+Reviewed up to: 15548
