@@ -6,22 +6,22 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 || *Changeset* || *Reason* ||
 ||[http://boinc.berkeley.edu/trac/changeset/15530 15530]||`*`||
-||15537||Properties. This feature is nowhere near ready.||
-||15559||Message filtering. This is not a good UI for filtering.||
-||15561||Already fixed.||
-||15568||Concatenated strings.||
-||15573||Solaris. This addition appears to be in the wrong file.||
-||15574||Already fixed. Correctly!||
-||15585||Undocumented. This will be moot when we use wxTaskBarIcon.||
-||15587||Event ids. This is pointless. See r75.||
-||15588||Solved better in r76. Ours won't cycle the logs if an error is logged when parsing the config file.||
-||15591||CUDA. We don't support this yet.||
-||15610||Reboot. This is just wrong.||
-||15670||`*`||
-||15690||Already fixed.||
-||15693||API`*` ||
-||15694||API`*` ||
+||[http://boinc.berkeley.edu/trac/changeset/15537 15537]||Properties. This feature is nowhere near ready.||
+||[http://boinc.berkeley.edu/trac/changeset/15559 15559]||Message filtering. This is not a good UI for filtering.||
+||[http://boinc.berkeley.edu/trac/changeset/15561 15561]||Already fixed.||
+||[http://boinc.berkeley.edu/trac/changeset/15568 15568]||Concatenated strings.||
+||[http://boinc.berkeley.edu/trac/changeset/15573 15573]||Solaris. This addition appears to be in the wrong file.||
+||[http://boinc.berkeley.edu/trac/changeset/15574 15574]||Already fixed. Correctly!||
+||[http://boinc.berkeley.edu/trac/changeset/15585 15585]||Undocumented. This will be moot when we use wxTaskBarIcon.||
+||[http://boinc.berkeley.edu/trac/changeset/15587 15587]||Event ids. This is pointless. See r75.||
+||[http://boinc.berkeley.edu/trac/changeset/15588 15588]||Solved better in r76. Ours won't cycle the logs if an error is logged when parsing the config file.||
+||[http://boinc.berkeley.edu/trac/changeset/15591 15591]||CUDA. We don't support this yet.||
+||[http://boinc.berkeley.edu/trac/changeset/15610 15610]||Reboot. This is just wrong.||
+||[http://boinc.berkeley.edu/trac/changeset/15670 15670]||`*`||
+||[http://boinc.berkeley.edu/trac/changeset/15690 15690]||Already fixed.||
+||[http://boinc.berkeley.edu/trac/changeset/15693 15693]||API`*` ||
+||[http://boinc.berkeley.edu/trac/changeset/15694 15694]||API`*` ||
 
-Reviewed up to: 15753
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/15753 15753]
 
 `*` These changesets may still be needed.
