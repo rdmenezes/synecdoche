@@ -187,9 +187,6 @@ public:
     std::string newer_version;
 #endif
 
-    GET_PROJECT_LIST_OP get_project_list_op;
-    void all_projects_list_check();
-    double all_projects_list_check_time;
 /// @}
 
 /// @name auto_update.C

@@ -56,11 +56,11 @@ using std::vector;
 CLIENT_STATE gstate;
 
 CLIENT_STATE::CLIENT_STATE():
-    lookup_website_op(&gui_http),
+    lookup_website_op(&gui_http)
 #ifdef ENABLE_UPDATE_CHECK
-    get_current_version_op(&gui_http),
+	,
+    get_current_version_op(&gui_http)
 #endif
-    get_project_list_op(&gui_http)
 {
     http_ops = new HTTP_OP_SET();
     file_xfers = new FILE_XFER_SET(http_ops);
@@ -126,7 +126,6 @@ CLIENT_STATE::CLIENT_STATE():
 #ifdef ENABLE_UPDATE_CHECK
     new_version_check_time = 0;
 #endif
-    all_projects_list_check_time = 0;
     detach_console = false;
 #ifdef SANDBOX
     g_use_sandbox = true; // User can override with -insecure command-line arg
@@ -389,10 +388,6 @@ int CLIENT_STATE::init() {
 #endif
 
     check_file_existence();
-    if (!boinc_file_exists(ALL_PROJECTS_LIST_FILENAME)) {
-        all_projects_list_check_time = 0;
-    }
-    all_projects_list_check();
 
     auto_update.init();
     http_ops->cleanup_temp_files();
@@ -1588,7 +1583,6 @@ void CLIENT_STATE::check_clock_reset() {
 #ifdef ENABLE_UPDATE_CHECK
     new_version_check_time = now;
 #endif
-    all_projects_list_check_time = now;
 
     unsigned int i;
     for (i=0; i<projects.size(); i++) {
