@@ -5,7 +5,7 @@
 Changesets that are irrelevant to Synecdoche are not shown. Some decisions listed here make subsequent changesets irrelevant.
 
 || *Changeset* || *Reason* ||
-||15530||`*`||
+||[http://boinc.berkeley.edu/trac/changeset/15530 15530]||`*`||
 ||15537||Properties. This feature is nowhere near ready.||
 ||15559||Message filtering. This is not a good UI for filtering.||
 ||15561||Already fixed.||
