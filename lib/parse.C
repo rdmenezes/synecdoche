@@ -332,7 +332,9 @@ void xml_escape(const char* in, char* out) {
 void xml_unescape(const char* in, char* out) {
     char* p = out;
     while (*in) {
-        if (!strncmp(in, "&lt;", 4)) {
+        if (*in != '&') {
+            *p++ = *in++;
+        } else if (!strncmp(in, "&lt;", 4)) {
             *p++ = '<';
             in += 4;
         } else if (!strncmp(in, "&amp;", 5)) {
