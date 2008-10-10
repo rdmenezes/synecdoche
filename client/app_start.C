@@ -845,7 +845,6 @@ int ACTIVE_TASK::start(bool first_time) {
 
 #endif
     set_task_state(PROCESS_EXECUTING, "start");
-    reserve_coprocs();
     return 0;
 
     // go here on error; "error_msg" contains error message, "retval" is nonzero

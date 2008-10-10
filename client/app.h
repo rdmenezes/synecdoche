@@ -135,9 +135,6 @@ public:
     APP_CLIENT_SHM app_client_shm;        ///< Core/app shared mem.
     MSG_QUEUE graphics_request_queue;
     MSG_QUEUE process_control_queue;
-    bool coprocs_reserved;
-    void reserve_coprocs();
-    void free_coprocs();
 
     /// Info related to app's graphics mode (win, screensaver, etc.).
     int graphics_mode_acked;            ///< Mode acked by app.
