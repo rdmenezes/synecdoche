@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="lib"
 	ProjectGUID="{E8F6BD7E-461A-4733-B7D8-37B09A099ED8}"
 	RootNamespace="libboinc"
@@ -479,10 +479,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\lib\coproc.C"
-				>
-			</File>
-			<File
 				RelativePath="..\lib\crypt.C"
 				>
 			</File>
@@ -722,10 +718,6 @@
 			</File>
 			<File
 				RelativePath="..\lib\boinc_win.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\coproc.h"
 				>
 			</File>
 			<File

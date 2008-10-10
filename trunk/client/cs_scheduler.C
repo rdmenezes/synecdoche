@@ -222,15 +222,6 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         disk_total, disk_project
     );
 
-    if (!coprocs.coprocs.empty()) {
-        fprintf(f, "    <coprocs>\n");
-        for (i=0; i<coprocs.coprocs.size(); i++) {
-            COPROC* c = coprocs.coprocs[i];
-            c->write_xml(mf);
-        }
-        fprintf(f, "    </coprocs>\n");
-    }
-
     // report results
     //
     p->nresults_returned = 0;
@@ -672,8 +663,6 @@ int CLIENT_STATE::handle_scheduler_reply(
             avp->max_ncpus = avpp.max_ncpus;
             avp->flops = avpp.flops;
             strcpy(avp->cmdline, avpp.cmdline);
-            avp->coprocs.delete_coprocs();
-            avp->coprocs = avpp.coprocs;
             strlcpy(avp->api_version, avpp.api_version, sizeof(avp->api_version));
 
             // if we had download failures, clear them

@@ -39,7 +39,6 @@
 #include "scheduler_op.h"
 #include "time_stats.h"
 #include "http_curl.h"
-#include "coproc.h"
 
 // project: suspended, deferred, or no new work (can't ask for more work)
 // overall: not work_fetch_ok (from CPU policy)
@@ -77,7 +76,6 @@ public:
     TIME_STATS time_stats;
     PROXY_INFO proxy_info;
     GUI_HTTP gui_http;
-    COPROCS coprocs;
 
     VERSION_INFO core_client_version;
     VERSION_INFO boinc_compat_version;

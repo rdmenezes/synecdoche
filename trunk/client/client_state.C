@@ -253,22 +253,6 @@ int CLIENT_STATE::init() {
 
     check_clock_reset();
 
-    const char* msg = coprocs.get();
-    if (msg) {
-        msg_printf(NULL, MSG_INFO, msg);
-    }
-#if 0
-    fake_cuda(coprocs);
-#endif
-    if (coprocs.coprocs.empty()) {
-        msg_printf(NULL, MSG_INFO, "No coprocessors");
-    } else {
-        for (i=0; i<coprocs.coprocs.size(); i++) {
-            COPROC* c = coprocs.coprocs[i];
-            msg_printf(NULL, MSG_INFO, "Coprocessor: %s (%d)", c->type, c->count);
-        }
-    }
-
     // Check to see if we can write the state file.
     //
     retval = write_state_file();

@@ -34,7 +34,6 @@
 
 #include "md5_file.h"
 #include "hostinfo.h"
-#include "coproc.h"
 #include "miofile.h"
 
 #define P_LOW 1
@@ -472,7 +471,6 @@ struct APP_VERSION {
     double max_ncpus;
     double flops;
     char cmdline[256];      ///< additional cmdline args
-    COPROCS coprocs;
 
     APP* app;
     PROJECT* project;

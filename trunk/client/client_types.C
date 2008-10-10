@@ -1086,7 +1086,6 @@ int APP_VERSION::parse(MIOFILE& in) {
     max_ncpus = 1;
     app = NULL;
     project = NULL;
-    coprocs.coprocs.clear();
     flops = gstate.host_info.p_fpops;
     while (in.fgets(buf, 256)) {
         if (match_tag(buf, "</app_version>")) return 0;
@@ -1104,17 +1103,6 @@ int APP_VERSION::parse(MIOFILE& in) {
         if (parse_double(buf, "<max_ncpus>", max_ncpus)) continue;
         if (parse_double(buf, "<flops>", flops)) continue;
         if (parse_str(buf, "<cmdline>", cmdline, sizeof(cmdline))) continue;
-        if (match_tag(buf, "<coproc>")) {
-            COPROC* cp = new COPROC("");
-            int retval = cp->parse(in);
-            if (!retval) {
-                coprocs.coprocs.push_back(cp);
-            } else {
-                msg_printf(0, MSG_INTERNAL_ERROR, "Error parsing <coproc>");
-                delete cp;
-            }
-            continue;
-        }
         if (log_flags.unparsed_xml) {
             msg_printf(0, MSG_INFO,
                 "[unparsed_xml] APP_VERSION::parse(): unrecognized: %s\n", buf
@@ -1156,7 +1144,6 @@ int APP_VERSION::write(MIOFILE& out) const {
         retval = app_files[i].write(out);
         if (retval) return retval;
     }
-    coprocs.write_xml(out);
 
     out.printf(
         "</app_version>\n"

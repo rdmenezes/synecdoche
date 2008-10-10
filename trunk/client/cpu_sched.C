@@ -46,7 +46,6 @@
 #include "str_util.h"
 #include "util.h"
 #include "error_numbers.h"
-#include "coproc.h"
 
 #include "client_msgs.h"
 #include "log_flags.h"
@@ -69,56 +68,6 @@ using std::vector;
 /// try to finish jobs this much in advance of their deadline
 #define DEADLINE_CUSHION    0
 
-bool COPROCS::sufficient_coprocs(COPROCS& needed, bool verbose) {
-    for (unsigned int i=0; i<needed.coprocs.size(); i++) {
-        COPROC* cp = needed.coprocs[i];
-        COPROC* cp2 = lookup(cp->type);
-        if (!cp2) {
-            msg_printf(NULL, MSG_INFO,
-                "Missing a %s coprocessor", cp->type
-            );
-            return false;
-        }
-        if (cp2->used + cp->count > cp2->count) {
-            if (verbose) {
-                msg_printf(NULL, MSG_INFO,
-                    "insufficient coproc %s (%d + %d > %d)",
-                    cp2->type, cp2->used, cp->count, cp2->count
-                );
-            }
-            return false;
-        }
-    }
-    return true;
-}
-
-void COPROCS::reserve_coprocs(COPROCS& needed, bool verbose) {
-    for (unsigned int i=0; i<needed.coprocs.size(); i++) {
-        COPROC* cp = needed.coprocs[i];
-        COPROC* cp2 = lookup(cp->type);
-        if (!cp2) continue;
-        if (verbose) {
-            msg_printf(NULL, MSG_INFO,
-                "reserving %d of coproc %s", cp->count, cp2->type
-            );
-        }
-        cp2->used += cp->count;
-    }
-}
-
-void COPROCS::free_coprocs(COPROCS& needed, bool verbose) {
-    for (unsigned int i=0; i<needed.coprocs.size(); i++) {
-        COPROC* cp = needed.coprocs[i];
-        COPROC* cp2 = lookup(cp->type);
-        if (!cp2) continue;
-        if (verbose) {
-            msg_printf(NULL, MSG_INFO,
-                "freeing %d of coproc %s", cp->count, cp2->type
-            );
-        }
-        cp2->used -= cp->count;
-    }
-}
 
 static bool more_preemptable(ACTIVE_TASK* t0, ACTIVE_TASK* t1) {
     // returning true means t1 is more preemptable than t0,
@@ -517,18 +466,6 @@ static bool schedule_if_possible(
     ACTIVE_TASK* atp;
 
     atp = gstate.lookup_active_task_by_result(rp);
-    if (!atp || atp->task_state() == PROCESS_UNINITIALIZED) {
-        if (!gstate.coprocs.sufficient_coprocs(
-            rp->avp->coprocs, log_flags.cpu_sched_debug)
-        ) {
-            if (log_flags.cpu_sched_debug) {
-                msg_printf(rp->project, MSG_INFO,
-                    "[cpu_sched_debug] insufficient coprocessors for %s", rp->name
-                );
-            }
-            return false;
-        }
-    }
     if (atp) {
         // see if it fits in available RAM
         //
@@ -974,11 +911,7 @@ bool CLIENT_STATE::enforce_schedule() {
         case CPU_SCHED_SCHEDULED:
             switch (atp->task_state()) {
             case PROCESS_UNINITIALIZED:
-                if (!coprocs.sufficient_coprocs(
-                    atp->app_version->coprocs, log_flags.cpu_sched_debug
-                )){
-                    continue;
-                }
+                // fall through
             case PROCESS_SUSPENDED:
                 action = true;
                 retval = atp->resume_or_start(
@@ -1072,20 +1005,14 @@ void PROJECT::set_rrsim_proc_rate(double rrs) {
 
 struct RR_SIM_STATUS {
     vector<RESULT*> active;
-    COPROCS coprocs;
 
-    inline bool can_run(RESULT* rp) {
-        return coprocs.sufficient_coprocs(rp->avp->coprocs, log_flags.rr_simulation);
-    }
     inline void activate(RESULT* rp) {
-        coprocs.reserve_coprocs(rp->avp->coprocs, log_flags.rr_simulation);
         active.push_back(rp);
     }
     // remove *rpbest from active set,
     // and adjust CPU time left for other results
     //
     inline void remove_active(RESULT* rpbest) {
-        coprocs.free_coprocs(rpbest->avp->coprocs, log_flags.rr_simulation);
         vector<RESULT*>::iterator it = active.begin();
         while (it != active.end()) {
             RESULT* rp = *it;
@@ -1101,7 +1028,6 @@ struct RR_SIM_STATUS {
         return (int) active.size();
     }
     ~RR_SIM_STATUS() {
-        coprocs.delete_coprocs();
     }
 };
 
@@ -1113,7 +1039,6 @@ struct RR_SIM_STATUS {
 /// We don't model time-slicing.
 /// Instead we use a continuous model where, at a given point,
 /// each project has a set of running jobs that uses all CPUs
-/// (and obeys coprocessor limits).
 /// These jobs are assumed to run at a rate proportionate to their avg_ncpus,
 /// and each project gets CPU proportionate to its RRS.
 ///
@@ -1137,7 +1062,6 @@ void CLIENT_STATE::rr_simulation() {
     RR_SIM_STATUS sim_status;
     unsigned int i;
 
-    sim_status.coprocs.clone(coprocs);
     double ar = available_ram();
 
     if (log_flags.rr_simulation) {
@@ -1162,7 +1086,7 @@ void CLIENT_STATE::rr_simulation() {
         if (rp->project->non_cpu_intensive) continue;
         rp->rrsim_cpu_left = rp->estimated_cpu_time_remaining(false);
         p = rp->project;
-        if (p->rr_sim_status.can_run(rp, gstate.ncpus) && sim_status.can_run(rp)) {
+        if (p->rr_sim_status.can_run(rp, gstate.ncpus)) {
             sim_status.activate(rp);
             p->rr_sim_status.activate(rp);
         } else {
@@ -1256,7 +1180,7 @@ void CLIENT_STATE::rr_simulation() {
         while (1) {
             rp = pbest->rr_sim_status.get_pending();
             if (!rp) break;
-            if (pbest->rr_sim_status.can_run(rp, gstate.ncpus) && sim_status.can_run(rp)) {
+            if (pbest->rr_sim_status.can_run(rp, gstate.ncpus)) {
                 sim_status.activate(rp);
                 pbest->rr_sim_status.activate(rp);
             } else {
