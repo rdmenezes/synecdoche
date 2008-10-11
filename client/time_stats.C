@@ -37,11 +37,7 @@
 #include "error_numbers.h"
 #include "client_msgs.h"
 #include "file_names.h"
-#ifdef SIM
-#include "sim.h"
-#else
 #include "client_state.h"
-#endif
 #include "network.h"
 #include "log_flags.h"
 
@@ -53,7 +49,6 @@
 #define CONNECTED_STATE_CONNECTED       1
 #define CONNECTED_STATE_UNKNOWN         2
 
-#ifndef SIM
 #ifdef _WIN32
 #include <sensapi.h>
 
@@ -68,7 +63,6 @@ int get_connected_state() {
 int get_connected_state() {
     return CONNECTED_STATE_UNKNOWN;
 }
-#endif
 #endif
 
 /// exponential decay constant.
@@ -94,7 +88,6 @@ TIME_STATS::TIME_STATS() {
 /// if log file is over a meg, discard everything older than a year
 ///
 void TIME_STATS::trim_stats_log() {
-#ifndef SIM
     double size;
     char buf[256];
     int retval;
@@ -118,7 +111,6 @@ void TIME_STATS::trim_stats_log() {
     }
     fclose(f);
     fclose(f2);
-#endif
 }
 
 void send_log_after(const char* filename, double t, MIOFILE& mf) {
@@ -170,15 +162,10 @@ void TIME_STATS::update(int suspend_reason) {
         w2 = 1 - w1;                // weight for everything before that
                                     // (close to zero if long gap)
 
-        int connected_state;
-#ifdef SIM
-        connected_state = CONNECTED_STATE_NOT_CONNECTED;
-#else
-        connected_state = get_connected_state();
+        int connected_state = get_connected_state();
         if (gstate.network_suspend_reason) {
             connected_state = CONNECTED_STATE_NOT_CONNECTED;
         }
-#endif
 
         if (first) {
             // the client has just started; this is the first call.
@@ -187,10 +174,8 @@ void TIME_STATS::update(int suspend_reason) {
             first = false;
             log_append("power_off", last_update);
             char buf[256];
-#ifndef SIM
             sprintf(buf, "platform %s", gstate.get_primary_platform());
             log_append(buf, gstate.now);
-#endif
             sprintf(buf, "version %s", SYNEC_VERSION_STRING);
             log_append(buf, gstate.now);
             log_append("power_on", gstate.now);
@@ -315,10 +300,8 @@ void TIME_STATS::quit() {
 }
 
 void TIME_STATS::log_append(const char* msg, double t) {
-#ifndef SIM
     if (!time_stats_log) return;
     fprintf(time_stats_log, "%f %s\n", t, msg);
-#endif
 }
 
 void TIME_STATS::log_append_net(int new_state) {

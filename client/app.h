@@ -141,10 +141,6 @@ public:
     int graphics_mode_before_ss;        ///< Mode before last screensaver request.
     double graphics_mode_ack_timeout;
 
-#ifdef SIM
-    double cpu_time_left;
-#endif
-
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
     // PowerPC apps emulated on i386 Macs crash if running graphics
     int powerpc_emulated_on_i386;

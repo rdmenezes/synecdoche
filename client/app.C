@@ -57,12 +57,8 @@
 
 #endif
 
-#ifdef SIM
-#include "sim.h"
-#else
 #include "client_state.h"
 #include "client_types.h"
-#endif
 
 #include "error_numbers.h"
 #include "filesys.h"
@@ -84,12 +80,8 @@
 #define QUIT_TIMEOUT    10
 
 ACTIVE_TASK::~ACTIVE_TASK() {
-#ifndef SIM
     cleanup_task();
-#endif
 }
-
-#ifndef SIM
 
 ACTIVE_TASK::ACTIVE_TASK() {
     result = NULL;
@@ -828,7 +820,5 @@ void ACTIVE_TASK_SET::init() {
         atp->scheduler_state = CPU_SCHED_PREEMPTED;
     }
 }
-
-#endif
 
 const char *BOINC_RCSID_778b61195e = "$Id: app.C 15287 2008-05-23 21:24:36Z davea $";
