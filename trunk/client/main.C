@@ -601,19 +601,24 @@ int main(int argc, char** argv) {
 
             std::string commandLine;
 
-            commandLine.append('"').append(argv[0]).append('"');
+            commandLine.append("\"").append(argv[0]).append("\"");
             for (i = 1; i < argc; i++) {
-                commandLine.append(' ').append(argv[i]);
+                commandLine.append(" ").append(argv[i]);
             }
 
             memset(&si, 0, sizeof(si));
             si.cb = sizeof(si);
 
+            // CreateProcess may modify lpCommandLine
+            char* lpCommandLine = new char[commandLine.length() + 1];
+            strcpy(lpCommandLine, commandLine.c_str());
+
             // If process creation succeeds, we exit, if it fails punt and continue
             // as usual.  We won't detach properly, but the program will run.
-            if (CreateProcess(NULL, commandLine.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            if (CreateProcess(NULL, lpCommandLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
                 exit(0);
             }
+            delete[] lpCommandLine;
             break;
         }
     }
