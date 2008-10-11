@@ -39,11 +39,7 @@
 #include "shmem.h"
 #include "log_flags.h"
 #include "client_msgs.h"
-#ifdef SIM
-#include "sim.h"
-#else
 #include "client_state.h"
-#endif
 
 using std::vector;
 
@@ -98,7 +94,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
     RESULT* rp = at.result;
     bool had_error = false;
 
-#ifndef SIM
     FILE_INFO* fip;
     unsigned int i;
     char path[256];
@@ -173,7 +168,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
             }
         }
     }
-#endif
 
     if (rp->exit_status != 0) {
         had_error = true;
@@ -189,14 +183,8 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
             rp->set_state(RESULT_COMPUTE_ERROR, "CS::app_finished");
         }
     } else {
-#ifdef SIM
-        rp->set_state(RESULT_FILES_UPLOADED, "CS::app_finished");
-        rp->ready_to_report = true;
-        rp->completed_time = now;
-#else
         rp->set_state(RESULT_FILES_UPLOADING, "CS::app_finished");
         rp->append_log_record();
-#endif
         rp->project->update_duration_correction_factor(rp);
     }
 
@@ -207,8 +195,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
 
     return 0;
 }
-
-#ifndef SIM
 
 /// Returns true iff all the input files for a result are present
 /// (both WU and app version).
@@ -317,6 +303,5 @@ ACTIVE_TASK* ACTIVE_TASK_SET::lookup_result(const RESULT* result) {
     }
     return NULL;
 }
-#endif
 
 const char *BOINC_RCSID_7bf63ad771 = "$Id: cs_apps.C 14114 2007-11-07 19:32:32Z davea $";
