@@ -568,8 +568,7 @@ int main(int argc, char** argv) {
     // TODO: clean up the following
     //
 #ifdef _WIN32
-    int i, len;
-    char *commandLine;
+    int i;
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
 
@@ -600,23 +599,11 @@ int main(int argc, char** argv) {
         if (strcmp(argv[i], "-detach") == 0 || strcmp(argv[i], "--detach") == 0) {
             argv[i] = "-detach_phase_two";
 
-            // start with space for two '"'s
-            len = 2;
-            for (i = 0; i < argc; i++) {
-                len += (int)strlen(argv[i]) + 1;
-            }
-            if ((commandLine = (char *) malloc(len)) == NULL) {
-                // Drop back ten and punt.  Can't do the detach thing, so we just carry on.
-                // At least the program will start.
-                break;
-            }
-            commandLine[0] = '"';
-            // OK, we can safely use strcpy and strcat, since we know that we allocated enough
-            strcpy(&commandLine[1], argv[0]);
-            strcat(commandLine, "\"");
+            std::string commandLine;
+
+            commandLine.append('"').append(argv[0]).append('"');
             for (i = 1; i < argc; i++) {
-                strcat(commandLine, " ");
-                strcat(commandLine, argv[i]);
+                commandLine.append(' ').append(argv[i]);
             }
 
             memset(&si, 0, sizeof(si));
@@ -624,7 +611,7 @@ int main(int argc, char** argv) {
 
             // If process creation succeeds, we exit, if it fails punt and continue
             // as usual.  We won't detach properly, but the program will run.
-            if (CreateProcess(NULL, commandLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            if (CreateProcess(NULL, commandLine.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
                 exit(0);
             }
             break;
