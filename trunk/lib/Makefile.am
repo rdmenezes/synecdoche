@@ -42,7 +42,6 @@ endif
 libboinc_a_SOURCES = \
     app_ipc.C \
     base64.C \
-    coproc.C \
     crypt.C \
     diagnostics.C \
     filesys.C \
@@ -71,7 +70,6 @@ pkginclude_HEADERS = \
     app_ipc.h \
     boinc_win.h \
 	common_defs.h \
-	coproc.h \
     crypt.h \
     diagnostics.h \
     error_numbers.h \
