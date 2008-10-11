@@ -289,7 +289,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     fprintf(f, "<in_progress_results>\n");
     for (i=0; i<results.size(); i++) {
         rp = results[i];
-        double x = rp->estimated_cpu_time_remaining(false);
+        double x = rp->estimated_cpu_time_remaining();
         if (x == 0) continue;
         fprintf(f,
             "    <ip_result>\n"

@@ -318,9 +318,9 @@ double CLIENT_STATE::time_until_work_done(
             // if it is a non_cpu intensive project,
             // it needs only one at a time.
             //
-            est = max(rp->estimated_cpu_time_remaining(true), work_buf_min());  
+            est = max(rp->estimated_cpu_time_remaining(), work_buf_min());  
         } else {
-            est += rp->estimated_cpu_time_remaining(true);
+            est += rp->estimated_cpu_time_remaining();
         }
     }
 	if (log_flags.work_fetch_debug) {
@@ -730,17 +730,17 @@ double RESULT::estimated_cpu_time_uncorrected() const {
 
 /// estimate how long a result will take on this host
 ///
-double RESULT::estimated_cpu_time(bool for_work_fetch) const {
+double RESULT::estimated_cpu_time() const {
     return estimated_cpu_time_uncorrected()*project->duration_correction_factor;
 }
 
-double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) const {
+double RESULT::estimated_cpu_time_remaining() const {
     if (computing_done()) return 0;
     ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(this);
     if (atp) {
-        return atp->est_cpu_time_to_completion(for_work_fetch);
+        return atp->est_cpu_time_to_completion();
     }
-    return estimated_cpu_time(for_work_fetch);
+    return estimated_cpu_time();
 }
 
 /// Returns the estimated CPU time to completion (in seconds) of this task.
@@ -748,9 +748,9 @@ double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) const {
 /// -# the workunit's flops count
 /// -# the current reported CPU time and fraction done
 ///
-double ACTIVE_TASK::est_cpu_time_to_completion(bool for_work_fetch) {
+double ACTIVE_TASK::est_cpu_time_to_completion() {
     if (fraction_done >= 1) return 0;
-    double wu_est = result->estimated_cpu_time(for_work_fetch);
+    double wu_est = result->estimated_cpu_time();
     if (fraction_done <= 0) return wu_est;
     double frac_est = (current_cpu_time / fraction_done) - current_cpu_time;
     double fraction_left = 1-fraction_done;

@@ -228,8 +228,8 @@ RESULT* CLIENT_STATE::earliest_deadline_result() {
         //
         ACTIVE_TASK* atp = lookup_active_task_by_result(rp);
         if (best_atp && !atp) continue;
-        if (rp->estimated_cpu_time_remaining(false)
-            < best_result->estimated_cpu_time_remaining(false)
+        if (rp->estimated_cpu_time_remaining()
+            < best_result->estimated_cpu_time_remaining()
             || (!best_atp && atp)
         ) {
             best_result = rp;
@@ -1074,7 +1074,7 @@ void CLIENT_STATE::rr_simulation() {
         if (!rp->nearly_runnable()) continue;
         if (rp->some_download_stalled()) continue;
         if (rp->project->non_cpu_intensive) continue;
-        rp->rrsim_cpu_left = rp->estimated_cpu_time_remaining(false);
+        rp->rrsim_cpu_left = rp->estimated_cpu_time_remaining();
         p = rp->project;
         if (p->rr_sim_status.can_run(rp, gstate.ncpus)) {
             sim_status.activate(rp);
@@ -1497,7 +1497,7 @@ int ACTIVE_TASK::preempt(bool quit_task) {
 /// completion time for this project's results.
 void PROJECT::update_duration_correction_factor(RESULT* rp) {
     double raw_ratio = rp->final_cpu_time/rp->estimated_cpu_time_uncorrected();
-    double adj_ratio = rp->final_cpu_time/rp->estimated_cpu_time(false);
+    double adj_ratio = rp->final_cpu_time/rp->estimated_cpu_time();
     double old_dcf = duration_correction_factor;
 
     // it's OK to overestimate completion time,

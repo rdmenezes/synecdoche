@@ -1639,7 +1639,7 @@ int RESULT::write_gui(MIOFILE& out) {
         exit_status,
         state(),
         report_deadline,
-        estimated_cpu_time_remaining(false)
+        estimated_cpu_time_remaining()
     );
     if (got_server_ack) out.printf("    <got_server_ack/>\n");
     if (ready_to_report) out.printf("    <ready_to_report/>\n");
