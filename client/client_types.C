@@ -540,7 +540,7 @@ int PROJECT::write_symlink_for_project_file(FILE_INFO* fip) {
 
     get_project_dir(this, project_dir, sizeof(project_dir));
     for (i=0; i<project_files.size(); i++) {
-        FILE_REF& fref = project_files[i];
+        const FILE_REF& fref = project_files[i];
         if (fref.file_info != fip) continue;
         sprintf(path, "%s/%s", project_dir, fref.open_name);
         FILE* f = boinc_fopen(path, "w");
@@ -1165,7 +1165,7 @@ bool APP_VERSION::had_download_failure(int& failnum) const {
 void APP_VERSION::get_file_errors(std::string& str) {
     int errnum;
     unsigned int i;
-    FILE_INFO* fip;
+    const FILE_INFO* fip;
     string msg;
 
     str = "couldn't get input files:\n";
@@ -1363,7 +1363,7 @@ bool WORKUNIT::had_download_failure(int& failnum) const {
 void WORKUNIT::get_file_errors(std::string& str) const {
     int x;
     unsigned int i;
-    FILE_INFO* fip;
+    const FILE_INFO* fip;
     string msg;
 
     str = "couldn't get input files:\n";
@@ -1529,7 +1529,7 @@ int RESULT::parse_state(MIOFILE& in) {
 
 int RESULT::write(MIOFILE& out, bool to_server) const {
     unsigned int i;
-    FILE_INFO* fip;
+    const FILE_INFO* fip;
     int n, retval;
 
     out.printf(
@@ -1647,7 +1647,7 @@ int RESULT::write_gui(MIOFILE& out) {
     if (suspended_via_gui) out.printf("    <suspended_via_gui/>\n");
     if (project->suspended_via_gui) out.printf("    <project_suspended_via_gui/>\n");
     if (edf_scheduled) out.printf("    <edf_scheduled/>\n");
-    ACTIVE_TASK* atp = gstate.active_tasks.lookup_result(this);
+    const ACTIVE_TASK* atp = gstate.active_tasks.lookup_result(this);
     if (atp) {
         atp->write_gui(out);
     }
@@ -1660,7 +1660,7 @@ int RESULT::write_gui(MIOFILE& out) {
 ///
 bool RESULT::is_upload_done() const {
     unsigned int i;
-    FILE_INFO* fip;
+    const FILE_INFO* fip;
     int retval;
 
     for (i=0; i<output_files.size(); i++) {
@@ -1693,7 +1693,7 @@ void RESULT::clear_uploaded_flags() {
 bool PROJECT::some_download_stalled() const {
     unsigned int i;
     for (i=0; i<gstate.pers_file_xfers->pers_file_xfers.size(); i++) {
-        PERS_FILE_XFER* pfx = gstate.pers_file_xfers->pers_file_xfers[i];
+        const PERS_FILE_XFER* pfx = gstate.pers_file_xfers->pers_file_xfers[i];
         if (pfx->fip->project != this) continue;
         if (pfx->is_upload) continue;
         if (pfx->next_request_time > gstate.now) return true;
@@ -1706,8 +1706,8 @@ bool PROJECT::some_download_stalled() const {
 ///
 bool RESULT::some_download_stalled() const {
     unsigned int i;
-    FILE_INFO* fip;
-    PERS_FILE_XFER* pfx;
+    const FILE_INFO* fip;
+    const PERS_FILE_XFER* pfx;
 
     for (i=0; i<wup->input_files.size(); i++) {
         fip = wup->input_files[i].file_info;
