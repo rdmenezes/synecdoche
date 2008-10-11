@@ -354,7 +354,7 @@ public:
     /// the project has used too much CPU time recently
     bool overworked() const;
     /// a download is backed off
-    bool some_download_stalled() /* XXX const */;
+    bool some_download_stalled() const;
     bool some_result_suspended() const;
     /// @}
 
@@ -593,7 +593,7 @@ struct RESULT {
     bool downloading() const;
     /// some input or app file is downloading, and backed off
     /// i.e. it may be a long time before we can run this result
-    bool some_download_stalled() /* XXX const */;
+    bool some_download_stalled() const;
 
     // temporaries used in CLIENT_STATE::rr_simulation():
     double rrsim_cpu_left;
