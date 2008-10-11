@@ -1690,7 +1690,7 @@ void RESULT::clear_uploaded_flags() {
     }
 }
 
-bool PROJECT::some_download_stalled() {
+bool PROJECT::some_download_stalled() const {
     unsigned int i;
     for (i=0; i<gstate.pers_file_xfers->pers_file_xfers.size(); i++) {
         PERS_FILE_XFER* pfx = gstate.pers_file_xfers->pers_file_xfers[i];
@@ -1704,7 +1704,7 @@ bool PROJECT::some_download_stalled() {
 /// return true if some file needed by this result (input or application)
 /// is downloading and backed off
 ///
-bool RESULT::some_download_stalled() {
+bool RESULT::some_download_stalled() const {
     unsigned int i;
     FILE_INFO* fip;
     PERS_FILE_XFER* pfx;
