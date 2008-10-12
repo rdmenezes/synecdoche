@@ -63,8 +63,6 @@ typedef BOOL (CALLBACK* FreeFn)(LPCTSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULAR
 #include "error_numbers.h"
 #include "filesys.h"
 
-using std::string;
-
 char boinc_failed_file[256];
 
 // routines for enumerating the entries in a directory
@@ -110,8 +108,36 @@ DIRREF dir_open(const char* p) {
     return dirp;
 }
 
-/// Scan through a directory and return the next file name in it
+/// Scan through a directory and return the next file name in it.
+///
+/// \param[out] p Pointer to a buffer that will receive the name of the
+///               next file.
+/// \param[in,out] dirp Pointer retrieved from a call to dir_open.
+/// \param[in] p_len Size of the buffer pointed to by \a p.
+/// \return Zero on success, ERR_BUFFER_OVERFLOW if the buffer
+///         pointed to by \a p is too small, ERR_READDIR if the
+///         directory-handle of \a dirp is invalid.
 int dir_scan(char* p, DIRREF dirp, int p_len) {
+    std::string buffer;
+    int ret_val = dir_scan(buffer, dirp);
+    if (ret_val == 0) {
+        // First check if the provided buffer is big enough:
+        if ((p) && (buffer.size() >= static_cast<std::string::size_type>(p_len))) {
+            return ERR_BUFFER_OVERFLOW;
+        }
+        strlcpy(p, buffer.c_str(), p_len);
+    }
+    return ret_val;
+}
+
+/// Scan through a directory and return the next file name in it.
+///
+/// \param[out] p Reference to a buffer that will receive the name of the
+///               next file.
+/// \param[in,out] dirp Pointer retrieved from a call to dir_open.
+/// \return Zero on success, ERR_READDIR if the
+///         directory-handle of \a dirp is invalid.
+int dir_scan(std::string& p, DIRREF dirp) {
 #ifdef _WIN32
     WIN32_FIND_DATA data;
     while (1) {
@@ -122,17 +148,16 @@ int dir_scan(char* p, DIRREF dirp, int p_len) {
                 return ERR_READDIR;
             } else {
                 // does Windows have "." and ".."?  well, just in case.
-                //
                 if (!strcmp(data.cFileName, ".")) continue;
                 if (!strcmp(data.cFileName, "..")) continue;
-                if (p) strlcpy(p, data.cFileName, p_len);
+                p = data.cFileName;
                 return 0;
             }
         } else {
             if (FindNextFile(dirp->handle, &data)) {
                 if (!strcmp(data.cFileName, ".")) continue;
                 if (!strcmp(data.cFileName, "..")) continue;
-                if (p) strlcpy(p, data.cFileName, p_len);
+                p = data.cFileName;
                 return 0;
             } else {
                 FindClose(dirp->handle);
@@ -147,7 +172,7 @@ int dir_scan(char* p, DIRREF dirp, int p_len) {
         if (dp) {
             if (!strcmp(dp->d_name, ".")) continue;
             if (!strcmp(dp->d_name, "..")) continue;
-            if (p) strlcpy(p, dp->d_name, p_len);
+            p = dp->d_name;
             return 0;
         } else {
             return ERR_READDIR;
@@ -171,7 +196,7 @@ void dir_close(DIRREF dirp) {
 #endif
 }
 
-DirScanner::DirScanner(string const& path) {
+DirScanner::DirScanner(std::string const& path) {
 #ifdef _WIN32
     first = true;
     handle = INVALID_HANDLE_VALUE;
@@ -185,7 +210,7 @@ DirScanner::DirScanner(string const& path) {
 }
 
 /// Scan through a directory and return the next file name in it
-bool DirScanner::scan(string& s) {
+bool DirScanner::scan(std::string& s) {
 #ifdef _WIN32
     WIN32_FIND_DATA data;
     while (1) {
@@ -304,23 +329,28 @@ int boinc_truncate(const char* path, double size) {
     return 0;
 }
 
-/// remove everything from specified directory
+/// Remove everything from specified directory.
+///
+/// \param[in] dirpath Path to the directory that should be cleaned.
+/// \return Zero on success, nonzero otherwise.
 int clean_out_dir(const char* dirpath) {
-    char filename[256], path[256];
-    int retval;
-    DIRREF dirp;
-
-    dirp = dir_open(dirpath);
-    if (!dirp) return 0;    // if dir doesn't exist, it's empty
+    DIRREF dirp = dir_open(dirpath);
+    if (!dirp) {
+        return 0;    // If dir doesn't exist, it's empty.
+    }
     while (1) {
-        strcpy(filename, "");
-        retval = dir_scan(filename, dirp, sizeof(filename));
-        if (retval) break;
-        sprintf(path, "%s/%s", dirpath,  filename);
-        clean_out_dir(path);
-        boinc_rmdir(path);
-        retval = boinc_delete_file(path);
+        std::string filename;
+        if (dir_scan(filename, dirp)) {
+            // The directory is empty - we're done.
+            break;
+        }
+        std::string path = std::string(dirpath).append("/").append(filename);
+        clean_out_dir(path.c_str());
+        boinc_rmdir(path.c_str());
+        int retval = boinc_delete_file(path.c_str());
         if (retval) {
+            // Deleting of one file failed - abort the
+            // operation and return the error code.
             dir_close(dirp);
             return retval;
         }
@@ -329,16 +359,22 @@ int clean_out_dir(const char* dirpath) {
     return 0;
 }
 
-/// return total size of files in directory and optionally its subdirectories
+/// Return total size of files in directory and optionally its subdirectories.
 /// Win: use special version because stat() is slow, can be avoided
 /// Unix: follow symbolic links
+///
+/// \param[in] dirpath Path to the directory which size should be calculated.
+/// \param[out] size Referenze to a variable that will receive the size of the
+///                  directory specified by \a dirpath.
+/// \param[in] recurse If true the size of all sub-directories will be
+///                    considered, too.
 int dir_size(const char* dirpath, double& size, bool recurse) {
 #ifdef WIN32
-    char path2[_MAX_PATH];
-    sprintf(path2, "%s/*", dirpath);
+    std::string path2(dirpath);
+    path2.append("/*");
     size = 0.0;
     WIN32_FIND_DATA findData;
-    HANDLE hFind = ::FindFirstFile(path2, &findData);
+    HANDLE hFind = ::FindFirstFile(path2.c_str(), &findData);
     if (INVALID_HANDLE_VALUE != hFind) {
         do {
             if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
@@ -347,9 +383,9 @@ int dir_size(const char* dirpath, double& size, bool recurse) {
                 if (!strcmp(findData.cFileName, "..")) continue;
 
                 double dsize = 0;
-                char buf[_MAX_PATH];
-                ::sprintf(buf, "%s/%s", dirpath, findData.cFileName);
-                dir_size(buf, dsize, recurse);
+                std::string buf(dirpath);
+                buf.append("/").append(findData.cFileName);
+                dir_size(buf.c_str(), dsize, recurse);
                 size += dsize;
             } else {
                 size += findData.nFileSizeLow + ((__int64)(findData.nFileSizeHigh) << 32);
@@ -360,7 +396,6 @@ int dir_size(const char* dirpath, double& size, bool recurse) {
         return ERR_OPENDIR;
     }
 #else
-    char filename[256], subdir[256];
     int retval=0;
     DIRREF dirp;
     double x;
@@ -369,18 +404,20 @@ int dir_size(const char* dirpath, double& size, bool recurse) {
     dirp = dir_open(dirpath);
     if (!dirp) return ERR_OPENDIR;
     while (1) {
-        retval = dir_scan(filename, dirp, sizeof(filename));
+        std::string filename;
+        retval = dir_scan(filename, dirp);
         if (retval) break;
-        sprintf(subdir, "%s/%s", dirpath, filename);
+        std::string subdir(dirpath);
+        subdir.append("/").append(filename);
 
-        if (is_dir(subdir)) {
+        if (is_dir(subdir.c_str())) {
             if (recurse) {
-                retval = dir_size(subdir, x);
+                retval = dir_size(subdir.c_str(), x);
                 if (retval) continue;
                 size += x;
             }
         } else {
-            retval = file_size(subdir, x);
+            retval = file_size(subdir.c_str(), x);
             if (retval) continue;
             size += x;
         }
@@ -725,5 +762,3 @@ int get_file_dir(char* filename, char* dir) {
 
 
 #endif
-
-const char *BOINC_RCSID_636c8d709b = "$Id: filesys.C 15064 2008-04-16 09:04:12Z charlief $";
