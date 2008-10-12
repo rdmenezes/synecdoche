@@ -64,8 +64,13 @@ extern "C" {
 #ifdef __cplusplus
 
 extern int file_size(const char*, double&);
-extern int clean_out_dir(const char*);
-extern int dir_size(const char* dirpath, double&, bool recurse=true);
+
+/// Remove everything from specified directory.
+extern int clean_out_dir(const char* dirpath);
+
+/// Return total size of files in directory and optionally its subdirectories.
+extern int dir_size(const char* dirpath, double& size, bool recurse = true);
+
 extern int get_filesystem_info(double& total, double& free, const char* path=".");
 
 // TODO TODO TODO
@@ -84,8 +89,13 @@ typedef DIR *DIRREF;
 #endif
 
 extern DIRREF dir_open(const char*);
-extern int dir_scan(char*, DIRREF, int);
-int dir_scan(std::string&, DIRREF);
+
+/// Scan through a directory and return the next file name in it.
+extern int dir_scan(char* p, DIRREF dirp, int p_len);
+
+/// Scan through a directory and return the next file name in it.
+extern int dir_scan(std::string& p, DIRREF dirp);
+
 extern void dir_close(DIRREF);
 
 
