@@ -32,6 +32,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <sstream>
 
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
@@ -67,12 +68,20 @@ char boinc_failed_file[256];
 
 // routines for enumerating the entries in a directory
 
+/// Check if the given path denotes a file.
+///
+/// \param[in] path The path that should be checked.
+/// \return One if the given path denotes a file, zero otherwise.
 int is_file(const char* path) {
     struct stat sbuf;
     int retval = stat(path, &sbuf);
     return (!retval && (((sbuf.st_mode) & S_IFMT) == S_IFREG));
 }
 
+/// Check if the given path denotes a directory.
+///
+/// \param[in] path The path that should be checked.
+/// \return One if the given path denotes a directory, zero otherwise.
 int is_dir(const char* path) {
     struct stat sbuf;
     int retval = stat(path, &sbuf);
@@ -80,6 +89,10 @@ int is_dir(const char* path) {
 }
 
 #ifndef _WIN32
+/// Check if the given path denotes a symbolic link.
+///
+/// \param[in] path The path that should be checked.
+/// \return One if the given path denotes a symbolic link, zero otherwise.
 int is_symlink(const char* path) {
     struct stat sbuf;
     int retval = lstat(path, &sbuf);
@@ -87,7 +100,11 @@ int is_symlink(const char* path) {
 }
 #endif
 
-/// Open a directory
+/// Open a directory for scanning with dir_scan.
+///
+/// \param[in] p Path denoting the directory that should be opened.
+/// \return A structure that can be passed to dir_scan if the directory
+///         denoted by \a p could be opened, NULL if opening failed.
 DIRREF dir_open(const char* p) {
     DIRREF dirp;
 #ifdef _WIN32
@@ -181,7 +198,9 @@ int dir_scan(std::string& p, DIRREF dirp) {
 #endif
 }
 
-/// Close a directory
+/// Close a directory previously opened by dir_open.
+///
+/// \param[in] dirp A DIRREF struct previously obtained by a call to dir_open.
 void dir_close(DIRREF dirp) {
 #ifdef _WIN32
     if (dirp->handle != INVALID_HANDLE_VALUE) {
@@ -338,7 +357,7 @@ int clean_out_dir(const char* dirpath) {
     if (!dirp) {
         return 0;    // If dir doesn't exist, it's empty.
     }
-    while (1) {
+    while (true) {
         std::string filename;
         if (dir_scan(filename, dirp)) {
             // The directory is empty - we're done.
@@ -507,6 +526,11 @@ int boinc_touch_file(const char *path) {
     return -1;
 }
 
+/// Copy a file.
+///
+/// \param[in] orig Path of the source file.
+/// \param[in] newf Path of the destination.
+/// \return Zero on success, nonzero otherwise.
 int boinc_copy(const char* orig, const char* newf) {
 #ifdef _WIN32
     if (!CopyFile(orig, newf, FALSE)) {     // FALSE means overwrite OK
@@ -514,13 +538,13 @@ int boinc_copy(const char* orig, const char* newf) {
     }
     return 0;
 #elif defined(__EMX__)
-    char cmd[256];
-    sprintf(cmd, "copy %s %s", orig, newf);
-    return system(cmd);
+    std::ostringstream cmd;
+    cmd << "copy " << orig << ' ' << newf;
+    return system(cmd.str().c_str());
 #else
-    char cmd[256];
-    sprintf(cmd, "cp %s %s", orig, newf);
-    return system(cmd);
+    std::ostringstream cmd;
+    cmd << "cp " << orig << ' ' << newf;
+    return system(cmd.str().c_str());
 #endif
 }
 
@@ -588,26 +612,27 @@ int boinc_chown(const char* path, gid_t gid) {
 }
 #endif
 
-/// if "filepath" is of the form a/b/c,
-/// create directories dirpath/a, dirpath/a/b etc.
+/// Create directories with parent directories if necessary.
+/// If \a filepath is of the form "a/b/c", this function
+/// creates the directories "dirpath/a", "dirpath/a/b".
+///
+/// \param[in] dirpath The base directory in which the directory
+///                    creation should start.
+/// \param[in] filepath The path that should be created.
+/// \return Zero on success, nonzero otherwise.
 int boinc_make_dirs(const char* dirpath, const char* filepath) {
-    char buf[1024], oldpath[1024], newpath[1024];
-    int retval;
-    char *p, *q;
-
-    if (strlen(filepath) + strlen(dirpath) > 1023) return ERR_BUFFER_OVERFLOW;
-    strcpy(buf, filepath);
-
-    q = buf;
-    while(*q) {
-        p = strchr(q, '/');
-        if (!p) break;
-        *p = 0;
-        sprintf(newpath, "%s/%s", oldpath, q);
-        retval = boinc_mkdir(newpath);
-        if (retval) return retval;
-        strcpy(oldpath, newpath);
-        q = p+1;
+    std::string buf(filepath);
+    std::string oldpath(dirpath);
+    std::string::size_type pos;
+    while ((pos = buf.find('/')) != std::string::npos) {
+        std::ostringstream newpath;
+        newpath << oldpath << '/' << buf.substr(0, pos);
+        int retval = boinc_mkdir(newpath.str().c_str());
+        if (retval) {
+            return retval;
+        }
+        oldpath = newpath.str();
+        buf.erase(0, pos + 1);
     }
     return 0;
 }

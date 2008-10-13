@@ -37,7 +37,10 @@ extern "C" {
   extern int boinc_delete_file(const char*);
   extern int boinc_touch_file(const char *path);
   extern FILE* boinc_fopen(const char* path, const char* mode);
+
+  /// Copy a file.
   extern int boinc_copy(const char* orig, const char* newf);
+
   extern int boinc_rename(const char* old, const char* newf);
   extern int boinc_mkdir(const char*);
 #ifndef _WIN32
@@ -47,11 +50,21 @@ extern "C" {
   extern int remove_project_owned_file_or_dir(const char* path);
   extern void boinc_getcwd(char*);
   extern void relative_to_absolute(const char* relname, char* path);
-  extern int boinc_make_dirs(char*, char*);
+
+  /// Create directories with parent directories if necessary.
+  extern int boinc_make_dirs(const char* dirpath, const char* filepath);
+
   extern char boinc_failed_file[256];
+
+  /// Check if the given path denotes a file.
   extern int is_file(const char* path);
+
+  /// Check if the given path denotes a directory.
   extern int is_dir(const char* path);
+
+  /// Check if the given path denotes a symbolic link.
   extern int is_symlink(const char* path);
+
   extern int boinc_truncate(const char*, double);
   extern int boinc_file_exists(const std::string& path);
   extern int boinc_file_or_symlink_exists(const std::string& path);
@@ -88,7 +101,8 @@ typedef DIR_DESC *DIRREF;
 typedef DIR *DIRREF;
 #endif
 
-extern DIRREF dir_open(const char*);
+/// Open a directory for scanning with dir_scan.
+extern DIRREF dir_open(const char* p);
 
 /// Scan through a directory and return the next file name in it.
 extern int dir_scan(char* p, DIRREF dirp, int p_len);
@@ -96,7 +110,8 @@ extern int dir_scan(char* p, DIRREF dirp, int p_len);
 /// Scan through a directory and return the next file name in it.
 extern int dir_scan(std::string& p, DIRREF dirp);
 
-extern void dir_close(DIRREF);
+/// Close a directory previously opened by dir_open.
+extern void dir_close(DIRREF dirp);
 
 
 class DirScanner {
