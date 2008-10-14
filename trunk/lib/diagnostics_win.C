@@ -111,7 +111,7 @@ static BOINC_PROCESSENTRY diagnostics_process;
 //   SEH exception is thrown.
 //
 
-/// This structure is used to keep track of stuff nessassary
+/// This structure is used to keep track of stuff necessary
 /// to dump backtraces for all threads during an abort or
 /// crash.  This is platform specific in nature since it
 /// depends on the OS datatypes.
@@ -372,7 +372,7 @@ int diagnostics_update_thread_list_NT() {
     // Wait for the ThreadListSync mutex before writing updates
     WaitForSingleObject(hThreadListSync, INFINITE);
 
-    // Lets start walking the structures to find the good stuff.
+    // Start walking the structures to find the good stuff.
     pProcesses = (PSYSTEM_PROCESSES_NT4)pBuffer;
     do {
         // Okay, found the current procceses entry now we just need to
@@ -578,7 +578,7 @@ int diagnostics_update_thread_list() {
 }
 
 
-/// Set the current threads name to make it easy to know what the
+/// Set the current thread's name to make it easy to know what the
 /// thread is supposed to be doing.
 int diagnostics_set_thread_exception_record(PEXCEPTION_POINTERS pExPtrs) {
     HANDLE hThread;
@@ -616,7 +616,7 @@ int diagnostics_set_thread_exception_record(PEXCEPTION_POINTERS pExPtrs) {
 }
 
 
-/// Set the current threads name to make it easy to know what the
+/// Set the current thread's name to make it easy to know what the
 /// thread is supposed to be doing.
 int diagnostics_set_thread_exempt_suspend() {
     HANDLE hThread;
@@ -852,7 +852,7 @@ int diagnostics_init_message_monitor() {
     }
     diagnostics_monitor_messages.clear();
 
-    // Check the registry to see if we are aloud to capture debugger messages.
+    // Check the registry to see if we are allowed to capture debugger messages.
     //   Apparently many audio and visual payback programs dump serious
     //   amounts of data to the debugger viewport even on a release build.
     //   When this feature is enabled it slows down the replay of DVDs and CDs
@@ -959,7 +959,7 @@ int diagnostics_init_message_monitor() {
 }
 
 
-/// Shutdown the message monitoring thread and cleanup any of the in memory
+/// Shutdown the message monitoring thread and cleanup any of the in-memory
 /// structures.
 int diagnostics_finish_message_monitor() {
     unsigned int i;
@@ -968,8 +968,8 @@ int diagnostics_finish_message_monitor() {
     //   message monitoring thread.
     SetEvent(hMessageQuitEvent);
 
-    // Wait until it is message monitoring thread is shutdown before
-    //   cleaning up the structure since we'll need to aquire the
+    // Wait until the message monitoring thread is shutdown before
+    //   cleaning up the structure since we'll need to acquire the
     //   MessageMonitorSync mutex.
     WaitForSingleObject(hMessageQuitFinishedEvent, INFINITE);
     WaitForSingleObject(hMessageMonitorSync, INFINITE);
@@ -1030,7 +1030,7 @@ int diagnostics_message_monitor_dump() {
 
 
 /// This thread monitors the shared memory buffer used to pass debug messages
-/// around.  due to an anomaly in the Windows debug environment it is
+/// around. Due to an anomaly in the Windows debug environment it is
 /// suggested that a sleep(0) be introduced before any 
 /// SetEvent/ResetEvent/PulseEvent function is called.
 /// 
@@ -1055,7 +1055,7 @@ UINT WINAPI diagnostics_message_monitor(LPVOID /* lpParameter */) {
     hEvents[0] = hMessageQuitEvent;
     hEvents[1] = hMessageReadyEvent;
 
-    // Cache the current process id
+    // Cache the current process ID
     dwCurrentProcessId = GetCurrentProcessId();
 
     // Signal that the buffer is ready for action.
@@ -1191,9 +1191,8 @@ UINT WINAPI diagnostics_message_monitor(LPVOID /* lpParameter */) {
 //   threads.
 //
 
-/// This structure is used to keep track of stuff nessassary
-/// to dump information about the top most window during
-/// a crash event.
+/// This structure is used to keep track of stuff necessary to dump
+/// information about the top most window during a crash event.
 typedef struct _BOINC_WINDOWCAPTURE {
     HWND         hwnd;
     char         window_name[256];
@@ -1241,7 +1240,7 @@ int diagnostics_init_unhandled_exception_monitor() {
 
     // The following event is thrown by a thread that has experienced an
     //   unhandled exception after storing its exception record but before
-    //   it attempts to aquire the halt mutex.
+    //   it attempts to acquire the halt mutex.
     hExceptionDetectedEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     if (!hExceptionDetectedEvent) {
         fprintf(
@@ -1309,7 +1308,7 @@ int diagnostics_finish_unhandled_exception_monitor() {
     SetEvent(hExceptionQuitEvent);
 
     // Wait until it is message monitoring thread is shutdown before
-    //   cleaning up the structure since we'll need to aquire the
+    //   cleaning up the structure since we'll need to acquire the
     //   MessageMonitorSync mutex.
     WaitForSingleObject(hExceptionQuitFinishedEvent, INFINITE);
 
@@ -1365,7 +1364,7 @@ int diagnostics_capture_foreground_window(PBOINC_WINDOWCAPTURE window_info) {
     window_info->window_thread_id = 0;
 
 
-    // Check the registry to see if we are aloud to capture the foreground
+    // Check the registry to see if we are allowed to capture the foreground
     //   window data. Many people were concerned about privacy issues.
     //
     // We'll turn it off by default, but keep it around just in case we need
@@ -1670,7 +1669,7 @@ int diagnostics_dump_exception_record(PEXCEPTION_POINTERS pExPtrs) {
 
 
 /// Priority is given to the worker threads exception code, and then the
-/// graphics thread.  If neither of those two threw the exception grab
+/// graphics thread.  If neither of those two threw the exception, grab
 /// the exception code of the thread that did.
 UINT diagnostics_determine_exit_code() {
     UINT   uiReturn = 0;
