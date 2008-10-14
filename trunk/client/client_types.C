@@ -113,7 +113,7 @@ void PROJECT::init() {
     deadlines_missed = 0;
 }
 
-/// parse project fields from client_state.xml
+/// Parse project fields from client_state.xml.
 ///
 int PROJECT::parse_state(MIOFILE& in) {
     char buf[256];
@@ -195,7 +195,7 @@ int PROJECT::parse_state(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-/// Write project information to client state file or GUI RPC reply
+/// Write project information to client state file or GUI RPC reply.
 ///
 int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
     unsigned int i;
@@ -313,7 +313,7 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
 }
 
 /// Some project data is stored in account file, other in client_state.xml
-/// Copy fields that are stored in client_state.xml from "p" into "this"
+/// Copy fields that are stored in client_state.xml from "p" into "this".
 ///
 void PROJECT::copy_state_fields(const PROJECT& p) {
     scheduler_urls = p.scheduler_urls;
@@ -360,7 +360,7 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
     use_symlinks = p.use_symlinks;
 }
 
-/// Write project statistic to project statistics file
+/// Write project statistic to project statistics file.
 ///
 int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) const {
     out.printf(
@@ -486,7 +486,7 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
     return ERR_XML_PARSE;
 }
 
-/// install pointers from FILE_REFs to FILE_INFOs for project files,
+/// Install pointers from FILE_REFs to FILE_INFOs for project files,
 /// and flag FILE_INFOs as being project files.
 ///
 void PROJECT::link_project_files(bool recreate_symlink_files) {
@@ -530,9 +530,9 @@ void PROJECT::write_project_files(MIOFILE& f) const {
     f.printf("</project_files>\n");
 }
 
-/// write symlinks for project files.
+/// Write symlinks for project files.
 /// Note: it's conceivable that one physical file
-/// has several logical names, so try them all
+/// has several logical names, so try them all.
 ///
 int PROJECT::write_symlink_for_project_file(FILE_INFO* fip) {
     char project_dir[256], path[256];
@@ -885,7 +885,7 @@ int FILE_INFO::write_gui(MIOFILE& out) const {
     return 0;
 }
 
-/// delete physical underlying file associated with FILE_INFO
+/// Delete physical underlying file associated with FILE_INFO.
 ///
 int FILE_INFO::delete_file() {
     char path[256];
@@ -902,7 +902,7 @@ int FILE_INFO::delete_file() {
 /// Files may have URLs for both upload and download.
 /// Call this to get the initial url,
 /// The is_upload arg says which kind you want.
-/// NULL return means there is no URL of the requested type
+/// NULL return means there is no URL of the requested type.
 ///
 const char* FILE_INFO::get_init_url(bool is_upload) {
     if (urls.empty()) {
@@ -925,9 +925,9 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
     current_url = (int)temp;
 #endif
     start_url = current_url;
-    while(1) {
+    while (true) {
         if (!is_correct_url_type(is_upload, urls[current_url])) {
-            current_url = (current_url + 1)%((int)urls.size());
+            current_url = (current_url + 1) % ((int)urls.size());
             if (current_url == start_url) {
                 msg_printf(project, MSG_INTERNAL_ERROR,
                     "Couldn't find suitable URL for %s", name);
@@ -945,8 +945,8 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
 ///
 const char* FILE_INFO::get_next_url(bool is_upload) {
     if (urls.empty()) return NULL;
-    while(1) {
-        current_url = (current_url + 1)%((int)urls.size());
+    while (true) {
+        current_url = (current_url + 1) % ((int)urls.size());
         if (current_url == start_url) {
             return NULL;
         }
@@ -969,8 +969,8 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
     return urls[current_url].c_str();
 }
 
-/// Checks if the URL includes the phrase "file_upload_handler"
-/// This indicates the URL is an upload url
+/// Checks if the URL includes the phrase "file_upload_handler".
+/// This indicates the URL is an upload url.
 /// 
 bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) const {
     const char* has_str = strstr(url.c_str(), "file_upload_handler");
@@ -981,9 +981,9 @@ bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) cons
     }
 }
 
-/// merges information from a new FILE_INFO that has the same name as one
+/// Merges information from a new FILE_INFO that has the same name as one
 /// that is already present in the client state file.
-/// Potentially changes upload_when_present, max_nbytes, and signed_xml
+/// Potentially changes upload_when_present, max_nbytes, and signed_xml.
 ///
 int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     char buf[256];
@@ -1014,7 +1014,7 @@ int FILE_INFO::merge_info(const FILE_INFO& new_info) {
 }
 
 /// Returns true if the file had an unrecoverable error
-/// (couldn't download, RSA/MD5 check failed, etc)
+/// (couldn't download, RSA/MD5 check failed, etc).
 ///
 bool FILE_INFO::had_failure(int& failnum) const {
     if (status != FILE_NOT_PRESENT && status != FILE_PRESENT) {
@@ -1376,8 +1376,8 @@ void WORKUNIT::get_file_errors(std::string& str) const {
     }
 }
 
-/// if any input files had download error from previous WU,
-/// reset them to try download again
+/// If any input files had download error from previous WU,
+/// reset them to try download again.
 ///
 void WORKUNIT::clear_errors() {
     int x;
@@ -1433,7 +1433,7 @@ void RESULT::clear() {
     strcpy(plan_class, "");
 }
 
-/// parse a <result> element from scheduling server.
+/// Parse a <result> element from scheduling server.
 ///
 int RESULT::parse_server(MIOFILE& in) {
     char buf[256];
@@ -1656,7 +1656,7 @@ int RESULT::write_gui(MIOFILE& out) {
 }
 
 /// Returns true if the result's output files are all either
-/// successfully uploaded or have unrecoverable errors
+/// successfully uploaded or have unrecoverable errors.
 ///
 bool RESULT::is_upload_done() const {
     unsigned int i;
@@ -1675,7 +1675,7 @@ bool RESULT::is_upload_done() const {
     return true;
 }
 
-/// resets all FILE_INFO's in result to uploaded = false 
+/// Resets all FILE_INFO's in result to uploaded = false 
 /// if upload_when_present is true.
 ///
 void RESULT::clear_uploaded_flags() {
@@ -1701,8 +1701,8 @@ bool PROJECT::some_download_stalled() const {
     return false;
 }
 
-/// return true if some file needed by this result (input or application)
-/// is downloading and backed off
+/// Return true if some file needed by this result (input or application)
+/// is downloading and backed off.
 ///
 bool RESULT::some_download_stalled() const {
     unsigned int i;
@@ -1756,7 +1756,7 @@ void RESULT::append_log_record() {
     fclose(f);
 }
 
-/// abort a result that's not currently running
+/// Abort a result that's not currently running.
 ///
 void RESULT::abort_inactive(int status) {
     if (state() >= RESULT_COMPUTE_ERROR) return;
