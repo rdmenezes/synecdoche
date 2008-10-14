@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -164,16 +165,19 @@ int dir_scan(std::string& p, DIRREF dirp) {
             if (dirp->handle == INVALID_HANDLE_VALUE) {
                 return ERR_READDIR;
             } else {
-                // does Windows have "." and ".."?  well, just in case.
-                if (!strcmp(data.cFileName, ".")) continue;
-                if (!strcmp(data.cFileName, "..")) continue;
+                // Does Windows have "." and ".."? Well, just in case.
+                if ((!strcmp(data.cFileName, ".")) || (!strcmp(data.cFileName, ".."))) {
+                    continue;
+                }
                 p = data.cFileName;
                 return 0;
             }
         } else {
             if (FindNextFile(dirp->handle, &data)) {
-                if (!strcmp(data.cFileName, ".")) continue;
-                if (!strcmp(data.cFileName, "..")) continue;
+                // Does Windows have "." and ".."? Well, just in case.
+                if ((!strcmp(data.cFileName, ".")) || (!strcmp(data.cFileName, ".."))) {
+                    continue;
+                }
                 p = data.cFileName;
                 return 0;
             } else {
@@ -187,8 +191,9 @@ int dir_scan(std::string& p, DIRREF dirp) {
     while (1) {
         dirent* dp = readdir(dirp);
         if (dp) {
-            if (!strcmp(dp->d_name, ".")) continue;
-            if (!strcmp(dp->d_name, "..")) continue;
+            if ((!strcmp(dp->d_name, ".")) || (!strcmp(dp->d_name, ".."))) {
+                continue;
+            }
             p = dp->d_name;
             return 0;
         } else {
@@ -215,11 +220,11 @@ void dir_close(DIRREF dirp) {
 #endif
 }
 
-DirScanner::DirScanner(std::string const& path) {
+DirScanner::DirScanner(const std::string& path) {
 #ifdef _WIN32
     first = true;
     handle = INVALID_HANDLE_VALUE;
-    if (!is_dir((char*)path.c_str())) {
+    if (!is_dir(path.c_str())) {
         return;
     }
     dir = path + "\\*";
@@ -228,24 +233,35 @@ DirScanner::DirScanner(std::string const& path) {
 #endif
 }
 
-/// Scan through a directory and return the next file name in it
+/// Scan through a directory and return the next file name in it.
+///
+/// \param[out] p Reference to a buffer that will receive the name of the
+///               next file.
+/// \param[in,out] dirp Pointer retrieved from a call to dir_open.
+/// \return True on success, false if there are no files left.
 bool DirScanner::scan(std::string& s) {
 #ifdef _WIN32
     WIN32_FIND_DATA data;
-    while (1) {
+    while (true) {
         if (first) {
             first = false;
             handle = FindFirstFile(dir.c_str(), &data);
             if (handle == INVALID_HANDLE_VALUE) {
                 return false;
             } else {
-                if (data.cFileName[0] == '.') continue;
+                // Does Windows have "." and ".."? Well, just in case.
+                if ((!strcmp(data.cFileName, ".")) || (!strcmp(data.cFileName, ".."))) {
+                    continue;
+                }
                 s = data.cFileName;
                 return true;
             }
         } else {
             if (FindNextFile(handle, &data)) {
-                if (data.cFileName[0] == '.') continue;
+                // Does Windows have "." and ".."? Well, just in case.
+                if ((!strcmp(data.cFileName, ".")) || (!strcmp(data.cFileName, ".."))) {
+                    continue;
+                }
                 s = data.cFileName;
                 return true;
             } else {
@@ -256,15 +272,21 @@ bool DirScanner::scan(std::string& s) {
         }
     }
 #else
-    if (!dirp) return false;
+    if (!dirp) {
+        return false;
+    }
 
-    while (1) {
+    while (true) {
         dirent* dp = readdir(dirp);
         if (dp) {
-            if (dp->d_name[0] == '.') continue;
+            if ((!strcmp(dp->d_name, ".")) || (!strcmp(dp->d_name, ".."))) {
+                continue;
+            }
             s = dp->d_name;
             return true;
         } else {
+            closedir(dirp);
+            dirp = 0;
             return false;
         }
     }
@@ -353,13 +375,10 @@ int boinc_truncate(const char* path, double size) {
 /// \param[in] dirpath Path to the directory that should be cleaned.
 /// \return Zero on success, nonzero otherwise.
 int clean_out_dir(const char* dirpath) {
-    DIRREF dirp = dir_open(dirpath);
-    if (!dirp) {
-        return 0;    // If dir doesn't exist, it's empty.
-    }
+    DirScanner dscan(dirpath);
     while (true) {
         std::string filename;
-        if (dir_scan(filename, dirp)) {
+        if (!dscan.scan(filename)) {
             // The directory is empty - we're done.
             break;
         }
@@ -370,11 +389,9 @@ int clean_out_dir(const char* dirpath) {
         if (retval) {
             // Deleting of one file failed - abort the
             // operation and return the error code.
-            dir_close(dirp);
             return retval;
         }
     }
-    dir_close(dirp);
     return 0;
 }
 
@@ -416,16 +433,15 @@ int dir_size(const char* dirpath, double& size, bool recurse) {
     }
 #else
     int retval=0;
-    DIRREF dirp;
     double x;
 
     size = 0;
-    dirp = dir_open(dirpath);
-    if (!dirp) return ERR_OPENDIR;
-    while (1) {
+    DirScanner dscan(dirpath);
+    while (true) {
         std::string filename;
-        retval = dir_scan(filename, dirp);
-        if (retval) break;
+        if (!dscan.scan(filename)) {
+            break;
+        }
         std::string subdir(dirpath);
         subdir.append("/").append(filename);
 
@@ -441,7 +457,6 @@ int dir_size(const char* dirpath, double& size, bool recurse) {
             size += x;
         }
     }
-    dir_close(dirp);
 #endif
     return 0;
 }
