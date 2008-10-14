@@ -53,15 +53,19 @@ static void print_options(char* prog) {
         "    --check_all_logins              for idle detection, check remote logins too\n"
         "    --allow_remote_gui_rpc          allow remote GUI RPC connections\n"
         "    --gui_rpc_port <port>           port for GUI RPCs\n"
-        "    --redirectio                    redirect stdout and stderr to log files\n"
-        "    --detach                        detach from console (Windows)\n"
-        "    --dir <path>                    use given dir as Synecdoche home\n"
         "    --no_gui_rpc                    don't allow GUI RPC, don't make socket\n"
-        "    --daemon                        run as daemon (Unix)\n"
+        "    --redirectio                    redirect stdout and stderr to log files\n"
+#ifdef _WIN32
+        "    --detach                        detach from console\n"
+        "    --daemon                        run as system service\n"
+#else
+        "    --daemon                        run as daemon\n"
+#endif
+        "    --dir <path>                    use given dir as Synecdoche home\n"
         "    --exit_before_start             exit right before starting a job\n"
         "    --exit_after_finish             exit right after finishing a job\n"
 #ifdef SANDBOX
-        "    --insecure                      disable app sandboxing (Unix)\n"
+        "    --insecure                      disable app sandboxing\n"
 #endif
         "    --launched_by_manager           core client was launched by Manager\n"
         "    --run_by_updater                set by updater\n"
