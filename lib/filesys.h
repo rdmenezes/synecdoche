@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,8 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _FILESYS_
-#define _FILESYS_
+#ifndef FILESYS_H
+#define FILESYS_H
 
 /// On Windows, retry for this period of time, since some other program
 /// (virus scan, defrag, index) may have the file open.
@@ -123,9 +124,11 @@ class DirScanner {
     DIR* dirp;
 #endif
 public:
-    DirScanner(std::string const& path);
+    DirScanner(const std::string& path);
     ~DirScanner();
-    bool scan(std::string& name);    // return true if file returned
+
+    /// Scan through a directory and return the next file name in it.
+    bool scan(std::string& name);
 };
 
 struct FILE_LOCK {
@@ -150,5 +153,5 @@ extern int get_file_dir(char* filename, char* dir);
 
 #endif /* c++ */
 
-#endif /* double-inclusion protection */
+#endif // FILESYS_H
 

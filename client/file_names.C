@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -187,45 +188,40 @@ int make_slot_dir(int slot) {
     return retval;
 }
 
-/// delete unused stuff in the slots/ directory
+/// Delete unused stuff in the slots/ directory.
 void delete_old_slot_dirs() {
-    char filename[1024], path[1024];
-    DIRREF dirp;
-    int retval;
-
-    dirp = dir_open(SLOTS_DIR);
-    if (!dirp) return;
+    DirScanner dscan(SLOTS_DIR);
     while (1) {
-        strcpy(filename, "");
-        retval = dir_scan(filename, dirp, sizeof(filename));
-        if (retval) break;
-        snprintf(path, sizeof(path), "%s/%s", SLOTS_DIR, filename);
-        if (is_dir(path)) {
-#ifndef _WIN32
-            char init_data_path[1024];
-            SHMEM_SEG_NAME shmem_seg_name;
+        std::string filename;
+        if (!dscan.scan(filename)) {
+            break;
+        }
+        std::string path(SLOTS_DIR);
+        path.append("/").append(filename);
 
+        if (is_dir(path.c_str())) {
+#ifndef _WIN32
             // If Synecdoche crashes or exits suddenly (e.g., due to 
             // being called with --exit_after_finish) it may leave 
             // orphan shared memory segments in the system.
             // Clean these up here. (We must do this before deleting the
             // INIT_DATA_FILE, if any, from each slot directory.)
             //
-            snprintf(init_data_path, sizeof(init_data_path), "%s/%s", path, INIT_DATA_FILE);
-            shmem_seg_name = ftok(init_data_path, 1);
+            std::string init_data_path(path);
+            path.append("/").append(INIT_DATA_FILE);
+            SHMEM_SEG_NAME shmem_seg_name = ftok(init_data_path.c_str(), 1);
             if (shmem_seg_name != -1) {
                 destroy_shmem(shmem_seg_name);
             }
 #endif
-            if (!gstate.active_tasks.is_slot_dir_in_use(path)) {
-                client_clean_out_dir(path);
-                remove_project_owned_dir(path);
+            if (!gstate.active_tasks.is_slot_dir_in_use(path.c_str())) {
+                client_clean_out_dir(path.c_str());
+                remove_project_owned_dir(path.c_str());
             }
         } else {
-            delete_project_owned_file(path, false);
+            delete_project_owned_file(path.c_str(), false);
         }
     }
-    dir_close(dirp);
 }
 
 void get_account_filename(const char* master_url, char* path) {

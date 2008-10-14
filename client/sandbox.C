@@ -178,13 +178,14 @@ int delete_project_owned_file(const char* path, bool retry) {
     return 0;
 }
 
-/// recursively delete everything in the specified directory
+/// Recursively delete everything in the specified directory.
 /// (but not the directory itself).
 /// If an error occurs, delete as much as possible.
 ///
+/// \param[in] dirpath Path to the directory that should be cleared.
+/// \return Zero on success, nonzero otherwise.
 int client_clean_out_dir(const char* dirpath) {
-    char filename[256], path[256];
-    int retval, final_retval = 0;
+    int final_retval = 0;
     DIRREF dirp;
 
     dirp = dir_open(dirpath);
@@ -198,19 +199,29 @@ int client_clean_out_dir(const char* dirpath) {
         return 0;    // if dir doesn't exist, it's empty
     }
 
-    while (1) {
-        strcpy(filename, "");
-        retval = dir_scan(filename, dirp, sizeof(filename));
-        if (retval) break;
-        sprintf(path, "%s/%s", dirpath,  filename);
-        if (is_dir(path)) {
-            retval = client_clean_out_dir(path);
-            if (retval) final_retval = retval;
-            retval = remove_project_owned_dir(path);
-            if (retval) final_retval = retval;
+    while (true) {
+        std::string filename;
+        if (dir_scan(filename, dirp)) {
+            break;
+        }
+        std::string path(dirpath);
+        path.append("/").append(filename);
+
+        int retval;
+        if (is_dir(path.c_str())) {
+            retval = client_clean_out_dir(path.c_str());
+            if (retval) {
+                final_retval = retval;
+            }
+            retval = remove_project_owned_dir(path.c_str());
+            if (retval) {
+                final_retval = retval;
+            }
         } else {
-            retval = delete_project_owned_file(path, false);
-            if (retval) final_retval = retval;
+            retval = delete_project_owned_file(path.c_str(), false);
+            if (retval) {
+                final_retval = retval;
+            }
         }
     }
     dir_close(dirp);
