@@ -44,11 +44,6 @@ static void print_options(char* prog) {
         "    --help                          show options\n"
         "    --version                       show version info\n"
         "    --exit_when_idle                exit when there are no results\n"
-        "    --show_projects                 show attached projects\n"
-        "    --detach_project <URL>          detach from a project\n"
-        "    --reset_project <URL>           reset (clear) a project\n"
-        "    --attach_project <URL> <key>    attach to a project\n"
-        "    --update_prefs <URL>            contact a project to update preferences\n"
         "    --run_cpu_benchmarks            run the CPU benchmarks\n"
         "    --check_all_logins              for idle detection, check remote logins too\n"
         "    --allow_remote_gui_rpc          allow remote GUI RPC connections\n"
@@ -152,26 +147,8 @@ void CLIENT_STATE::parse_cmdline(int argc, char** argv) {
         // NOTE: if you change or add anything, make the same chane
         // in show_options() (above) and in doc/client.php
 
-        } else if (ARG("show_projects")) {
-            show_projects = true;
-        } else if (ARG("detach_project")) {
-            if (i == argc-1) show_options = true;
-            else safe_strcpy(detach_project_url, argv[++i]);
-        } else if (ARG("reset_project")) {
-            if (i == argc-1) show_options = true;
-            else safe_strcpy(reset_project_url, argv[++i]);
-        } else if (ARG("update_prefs")) {
-            if (i == argc-1) show_options = true;
-            else safe_strcpy(update_prefs_url, argv[++i]);
         } else if (ARG("run_cpu_benchmarks")) {
             run_cpu_benchmarks = true;
-        } else if (ARG("attach_project")) {
-            if (i >= argc-2) {
-                show_options = true;
-            } else {
-                safe_strcpy(attach_project_url, argv[++i]);
-                safe_strcpy(attach_project_auth, argv[++i]);
-            }
         } else if (ARG("version")) {
             printf(BOINC_VERSION_STRING " " HOSTTYPE "\n");
             exit(0);
@@ -267,61 +244,6 @@ void CLIENT_STATE::parse_env_vars() {
 	p = getenv("SOCKS5_PASSWD");
     if (p) {
         safe_strcpy(proxy_info.socks5_user_passwd, p);
-    }
-}
-
-void CLIENT_STATE::do_cmdline_actions() {
-    unsigned int i;
-
-    if (show_projects) {
-        printf("projects:\n");
-        for (i=0; i<projects.size(); i++) {
-            msg_printf(NULL, MSG_INFO, "URL: %s name: %s\n",
-                projects[i]->master_url, projects[i]->project_name
-            );
-        }
-        exit(0);
-    }
-
-    if (strlen(detach_project_url)) {
-        canonicalize_master_url(detach_project_url);
-        PROJECT* project = lookup_project(detach_project_url);
-        if (project) {
-            // do this before detaching - it frees the project
-            //
-            msg_printf(project, MSG_INFO, "detaching from %s\n", detach_project_url);
-            detach_project(project);
-        } else {
-            msg_printf(NULL, MSG_USER_ERROR, "project %s not found\n", detach_project_url);
-        }
-        exit(0);
-    }
-
-    if (strlen(reset_project_url)) {
-        canonicalize_master_url(reset_project_url);
-        PROJECT* project = lookup_project(reset_project_url);
-        if (project) {
-            reset_project(project, false);
-            msg_printf(project, MSG_INFO, "Project %s has been reset", reset_project_url);
-        } else {
-            msg_printf(NULL, MSG_USER_ERROR, "project %s not found\n", reset_project_url);
-        }
-        exit(0);
-    }
-
-    if (strlen(update_prefs_url)) {
-        canonicalize_master_url(update_prefs_url);
-        PROJECT* project = lookup_project(update_prefs_url);
-        if (project) {
-            project->sched_rpc_pending = RPC_REASON_USER_REQ;
-        } else {
-            msg_printf(NULL, MSG_USER_ERROR, "project %s not found\n", update_prefs_url);
-        }
-    }
-
-    if (strlen(attach_project_url)) {
-        canonicalize_master_url(attach_project_url);
-        add_project(attach_project_url, attach_project_auth, "", false);
     }
 }
 

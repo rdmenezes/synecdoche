@@ -91,16 +91,10 @@ public:
     bool user_active;       ///< there has been recent mouse/kbd input
     bool allow_remote_gui_rpc;
     int cmdline_gui_rpc_port;
-    bool show_projects;
     bool requested_exit;
-    char detach_project_url[256]; ///< stores URL for -detach_project option
-    char reset_project_url[256]; ///< stores URL for -reset_project option
-    char update_prefs_url[256]; ///< stores URL for -update_prefs option
     /// venue from project that gave us general prefs
     /// or from account manager
     char main_host_venue[256];
-    char attach_project_url[256];
-    char attach_project_auth[256];
     bool exit_before_upload; ///< exit when about to upload a file
 #ifndef _WIN32
     gid_t boinc_project_gid;
@@ -346,7 +340,6 @@ public:
 public:
     void parse_cmdline(int argc, char** argv);
     void parse_env_vars();
-    void do_cmdline_actions();
 /// @}
 
 /// @name cs_files.C
