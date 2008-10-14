@@ -93,11 +93,7 @@ CLIENT_STATE::CLIENT_STATE():
     app_started = 0;
     exit_before_upload = false;
     proxy_info.clear();
-    show_projects = false;
-    strcpy(detach_project_url, "");
     strcpy(main_host_venue, "");
-    strcpy(attach_project_url, "");
-    strcpy(attach_project_auth, "");
     run_mode.set(RUN_MODE_AUTO, 0);
     network_mode.set(RUN_MODE_AUTO, 0);
     started_by_screensaver = false;
@@ -269,7 +265,6 @@ int CLIENT_STATE::init() {
     parse_preferences_for_user_files();
 
     print_summary();
-    do_cmdline_actions();
 
     // if new version of core client,
     // - run CPU benchmarks
