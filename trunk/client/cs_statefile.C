@@ -704,9 +704,15 @@ void CLIENT_STATE::check_anonymous() {
             "Found %s; using anonymous platform", APP_INFO_FILE_NAME
         );
 
+        // flag as anonymous even if can't parse file
         p->anonymous_platform = true;
-            // flag as anonymous even if can't parse file
+
         retval = parse_app_info(p, f);
+        if (retval) {
+            msg_printf(p, MSG_USER_ERROR,
+                "Parse error in %s; check XML syntax", APP_INFO_FILE_NAME
+            );
+        }
         fclose(f);
     }
 }
@@ -765,7 +771,9 @@ int CLIENT_STATE::parse_app_info(PROJECT* p, FILE* in) {
         }
         if (log_flags.unparsed_xml) {
             msg_printf(p, MSG_INFO,
-                "[unparsed_xml] Unparsed line in app_info.xml: %s", buf
+                "[unparsed_xml] Unparsed line in %s: %s",
+                APP_INFO_FILE_NAME,
+                buf
             );
         }
     }
