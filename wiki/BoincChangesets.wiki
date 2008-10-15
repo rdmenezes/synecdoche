@@ -17,11 +17,32 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/15588 15588]||Solved better in r76. Ours won't cycle the logs if an error is logged when parsing the config file.||
 ||[http://boinc.berkeley.edu/trac/changeset/15591 15591]||CUDA. We don't support this yet.||
 ||[http://boinc.berkeley.edu/trac/changeset/15610 15610]||Reboot. This is just wrong.||
-||[http://boinc.berkeley.edu/trac/changeset/15670 15670]||`*`||
 ||[http://boinc.berkeley.edu/trac/changeset/15690 15690]||Already fixed.||
 ||[http://boinc.berkeley.edu/trac/changeset/15693 15693]||API`*` ||
 ||[http://boinc.berkeley.edu/trac/changeset/15694 15694]||API`*` ||
-
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/15753 15753]
+||[http://boinc.berkeley.edu/trac/changeset/15793 15793]||Already fixed in r171.||
+||[http://boinc.berkeley.edu/trac/changeset/15801 15801]||Already fixed in r152. Correctly!||
+||[http://boinc.berkeley.edu/trac/changeset/15808 15808]||Already fixed in r194.||
+||[http://boinc.berkeley.edu/trac/changeset/15850 15850]||Proposed async solution is not typesafe. Grid view was already fixed (removed).||
 
 `*` These changesets may still be needed.
+
+== Pending merge ==
+
+15756
+15757
+15759 missing copyrights
+15764 API
+15767 Need to review this mess carefully.
+15809/15811/15812
+15820
+15827 Screensaver stuff hidden in there.
+15831 Manifest files?
+15834/15873 We can't possibly need this.
+15840/15874/15877/15885 Screensaver mess
+15865
+15886
+15891/15893/15894 This may be moot.
+
+
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/15900 15900]
