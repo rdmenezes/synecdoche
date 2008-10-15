@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 #ifdef HAVE_IEEEFP_H
 #include <ieeefp.h>
 extern "C" {
@@ -76,7 +77,9 @@ inline bool match_tag(const std::string& s, const std::string& tag) {
 inline bool parse_int(const char* buf, const char* tag, int& x) {
     const char* p = strstr(buf, tag);
     if (!p) return false;
-    x = strtol(p+strlen(tag), 0, 0);        // this parses 0xabcd correctly
+    int y = strtol(p + strlen(tag), 0, 0);      // This respects hex and octal prefixes.
+    if (errno == ERANGE) return false;
+    x = y;
     return true;
 }
 
