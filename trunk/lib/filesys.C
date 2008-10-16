@@ -221,7 +221,7 @@ void dir_close(DIRREF dirp) {
 #endif // _WIN32
 }
 
-/// Create a DirScanner instance and try to open the directory specyfied by \a path.
+/// Create a DirScanner instance and try to open the directory specified by \a path.
 ///
 /// \param[in] path The directory that should be scanned.
 DirScanner::DirScanner(const std::string& path) {
@@ -496,7 +496,7 @@ int dir_size(const char* dirpath, double& size, bool recurse) {
 ///
 /// \param[in] path The path to the file that should be opened.
 /// \param[in] mode A string describing in which mode the file should be
-///                 openend (e.g. read, write, append, etc.). See the
+///                 opened (e.g. read, write, append, etc.). See the
 ///                 documentation of fopen for all available modes.
 /// \return A pointer to a FILE instance if opening was successful,
 ///         zero on error.
@@ -582,7 +582,7 @@ int boinc_touch_file(const char *path) {
     if (boinc_file_exists(path)) {
         return 0;
     }
-    FILE* fp = fopen(path, "w");
+    FILE* fp = boinc_fopen(path, "w");
     if (fp) {
         fclose(fp);
         return 0;
@@ -632,7 +632,7 @@ static int boinc_rename_aux(const char* old, const char* newf) {
 }
 
 /// Rename a file.
-/// If the first attempt of deleting failes this function retries to delete
+/// If the first attempt of deleting fails this function retries to delete
 /// the file multiple times until the time limit specified by
 /// FILE_RETRY_INTERVAL is reached.
 ///
@@ -807,7 +807,7 @@ int FILE_LOCK::unlock(const char* filename) {
 /// \return A string containing the current working directory. This string
 ///         will be empty if an error occured.
 std::string boinc_getcwd() {
-    // The following code dynamically allocates a buffer and calles getcwd
+    // The following code dynamically allocates a buffer and calls getcwd
     // on it. If the buffer is to small this function allocates a new buffer
     // which is bigger than the previous one and tries again until either
     // getcwd succeeds or there is a different error.
@@ -830,13 +830,13 @@ std::string boinc_getcwd() {
     // Now check if the call to getcwd was successful finally:
     std::string result;
     if (res) {
-        result = res;
+        result = path;
     }
     delete[] path;
     return result;
 }
 
-/// Turn a relative path into an absolute on.
+/// Turn a relative path into an absolute one.
 ///
 /// \param[in] relname The relative path that should be turned into an
 ///                    absolute path.
@@ -914,14 +914,13 @@ int get_filesystem_info(double& total_space, double& free_space, const char* pat
 ///                 described by \a filename was found.
 /// \return Zero on success, ERR_NOT_FOUND on error.
 int get_file_dir(const char* filename, std::string& dir) {
-    char *p, path[256];
+    char *p;
 
     p = getenv("PATH");
     if (!p) {
         return ERR_NOT_FOUND;
     }
-    std::stringstream str;
-    str << p;
+    std::stringstream str(p);
     
     std::string buf;
     while (std::getline(str, buf, ':')) {
