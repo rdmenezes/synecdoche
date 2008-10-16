@@ -207,7 +207,8 @@ int ACTIVE_TASK::init(RESULT* rp) {
     max_disk_usage = rp->wup->rsc_disk_bound;
     max_mem_usage = rp->wup->rsc_memory_bound;
     get_slot_dir(slot, slot_dir, sizeof(slot_dir));
-    relative_to_absolute(slot_dir, slot_path);
+    std::string buf = relative_to_absolute(slot_dir);
+    strlcpy(slot_path, buf.c_str(), sizeof(slot_path));
     return 0;
 }
 

@@ -171,7 +171,6 @@ void AUTO_UPDATE::install() {
     unsigned int i;
     FILE_INFO* fip=0;
     char version_dir[1024];
-    char cwd[256];
     char *argv[10];
     int retval, argc;
 #ifdef _WIN32
@@ -195,7 +194,9 @@ void AUTO_UPDATE::install() {
         return;
     }
     boinc_version_dir(*project, version, version_dir);
-    boinc_getcwd(cwd);
+    std::string cwd_str = boinc_getcwd();
+    char* cwd = new char[cwd_str.size() + 1];
+    strcpy(cwd, cwd_str.c_str());
     argv[0] = fip->name;
     argv[1] = "--install_dir";
     argv[2] = cwd;
@@ -203,6 +204,7 @@ void AUTO_UPDATE::install() {
     argv[4] = 0;
     argc = 4;
     retval = run_program(version_dir, fip->name, argc, argv, 5, pid);
+    delete[] cwd;
     if (retval) {
         msg_printf(NULL, MSG_INTERNAL_ERROR,
             "Couldn't launch updater; staying with current version"

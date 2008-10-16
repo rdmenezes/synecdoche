@@ -215,8 +215,8 @@ int CLIENT_STATE::init() {
         msg_printf(NULL, MSG_INFO, "Running as a daemon");
     }
 
-    relative_to_absolute("", buf);
-    msg_printf(NULL, MSG_INFO, "Data directory: %s", buf);
+    std::string data_dir = relative_to_absolute("");
+    msg_printf(NULL, MSG_INFO, "Data directory: %s", data_dir.c_str());
 
 #ifdef _WIN32
     DWORD  buf_size = sizeof(buf);
@@ -740,10 +740,10 @@ int CLIENT_STATE::link_app_version(PROJECT* p, APP_VERSION* avp) {
         }
 
         if (!strcmp(file_ref.open_name, GRAPHICS_APP_FILENAME)) {
-            char relpath[512], path[512];
+            char relpath[512];
             get_pathname(fip, relpath, sizeof(relpath));
-            relative_to_absolute(relpath, path);
-            strlcpy(avp->graphics_exec_path, path, sizeof(avp->graphics_exec_path));
+            std::string path = relative_to_absolute(relpath);
+            strlcpy(avp->graphics_exec_path, path.c_str(), sizeof(avp->graphics_exec_path));
         }
 
         // any file associated with an app version must be signed
