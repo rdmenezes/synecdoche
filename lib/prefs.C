@@ -57,6 +57,7 @@ void GLOBAL_PREFS_MASK::set_all() {
     dont_verify_images = true;
     work_buf_min_days = true;
     work_buf_additional_days = true;
+    max_cpus = true;
     max_ncpus_pct = true;
     cpu_scheduling_period_minutes = true;
     disk_interval = true;
@@ -87,6 +88,7 @@ bool GLOBAL_PREFS_MASK::are_prefs_set() {
     if (dont_verify_images) return true;
     if (work_buf_min_days) return true;
     if (work_buf_additional_days) return true;
+    if (max_cpus) return true;
     if (max_ncpus_pct) return true;
     if (cpu_scheduling_period_minutes) return true;
     if (disk_interval) return true;
@@ -278,6 +280,7 @@ void GLOBAL_PREFS::defaults() {
     dont_verify_images = false;
     work_buf_min_days = 0.1;
     work_buf_additional_days = 0.25;
+    max_cpus = 16;
     max_ncpus_pct = 100;
     cpu_scheduling_period_minutes = 60;
     disk_interval = 60;
@@ -395,6 +398,9 @@ int GLOBAL_PREFS::parse_override(
 
     found_venue = false;
     mask.clear();
+    // Reset max_ncpus_pct to zero, because absence of this preference means use max_cpus,
+    // and not use the default, which is 100%.
+    max_ncpus_pct = 0;
 
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!is_tag) continue;
@@ -421,6 +427,7 @@ int GLOBAL_PREFS::parse_override(
                     defaults();
                     clear_bools();
                     mask.clear();
+                    max_ncpus_pct = 0;
                     in_correct_venue = true;
                     found_venue = true;
                 } else {
@@ -502,8 +509,14 @@ int GLOBAL_PREFS::parse_override(
             mask.work_buf_additional_days = true;
             continue;
         }
+        if (xp.parse_int(tag, "max_cpus", max_cpus)) {
+            if (max_cpus < 1) max_cpus = 1;
+            mask.max_cpus = true;
+            continue;
+        }
         if (xp.parse_double(tag, "max_ncpus_pct", max_ncpus_pct)) {
-            if (max_ncpus_pct <= 0) max_ncpus_pct = 100;
+            // If this is zero, max_cpus will take precedence.
+            if (max_ncpus_pct < 0) max_ncpus_pct = 0;
             if (max_ncpus_pct > 100) max_ncpus_pct = 100;
             mask.max_ncpus_pct = true;
             continue;
@@ -613,6 +626,7 @@ int GLOBAL_PREFS::write(MIOFILE& f) {
         "%s%s%s%s"
         "   <work_buf_min_days>%f</work_buf_min_days>\n"
         "   <work_buf_additional_days>%f</work_buf_additional_days>\n"
+        "   <max_cpus>%d</max_cpus>\n"
         "   <max_ncpus_pct>%f</max_ncpus_pct>\n"
         "   <cpu_scheduling_period_minutes>%f</cpu_scheduling_period_minutes>\n"
         "   <disk_interval>%f</disk_interval>\n"
@@ -640,6 +654,7 @@ int GLOBAL_PREFS::write(MIOFILE& f) {
         dont_verify_images?"   <dont_verify_images/>\n":"",
         work_buf_min_days,
         work_buf_additional_days,
+        max_cpus,
         max_ncpus_pct,
         cpu_scheduling_period_minutes,
         disk_interval,
@@ -743,6 +758,9 @@ int GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
     if (mask.work_buf_additional_days) {
         f.printf("   <work_buf_additional_days>%f</work_buf_additional_days>\n", work_buf_additional_days);
     }
+    if (mask.max_cpus) {
+        f.printf("   <max_cpus>%d</max_cpus>\n", max_cpus);
+    }
     if (mask.max_ncpus_pct) {
         f.printf("   <max_ncpus_pct>%f</max_ncpus_pct>\n", max_ncpus_pct);
     }
@@ -800,6 +818,25 @@ int GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
     }
     f.printf("</global_preferences>\n");
     return 0;
+}
+
+
+/// The new percentage preference for CPUs is given precedence, but if that 
+/// isn't specified then the exact limit is used. The maximum is never less
+/// than 1.
+/// \param[in] availableCPUs Total number of CPUs available (need not represent real CPUs).
+/// \return The maximum number of CPUs that may be used.
+int GLOBAL_PREFS::GetMaxCPUs(int availableCPUs) const {
+
+    if (max_ncpus_pct > 0) {
+        availableCPUs = static_cast<int>((availableCPUs * max_ncpus_pct) / 100);
+    } else if (max_cpus < availableCPUs) {
+        availableCPUs = max_cpus;
+    }
+    if (availableCPUs < 1) {
+        availableCPUs = 1;
+    }
+    return availableCPUs;
 }
 
 const char *BOINC_RCSID_3fb442bb02 = "$Id: prefs.C 14664 2008-02-03 21:46:30Z davea $";
