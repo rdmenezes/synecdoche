@@ -24,25 +24,38 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/15801 15801]||Already fixed in r152. Correctly!||
 ||[http://boinc.berkeley.edu/trac/changeset/15808 15808]||Already fixed in r194.||
 ||[http://boinc.berkeley.edu/trac/changeset/15850 15850]||Proposed async solution is not typesafe. Grid view was already fixed (removed).||
+||[http://boinc.berkeley.edu/trac/changeset/15891 15891]||Useless and already fixed correctly||
+||[http://boinc.berkeley.edu/trac/changeset/15920 15920]||Already fixed in r265.||
+||[http://boinc.berkeley.edu/trac/changeset/15942 15942]||Already fixed in r265.||
+||[http://boinc.berkeley.edu/trac/changeset/15944 15944]||Already fixed in r236.||
+||[http://boinc.berkeley.edu/trac/changeset/15948 15948]||Already fixed in r298.||
 
 `*` These changesets may still be needed.
 
 == Pending merge ==
 
-15756
-15757
-15759 missing copyrights
-15764 API
-15767 Need to review this mess carefully.
-15809/15811/15812
-15820
-15827 Screensaver stuff hidden in there.
-15831 Manifest files?
-15834/15873 We can't possibly need this.
-15840/15874/15877/15885 Screensaver mess
-15865
-15886
-15891/15893/15894 This may be moot.
+||15756||||
+||15757||||
+||15759||missing copyrights||
+||15764||API||
+||15767||Need to review this mess carefully.||
+||15809/15811/15812||||
+||15820||||
+||15827||Screensaver stuff hidden in there.||
+||15831||Manifest files?||
+||15834/15873||We can't possibly need this.||
+||15840/15874/15877/15885/15967||Screensaver mess||
+||15865||||
+||15886||||
+||15929||Precompiled headers work for the manager, but do they work for the client/lib/etc (windows only)?||
+||15954||XML fixes for APP_INIT_DATA||
+||15945||Do we need the screensaver stuff? The other fix is already applied.||
+||15946||Localization updates||
+||15955/15957/15958/15960/15961/15963/15965||Code signing stuff.||
+||15959/15964/15966||MGR: Save and restore selected items by key values when refreshing||
+||15970/15978/15981/15990/15991/15993/15994/15995/15996||Flickering of the MGR - do we need these fixes? Do they even work?||
+||15976||MGR: Make formatting of List Views more efficient||
+||15987||MGR: Simple GUI fixes||
+||15998/15999||MGR: Simplify Message display logic; fix possible memory leaks; fix button tooltip||
 
-
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/15900 15900]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16000 16000]
