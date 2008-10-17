@@ -1432,21 +1432,23 @@ void RESULT::set_state(int val, const char* where) {
 // and when general prefs have been parsed
 //
 void CLIENT_STATE::set_ncpus() {
-    int ncpus_old = ncpus;
+    int inUse = ncpus;
+    int availableCPUs = 1;
 
-    if (config.ncpus>0) {
-        ncpus = config.ncpus;
-    } else if (host_info.p_ncpus>0) {
-        ncpus = (int)((host_info.p_ncpus * global_prefs.max_ncpus_pct)/100);
-        if (ncpus == 0) ncpus = 1;
-    } else {
-        ncpus = 1;
+    if (config.ncpus > 0) {
+        // Pretend we have a different CPU count:
+        availableCPUs = config.ncpus;
+    } else if (host_info.p_ncpus > 0) {
+        availableCPUs = host_info.p_ncpus;
     }
 
-    if (initialized && ncpus != ncpus_old) {
+    // Restricts CPUs according to preferences:
+    ncpus = gstate.global_prefs.GetMaxCPUs(availableCPUs);
+
+    if (initialized && (ncpus != inUse)) {
         msg_printf(0, MSG_INFO,
             "Number of usable CPUs has changed from %d to %d.  Running benchmarks.",
-            ncpus_old, ncpus
+            inUse, ncpus
         );
         run_cpu_benchmarks = true;
         request_schedule_cpus("Number of usable CPUs has changed");
