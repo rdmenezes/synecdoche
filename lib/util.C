@@ -428,6 +428,9 @@ int get_exit_status(HANDLE pid_handle) {
             if (status == STILL_ACTIVE) {
                 boinc_sleep(1);
             }
+            else {
+                break;
+            }
         }
     }
     return (int) status;
