@@ -19,6 +19,7 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+#include "proc_control.h"
 #else
 #include "config.h"
 #include <unistd.h>
@@ -364,7 +365,14 @@ int CLIENT_STATE::init() {
 
 #ifdef SANDBOX
     get_project_gid();
-#endif
+#endif // SANDBOX
+
+#ifdef _WIN32
+    get_sandbox_account_service_token();
+    if (sandbox_account_service_token) {
+        g_use_sandbox = true;
+    }
+#endif // _WIN32
 
     check_file_existence();
 
