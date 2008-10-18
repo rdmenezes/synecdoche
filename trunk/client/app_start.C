@@ -361,9 +361,6 @@ int ACTIVE_TASK::start(bool first_time) {
 #ifdef _WIN32
     std::string cmd_line;
     std::string slotdirpath;
-
-    get_sandbox_account_service_token();
-        // do this first because it affects how we create shmem seg
 #else
     // Needs to be defined here because those gotos would skip the
     // initialization of 'cmdline' and 'argv' if it would be defined later.
