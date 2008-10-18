@@ -40,11 +40,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 || *Changesets* || *Additional comments* ||
 ||15756||||
-||15757||||
 ||15759||missing copyrights||
 ||15764||API||
 ||15767||Need to review this mess carefully.||
-||15809/15811/15812||||
 ||15820||||
 ||15827||Screensaver stuff hidden in there.||
 ||15831||Manifest files?||
