@@ -30,9 +30,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/15944 15944]||Already fixed in r236.||
 ||[http://boinc.berkeley.edu/trac/changeset/15948 15948]||Already fixed in r298.||
 ||[http://boinc.berkeley.edu/trac/changeset/16029 16029]||WCG "feature" for the wizards. No need for that.||
-||[http://boinc.berkeley.edu/trac/changeset/16061 16061]||Exclude list for proxy. Usefull feature but bad implementation.`*` Additional changesets: 16066||
+||[http://boinc.berkeley.edu/trac/changeset/16061 16061]||Exclude list for proxy. Useful feature but bad implementation.`*` Additional changesets: 16066||
 ||[http://boinc.berkeley.edu/trac/changeset/16087 16087]||"exclusive app" feature.`*` Additional changesets: 16084/16085/16090||
-||[http://boinc.berkeley.edu/trac/changeset/16095 16095]||RPC calls are not obsolute just because the official manager does not use them any more.||
+||[http://boinc.berkeley.edu/trac/changeset/16095 16095]||RPC calls are not obsolete just because the official manager does not use them any more.||
 
 `*` These changesets may still be needed.
 
@@ -65,7 +65,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||16003||Is this used by the client or does this belong to the server?||
 ||16014/16016||Mac installer for GridRepublic - do we support this?||
 ||16028/16096||"Improvements" for the "XML parser"||
-||16038||Fix for boinc_exit()||
+||16038||Fix for boinc_exit() (API, we don't need this)||
 ||16098||Performance improvement already applied in r422, but the other fix may still be needed.||
 ||16099/16100||Mac build updates||
 
