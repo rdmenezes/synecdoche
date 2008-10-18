@@ -254,17 +254,17 @@ void extract_venue(const char* in, const char* venue_name, char* out) {
         //
         q = in;
         strcpy(out, "");
-       	while (1) {
-           	p = strstr(q, "<venue");
-           	if (!p) {
-       	        strcat(out, q);
+        while (1) {
+            p = strstr(q, "<venue");
+            if (!p) {
+                strcat(out, q);
                 break;
             }
-           	strncat(out, q, p-q);
-           	q = strstr(p, "</venue>");
-           	if (!q) break;
-           	q += strlen("</venue>");
-       	}
+            strncat(out, q, p-q);
+            q = strstr(p, "</venue>");
+            if (!q) break;
+            q += strlen("</venue>");
+        }
     }
 }
 
@@ -685,27 +685,27 @@ bool XML_PARSER::parse_start(const char* start_tag) {
 /// The copied text may include XML tags.
 /// strips whitespace.
 int XML_PARSER::element_contents(const char* end_tag, char* buf, int buflen) {
-	int n=0;
-	int retval=0;
+    int n=0;
+    int retval=0;
     while (1) {
-		if (n == buflen-1) {
-			retval = ERR_XML_PARSE;
-			break;
-		}
+        if (n == buflen-1) {
+            retval = ERR_XML_PARSE;
+            break;
+        }
         int c = f->_getc();
-		if (c == EOF) {
-			retval = ERR_XML_PARSE;
-			break;
-		}
-		buf[n++] = c;
-		buf[n] = 0;
-		char* p = strstr(buf, end_tag);
-		if (p) {
-			*p = 0;
-			break;
-		}
+        if (c == EOF) {
+            retval = ERR_XML_PARSE;
+            break;
+        }
+        buf[n++] = c;
+        buf[n] = 0;
+        char* p = strstr(buf, end_tag);
+        if (p) {
+            *p = 0;
+            break;
+        }
     }
-	buf[n] = 0;
+    buf[n] = 0;
     strip_whitespace(buf);
     return retval;
 }
