@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -92,7 +92,7 @@ static bool boinc_cleanup_completed = false;
 ///
 void show_message(const PROJECT *p, const char* msg, int priority) {
     const char* x;
-    char message[1024];
+
     time_t now = time(0);
     std::string time_string = time_to_string((double)now);
 #if defined(WIN32) && defined(_CONSOLE)
@@ -102,14 +102,17 @@ void show_message(const PROJECT *p, const char* msg, int priority) {
     // Cycle the log files if we need to
     diagnostics_cycle_logs();
 
+    std::string message(msg);
     if (priority == MSG_INTERNAL_ERROR) {
-        strcpy(message, "[error] ");
-        strlcpy(message+8, msg, sizeof(message)-8);
-    } else {
-        strlcpy(message, msg, sizeof(message));
+        message.insert(0, "[error] ");
     }
-    while (strlen(message)&&message[strlen(message)-1] == '\n') {
-        message[strlen(message)-1] = 0;
+
+    // Trim trailing \n's:
+    std::string::size_type pos = message.find_last_not_of('\n');
+    if (pos == std::string::npos) {
+        message.clear();
+    } else if (pos < message.length() - 1) {
+        message.erase(pos + 1);
     }
 
     if (p) {
@@ -118,15 +121,16 @@ void show_message(const PROJECT *p, const char* msg, int priority) {
         x = "---";
     }
 
-    record_message(p, priority, (int)now, message);
+    record_message(p, priority, (int)now, message.c_str());
 
-    printf("%s [%s] %s\n", time_string.c_str(), x, message);
-    if (gstate.executing_as_daemon) {
+    printf("%s [%s] %s\n", time_string.c_str(), x, message.c_str());
+
 #if defined(WIN32) && defined(_CONSOLE)
-        stprintf(event_message, TEXT("%s [%s] %s\n"), time_string,  x, message);
+    if (gstate.executing_as_daemon) {
+        stprintf(event_message, TEXT("%s [%s] %s\n"), time_string,  x, message.c_str());
         ::OutputDebugString(event_message);
-#endif
     }
+#endif
 }
 
 #ifdef WIN32

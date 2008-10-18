@@ -24,8 +24,7 @@
 #include <deque>
 #endif
 
-using std::deque;
-
+#include "str_util.h"
 #include "log_flags.h"
 #include "client_types.h"
 #include "client_msgs.h"
@@ -34,7 +33,7 @@ using std::deque;
 
 /// a dequeue of up to MAX_SAVED_MESSAGES most recent messages,
 /// stored in newest-first order.
-deque<MESSAGE_DESC*> message_descs;
+std::deque<MESSAGE_DESC*> message_descs;
 
 /// Takes a printf style formatted string, inserts the proper values,
 /// and passes it to show_message.
@@ -46,19 +45,20 @@ void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) {
     if (fmt == NULL) return;
 
     va_start(ap, fmt); // Parses string for variables
-    vsprintf(buf, fmt, ap); // And convert symbols To actual numbers
+    vsnprintf(buf, sizeof(buf), fmt, ap); // And convert symbols To actual numbers
+    buf[sizeof(buf) - 1] = 0;
     va_end(ap); // Results are stored in text
-
+    
     show_message(p, buf, priority);
 }
 
-/// stash message in memory
+/// Add message to cache and delete old messages if the cache gets too big.
 void record_message(const PROJECT* p, int priority, int now, const char* message) {
     MESSAGE_DESC* mdp = new MESSAGE_DESC;
     static int seqno = 1;
     strcpy(mdp->project_name, "");
     if (p) {
-        strcpy(mdp->project_name, p->get_project_name());
+        strlcpy(mdp->project_name, p->get_project_name(), sizeof(mdp->project_name));
     }
     mdp->priority = priority;
     mdp->timestamp = now;
