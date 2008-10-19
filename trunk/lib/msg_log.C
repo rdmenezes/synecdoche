@@ -201,5 +201,3 @@ void SCOPE_MSG_LOG::printf_file(
     messages.vprintf_file(kind, filename, prefix_format, va);
     va_end(va);
 }
-
-const char *BOINC_RCSID_2e9a7d8610 = "$Id: msg_log.C 14679 2008-02-05 21:26:43Z davea $";

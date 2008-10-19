@@ -358,7 +358,7 @@ int initialize() {
 #ifdef _WIN32
     g_hClientLibraryDll = LoadLibrary("synecdoche.dll");
     if(!g_hClientLibraryDll) {
-        stprintf(event_message, 
+        stprintf(event_message,
             TEXT("Synecdoche Daemon Error Message\n"
                  "Failed to initialize the Synecdoche Client Library.\n"
                  "Load failed: %s\n"), windows_error_string(event_message, sizeof(event_message))
@@ -374,7 +374,7 @@ int initialize() {
     if (!config.allow_multiple_clients) {
         retval = wait_client_mutex(".", 10);
         if (retval) {
-            fprintf(stderr, 
+            fprintf(stderr,
                 "Another instance of Synecdoche is running\n"
             );
 #ifdef _WIN32
@@ -417,7 +417,7 @@ int initialize() {
         fnClientLibraryStartup = (ClientLibraryStartup)GetProcAddress(g_hClientLibraryDll, _T("ClientLibraryStartup"));
         if(fnClientLibraryStartup) {
             if(!fnClientLibraryStartup()) {
-                stprintf(event_message, 
+                stprintf(event_message,
                     TEXT("Synecdoche Daemon Error Message\n"
                         "Failed to initialize the Synecdoche Idle Detection Interface.\n"
                         "Synecdoche will not be able to determine if the user is idle or not...\n"
@@ -437,7 +437,7 @@ int initialize() {
 
 int boinc_main_loop() {
     int retval;
-    
+
     retval = initialize();
     if (retval) return retval;
 
@@ -521,7 +521,7 @@ int finalize() {
             fnClientLibraryShutdown();
         }
         if(!FreeLibrary(g_hClientLibraryDll)) {
-            stprintf(event_message, 
+            stprintf(event_message,
                 TEXT("Synecdoche Daemon Error Message\n"
                     "Failed to cleanup the Synecdoche Idle Detection Interface\n"
                     "Unload failed: %s\n"
@@ -539,7 +539,7 @@ int finalize() {
 
 #ifdef USE_WINSOCK
     if (WinsockCleanup()) {
-        stprintf(event_message, 
+        stprintf(event_message,
             TEXT("Synecdoche Daemon Error Message\n"
                 "Failed to cleanup the Windows Sockets interface\n"
                 "Unload failed: %s\n"
@@ -630,7 +630,7 @@ int main(int argc, char** argv) {
 #else
     // non-Apple Unix
     int i;
-    
+
     for (i=1; i<argc; i++) {
         if (strcmp(argv[i], "-daemon") == 0 || strcmp(argv[i], "--daemon") == 0) {
             syslog(LOG_DAEMON|LOG_INFO,

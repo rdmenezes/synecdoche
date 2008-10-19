@@ -28,9 +28,9 @@
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
 #include "WizardAccountManager.h"
- 
+
 IMPLEMENT_DYNAMIC_CLASS(CWelcomePage, wxWizardPage)
- 
+
 BEGIN_EVENT_TABLE(CWelcomePage, wxWizardPage)
     EVT_WIZARD_PAGE_CHANGED(-1, CWelcomePage::OnPageChanged)
     EVT_WIZARD_PAGE_CHANGING(-1, CWelcomePage::OnPageChanging)
@@ -38,22 +38,22 @@ BEGIN_EVENT_TABLE(CWelcomePage, wxWizardPage)
     EVT_SET_FOCUS(CWelcomePage::OnSetFocus)
     EVT_SHOW(CWelcomePage::OnShow)
 END_EVENT_TABLE()
- 
+
 /*!
  * CWelcomePage constructors
  */
- 
+
 CWelcomePage::CWelcomePage() {
 }
- 
+
 CWelcomePage::CWelcomePage(CBOINCBaseWizard* parent) {
     Create(parent);
 }
- 
+
 /*!
  * WizardPage creator
  */
- 
+
 bool CWelcomePage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pDescriptionStaticCtrl = NULL;
@@ -80,11 +80,11 @@ bool CWelcomePage::Create(CBOINCBaseWizard* parent) {
 
     return TRUE;
 }
- 
+
 /*!
  * Control creation for WizardPage
  */
- 
+
 void CWelcomePage::CreateControls() {    
     CWelcomePage* itemWizardPage2 = this;
 
@@ -175,15 +175,15 @@ void CWelcomePage::CreateControls() {
 /*!
  * Gets the previous page.
  */
- 
+
 wxWizardPage* CWelcomePage::GetPrev() const {
     return NULL;
 }
- 
+
 /*!
  * Gets the next page.
  */
- 
+
 wxWizardPage* CWelcomePage::GetNext() const {
     if (CHECK_CLOSINGINPROGRESS()) {
         // Cancel Event Detected
@@ -200,11 +200,11 @@ wxWizardPage* CWelcomePage::GetNext() const {
     }
     return NULL;
 }
- 
+
 /*!
  * Should we show tooltips?
  */
- 
+
 bool CWelcomePage::ShowToolTips() {
     return TRUE;
 }
@@ -212,23 +212,23 @@ bool CWelcomePage::ShowToolTips() {
 /*!
  * Get bitmap resources
  */
- 
+
 wxBitmap CWelcomePage::GetBitmapResource(const wxString& WXUNUSED(name)) {
     return wxNullBitmap;
 }
- 
+
 /*!
  * Get icon resources
  */
- 
+
 wxIcon CWelcomePage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
 }
-   
+
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_WELCOMEPAGE
  */
- 
+
 void CWelcomePage::OnPageChanged(wxWizardEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CWelcomePage::OnPageChanged - Function Begin"));
     if (event.GetDirection() == false) return;
@@ -281,7 +281,7 @@ void CWelcomePage::OnPageChanged(wxWizardEvent& event) {
             m_pTitleStaticCtrl->SetLabel(_("Attach to project"));
             m_pDescriptionStaticCtrl->SetLabel(
                 _("We'll now guide you through the process of attaching\n"
-			      "to a project.")
+                  "to a project.")
             );
         }
     } else if (CheckWizardTypeByPage<CWizardAccountManager>(this)) {
@@ -300,9 +300,9 @@ void CWelcomePage::OnPageChanged(wxWizardEvent& event) {
             m_pDescriptionStaticCtrl->SetLabel(
                 _("We'll now guide you through the process of attaching\n"
                   "to an account manager.\n\n"
-			      "If you want to attach to a single project, click Cancel,\n"
-			      "then select the 'Attach to project' menu item instead."
-			    )
+                  "If you want to attach to a single project, click Cancel,\n"
+                  "then select the 'Attach to project' menu item instead."
+                )
             );
         }
     } else {
@@ -328,16 +328,16 @@ void CWelcomePage::OnPageChanged(wxWizardEvent& event) {
     Fit();
     wxLogTrace(wxT("Function Start/End"), wxT("CWelcomePage::OnPageChanged - Function End"));
 }
-  
+
 /*!
  * wxEVT_WIZARD_PAGE_CHANGING event handler for ID_WELCOMEPAGE
  */
 
 void CWelcomePage::OnPageChanging(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
- 
+
     unsigned long ulFlags = 0;
- 
+
 #if defined(__WIZ_DEBUG__)
     if (m_pErrProjectPropertiesCtrl->GetValue()) {
         ulFlags |= WIZDEBUG_ERRPROJECTPROPERTIES;
@@ -373,11 +373,11 @@ void CWelcomePage::OnPageChanging(wxWizardEvent& event) {
  
     PROCESS_DEBUG_FLAG(ulFlags);
 }
-  
+
 /*!
  * wxEVT_WIZARD_CANCEL event handler for ID_WELCOMEPAGE
  */
- 
+
 void CWelcomePage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }
@@ -386,7 +386,7 @@ void CWelcomePage::OnCancel(wxWizardEvent& event) {
 /*!
  * wxEVT_SET_FOCUS event handler for ID_WELCOMEPAGE
  */
- 
+
 void CWelcomePage::OnSetFocus(wxFocusEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CWelcomePage::OnSetFocus - Function Begin"));
     event.Skip();    

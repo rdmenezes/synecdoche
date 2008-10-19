@@ -126,9 +126,9 @@ char* next_arg(int argc, char** argv, int& i) {
 
 /// If there's a password file, read it
 void read_password_from_file(char* buf) {
-	FILE* f = fopen("gui_rpc_auth.cfg", "r");
-	if (!f) return;
-	char* p = fgets(buf, 256, f);
+    FILE* f = fopen("gui_rpc_auth.cfg", "r");
+    if (!f) return;
+    char* p = fgets(buf, 256, f);
         if (p) {                // Fixes compiler warning
             int n = (int)strlen(buf);
 
@@ -137,22 +137,22 @@ void read_password_from_file(char* buf) {
             if (n && buf[n-1]=='\n') {
                     buf[n-1] = 0;
             }
-	}
-	fclose(f);
+    }
+    fclose(f);
 }
 
 int main(int argc, char** argv) {
     RPC_CLIENT rpc;
     int i, retval, port=0;
     MESSAGES messages;
-	char passwd_buf[256], hostname_buf[256], *hostname=0;
+    char passwd_buf[256], hostname_buf[256], *hostname=0;
     char* passwd = passwd_buf, *p;
 
 #ifdef _WIN32
     chdir_to_data_dir();
 #endif
-	strcpy(passwd_buf, "");
-	read_password_from_file(passwd_buf);
+    strcpy(passwd_buf, "");
+    read_password_from_file(passwd_buf);
 
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSADATA wsdata;
@@ -515,5 +515,3 @@ int main(int argc, char** argv) {
 #endif
     exit(retval);
 }
-
-const char *BOINC_RCSID_77f00010ab = "$Id: boinc_cmd.C 15272 2008-05-22 03:57:55Z davea $";

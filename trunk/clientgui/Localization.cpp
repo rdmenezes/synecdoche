@@ -22,7 +22,7 @@
 
 CLocalization::CLocalization() {
 
-	// SETI@home
+    // SETI@home
     m_strSAHMessageBoardsName =
         _("Message boards");
     m_strSAHMessageBoardsDescription =
@@ -52,7 +52,7 @@ CLocalization::CLocalization() {
     m_strSAHYourTeamDescription =
         _("View information about your team");
 
-	// Einstein@home
+    // Einstein@home
     m_strEAHCommonQuestionsName =
         _("Common questions");
     m_strEAHCommonQuestionsDesc =
@@ -65,7 +65,7 @@ CLocalization::CLocalization() {
         _("Message boards");
     m_strEAHMessageBoardsDesc =
         _("Correspond with admins and other users on the Einstein@Home message boards");
-	m_strEAHEinsteinStatusName =
+    m_strEAHEinsteinStatusName =
         _("Einstein status");
     m_strEAHEinsteinStatusDesc =
         _("Current status of the Einstein@Home server");
@@ -77,7 +77,7 @@ CLocalization::CLocalization() {
         _("Your account");
     m_strEAHYourAccountDesc =
         _("View and modify your Einstein@Home account profile and preferences");
-	m_strEAHAccountSummaryName =
+    m_strEAHAccountSummaryName =
         _("Account summary");
     m_strEAHAccountSummaryDesc =
         _("View your account information and credit totals");
@@ -85,7 +85,7 @@ CLocalization::CLocalization() {
         _("Your results");
     m_strEAHYourResultsDescription =
         _("View your last week (or more) of computational results and work");
-	m_strEAHYourComputersName =
+    m_strEAHYourComputersName =
         _("Your computers");
     m_strEAHYourComputersDesc =
         _("View a listing of all the computers on which you are running Einstein@Home");
@@ -93,7 +93,7 @@ CLocalization::CLocalization() {
         _("Your team");
     m_strEAHYourTeamDescription =
         _("View information about your team");
-	m_strEAHLIGOProjectName =
+    m_strEAHLIGOProjectName =
         _("LIGO project");
     m_strEAHLIGOProjectDesc =
         _("The home page of the Laser Interferometer Gravitational-wave Observatory (LIGO) project");
@@ -107,7 +107,7 @@ CLocalization::CLocalization() {
         _("Your account");
     m_strPAHYourAccountDesc =
         _("View your account information and credit totals");
-	m_strPAHTeamName =
+    m_strPAHTeamName =
         _("Team");
     m_strPAHTeamDesc =
         _("Info about your Team");
@@ -117,15 +117,15 @@ CLocalization::CLocalization() {
         _("Help");
     m_strCPDNHelpDesc =
         _("Get help for climateprediction.net");
-	m_strCPDNNewsName =
+    m_strCPDNNewsName =
         _("News");
     m_strCPDNNewsDesc =
         _("climateprediction.net News");
-	m_strCPDNYourAccountName =
+    m_strCPDNYourAccountName =
         _("Your account");
     m_strCPDNYourAccountDesc =
         _("View your account information, credits, and trickles");
-	m_strCPDNTeamName =
+    m_strCPDNTeamName =
         _("Team");
     m_strCPDNTeamDesc =
         _("Info about your team");
@@ -153,5 +153,3 @@ CLocalization::CLocalization() {
         _("Learn about the projects hosted at World Community Grid");
 
 }
-
-const char *BOINC_RCSID_4632804e37="$Id: Localization.cpp 13804 2007-10-09 11:35:47Z fthomas $";

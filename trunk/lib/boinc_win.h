@@ -48,7 +48,7 @@
 #endif
 
 #ifndef _WIN32_WINNT            // Allow use of features specific to Windows NT 4 or later.
-#define _WIN32_WINNT 0x0400		// Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
+#define _WIN32_WINNT 0x0400     // Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
 #endif
 
 #ifndef _WIN32_WINDOWS          // Allow use of features specific to Windows 98 or later.
@@ -83,7 +83,7 @@
 
 typedef size_t socklen_t;
 
-#else 
+#else
 
 /* Under cygwin, curl was probably compiled to use <sys/socket.h> */
 #include <unistd.h>
@@ -211,15 +211,15 @@ typedef LPCSTR PCTSTR, LPCTSTR, PCUTSTR, LPCUTSTR;
 #define vsnprintf               _vsnprintf
 #define snprintf                _snprintf
 #define stprintf                _stprintf
-#define stricmp					_stricmp
-#define strdup					_strdup
-#define fdopen					_fdopen
-#define dup						_dup
-#define unlink					_unlink
-#define read					_read
-#define stat					_stat
-#define chdir					_chdir
-#define finite					_finite
+#define stricmp                 _stricmp
+#define strdup                  _strdup
+#define fdopen                  _fdopen
+#define dup                     _dup
+#define unlink                  _unlink
+#define read                    _read
+#define stat                    _stat
+#define chdir                   _chdir
+#define finite                  _finite
 #define strdate                 _strdate
 #define strtime                 _strtime
 #define getcwd                  _getcwd

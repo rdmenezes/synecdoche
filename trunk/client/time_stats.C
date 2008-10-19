@@ -317,5 +317,3 @@ void TIME_STATS::log_append_net(int new_state) {
         break;
     }
 }
-
-const char *BOINC_RCSID_472504d8c2 = "$Id: time_stats.C 14811 2008-02-27 23:26:38Z davea $";

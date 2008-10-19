@@ -52,7 +52,7 @@ struct LOG_FLAGS {
     bool debt_debug;        ///< changes to debt
     bool task_debug;        ///< task start and control details
                             ///< also prints when apps checkpoint
-    bool work_fetch_debug;  ///< work fetch policy 
+    bool work_fetch_debug;  ///< work fetch policy
 
     bool unparsed_xml;      ///< show unparsed XML lines
     bool state_debug;       ///< print textual summary of CLIENT_STATE initially
@@ -69,10 +69,10 @@ struct LOG_FLAGS {
     bool poll_debug;        ///< show what polls are responding
     bool guirpc_debug;
     bool scrsave_debug;
-    bool app_msg_send;       ///< show shared-mem message to apps
-    bool app_msg_receive;    ///< show shared-mem message from apps
-	bool mem_usage_debug;	 ///< memory usage
-	bool network_status_debug;
+    bool app_msg_send;      ///< show shared-mem message to apps
+    bool app_msg_receive;   ///< show shared-mem message from apps
+    bool mem_usage_debug;   ///< memory usage
+    bool network_status_debug;
     bool checkpoint_debug;
 
     LOG_FLAGS();
@@ -83,7 +83,7 @@ struct LOG_FLAGS {
 
 struct CONFIG {
     bool dont_check_file_sizes;
-	bool http_1_0;
+    bool http_1_0;
     int save_stats_days;
     int ncpus;
     int max_file_xfers;

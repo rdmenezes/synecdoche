@@ -504,7 +504,7 @@ void escape_url_readable(const char *in, char* out) {
 /// \param[in,out] url The url that should get canonicalized.
 void canonicalize_master_url(std::string& url) {
     std::string buf(url);
-	bool bSSL = false; // keep track if they sent in https://
+    bool bSSL = false; // keep track if they sent in https://
 
     std::string::size_type pos = buf.find("://");
     if (pos != std::string::npos) {
@@ -543,19 +543,19 @@ void canonicalize_master_url(char* url) {
 bool valid_master_url(const char* buf) {
     const char *p, *q;
     size_t n;
-	bool bSSL = false;
+    bool bSSL = false;
 
     p = strstr(buf, "http://");
-	if (p != buf) {
-		// allow https
-	    p = strstr(buf, "https://");
-		if (p == buf) {
-			bSSL = true;
-		} else {
-			return false; // no http or https, it's bad!
-	    }
-	}
-	q = p+strlen(bSSL ? "https://" : "http://");
+    if (p != buf) {
+        // allow https
+        p = strstr(buf, "https://");
+        if (p == buf) {
+            bSSL = true;
+        } else {
+            return false; // no http or https, it's bad!
+        }
+    }
+    q = p+strlen(bSSL ? "https://" : "http://");
     p = strstr(q, ".");
     if (!p) return false;
     if (p == q) return false;
@@ -833,13 +833,13 @@ const char* boincerror(int which_error) {
 }
 
 const char* network_status_string(int n) {
-	switch (n) {
-	case NETWORK_STATUS_ONLINE: return "online";
-	case NETWORK_STATUS_WANT_CONNECTION: return "need connection";
-	case NETWORK_STATUS_WANT_DISCONNECT: return "don't need connection";
-	case NETWORK_STATUS_LOOKUP_PENDING: return "reference site lookup pending";
-	default: return "unknown";
-	}
+    switch (n) {
+    case NETWORK_STATUS_ONLINE: return "online";
+    case NETWORK_STATUS_WANT_CONNECTION: return "need connection";
+    case NETWORK_STATUS_WANT_DISCONNECT: return "don't need connection";
+    case NETWORK_STATUS_LOOKUP_PENDING: return "reference site lookup pending";
+    default: return "unknown";
+    }
 }
 
 const char* rpc_reason_string(int reason) {
@@ -925,5 +925,3 @@ char* windows_format_error_string(
     return pszBuf;
 }
 #endif
-
-const char *BOINC_RCSID_ab90e1e = "$Id: str_util.C 15423 2008-06-18 16:43:05Z davea $";

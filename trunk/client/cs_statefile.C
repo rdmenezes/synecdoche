@@ -155,7 +155,7 @@ int CLIENT_STATE::parse_state_file() {
                 );
                 delete app;
                 continue;
-		    }
+            }
             apps.push_back(app);
             continue;
         }
@@ -237,7 +237,7 @@ int CLIENT_STATE::parse_state_file() {
                 );
                 delete avp;
                 continue;
-            } 
+            }
             if (strlen(avp->platform) == 0) {
                 strcpy(avp->platform, get_primary_platform());
             } else {
@@ -457,7 +457,7 @@ int CLIENT_STATE::write_state_file() const {
 
     for (attempt=1; attempt<=MAX_STATE_FILE_WRITE_ATTEMPTS; attempt++) {
         if (attempt > 1) boinc_sleep(1.0);
-            
+
         if (log_flags.state_debug) {
             msg_printf(0, MSG_INFO,
                 "[status_debug] CLIENT_STATE::write_state_file(): Writing state file"
@@ -518,7 +518,7 @@ int CLIENT_STATE::write_state_file() const {
                     if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
                 }
             }
-            
+
             retval = boinc_rename(STATE_FILE_NAME, STATE_FILE_PREV);
             if (retval) {
                 if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
@@ -528,8 +528,8 @@ int CLIENT_STATE::write_state_file() const {
                         windows_error_string(win_error_msg, sizeof(win_error_msg))
                     );
 #else
-                    msg_printf(0, MSG_USER_ERROR, 
-                        "rename current state file to previous state file returned error %d: %s", 
+                    msg_printf(0, MSG_USER_ERROR,
+                        "rename current state file to previous state file returned error %d: %s",
                         errno, strerror(errno)
                     );
 #endif
@@ -545,7 +545,7 @@ int CLIENT_STATE::write_state_file() const {
             );
         }
         if (!retval) break;     // Success!
-        
+
          if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
 #ifdef _WIN32
             if (retval == ERROR_ACCESS_DENIED) {
@@ -559,9 +559,9 @@ int CLIENT_STATE::write_state_file() const {
                 );
             }
 #elif defined (__APPLE__)
-            msg_printf(0, MSG_USER_ERROR, 
+            msg_printf(0, MSG_USER_ERROR,
                 "Can't rename %s to %s; check file and directory permissions\n"
-                "rename returned error %d: %s", 
+                "rename returned error %d: %s",
                 STATE_FILE_NEXT, STATE_FILE_NAME, errno, strerror(errno)
             );
             if (log_flags.state_debug) {
@@ -824,7 +824,7 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) {
 
 int CLIENT_STATE::write_tasks_gui(MIOFILE& f) {
     unsigned int i;
-    
+
     for (i=0; i<results.size(); i++) {
         RESULT* rp = results[i];
         rp->write_gui(f);
@@ -848,5 +848,3 @@ int CLIENT_STATE::write_file_transfers_gui(MIOFILE& f) {
 
     return 0;
 }
-
-const char *BOINC_RCSID_375ec798cc = "$Id: cs_statefile.C 14994 2008-04-01 20:46:41Z davea $";

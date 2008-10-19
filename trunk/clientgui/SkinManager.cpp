@@ -93,8 +93,8 @@ wxColour CSkinItem::ParseColor(wxString strColor) {
     long red, green, blue;
     wxStringTokenizer tkz(strColor, wxT(":"), wxTOKEN_RET_EMPTY);
     wxString(tkz.GetNextToken()).ToLong(&red);
-	wxString(tkz.GetNextToken()).ToLong(&green);
-	wxString(tkz.GetNextToken()).ToLong(&blue);
+    wxString(tkz.GetNextToken()).ToLong(&green);
+    wxString(tkz.GetNextToken()).ToLong(&blue);
     return wxColour((unsigned char)red, (unsigned char)green, (unsigned char)blue);
 }
 
@@ -556,9 +556,9 @@ CSkinSimple::~CSkinSimple() {
 
 
 void CSkinSimple::Clear() {
-	m_BackgroundImage.Clear();
+    m_BackgroundImage.Clear();
     m_SpacerImage.Clear();
-	m_StaticLineColor = wxNullColour;
+    m_StaticLineColor = wxNullColour;
 
     m_StateIndicatorBackgroundImage.Clear();
     m_ConnectingIndicatorImage.Clear();

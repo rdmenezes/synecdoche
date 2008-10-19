@@ -1,5 +1,5 @@
 // Contributor(s):
-//		Craig Link, Microsoft Corp., Service Sample Template
+//      Craig Link, Microsoft Corp., Service Sample Template
 //
 
 #ifndef _WIN_SERVICE_H
@@ -25,15 +25,15 @@ extern "C" {
 #define SERVICE_ACCEPTED_ACTIONS  ( \
     SERVICE_ACCEPT_STOP | \
     SERVICE_ACCEPT_PAUSE_CONTINUE | \
-    SERVICE_ACCEPT_SHUTDOWN ) 
+    SERVICE_ACCEPT_SHUTDOWN )
 
 // Service Control Manager Routines
 VOID WINAPI service_main(DWORD dwArgc, LPTSTR *lpszArgv);
 VOID WINAPI service_ctrl(DWORD dwCtrlCode);
-BOOL		ReportStatus(DWORD dwCurrentState, DWORD dwWin32ExitCode, DWORD dwWaitHint);
-VOID		LogEventErrorMessage(LPTSTR lpszMsg);
-VOID		LogEventWarningMessage(LPTSTR lpszMsg);
-VOID		LogEventInfoMessage(LPTSTR lpszMsg);
+BOOL        ReportStatus(DWORD dwCurrentState, DWORD dwWin32ExitCode, DWORD dwWaitHint);
+VOID        LogEventErrorMessage(LPTSTR lpszMsg);
+VOID        LogEventWarningMessage(LPTSTR lpszMsg);
+VOID        LogEventInfoMessage(LPTSTR lpszMsg);
 
 #ifdef __cplusplus
 }

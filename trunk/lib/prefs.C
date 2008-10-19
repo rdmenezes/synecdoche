@@ -837,8 +837,3 @@ int GLOBAL_PREFS::GetMaxCPUs(int availableCPUs) const {
     }
     return availableCPUs;
 }
-
-const char *BOINC_RCSID_3fb442bb02 = "$Id: prefs.C 14664 2008-02-03 21:46:30Z davea $";
-
-
-

@@ -927,22 +927,22 @@ union headeru {
 int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     FILE *f;
     int result = 0;
-    
+
     headeru myHeader;
     fat_arch fatHeader;
-    
+
     uint32_t n, i, len;
     uint32_t theMagic;
     integer_t theType;
-    
+
     f = boinc_fopen(exec_path, "rb");
     if (!f) {
         return result;          // Should never happen
     }
-    
+
     myHeader.fat.magic = 0;
     myHeader.fat.nfat_arch = 0;
-    
+
     fread(&myHeader, 1, sizeof(fat_header), f);
     theMagic = myHeader.mach.magic;
     switch (theMagic) {
@@ -988,5 +988,3 @@ int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     return result;
 }
 #endif
-
-const char *BOINC_RCSID_be8bae8cbb = "$Id: app_start.C 15477 2008-06-26 03:50:03Z davea $";

@@ -511,6 +511,3 @@ wxIcon CDlgOptions::GetIconResource( const wxString& WXUNUSED(name) )
     return wxNullIcon;
 ////@end CDlgOptions icon retrieval
 }
-
-
-const char *BOINC_RCSID_5743f67054="$Id: DlgOptions.cpp 13804 2007-10-09 11:35:47Z fthomas $";

@@ -59,8 +59,8 @@ void get_pathname(const FILE_INFO* fip, char* path, int len) {
     //
     if (p) {
         get_project_dir(p, buf, sizeof(buf));
-	    snprintf(path, len, "%s/%s", buf, fip->name);
-	} else {
+        snprintf(path, len, "%s/%s", buf, fip->name);
+    } else {
         strlcpy(path, fip->name, len);
     }
 }
@@ -197,8 +197,8 @@ void delete_old_slot_dirs() {
 
         if (is_dir(path.c_str())) {
 #ifndef _WIN32
-            // If Synecdoche crashes or exits suddenly (e.g., due to 
-            // being called with --exit_after_finish) it may leave 
+            // If Synecdoche crashes or exits suddenly (e.g., due to
+            // being called with --exit_after_finish) it may leave
             // orphan shared memory segments in the system.
             // Clean these up here. (We must do this before deleting the
             // INIT_DATA_FILE, if any, from each slot directory.)

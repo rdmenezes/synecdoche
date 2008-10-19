@@ -156,11 +156,11 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         fprintf(f, "    <code_sign_key>\n%s</code_sign_key>\n", p->code_sign_key);
     }
 
-	// send working prefs
-	//
-	fprintf(f, "<working_global_preferences>\n");
-	global_prefs.write(mf);
-	fprintf(f, "</working_global_preferences>\n");
+    // send working prefs
+    //
+    fprintf(f, "<working_global_preferences>\n");
+    global_prefs.write(mf);
+    fprintf(f, "</working_global_preferences>\n");
 
     // send master global preferences if present and not host-specific
     //
@@ -319,8 +319,8 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
     bool action=false;
     static double last_time=0;
 
-	// check only every 5 sec
-	//
+    // check only every 5 sec
+    //
     if (now - last_time < 5.0) return false;
     last_time = now;
 
@@ -333,7 +333,7 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
 
         p = next_project_sched_rpc_pending();
         if (p) {
-			scheduler_op->init_op_project(p, p->sched_rpc_pending);
+            scheduler_op->init_op_project(p, p->sched_rpc_pending);
             action = true;
             break;
         }
@@ -344,7 +344,7 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
             action = true;
             break;
         }
-        
+
         // report overdue results
         //
         p = find_project_with_overdue_results();
@@ -484,7 +484,7 @@ int CLIENT_STATE::handle_scheduler_reply(
     if (sr.project_is_down) {
         if (sr.request_delay) {
             double x = now + sr.request_delay;
-			project->set_min_rpc_time(x, "project is down");
+            project->set_min_rpc_time(x, "project is down");
         }
         return ERR_PROJECT_DOWN;
     }
@@ -493,24 +493,24 @@ int CLIENT_STATE::handle_scheduler_reply(
     // insert extra elements, write to disk, and parse
     //
     if (sr.global_prefs_xml) {
-		// skip this if we have host-specific prefs
-		// and we're talking to an old scheduler
-		//
-		if (!global_prefs.host_specific || sr.scheduler_version >= 507) {
-			retval = save_global_prefs(
-				sr.global_prefs_xml, project->master_url, scheduler_url
-			);
-			if (retval) {
-				return retval;
-			}
-			update_global_prefs = true;
-		} else {
-			if (log_flags.sched_op_debug) {
-				msg_printf(project, MSG_INFO,
-					"ignoring prefs from old server; we have host-specific prefs"
-				);
-			}
-		}
+        // skip this if we have host-specific prefs
+        // and we're talking to an old scheduler
+        //
+        if (!global_prefs.host_specific || sr.scheduler_version >= 507) {
+            retval = save_global_prefs(
+                sr.global_prefs_xml, project->master_url, scheduler_url
+            );
+            if (retval) {
+                return retval;
+            }
+            update_global_prefs = true;
+        } else {
+            if (log_flags.sched_op_debug) {
+                msg_printf(project, MSG_INFO,
+                    "ignoring prefs from old server; we have host-specific prefs"
+                );
+            }
+        }
     }
 
     // see if we have a new venue from this project
@@ -859,5 +859,3 @@ int CLIENT_STATE::handle_scheduler_reply(
 
     return 0;
 }
-
-const char *BOINC_RCSID_d35a4a7711 = "$Id: cs_scheduler.C 15344 2008-06-01 03:43:47Z davea $";

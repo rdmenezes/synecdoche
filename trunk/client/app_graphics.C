@@ -56,7 +56,7 @@ void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
         // Restore mode from before screensaver
         m.mode = graphics_mode_before_ss;
     }
-    
+
     graphics_msg = m;       // save graphics_station, desktop, display
 
     strcpy(buf, xml_graphics_modes[m.mode]);
@@ -138,5 +138,3 @@ bool ACTIVE_TASK::supports_graphics() const {
     if (scheduler_state != CPU_SCHED_SCHEDULED) return false;
     return true;
 }
-
-const char *BOINC_RCSID_71e9cd9f4d = "$Id: app_graphics.C 13939 2007-10-24 00:44:42Z charlief $";

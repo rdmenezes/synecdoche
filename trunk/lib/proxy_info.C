@@ -105,5 +105,3 @@ void PROXY_INFO::clear() {
     strcpy(http_user_passwd, "");
     socks_version = 0;
 }
-
-const char *BOINC_RCSID_af13db88e5 = "$Id: proxy_info.C 14811 2008-02-27 23:26:38Z davea $";

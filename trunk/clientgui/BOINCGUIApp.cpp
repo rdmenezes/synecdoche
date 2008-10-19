@@ -529,13 +529,13 @@ void CBOINCGUIApp::InitSupportedLanguages() {
 
 // Set s_bSkipExitConfirmation to true if cancelled because of logging out or shutting down
 OSErr CBOINCGUIApp::QuitAppleEventHandler( const AppleEvent *appleEvt, AppleEvent* reply, UInt32 refcon ) {
-        DescType		senderType;
-        Size			actualSize;
-        ProcessSerialNumber	SenderPSN, ourPSN;
-        Boolean			isSame;
-        ProcessInfoRec		pInfo;
-        FSSpec			fileSpec;
-    OSStatus		anErr;
+        DescType            senderType;
+        Size                actualSize;
+        ProcessSerialNumber SenderPSN, ourPSN;
+        Boolean             isSame;
+        ProcessInfoRec      pInfo;
+        FSSpec              fileSpec;
+        OSStatus            anErr;
 
         // Refuse to quit if a modal dialog is open.  Search for the dialog 
         // by ID since all of BOINC Manager's dialog IDs are 10000.

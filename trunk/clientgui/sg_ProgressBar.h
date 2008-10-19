@@ -16,33 +16,32 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef _PROGRESSBAR_H_
-#define _PROGRESSBAR_H_ 
+#define _PROGRESSBAR_H_
 
 class ImageLoader;
 
 class CProgressBar : public wxPanel
-{ 
-public: 
-		int indicatorWidth;
-		int indicatorHeight;
-		int numOfIndic;
-		int rightPosition;
-	    int topPosition;
-		std::vector<ImageLoader*> m_progInd;
-	    /// Constructors
-	    CProgressBar(wxPanel* parent, wxPoint coord); 
-		void SetValue(double progress);
-		void ReskinInterface();
-		void LoadIndicators();
-private: 
-        
-		double m_progress;
-		int m_numOfProgressInd;
+{
+public:
+    int indicatorWidth;
+    int indicatorHeight;
+    int numOfIndic;
+    int rightPosition;
+    int topPosition;
+    std::vector<ImageLoader*> m_progInd;
+    /// Constructors
+    CProgressBar(wxPanel* parent, wxPoint coord); 
+    void SetValue(double progress);
+    void ReskinInterface();
+    void LoadIndicators();
+private:
 
-		void OnEraseBackground(wxEraseEvent& event);
+    double m_progress;
+    int m_numOfProgressInd;
 
-        DECLARE_EVENT_TABLE() 
-}; 
+    void OnEraseBackground(wxEraseEvent& event);
+
+    DECLARE_EVENT_TABLE()
+};
 
 #endif 
-

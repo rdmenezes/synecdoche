@@ -55,7 +55,7 @@ void MIOFILE::init_buf_read(const char* _buf) {
 void MIOFILE::init_buf_write(char* _buf, int _len) {
     wbuf = _buf;
     len = _len;
-	wbuf[0] = 0;
+    wbuf[0] = 0;
 }
 
 int MIOFILE::printf(const char* format, ...) {
@@ -136,5 +136,3 @@ int copy_element_contents(MIOFILE& in, const char* end_tag, string& str) {
     fprintf(stderr, "copy_element_contents(): no end tag\n");
     return ERR_XML_PARSE;
 }
-
-const char *BOINC_RCSID_37339d4dc0 = "$Id: miofile.C 14655 2008-01-31 18:34:51Z boincadm $";

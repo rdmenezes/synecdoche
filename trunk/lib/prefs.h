@@ -57,8 +57,8 @@ struct GLOBAL_PREFS_MASK {
     bool disk_max_used_pct;
     bool disk_min_free_gb;
     bool vm_max_used_frac;
-	bool ram_max_used_busy_frac;
-	bool ram_max_used_idle_frac;
+    bool ram_max_used_busy_frac;
+    bool ram_max_used_idle_frac;
     bool max_bytes_sec_up;
     bool max_bytes_sec_down;
     bool cpu_usage_limit;
@@ -152,8 +152,8 @@ struct GLOBAL_PREFS {
     double disk_max_used_pct;
     double disk_min_free_gb;
     double vm_max_used_frac;
-	double ram_max_used_busy_frac;
-	double ram_max_used_idle_frac;
+    double ram_max_used_busy_frac;
+    double ram_max_used_idle_frac;
     double max_bytes_sec_up;
     double max_bytes_sec_down;
     double cpu_usage_limit;

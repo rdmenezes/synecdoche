@@ -281,5 +281,3 @@ void ACCOUNT_OUT::print() const {
         printf("account key: %s\n", authenticator.c_str());
     }
 }
-
-const char *BOINC_RCSID_2bed1889d8="$Id: gui_rpc_client_print.C 15115 2008-05-01 22:11:08Z davea $";

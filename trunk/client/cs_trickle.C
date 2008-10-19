@@ -139,5 +139,3 @@ int CLIENT_STATE::handle_trickle_down(PROJECT* project, FILE* in) {
     }
     return ERR_XML_PARSE;
 }
-
-const char *BOINC_RCSID_acbefbad3d = "$Id: cs_trickle.C 14811 2008-02-27 23:26:38Z davea $";

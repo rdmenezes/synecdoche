@@ -109,16 +109,16 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
         break;
     default:
         for (i=0; i<rp->output_files.size(); i++) {
-			FILE_REF& fref = rp->output_files[i];
+            FILE_REF& fref = rp->output_files[i];
             fip = fref.file_info;
             if (fip->uploaded) continue;
             get_pathname(fip, path, sizeof(path));
             retval = file_size(path, size);
             if (retval) {
-				if (fref.optional) {
-					fip->upload_when_present = false;
-					continue;
-				}
+                if (fref.optional) {
+                    fip->upload_when_present = false;
+                    continue;
+                }
 
                 // an output file is unexpectedly absent.
                 //
@@ -303,5 +303,3 @@ ACTIVE_TASK* ACTIVE_TASK_SET::lookup_result(const RESULT* result) {
     }
     return NULL;
 }
-
-const char *BOINC_RCSID_7bf63ad771 = "$Id: cs_apps.C 14114 2007-11-07 19:32:32Z davea $";

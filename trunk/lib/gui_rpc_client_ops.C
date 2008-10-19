@@ -951,7 +951,7 @@ int ACCOUNT_OUT::parse(MIOFILE& in) {
 
 void ACCOUNT_OUT::clear() {
     error_num = 0;
-	error_msg = "";
+    error_msg = "";
     authenticator.clear();
 }
 
@@ -976,8 +976,8 @@ int CC_STATUS::parse(MIOFILE& in) {
         if (parse_int(buf, "<network_mode>", network_mode)) continue;
         if (parse_int(buf, "<task_mode_perm>", task_mode_perm)) continue;
         if (parse_int(buf, "<network_mode_perm>", network_mode_perm)) continue;
-		if (parse_double(buf, "<task_mode_delay>", task_mode_delay)) continue;
-		if (parse_double(buf, "<network_mode_delay>", network_mode_delay)) continue;
+        if (parse_double(buf, "<task_mode_delay>", task_mode_delay)) continue;
+        if (parse_double(buf, "<network_mode_delay>", network_mode_delay)) continue;
         if (parse_bool(buf, "disallow_attach", disallow_attach)) continue;
         if (parse_bool(buf, "simple_gui_only", simple_gui_only)) continue;
     }
@@ -994,8 +994,8 @@ void CC_STATUS::clear() {
     network_mode = -1;
     task_mode_perm = -1;
     network_mode_perm = -1;
-	task_mode_delay = 0;
-	network_mode_delay = 0;
+    task_mode_delay = 0;
+    network_mode_delay = 0;
     disallow_attach = false;
     simple_gui_only = false;
 }
@@ -2232,6 +2232,3 @@ int RPC_CLIENT::set_debts(const std::vector<PROJECT>& projects) {
     retval = rpc.do_rpc(s.c_str());
     return retval;
 }
-
-
-const char *BOINC_RCSID_90e8b8d168="$Id: gui_rpc_client_ops.C 15190 2008-05-13 19:52:35Z davea $";

@@ -200,15 +200,15 @@ extern void set_signal_exit_code(int);
 //   if it hasn't already been redirected.
 
 #ifndef BOINCASSERT
-#define BOINCASSERT			assert
+#define BOINCASSERT         assert
 #endif
 
 #ifndef BOINCTRACE
-#define BOINCTRACE			
+#define BOINCTRACE
 #endif
 
 #ifndef BOINCINFO
-#define BOINCINFO			boinc_info
+#define BOINCINFO           boinc_info
 #endif
 
 #endif

@@ -66,7 +66,7 @@ public:
     WORKUNIT* wup;
     APP_VERSION* app_version;
     PROCESS_ID pid;
-	PROCINFO procinfo;
+    PROCINFO procinfo;
 
     int slot;   ///< subdirectory of slots/ where this runs.
     inline int task_state() const {
@@ -162,7 +162,7 @@ public:
     }
 
     ACTIVE_TASK();
-	~ACTIVE_TASK();
+    ~ACTIVE_TASK();
     int init(RESULT*);
     void close_process_handles();
     void cleanup_task();

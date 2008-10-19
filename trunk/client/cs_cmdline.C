@@ -228,23 +228,21 @@ void CLIENT_STATE::parse_env_vars() {
         parse_url(p, proxy_info.socks_server_name, proxy_info.socks_server_port, temp);
     }
 
-	p = getenv("SOCKS_SERVER");
-	if (!p) p = getenv("SOCKS5_SERVER");
+    p = getenv("SOCKS_SERVER");
+    if (!p) p = getenv("SOCKS5_SERVER");
     if (p && strlen(p)) {
         proxy_info.use_socks_proxy = true;
         parse_url(p, proxy_info.socks_server_name, proxy_info.socks_server_port, temp);
     }
 
-	p = getenv("SOCKS5_USER");
-	if (!p) p = getenv("SOCKS_USER");
+    p = getenv("SOCKS5_USER");
+    if (!p) p = getenv("SOCKS_USER");
     if (p) {
         safe_strcpy(proxy_info.socks5_user_name, p);
     }
 
-	p = getenv("SOCKS5_PASSWD");
+    p = getenv("SOCKS5_PASSWD");
     if (p) {
         safe_strcpy(proxy_info.socks5_user_passwd, p);
     }
 }
-
-const char *BOINC_RCSID_829bd0f60b = "$Id: cs_cmdline.C 15223 2008-05-15 16:08:52Z davea $";

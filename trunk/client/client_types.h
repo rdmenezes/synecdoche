@@ -306,7 +306,7 @@ public:
     /// Return work, but don't request more.
     /// Used for a clean exit to a project,
     /// or if a user wants to pause doing work for the project.
-    bool dont_request_more_work; 
+    bool dont_request_more_work;
     bool attached_via_acct_mgr;
     /// when no results for this project, detach it.
     bool detach_when_done;
@@ -334,7 +334,7 @@ public:
     /// the factor is set to X.
     double duration_correction_factor;
     void update_duration_correction_factor(RESULT*);
-    
+
     /// @name CPU scheduler and work fetch
     /// Fields used by CPU scheduler and work fetch.
     /// everything from here on applies only to CPU intensive projects.
@@ -620,7 +620,7 @@ public:
     void set(int mode, double duration);
     int get_perm() const;
     int get_current() const;
-	double delay() const;
+    double delay() const;
 };
 
 /// a platform supported by the client.

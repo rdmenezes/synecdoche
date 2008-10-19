@@ -159,5 +159,3 @@ void MFILE::get_buf(char*& b, int& l) {
     buf = 0;
     len = 0;
 }
-
-const char *BOINC_RCSID_8de9facdd7 = "$Id: mfile.C 13804 2007-10-09 11:35:47Z fthomas $";

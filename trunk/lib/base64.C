@@ -61,17 +61,17 @@ static short base64_char_to_value[128] =
 /* The following diagram shows the logical steps by which three octets
    get transformed into four base64 characters.
 
-		 .--------.  .--------.  .--------.
-		 |aaaaaabb|  |bbbbcccc|  |ccdddddd|
-		 `--------'  `--------'  `--------'
+         .--------.  .--------.  .--------.
+         |aaaaaabb|  |bbbbcccc|  |ccdddddd|
+         `--------'  `--------'  `--------'
                     6   2      4   4       2   6
-	       .--------+--------+--------+--------.
-	       |00aaaaaa|00bbbbbb|00cccccc|00dddddd|
-	       `--------+--------+--------+--------'
+           .--------+--------+--------+--------.
+           |00aaaaaa|00bbbbbb|00cccccc|00dddddd|
+           `--------+--------+--------+--------'
 
-	       .--------+--------+--------+--------.
-	       |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD|
-	       `--------+--------+--------+--------'
+           .--------+--------+--------+--------.
+           |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD|
+           `--------+--------+--------+--------'
 
    The octets are divided into 6 bit chunks, which are then encoded into
    base64 characters.  */
@@ -94,12 +94,12 @@ string r_base64_encode (const char* from, size_t length)
 
         // Process second byte of a triplet.
         if (i == length)
-	{
+        {
             result += base64_value_to_char[value];
             result += '=';
             result += '=';
             break;
-	}
+        }
 
         c = from[i++];
 
@@ -108,11 +108,11 @@ string r_base64_encode (const char* from, size_t length)
 
         // Process third byte of a triplet.
         if (i == length)
-	{
+        {
             result += base64_value_to_char[value];
             result += '=';
             break;
-	}
+        }
 
         c = from[i++];
 
@@ -170,13 +170,13 @@ string r_base64_decode (const char* from, size_t length)
 
         READ_QUADRUPLET_BYTE();
         if (c == '=')
-	{
+        {
             READ_QUADRUPLET_BYTE();
 
             if (c != '=')
                 throw InvalidBase64Exception();
             continue;
-	}
+        }
 
         if (!IS_BASE64 (c))
             throw InvalidBase64Exception();
@@ -200,5 +200,3 @@ string r_base64_decode (const char* from, size_t length)
         result += c;
     }
 }
-
-const char *BOINC_RCSID_2b47467419 = "$Id: base64.C 13804 2007-10-09 11:35:47Z fthomas $";

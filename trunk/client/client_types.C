@@ -451,7 +451,7 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
     unsigned int i;
     char project_dir[256], path[256];
 
-    
+
     if (delete_existing_symlinks) {
         // delete current sym links.
         // This is done when parsing scheduler reply,
@@ -968,7 +968,7 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
 
 /// Checks if the URL includes the phrase "file_upload_handler".
 /// This indicates the URL is an upload url.
-/// 
+///
 bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) const {
     const char* has_str = strstr(url.c_str(), "file_upload_handler");
     if ((is_upload && !has_str) || (!is_upload && has_str)) {
@@ -1672,7 +1672,7 @@ bool RESULT::is_upload_done() const {
     return true;
 }
 
-/// Resets all FILE_INFO's in result to uploaded = false 
+/// Resets all FILE_INFO's in result to uploaded = false
 /// if upload_when_present is true.
 ///
 void RESULT::clear_uploaded_flags() {

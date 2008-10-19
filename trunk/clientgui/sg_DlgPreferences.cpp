@@ -451,9 +451,9 @@ void CPanelPreferences::CreateControls()
         ),
         wxBU_AUTODRAW
     );
-	if ( pSkinSimple->GetSaveButton()->GetBitmapClicked() != NULL ) {
-		itemBitmapButton44->SetBitmapSelected(*pSkinSimple->GetSaveButton()->GetBitmapClicked());
-	}
+    if ( pSkinSimple->GetSaveButton()->GetBitmapClicked() != NULL ) {
+        itemBitmapButton44->SetBitmapSelected(*pSkinSimple->GetSaveButton()->GetBitmapClicked());
+    }
     itemBoxSizer44->Add(itemBitmapButton44, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     wxBitmapButton* itemBitmapButton45 = new wxBitmapButton(
@@ -467,14 +467,14 @@ void CPanelPreferences::CreateControls()
         ),
         wxBU_AUTODRAW
     );
-	if ( pSkinSimple->GetCancelButton()->GetBitmapClicked() != NULL ) {
-		itemBitmapButton45->SetBitmapSelected(*pSkinSimple->GetCancelButton()->GetBitmapClicked());
-	}
+    if ( pSkinSimple->GetCancelButton()->GetBitmapClicked() != NULL ) {
+        itemBitmapButton45->SetBitmapSelected(*pSkinSimple->GetCancelButton()->GetBitmapClicked());
+    }
     itemBoxSizer44->Add(itemBitmapButton45, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
 #ifndef __WXMSW__
 #ifdef __WXMAC__
-	wxBitmapButton* itemButton46 = new wxBitmapButton(
+    wxBitmapButton* itemButton46 = new wxBitmapButton(
         this,
         ID_SIMPLE_HELP,
         *pSkinSimple->GetHelpButton()->GetBitmap(),
@@ -485,11 +485,11 @@ void CPanelPreferences::CreateControls()
         ),
         wxBU_AUTODRAW
     );
-	if ( pSkinSimple->GetHelpButton()->GetBitmapClicked() != NULL ) {
-		itemButton46->SetBitmapSelected(*pSkinSimple->GetHelpButton()->GetBitmapClicked());
-	}
+    if ( pSkinSimple->GetHelpButton()->GetBitmapClicked() != NULL ) {
+        itemButton46->SetBitmapSelected(*pSkinSimple->GetHelpButton()->GetBitmapClicked());
+    }
 #ifdef wxUSE_TOOLTIPS
-	itemButton46->SetToolTip(new wxToolTip(_("Get Help")));
+    itemButton46->SetToolTip(new wxToolTip(_("Get Help")));
 #endif
     itemBoxSizer44->Add(itemButton46, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 #else
@@ -633,8 +633,8 @@ void CPanelPreferences::OnOK() {
     }
 
 
-	pDoc->rpc.set_global_prefs_override_struct(global_preferences_working, global_preferences_override_mask);
-	pDoc->rpc.read_global_prefs_override();
+    pDoc->rpc.set_global_prefs_override_struct(global_preferences_working, global_preferences_override_mask);
+    pDoc->rpc.read_global_prefs_override();
 }
 
 
@@ -704,7 +704,7 @@ bool CPanelPreferences::ReadPreferenceSettings() {
     if (retval == ERR_NOT_FOUND) {
         // Older clients don't support get_global_prefs_working_struct RPC
         global_preferences_working = pDoc->state.global_prefs;
-	retval = pDoc->rpc.get_global_prefs_override_struct(global_preferences_working, global_preferences_mask);
+    retval = pDoc->rpc.get_global_prefs_override_struct(global_preferences_working, global_preferences_mask);
     }
 
     if (!retval && global_preferences_override_mask.are_simple_prefs_set()) {
@@ -712,8 +712,8 @@ bool CPanelPreferences::ReadPreferenceSettings() {
     } else {
         m_bCustomizedPreferences = false;
     }
-	
-	// Allow this structure to be modified for display purposes
+    
+    // Allow this structure to be modified for display purposes
     display_global_preferences = global_preferences_working;
 
 
@@ -757,9 +757,9 @@ bool CPanelPreferences::ReadPreferenceSettings() {
     if (display_global_preferences.disk_max_used_gb > 0) {
         if (display_global_preferences.disk_max_used_gb < 1) {
             strDiskUsage.Printf(_("%d MB"), (int)(display_global_preferences.disk_max_used_gb * 1000));  
-	    } else {
+        } else {
             strDiskUsage.Printf(_("%4.2f GB"), display_global_preferences.disk_max_used_gb); 
-	    }
+        }
 
         // Null out strDiskUsage if it is a duplicate
         for (i = 0; i < aDiskUsage.Count(); i++) {
@@ -837,7 +837,7 @@ bool CPanelPreferences::ReadPreferenceSettings() {
 
     aWorkWhenIdle.Insert(_("0 (Run Always)"), 0);
 
-	if (display_global_preferences.idle_time_to_run > 0) {
+    if (display_global_preferences.idle_time_to_run > 0) {
         strWorkWhenIdle.Printf(_("%d"), (int)display_global_preferences.idle_time_to_run); 
 
         // Null out strWorkWhenIdle if it is a duplicate
@@ -861,17 +861,17 @@ bool CPanelPreferences::ReadPreferenceSettings() {
 
     m_WorkWhenIdleCtrl->Append(aWorkWhenIdle);
 
-	if (display_global_preferences.run_if_user_active) {
-		// run_if_user_active and idle_time_to_run were merged into a single combo
-		//   box. 0 = run if active.
-		m_strWorkWhenIdle = aWorkWhenIdle[0];
-	} else {	
-		if (strWorkWhenIdle.IsEmpty()) {
-			m_strWorkWhenIdle = aWorkWhenIdle[iWorkWhenIdleIndex];
-		} else {
-			m_strWorkWhenIdle = strWorkWhenIdle;
-		}
-	}
+    if (display_global_preferences.run_if_user_active) {
+        // run_if_user_active and idle_time_to_run were merged into a single combo
+        //   box. 0 = run if active.
+        m_strWorkWhenIdle = aWorkWhenIdle[0];
+    } else {
+        if (strWorkWhenIdle.IsEmpty()) {
+            m_strWorkWhenIdle = aWorkWhenIdle[iWorkWhenIdleIndex];
+        } else {
+            m_strWorkWhenIdle = strWorkWhenIdle;
+        }
+    }
 
     // Now make sure the UI is in sync with the settings
     TransferDataToWindow();

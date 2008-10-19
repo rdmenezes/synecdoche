@@ -383,7 +383,7 @@ bool SCHEDULER_OP::poll() {
                     msg_printf(cur_proj, MSG_INFO, "Master file download succeeded");
                     cur_proj->master_fetch_failures = 0;
                     changed = update_urls(cur_proj, urls);
-                    
+
                     // reenable scheduler RPCs if have new URLs
                     //
                     if (changed) {
@@ -798,5 +798,3 @@ USER_MESSAGE::USER_MESSAGE(char* m, char* p) {
     message = m;
     priority = p;
 }
-
-const char *BOINC_RCSID_11c806525b = "$Id: scheduler_op.C 15258 2008-05-20 00:11:28Z davea $";

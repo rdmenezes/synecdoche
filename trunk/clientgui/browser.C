@@ -52,7 +52,7 @@ void get_home_dir_path( std::string& path ) {
 #ifdef _WIN32
     TCHAR               szBuffer[MAX_PATH];
     HMODULE             hShell32;
-	MYSHGETFOLDERPATH   pfnMySHGetFolderPath = NULL;
+    MYSHGETFOLDERPATH   pfnMySHGetFolderPath = NULL;
 
     // Attempt to link to dynamic function if it exists
     hShell32 = LoadLibrary(_T("SHELL32.DLL"));
@@ -61,15 +61,15 @@ void get_home_dir_path( std::string& path ) {
     }
 
     if (NULL != pfnMySHGetFolderPath) {
-		if (SUCCEEDED((pfnMySHGetFolderPath)(NULL, CSIDL_APPDATA|CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szBuffer))) {
+        if (SUCCEEDED((pfnMySHGetFolderPath)(NULL, CSIDL_APPDATA|CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szBuffer))) {
             path  = std::string(szBuffer);
             path += std::string("\\");
         }
     }
 
-	// Free the dynamically linked to library
+    // Free the dynamically linked to library
     if (NULL != hShell32) {
-    	FreeLibrary(hShell32);
+        FreeLibrary(hShell32);
     }
 #elif defined(__APPLE__)
     path = std::string(getenv("HOME") )+ std::string("/");
@@ -312,8 +312,8 @@ bool detect_setup_authenticator_mozilla_generic(
     bool retval = false;
     FILE* pf = NULL;
     FILE* cf = NULL;
-   	MIOFILE pmf;
-   	MIOFILE cmf;
+    MIOFILE pmf;
+    MIOFILE cmf;
     MOZILLA_PROFILES mps;
     MOZILLA_PROFILE* mp = NULL;
     std::string cookies_root;
@@ -437,11 +437,11 @@ bool detect_setup_authenticator_ie(std::string& project_url, std::string& authen
 
 
     // if we don't find the cookie at the exact project dns name, check one higher (i.e. www.worldcommunitygrid.org becomes
-	// worldcommunitygrid.org
+    // worldcommunitygrid.org
     parse_hostname(project_url, hostname);
 
     bReturnValue = InternetGetCookie(project_url.c_str(), NULL, szCookieBuffer, &dwSize) == TRUE;
-	if (!bReturnValue) bReturnValue = InternetGetCookie(hostname.c_str(), NULL, szCookieBuffer, &dwSize) == TRUE;
+    if (!bReturnValue) bReturnValue = InternetGetCookie(hostname.c_str(), NULL, szCookieBuffer, &dwSize) == TRUE;
     if (bReturnValue)
     {
         // reset this becuase at this point we just know that we found some cookies for the website.  We don't
@@ -511,4 +511,3 @@ bool detect_setup_authenticator(
 
     return false;
 }
-
