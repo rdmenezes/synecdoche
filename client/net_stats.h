@@ -63,8 +63,8 @@ class NET_STATUS {
 public:
     /// contact the reference site as soon as GUI_HTTP is idle.
     /// polled from NET_STATS::poll(), for want of a better place.
-	bool need_to_contact_reference_site;
-	void contact_reference_site();
+    bool need_to_contact_reference_site;
+    void contact_reference_site();
     bool show_ref_message;
     /// client wants to do network comm and no physical connection exists.
     /// Initially false; set whenever a Curl operation
@@ -80,7 +80,7 @@ public:
     /// (e.g. report completed results)
     ///
     bool have_sporadic_connection;
-	double last_comm_time;
+    double last_comm_time;
 
     int network_status();
     void network_available();
@@ -88,9 +88,9 @@ public:
     NET_STATUS() {
         need_physical_connection = false;
         have_sporadic_connection = false;
-		need_to_contact_reference_site = false;
+        need_to_contact_reference_site = false;
         show_ref_message = false;
-		last_comm_time = 0;
+        last_comm_time = 0;
     }
     void poll();
 };

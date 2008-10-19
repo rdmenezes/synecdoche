@@ -175,10 +175,10 @@ enum SUSPEND_REASON {
 /// \name Network status
 /// values of "network status"
 /// @{
-#define NETWORK_STATUS_ONLINE			0
-#define NETWORK_STATUS_WANT_CONNECTION	1
-#define NETWORK_STATUS_WANT_DISCONNECT	2
-#define NETWORK_STATUS_LOOKUP_PENDING	3
+#define NETWORK_STATUS_ONLINE           0
+#define NETWORK_STATUS_WANT_CONNECTION  1
+#define NETWORK_STATUS_WANT_DISCONNECT  2
+#define NETWORK_STATUS_LOOKUP_PENDING   3
 /// @}
 
 /// \name RPC reasons

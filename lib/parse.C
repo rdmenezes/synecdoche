@@ -811,4 +811,3 @@ int main() {
 </blah>
 
 #endif
-const char *BOINC_RCSID_3f3de9eb18 = "$Id: parse.C 15027 2008-04-07 16:04:02Z davea $";

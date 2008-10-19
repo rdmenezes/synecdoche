@@ -43,7 +43,7 @@
 #define AU_MGR_GOT          1
 #define AU_MGR_QUIT_REQ     2
 #define AU_MGR_QUIT_SENT    3
-    
+
 class GUI_RPC_CONN {
 public:
     int sock;

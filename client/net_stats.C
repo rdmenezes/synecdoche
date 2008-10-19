@@ -131,27 +131,27 @@ int NET_STATS::parse(MIOFILE& in) {
 /// in the case of a modem connection waiting to be closed by the mgr)
 ///
 int NET_STATUS::network_status() {
-	int retval;
+    int retval;
 
     if (gstate.http_ops->nops()) {
         last_comm_time = gstate.now;
     }
-	if (gstate.lookup_website_op.error_num == ERR_IN_PROGRESS) {
+    if (gstate.lookup_website_op.error_num == ERR_IN_PROGRESS) {
         retval = NETWORK_STATUS_LOOKUP_PENDING;
-	} else if (gstate.now - last_comm_time < 10) {
+    } else if (gstate.now - last_comm_time < 10) {
         retval = NETWORK_STATUS_ONLINE;
     } else if (need_physical_connection) {
         retval = NETWORK_STATUS_WANT_CONNECTION;
     } else if (gstate.active_tasks.want_network()) {
         retval = NETWORK_STATUS_WANT_CONNECTION;
-	} else {
-		have_sporadic_connection = false;
-		retval = NETWORK_STATUS_WANT_DISCONNECT;
-	}
-	if (log_flags.network_status_debug) {
-		msg_printf(NULL, MSG_INFO, "[network_status_debug] status: %s", network_status_string(retval));
-	}
-	return retval;
+    } else {
+        have_sporadic_connection = false;
+        retval = NETWORK_STATUS_WANT_DISCONNECT;
+    }
+    if (log_flags.network_status_debug) {
+        msg_printf(NULL, MSG_INFO, "[network_status_debug] status: %s", network_status_string(retval));
+    }
+    return retval;
 }
 
 /// There's now a network connection, after some period of disconnection.
@@ -187,25 +187,25 @@ void NET_STATUS::got_http_error() {
             // may still be coming up, so don't worry for now
         && !config.dont_contact_ref_site
     ) {
-	    if (log_flags.network_status_debug) {
-		    msg_printf(0, MSG_INFO,
-			    "[network_status_debug] got http error and not still waking up"
-		    );
-	    }
-		need_to_contact_reference_site = true;
+        if (log_flags.network_status_debug) {
+            msg_printf(0, MSG_INFO,
+                "[network_status_debug] got http error and not still waking up"
+            );
+        }
+        need_to_contact_reference_site = true;
         show_ref_message = true;
     }
 }
 
 void NET_STATUS::contact_reference_site() {
     std::string url = "http://www.google.com";
-	if (log_flags.network_status_debug) {
-		msg_printf(0, MSG_INFO,
-			"[network_status_debug] need_phys_conn %d; trying google", need_physical_connection
-		);
-	}
+    if (log_flags.network_status_debug) {
+        msg_printf(0, MSG_INFO,
+            "[network_status_debug] need_phys_conn %d; trying google", need_physical_connection
+        );
+    }
     gstate.lookup_website_op.do_rpc(url);
-	need_to_contact_reference_site = false;
+    need_to_contact_reference_site = false;
 }
 
 int LOOKUP_WEBSITE_OP::do_rpc(std::string& url) {
@@ -218,7 +218,7 @@ int LOOKUP_WEBSITE_OP::do_rpc(std::string& url) {
     if (retval) {
         error_num = retval;
         net_status.need_physical_connection = true;
-		net_status.last_comm_time = 0;
+        net_status.last_comm_time = 0;
         msg_printf(0, MSG_USER_ERROR,
             "Synecdoche can't access Internet - check network connection or proxy configuration."
         );
@@ -238,7 +238,7 @@ void LOOKUP_WEBSITE_OP::handle_reply(int http_op_retval) {
     //
     if (http_op_retval) {
         net_status.need_physical_connection = true;
-		net_status.last_comm_time = 0;
+        net_status.last_comm_time = 0;
         msg_printf(0, MSG_USER_ERROR,
             "Synecdoche can't access Internet - check network connection or proxy configuration."
         );
@@ -252,9 +252,7 @@ void LOOKUP_WEBSITE_OP::handle_reply(int http_op_retval) {
 }
 
 void NET_STATUS::poll() {
-	if (net_status.need_to_contact_reference_site && gstate.gui_http.state==GUI_HTTP_STATE_IDLE) {
-		net_status.contact_reference_site();
-	}
+    if (net_status.need_to_contact_reference_site && gstate.gui_http.state==GUI_HTTP_STATE_IDLE) {
+        net_status.contact_reference_site();
+    }
 }
-
-const char *BOINC_RCSID_733b4006f5 = "$Id: net_stats.C 13804 2007-10-09 11:35:47Z fthomas $";

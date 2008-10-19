@@ -365,7 +365,7 @@ int PROJECT::write_statistics_file() const {
     get_statistics_filename(master_url, path);
     f = boinc_fopen(TEMP_FILE_NAME, "w");
     if (!f) return ERR_FOPEN;
-    fprintf(f, 
+    fprintf(f,
         "<project_statistics>\n"
         "    <master_url>%s</master_url>\n",
         master_url
@@ -374,7 +374,7 @@ int PROJECT::write_statistics_file() const {
     for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
         i!=statistics.end(); ++i
     ) {
-        fprintf(f, 
+        fprintf(f,
             "    <daily_statistics>\n"
             "        <day>%f</day>\n"
             "        <user_total_credit>%f</user_total_credit>\n"
@@ -390,7 +390,7 @@ int PROJECT::write_statistics_file() const {
         );
     }
 
-    fprintf(f, 
+    fprintf(f,
         "</project_statistics>\n"
     );
 
@@ -486,5 +486,3 @@ int CLIENT_STATE::parse_preferences_for_user_files() {
     }
     return 0;
 }
-
-const char *BOINC_RCSID_497223a3f8 = "$Id: cs_account.C 15307 2008-05-28 16:33:51Z davea $";

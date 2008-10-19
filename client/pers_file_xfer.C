@@ -481,5 +481,3 @@ void PERS_FILE_XFER_SET::suspend() {
         pers_file_xfers[i]->suspend();
     }
 }
-
-const char *BOINC_RCSID_76edfcfb49 = "$Id: pers_file_xfer.C 14272 2007-11-20 22:58:14Z davea $";

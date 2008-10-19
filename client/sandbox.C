@@ -50,10 +50,10 @@ static int lookup_group(const char* name, gid_t& gid) {
 
 void kill_via_switcher(int pid) {
     char cmd[1024];
-    
+
     if (!g_use_sandbox) return;
 
-    // if project application is running as user boinc_project and 
+    // if project application is running as user boinc_project and
     // core client is running as user boinc_master, we cannot send
     // a signal directly, so use switcher.
     sprintf(cmd, "/bin/kill kill -s KILL %d", pid);
@@ -83,10 +83,10 @@ int set_to_project_group(const char* path) {
 }
 
 /// Run an utility program.
-/// POSIX requires that shells run from an application will use the 
-/// real UID and GID if different from the effective UID and GID.  
-/// Mac OS 10.4 did not enforce this, but OS 10.5 does.  Since 
-/// system() invokes a shell, we can't use it to run the switcher 
+/// POSIX requires that shells run from an application will use the
+/// real UID and GID if different from the effective UID and GID.
+/// Mac OS 10.4 did not enforce this, but OS 10.5 does.  Since
+/// system() invokes a shell, we can't use it to run the switcher
 /// or setprojectgrp utilities, so we must do a fork() and execv().
 ///
 /// \param[in] util_filename Name of the utility that should get started.
@@ -112,7 +112,7 @@ int switcher_exec(const char* util_filename, const char* cmdline) {
         return ERR_EXEC;
     }
     // Wait for command to complete, like system() does.
-    waitpid(pid, 0, 0); 
+    waitpid(pid, 0, 0);
     return BOINC_SUCCESS;
 }
 

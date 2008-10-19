@@ -43,9 +43,9 @@ BEGIN_EVENT_TABLE (CPaintStatistics, wxWindow)
 END_EVENT_TABLE ()
 
 
-CPaintStatistics::CPaintStatistics(wxWindow* parent, wxWindowID id, const wxPoint& pos,	const wxSize& size, long style, const wxString& name
+CPaintStatistics::CPaintStatistics(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name
 ): wxWindow(parent, id, pos, size, style, name)
-{	m_font_standart = *wxSWISS_FONT;
+{   m_font_standart = *wxSWISS_FONT;
     m_font_bold = *wxSWISS_FONT;
     m_font_standart_italic = *wxSWISS_FONT;
 
@@ -192,15 +192,15 @@ static bool CrossTwoLine(const double X1_1, const double Y1_1, const double X1_2
 
 void CPaintStatistics::getDrawColour(wxColour &graphColour, int number) {
     switch (number % 10){
-    case 1:	graphColour = m_pen_GraphColour01;	break;
-    case 2:	graphColour = m_pen_GraphColour02;	break;
-    case 3:	graphColour = m_pen_GraphColour03;	break;
-    case 4:	graphColour = m_pen_GraphColour04;	break;
-    case 5: graphColour = m_pen_GraphColour05;	break;
-    case 6:	graphColour = m_pen_GraphColour06;	break;
-    case 7:	graphColour = m_pen_GraphColour07;	break;
-    case 8:	graphColour = m_pen_GraphColour08;	break;
-    case 9: graphColour = m_pen_GraphColour09;	break;
+    case 1: graphColour = m_pen_GraphColour01;  break;
+    case 2: graphColour = m_pen_GraphColour02;  break;
+    case 3: graphColour = m_pen_GraphColour03;  break;
+    case 4: graphColour = m_pen_GraphColour04;  break;
+    case 5: graphColour = m_pen_GraphColour05;  break;
+    case 6: graphColour = m_pen_GraphColour06;  break;
+    case 7: graphColour = m_pen_GraphColour07;  break;
+    case 8: graphColour = m_pen_GraphColour08;  break;
+    case 9: graphColour = m_pen_GraphColour09;  break;
     default:graphColour = m_pen_GraphColour00;
     }
 }
@@ -222,8 +222,8 @@ static void myDrawPoint(wxDC &dc,int X, int Y, wxColour graphColour,int numberTy
         dc.DrawPolygon(3, points);
         delete[] points;
         break;}
-    case 3:	dc.DrawRectangle(wxCoord(X - (PointWidth / 2)),wxCoord(Y - (PointWidth / 2)),wxCoord(PointWidth + 1),wxCoord(PointWidth + 1));
-        break;                              
+    case 3: dc.DrawRectangle(wxCoord(X - (PointWidth / 2)),wxCoord(Y - (PointWidth / 2)),wxCoord(PointWidth + 1),wxCoord(PointWidth + 1));
+        break;
     case 4: {wxPoint* points = new wxPoint[4];
         points[0] = wxPoint(X, Y - 1 - (PointWidth / 2));
         points[1] = wxPoint(X + 1 + (PointWidth / 2), Y);
@@ -241,10 +241,10 @@ static void MinMaxDayCredit(std::vector<PROJECT*>::const_iterator &i, double &mi
         if (first){
             max_day = j->day;
             switch (m_SelectedStatistic){ 
-            case 0:	max_credit = j->user_total_credit;	break;
-            case 1:	max_credit = j->user_expavg_credit;	break;
-            case 2:	max_credit = j->host_total_credit;	break;
-            case 3:	max_credit = j->host_expavg_credit;	break;
+            case 0: max_credit = j->user_total_credit;  break;
+            case 1: max_credit = j->user_expavg_credit; break;
+            case 2: max_credit = j->host_total_credit;  break;
+            case 3: max_credit = j->host_expavg_credit; break;
             default: max_credit = 0.0;
             }
             min_day = max_day;
@@ -515,7 +515,7 @@ void CPaintStatistics::DrawLegend(wxDC &dc, PROJECTS* proj, CMainDocument* pDoc,
 
     if (m_Legend_Shift > count) m_Legend_Shift = count; //???
     if (m_Legend_Shift < 0) m_Legend_Shift = 0;
-//	Legend Shift (end)
+//  Legend Shift (end)
     if (m_Legend_Shift > 0){
         dc.SetBrush(wxBrush(m_brush_LegendColour , wxSOLID));
         dc.SetPen(wxPen(m_pen_LegendColour , 1 , wxSOLID));
@@ -577,7 +577,7 @@ void CPaintStatistics::DrawLegend(wxDC &dc, PROJECTS* proj, CMainDocument* pDoc,
         if (y0 < 0) y0 = 0;
         if ((SelProj >= 0) || (!(m_HideProjectStatistic.count( wxString( (*i)->master_url.c_str(),wxConvUTF8 ) )))){
             myDrawPoint(dc, int(x0), int(y0), graphColour, typePoint ,m_GraphPointWidth);
-            dc.SetFont(m_font_bold);			
+            dc.SetFont(m_font_bold);
         }else {
             dc.SetFont(m_font_standart_italic);
             graphColour = wxColour(0, 0, 0);
@@ -662,10 +662,10 @@ void CPaintStatistics::DrawAxis(wxDC &dc, const double max_val_y, const double m
     if (h0 < 0) h0 = 0;
     dc.DrawRoundedRectangle(x0, y0, w0, h0, radius1);
 
-    m_Graph_X_start = m_WorkSpace_X_start;	//x0;
-    m_Graph_X_end = m_WorkSpace_X_end;		//x0 + w0;
-    m_Graph_Y_start = m_WorkSpace_Y_start;	//y0;
-    m_Graph_Y_end = m_WorkSpace_Y_end;		//y0 + h0;
+    m_Graph_X_start = m_WorkSpace_X_start;  //x0;
+    m_Graph_X_end = m_WorkSpace_X_end;      //x0 + w0;
+    m_Graph_Y_start = m_WorkSpace_Y_start;  //y0;
+    m_Graph_Y_end = m_WorkSpace_Y_end;      //y0 + h0;
 
     m_WorkSpace_X_start += d_x;
     m_WorkSpace_X_end -= d_x;
@@ -687,16 +687,16 @@ void CPaintStatistics::DrawAxis(wxDC &dc, const double max_val_y, const double m
     dc.SetTextForeground (m_pen_AxisYTextColour);
 
     int d_oy_count = 1;
-    if (h_temp > 0)	d_oy_count = (int)ceil((m_WorkSpace_Y_end - m_WorkSpace_Y_start) / ( 2.0 * double(h_temp)));
+    if (h_temp > 0) d_oy_count = (int)ceil((m_WorkSpace_Y_end - m_WorkSpace_Y_start) / ( 2.0 * double(h_temp)));
     if (d_oy_count <= 0) d_oy_count = 1;
     double d_oy_val = fabs((max_val_y - min_val_y) / double(d_oy_count));
     double d2 = pow(double(10.0) , floor(log10(d_oy_val)));
 
     if (d2 >= d_oy_val){
         d_oy_val = 1.0 * d2;
-    } else	if (2.0 * d2 >= d_oy_val){ 
+    } else if (2.0 * d2 >= d_oy_val){
             d_oy_val = 2.0 * d2;
-        } else	if (5.0 * d2 >= d_oy_val){
+        } else if (5.0 * d2 >= d_oy_val){
                 d_oy_val = 5.0 * d2;
             } else {
                 d_oy_val = 10.0 * d2;
@@ -732,7 +732,7 @@ void CPaintStatistics::DrawAxis(wxDC &dc, const double max_val_y, const double m
     dc.GetTextExtent(strBuffer1, &w_temp, &h_temp, &des_temp, &lead_temp);
 
     int d_ox_count = 1;
-    if (w_temp > 0)	d_ox_count = (int)((m_WorkSpace_X_end - m_WorkSpace_X_start) / (1.2 * double(w_temp)));
+    if (w_temp > 0) d_ox_count = (int)((m_WorkSpace_X_end - m_WorkSpace_X_start) / (1.2 * double(w_temp)));
     if (d_ox_count <= 0) d_ox_count = 1;
     
     double d_ox_val = ceil(((double)(max_val_x - min_val_x) / double(d_ox_count)) / 86400.0) * 86400.0;
@@ -816,11 +816,11 @@ void CPaintStatistics::DrawGraph(wxDC &dc, std::vector<PROJECT*>::const_iterator
 
         d_xpos = (m_Ax_ValToCoord * j->day + m_Bx_ValToCoord);// добавить округление
         switch (m_SelectedStatistic){  // добавить округление
-        case 0:	d_ypos = (m_Ay_ValToCoord * j->user_total_credit + m_By_ValToCoord);	break;
-        case 1:	d_ypos = (m_Ay_ValToCoord * j->user_expavg_credit + m_By_ValToCoord);	break;
-        case 2:	d_ypos = (m_Ay_ValToCoord * j->host_total_credit + m_By_ValToCoord);	break;
-        case 3:	d_ypos = (m_Ay_ValToCoord * j->host_expavg_credit + m_By_ValToCoord);	break;
-        default:d_ypos = (m_Ay_ValToCoord * j->user_total_credit + m_By_ValToCoord);	break;
+        case 0: d_ypos = (m_Ay_ValToCoord * j->user_total_credit + m_By_ValToCoord);    break;
+        case 1: d_ypos = (m_Ay_ValToCoord * j->user_expavg_credit + m_By_ValToCoord);   break;
+        case 2: d_ypos = (m_Ay_ValToCoord * j->host_total_credit + m_By_ValToCoord);    break;
+        case 3: d_ypos = (m_Ay_ValToCoord * j->host_expavg_credit + m_By_ValToCoord);   break;
+        default:d_ypos = (m_Ay_ValToCoord * j->user_total_credit + m_By_ValToCoord);    break;
         }
 
         if (first_point) {
@@ -1095,7 +1095,7 @@ void CPaintStatistics::DrawAll(wxDC &dc) {
 
     dc.SetBackground(m_brush_MainColour);
 
-//	dc.SetTextForeground (GetForegroundColour ());
+//  dc.SetTextForeground (GetForegroundColour ());
     dc.SetTextForeground (m_pen_HeadTextColour);
     dc.SetTextBackground (GetBackgroundColour ());
 
@@ -1105,7 +1105,7 @@ void CPaintStatistics::DrawAll(wxDC &dc) {
     
     m_font_standart.SetWeight(wxNORMAL);
     m_font_bold.SetWeight(wxBOLD);
-//	m_font_standart_italic.SetFaceName(_T("Verdana"));
+//  m_font_standart_italic.SetFaceName(_T("Verdana"));
     m_font_standart_italic.SetStyle(wxFONTSTYLE_ITALIC);
 
     dc.SetFont(m_font_standart);
@@ -1134,10 +1134,10 @@ void CPaintStatistics::DrawAll(wxDC &dc) {
     if ((m_NextProjectStatistic < 0) || (m_NextProjectStatistic >= nb_proj)) m_NextProjectStatistic = 0;
 // Initial coord
     switch (m_SelectedStatistic){
-    case 0: heading = _("User Total");		break;
-    case 1: heading = _("User Average");	break;
-    case 2: heading = _("Host Total");		break;
-    case 3: heading = _("Host Average");	break;
+    case 0: heading = _("User Total");      break;
+    case 1: heading = _("User Average");    break;
+    case 2: heading = _("Host Total");      break;
+    case 3: heading = _("Host Average");    break;
     default:heading = wxT("");
     }
 

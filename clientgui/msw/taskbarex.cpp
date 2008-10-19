@@ -438,6 +438,3 @@ LRESULT APIENTRY wxTaskBarIconExWindowProc( HWND hWnd, unsigned msg, UINT wParam
 {
     return wxGetApp().GetTaskBarIcon()->WindowProc((WXHWND) hWnd, msg, wParam, lParam);
 }
-
-
-const char *BOINC_RCSID_46d006c50e = "$Id: taskbarex.cpp 15452 2008-06-23 18:47:51Z romw $";

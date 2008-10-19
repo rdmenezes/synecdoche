@@ -235,7 +235,7 @@ void CAccountInfoPage::OnPageChanged(wxWizardEvent& event) {
     CBOINCBaseWizard*      bw = dynamic_cast<CBOINCBaseWizard*>(GetParent());
     wxASSERT(bw);
 
-	PROJECT_CONFIG*        pc = bw->GetProjectConfig();
+    PROJECT_CONFIG*        pc = bw->GetProjectConfig();
     CSkinAdvanced*         pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
     CSkinWizardATAM*       pSkinWizardATAM = wxGetApp().GetSkinManager()->GetWizards()->GetWizardATAM();
 

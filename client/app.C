@@ -26,7 +26,7 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
-#else 
+#else
 #include "config.h"
 #endif
 
@@ -168,7 +168,7 @@ void ACTIVE_TASK::cleanup_task() {
     }
 #else
     int retval;
-    
+
     if (app_client_shm.shm) {
 #ifndef __EMX__
         if (app_version->api_major_version() >= 6) {
@@ -193,7 +193,7 @@ void ACTIVE_TASK::cleanup_task() {
         gstate.retry_shmem_time = 0;
     }
 #endif
-    
+
     if (gstate.exit_after_finish) {
         exit(0);
     }
@@ -231,7 +231,7 @@ void ACTIVE_TASK_SET::free_mem() {
 void ACTIVE_TASK_SET::get_memory_usage() {
     static double last_mem_time=0;
     unsigned int i;
-	int retval;
+    int retval;
 
     double diff = gstate.now - last_mem_time;
     if (diff < 10) return;
@@ -239,14 +239,14 @@ void ACTIVE_TASK_SET::get_memory_usage() {
     last_mem_time = gstate.now;
     std::vector<PROCINFO> piv;
     retval = procinfo_setup(piv);
-	if (retval) {
-		if (log_flags.mem_usage_debug) {
-			msg_printf(0, MSG_INTERNAL_ERROR,
-				"[mem_usage_debug] procinfo_setup() returned %d", retval
-			);
-		}
-		return;
-	}
+    if (retval) {
+        if (log_flags.mem_usage_debug) {
+            msg_printf(0, MSG_INTERNAL_ERROR,
+                "[mem_usage_debug] procinfo_setup() returned %d", retval
+            );
+        }
+        return;
+    }
     for (i=0; i<active_tasks.size(); i++) {
         ACTIVE_TASK* atp = active_tasks[i];
         if (atp->scheduler_state == CPU_SCHED_SCHEDULED) {
@@ -642,79 +642,79 @@ int ACTIVE_TASK_SET::parse(MIOFILE& fin) {
 }
 
 void MSG_QUEUE::init(char* n) {
-	strcpy(name, n);
-	last_block = 0;
-	msgs.clear();
+    strcpy(name, n);
+    last_block = 0;
+    msgs.clear();
 }
 
 void MSG_QUEUE::msg_queue_send(const char* msg, MSG_CHANNEL& channel) {
     if (msgs.empty() && channel.send_msg(msg)) {
-		if (log_flags.app_msg_send) {
+        if (log_flags.app_msg_send) {
             msg_printf(NULL, MSG_INFO, "[app_msg_send] sent %s to %s", msg, name);
-		}
+        }
         last_block = 0;
-		return;
+        return;
     }
-	if (log_flags.app_msg_send) {
+    if (log_flags.app_msg_send) {
         msg_printf(NULL, MSG_INFO, "[app_msg_send] deferred %s to %s", msg, name);
-	}
+    }
     msgs.push_back(std::string(msg));
-	if (!last_block) last_block = gstate.now;
+    if (!last_block) last_block = gstate.now;
 }
 
 void MSG_QUEUE::msg_queue_poll(MSG_CHANNEL& channel) {
     if (!msgs.empty()) {
-		if (log_flags.app_msg_send) {
-			msg_printf(NULL, MSG_INFO,
-				"[app_msg_send] poll: %lu msgs queued for %s:",
-				msgs.size(), name
-			);
-		}
+        if (log_flags.app_msg_send) {
+            msg_printf(NULL, MSG_INFO,
+                "[app_msg_send] poll: %lu msgs queued for %s:",
+                msgs.size(), name
+            );
+        }
         if (channel.send_msg(msgs[0].c_str())) {
-			if (log_flags.app_msg_send) {
-				msg_printf(NULL, MSG_INFO, "[app_msg_send] poll: delayed sent %s", (msgs[0].c_str()));
-			}
+            if (log_flags.app_msg_send) {
+                msg_printf(NULL, MSG_INFO, "[app_msg_send] poll: delayed sent %s", (msgs[0].c_str()));
+            }
             msgs.erase(msgs.begin());
-			last_block = 0;
-		}
-		for (unsigned int i=0; i<msgs.size(); i++) {
-			if (log_flags.app_msg_send) {
-				msg_printf(NULL, MSG_INFO, "[app_msg_send] poll:  deferred: %s", (msgs[0].c_str()));
-			}
-		}
+            last_block = 0;
+        }
+        for (unsigned int i=0; i<msgs.size(); i++) {
+            if (log_flags.app_msg_send) {
+                msg_printf(NULL, MSG_INFO, "[app_msg_send] poll:  deferred: %s", (msgs[0].c_str()));
+            }
+        }
     }
 }
 
 /// If the last message in the buffer is "msg", remove it and return 1.
 int MSG_QUEUE::msg_queue_purge(const char* msg) {
-	int count = msgs.size();
-	if (!count) return 0;
-	std::vector<std::string>::iterator iter = msgs.begin();
-	for (int i=0; i<count-1; i++) {
-		iter++;
-	}
-	if (log_flags.app_msg_send) {
-		msg_printf(NULL, MSG_INFO,
-		    "[app_msg_send] purge: wanted  %s last msg is %s in %s",
-		    msg, iter->c_str(), name
-	    );
+    int count = msgs.size();
+    if (!count) return 0;
+    std::vector<std::string>::iterator iter = msgs.begin();
+    for (int i=0; i<count-1; i++) {
+        iter++;
     }
-	if (!strcmp(msg, iter->c_str())) {
-		if (log_flags.app_msg_send) {
-			msg_printf(NULL, MSG_INFO, "[app_msg_send] purged %s from %s", msg, name);
-		}
-		iter = msgs.erase(iter);
-		return 1;
-	}
-	return 0;
+    if (log_flags.app_msg_send) {
+        msg_printf(NULL, MSG_INFO,
+            "[app_msg_send] purge: wanted  %s last msg is %s in %s",
+            msg, iter->c_str(), name
+        );
+    }
+    if (!strcmp(msg, iter->c_str())) {
+        if (log_flags.app_msg_send) {
+            msg_printf(NULL, MSG_INFO, "[app_msg_send] purged %s from %s", msg, name);
+        }
+        iter = msgs.erase(iter);
+        return 1;
+    }
+    return 0;
 }
 
 bool MSG_QUEUE::timeout(double diff) {
-	if (!last_block) return false;
-	if (gstate.now - last_block > diff) {
-		return true;
-	}
-	return false;
+    if (!last_block) return false;
+    if (gstate.now - last_block > diff) {
+        return true;
+    }
+    return false;
 }
 
 void ACTIVE_TASK_SET::report_overdue() const {
@@ -821,5 +821,3 @@ void ACTIVE_TASK_SET::init() {
         atp->scheduler_state = CPU_SCHED_PREEMPTED;
     }
 }
-
-const char *BOINC_RCSID_778b61195e = "$Id: app.C 15287 2008-05-23 21:24:36Z davea $";

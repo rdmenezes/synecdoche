@@ -252,7 +252,7 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
         if (avail > 0) {
             if (avail > free) avail = free;
             FormatDiskSpace(avail, diskspace);
-	        label.Printf(_("free, available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
+            label.Printf(_("free, available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
             part.SetLabel(label + diskspace);
             part.SetValue(avail);
             part.SetColour(wxColour(128, 128, 128));

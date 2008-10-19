@@ -19,6 +19,3 @@
 
 // TODO: reference any additional headers you need in STDAFX.H
 // and not in this file
-
-
-const char *BOINC_RCSID_4e0e4c54ab = "$Id: stdwx.cpp 13804 2007-10-09 11:35:47Z fthomas $";

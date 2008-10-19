@@ -58,8 +58,8 @@ typedef HANDLE (WINAPI *tOT)(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD d
 /// Look in the registry for the specified value user the BOINC diagnostics
 /// hive.
 BOOL diagnostics_get_registry_value(LPCTSTR lpName, LPDWORD lpdwType, LPDWORD lpdwSize, LPBYTE lpData) {
-	LONG  lRetVal;
-	HKEY  hKey;
+    LONG  lRetVal;
+    HKEY  hKey;
 
     // Detect platform information
     OSVERSIONINFO osvi; 
@@ -67,30 +67,30 @@ BOOL diagnostics_get_registry_value(LPCTSTR lpName, LPDWORD lpdwType, LPDWORD lp
     GetVersionEx(&osvi);
 
     if (VER_PLATFORM_WIN32_WINDOWS == osvi.dwPlatformId) {
-		lRetVal = RegOpenKeyEx(
+        lRetVal = RegOpenKeyEx(
             HKEY_LOCAL_MACHINE, 
             _T("SOFTWARE\\Synecdoche\\Synecdoche Diagnostics"),
-			(DWORD)NULL, 
+            (DWORD)NULL, 
             KEY_READ,
             &hKey
         );
-		if (lRetVal != ERROR_SUCCESS) return FALSE;
-	} else {
-		lRetVal = RegOpenKeyEx(
+        if (lRetVal != ERROR_SUCCESS) return FALSE;
+    } else {
+        lRetVal = RegOpenKeyEx(
             HKEY_CURRENT_USER,
             _T("SOFTWARE\\Synecdoche\\Synecdoche Diagnostics"),
-			(DWORD)NULL,
+            (DWORD)NULL,
             KEY_READ,
             &hKey
         );
-		if (lRetVal != ERROR_SUCCESS) return FALSE;
-	}
+        if (lRetVal != ERROR_SUCCESS) return FALSE;
+    }
 
-	lRetVal = RegQueryValueEx(hKey, lpName, NULL, lpdwType, lpData, lpdwSize);
+    lRetVal = RegQueryValueEx(hKey, lpName, NULL, lpdwType, lpData, lpdwSize);
 
-	RegCloseKey(hKey);
+    RegCloseKey(hKey);
 
-	return (lRetVal == ERROR_SUCCESS);
+    return (lRetVal == ERROR_SUCCESS);
 }
 
 
@@ -1357,8 +1357,8 @@ int diagnostics_capture_foreground_window(PBOINC_WINDOWCAPTURE window_info) {
 
 
     // Initialize structure variables.
-	strcpy(window_info->window_name, "");
-	strcpy(window_info->window_class, "");
+    strcpy(window_info->window_name, "");
+    strcpy(window_info->window_class, "");
     window_info->hwnd = 0;
     window_info->window_process_id = 0;
     window_info->window_thread_id = 0;
@@ -1389,23 +1389,23 @@ int diagnostics_capture_foreground_window(PBOINC_WINDOWCAPTURE window_info) {
             &window_info->window_process_id
         );
 
-	    // Only query the window text from windows in a different process space.
-	    //   All threads that might have windows are suspended in this process
-	    //   space and attempting to get the window text will deadlock the exception
-	    //   handler.
-	    if (window_info->window_process_id != GetCurrentProcessId()) {
-		    GetWindowText(
-			    window_info->hwnd, 
-			    window_info->window_name,
-			    sizeof(window_info->window_name)
-		    );
+        // Only query the window text from windows in a different process space.
+        //   All threads that might have windows are suspended in this process
+        //   space and attempting to get the window text will deadlock the exception
+        //   handler.
+        if (window_info->window_process_id != GetCurrentProcessId()) {
+            GetWindowText(
+                window_info->hwnd, 
+                window_info->window_name,
+                sizeof(window_info->window_name)
+            );
 
-		    GetClassName(
-			    window_info->hwnd,
-			    window_info->window_class,
-			    sizeof(window_info->window_class)
-		    );
-	    }
+            GetClassName(
+                window_info->hwnd,
+                window_info->window_class,
+                sizeof(window_info->window_class)
+            );
+        }
     }
 
     return 0;
@@ -1756,7 +1756,7 @@ UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID /* lpParameter */) {
                 // Suspend the other threads.
                 for (i=0; i<diagnostics_threads.size(); i++) {
                     pThreadEntry = diagnostics_threads[i];
-			        // Suspend the thread before getting the threads context, otherwise
+                    // Suspend the thread before getting the threads context, otherwise
                     //   it'll be junk.
                     if (!pThreadEntry->crash_suspend_exempt && pThreadEntry->thread_handle) {
                         SuspendThread(pThreadEntry->thread_handle);
@@ -1771,14 +1771,14 @@ UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID /* lpParameter */) {
                 //   in the install directory if it is defined, otherwise look
                 //   in the data directory.
                 if (0 != strlen(diagnostics_get_boinc_install_dir())) {
- 	                bDebuggerInitialized = !DebuggerInitialize(
+                    bDebuggerInitialized = !DebuggerInitialize(
                         diagnostics_get_boinc_install_dir(),
                         diagnostics_get_symstore(),
                         diagnostics_is_proxy_enabled(),
                         diagnostics_get_proxy()
                     );
                 } else {
- 	                bDebuggerInitialized = !DebuggerInitialize(
+                    bDebuggerInitialized = !DebuggerInitialize(
                         diagnostics_get_boinc_dir(),
                         diagnostics_get_symstore(),
                         diagnostics_is_proxy_enabled(),
@@ -1818,7 +1818,7 @@ UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID /* lpParameter */) {
                                     // Get the thread context
                                     memset(&c, 0, sizeof(CONTEXT));
                                     c.ContextFlags = CONTEXT_FULL;
-				                    GetThreadContext(pThreadEntry->thread_handle, &c);
+                                    GetThreadContext(pThreadEntry->thread_handle, &c);
 
                                     StackwalkThread(
                                         pThreadEntry->thread_handle,
@@ -2052,24 +2052,21 @@ LONG CALLBACK boinc_catch_signal(PEXCEPTION_POINTERS pExPtrs) {
 /// then throw a breakpoint exception to dump all the rest of the useful
 /// information.
 void boinc_catch_signal_invalid_parameter(
-    const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line,	uintptr_t /* pReserved */
+    const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line, uintptr_t /* pReserved */
 ) {
-	fprintf(
-		stderr,
+    fprintf(
+        stderr,
         "ERROR: Invalid parameter detected in function %s. File: %s Line: %d\n",
-		function,
-		file,
-		line
-	);
-	fprintf(
-		stderr,
-		"ERROR: Expression: %s\n",
-		expression
-	);
+        function,
+        file,
+        line
+    );
+    fprintf(
+        stderr,
+        "ERROR: Expression: %s\n",
+        expression
+    );
 
-	// Cause a Debug Breakpoint.
-	DebugBreak();
+    // Cause a Debug Breakpoint.
+    DebugBreak();
 }
-
-
-const char *BOINC_RCSID_5967ad204d = "$Id: diagnostics_win.C 15378 2008-06-09 19:28:35Z romw $";

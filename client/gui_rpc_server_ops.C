@@ -410,13 +410,13 @@ static void handle_file_transfer_op(const char* buf, MIOFILE& fout, const char* 
         fout.printf("<error>Missing filename</error>\n");
         return;
     }
-    
+
     FILE_INFO* f = gstate.lookup_file_info(p, filename.c_str());
     if (!f) {
         fout.printf("<error>No such file</error>\n");
         return;
     }
-    
+
     PERS_FILE_XFER* pfx = f->pers_file_xfer;
     if (!pfx) {
         fout.printf("<error>No such transfer waiting</error>\n");

@@ -64,7 +64,7 @@ public:
 
     PROXY_INFO pi;
 
-    char m_url[256];  
+    char m_url[256];
     char m_curl_ca_bundle_location[256]; ///< string needed for ssl support
     char szCurlProxyUserPwd[128]; ///< string needed for proxy username/password
 
@@ -158,7 +158,7 @@ public:
 private:
     /// Takes an init_get/post/post2 and turns it into
     /// an appropriate libcurl request.
-    int libcurl_exec(const char* url, const char* in, const char* out, 
+    int libcurl_exec(const char* url, const char* in, const char* out,
         double offset, bool bPost
     );
 };

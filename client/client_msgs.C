@@ -48,7 +48,7 @@ void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) {
     vsnprintf(buf, sizeof(buf), fmt, ap); // And convert symbols To actual numbers
     buf[sizeof(buf) - 1] = 0;
     va_end(ap); // Results are stored in text
-    
+
     show_message(p, buf, priority);
 }
 
@@ -70,5 +70,3 @@ void record_message(const PROJECT* p, int priority, int now, const char* message
     }
     message_descs.push_front(mdp);
 }
-
-const char *BOINC_RCSID_9572274f4f = "$Id: client_msgs.C 14436 2007-12-21 21:09:40Z davea $";

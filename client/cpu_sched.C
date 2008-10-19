@@ -67,7 +67,7 @@ using std::vector;
 
 static bool more_preemptable(ACTIVE_TASK* t0, ACTIVE_TASK* t1) {
     // returning true means t1 is more preemptable than t0,
-    // the "largest" result is at the front of a heap, 
+    // the "largest" result is at the front of a heap,
     // and we want the best replacement at the front,
     //
     if (t0->result->project->deadlines_missed && !t1->result->project->deadlines_missed) return false;
@@ -476,7 +476,7 @@ static bool schedule_if_possible(
             return false;
         }
         atp->too_large = false;
-        
+
         if (gstate.retry_shmem_time > gstate.now) {
             if (atp->app_client_shm.shm == NULL) {
                 atp->needs_shmem = true;
@@ -608,7 +608,7 @@ void CLIENT_STATE::make_running_task_heap(
 ///   - This function sets each task's next_scheduler_state,
 ///     and at the end it starts/resumes and preempts tasks
 ///     based on scheduler_state and next_scheduler_state.
-/// 
+///
 bool CLIENT_STATE::enforce_schedule() {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -658,7 +658,7 @@ bool CLIENT_STATE::enforce_schedule() {
     make_running_task_heap(running_tasks, ncpus_used);
 
     // if there are more running tasks than ncpus,
-    // then mark the extras for preemption 
+    // then mark the extras for preemption
     //
     while (ncpus_used > ncpus) {
         atp = running_tasks[0];
@@ -1162,7 +1162,7 @@ void CLIENT_STATE::rr_simulation() {
         int last_proj_active_size = pbest->rr_sim_status.cpus_used();
 
         sim_status.remove_active(rpbest);
- 
+
         pbest->rr_sim_status.remove_active(rpbest);
 
         // If project has more results, add one or more to active set.
@@ -1222,7 +1222,7 @@ void CLIENT_STATE::rr_simulation() {
             if (end_time < buf_end) {
                 d_time = buf_end - end_time;
                 // if this is the last result for this project, account for the tail
-                if (pbest->rr_sim_status.none_active()) { 
+                if (pbest->rr_sim_status.none_active()) {
                     pbest->rr_sim_status.cpu_shortfall += d_time * proj_cpu_share;
                     if (log_flags.rr_simulation) {
                          msg_printf(pbest, MSG_INFO, "[rr_sim] proj out of work; shortfall %f d %f pcs %f",
@@ -1236,7 +1236,6 @@ void CLIENT_STATE::rr_simulation() {
                     "[rr_sim] total: idle cpus %d, last active %d, active %d, shortfall %f",
                     nidle_cpus, last_active_size, sim_status.nactive(),
                     cpu_shortfall
-                    
                 );
                 msg_printf(0, MSG_INFO,
                     "[rr_sim] proj %s: last active %d, active %d, shortfall %f",
@@ -1281,8 +1280,8 @@ void CLIENT_STATE::request_enforce_schedule(const char* where) {
 }
 
 /// Trigger CPU scheduling.
-/// Called when a result is completed, 
-/// when new results become runnable, 
+/// Called when a result is completed,
+/// when new results become runnable,
 /// or when the user performs a UI interaction
 /// (e.g. suspending or resuming a project or result).
 ///
@@ -1531,5 +1530,3 @@ void PROJECT::update_duration_correction_factor(RESULT* rp) {
         );
     }
 }
-
-const char *BOINC_RCSID_e830ee1 = "$Id: cpu_sched.C 15290 2008-05-23 22:20:45Z davea $";

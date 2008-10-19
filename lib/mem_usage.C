@@ -132,5 +132,3 @@ int mem_usage(double& vm_usage, double& resident_set) {
     return ERR_NOT_IMPLEMENTED;
 #endif
 }
-
-const char *BOINC_RCSID_dc202bfd53 = "$Id: mem_usage.C 13804 2007-10-09 11:35:47Z fthomas $";

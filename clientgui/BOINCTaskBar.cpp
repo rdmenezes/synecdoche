@@ -181,7 +181,7 @@ void CTaskBarIcon::OnOpen(wxCommandEvent& WXUNUSED(event)) {
 #ifdef __WXMSW__
         ::SetForegroundWindow((HWND)pFrame->GetHandle());
 #endif
-	}
+    }
 }
 
 
@@ -683,5 +683,3 @@ void CTaskBarIcon::AdjustMenuItems(wxMenu* pMenu) {
         pMenu->Enable(ID_TB_SUSPEND, true);
     }
 }
-
-const char *BOINC_RCSID_531575eeaa = "$Id: BOINCTaskBar.cpp 15475 2008-06-25 19:38:55Z romw $";

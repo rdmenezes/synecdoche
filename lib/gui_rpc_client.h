@@ -79,7 +79,7 @@ public:
     static bool compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second);
 };
 inline bool PROJECT_LIST_ENTRY::compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second) {
-	return first->name < second->name;
+    return first->name < second->name;
 }
 
 class PROJECT {
@@ -489,7 +489,7 @@ struct ACCOUNT_IN {
 
 struct ACCOUNT_OUT {
     int error_num;
-	std::string error_msg;
+    std::string error_msg;
     std::string authenticator;
 
     ACCOUNT_OUT();
@@ -509,10 +509,10 @@ public:
     int network_suspend_reason;
     int task_mode;              // always/auto/never; see common_defs.h
     int network_mode;
-    int task_mode_perm;			// same, but permanent version
+    int task_mode_perm;         // same, but permanent version
     int network_mode_perm;
-	double task_mode_delay;		// time until perm becomes actual
-	double network_mode_delay;
+    double task_mode_delay;     // time until perm becomes actual
+    double network_mode_delay;
     bool disallow_attach;
     bool simple_gui_only;
 

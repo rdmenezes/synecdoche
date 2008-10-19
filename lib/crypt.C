@@ -380,4 +380,3 @@ void public_to_openssl(R_RSA_PUBLIC_KEY& pub, RSA* rp) {
 }
 
 #endif
-const char *BOINC_RCSID_4f0c2e42ea = "$Id: crypt.C 15170 2008-05-09 21:27:22Z davea $";

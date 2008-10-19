@@ -143,7 +143,7 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     icons.AddIcon(*icon);
     icons.AddIcon(*icon32);
     SetIcons(icons);
-	
+
     // Create UI elements
     wxCHECK_RET(CreateMenu(), _T("Failed to create menu bar."));
     wxCHECK_RET(CreateNotebook(), _T("Failed to create notebook."));

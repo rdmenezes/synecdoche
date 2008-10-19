@@ -91,7 +91,7 @@ typedef mach_port_t NXEventHandle;
 NXEventHandle NXOpenEventStatus(void);
 extern double NXIdleTime(NXEventHandle handle);
 #ifdef __cplusplus
-}	// extern "C"
+}   // extern "C"
 #endif
 
 extern NXEventHandle gEventHandle;

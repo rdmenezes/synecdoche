@@ -40,8 +40,8 @@
 #define ID_FILESELECTCOMPUTER                   6018
 #define ID_PROJECTSATTACHACCOUNTMANAGER         6019
 #define ID_PROJECTSATTACHPROJECT                6020
-#define ID_READ_PREFS							6021
-#define ID_READ_CONFIG							6022
+#define ID_READ_PREFS                           6021
+#define ID_READ_CONFIG                          6022
 #define ID_OPTIONSOPTIONS                       6023
 #define ID_HELPBOINCWEBSITE                     6024
 #define ID_HELPBOINCMANAGER                     6025
@@ -51,7 +51,7 @@
 #define ID_REFRESHMESSAGESTIMER                 6030
 #define ID_ACTIVITYMENUSEPARATOR                6031
 #define ID_FILECLOSEWINDOW                      6032
-#define ID_ADVPREFSDLG							6033
+#define ID_ADVPREFSDLG                          6033
 #define ID_SHUTDOWNCORECLIENT                   6034
 #define ID_HELPBOINC                            6035
 #define ID_VIEWADVANCEDGUI                      6036
@@ -76,7 +76,7 @@
 #define ID_LIST_MESSAGESVIEW                    7003
 #define ID_LIST_RESOURCEUTILIZATIONVIEW         7004
 #define ID_LIST_STATISTICSVIEW                  7005
-#define ID_LIST_RESOURCEUTILIZATIONVIEWTOTAL	7006
+#define ID_LIST_RESOURCEUTILIZATIONVIEWTOTAL    7006
 #define ID_LIST_WORKGRIDVIEW                    7007
 #define ID_LIST_TRANSFERSGRIDVIEW               7008
 #define ID_LIST_PROJECTSGRIDVIEW                7009

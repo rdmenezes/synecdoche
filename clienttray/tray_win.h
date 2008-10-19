@@ -37,7 +37,7 @@ protected:
 
     DWORD WINAPI            DataManagementProc();
     static DWORD WINAPI     DataManagementProcStub( LPVOID lpParam );
-	LRESULT                 TrayProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+    LRESULT                 TrayProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
     static LRESULT CALLBACK TrayProcStub( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
     HANDLE                  m_hDataManagementThread;

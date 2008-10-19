@@ -31,31 +31,31 @@ HINSTANCE g_hClientLibraryDll;
 
 // Newer system metrics values
 #ifndef SM_SERVERR2
-#define SM_SERVERR2 89   
+#define SM_SERVERR2 89
 #endif
 
 
 // Newer processor features than what is currently defined in
 //   Visual Studio 2003
 #ifndef PF_SSE_DAZ_MODE_AVAILABLE
-#define PF_SSE_DAZ_MODE_AVAILABLE          11   
+#define PF_SSE_DAZ_MODE_AVAILABLE          11
 #endif
 #ifndef PF_NX_ENABLED
-#define PF_NX_ENABLED                      12   
+#define PF_NX_ENABLED                      12
 #endif
 #ifndef PF_SSE3_INSTRUCTIONS_AVAILABLE
-#define PF_SSE3_INSTRUCTIONS_AVAILABLE     13   
+#define PF_SSE3_INSTRUCTIONS_AVAILABLE     13
 #endif
 #ifndef PF_COMPARE_EXCHANGE128
-#define PF_COMPARE_EXCHANGE128             14   
+#define PF_COMPARE_EXCHANGE128             14
 #endif
 #ifndef PF_COMPARE64_EXCHANGE128
-#define PF_COMPARE64_EXCHANGE128           15   
+#define PF_COMPARE64_EXCHANGE128           15
 #endif
 
 
 // Memory Status Structure for Win2K and WinXP based systems.
-typedef struct _MYMEMORYSTATUSEX {  
+typedef struct _MYMEMORYSTATUSEX {
     DWORD dwLength;
     DWORD dwMemoryLoad;
     DWORDLONG ullTotalPhys;
@@ -86,7 +86,7 @@ struct INTERNALMONITORINFO
 //
 int get_timezone(int& timezone) {
     TIME_ZONE_INFORMATION tzi;
-	memset(&tzi, 0, sizeof(TIME_ZONE_INFORMATION));
+    memset(&tzi, 0, sizeof(TIME_ZONE_INFORMATION));
     DWORD result = GetTimeZoneInformation(&tzi);
     if (result == TIME_ZONE_ID_DAYLIGHT) {
         timezone = -(tzi.Bias + tzi.DaylightBias) * 60;
@@ -108,19 +108,19 @@ int get_memory_info(double& bytes, double& swap) {
     }
 
     if (hKernel32Lib && myGlobalMemoryStatusEx) {
-	    MYMEMORYSTATUSEX mStatusEx;
-	    ZeroMemory(&mStatusEx, sizeof(MYMEMORYSTATUSEX));
-	    mStatusEx.dwLength = sizeof(MYMEMORYSTATUSEX);
-	    (*myGlobalMemoryStatusEx)(&mStatusEx);
+        MYMEMORYSTATUSEX mStatusEx;
+        ZeroMemory(&mStatusEx, sizeof(MYMEMORYSTATUSEX));
+        mStatusEx.dwLength = sizeof(MYMEMORYSTATUSEX);
+        (*myGlobalMemoryStatusEx)(&mStatusEx);
         bytes = (double)mStatusEx.ullTotalPhys;
         swap = (double)mStatusEx.ullTotalPageFile;
     } else {
-	    MEMORYSTATUS mStatus;
-	    ZeroMemory(&mStatus, sizeof(MEMORYSTATUS));
-	    mStatus.dwLength = sizeof(MEMORYSTATUS);
-	    GlobalMemoryStatus(&mStatus);
-	    bytes = (double)mStatus.dwTotalPhys;
-	    swap = (double)mStatus.dwTotalPageFile;
+        MEMORYSTATUS mStatus;
+        ZeroMemory(&mStatus, sizeof(MEMORYSTATUS));
+        mStatus.dwLength = sizeof(MEMORYSTATUS);
+        GlobalMemoryStatus(&mStatus);
+        bytes = (double)mStatus.dwTotalPhys;
+        swap = (double)mStatus.dwTotalPageFile;
     }
 
     return 0;
@@ -157,7 +157,7 @@ int get_os_information(
 
     // Try calling GetVersionEx using the OSVERSIONINFOEX structure.
     // If that fails, try using the OSVERSIONINFO structure.
-	bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi);
+    bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi);
     if(!bOsVersionInfoEx) {
         osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
         GetVersionEx ( (OSVERSIONINFO *) &osvi );
@@ -250,7 +250,7 @@ int get_os_information(
                         strcpy( szSKU, "Professional Edition" );
                     }
                 }
-            
+
                 // Test for the server type.
                 else if ( (osvi.wProductType == VER_NT_SERVER) || (osvi.wProductType == VER_NT_DOMAIN_CONTROLLER) ) {
                     if( (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0) || (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2) ) {
@@ -291,7 +291,7 @@ int get_os_information(
                             strcpy( szSKU, "Standard Server Edition" );
                         }
 
-                    } else { // Windows NT 4.0 
+                    } else { // Windows NT 4.0
                         if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE ) {
                             strcpy( szSKU, "Enterprise Server Edition" );
                         } else {
@@ -368,12 +368,12 @@ int get_os_information(
             if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0) {
                 if ( osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B' )
                     strcpy( szServicePack, "OSR2" );
-            } 
+            }
 
             if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10) {
                 if ( osvi.szCSDVersion[1] == 'A' )
                     strcpy( szServicePack, "SE" );
-            } 
+            }
 
             break;
     }
@@ -434,7 +434,7 @@ typedef BOOL (__stdcall *tIPFP)( IN DWORD dwFeature );
 
 BOOL is_processor_feature_supported(DWORD feature) {
     // Detect platform information
-    OSVERSIONINFO osvi; 
+    OSVERSIONINFO osvi;
     osvi.dwOSVersionInfoSize = sizeof(osvi);
     GetVersionEx(&osvi);
 
@@ -466,11 +466,11 @@ int get_processor_info(
     char* p_features, int p_features_size
 )
 {
-	char vendorName[256], processorName[256], identifierName[256], capabilities[256], temp_model[256];
-	HKEY hKey = NULL;
-	LONG retval = 0;
-	DWORD nameSize = 0, procSpeed = 0;
-	bool gotIdent = false, gotProcName = false, gotMHz = false, gotVendIdent = false;
+    char vendorName[256], processorName[256], identifierName[256], capabilities[256], temp_model[256];
+    HKEY hKey = NULL;
+    LONG retval = 0;
+    DWORD nameSize = 0, procSpeed = 0;
+    bool gotIdent = false, gotProcName = false, gotMHz = false, gotVendIdent = false;
 
     strcpy(vendorName, "");
     strcpy(processorName, "");
@@ -507,9 +507,9 @@ int get_processor_info(
     }
     strip_whitespace(capabilities);
 
-    
-	retval = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Hardware\\Description\\System\\CentralProcessor\\0", 0, KEY_QUERY_VALUE, &hKey);
-	if(retval == ERROR_SUCCESS) {
+
+    retval = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Hardware\\Description\\System\\CentralProcessor\\0", 0, KEY_QUERY_VALUE, &hKey);
+    if(retval == ERROR_SUCCESS) {
         // Win9x and WinNT store different information in these field.
         // NT Examples:
         // ProcessorNameString: Intel(R) Xeon(TM) CPU 3.06GHz
@@ -523,23 +523,23 @@ int get_processor_info(
         // VendorIdentifier: GenuineIntel
 
         // Look in various places for processor information, add'l
-		// entries suggested by mark mcclure
-		nameSize = sizeof(vendorName);
-		retval = RegQueryValueEx(hKey, "VendorIdentifier", NULL, NULL, (LPBYTE)vendorName, &nameSize);
-		if (retval == ERROR_SUCCESS) gotVendIdent = true;
+        // entries suggested by mark mcclure
+        nameSize = sizeof(vendorName);
+        retval = RegQueryValueEx(hKey, "VendorIdentifier", NULL, NULL, (LPBYTE)vendorName, &nameSize);
+        if (retval == ERROR_SUCCESS) gotVendIdent = true;
 
-		nameSize = sizeof(identifierName);
-		retval = RegQueryValueEx(hKey, "Identifier", NULL, NULL, (LPBYTE)identifierName, &nameSize);
-		if (retval == ERROR_SUCCESS) gotIdent = true;
+        nameSize = sizeof(identifierName);
+        retval = RegQueryValueEx(hKey, "Identifier", NULL, NULL, (LPBYTE)identifierName, &nameSize);
+        if (retval == ERROR_SUCCESS) gotIdent = true;
 
-		nameSize = sizeof(processorName);
-		retval = RegQueryValueEx(hKey, "ProcessorNameString", NULL, NULL, (LPBYTE)processorName, &nameSize);
-		if (retval == ERROR_SUCCESS) gotProcName = true;
+        nameSize = sizeof(processorName);
+        retval = RegQueryValueEx(hKey, "ProcessorNameString", NULL, NULL, (LPBYTE)processorName, &nameSize);
+        if (retval == ERROR_SUCCESS) gotProcName = true;
 
-		nameSize = sizeof(DWORD);
-		retval = RegQueryValueEx(hKey, "~MHz", NULL, NULL, (LPBYTE)&procSpeed, &nameSize);
-		if (retval == ERROR_SUCCESS) gotMHz = true;
-	}
+        nameSize = sizeof(DWORD);
+        retval = RegQueryValueEx(hKey, "~MHz", NULL, NULL, (LPBYTE)&procSpeed, &nameSize);
+        if (retval == ERROR_SUCCESS) gotMHz = true;
+    }
 
     // populate vendor field.
     if (gotVendIdent) {
@@ -568,7 +568,7 @@ int get_processor_info(
     p_model[p_model_size-1] = 0;
     strlcpy(p_features, capabilities, p_features_size);
 
-	RegCloseKey(hKey);
+    RegCloseKey(hKey);
 
     return 0;
 }
@@ -589,8 +589,8 @@ int get_processor_count(int& processor_count) {
 // Gets host information; called on startup and before each sched RPC
 //
 int HOST_INFO::get_host_info() {
-	get_timezone(timezone);
-	get_filesystem_info(d_total, d_free);
+    get_timezone(timezone);
+    get_filesystem_info(d_total, d_free);
     get_memory_info(m_nbytes, m_swap);
     get_os_information(
         os_name, sizeof(os_name), os_version, sizeof(os_version)
@@ -609,13 +609,13 @@ int HOST_INFO::get_host_info() {
 }
 
 bool HOST_INFO::host_is_running_on_batteries() {
-	SYSTEM_POWER_STATUS pStatus;
-	ZeroMemory(&pStatus, sizeof(SYSTEM_POWER_STATUS));
-	if (!GetSystemPowerStatus(&pStatus)) {
-		return false;
-	}
+    SYSTEM_POWER_STATUS pStatus;
+    ZeroMemory(&pStatus, sizeof(SYSTEM_POWER_STATUS));
+    if (!GetSystemPowerStatus(&pStatus)) {
+        return false;
+    }
 
-    // Sometimes the system reports the ACLineStatus as an 
+    // Sometimes the system reports the ACLineStatus as an
     //   undocumented value, so lets check to see if the
     //   battery is charging or missing and make that part
     //   of the decision.
@@ -623,7 +623,7 @@ bool HOST_INFO::host_is_running_on_batteries() {
     bool bIsBatteryCharging = ((pStatus.BatteryFlag & 8) == 8);
     bool bIsBatteryMissing = ((pStatus.BatteryFlag & 128) == 128);
 
-	return (bIsOnBatteryPower && !bIsBatteryCharging && !bIsBatteryMissing);
+    return (bIsOnBatteryPower && !bIsBatteryCharging && !bIsBatteryMissing);
 }
 
 bool HOST_INFO::users_idle(bool /*check_all_logins*/, double idle_time_to_run) {
@@ -638,5 +638,3 @@ bool HOST_INFO::users_idle(bool /*check_all_logins*/, double idle_time_to_run) {
 
     return false;
 }
-
-const char *BOINC_RCSID_37fbd07edd = "$Id: hostinfo_win.C 15190 2008-05-13 19:52:35Z davea $";

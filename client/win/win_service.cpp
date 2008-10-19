@@ -110,28 +110,28 @@ VOID WINAPI service_ctrl(DWORD dwCtrlCode)
         // which may result in a 1053 - The Service did not respond...
         // error.
         case SERVICE_CONTROL_STOP:
-		case SERVICE_CONTROL_SHUTDOWN:
+        case SERVICE_CONTROL_SHUTDOWN:
             ReportStatus(SERVICE_STOP_PENDING, ERROR_SUCCESS, 30000);
-			quit_client();
+            quit_client();
             return;
 
         // Pause the service.
         //
-		case SERVICE_CONTROL_PAUSE:
+        case SERVICE_CONTROL_PAUSE:
             ReportStatus(SERVICE_PAUSE_PENDING, ERROR_SUCCESS, 10000);
-			suspend_client();
+            suspend_client();
             ReportStatus(SERVICE_PAUSED, ERROR_SUCCESS, 10000);
             return;
 
         // Continue the service.
         //
-		case SERVICE_CONTROL_CONTINUE:
+        case SERVICE_CONTROL_CONTINUE:
             ReportStatus(SERVICE_CONTINUE_PENDING, ERROR_SUCCESS, 10000);
-			resume_client();
+            resume_client();
             ReportStatus(SERVICE_RUNNING, ERROR_SUCCESS, 10000);
             return;
 
-		// Update the service status.
+        // Update the service status.
         //
         case SERVICE_CONTROL_INTERROGATE:
             break;
@@ -189,7 +189,7 @@ BOOL ReportStatus(DWORD dwCurrentState,
 
     // Report the status of the service to the service control manager.
     //
-	fResult = SetServiceStatus( sshStatusHandle, &ssStatus);
+    fResult = SetServiceStatus( sshStatusHandle, &ssStatus);
     if (!fResult) {
         LogEventErrorMessage(TEXT("SetServiceStatus"));
     }
@@ -326,6 +326,3 @@ VOID LogEventInfoMessage(LPTSTR lpszMsg)
 
 
 #endif
-
-
-const char *BOINC_RCSID_ad2dd5eef4 = "$Id: win_service.cpp 13804 2007-10-09 11:35:47Z fthomas $";

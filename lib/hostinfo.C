@@ -222,6 +222,3 @@ void HOST_INFO::make_random_string(const char* salt, char* out) {
 void HOST_INFO::generate_host_cpid() {
     make_random_string("", host_cpid);
 }
-
-
-const char *BOINC_RCSID_edf7e5c147 = "$Id: hostinfo.C 13804 2007-10-09 11:35:47Z fthomas $";

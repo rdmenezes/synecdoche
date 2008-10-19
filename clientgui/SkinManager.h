@@ -234,9 +234,9 @@ public:
     CSkinImage*         GetDialogBackgroundImage() { return &m_DialogBackgroundImage; }
 
 private:
-	CSkinImage          m_BackgroundImage;
+    CSkinImage          m_BackgroundImage;
     CSkinImage          m_SpacerImage;
-	wxColour            m_StaticLineColor;
+    wxColour            m_StaticLineColor;
 
     CSkinImage          m_StateIndicatorBackgroundImage;
     CSkinImage          m_ConnectingIndicatorImage;

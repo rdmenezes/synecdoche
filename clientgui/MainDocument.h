@@ -164,26 +164,26 @@ private:
 
 public:
     PROJECT*                    project(unsigned int);
-	PROJECT*                    project(const wxString& projectname);
+    PROJECT*                    project(const wxString& projectname);
     float                       m_fProjectTotalResourceShare;
 
     int                         GetProjectCount();
 
     int                         ProjectNoMoreWork(int iIndex);
-	int                         ProjectNoMoreWork(const wxString& projectname);
+    int                         ProjectNoMoreWork(const wxString& projectname);
     int                         ProjectAllowMoreWork(int iIndex);
-	int                         ProjectAllowMoreWork(const wxString& projectname);
+    int                         ProjectAllowMoreWork(const wxString& projectname);
     int                         ProjectAttach(const wxString& strURL, const wxString& strAccountKey);
     int                         ProjectDetach(int iIndex);
-	int                         ProjectDetach(const wxString& projectname);
+    int                         ProjectDetach(const wxString& projectname);
     int                         ProjectUpdate(int iIndex);
-	int                         ProjectUpdate(const wxString& projectname);
+    int                         ProjectUpdate(const wxString& projectname);
     int                         ProjectReset(int iIndex);
-	int                         ProjectReset(const wxString& projectname);
+    int                         ProjectReset(const wxString& projectname);
     int                         ProjectSuspend(int iIndex);
-	int                         ProjectSuspend(const wxString& projectname);
+    int                         ProjectSuspend(const wxString& projectname);
     int                         ProjectResume(int iIndex);
-	int                         ProjectResume(const wxString& projectname);
+    int                         ProjectResume(const wxString& projectname);
 
 
     //
@@ -275,27 +275,27 @@ public:
     PROJECT*                    DiskUsageProject(unsigned int);
     int                         CachedDiskUsageUpdate();
 
-	//
-	// Statistics Tab
-	//
+    //
+    // Statistics Tab
+    //
 private:
     int                         CachedStatisticsStatusUpdate();
     wxDateTime                  m_dtStatisticsStatusTimestamp;
 
 public:
-	PROJECTS                    statistics_status;
+    PROJECTS                    statistics_status;
     PROJECT*                    statistic(unsigned int);
 
     int                         GetStatisticsCount();
-	
+    
 
-	//
-	// Proxy Configuration
-	//
+    //
+    // Proxy Configuration
+    //
 private:
 
 public:
-	GR_PROXY_INFO   			proxy_info;
+    GR_PROXY_INFO               proxy_info;
     int                         GetProxyConfiguration();
     int                         SetProxyConfiguration();
 

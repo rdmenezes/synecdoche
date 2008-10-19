@@ -18,7 +18,7 @@
 #ifdef _WIN32
 #include "boinc_win.h"
 
-#else 
+#else
 
 #include "config.h"
 #include <cstdio>
@@ -58,7 +58,7 @@
 int HOST_INFO::get_local_network_info() {
     struct in_addr addr;
     struct hostent* he;
-    
+
     strcpy(domain_name, "");
     strcpy(ip_addr, "");
 
@@ -75,5 +75,3 @@ int HOST_INFO::get_local_network_info() {
     strlcpy(ip_addr, inet_ntoa(addr), sizeof(ip_addr));
     return 0;
 }
-
-const char *BOINC_RCSID_9275b20aa5 = "$Id: hostinfo_network.C 14445 2007-12-27 21:40:20Z davea $";

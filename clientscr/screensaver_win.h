@@ -45,7 +45,7 @@ struct INTERNALMONITORINFO
     RECT           rcScreen;
     HWND           hWnd;
 
-	DWORD          dwTimeLastUpdate;
+    DWORD          dwTimeLastUpdate;
 
     // Error message state
     FLOAT          xError;
@@ -119,28 +119,28 @@ public:
     // Infrastructure layer 
     //
 protected:
-	SaverMode       ParseCommandLine( TCHAR* pstrCommandLine );
-	VOID            EnumMonitors( VOID );
+    SaverMode       ParseCommandLine( TCHAR* pstrCommandLine );
+    VOID            EnumMonitors( VOID );
 
     int             UtilGetRegKey(LPCTSTR name, DWORD &keyval);
     int             UtilSetRegKey(LPCTSTR name, DWORD value);
     int             UtilGetRegStartupStr(LPCTSTR name, LPTSTR str);
 
-	BOOL			IsConfigStartupBOINC();
+    BOOL            IsConfigStartupBOINC();
 
     BOOL            CreateInfrastructureMutexes();
 
     BOOL            GetError( BOOL& bErrorMode, HRESULT& hrError, TCHAR* pszError, size_t iErrorSize );
     BOOL            SetError( BOOL bErrorMode, HRESULT hrError );
-	VOID            UpdateErrorBoxText();
-	virtual BOOL    GetTextForError( HRESULT hr, TCHAR* pszError, DWORD dwNumChars );
+    VOID            UpdateErrorBoxText();
+    virtual BOOL    GetTextForError( HRESULT hr, TCHAR* pszError, DWORD dwNumChars );
 
 
     // Variables for non-fatal error management
     HANDLE          m_hErrorManagementMutex;
-    BOOL			m_bErrorMode;        // Whether to display an error
-    HRESULT			m_hrError;           // Error code to display
-    TCHAR			m_szError[400];      // Error message text
+    BOOL            m_bErrorMode;        // Whether to display an error
+    HRESULT         m_hrError;           // Error code to display
+    TCHAR           m_szError[400];      // Error message text
 
     BOOL            m_bBOINCConfigChecked;
     BOOL            m_bBOINCStartupConfigured;
@@ -159,7 +159,7 @@ protected:
     static DWORD WINAPI DataManagementProcStub( LPVOID lpParam );
     void            CheckForegroundWindow();
     int             terminate_screensaver(HANDLE& graphics_application, RESULT *worker_app);
-	int             launch_screensaver(RESULT* rp, HANDLE& graphics_application);
+    int             launch_screensaver(RESULT* rp, HANDLE& graphics_application);
     void            HandleRPCError(void);
 
 // Determine if two RESULT pointers refer to the same task
@@ -184,49 +184,49 @@ protected:
     BOOL            m_bResetCoreState;
     bool            m_QuitDataManagementProc;
     bool            m_bV5_GFX_app_is_running;
-	int				m_iLastResultShown;
-	time_t			m_tLastResultChangeTime;
+    int             m_iLastResultShown;
+    time_t          m_tLastResultChangeTime;
     time_t          m_tThreadCreateTime;
 
     //
     // Presentation layer
     //
 protected:
-	HRESULT         CreateSaverWindow();
-	VOID            UpdateErrorBox();
+    HRESULT         CreateSaverWindow();
+    VOID            UpdateErrorBox();
     VOID            InterruptSaver();
     VOID            ShutdownSaver();
-	VOID            ChangePassword();
+    VOID            ChangePassword();
 
     VOID            DoConfig();
-	HRESULT         DoSaver();
-	VOID            DoPaint( HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps );
+    HRESULT         DoSaver();
+    VOID            DoPaint( HWND hwnd, HDC hdc, LPPAINTSTRUCT lpps );
 
-	LRESULT         SaverProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	INT_PTR         ConfigureDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+    LRESULT         SaverProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+    INT_PTR         ConfigureDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
     static LRESULT CALLBACK SaverProcStub( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	static INT_PTR CALLBACK ConfigureDialogProcStub( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+    static INT_PTR CALLBACK ConfigureDialogProcStub( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 protected:
-    SaverMode				m_SaverMode;         // sm_config, sm_full, sm_preview, etc.
-    BOOL					m_bAllScreensSame;   // If TRUE, show same image on all screens
-    HWND					m_hWnd;              // Focus window and device window on primary
-    HWND					m_hWndParent;
-    HINSTANCE				m_hInstance;
-    BOOL					m_bWaitForInputIdle;  // Used to pause when preview starts
-    DWORD					m_dwSaverMouseMoveCount;
-    BOOL					m_bIs9x;
-    BOOL					m_bCheckingSaverPassword;
-    BOOL					m_bWindowed;
+    SaverMode               m_SaverMode;         // sm_config, sm_full, sm_preview, etc.
+    BOOL                    m_bAllScreensSame;   // If TRUE, show same image on all screens
+    HWND                    m_hWnd;              // Focus window and device window on primary
+    HWND                    m_hWndParent;
+    HINSTANCE               m_hInstance;
+    BOOL                    m_bWaitForInputIdle;  // Used to pause when preview starts
+    DWORD                   m_dwSaverMouseMoveCount;
+    BOOL                    m_bIs9x;
+    BOOL                    m_bCheckingSaverPassword;
+    BOOL                    m_bWindowed;
 
-    INTERNALMONITORINFO		m_Monitors[MAX_DISPLAYS];
-    DWORD					m_dwNumMonitors;
-    RECT					m_rcRenderTotal;     // Rect of entire area to be rendered
-    RECT					m_rcRenderCurDevice; // Rect of render area of current device
-	BOOL					m_bPaintingInitialized;
+    INTERNALMONITORINFO     m_Monitors[MAX_DISPLAYS];
+    DWORD                   m_dwNumMonitors;
+    RECT                    m_rcRenderTotal;     // Rect of entire area to be rendered
+    RECT                    m_rcRenderCurDevice; // Rect of render area of current device
+    BOOL                    m_bPaintingInitialized;
 
-    TCHAR					m_strWindowTitle[200]; // Title for the app's window
+    TCHAR                   m_strWindowTitle[200]; // Title for the app's window
 
     DWORD                   m_dwLastInputTimeAtStartup;
 };

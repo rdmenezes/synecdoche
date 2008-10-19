@@ -59,7 +59,7 @@ CLIENT_STATE gstate;
 CLIENT_STATE::CLIENT_STATE():
     lookup_website_op(&gui_http)
 #ifdef ENABLE_UPDATE_CHECK
-	,
+    ,
     get_current_version_op(&gui_http)
 #endif
 {
@@ -377,7 +377,7 @@ int CLIENT_STATE::init() {
     check_file_existence();
 
     http_ops->cleanup_temp_files();
-    
+
     initialized = true;
     return 0;
 }
@@ -472,7 +472,7 @@ bool CLIENT_STATE::poll_slow_events() {
         last_wakeup_time = now;
     }
 
-	if (should_run_cpu_benchmarks() && !are_cpu_benchmarks_running()) {
+    if (should_run_cpu_benchmarks() && !are_cpu_benchmarks_running()) {
         run_cpu_benchmarks = false;
         start_cpu_benchmarks();
     }
@@ -568,7 +568,7 @@ bool CLIENT_STATE::poll_slow_events() {
     // in that order (active_tasks_poll() sets must_schedule_cpus,
     // and handle_finished_apps() must be done before possibly_schedule_cpus()
 
-	check_project_timeout();
+    check_project_timeout();
     POLL_ACTION(active_tasks           , active_tasks.poll      );
     POLL_ACTION(garbage_collect        , garbage_collect        );
     POLL_ACTION(update_results         , update_results         );
@@ -731,7 +731,7 @@ int CLIENT_STATE::link_app_version(PROJECT* p, APP_VERSION* avp) {
         );
         return ERR_NOT_UNIQUE;
     }
-    
+
     avp->graphics_exec_path[0] = 0;
 
     for (i=0; i<avp->app_files.size(); i++) {

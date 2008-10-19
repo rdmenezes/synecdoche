@@ -59,7 +59,7 @@
 ///   - PERS_FILE_XFER::suspend()
 /// -# if the FILE_XFER_SET::insert() fails
 ///   - PERS_FILE_XFER::start_xfer()
-/// 
+///
 /// NOTE: when this is done, pers_xfer_done is set
 ///
 /// Pointers:

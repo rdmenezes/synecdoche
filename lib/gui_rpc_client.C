@@ -62,10 +62,10 @@ RPC_CLIENT::~RPC_CLIENT() {
 //
 void RPC_CLIENT::close() {
     //fprintf(stderr, "RPC_CLIENT::close called\n");
-	if (sock>=0) {
-		boinc_close_socket(sock);
-		sock = -1;
-	}
+    if (sock>=0) {
+        boinc_close_socket(sock);
+        sock = -1;
+    }
 }
 
 int RPC_CLIENT::init(const char* host, int port) {
@@ -108,7 +108,7 @@ int RPC_CLIENT::init_asynch(
     const char* host, double _timeout, bool _retry, int port
 ) {
     int retval;
-	memset(&addr, 0, sizeof(addr));
+    memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     retry = _retry;
@@ -302,5 +302,3 @@ int RPC::parse_reply() {
     }
     return ERR_NOT_FOUND;
 }
-
-const char *BOINC_RCSID_6802bead97 = "$Id: gui_rpc_client.C 14681 2008-02-06 00:10:31Z davea $";

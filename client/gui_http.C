@@ -79,5 +79,3 @@ bool GUI_HTTP::poll() {
     }
     return true;
 }
-
-const char *BOINC_RCSID_7c374a67d3="$Id: gui_http.C 14811 2008-02-27 23:26:38Z davea $";

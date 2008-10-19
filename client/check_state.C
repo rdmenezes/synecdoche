@@ -240,5 +240,3 @@ void CLIENT_STATE::free_mem() {
     active_tasks.free_mem();
 }
 #endif
-
-const char *BOINC_RCSID_d91498c9e4 = "$Id: check_state.C 13804 2007-10-09 11:35:47Z fthomas $";
