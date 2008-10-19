@@ -123,8 +123,13 @@ extern void replace_element_contents(
 extern bool remove_element(char* buf, const char* start, const char* end);
 extern bool str_replace(char* str, const char* old, const char* neww);
 extern char* sgets(char* buf, int len, char* &in);
-extern void xml_escape(const char*, char*);
-extern void xml_unescape(const char*, char*);
+
+/// Escape XML.
+extern void xml_escape(const char* in, char* out, int len);
+
+/// Unescape XML.
+extern void xml_unescape(const char* in, char* out, int len);
+
 extern void extract_venue(const char*, const char*, char*);
 
 /// Skip unrecognized line.

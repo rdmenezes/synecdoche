@@ -201,12 +201,10 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
     unsigned int i;
     char un[2048], tn[2048];
 
-    out.printf(
-        "<project>\n"
-    );
+    out.printf("<project>\n");
 
-    xml_escape(user_name, un);
-    xml_escape(team_name, tn);
+    xml_escape(user_name, un, sizeof(un));
+    xml_escape(team_name, tn, sizeof(tn));
     out.printf(
         "    <master_url>%s</master_url>\n"
         "    <project_name>%s</project_name>\n"

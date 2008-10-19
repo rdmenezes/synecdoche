@@ -89,7 +89,7 @@ bool parse_str(const char* buf, const char* tag, char* dest, int destlen) {
     memcpy(tempbuf, p, len);
     tempbuf[len] = 0;
     strip_whitespace(tempbuf);
-    xml_unescape(tempbuf, dest);
+    xml_unescape(tempbuf, dest, destlen);
     return true;
 }
 
@@ -283,14 +283,15 @@ char* sgets(char* buf, int len, char*& in) {
 }
 
 /// Escape XML.
-/// \if maint
-/// This description badly needs expanding
-/// \endif
-/// NOTE: these used to take std::string instead of char* args.
-/// But this performed poorly.
-/// 
+/// This function handles "&lt;", "&amp;" and "&#".
 /// NOTE: output buffer should be 6X size of input
-void xml_escape(const char* in, char* out) {
+///
+/// \param[in] in Pointer to the input buffer which contains the xml that
+///               should be escaped.
+/// \param[out] out Pointer to the output buffer which should receive the
+///                 escaped xml provided by \a in.
+/// \param[in] len Size of the output buffer.
+void xml_escape(const char* in, char* out, int len) {
     char buf[256], *p;
 
     p = out;
@@ -321,16 +322,26 @@ void xml_escape(const char* in, char* out) {
         } else {
             *p++ = x;
         }
+        if ((p - out) >= (len - 7)) {
+            if ((p - out) > (len - 1)) {
+                p = out + len - 1;
+            }
+            break;
+        }
     }
     *p = 0;
 }
 
 /// Unescape XML.
-/// \if maint
-/// This description badly needs expanding
-/// \endif
-/// output buffer need not be larger than input
-void xml_unescape(const char* in, char* out) {
+/// The output buffer does not need to be larger than the input.
+/// This function handles "&lt;", "&amp;" and "&#".
+///
+/// \param[in] in Pointer to the input buffer which contains the xml that
+///               should be unescaped.
+/// \param[out] out Pointer to the output buffer which should receive the
+///                 unescaped xml provided by \a in.
+/// \param[in] len Size of the output buffer.
+void xml_unescape(const char* in, char* out, int len) {
     char* p = out;
     while (*in) {
         if (*in != '&') {
@@ -349,6 +360,10 @@ void xml_unescape(const char* in, char* out) {
             if (in) in++;
         } else {
             *p++ = *in++;
+        }
+        if ((p - out) >= (len - 1)) {
+            p = out + len - 1;
+            break;
         }
     }
     *p = 0;

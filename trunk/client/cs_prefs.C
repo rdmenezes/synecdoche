@@ -353,9 +353,13 @@ void CLIENT_STATE::read_global_prefs() {
         GLOBAL_PREFS_FILE_NAME, main_host_venue, found_venue
     );
     if (retval) {
-        msg_printf(NULL, MSG_INFO,
-            "No general preferences found - using defaults"
-        );
+        if (retval == ERR_FOPEN) {
+            msg_printf(NULL, MSG_INFO, "No general preferences found - using defaults");
+        } else {
+            msg_printf(NULL, MSG_INFO, "Couldn't parse preference file - using BOINC defaults");
+            boinc_delete_file(GLOBAL_PREFS_FILE_NAME);
+            global_prefs.init();
+        }
     } else {
         // check that the source project's venue matches main_host_venue.
         // If not, read file again.
