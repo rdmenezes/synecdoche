@@ -48,8 +48,6 @@ extern void get_sched_request_filename(const PROJECT&, char*, int len);
 extern void get_sched_reply_filename(const PROJECT&, char*, int len);
 extern void get_master_filename(const PROJECT&, char*, int len);
 extern void job_log_filename(const PROJECT&, char*, int);
-extern void boinc_version_dir(const PROJECT&, const VERSION_INFO&, char*);
-extern bool is_version_dir(const char*, VERSION_INFO&);
 extern void send_log_after(const char* filename, double t, MIOFILE& mf);
 
 #define PROJECTS_DIR                "projects"

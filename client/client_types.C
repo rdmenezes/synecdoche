@@ -617,7 +617,6 @@ FILE_INFO::FILE_INFO() {
     signature_required = false;
     is_user_file = false;
     is_project_file = false;
-    is_auto_update_file = false;
     pers_file_xfer = NULL;
     result = NULL;
     project = NULL;

@@ -198,9 +198,6 @@ struct VERSION_INFO {
     int minor;
     int release;
     bool prerelease;
-    int parse(MIOFILE&); 
-    void write(MIOFILE&) const;
-    bool greater_than(VERSION_INFO&) const;
 };
 
 #ifdef _WIN32

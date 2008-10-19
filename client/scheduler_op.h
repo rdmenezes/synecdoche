@@ -22,7 +22,6 @@
 #include <string>
 
 #include "client_types.h"
-#include "auto_update.h"
 #include "http_curl.h"
 
 #define SCHEDULER_OP_STATE_IDLE         0
@@ -122,7 +121,6 @@ struct SCHEDULER_REPLY {
     int send_time_stats_log;
     int send_job_log;
     int scheduler_version;
-    AUTO_UPDATE auto_update;
 
     SCHEDULER_REPLY();
     ~SCHEDULER_REPLY();

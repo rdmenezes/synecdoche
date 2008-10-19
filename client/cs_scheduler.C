@@ -824,12 +824,6 @@ int CLIENT_STATE::handle_scheduler_reply(
         project->rpc_seqno = 0;
     }
 
-    if (sr.auto_update.present) {
-        if (!sr.auto_update.validate_and_link(project)) {
-            auto_update = sr.auto_update;
-        }
-    }
-
     project->link_project_files(true);
 
     set_client_state_dirty("handle_scheduler_reply");

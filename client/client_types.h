@@ -72,7 +72,6 @@ public:
     bool signature_required;    ///< true iff associated with app version
     bool is_user_file;
     bool is_project_file;
-    bool is_auto_update_file;
     bool gzip_when_done; ///< for output files: gzip file when done, and append .gz to its name
     class PERS_FILE_XFER* pers_file_xfer; ///< nonzero if in the process of being up/downloaded
     struct RESULT* result;         ///< for upload files (to authenticate)

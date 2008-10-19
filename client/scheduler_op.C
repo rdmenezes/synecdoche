@@ -41,10 +41,6 @@
 #include "main.h"
 #include "scheduler_op.h"
 
-//#define ENABLE_AUTO_UPDATE
-
-using std::vector;
-
 SCHEDULER_OP::SCHEDULER_OP(HTTP_OP_SET* h) {
     cur_proj = NULL;
     state = SCHEDULER_OP_STATE_IDLE;
@@ -268,7 +264,7 @@ int SCHEDULER_OP::init_master_fetch(PROJECT* p) {
 }
 
 /// Parse a master file.
-int SCHEDULER_OP::parse_master_file(PROJECT* p, vector<std::string> &urls) {
+int SCHEDULER_OP::parse_master_file(PROJECT* p, std::vector<std::string> &urls) {
     char buf[256], buf2[256];
     char master_filename[256];
     std::string str;
@@ -330,7 +326,7 @@ int SCHEDULER_OP::parse_master_file(PROJECT* p, vector<std::string> &urls) {
 /// A master file has just been read,
 /// transfer scheduler URLs to project.
 /// Return true if any of them is new.
-bool SCHEDULER_OP::update_urls(PROJECT* p, vector<std::string> &urls) {
+bool SCHEDULER_OP::update_urls(PROJECT* p, std::vector<std::string> &urls) {
     unsigned int i, j;
     bool found, any_new;
 
@@ -357,7 +353,7 @@ bool SCHEDULER_OP::update_urls(PROJECT* p, vector<std::string> &urls) {
 /// Poll routine.  If an operation is in progress, check for completion.
 bool SCHEDULER_OP::poll() {
     int retval, nresults;
-    vector<std::string> urls;
+    std::vector<std::string> urls;
     bool changed, scheduler_op_done;
 
     switch(state) {
@@ -779,11 +775,6 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
             continue;
         } else if (match_tag(buf, "<project_files>")) {
             retval = project->parse_project_files(mf, true);
-#ifdef ENABLE_AUTO_UPDATE
-        } else if (match_tag(buf, "<auto_update>")) {
-            retval = auto_update.parse(mf);
-            if (!retval) auto_update.present = true;
-#endif
         } else if (match_tag(buf, "<!--")) {
             continue;
         } else if (strlen(buf)>1){
