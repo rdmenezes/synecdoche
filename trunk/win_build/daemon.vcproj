@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="synecd"
 	ProjectGUID="{C04F0FCC-BB5D-4627-8656-6173B28BD69E}"
 	RootNamespace="boinc_cli"
@@ -776,10 +776,6 @@
 			</File>
 			<File
 				RelativePath="..\client\app_start.C"
-				>
-			</File>
-			<File
-				RelativePath="..\client\auto_update.C"
 				>
 			</File>
 			<File
@@ -2205,10 +2201,6 @@
 			</File>
 			<File
 				RelativePath="..\client\app.h"
-				>
-			</File>
-			<File
-				RelativePath="..\client\auto_update.h"
 				>
 			</File>
 			<File

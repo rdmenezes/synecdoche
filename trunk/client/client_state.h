@@ -181,11 +181,6 @@ public:
 
 /// @}
 
-/// @name auto_update.C
-public:
-    AUTO_UPDATE auto_update;
-/// @}
-
 /// @name client_state.C
 public:
     CLIENT_STATE();

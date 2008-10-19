@@ -58,11 +58,7 @@ void get_pathname(const FILE_INFO* fip, char* path, int len) {
     // an associated PROJECT.
     //
     if (p) {
-		if (fip->is_auto_update_file) {
-			boinc_version_dir(*p, gstate.auto_update.version, buf);
-		} else {
-            get_project_dir(p, buf, sizeof(buf));
-		}
+        get_project_dir(p, buf, sizeof(buf));
 	    snprintf(path, len, "%s/%s", buf, fip->name);
 	} else {
         strlcpy(path, fip->name, len);
@@ -290,16 +286,3 @@ bool is_image_file(const char* filename) {
     if (ends_with(fn, std::string(".png"))) return true;
     return false;
 }
-
-void boinc_version_dir(const PROJECT& p, const VERSION_INFO& vi, char* buf) {
-	char projdir[1024];
-	get_project_dir(&p, projdir, sizeof(projdir));
-    sprintf(buf, "%s/boinc_version_%d_%d_%d", projdir, vi.major, vi.minor, vi.release);
-}
-
-bool is_version_dir(const char* buf, VERSION_INFO& vi) {
-    int n = sscanf(buf, "boinc_version_%d_%d_%d", &vi.major, &vi.minor, &vi.release);
-    return (n==3);
-}
-
-const char *BOINC_RCSID_7d362a6a52 = "$Id: file_names.C 14582 2008-01-16 22:10:34Z romw $";

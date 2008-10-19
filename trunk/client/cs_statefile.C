@@ -435,19 +435,6 @@ int CLIENT_STATE::parse_state_file() {
             continue;
         }
 #endif
-        if (match_tag(buf, "<auto_update>")) {
-            if (!project) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "auto update outside project in state file"
-                );
-                skip_unrecognized(buf, mf);
-                continue;
-            }
-            if (!auto_update.parse(mf) && !auto_update.validate_and_link(project)) {
-                auto_update.present = true;
-            }
-            continue;
-        }
         if (log_flags.unparsed_xml) {
             msg_printf(0, MSG_INFO,
                 "[unparsed_xml] state_file: unrecognized: %s", buf
@@ -632,9 +619,6 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
             if (results[i]->project == p) results[i]->write(f, false);
         }
         p->write_project_files(f);
-        if (auto_update.present && auto_update.project==p) {
-            auto_update.write(f);
-        }
     }
     active_tasks.write(f);
     f.printf(
