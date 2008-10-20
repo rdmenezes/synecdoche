@@ -135,8 +135,7 @@ public:
     /// So GUIs shouldn't offer graphics.
     bool disable_graphics;
     bool detach_console;
-    bool launched_by_manager; // this affects auto-update
-    bool run_by_updater;
+    bool launched_by_manager;
     double now;
     double client_start_time;
     double last_wakeup_time;

@@ -63,7 +63,6 @@ static void print_options(char* prog) {
         "    --insecure                      disable app sandboxing\n"
 #endif
         "    --launched_by_manager           core client was launched by Manager\n"
-        "    --run_by_updater                set by updater\n"
         "    --start_delay X                 delay starting apps for X secs\n"
         ,
         prog, prog, prog
@@ -178,8 +177,6 @@ void CLIENT_STATE::parse_cmdline(int argc, char** argv) {
 #endif
         } else if (ARG("launched_by_manager")) {
             launched_by_manager = true;
-        } else if (ARG("run_by_updater")) {
-            run_by_updater = true;
         } else if (ARG("start_delay")) {
             if (i == argc-1) show_options = true;
             else config.start_delay = atof(argv[++i]);

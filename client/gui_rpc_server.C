@@ -60,8 +60,6 @@
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
     sock(s),
     auth_needed(false),
-    au_ss_state(AU_SS_INIT),
-    au_mgr_state(AU_MGR_INIT),
 
     get_project_config_op(&gui_http),
     lookup_account_op(&gui_http),
@@ -450,28 +448,4 @@ void GUI_RPC_CONN_SET::close() {
         boinc_close_socket(lsock);
         lsock = -1;
     }
-}
-
-/// this is called when we're ready to auto-update;
-/// set flags to send quit messages to screensaver and local manager
-void GUI_RPC_CONN_SET::send_quits() {
-    for (unsigned int i=0; i<gui_rpcs.size(); i++) {
-        GUI_RPC_CONN* gr = gui_rpcs[i];
-        if (gr->au_ss_state == AU_SS_GOT) {
-            gr->au_ss_state = AU_SS_QUIT_REQ;
-        }
-        if (gr->au_mgr_state == AU_MGR_GOT && gr->is_local) {
-            gr->au_mgr_state = AU_MGR_QUIT_REQ;
-        }
-    }
-}
-
-/// check whether the quit messages have actually been sent
-bool GUI_RPC_CONN_SET::quits_sent() const {
-    for (unsigned int i=0; i<gui_rpcs.size(); i++) {
-        const GUI_RPC_CONN* gr = gui_rpcs[i];
-        if (gr->au_ss_state == AU_SS_QUIT_REQ) return false;
-        if (gr->au_mgr_state == AU_MGR_QUIT_REQ) return false;
-    }
-    return true;
 }

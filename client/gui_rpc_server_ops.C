@@ -530,7 +530,7 @@ static void handle_get_statistics(const char*, MIOFILE& fout) {
     fout.printf("</statistics>\n");
 }
 
-static void handle_get_cc_status(GUI_RPC_CONN* gr, MIOFILE& fout) {
+static void handle_get_cc_status(MIOFILE& fout) {
     fout.printf(
         "<cc_status>\n"
         "   <network_status>%d</network_status>\n"
@@ -544,7 +544,8 @@ static void handle_get_cc_status(GUI_RPC_CONN* gr, MIOFILE& fout) {
         "   <task_mode_delay>%f</task_mode_delay>\n"
         "   <network_mode_delay>%f</network_mode_delay>\n"
         "   <disallow_attach>%d</disallow_attach>\n"
-        "   <simple_gui_only>%ds</simple_gui_only>\n",
+        "   <simple_gui_only>%ds</simple_gui_only>\n"
+        "</cc_status>\n",
         net_status.network_status(),
         gstate.acct_mgr_info.password_error?1:0,
         gstate.suspend_reason,
@@ -557,15 +558,6 @@ static void handle_get_cc_status(GUI_RPC_CONN* gr, MIOFILE& fout) {
         gstate.network_mode.delay(),
         config.disallow_attach?1:0,
         config.simple_gui_only?1:0
-    );
-    if (gr->au_mgr_state == AU_MGR_QUIT_REQ) {
-        fout.printf(
-            "   <manager_must_quit>1</manager_must_quit>\n"
-        );
-        gr->au_mgr_state = AU_MGR_QUIT_SENT;
-    }
-    fout.printf(
-        "</cc_status>\n"
     );
 }
 
@@ -1064,7 +1056,7 @@ int GUI_RPC_CONN::handle_rpc() {
         handle_get_newer_version(mf);
 #endif
     } else if (match_tag(request_msg, "<get_cc_status")) {
-        handle_get_cc_status(this, mf);
+        handle_get_cc_status(mf);
 
     // Operations that require authentication start here
 

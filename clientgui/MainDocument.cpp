@@ -578,13 +578,6 @@ int CMainDocument::GetCoreClientStatus(CC_STATUS& ccs, bool bForce) {
             iRetVal = rpc.get_cc_status(ccs);
             if (0 == iRetVal) {
                 status = ccs;
-                if (ccs.manager_must_quit) {
-                    if (IsLocalClient()) {
-                        CBOINCBaseFrame* pFrame = wxGetApp().GetFrame();
-                        wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
-                        pFrame->Close(true);
-                    }
-                }
             } else {
                 m_pNetworkConnection->SetStateDisconnected();
             }

@@ -28,29 +28,12 @@
 #include "acct_setup.h"
 #include "miofile.h"
 
-// FSM states for auto-update
-
-/// No get_screensaver_mode() yet
-#define AU_SS_INIT          0
-/// Got a get_screensaver_mode()
-#define AU_SS_GOT           1
-/// Send a QUIT next time
-#define AU_SS_QUIT_REQ      2
-/// QUIT sent
-#define AU_SS_QUIT_SENT     3
-
-#define AU_MGR_INIT         0
-#define AU_MGR_GOT          1
-#define AU_MGR_QUIT_REQ     2
-#define AU_MGR_QUIT_SENT    3
 
 class GUI_RPC_CONN {
 public:
     int sock;
     bool auth_needed; ///< If true, don't allow operations other than authentication.
     bool is_local; ///< Connection is from local host.
-    int au_ss_state;
-    int au_mgr_state;
     GUI_HTTP gui_http;
 
     GUI_RPC_CONN(int);
