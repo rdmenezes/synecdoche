@@ -39,11 +39,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 == Pending merge ==
 
 || *Changesets* || *Additional comments* ||
-||15756||||
 ||15759||missing copyrights||
 ||15764||API||
 ||15767||Need to review this mess carefully.||
-||15820||||
 ||15827||Screensaver stuff hidden in there.||
 ||15831||Manifest files?||
 ||15834/15873||We can't possibly need this.||
