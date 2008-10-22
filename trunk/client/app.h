@@ -218,7 +218,10 @@ public:
 
     /// Write the app init file.
     int write_app_init_file();
+
+    /// Move a trickle file from the slot directory to the project directory.
     int move_trickle_file();
+
     int handle_upload_files();
     void upload_notify_app(const FILE_INFO*, const FILE_REF*);
     int copy_output_files();

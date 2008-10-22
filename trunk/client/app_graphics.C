@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -41,9 +42,9 @@
 
 
 void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
-    char buf[MSG_CHANNEL_SIZE], buf2[256];
-
-    if (!app_client_shm.shm) return;
+    if (!app_client_shm.shm) {
+        return;
+    }
 
     if (m.mode == MODE_FULLSCREEN) {
         // Remember mode before screensaver
@@ -52,25 +53,23 @@ void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
         graphics_mode_before_ss = MODE_HIDE_GRAPHICS;
     }
 
-    if ( (m.mode == MODE_HIDE_GRAPHICS) && (graphics_mode_acked == MODE_FULLSCREEN) ) {
+    if ((m.mode == MODE_HIDE_GRAPHICS) && (graphics_mode_acked == MODE_FULLSCREEN)) {
         // Restore mode from before screensaver
         m.mode = graphics_mode_before_ss;
     }
 
     graphics_msg = m;       // save graphics_station, desktop, display
 
-    strcpy(buf, xml_graphics_modes[m.mode]);
+    std::ostringstream buf(xml_graphics_modes[m.mode]);
+
     if (strlen(m.window_station)) {
-        sprintf(buf2, "<window_station>%s</window_station>", m.window_station);
-        strcat(buf, buf2);
+        buf << "<window_station>" << m.window_station << "</window_station>";
     }
     if (strlen(m.desktop)) {
-        sprintf(buf2, "<desktop>%s</desktop>", m.desktop);
-        strcat(buf, buf2);
+        buf << "<desktop>" << m.desktop << "</desktop>";
     }
     if (strlen(m.display)) {
-        sprintf(buf2, "<display>%s</display>", m.display);
-        strcat(buf, buf2);
+        buf << "<display>" << m.display << "</display>";
     }
 
     if (log_flags.scrsave_debug) {
@@ -79,10 +78,7 @@ void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
             xml_graphics_modes[m.mode], result->name
         );
     }
-    graphics_request_queue.msg_queue_send(
-        buf,
-        app_client_shm.shm->graphics_request
-    );
+    graphics_request_queue.msg_queue_send(buf.str().c_str(), app_client_shm.shm->graphics_request);
 }
 
 
