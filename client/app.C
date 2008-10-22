@@ -323,24 +323,24 @@ bool ACTIVE_TASK_SET::poll() {
     return action;
 }
 
-/// There's a new trickle file.
-/// Move it from slot dir to project dir
+/// Move a trickle file from the slot directory to the project directory.
+/// If moving the file files it will be deleted.
+///
+/// \return Zero on success, ERR_RENAME on error.
 int ACTIVE_TASK::move_trickle_file() {
-    char project_dir[256], new_path[1024], old_path[1024];
-    int retval;
-
+    char project_dir[256];
     get_project_dir(result->project, project_dir, sizeof(project_dir));
-    sprintf(old_path, "%s/trickle_up.xml", slot_dir);
-    sprintf(new_path,
-        "%s/trickle_up_%s_%d.xml",
-        project_dir, result->name, (int)time(0)
-    );
-    retval = boinc_rename(old_path, new_path);
 
-    // if can't move it, remove
-    //
+    std::string old_path(slot_dir);
+    old_path.append("/trickle_up.xml");
+    std::ostringstream new_path(project_dir);
+    new_path << "/trickle_up_" << result->name << '_' << time(0) << ".xml";
+
+    int retval = boinc_rename(old_path.c_str(), new_path.str().c_str());
+
+    // If can't move it, remove it.
     if (retval) {
-        delete_project_owned_file(old_path, true);
+        delete_project_owned_file(old_path.c_str(), true);
         return ERR_RENAME;
     }
     return 0;

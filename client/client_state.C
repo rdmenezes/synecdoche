@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -1236,15 +1237,12 @@ bool CLIENT_STATE::time_to_exit() const {
 /// - Append a description of the error to result.stderr_out
 /// - If result state is FILES_DOWNLOADED, change it to COMPUTE_ERROR
 ///   so that we don't try to run it again.
+///
+/// \param[in,out] res Reference to the failed result.
+/// \param[in] format Format string to format the error message.
+/// \return Always returns Zero.
 int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
-    char buf[4096],  err_msg[4096];
-        // The above store 1-line messages and short XML snippets.
-        // Shouldn't exceed a few hundred bytes.
-    unsigned int i;
-    int failnum;
-
-    // only do this once per result
-    //
+    // Only do this once per result.
     if (res.ready_to_report) {
         return 0;
     }
@@ -1252,16 +1250,25 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     res.ready_to_report = true;
     res.completed_time = now;
 
+    char err_msg[4096];
+    // The above store 1-line messages and short XML snippets.
+    // Shouldn't exceed a few hundred bytes.
+    // Note: This whole message-formatting with variable arguments like
+    // printf is just insane and should be removed as soon as possible.
+
     va_list va;
     va_start(va, format);
     vsnprintf(err_msg, sizeof(err_msg), format, va);
     va_end(va);
+    err_msg[sizeof(err_msg) - 1] = 0; // Yes, I'm paranoid. But it's vsnprintf, which *can* leave the string without '\0' at the end.
 
-    sprintf(buf, "Unrecoverable error for result %s (%s)", res.name, err_msg);
-    scheduler_op->backoff(res.project, buf);
+    std::ostringstream backoff_buf;
+    backoff_buf << "Unrecoverable error for result " << res.name << " (" << err_msg << ")";
+    scheduler_op->backoff(res.project, backoff_buf.str().c_str());
 
-    sprintf( buf, "<message>\n%s\n</message>\n", err_msg);
-    res.stderr_out.append(buf);
+    std::ostringstream stderr_buf;
+    stderr_buf << "<message>\n" << err_msg << "\n</message>\n";
+    res.stderr_out.append(stderr_buf.str());
 
     switch(res.state()) {
     case RESULT_NEW:
@@ -1269,7 +1276,6 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
         // called from:
         // CLIENT_STATE::garbage_collect()
         //   if WU or app_version had a download failure
-        //
         if (!res.exit_status) {
             res.exit_status = ERR_RESULT_DOWNLOAD;
         }
@@ -1283,7 +1289,6 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
         // ACTIVE_TASK::handle_exited_app (on nonzero exit or signal)
         // ACTIVE_TASK::abort_task (if exceeded resource limit)
         // CLIENT_STATE::schedule_cpus (catch-all for resume/start errors)
-        //
         res.set_state(RESULT_COMPUTE_ERROR, "CS::report_result_error");
         if (!res.exit_status) {
             res.exit_status = ERR_RESULT_START;
@@ -1293,17 +1298,17 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     case RESULT_FILES_UPLOADING:
         // called from
         // CLIENT_STATE::garbage_collect() if result had an upload error
-        //
-        for (i=0; i<res.output_files.size(); i++) {
-            if (res.output_files[i].file_info->had_failure(failnum)) {
-                sprintf(buf,
-                    "<upload_error>\n"
-                    "    <file_name>%s</file_name>\n"
-                    "    <error_code>%d</error_code>\n"
-                    "</upload_error>\n",
-                    res.output_files[i].file_info->name, failnum
-                );
-                res.stderr_out.append(buf);
+        typedef std::vector<FILE_REF>::const_iterator filerefs_it;
+        for (filerefs_it it = res.output_files.begin(); it != res.output_files.end(); ++it) {
+            FILE_INFO* cur_finfo = (*it).file_info;
+            int failnum;
+            if (cur_finfo->had_failure(failnum)) {
+                std::ostringstream buf;
+                buf << "<upload_error>\n"
+                    << "    <file_name>" << cur_finfo->name << "</file_name>\n"
+                    << "    <error_code>" << failnum << "</error_code>\n"
+                    << "</upload_error>\n";
+                res.stderr_out.append(buf.str());
             }
         }
         if (!res.exit_status) {
@@ -1317,7 +1322,10 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
         break;
     }
 
-    res.stderr_out = res.stderr_out.substr(0, MAX_STDERR_LEN);
+    // Prevent the stderr_out contents from beeing longer than MAX_STDERR_LEN:
+    if (res.stderr_out.size() > MAX_STDERR_LEN) {
+        res.stderr_out.erase(MAX_STDERR_LEN);
+    }
     return 0;
 }
 
