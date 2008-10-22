@@ -35,6 +35,8 @@
 #endif
 #endif
 
+#include <sstream>
+
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"
