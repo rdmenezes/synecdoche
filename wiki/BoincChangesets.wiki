@@ -31,7 +31,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/15948 15948]||Already fixed in r298.||
 ||[http://boinc.berkeley.edu/trac/changeset/16029 16029]||WCG "feature" for the wizards. No need for that.||
 ||[http://boinc.berkeley.edu/trac/changeset/16061 16061]||Exclude list for proxy. Useful feature but bad implementation.`*` Additional changesets: 16066||
-||[http://boinc.berkeley.edu/trac/changeset/16087 16087]||"exclusive app" feature.`*` Additional changesets: 16084/16085/16090||
+||[http://boinc.berkeley.edu/trac/changeset/16087 16087]||"exclusive app" feature.`*` Additional changesets: 16084/16085/16090/16175||
 ||[http://boinc.berkeley.edu/trac/changeset/16095 16095]||RPC calls are not obsolete just because the official manager does not use them any more.||
 ||[http://boinc.berkeley.edu/trac/changeset/16118 16118]||Sample wrapper, useless Makefile fix, debug code already removed in r254||
 ||[http://boinc.berkeley.edu/trac/changeset/16130 16130]||Documentation fixes for doxygen||
@@ -53,10 +53,10 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||15929||Precompiled headers work for the manager, but do they work for the client/lib/etc (windows only)?||
 ||15954||XML fixes for APP_INIT_DATA||
 ||15945||Do we need the screensaver stuff? The other fix is already applied.||
-||15946/16007||Localization updates||
+||15946/16007/16152/16153||Localization updates||
 ||15955/15957/15958/15960/15961/15963/15965||Code signing stuff.||
 ||15959/15964/15966||MGR: Save and restore selected items by key values when refreshing||
-||15970/15978/15981/15990/15991/15993/15994/15995/15996/16006||Flickering of the MGR - do we need these fixes? Do they even work?||
+||15970/15978/15981/15990/15991/15993/15994/15995/15996/16006/16185||Flickering of the MGR - do we need these fixes? Do they even work?||
 ||15976||MGR: Make formatting of List Views more efficient||
 ||15987||MGR: Simple GUI fixes||
 ||15998/15999||MGR: Simplify Message display logic; fix possible memory leaks; fix button tooltip||
@@ -66,11 +66,17 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||16038||Fix for boinc_exit() (API, we don't need this)||
 ||16098||Performance improvement already applied in r422, but the other fix may still be needed.||
 ||16099/16100/16101/16120||Mac build updates||
-||16117||Code formatting issues||
+||16117/16156||Code formatting issues||
 ||16119/16124/16125/16137/16138/16139/16146/16148||MGR: progress bar fixes||
 ||16121||MGR: show resource requirements of all jobs, running or not||
 ||16128||client: it a file upload fails for a job that's in progress, abort the task.||
 ||16149||client: show est CPC time of jobs returned by sched RPC, if sched_op_debug||
 ||16150||client: use different temp file names for different purposes / change logic in a pathological file xfer case||
+||16155/16158||MGR: Fix crash in Projects:Properties; Always update underlying data when changing tabs, attaching, detaching, forcing refresh, etc. May have something to do with BOINC's AsyncRPC.||
+||16181/16183||MGR: SimpleGUI: compatibility fixes for wxWidgets 2.8||
+||16186||MGR: Fix flashing red Messages button in SimpleGUI||
+||16187||client: print a message, and recompute ncpus, when reread cc_config.xml||
+||16188||client: report job resources even when no active task||
+||16189||client: correctly null-terminate file upload handler reply||
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16150 16150]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16200 16200]
