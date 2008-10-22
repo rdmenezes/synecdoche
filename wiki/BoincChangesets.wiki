@@ -65,7 +65,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||16028/16096||"Improvements" for the "XML parser"||
 ||16038||Fix for boinc_exit() (API, we don't need this)||
 ||16098||Performance improvement already applied in r422, but the other fix may still be needed.||
-||16099/16100/16101/16120||Mac build updates||
+||16099/16100/16101/16120/16248||Mac build updates||
 ||16117/16156||Code formatting issues||
 ||16119/16124/16125/16137/16138/16139/16146/16148||MGR: progress bar fixes||
 ||16121||MGR: show resource requirements of all jobs, running or not||
@@ -78,5 +78,13 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||16187||client: print a message, and recompute ncpus, when reread cc_config.xml||
 ||16188||client: report job resources even when no active task||
 ||16189||client: correctly null-terminate file upload handler reply||
+||16206/16207||client: clarify and fix the semantics of "next RPC time".||
+||16208||client: new config flags||
+||16212||MGR: Fix updating task bar icon on disconnect from Client, fix a crash on exiting||
+||16213||Add a call to diagnostics_finish() in BOINCGUIApp::OnExit().||
+||16226||MGR: update all resource share percentages when they change. (15976 needs to be applied before this one here.)||
+||16234||client: if "leave in memory" pref changes, quit suspended tasks||
+||16242||MGR: fix disk display when talking to pre-6.3 client - do we need this fix?||
+||16247||MGR: More thorough validity checking to prevent crashes||
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16200 16200]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16250 16250]
