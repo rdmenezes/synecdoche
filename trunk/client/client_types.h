@@ -200,8 +200,10 @@ struct RR_SIM_PROJECT_STATUS {
 
 class PROJECT {
 public:
+    /// @name Account file
     /// The following items come from the account file.
     /// They are a function only of the user and the project.
+    /// @{
 
     char master_url[256];    ///< URL of site that contains scheduler tags for this project.
     char authenticator[256]; ///< User's authenticator on this project.
@@ -225,10 +227,13 @@ public:
     char host_venue[256];
 
     bool using_venue_specific_prefs;
+    /// @}
 
+    /// @name client_state
     /// The following items come from client_state.xml.
     /// They may depend on the host as well as user and project.
     /// \note if you add anything, add it to copy_state_fields() also!!!
+    /// @{
 
     std::vector<std::string> scheduler_urls; ///< where to find scheduling servers
     char project_name[256];             ///< descriptive.  not unique
@@ -246,8 +251,11 @@ public:
     double host_expavg_credit;
     double host_create_time;
     double ams_resource_share; ///< resource share according to AMS; overrides project
+    /// @}
 
+    /// @name Scheduler RPCs
     /// Stuff related to scheduler RPCs and master fetch
+    /// @{
 
     int rpc_seqno;
 
@@ -279,6 +287,10 @@ public:
 
     bool trickle_up_pending;    ///< have trickle up to send
     double last_rpc_time;       ///< when last RPC finished
+    /// @}
+
+    /// @name Others
+    /// @{
 
     /// app_versions.xml file found in project dir;
     /// use those apps rather than getting from server
@@ -287,9 +299,12 @@ public:
     bool non_cpu_intensive;
     bool verify_files_on_app_start;
     bool use_symlinks;
+    /// @}
 
+    /// @name Server requests for data
     /// Items send in scheduler replies, requesting that
     /// various things be sent in the next request
+    /// @{
 
     /// Send the list of permanent files associated with the project
     /// in the next scheduler reply.
@@ -297,6 +312,8 @@ public:
 
     int send_time_stats_log;  ///< If nonzero, send time stats log from that point on
     int send_job_log; ///< if nonzero, send this project's job log from that point on
+    /// @}
+
     bool suspended_via_gui;
 
     /// Return work, but don't request more.
@@ -335,8 +352,10 @@ public:
 
     void update_duration_correction_factor(RESULT*);
 
+    /// @name CPU scheduler and work fetch
     /// Fields used by CPU scheduler and work fetch.
     /// everything from here on applies only to CPU intensive projects.
+    /// @{
 
     /// Not suspended and not deferred and not no more work.
     bool contactable() const;
@@ -360,6 +379,7 @@ public:
     bool some_download_stalled() const;
 
     bool some_result_suspended() const;
+    /// @}
 
     /// temps used in CLIENT_STATE::rr_simulation();
     RR_SIM_PROJECT_STATUS rr_sim_status;
@@ -367,7 +387,9 @@ public:
 
     int deadlines_missed;   ///< used as scratch by scheduler, enforcer
 
+    /// @name Debt
     /// "debt" is how much CPU time we owe this project relative to others.
+    /// @{
 
     /// Computed over runnable projects.
     /// Used for CPU scheduling.
@@ -385,6 +407,7 @@ public:
     /// How much "wall CPU time" has been devoted to this
     /// project in the current debt interval.
     double wall_cpu_time_this_debt_interval;
+    /// @}
 
     /// The next result to run for this project.
     struct RESULT *next_runnable_result;
@@ -414,6 +437,7 @@ public:
     /// Temporary used when scanning projects.
     bool checked;
 
+    /// @name File transfer backoff.
     /// Vars related to file-transfer backoff.
     /// file_xfer_failures_up: count of consecutive upload failures.
     /// next_file_xfer_up: when to start trying uploads again.
@@ -424,6 +448,7 @@ public:
     ///
     /// NOTE: all this refers to transient failures, not permanent.
     /// Also, none of this is used right now (commented out)
+    /// @{
 #define FILE_XFER_FAILURE_LIMIT 3
     int file_xfer_failures_up;
     int file_xfer_failures_down;
@@ -433,6 +458,7 @@ public:
     double next_file_xfer_time(const bool) const;
     void file_xfer_failed(const bool);
     void file_xfer_succeeded(const bool);
+    /// @}
 
     PROJECT();
     ~PROJECT(){}
