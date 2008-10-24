@@ -1300,8 +1300,7 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     case RESULT_FILES_UPLOADING:
         // called from
         // CLIENT_STATE::garbage_collect() if result had an upload error
-        typedef std::vector<FILE_REF>::const_iterator filerefs_it;
-        for (filerefs_it it = res.output_files.begin(); it != res.output_files.end(); ++it) {
+        for (FILE_REF_VEC::const_iterator it = res.output_files.begin(); it != res.output_files.end(); ++it) {
             FILE_INFO* cur_finfo = (*it).file_info;
             int failnum;
             if (cur_finfo->had_failure(failnum)) {

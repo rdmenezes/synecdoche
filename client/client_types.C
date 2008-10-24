@@ -446,29 +446,34 @@ void PROJECT::file_xfer_succeeded(const bool is_upload) {
     }
 }
 
+/// Parse project files from a xml file.
+///
+/// \param[in,out] in Reference to a MIOFILE instance from which the file
+///                   contents should be read.
+/// \param[in] delete_existing_symlinks If true existing symlinks will be
+///                                     deleted before parsing \a in.
+/// \return Zero on success, ERR_XML_PARSE otherwise.
 int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
-    char buf[256];
-    unsigned int i;
-    char project_dir[256], path[256];
-
-
     if (delete_existing_symlinks) {
-        // delete current sym links.
+        // Delete current sym links.
         // This is done when parsing scheduler reply,
         // to ensure that we get rid of sym links for
         // project files no longer in use
-        //
+        char project_dir[256];
         get_project_dir(this, project_dir, sizeof(project_dir));
-        for (i=0; i<project_files.size(); i++) {
-            FILE_REF& fref = project_files[i];
-            sprintf(path, "%s/%s", project_dir, fref.open_name);
-            delete_project_owned_file(path, false);
+        for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
+            std::string path(project_dir);
+            path.append("/").append((*it).open_name);
+            delete_project_owned_file(path.c_str(), false);
         }
     }
 
     project_files.clear();
+    char buf[256];
     while (in.fgets(buf, 256)) {
-        if (match_tag(buf, "</project_files>")) return 0;
+        if (match_tag(buf, "</project_files>")) {
+            return 0;
+        }
         if (match_tag(buf, "<file_ref>")) {
             FILE_REF file_ref;
             file_ref.parse(in);
@@ -476,8 +481,7 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
         } else {
             if (log_flags.unparsed_xml) {
                 msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] parse_project_files(): unrecognized: %s\n", buf
-                );
+                    "[unparsed_xml] parse_project_files(): unrecognized: %s\n", buf);
             }
         }
     }
