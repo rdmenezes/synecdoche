@@ -113,7 +113,7 @@ synecmgr_CPPFLAGS = $(AM_CPPFLAGS) $(WX_CPPFLAGS) $(CLIENTGUIFLAGS)
 synecmgr_CXXFLAGS = $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
 synecmgr_LDADD = $(LIBBOINC) $(CLIENTGUILIBS)
 
-stdwx.h.gch:
+stdwx.h.gch: stdwx.h
 	-rm -f stdwx.h.gch
 	$(CXXCOMPILE) -o stdwx.h.gch -xc++-header stdwx.h
 
