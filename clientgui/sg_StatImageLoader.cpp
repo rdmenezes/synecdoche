@@ -85,7 +85,7 @@ void StatImageLoader::BuildUserStatToolTip() {
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
-    PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
+    const PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
 
     strBuffer.Printf(
         _("%s. Work done by %s: %0.2f"),
@@ -104,7 +104,7 @@ void StatImageLoader::AddMenuItems()
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
-    PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
+    const PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
     urlCount = project->gui_urls.size();
 
     // Add the home page link
@@ -178,7 +178,7 @@ void StatImageLoader::OnProjectDetach() {
     int indexOfProj = -1;
     int prjCount = pDoc->GetProjectCount();
     for(int m = 0; m < prjCount; m++){
-        PROJECT* project = pDoc->project(m);
+        const PROJECT* project = pDoc->project(m);
         project->get_name(strProjectName);
         if(project->master_url == m_prjUrl){
             indexOfProj = m;
@@ -217,7 +217,7 @@ void StatImageLoader::LoadStatIcon(wxBitmap& image) {
 std::string StatImageLoader::GetProjectIconLoc() {
     char urlDirectory[256];
     CMainDocument* pDoc = wxGetApp().GetDocument();
-    PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
+    const PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
     url_to_project_dir(project->master_url.c_str(), urlDirectory);
     return std::string(urlDirectory) + std::string("/stat_icon");
 }
@@ -261,16 +261,16 @@ void StatImageLoader::ReloadProjectSpecificIcon() {
 
 void StatImageLoader::UpdateInterface() {
     CMainDocument* pDoc = wxGetApp().GetDocument();
-    PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
+    const PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
 
     // Check to see if we need to reload the stat icon
-    if ( project > NULL && project->project_files_downloaded_time > project_files_downloaded_time ) {
+    if ( project != NULL && project->project_files_downloaded_time > project_files_downloaded_time ) {
         ReloadProjectSpecificIcon();
         project_files_downloaded_time = project->project_files_downloaded_time;
     }
 
     // Check to see if we need to rebuild the hoover and menu
-    if ( project > NULL && project->last_rpc_time > project_last_rpc_time ) {
+    if ( project != NULL && project->last_rpc_time > project_last_rpc_time ) {
         RebuildMenu();
         BuildUserStatToolTip();
         project_last_rpc_time = project->last_rpc_time;
