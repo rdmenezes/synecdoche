@@ -301,68 +301,74 @@ void APP_CLIENT_SHM::reset_msgs() {
 }
 
 /// Resolve virtual name (in slot dir) to physical path (in project dir).
+/// This function is a C-version of boinc_resolve_filename_s and only exists
+/// for compatibility reasons. See boinc_resolve_filename_s for more
+///information.
+///
+/// \param[in] virtual_name String describing the virtual file name which
+///                         should get resolved.
+/// \param[out] physical_name Pointer to a buffer that should receive the
+///                           resolved file name belonging to the virtual
+///                           file name in \a virtual_name.
+/// \param[out] len Size of the output buffer \a physical_name.
+/// \return Zero on success, ERR_NULL if \a virtual_name is zero,
+///         ERR_BUFFER_OVERFLOW if the buffer pointed to by \a physical_name
+///         is too small.
+int boinc_resolve_filename(const char* virtual_name, char* physical_name, int len) {
+    std::string buf;
+    int ret_val = boinc_resolve_filename_s(virtual_name, buf);
+    if (ret_val == 0) {
+        // Check if the output buffer is big enough:
+        if (buf.size() + 1 >= static_cast<std::string::size_type>(len)) {
+            return ERR_BUFFER_OVERFLOW;
+        }
+        strlcpy(physical_name, buf.c_str(), len);
+    }
+    return ret_val;
+}
+
+
+/// Resolve virtual name (in slot dir) to physical path (in project dir).
 /// Cases:
 /// - Windows and pre-6.12 Unix:
 ///   virtual name refers to a "soft link" (XML file acting as symbolic link)
 /// - 6.12+ Unix:
 ///   virtual name is a symbolic link
 /// - Standalone: physical path is same as virtual name
-int boinc_resolve_filename(
-    const char *virtual_name, char *physical_name, int len
-) {
-    FILE *fp;
-    char buf[512], *p;
-
-    if (!virtual_name) return ERR_NULL;
-    strlcpy(physical_name, virtual_name, len);
-
-#ifndef _WIN32
-    if (is_symlink(virtual_name)) {
-        return 0;
-    }
-#endif
-
-    // Open the link file and read the first line
-    //
-    fp = boinc_fopen(virtual_name, "r");
-    if (!fp) return 0;
-
-    // must initialize buf since fgets() on an empty file won't do anything
-    //
-    buf[0] = 0;
-    p =fgets(buf, sizeof(buf), fp);
-    fclose(fp);
-
-    // If it's the <soft_link> XML tag, return its value,
-    // otherwise, return the original file name
-    //
-    if (p) parse_str(buf, "<soft_link>", physical_name, len);
-    return 0;
-}
-
-
-/**
- * \overload
- */
+///
+/// \param[in] virtual_name String describing the virtual file name which
+///                         should get resolved.
+/// \param[out] physical_name Reference to a string instance that should
+///                           receive the resolved file name belonging to
+///                           the virtual file name in \a virtual_name.
+/// \return Zero on success, ERR_NULL if \a virtual_name is zero.
 int boinc_resolve_filename_s(const char *virtual_name, string& physical_name) {
-    char buf[512], *p;
-    if (!virtual_name) return ERR_NULL;
+    if (!virtual_name) {
+        return ERR_NULL;
+    }
     physical_name = virtual_name;
 #ifndef _WIN32
     if (is_symlink(virtual_name)) {
         return 0;
     }
 #endif
+    // Open the link file and read the first line
     FILE *fp = boinc_fopen(virtual_name, "r");
-    if (!fp) return ERR_FOPEN;
-    buf[0] = 0;
-    p = fgets(buf, 512, fp);
+    if (!fp) {
+        return 0;
+    }
+
+    // Must initialize buf since fgets() on an empty file won't do anything.
+    char buf[512] = {0};
+    char* p = fgets(buf, sizeof(buf), fp);
     fclose(fp);
-    if (p) parse_str(buf, "<soft_link>", physical_name);
+    if (p) {
+        parse_str(buf, "<soft_link>", physical_name);
+    }
     return 0;
 }
 
-void url_to_project_dir(char* url, char* dir) {
+void url_to_project_dir(const char* url, char* dir) {
     char buf[256];
     escape_project_url(url, buf);
     sprintf(dir, "%s/%s", PROJECT_DIR, buf);

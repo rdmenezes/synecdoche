@@ -211,12 +211,15 @@ void StatImageLoader::LoadStatIcon(wxBitmap& image) {
     SetSize(width, height); 
 }
 
+/// Retrieve the location of the project icon.
+///
+/// \return A string containing the path to the project icon.
 std::string StatImageLoader::GetProjectIconLoc() {
     char urlDirectory[256];
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
-    url_to_project_dir((char*)project->master_url.c_str() ,urlDirectory);
-    return (std::string)urlDirectory + "/stat_icon";
+    url_to_project_dir(project->master_url.c_str(), urlDirectory);
+    return std::string(urlDirectory) + std::string("/stat_icon");
 }
 
 

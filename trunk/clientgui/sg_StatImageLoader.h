@@ -48,7 +48,10 @@ private:
     void ReloadProjectSpecificIcon();
     void BuildUserStatToolTip();
     void AddMenuItems();
+
+    /// Retrieve the location of the project icon.
     std::string GetProjectIconLoc();
+
     DECLARE_EVENT_TABLE() 
 };
 
