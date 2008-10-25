@@ -120,7 +120,10 @@ protected:
 private:
 
     void CreateSlideShowWindow();
-    void LoadSlideShow(std::vector<wxBitmap> *vSlideShow);
+
+    /// Load the slideshow.
+    void LoadSlideShow(std::vector<wxBitmap>* vSlideShow);
+
     bool Downloading();
     int ComputeState();
     void WriteText(wxDC* dc);

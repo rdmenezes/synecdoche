@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -167,22 +167,28 @@ int CViewTabPage::ComputeState() {
     return status;
 }
 
-void CViewTabPage::LoadSlideShow(std::vector<wxBitmap> *vSlideShow) {
-    char urlDirectory[256];
-    CMainDocument* pDoc     = wxGetApp().GetDocument();
+/// Load the slideshow.
+///
+/// \param[out] vSlideShow A pointer to a vector for wxBitmap. It will receive
+///                        the sucessfully loaded images.
+void CViewTabPage::LoadSlideShow(std::vector<wxBitmap>* vSlideShow) {
+    CMainDocument* pDoc = wxGetApp().GetDocument();
     RESULT* result = pDoc->state.lookup_result(resultWU->project_url, resultWU->name);
     // If result not found then return
-    if ( result <= 0 ) return;
-    url_to_project_dir((char *) result->project->master_url.c_str() ,urlDirectory);
-    char file[512];
-    char resolvedFile[512];
-    wxBitmap* btmpSlideShow;
-    for(int i=0; i<99; i++) {
-        sprintf(file, "%s/slideshow_%s_%02d", urlDirectory, result->app->name.c_str(), i);
-        if(boinc_resolve_filename(file, resolvedFile, sizeof(resolvedFile)) == 0){
-            btmpSlideShow = new wxBitmap();
-            if ( btmpSlideShow->LoadFile(wxString(resolvedFile,wxConvUTF8), wxBITMAP_TYPE_ANY) ) {
-                if (btmpSlideShow->Ok() ) {
+    if (result <= 0) {
+        return;
+    }
+    char urlDirectory[256];
+    url_to_project_dir(result->project->master_url.c_str(), urlDirectory);
+    for(int i = 0; i < 99; ++i) {
+        std::ostringstream file;
+        file << urlDirectory << "/slideshow_" << result->app->name.c_str() << '_';
+        file << std::setw(2) << std::setfill('0') << i;
+        std::string resolvedFile;
+        if (boinc_resolve_filename_s(file.str().c_str(), resolvedFile) == 0){
+            wxBitmap* btmpSlideShow = new wxBitmap();
+            if (btmpSlideShow->LoadFile(wxString(resolvedFile.c_str(), wxConvUTF8), wxBITMAP_TYPE_ANY)) {
+                if (btmpSlideShow->Ok()) {
                     vSlideShow->push_back(*btmpSlideShow);
                 }
             }
@@ -191,13 +197,16 @@ void CViewTabPage::LoadSlideShow(std::vector<wxBitmap> *vSlideShow) {
             break;
         }
     }
-    if ( vSlideShow->size() == 0 ) {
-        for(int i=0; i<99; i++) {
-            sprintf(file, "%s/slideshow_%02d", urlDirectory, i);
-            if(boinc_resolve_filename(file, resolvedFile, sizeof(resolvedFile)) == 0){
-                btmpSlideShow = new wxBitmap();
-                if ( btmpSlideShow->LoadFile(wxString(resolvedFile,wxConvUTF8), wxBITMAP_TYPE_ANY) ) {
-                    if (btmpSlideShow->Ok() ) {
+    if (vSlideShow->size() == 0) {
+        for (int i = 0; i < 99; ++i) {
+            std::ostringstream file;
+            file << urlDirectory << "/slideshow_";
+            file << std::setw(2) << std::setfill('0') << i;
+            std::string resolvedFile;
+            if (boinc_resolve_filename_s(file.str().c_str(), resolvedFile) == 0){
+                wxBitmap* btmpSlideShow = new wxBitmap();
+                if (btmpSlideShow->LoadFile(wxString(resolvedFile.c_str(), wxConvUTF8), wxBITMAP_TYPE_ANY)) {
+                    if (btmpSlideShow->Ok()) {
                         vSlideShow->push_back(*btmpSlideShow);
                     }
                 }
