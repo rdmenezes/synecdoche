@@ -5,13 +5,13 @@
 Changesets that are irrelevant to Synecdoche are not shown. Some decisions listed here make subsequent changesets irrelevant.
 
 || *Changeset* || *Reason* ||
-||[http://boinc.berkeley.edu/trac/changeset/15530 15530]||`*`||
 ||[http://boinc.berkeley.edu/trac/changeset/15537 15537]||Properties. This feature is nowhere near ready.||
 ||[http://boinc.berkeley.edu/trac/changeset/15559 15559]||Message filtering. This is not a good UI for filtering.||
 ||[http://boinc.berkeley.edu/trac/changeset/15561 15561]||Already fixed.||
 ||[http://boinc.berkeley.edu/trac/changeset/15568 15568]||Concatenated strings.||
 ||[http://boinc.berkeley.edu/trac/changeset/15573 15573]||Solaris. This addition appears to be in the wrong file.||
 ||[http://boinc.berkeley.edu/trac/changeset/15574 15574]||Already fixed. Correctly!||
+||[http://boinc.berkeley.edu/trac/changeset/15764 15764]||API`*` ||
 ||[http://boinc.berkeley.edu/trac/changeset/15585 15585]||Undocumented. This will be moot when we use wxTaskBarIcon.||
 ||[http://boinc.berkeley.edu/trac/changeset/15587 15587]||Event ids. This is pointless. See r75.||
 ||[http://boinc.berkeley.edu/trac/changeset/15588 15588]||Solved better in r76. Ours won't cycle the logs if an error is logged when parsing the config file.||
@@ -34,26 +34,27 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16087 16087]||"exclusive app" feature.`*` Additional changesets: 16084/16085/16090/16175||
 ||[http://boinc.berkeley.edu/trac/changeset/16095 16095]||RPC calls are not obsolete just because the official manager does not use them any more.||
 ||[http://boinc.berkeley.edu/trac/changeset/16118 16118]||Sample wrapper, useless Makefile fix, debug code already removed in r254||
+||[http://boinc.berkeley.edu/trac/changeset/16119 16119]||Already fixed.||
 ||[http://boinc.berkeley.edu/trac/changeset/16130 16130]||Documentation fixes for doxygen||
+||[http://boinc.berkeley.edu/trac/changeset/16188 16188]||Report job resources even when no active task. Coproc feature.||
 
 `*` These changesets may still be needed.
 
 == Pending merge ==
 
 || *Changesets* || *Additional comments* ||
+||15530||||
 ||15759||missing copyrights||
-||15764||API||
 ||15767||Need to review this mess carefully.||
 ||15827||Screensaver stuff hidden in there.||
 ||15831||Manifest files?||
-||15834/15873||We can't possibly need this.||
+||15834/15873||We can't possibly need this (but we do).||
 ||15840/15874/15877/15885/15967/16001||Screensaver mess||
 ||15865||||
 ||15886||||
 ||15929||Precompiled headers work for the manager, but do they work for the client/lib/etc (windows only)?||
 ||15954||XML fixes for APP_INIT_DATA||
 ||15945||Do we need the screensaver stuff? The other fix is already applied.||
-||15946/16007/16152/16153||Localization updates||
 ||15955/15957/15958/15960/15961/15963/15965||Code signing stuff.||
 ||15959/15964/15966||MGR: Save and restore selected items by key values when refreshing||
 ||15970/15978/15981/15990/15991/15993/15994/15995/15996/16006/16185||Flickering of the MGR - do we need these fixes? Do they even work?||
@@ -61,22 +62,15 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||15987||MGR: Simple GUI fixes||
 ||15998/15999||MGR: Simplify Message display logic; fix possible memory leaks; fix button tooltip||
 ||16003||Is this used by the client or does this belong to the server?||
-||16014/16016||Mac installer for GridRepublic - do we support this?||
 ||16028/16096||"Improvements" for the "XML parser"||
 ||16038||Fix for boinc_exit() (API, we don't need this)||
 ||16098||Performance improvement already applied in r422, but the other fix may still be needed.||
-||16099/16100/16101/16120/16248||Mac build updates||
-||16117/16156||Code formatting issues||
-||16119/16124/16125/16137/16138/16139/16146/16148||MGR: progress bar fixes||
 ||16121||MGR: show resource requirements of all jobs, running or not||
 ||16128||client: it a file upload fails for a job that's in progress, abort the task.||
 ||16149||client: show est CPC time of jobs returned by sched RPC, if sched_op_debug||
 ||16150||client: use different temp file names for different purposes / change logic in a pathological file xfer case||
-||16155/16158||MGR: Fix crash in Projects:Properties; Always update underlying data when changing tabs, attaching, detaching, forcing refresh, etc. May have something to do with BOINC's AsyncRPC.||
 ||16181/16183||MGR: SimpleGUI: compatibility fixes for wxWidgets 2.8||
-||16186||MGR: Fix flashing red Messages button in SimpleGUI||
 ||16187||client: print a message, and recompute ncpus, when reread cc_config.xml||
-||16188||client: report job resources even when no active task||
 ||16189||client: correctly null-terminate file upload handler reply||
 ||16206/16207||client: clarify and fix the semantics of "next RPC time".||
 ||16208||client: new config flags||
