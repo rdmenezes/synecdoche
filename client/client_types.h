@@ -333,14 +333,18 @@ public:
     /// Parse project files from a xml file.
     int parse_project_files(MIOFILE&, bool delete_existing_symlinks);
 
+    /// Write the XML representation of the project files into a file.
     void write_project_files(MIOFILE&) const;
+
+    /// Install pointers from FILE_REFs to FILE_INFOs for project files.
     void link_project_files(bool recreate_symlink_files);
-    int write_symlink_for_project_file(FILE_INFO*);
+
+    /// Write symlinks for project files.
+    int write_symlink_for_project_file(const FILE_INFO* fip) const;
 
     double project_files_downloaded_time; ///< When last project file download finished.
 
-    /// Called when a project file download finishes.
-    /// If it's the last one, set project_files_downloaded_time to now.
+    /// Update project_files_downloaded_time to the current time.
     void update_project_files_downloaded_time();
 
     /// Multiply by this when estimating the CPU time of a result
