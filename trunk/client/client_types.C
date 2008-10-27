@@ -491,43 +491,43 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
 /// Install pointers from FILE_REFs to FILE_INFOs for project files,
 /// and flag FILE_INFOs as being project files.
 ///
+/// \param[in] recreate_symlink_files If true symlinks for the files
+///                                   belonging to this project will be
+///                                   recreated.
 void PROJECT::link_project_files(bool recreate_symlink_files) {
-    FILE_INFO* fip;
-    vector<FILE_REF>::iterator fref_iter;
-    fref_iter = project_files.begin();
+    FILE_REF_VEC::iterator fref_iter = project_files.begin();
     while (fref_iter != project_files.end()) {
         FILE_REF& fref = *fref_iter;
-        fip = gstate.lookup_file_info(this, fref.file_name);
+        FILE_INFO* fip = gstate.lookup_file_info(this, fref.file_name);
         if (!fip) {
-            msg_printf(this, MSG_INTERNAL_ERROR,
-                "project file refers to non-existent %s", fref.file_name
-            );
+            msg_printf(this, MSG_INTERNAL_ERROR, "project file refers to non-existent %s", fref.file_name);
             fref_iter = project_files.erase(fref_iter);
             continue;
         }
         fref.file_info = fip;
         fip->is_project_file = true;
-        fref_iter++;
+        ++fref_iter;
     }
 
     if (recreate_symlink_files) {
-        for (unsigned i=0; i<gstate.file_infos.size(); i++) {
-            fip = gstate.file_infos[i];
-            if (fip->project == this && fip->is_project_file && fip->status == FILE_PRESENT) {
-                write_symlink_for_project_file(fip);
+        for (std::vector<FILE_INFO*>::const_iterator it = gstate.file_infos.begin(); it != gstate.file_infos.end(); ++it) {
+            if (((*it)->project == this) && ((*it)->is_project_file) && ((*it)->status == FILE_PRESENT)) {
+                write_symlink_for_project_file(*it);
             }
         }
     }
 }
 
+/// Write the XML representation of the project files into a file.
+///
+/// \param[in] f Reference to a MIOFILE instance representing the target file.
 void PROJECT::write_project_files(MIOFILE& f) const {
-    unsigned int i;
-
-    if (project_files.empty()) return;
+    if (project_files.empty()) {
+        return;
+    }
     f.printf("<project_files>\n");
-    for (i=0; i<project_files.size(); i++) {
-        const FILE_REF& fref = project_files[i];
-        fref.write(f);
+    for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
+        (*it).write(f);
     }
     f.printf("</project_files>\n");
 }
@@ -536,33 +536,30 @@ void PROJECT::write_project_files(MIOFILE& f) const {
 /// Note: it's conceivable that one physical file
 /// has several logical names, so try them all.
 ///
-int PROJECT::write_symlink_for_project_file(FILE_INFO* fip) {
-    char project_dir[256], path[256];
-    unsigned int i;
-
+/// \param[in] fip A pointer to a file info instance for which the symbolic
+///                links should be created.
+/// \return Always returns zero.
+int PROJECT::write_symlink_for_project_file(const FILE_INFO* fip) const {
+    char project_dir[256];
     get_project_dir(this, project_dir, sizeof(project_dir));
-    for (i=0; i<project_files.size(); i++) {
-        const FILE_REF& fref = project_files[i];
-        if (fref.file_info != fip) continue;
-        sprintf(path, "%s/%s", project_dir, fref.open_name);
-        FILE* f = boinc_fopen(path, "w");
-        if (!f) continue;
-        fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir, fip->name);
-        fclose(f);
+
+    for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
+        if ((*it).file_info == fip) {
+            std::string path(project_dir);
+            path.append("/").append((*it).open_name);
+            FILE* f = boinc_fopen(path.c_str(), "w");
+            if (f) {
+                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir, fip->name);
+                fclose(f);
+            }
+        }
     }
     return 0;
 }
 
-/// a project file download just finished.
-/// If it's the last one, update project_files_downloaded_time
-///
+/// Update project_files_downloaded_time to the current time.
+/// This is called when a project file download finishes.
 void PROJECT::update_project_files_downloaded_time() {
-    unsigned int i;
-    for (i=0; i<project_files.size(); i++) {
-        FILE_REF& fref = project_files[i];
-        FILE_INFO* fip = fref.file_info;
-        if (fip->status != FILE_PRESENT) continue;
-    }
     project_files_downloaded_time = gstate.now;
 }
 
