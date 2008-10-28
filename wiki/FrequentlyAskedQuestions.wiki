@@ -1,5 +1,6 @@
 #summary Answers to frequently asked questions
 #labels Featured
+<wiki:toc/>
 
 = What does Synecdoche mean? =
 
