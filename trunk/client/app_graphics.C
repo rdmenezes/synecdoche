@@ -33,8 +33,6 @@
 #include "config.h"
 #endif
 
-#include <sstream>
-
 #include "diagnostics.h"
 #include "client_state.h"
 #include "client_msgs.h"

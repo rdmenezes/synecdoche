@@ -410,10 +410,15 @@ public:
 
 /// @name cs_trickle.C
 private:
-    int read_trickle_files(PROJECT*, FILE*);
-    int remove_trickle_files(PROJECT*);
+    /// Scan project dir for trickle files and convert them to XML.
+    int read_trickle_files(const PROJECT* project, FILE* f);
+
+    /// Remove trickle files when ack has been received.
+    int remove_trickle_files(const PROJECT* project);
+
 public:
-    int handle_trickle_down(PROJECT*, FILE*);
+    /// Parse a trickle-down message in a scheduler reply.
+    int handle_trickle_down(const PROJECT* project, FILE* in);
 /// @}
 
 /// @name check_state.C
