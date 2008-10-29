@@ -29,13 +29,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstdarg>
-#include <cstring>
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
 #endif
-
-#include <sstream>
 
 #include "parse.h"
 #include "str_util.h"
