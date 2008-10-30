@@ -625,7 +625,7 @@ bool CLIENT_STATE::poll_slow_events() {
 /// in the client state record.  Ignore any trailing "/" characters
 PROJECT* CLIENT_STATE::lookup_project(const char* master_url) {
     int len1, len2;
-    char *mu;
+    const char *mu;
 
     len1 = (int)strlen(master_url);
     if (master_url[strlen(master_url)-1] == '/') len1--;
@@ -666,7 +666,7 @@ WORKUNIT* CLIENT_STATE::lookup_workunit(const PROJECT* p, const char* name) {
 }
 
 APP_VERSION* CLIENT_STATE::lookup_app_version(
-    APP* app, char* platform, int version_num, char* plan_class
+    const APP* app, const char* platform, int version_num, const char* plan_class
 ) {
     for (unsigned int i=0; i<app_versions.size(); i++) {
         APP_VERSION* avp = app_versions[i];
@@ -1298,7 +1298,7 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
         // called from
         // CLIENT_STATE::garbage_collect() if result had an upload error
         for (FILE_REF_VEC::const_iterator it = res.output_files.begin(); it != res.output_files.end(); ++it) {
-            FILE_INFO* cur_finfo = (*it).file_info;
+            const FILE_INFO* cur_finfo = (*it).file_info;
             int failnum;
             if (cur_finfo->had_failure(failnum)) {
                 std::ostringstream buf;
@@ -1446,7 +1446,7 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     }
 
     // If global prefs came from this project, delete file and reinit:
-    PROJECT* p = lookup_project(global_prefs.source_project);
+    const PROJECT* p = lookup_project(global_prefs.source_project);
     if (p == project) {
         boinc_delete_file(GLOBAL_PREFS_FILE_NAME);
         global_prefs.defaults();

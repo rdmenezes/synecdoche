@@ -192,12 +192,12 @@ public:
         // in which case it should be called again immediately.
     void do_io_or_sleep(double dt);
     bool time_to_exit() const;
-    PROJECT* lookup_project(const char*);
-    APP* lookup_app(const PROJECT*, const char*);
-    FILE_INFO* lookup_file_info(const PROJECT*, const char* name);
-    RESULT* lookup_result(const PROJECT*, const char*);
-    WORKUNIT* lookup_workunit(const PROJECT*, const char*);
-    APP_VERSION* lookup_app_version(APP*, char* platform, int ver, char* plan_class);
+    PROJECT* lookup_project(const char* master_url);
+    APP* lookup_app(const PROJECT* p, const char* name);
+    FILE_INFO* lookup_file_info(const PROJECT* p, const char* name);
+    RESULT* lookup_result(const PROJECT* p, const char* name);
+    WORKUNIT* lookup_workunit(const PROJECT* p, const char* name);
+    APP_VERSION* lookup_app_version(const APP* app, const char* platform, int ver, const char* plan_class);
 
     /// "Detach" a project.
     int detach_project(PROJECT* project);
@@ -205,15 +205,15 @@ public:
     /// Call this when a result has a nonrecoverable error.
     int report_result_error(RESULT& res, const char *format, ...);
 
-    int reset_project(PROJECT*, bool detaching);
+    int reset_project(PROJECT* project, bool detaching);
     bool no_gui_rpc;
 private:
-    int link_app(PROJECT*, APP*);
-    int link_file_info(PROJECT*, FILE_INFO*);
-    int link_file_ref(PROJECT*, FILE_REF*);
-    int link_app_version(PROJECT*, APP_VERSION*);
-    int link_workunit(PROJECT*, WORKUNIT*);
-    int link_result(PROJECT*, RESULT*);
+    int link_app(PROJECT* p, APP* app);
+    int link_file_info(PROJECT* p, FILE_INFO* fip);
+    int link_file_ref(PROJECT* p, FILE_REF* file_refp);
+    int link_app_version(PROJECT* p, APP_VERSION* avp);
+    int link_workunit(PROJECT* p, WORKUNIT* wup);
+    int link_result(PROJECT* p, RESULT* rp);
     void print_summary() const;
     bool garbage_collect();
     bool garbage_collect_always();
