@@ -41,8 +41,12 @@ extern void delete_old_slot_dirs();
 /// Get the name of the account file for a given master URL.
 extern std::string get_account_filename(const char* master_url);
 
-extern bool is_account_file(const char*);
-extern bool is_statistics_file(const char*);
+/// Check if the given filename if the name of an account file.
+extern bool is_account_file(const std::string& filename);
+
+/// Check if the given filename if the name of a statistics file.
+extern bool is_statistics_file(const std::string& filename);
+
 extern void get_statistics_filename(const char* master_url, char* path);
 extern bool is_image_file(const char*);
 
