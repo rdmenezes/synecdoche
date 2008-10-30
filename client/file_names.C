@@ -233,49 +233,52 @@ std::string get_account_filename(const char* master_url) {
     return result.str();
 }
 
-static bool bad_account_filename(const char* filename) {
-    msg_printf(NULL, MSG_INTERNAL_ERROR, "Invalid account filename: %s", filename);
+static bool bad_account_filename(const std::string& filename) {
+    msg_printf(NULL, MSG_INTERNAL_ERROR, "Invalid account filename: %s", filename.c_str());
     return false;
 }
 
+/// Check if the given filename if the name of an account file.
 /// Account filenames are of the form
 /// "account_URL.xml",
 /// where URL is master URL with slashes replaced by underscores.
-bool is_account_file(const char* filename) {
-    const char* p, *q;
-    p = strstr(filename, "account_");
-    if (p != filename) return false;
+///
+/// \param[in] filename The name of the file that should be checked.
+/// \return True if the file name given by \a filename has the correct
+///         syntax for an account file name, false otherwise.
+bool is_account_file(const std::string& filename) {
+    if ((!starts_with(filename, "account_")) || (!ends_with(filename, ".xml"))) {
+        return bad_account_filename(filename);
+    }
 
-    q = filename + strlen("account_");
-    p = strstr(q, ".xml");
-    if (!p) return bad_account_filename(filename);
-    if (p == q) return bad_account_filename(filename);
+    // Now check if there is an url between "account_" and ".xml":
+    if (filename.length() == (strlen("account_") + strlen(".xml"))) {
+        return bad_account_filename(filename);
+    }
 
-    q = p + strlen(".xml");
-    if (strlen(q)) return bad_account_filename(filename);
+    // All checks passed.
     return true;
 }
 
+/// Check if the given filename if the name of a statistics file.
 /// statistics filenames are of the form
 /// "statistics_URL.xml",
 /// where URL is master URL with slashes replaced by underscores.
-bool is_statistics_file(const char* filename) {
-    const char* p, *q;
-    p = strstr(filename, "statistics_");
-    if (p != filename) return false;
-    q = filename + strlen("statistics_");
+///
+/// \param[in] filename The name of the file that should be checked.
+/// \return True if the file name given by \a filename has the correct
+///         syntax for a statistics file name, false otherwise.
+bool is_statistics_file(const std::string& filename) {
+    if ((!starts_with(filename, "statistics_")) || (!ends_with(filename, ".xml"))) {
+        return bad_account_filename(filename);
+    }
 
-    p = strstr(q, ".");
-    if (!p) return bad_account_filename(filename);
-    if (p == q) return bad_account_filename(filename);
+    // Now check if there is an url between "account_" and ".xml":
+    if (filename.length() == (strlen("statistics_") + strlen(".xml"))) {
+        return bad_account_filename(filename);
+    }
 
-    q = p+1;
-    p = strstr(q, ".xml");
-    if (!p) return bad_account_filename(filename);
-    if (p == q) return bad_account_filename(filename);
-
-    q = p + strlen(".xml");
-    if (strlen(q)) return bad_account_filename(filename);
+    // All checks passed.
     return true;
 }
 

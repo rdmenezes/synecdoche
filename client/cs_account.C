@@ -226,7 +226,7 @@ int CLIENT_STATE::parse_account_files() {
     DirScanner dir(".");
     while (dir.scan(name)) {
         if (!is_file(name.c_str())) continue;
-        if (!is_account_file(name.c_str())) continue;
+        if (!is_account_file(name)) continue;
 
         FILE* f = boinc_fopen(name.c_str(), "r");
         if (!f) continue;
@@ -320,7 +320,7 @@ int CLIENT_STATE::parse_statistics_files() {
     DirScanner dir(".");
     while (dir.scan(name)) {
         PROJECT temp;
-        if (is_statistics_file(name.c_str())) {
+        if (is_statistics_file(name)) {
             FILE* f = boinc_fopen(name.c_str(), "r");
             if (!f) continue;
             int retval = temp.parse_statistics(f);
