@@ -38,7 +38,9 @@ extern int make_slot_dir(int);
 /// Delete unused stuff in the slots/ directory.
 extern void delete_old_slot_dirs();
 
-extern void get_account_filename(const char* master_url, char* path);
+/// Get the name of the account file for a given master URL.
+extern std::string get_account_filename(const char* master_url);
+
 extern bool is_account_file(const char*);
 extern bool is_statistics_file(const char*);
 extern void get_statistics_filename(const char* master_url, char* path);

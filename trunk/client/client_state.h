@@ -197,10 +197,10 @@ public:
     FILE_INFO* lookup_file_info(const PROJECT*, const char* name);
     RESULT* lookup_result(const PROJECT*, const char*);
     WORKUNIT* lookup_workunit(const PROJECT*, const char*);
-    APP_VERSION* lookup_app_version(
-        APP*, char* platform, int ver, char* plan_class
-    );
-    int detach_project(PROJECT*);
+    APP_VERSION* lookup_app_version(APP*, char* platform, int ver, char* plan_class);
+
+    /// "Detach" a project.
+    int detach_project(PROJECT* project);
 
     /// Call this when a result has a nonrecoverable error.
     int report_result_error(RESULT& res, const char *format, ...);
@@ -275,10 +275,8 @@ public:
 
 /// @name cs_account.C
 public:
-    int add_project(
-        const char* master_url, const char* authenticator,
-        const char* project_name, bool attached_via_acct_mgr
-    );
+    /// Add a project.
+    int add_project(const char* master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr);
 private:
     int parse_account_files();
     int parse_account_files_venue();

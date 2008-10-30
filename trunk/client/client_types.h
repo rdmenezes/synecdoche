@@ -469,9 +469,15 @@ public:
     void init();
     void copy_state_fields(const PROJECT&);
     const char *get_project_name() const;
+
+    /// Write account_*.xml file.
     int write_account_file() const;
+
     int parse_account(FILE*);
+
+    /// Scan and parse an account_*.xml file, looking for a <venue> element.
     int parse_account_file_venue();
+
     int parse_account_file();
     int parse_state(MIOFILE&);
     int write_state(MIOFILE&, bool gui_rpc=false) const;

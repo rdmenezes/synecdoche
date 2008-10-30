@@ -1425,23 +1425,18 @@ int CLIENT_STATE::reset_project(PROJECT* project, bool detaching) {
 /// - delete all file infos
 /// - delete account file
 /// - delete account directory
+///
+/// \param[in] project Pointer to a PROJECT instance for the project that
+///                    should be detached from.
+/// \return Always returns Zero.
 int CLIENT_STATE::detach_project(PROJECT* project) {
-    vector<PROJECT*>::iterator project_iter;
-    vector<FILE_INFO*>::iterator fi_iter;
-    FILE_INFO* fip;
-    PROJECT* p;
-    char path[256];
-    int retval;
-
     reset_project(project, true);
-
     msg_printf(project, MSG_INFO, "Detaching from project");
 
-    // delete all FILE_INFOs associated with this project
-    //
-    fi_iter = file_infos.begin();
+    // Delete all FILE_INFOs associated with this project:
+    vector<FILE_INFO*>::iterator fi_iter = file_infos.begin();
     while (fi_iter != file_infos.end()) {
-        fip = *fi_iter;
+        FILE_INFO* fip = *fi_iter;
         if (fip->project == project) {
             fi_iter = file_infos.erase(fi_iter);
             delete fip;
@@ -1450,65 +1445,57 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
         }
     }
 
-    // if global prefs came from this project, delete file and reinit
-    //
-    p = lookup_project(global_prefs.source_project);
+    // If global prefs came from this project, delete file and reinit:
+    PROJECT* p = lookup_project(global_prefs.source_project);
     if (p == project) {
         boinc_delete_file(GLOBAL_PREFS_FILE_NAME);
         global_prefs.defaults();
     }
 
-    // find project and remove it from the vector
-    //
-    for (project_iter = projects.begin(); project_iter != projects.end(); project_iter++) {
-        p = *project_iter;
-        if (p == project) {
+    // Find project and remove it from the vector:
+    for (vector<PROJECT*>::iterator project_iter = projects.begin(); project_iter != projects.end(); project_iter++) {
+        if ((*project_iter) == project) {
             project_iter = projects.erase(project_iter);
             break;
         }
     }
 
-    // delete statistics file
-    //
+    // Delete statistics file:
+    char path[256];
     get_statistics_filename(project->master_url, path);
-    retval = boinc_delete_file(path);
+    int retval = boinc_delete_file(path);
     if (retval) {
-        msg_printf(project, MSG_INTERNAL_ERROR,
-            "Can't delete statistics file: %s", boincerror(retval)
-        );
+        msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete statistics file: %s", boincerror(retval));
     }
 
-    // delete account file
-    //
-    get_account_filename(project->master_url, path);
-    retval = boinc_delete_file(path);
+    // Delete account file:
+    std::string af_path = get_account_filename(project->master_url);
+    retval = boinc_delete_file(af_path.c_str());
     if (retval) {
-        msg_printf(project, MSG_INTERNAL_ERROR,
-            "Can't delete account file: %s", boincerror(retval)
-        );
+        msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete account file: %s", boincerror(retval));
     }
 
+    // Delete scheduler request file:
     get_sched_request_filename(*project, path, sizeof(path));
-    retval = boinc_delete_file(path);
+    boinc_delete_file(path);
 
+    // Delete scheduler reply file:
     get_sched_reply_filename(*project, path, sizeof(path));
-    retval = boinc_delete_file(path);
+    boinc_delete_file(path);
 
+    // Delete master file:
     get_master_filename(*project, path, sizeof(path));
-    retval = boinc_delete_file(path);
+    boinc_delete_file(path);
 
-    // remove project directory and its contents
-    //
+    // Remove project directory and its contents:
     retval = remove_project_dir(*project);
     if (retval) {
-        msg_printf(project, MSG_INTERNAL_ERROR,
-            "Can't delete project directory: %s", boincerror(retval)
-        );
+        msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete project directory: %s", boincerror(retval));
     }
 
+    // Finally delete the project:
     delete project;
     write_state_file();
-
     return 0;
 }
 
