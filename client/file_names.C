@@ -220,10 +220,17 @@ void delete_old_slot_dirs() {
     }
 }
 
-void get_account_filename(const char* master_url, char* path) {
+/// Get the name of the account file for a given master URL.
+///
+/// \param[in] master_url The master URL for a project for which the account
+///                       file name should be generated.
+/// \return The name of the account file for the project specified by \a master_url.
+std::string get_account_filename(const char* master_url) {
     char buf[1024];
     escape_project_url(master_url, buf);
-    sprintf(path, "account_%s.xml", buf);
+    std::ostringstream result;
+    result << "account_" << buf << ".xml";
+    return result.str();
 }
 
 static bool bad_account_filename(const char* filename) {
