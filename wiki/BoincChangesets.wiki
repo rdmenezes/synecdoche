@@ -37,6 +37,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16119 16119]||Already fixed.||
 ||[http://boinc.berkeley.edu/trac/changeset/16130 16130]||Documentation fixes for doxygen||
 ||[http://boinc.berkeley.edu/trac/changeset/16188 16188]||Report job resources even when no active task. Coproc feature.||
+||[http://boinc.berkeley.edu/trac/changeset/16268 16268]||Already fixed in r449.||
 
 `*` These changesets may still be needed.
 
@@ -49,7 +50,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||15827||Screensaver stuff hidden in there.||
 ||15831||Manifest files?||
 ||15834/15873||We can't possibly need this (but we do).||
-||15840/15874/15877/15885/15967/16001||Screensaver mess||
+||15840/15874/15877/15885/15967/16001/16252/16253||Screensaver mess||
 ||15865||||
 ||15886||||
 ||15929||Precompiled headers work for the manager, but do they work for the client/lib/etc (windows only)?||
@@ -80,5 +81,15 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||16234||client: if "leave in memory" pref changes, quit suspended tasks||
 ||16242||MGR: fix disk display when talking to pre-6.3 client - do we need this fix?||
 ||16247||MGR: More thorough validity checking to prevent crashes||
+||16274||LIB: Fix the windows callstack dump routine for Visual Studio 2008||
+||16280||MGR: Add a new tab status to the Simple GUI for when the client has been instructed to delay starting applications via the <delay_start> option in cc_config.xml (From Kevin Reed)||
+||16307||client: --help: alphabetize options||
+||16323||multiple client fixes||
+||16326||client: fix crash when sched_op_debug is enabled (I'm not sure if we are prone to this crash, too, but this needs more investigation.)||
+||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::OnConnect()||
+||16328||client: accept --insecure flag even if not compiled with -DSANDBOX manager: pass --insecure flab only if compiled with -DSANDBOX||
+||16336/16337/16347||MGR: When removing a row from sorted lists, refresh all rows to ensure proper display update (Does anyone know which bug is fixed by this changeset? Do we need it?)||
+||16338/16339/16340/16344/16348||client: move round-robin simulation to its own file||
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16250 16250]
+
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16350 16350]
