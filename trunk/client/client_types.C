@@ -1022,24 +1022,19 @@ bool FILE_INFO::had_failure(int& failnum) const {
     return false;
 }
 
-void FILE_INFO::failure_message(std::string& s) const {
-    char buf[1024];
-    sprintf(buf,
-        "<file_xfer_error>\n"
-        "  <file_name>%s</file_name>\n"
-        "  <error_code>%d</error_code>\n",
-        name,
-        status
-    );
-    s = buf;
+/// Create a failure message for a failed file-xfer in XML format.
+///
+/// \return A string containing error information in XML format.
+std::string FILE_INFO::failure_message() const {
+    std::ostringstream buf;
+    buf << "<file_xfer_error>\n"
+        << "  <file_name>" << name << "</file_name>\n"
+        << "  <error_code>" << status << "</error_code>\n";
     if (!error_msg.empty()) {
-        sprintf(buf,
-            "  <error_message>%s</error_message>\n",
-            error_msg.c_str()
-            );
-        s = s + buf;
+        buf << "  <error_message>" << error_msg << "</error_message>\n";
     }
-    s = s + "</file_xfer_error>\n";
+    buf << "</file_xfer_error>\n";
+    return buf.str();
 }
 
 #define BUFSIZE 16384
@@ -1164,14 +1159,12 @@ void APP_VERSION::get_file_errors(std::string& str) {
     int errnum;
     unsigned int i;
     const FILE_INFO* fip;
-    string msg;
 
     str = "couldn't get input files:\n";
     for (i=0; i<app_files.size();i++) {
         fip = app_files[i].file_info;
         if (fip->had_failure(errnum)) {
-            fip->failure_message(msg);
-            str = str + msg;
+            str += fip->failure_message();
         }
     }
 }
@@ -1362,14 +1355,12 @@ void WORKUNIT::get_file_errors(std::string& str) const {
     int x;
     unsigned int i;
     const FILE_INFO* fip;
-    string msg;
 
     str = "couldn't get input files:\n";
     for (i=0;i<input_files.size();i++) {
         fip = input_files[i].file_info;
         if (fip->had_failure(x)) {
-            fip->failure_message(msg);
-            str = str + msg;
+            str += fip->failure_message();
         }
     }
 }

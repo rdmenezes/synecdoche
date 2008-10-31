@@ -407,9 +407,7 @@ void CLIENT_STATE::read_global_prefs() {
     request_work_fetch("Prefs update");
 }
 
-int CLIENT_STATE::save_global_prefs(
-    char* global_prefs_xml, char* master_url, char* scheduler_url
-) {
+int CLIENT_STATE::save_global_prefs(const char* global_prefs_xml, const char* master_url, const char* scheduler_url) {
     FILE* f = boinc_fopen(GLOBAL_PREFS_FILE_NAME, "w");
     if (!f) return ERR_FOPEN;
     fprintf(f,
