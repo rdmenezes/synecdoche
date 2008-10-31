@@ -367,7 +367,7 @@ public:
     int suspend_network(int reason);
     int resume_network();
     void read_global_prefs();
-    int save_global_prefs(char* prefs, char* url, char* sched);
+    int save_global_prefs(const char* global_prefs_xml, const char* master_url, const char* scheduler_url);
     double available_ram();
     double max_available_ram();
 private:
@@ -381,7 +381,10 @@ private:
 /// @name cs_scheduler.C
 public:
     int make_scheduler_request(PROJECT*);
-    int handle_scheduler_reply(PROJECT*, char* scheduler_url, int& nresults);
+
+    /// Handle the reply from a scheduler.
+    int handle_scheduler_reply(PROJECT* project, const char* scheduler_url, int& nresults);
+
     SCHEDULER_OP* scheduler_op;
 private:
     bool contacted_sched_server;

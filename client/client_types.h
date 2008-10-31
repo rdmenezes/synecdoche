@@ -106,7 +106,10 @@ public:
     const char* get_current_url(bool);
     bool is_correct_url_type(bool, const std::string&) const;
     bool had_failure(int& failnum) const;
-    void failure_message(std::string&) const;
+
+    /// Create a failure message for a failed file-xfer in XML format.
+    std::string failure_message() const;
+
     int merge_info(const FILE_INFO&);
     int verify_file(bool, bool);
     int gzip();     ///< gzip file and add .gz to name

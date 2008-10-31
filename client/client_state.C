@@ -1007,10 +1007,8 @@ bool CLIENT_STATE::garbage_collect_always() {
             if (!rp->ready_to_report) {
                 fip = rp->output_files[i].file_info;
                 if (fip->had_failure(failnum)) {
-                    string msg;
-                    fip->failure_message(msg);
                     found_error = true;
-                    error_str += msg;
+                    error_str += fip->failure_message();
                 }
             }
             rp->output_files[i].file_info->ref_cnt++;
