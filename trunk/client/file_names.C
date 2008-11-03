@@ -233,6 +233,10 @@ std::string get_account_filename(const char* master_url) {
     return result.str();
 }
 
+/// Print an error message for an invalid account file name.
+///
+/// \param[in] filename The invalid file name.
+/// \return Always returns false.
 static bool bad_account_filename(const std::string& filename) {
     msg_printf(NULL, MSG_INTERNAL_ERROR, "Invalid account filename: %s", filename.c_str());
     return false;
@@ -268,6 +272,15 @@ bool is_account_file(const std::string& filename) {
     return true;
 }
 
+/// Print an error message for an invalid statistics file name.
+///
+/// \param[in] filename The invalid file name.
+/// \return Always returns false.
+static bool bad_statistics_filename(const std::string& filename) {
+    msg_printf(NULL, MSG_INTERNAL_ERROR, "Invalid statistics filename: %s", filename.c_str());
+    return false;
+}
+
 /// Check if the given filename if the name of a statistics file.
 /// statistics filenames are of the form
 /// "statistics_URL.xml",
@@ -286,12 +299,12 @@ bool is_statistics_file(const std::string& filename) {
     }
 
     if (!ends_with(filename, ".xml")) {
-        return bad_account_filename(filename);
+        return bad_statistics_filename(filename);
     }
 
     // Now check if there is an url between "account_" and ".xml":
     if (filename.length() == (strlen("statistics_") + strlen(".xml"))) {
-        return bad_account_filename(filename);
+        return bad_statistics_filename(filename);
     }
 
     // All checks passed.
