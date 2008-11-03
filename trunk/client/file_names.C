@@ -247,7 +247,15 @@ static bool bad_account_filename(const std::string& filename) {
 /// \return True if the file name given by \a filename has the correct
 ///         syntax for an account file name, false otherwise.
 bool is_account_file(const std::string& filename) {
-    if ((!starts_with(filename, "account_")) || (!ends_with(filename, ".xml"))) {
+    if (!starts_with(filename, "account_")) {
+        // Just return without an error message here because this would
+        // generate an error message for each file in the data directory
+        // but error messages should only be shown for maleformed
+        // account files.
+        return false;
+    }
+
+    if (!ends_with(filename, ".xml")) {
         return bad_account_filename(filename);
     }
 
@@ -269,7 +277,15 @@ bool is_account_file(const std::string& filename) {
 /// \return True if the file name given by \a filename has the correct
 ///         syntax for a statistics file name, false otherwise.
 bool is_statistics_file(const std::string& filename) {
-    if ((!starts_with(filename, "statistics_")) || (!ends_with(filename, ".xml"))) {
+    if (!starts_with(filename, "statistics_")) {
+        // Just return without an error message here because this would
+        // generate an error message for each file in the data directory
+        // but error messages should only be shown for maleformed
+        // statistics files.
+        return false;
+    }
+
+    if (!ends_with(filename, ".xml")) {
         return bad_account_filename(filename);
     }
 
