@@ -736,7 +736,7 @@ double RESULT::estimated_cpu_time() const {
 
 double RESULT::estimated_cpu_time_remaining() const {
     if (computing_done()) return 0;
-    ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(this);
+    const ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(this);
     if (atp) {
         return atp->est_cpu_time_to_completion();
     }
@@ -748,7 +748,7 @@ double RESULT::estimated_cpu_time_remaining() const {
 /// -# the workunit's flops count
 /// -# the current reported CPU time and fraction done
 ///
-double ACTIVE_TASK::est_cpu_time_to_completion() {
+double ACTIVE_TASK::est_cpu_time_to_completion() const {
     if (fraction_done >= 1) return 0;
     double wu_est = result->estimated_cpu_time();
     if (fraction_done <= 0) return wu_est;

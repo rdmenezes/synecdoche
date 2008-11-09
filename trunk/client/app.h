@@ -144,7 +144,7 @@ public:
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
     // PowerPC apps emulated on i386 Macs crash if running graphics
     int powerpc_emulated_on_i386;
-    int is_native_i386_app(char*);
+    int is_native_i386_app(const char*) const;
 #endif
     GRAPHICS_MSG graphics_msg;
     void request_graphics_mode(GRAPHICS_MSG&);
@@ -155,7 +155,7 @@ public:
 
     /// Make a unique key for core/app shared memory segment.
     int get_shmem_seg_name();
-    bool runnable() {
+    bool runnable() const {
         return _task_state == PROCESS_UNINITIALIZED
             || _task_state == PROCESS_EXECUTING
             || _task_state == PROCESS_SUSPENDED;
@@ -211,9 +211,9 @@ public:
 
     bool get_app_status_msg();
     bool get_trickle_up_msg();
-    double est_cpu_time_to_completion();
+    double est_cpu_time_to_completion() const;
     bool read_stderr_file();
-    bool finish_file_present();
+    bool finish_file_present() const;
     bool supports_graphics() const;
 
     /// Write the app init file.
