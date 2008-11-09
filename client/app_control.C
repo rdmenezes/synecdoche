@@ -381,7 +381,7 @@ void ACTIVE_TASK::handle_exited_app(int stat)
     gstate.request_work_fetch("application exited");
 }
 
-bool ACTIVE_TASK::finish_file_present() {
+bool ACTIVE_TASK::finish_file_present() const {
     std::ostringstream path;
     path << slot_dir << '/' << BOINC_FINISH_CALLED_FILE;
     return (boinc_file_exists(path.str()) != 0);

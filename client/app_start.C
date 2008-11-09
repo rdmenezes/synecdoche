@@ -924,7 +924,7 @@ union headeru {
 /// Read the mach-o headers to determine the architectures
 /// supported by executable file.
 /// Returns 1 if application can run natively on i386 / x86_64 Macs, else returns 0.
-int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
+int ACTIVE_TASK::is_native_i386_app(const char* exec_path) const {
     FILE *f;
     int result = 0;
 
