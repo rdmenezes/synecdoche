@@ -41,11 +41,11 @@ class XML_PARSER {
     MIOFILE* f;
     bool scan_nonws(int&);
     int scan_comment();
-    int scan_tag(char*, int);
+    int scan_tag(char* tag_buf, int tag_len, char* attr_buf = 0, int attr_len = 0);
     bool copy_until_tag(char*, int);
 public:
     XML_PARSER(MIOFILE*);
-    bool get(char*, int, bool&);
+    bool get(char* buf, int len, bool& is_tag, char* attr_buf = 0, int attr_len = 0);
     bool parse_start(const char*);
     bool parse_str(char*, const char*, char*, int);
     bool parse_string(char*, const char*, std::string&);

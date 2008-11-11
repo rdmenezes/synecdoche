@@ -447,23 +447,39 @@ int XML_PARSER::scan_comment() {
 /// 0 if got a tag
 /// 1 if got a comment (ignore)
 /// 2 if reached EOF
-/// TODO: parse attributes too
-int XML_PARSER::scan_tag(char* buf, int len) {
-    int c;
-    char* buf_start = buf;
+int XML_PARSER::scan_tag(char* tag_buf, int tag_len, char* attr_buf, int attr_len) {
+    char* buf_start = tag_buf;
+    bool found_space = false;
     for (int i=0; ; i++) {
-        c = f->_getc();
+        int c = f->_getc();
         if (c == EOF) return 2;
         if (c == '>') {
-            *buf = 0;
+            *tag_buf = 0;
+            if (attr_buf) {
+                *attr_buf = 0;
+            }
             return 0;
         }
-        if (--len > 0) {
-            *buf++ = c;
+        if (isspace(c)) {
+            found_space = true;
+        }
+        if (c == '/') {
+            if (--tag_len > 0) {
+                *tag_buf++ = c;
+            }
+        } else {
+            if ((found_space) && (attr_buf)) {
+                if (--attr_len > 0) {
+                    *attr_buf++ = c;
+                }
+            } else {
+                if (--tag_len > 0) {
+                    *tag_buf++ = c;
+                }
+            }
         }
 
         // check for comment start
-        //
         if (i==2 && !strncmp(buf_start, "!--", 3)) {
             return scan_comment();
         }
@@ -491,16 +507,15 @@ bool XML_PARSER::copy_until_tag(char* buf, int len) {
 
 /// Scan something, either tag or text.
 /// Strip whitespace at start and end.
-/// Return true iff reached EOF
-bool XML_PARSER::get(char* buf, int len, bool& is_tag) {
-    bool eof;
-    int c;
-    
-    while (1) {
-        eof = scan_nonws(c);
+///
+/// \return True if reached EOF, false otherwise.
+bool XML_PARSER::get(char* buf, int len, bool& is_tag, char* attr_buf, int attr_len) {
+    while (true) {
+        int c;
+        bool eof = scan_nonws(c);
         if (eof) return true;
         if (c == '<') {
-            int retval = scan_tag(buf, len);
+            int retval = scan_tag(buf, len, attr_buf, attr_len);
             if (retval == 2) return true;
             if (retval == 1) continue;
             is_tag = true;
