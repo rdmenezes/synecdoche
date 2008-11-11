@@ -31,13 +31,16 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/15948 15948]||Already fixed in r298.||
 ||[http://boinc.berkeley.edu/trac/changeset/16029 16029]||WCG "feature" for the wizards. No need for that.||
 ||[http://boinc.berkeley.edu/trac/changeset/16061 16061]||Exclude list for proxy. Useful feature but bad implementation.`*` Additional changesets: 16066||
-||[http://boinc.berkeley.edu/trac/changeset/16087 16087]||"exclusive app" feature.`*` Additional changesets: 16084/16085/16090/16175||
+||[http://boinc.berkeley.edu/trac/changeset/16087 16087]||"exclusive app" feature.`*` Additional changesets: 16084/16085/16090/16175/16354||
 ||[http://boinc.berkeley.edu/trac/changeset/16095 16095]||RPC calls are not obsolete just because the official manager does not use them any more.||
 ||[http://boinc.berkeley.edu/trac/changeset/16118 16118]||Sample wrapper, useless Makefile fix, debug code already removed in r254||
 ||[http://boinc.berkeley.edu/trac/changeset/16119 16119]||Already fixed.||
 ||[http://boinc.berkeley.edu/trac/changeset/16130 16130]||Documentation fixes for doxygen||
 ||[http://boinc.berkeley.edu/trac/changeset/16188 16188]||Report job resources even when no active task. Coproc feature.||
 ||[http://boinc.berkeley.edu/trac/changeset/16268 16268]||Already fixed in r449.||
+||[http://boinc.berkeley.edu/trac/changeset/16357 16357]||There is no need for this mess (except the change for rr_sim.cpp).||
+||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
+||[http://boinc.berkeley.edu/trac/changeset/16387 16387]||client: there were a few places where we had 1e9 instead of 1 gig (2^20) - Actually 1e9 would be correct when talking about Gigabytes instead of Gibibytes (which would be 2^30 anyway...)||
 
 `*` These changesets may still be needed.
 
@@ -50,7 +53,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||15827||Screensaver stuff hidden in there.||
 ||15831||Manifest files?||
 ||15834/15873||We can't possibly need this (but we do).||
-||15840/15874/15877/15885/15967/16001/16252/16253||Screensaver mess||
+||15840/15874/15877/15885/15967/16001/16252/16253/16372/16385||Screensaver mess||
 ||15865||||
 ||15886||||
 ||15929||Precompiled headers work for the manager, but do they work for the client/lib/etc (windows only)?||
@@ -89,7 +92,15 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::OnConnect()||
 ||16328||client: accept --insecure flag even if not compiled with -DSANDBOX manager: pass --insecure flab only if compiled with -DSANDBOX||
 ||16336/16337/16347||MGR: When removing a row from sorted lists, refresh all rows to ensure proper display update (Does anyone know which bug is fixed by this changeset? Do we need it?)||
-||16338/16339/16340/16344/16348||client: move round-robin simulation to its own file||
+||16338/16339/16340/16344/16348/16357||client: move round-robin simulation to its own file||
+||16352||MGR: Always sort after a row is added or deleted.||
+||16355/16400||client: the preemptability order was wrong||
+||16356||client: cleaned up CPU scheduler logic somewhat||
+||16366/16383/16386/16391||client: revise round-robin simulation to take variable avg_ncpus into account (I'm not sure if we need this or if this change works with our ncpu-fix.)||
+||16377/16378/16379/16381||MGR: Move the wxWidget version information to the about box.||
+||16388||client: fix a long-standing error: if prefs say leave X GB free, and BOINC is using Y GB, and there are Z GB free, the limit on BOINC is Y + Z - X (not Z - X)||
+||16395/16396||client: fix bug that caused occasional assert in pop_heap() for the preemptable_task_list.||
+||16397||client: Fix result state name for aborted results.||
 
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16350 16350]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16400 16400]
