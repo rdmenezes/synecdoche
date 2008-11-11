@@ -537,8 +537,12 @@ public:
     bool retry;
     sockaddr_in addr;
 
-    int send_request(const char*);
-    int get_reply(char*&);
+    /// Send a rpc-request to the rpc-server.
+    int send_request(const char* p);
+
+    /// Get reply from server.
+    int get_reply(char*& mbuf);
+
     RPC_CLIENT();
     ~RPC_CLIENT();
     int init(const char* host, int port=0);
