@@ -377,21 +377,22 @@ int GLOBAL_PREFS::parse_day(XML_PARSER& xp) {
 }
 
 
-// Parse global prefs, overriding whatever is currently in the structure.
-//
-// If host_venue is nonempty and we find an element of the form
-// <venue name="X">
-//   ...
-// </venue>
-// where X==host_venue, then parse that and ignore the rest.
-// Otherwise ignore <venue> elements.
-//
-// The start tag may or may not have already been parsed
-//
-int GLOBAL_PREFS::parse_override(
-    XML_PARSER& xp, const char* host_venue, bool& found_venue, GLOBAL_PREFS_MASK& mask
-) {
-    char tag[256], buf2[256];
+/// Parse global prefs, overriding whatever is currently in the structure.
+///
+/// If host_venue is nonempty and we find an element of the form
+/// <venue name="X">
+///   ...
+/// </venue>
+/// where X==host_venue, then parse that and ignore the rest.
+/// Otherwise ignore <venue> elements.
+///
+/// The start tag may or may not have already been parsed
+///
+/// \return Zero on success, ERR_XML_PARSE on error.
+int GLOBAL_PREFS::parse_override(XML_PARSER& xp, const char* host_venue, bool& found_venue, GLOBAL_PREFS_MASK& mask) {
+    char tag[256];
+    char buf2[256];
+    char attrs[256];
     bool in_venue = false, in_correct_venue=false, is_tag;
     double dtemp;
 
@@ -401,7 +402,7 @@ int GLOBAL_PREFS::parse_override(
     // and not use the default, which is 100%.
     max_ncpus_pct = 0;
 
-    while (!xp.get(tag, sizeof(tag), is_tag)) {
+    while (!xp.get(tag, sizeof(tag), is_tag, attrs, sizeof(attrs))) {
         if (!is_tag) continue;
         if (!strcmp(tag, "global_preferences")) continue;
         if (!strcmp(tag, "/global_preferences")) {
@@ -421,7 +422,7 @@ int GLOBAL_PREFS::parse_override(
         } else {
             if (strstr(tag, "venue")) {
                 in_venue = true;
-                parse_attr(tag, "name", buf2, sizeof(buf2));
+                parse_attr(attrs, "name", buf2, sizeof(buf2));
                 if (!strcmp(buf2, host_venue)) {
                     defaults();
                     clear_bools();

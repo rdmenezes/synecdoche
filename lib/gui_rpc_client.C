@@ -197,16 +197,22 @@ int RPC_CLIENT::init_poll() {
 }
 
 int RPC_CLIENT::authorize(const char* passwd) {
-    bool found=false;
+    bool found = false;
     int retval, n;
     char buf[256], nonce[256], nonce_hash[256];
     RPC rpc(this);
+    XML_PARSER xp(&rpc.fin);
+    bool is_tag;
 
     retval = rpc.do_rpc("<auth1/>\n");
     if (retval) return retval;
-    while (rpc.fin.fgets(buf, 256)) {
-        if (parse_str(buf, "<nonce>", nonce, sizeof(nonce))) {
+    while (!xp.get(buf, sizeof(buf), is_tag)) {
+        if (!is_tag) {
+            continue;
+        }
+        if (xp.parse_str(buf, "nonce", nonce, sizeof(nonce))) {
             found = true;
+            break;
         }
     }
     if (!found) {
@@ -220,9 +226,15 @@ int RPC_CLIENT::authorize(const char* passwd) {
     sprintf(buf, "<auth2>\n<nonce_hash>%s</nonce_hash>\n</auth2>\n", nonce_hash);
     retval = rpc.do_rpc(buf);
     if (retval) return retval;
-    while (rpc.fin.fgets(buf, 256)) {
-        if (match_tag(buf, "<authorized/>")) {
-            return 0;
+    while (!xp.get(buf, sizeof(buf), is_tag)) {
+        if (!is_tag) {
+            continue;
+        }
+        bool authorized;
+        if (xp.parse_bool(buf, "authorized", authorized)) {
+            if (authorized) {
+                return 0;
+            }
         }
     }
     return ERR_AUTHENTICATOR;
