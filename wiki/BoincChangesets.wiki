@@ -40,7 +40,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16268 16268]||Already fixed in r449.||
 ||[http://boinc.berkeley.edu/trac/changeset/16357 16357]||There is no need for this mess (except the change for rr_sim.cpp).||
 ||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
-||[http://boinc.berkeley.edu/trac/changeset/16387 16387]||client: there were a few places where we had 1e9 instead of 1 gig (2^20) - Actually 1e9 would be correct when talking about Gigabytes instead of Gibibytes (which would be 2^30 anyway...)||
+||[http://boinc.berkeley.edu/trac/changeset/16387 16387]||client: there were a few places where we had 1e9 instead of 1 gig (2^20^) - Actually 1e9 would be correct when talking about Gigabytes instead of Gibibytes (which would be 2^30^ anyway...)||
 
 `*` These changesets may still be needed.
 
