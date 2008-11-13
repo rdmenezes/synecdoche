@@ -769,16 +769,30 @@ int ACTIVE_TASK_SET::abort_project(PROJECT* project) {
     return 0;
 }
 
-/// suspend all currently running tasks
+/// Suspend all currently running tasks.
 /// called only from CLIENT_STATE::suspend_tasks(),
 /// e.g. because on batteries, time of day, benchmarking, CPU throttle, etc.
-void ACTIVE_TASK_SET::suspend_all(bool leave_apps_in_memory) {
-    unsigned int i;
-    ACTIVE_TASK* atp;
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
-        if (atp->task_state() != PROCESS_EXECUTING) continue;
-        atp->preempt(!leave_apps_in_memory);
+void ACTIVE_TASK_SET::suspend_all(bool cpu_throttle) {
+    // Only allow apps to be removed from memory if they are not suspended
+    // because of CPU throttling.
+    bool leave_in_mem = true;
+    if (!cpu_throttle) {
+        leave_in_mem = gstate.global_prefs.leave_apps_in_memory;
+    }
+
+    for (active_tasks_v::iterator it = active_tasks.begin(); it != active_tasks.end(); ++it) {
+        ACTIVE_TASK& at = **it;
+        if (at.task_state() != PROCESS_EXECUTING) {
+            continue;
+        }
+        if (cpu_throttle) {
+            // If we're doing CPU throttling, don't bother suspending apps
+            // that don't use a full CPU.
+            if ((at.result->project->non_cpu_intensive) || (at.app_version->avg_ncpus < 1.0)) {
+                continue;
+            }
+        }
+        at.preempt(!leave_in_mem);
     }
 }
 
@@ -849,14 +863,11 @@ void ACTIVE_TASK_SET::kill_tasks(PROJECT* proj) {
 int ACTIVE_TASK::suspend() {
     if (!app_client_shm.shm) return 0;
     if (task_state() != PROCESS_EXECUTING) {
-        msg_printf(0, MSG_INFO, "Internal error: expected process to be executing");
+        msg_printf(result->project, MSG_INFO, "Internal error: expected process %s to be executing", result->name);
     }
     int n = process_control_queue.msg_queue_purge("<resume/>");
     if (n == 0) {
-        process_control_queue.msg_queue_send(
-            "<suspend/>",
-            app_client_shm.shm->process_control_request
-        );
+        process_control_queue.msg_queue_send("<suspend/>", app_client_shm.shm->process_control_request);
     }
     set_task_state(PROCESS_SUSPENDED, "suspend");
     return 0;
@@ -868,19 +879,14 @@ int ACTIVE_TASK::suspend() {
 int ACTIVE_TASK::unsuspend() {
     if (!app_client_shm.shm) return 0;
     if (task_state() != PROCESS_SUSPENDED) {
-        msg_printf(0, MSG_INFO, "Internal error: expected process to be suspended");
+        msg_printf(result->project, MSG_INFO, "Internal error: expected process %s to be suspended", result->name);
     }
     if (log_flags.cpu_sched) {
-        msg_printf(result->project, MSG_INFO,
-            "[cpu_sched] Resuming %s", result->name
-        );
+        msg_printf(result->project, MSG_INFO, "[cpu_sched] Resuming %s", result->name);
     }
     int n = process_control_queue.msg_queue_purge("<suspend/>");
     if (n == 0) {
-        process_control_queue.msg_queue_send(
-            "<resume/>",
-            app_client_shm.shm->process_control_request
-        );
+        process_control_queue.msg_queue_send("<resume/>", app_client_shm.shm->process_control_request);
     }
     set_task_state(PROCESS_EXECUTING, "unsuspend");
     return 0;
