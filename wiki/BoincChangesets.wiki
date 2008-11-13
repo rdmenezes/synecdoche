@@ -1,49 +1,5 @@
 #summary Tracking BOINC revisions
 
-== Rejected changes ==
-
-Changesets that are irrelevant to Synecdoche are not shown. Some decisions listed here make subsequent changesets irrelevant.
-
-|| *Changeset* || *Reason* ||
-||[http://boinc.berkeley.edu/trac/changeset/15537 15537]||Properties. This feature is nowhere near ready.||
-||[http://boinc.berkeley.edu/trac/changeset/15559 15559]||Message filtering. This is not a good UI for filtering.||
-||[http://boinc.berkeley.edu/trac/changeset/15561 15561]||Already fixed.||
-||[http://boinc.berkeley.edu/trac/changeset/15568 15568]||Concatenated strings.||
-||[http://boinc.berkeley.edu/trac/changeset/15573 15573]||Solaris. This addition appears to be in the wrong file.||
-||[http://boinc.berkeley.edu/trac/changeset/15574 15574]||Already fixed. Correctly!||
-||[http://boinc.berkeley.edu/trac/changeset/15764 15764]||API`*` ||
-||[http://boinc.berkeley.edu/trac/changeset/15585 15585]||Undocumented. This will be moot when we use wxTaskBarIcon.||
-||[http://boinc.berkeley.edu/trac/changeset/15587 15587]||Event ids. This is pointless. See r75.||
-||[http://boinc.berkeley.edu/trac/changeset/15588 15588]||Solved better in r76. Ours won't cycle the logs if an error is logged when parsing the config file.||
-||[http://boinc.berkeley.edu/trac/changeset/15591 15591]||CUDA. We don't support this yet.||
-||[http://boinc.berkeley.edu/trac/changeset/15610 15610]||Reboot. This is just wrong.||
-||[http://boinc.berkeley.edu/trac/changeset/15690 15690]||Already fixed.||
-||[http://boinc.berkeley.edu/trac/changeset/15693 15693]||API`*` ||
-||[http://boinc.berkeley.edu/trac/changeset/15694 15694]||API`*` ||
-||[http://boinc.berkeley.edu/trac/changeset/15793 15793]||Already fixed in r171.||
-||[http://boinc.berkeley.edu/trac/changeset/15801 15801]||Already fixed in r152. Correctly!||
-||[http://boinc.berkeley.edu/trac/changeset/15808 15808]||Already fixed in r194.||
-||[http://boinc.berkeley.edu/trac/changeset/15850 15850]||Proposed async solution is not typesafe. Grid view was already fixed (removed).||
-||[http://boinc.berkeley.edu/trac/changeset/15891 15891]||Useless and already fixed correctly||
-||[http://boinc.berkeley.edu/trac/changeset/15920 15920]||Already fixed in r265.||
-||[http://boinc.berkeley.edu/trac/changeset/15942 15942]||Already fixed in r265.||
-||[http://boinc.berkeley.edu/trac/changeset/15944 15944]||Already fixed in r236.||
-||[http://boinc.berkeley.edu/trac/changeset/15948 15948]||Already fixed in r298.||
-||[http://boinc.berkeley.edu/trac/changeset/16029 16029]||WCG "feature" for the wizards. No need for that.||
-||[http://boinc.berkeley.edu/trac/changeset/16061 16061]||Exclude list for proxy. Useful feature but bad implementation.`*` Additional changesets: 16066||
-||[http://boinc.berkeley.edu/trac/changeset/16087 16087]||"exclusive app" feature.`*` Additional changesets: 16084/16085/16090/16175/16354||
-||[http://boinc.berkeley.edu/trac/changeset/16095 16095]||RPC calls are not obsolete just because the official manager does not use them any more.||
-||[http://boinc.berkeley.edu/trac/changeset/16118 16118]||Sample wrapper, useless Makefile fix, debug code already removed in r254||
-||[http://boinc.berkeley.edu/trac/changeset/16119 16119]||Already fixed.||
-||[http://boinc.berkeley.edu/trac/changeset/16130 16130]||Documentation fixes for doxygen||
-||[http://boinc.berkeley.edu/trac/changeset/16188 16188]||Report job resources even when no active task. Coproc feature.||
-||[http://boinc.berkeley.edu/trac/changeset/16268 16268]||Already fixed in r449.||
-||[http://boinc.berkeley.edu/trac/changeset/16357 16357]||There is no need for this mess (except the change for rr_sim.cpp).||
-||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
-||[http://boinc.berkeley.edu/trac/changeset/16387 16387]||client: there were a few places where we had 1e9 instead of 1 gig (2^20^) - Actually 1e9 would be correct when talking about Gigabytes instead of Gibibytes (which would be 2^30^ anyway...)||
-
-`*` These changesets may still be needed.
-
 == Pending merge ==
 
 || *Changesets* || *Additional comments* ||
@@ -66,7 +22,6 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||15987||MGR: Simple GUI fixes||
 ||15998/15999||MGR: Simplify Message display logic; fix possible memory leaks; fix button tooltip||
 ||16003||Is this used by the client or does this belong to the server?||
-||16038||Fix for boinc_exit() (API, we don't need this)||
 ||16098||Performance improvement already applied in r422, but the other fix may still be needed.||
 ||16121||MGR: show resource requirements of all jobs, running or not||
 ||16128||client: it a file upload fails for a job that's in progress, abort the task.||
@@ -101,5 +56,50 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||16395/16396||client: fix bug that caused occasional assert in pop_heap() for the preemptable_task_list.||
 ||16397||client: Fix result state name for aborted results.||
 
+
+== Rejected changes ==
+
+Changesets that are irrelevant to Synecdoche are not shown. Some decisions listed here make subsequent changesets irrelevant.
+
+|| *Changeset* || *Reason* ||
+||[http://boinc.berkeley.edu/trac/changeset/15537 15537]||Properties. This feature is nowhere near ready.||
+||[http://boinc.berkeley.edu/trac/changeset/15559 15559]||Message filtering. This is not a good UI for filtering.||
+||[http://boinc.berkeley.edu/trac/changeset/15561 15561]||Already fixed.||
+||[http://boinc.berkeley.edu/trac/changeset/15568 15568]||Concatenated strings.||
+||[http://boinc.berkeley.edu/trac/changeset/15573 15573]||Solaris. This addition appears to be in the wrong file.||
+||[http://boinc.berkeley.edu/trac/changeset/15574 15574]||Already fixed. Correctly!||
+||[http://boinc.berkeley.edu/trac/changeset/15764 15764] `*`||API||
+||[http://boinc.berkeley.edu/trac/changeset/15585 15585]||Undocumented. This will be moot when we use wxTaskBarIcon.||
+||[http://boinc.berkeley.edu/trac/changeset/15587 15587]||Event ids. This is pointless. See r75.||
+||[http://boinc.berkeley.edu/trac/changeset/15588 15588]||Solved better in r76. Ours won't cycle the logs if an error is logged when parsing the config file.||
+||[http://boinc.berkeley.edu/trac/changeset/15591 15591]||CUDA. We don't support this yet.||
+||[http://boinc.berkeley.edu/trac/changeset/15610 15610]||Reboot. This is just wrong.||
+||[http://boinc.berkeley.edu/trac/changeset/15690 15690]||Already fixed.||
+||[http://boinc.berkeley.edu/trac/changeset/15693 15693] `*`||API||
+||[http://boinc.berkeley.edu/trac/changeset/15694 15694] `*`||API||
+||[http://boinc.berkeley.edu/trac/changeset/15793 15793]||Already fixed in r171.||
+||[http://boinc.berkeley.edu/trac/changeset/15801 15801]||Already fixed in r152. Correctly!||
+||[http://boinc.berkeley.edu/trac/changeset/15808 15808]||Already fixed in r194.||
+||[http://boinc.berkeley.edu/trac/changeset/15850 15850]||Proposed async solution is not typesafe. Grid view was already fixed (removed).||
+||[http://boinc.berkeley.edu/trac/changeset/15891 15891]||Useless and already fixed correctly||
+||[http://boinc.berkeley.edu/trac/changeset/15920 15920]||Already fixed in r265.||
+||[http://boinc.berkeley.edu/trac/changeset/15942 15942]||Already fixed in r265.||
+||[http://boinc.berkeley.edu/trac/changeset/15944 15944]||Already fixed in r236.||
+||[http://boinc.berkeley.edu/trac/changeset/15948 15948]||Already fixed in r298.||
+||[http://boinc.berkeley.edu/trac/changeset/16029 16029]||WCG "feature" for the wizards. No need for that.||
+||[http://boinc.berkeley.edu/trac/changeset/16038 16038] `*`||API: Fix for boinc_exit()||
+||[http://boinc.berkeley.edu/trac/changeset/16061 16061] `*`||Exclude list for proxy. Useful feature but bad implementation. Additional changesets: 16066||
+||[http://boinc.berkeley.edu/trac/changeset/16087 16087] `*`||"exclusive app" feature. Additional changesets: 16084/16085/16090/16175/16354||
+||[http://boinc.berkeley.edu/trac/changeset/16095 16095]||RPC calls are not obsolete just because the official manager does not use them any more.||
+||[http://boinc.berkeley.edu/trac/changeset/16118 16118]||Sample wrapper, useless Makefile fix, debug code already removed in r254||
+||[http://boinc.berkeley.edu/trac/changeset/16119 16119]||Already fixed.||
+||[http://boinc.berkeley.edu/trac/changeset/16130 16130]||Documentation fixes for doxygen||
+||[http://boinc.berkeley.edu/trac/changeset/16188 16188]||Report job resources even when no active task. Coproc feature.||
+||[http://boinc.berkeley.edu/trac/changeset/16268 16268]||Already fixed in r449.||
+||[http://boinc.berkeley.edu/trac/changeset/16357 16357]||There is no need for this mess (except the change for rr_sim.cpp).||
+||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
+||[http://boinc.berkeley.edu/trac/changeset/16387 16387] `*`||client: there were a few places where we had 1e9 instead of 1 gig (2^20^) - Actually 1e9 would be correct when talking about Gigabytes instead of Gibibytes (which would be 2^30^ anyway...)||
+
+`*` These changesets may still be needed.
 
 Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16400 16400]
