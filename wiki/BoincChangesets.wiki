@@ -13,7 +13,6 @@
 ||15865||||
 ||15886||||
 ||15929||Precompiled headers work for the manager, but do they work for the client/lib/etc (windows only)?||
-||15954||XML fixes for APP_INIT_DATA||
 ||15945||Do we need the screensaver stuff? The other fix is already applied.||
 ||15955/15957/15958/15960/15961/15963/15965||Code signing stuff.||
 ||15959/15964/15966||MGR: Save and restore selected items by key values when refreshing||
@@ -22,7 +21,6 @@
 ||15987||MGR: Simple GUI fixes||
 ||15998/15999||MGR: Simplify Message display logic; fix possible memory leaks; fix button tooltip||
 ||16003||Is this used by the client or does this belong to the server?||
-||16098||Performance improvement already applied in r422, but the other fix may still be needed.||
 ||16121||MGR: show resource requirements of all jobs, running or not||
 ||16128||client: it a file upload fails for a job that's in progress, abort the task.||
 ||16149||client: show est CPC time of jobs returned by sched RPC, if sched_op_debug||
