@@ -239,7 +239,10 @@ public:
     ACTIVE_TASK* lookup_result(const RESULT*);
     void init();
     bool poll();
-    void suspend_all(bool leave_apps_in_memory=true);
+
+    /// Suspend all currently running tasks.
+    void suspend_all(bool cpu_throttle);
+
     void unsuspend_all();
     bool is_task_executing();
     void request_tasks_exit(PROJECT* p=0);

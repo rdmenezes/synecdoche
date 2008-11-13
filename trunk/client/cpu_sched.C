@@ -609,6 +609,7 @@ void CLIENT_STATE::make_running_task_heap(
 ///     and at the end it starts/resumes and preempts tasks
 ///     based on scheduler_state and next_scheduler_state.
 ///
+/// \return True if something changed, false otherwise.
 bool CLIENT_STATE::enforce_schedule() {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -618,7 +619,6 @@ bool CLIENT_STATE::enforce_schedule() {
     double ncpus_used;
 
     // Do this when requested, and once a minute as a safety net
-    //
     if (now - last_time > 60) {
         must_enforce_cpu_schedule = true;
     }
@@ -639,7 +639,6 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // set temporary variables
-    //
     for (i=0; i<projects.size(); i++){
         projects[i]->deadlines_missed = projects[i]->rr_sim_status.deadlines_missed;
     }
@@ -654,12 +653,10 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // make heap of currently running tasks, ordered by preemptibility
-    //
     make_running_task_heap(running_tasks, ncpus_used);
 
     // if there are more running tasks than ncpus,
     // then mark the extras for preemption
-    //
     while (ncpus_used > ncpus) {
         atp = running_tasks[0];
         atp->next_scheduler_state = CPU_SCHED_PREEMPTED;
@@ -682,7 +679,6 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // Loop through the scheduled results
-    //
     for (i=0; i<ordered_scheduled_results.size(); i++) {
         RESULT* rp = ordered_scheduled_results[i];
         if (log_flags.cpu_sched_debug) {
@@ -692,13 +688,11 @@ bool CLIENT_STATE::enforce_schedule() {
         }
 
         // See if it's already running.
-        //
         atp = NULL;
         for (vector<ACTIVE_TASK*>::iterator it = running_tasks.begin(); it != running_tasks.end(); it++) {
             ACTIVE_TASK *atp1 = *it;
             if (atp1 && atp1->result == rp) {
                 // The task is already running; remove it from the heap
-                //
                 atp = atp1;
                 it = running_tasks.erase(it);
                 std::make_heap(
@@ -712,7 +706,6 @@ bool CLIENT_STATE::enforce_schedule() {
 
         // if it's already running, see if it fits in mem;
         // If not, flag for preemption
-        //
         if (atp) {
             if (log_flags.cpu_sched_debug) {
                 msg_printf(rp->project, MSG_INFO,
@@ -739,7 +732,6 @@ bool CLIENT_STATE::enforce_schedule() {
 
         // Here if the result is not already running.
         // If it already has an active task and won't fit in mem, skip it
-        //
         atp = lookup_active_task_by_result(rp);
         if (atp) {
             if (atp->procinfo.working_set_size_smoothed > ram_left) {
@@ -757,7 +749,6 @@ bool CLIENT_STATE::enforce_schedule() {
         }
 
         // Preempt something if needed (and possible).
-        //
         bool run_task = false;
         bool need_to_preempt = (ncpus_used >= ncpus) && !running_tasks.empty();
             // the 2nd half of the above is redundant
@@ -766,7 +757,6 @@ bool CLIENT_STATE::enforce_schedule() {
             // Preempt it if either
             // 1) it's completed its time slice and has checkpointed recently
             // 2) the scheduled result is in deadline trouble
-            //
             atp = running_tasks[0];
             double time_running = now - atp->run_interval_start_wall_time;
             bool running_beyond_sched_period = time_running >= global_prefs.cpu_scheduling_period();
@@ -819,7 +809,6 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // make sure we don't exceed RAM limits
-    //
     for (i=0; i<running_tasks.size(); i++) {
         atp = running_tasks[i];
         if (atp->procinfo.working_set_size_smoothed > ram_left) {
@@ -847,7 +836,6 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // schedule new non CPU intensive tasks
-    //
     for (i=0; i<results.size(); i++) {
         RESULT* rp = results[i];
         if (rp->project->non_cpu_intensive && rp->runnable()) {
@@ -858,10 +846,9 @@ bool CLIENT_STATE::enforce_schedule() {
 
     double swap_left = (global_prefs.vm_max_used_frac)*host_info.m_swap;
     bool check_swap = (host_info.m_swap != 0);
-        // in case couldn't measure swap on this host
+    // in case couldn't measure swap on this host
 
     // preempt and start tasks as needed
-    //
     for (i=0; i<active_tasks.active_tasks.size(); i++) {
         atp = active_tasks.active_tasks[i];
         if (log_flags.cpu_sched_debug) {
@@ -873,10 +860,11 @@ bool CLIENT_STATE::enforce_schedule() {
         }
         switch (atp->next_scheduler_state) {
         case CPU_SCHED_PREEMPTED:
+            bool preempt_by_quit;
             switch (atp->task_state()) {
             case PROCESS_EXECUTING:
                 action = true;
-                bool preempt_by_quit = !global_prefs.leave_apps_in_memory;
+                preempt_by_quit = !global_prefs.leave_apps_in_memory;
                 if (check_swap && swap_left < 0) {
                     if (log_flags.mem_usage_debug) {
                         msg_printf(atp->result->project, MSG_INFO,
@@ -895,6 +883,14 @@ bool CLIENT_STATE::enforce_schedule() {
                 }
                 atp->preempt(preempt_by_quit);
                 break;
+            case PROCESS_SUSPENDED:
+                // Handle the case where user changes prefs from "leave in
+                // memory" to "remove from memory".
+                // Need to quit suspended tasks:
+                if ((atp->checkpoint_cpu_time) && (!global_prefs.leave_apps_in_memory)) {
+                    atp->preempt(true);
+                }
+                break;
             }
             atp->scheduler_state = CPU_SCHED_PREEMPTED;
             break;
@@ -911,7 +907,6 @@ bool CLIENT_STATE::enforce_schedule() {
                     // Assume no additional shared memory segs
                     // will be available in the next 10 seconds
                     // (run only tasks which are already attached to shared memory).
-                    //
                     if (gstate.retry_shmem_time < gstate.now) {
                         request_schedule_cpus("no more shared memory");
                     }
@@ -919,9 +914,7 @@ bool CLIENT_STATE::enforce_schedule() {
                     continue;
                 }
                 if (retval) {
-                    report_result_error(
-                        *(atp->result), "Couldn't start or resume: %d", retval
-                    );
+                    report_result_error(*(atp->result), "Couldn't start or resume: %d", retval);
                     request_schedule_cpus("start failed");
                     continue;
                 }
