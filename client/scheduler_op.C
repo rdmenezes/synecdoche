@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,16 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "cpp.h"
+
 #ifdef _WIN32
 #include "boinc_win.h"
-#endif
-
-#ifndef _WIN32
-#include "config.h"
-#include <cmath>
-#include <cstdlib>
-#include <cstdio>
-#include <ctime>
 #endif
 
 #include "str_util.h"
@@ -89,27 +84,25 @@ int SCHEDULER_OP::init_get_work() {
 /// Try to initiate an RPC to the given project.
 /// If there are multiple schedulers, start with a random one.
 /// User messages and backoff() is done at this level.
-int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
-    int retval;
-    char err_msg[256];
-
+///
+/// \param[in] p Pointer to a PROJECT instance for the project a rpc should
+///              be initiated for.
+/// \param[in] r The reason for initiating a rpc.
+/// \return Zero on success, nonzero on error.
+int SCHEDULER_OP::init_op_project(PROJECT* p, rpc_reason r) {
     reason = r;
     if (log_flags.sched_op_debug) {
-        msg_printf(p, MSG_INFO,
-            "[sched_op_debug] Starting scheduler request"
-        );
+        msg_printf(p, MSG_INFO, "[sched_op_debug] Starting scheduler request");
     }
 
-    // if project has no schedulers,
+    // If project has no schedulers,
     // skip everything else and just get its master file.
-    //
     if (p->scheduler_urls.empty()) {
-        retval = init_master_fetch(p);
+        int retval = init_master_fetch(p);
         if (retval) {
-            sprintf(err_msg,
-                "Scheduler list fetch initialization failed: %d\n", retval
-            );
-            backoff(p, err_msg);
+            std::ostringstream err_msg;
+            err_msg << "Scheduler list fetch initialization failed: " << retval << '\n';
+            backoff(p, err_msg.str());
         }
         return retval;
     }
@@ -122,21 +115,19 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
     }
 
     url_index = 0;
-    retval = gstate.make_scheduler_request(p);
+    int retval = gstate.make_scheduler_request(p);
     if (!retval) {
         retval = start_rpc(p);
     }
     if (retval) {
-        sprintf(err_msg,
-            "scheduler request to %s failed: %s\n",
-            p->get_scheduler_url(url_index, url_random), boincerror(retval)
-        );
-        backoff(p, err_msg);
+        std::ostringstream err_msg;
+        err_msg << "scheduler request to " << p->get_scheduler_url(url_index, url_random)
+                << " failed: " << boincerror(retval) << '\n';
+        backoff(p, err_msg.str());
     } else {
         // RPC started OK, so we must have network connectivity.
         // Now's a good time to check for new BOINC versions
         // and project list
-        //
 #ifdef ENABLE_UPDATE_CHECK
         gstate.new_version_check();
 #endif
@@ -144,6 +135,9 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
     return retval;
 }
 
+/// Back off contacting this project's schedulers,
+/// and output an error msg if needed.
+///
 /// One of the following errors occurred:
 /// - connection failure in fetching master file
 /// - connection failure in scheduler RPC
@@ -151,24 +145,21 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, int r) {
 /// - tried all schedulers, none responded
 /// - sent nonzero work request, got a reply with no work
 ///
-/// Back off contacting this project's schedulers,
-/// and output an error msg if needed.
-void SCHEDULER_OP::backoff(PROJECT* p, const char *reason_msg) {
-    char buf[1024];
-
+/// \param[in] p Pointer to a PROJECT instance of the project for which a
+///              back off is requested.
+/// \param[in] reason_msg A string describing the reason for the requested
+///                       back off.
+void SCHEDULER_OP::backoff(PROJECT* p, const std::string& reason_msg) {
     if (p->master_fetch_failures >= gstate.master_fetch_retry_cap) {
-        sprintf(buf,
-            "%d consecutive failures fetching scheduler list",
-            p->master_fetch_failures
-        );
+        std::ostringstream buf;
+        buf << p->master_fetch_failures << "consecutive failures fetching scheduler list";
         p->master_url_fetch_pending = true;
-        p->set_min_rpc_time(gstate.now + gstate.master_fetch_interval, buf);
+        p->set_min_rpc_time(gstate.now + gstate.master_fetch_interval, buf.str().c_str());
         return;
     }
 
-    // if nrpc failures is master_fetch_period,
-    // then set master_url_fetch_pending and initialize again
-    //
+    // If nrpc failures is master_fetch_period,
+    // then set master_url_fetch_pending and initialize again.
     if (p->nrpc_failures == gstate.master_fetch_period) {
         p->master_url_fetch_pending = true;
         p->min_rpc_time = 0;
@@ -176,20 +167,17 @@ void SCHEDULER_OP::backoff(PROJECT* p, const char *reason_msg) {
         p->master_fetch_failures++;
     }
 
-    // if network is down, don't count it as RPC failure
-    //
+    // If network is down, don't count it as RPC failure.
     if (!net_status.need_physical_connection) {
         p->nrpc_failures++;
     }
-    //msg_printf(p, MSG_INFO, "nrpc_failures %d need_conn %d", p->nrpc_failures, gstate.need_physical_connection);
 
     int n = p->nrpc_failures;
-    if (n > gstate.retry_cap) n = gstate.retry_cap;
-    double exp_backoff = calculate_exponential_backoff(
-        n, gstate.sched_retry_delay_min, gstate.sched_retry_delay_max
-    );
-    //msg_printf(p, MSG_INFO, "simulating backoff of %f", exp_backoff);
-    p->set_min_rpc_time(gstate.now + exp_backoff, reason_msg);
+    if (n > gstate.retry_cap) {
+        n = gstate.retry_cap;
+    }
+    double exp_backoff = calculate_exponential_backoff(n, gstate.sched_retry_delay_min, gstate.sched_retry_delay_max);
+    p->set_min_rpc_time(gstate.now + exp_backoff, reason_msg.c_str());
 }
 
 /// Low-level routine to initiate an RPC.
@@ -438,7 +426,7 @@ bool SCHEDULER_OP::poll() {
                     // if project suspended, don't retry failed RPC
                     //
                     if (cur_proj->suspended_via_gui) {
-                        cur_proj->sched_rpc_pending = 0;
+                        cur_proj->sched_rpc_pending = NO_RPC_REASON;
                     }
                 }
             } else {

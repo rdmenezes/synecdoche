@@ -33,6 +33,8 @@
 #include "config.h"
 #endif
 
+#include "common_defs.h"
+
 #define KILO (1024.0)
 #define MEGA (1048576.0)
 #define GIGA (1024.*1048576.0)
@@ -122,7 +124,7 @@ extern int mysql_timestamp(double dt, char* p, size_t len);
 //
 extern const char* boincerror(int which_error);
 extern const char* network_status_string(int);
-extern const char* rpc_reason_string(int);
+extern const char* rpc_reason_string(rpc_reason reason);
 
 #ifdef _WIN32
 #include <windows.h>

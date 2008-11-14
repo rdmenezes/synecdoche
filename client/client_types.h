@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@
 #include <vector>
 #include <string>
 
+#include "common_defs.h"
 #include "md5_file.h"
 #include "hostinfo.h"
 #include "miofile.h"
@@ -276,7 +277,7 @@ public:
     /// We need to do a scheduler RPC, for various possible reasons:
     /// user request, propagate host CPID, time-based, etc.
     /// Reasons are enumerated in scheduler_op.h.
-    int sched_rpc_pending;
+    rpc_reason sched_rpc_pending;
 
     /// If nonzero, specifies a time when another scheduler RPC
     /// should be done (as requested by server).

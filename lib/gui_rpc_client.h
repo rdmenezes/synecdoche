@@ -104,7 +104,7 @@ public:
     double duration_correction_factor;
 
     bool master_url_fetch_pending; // need to fetch and parse the master URL
-    int sched_rpc_pending;      // need to contact scheduling server
+    rpc_reason sched_rpc_pending;      // need to contact scheduling server
     int rr_sim_deadlines_missed;
     bool non_cpu_intensive;
     bool suspended_via_gui;

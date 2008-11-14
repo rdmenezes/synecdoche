@@ -42,7 +42,6 @@
 #include <iomanip>
 #include <list>
 #include "error_numbers.h"
-#include "common_defs.h"
 #include "filesys.h"
 #include "str_util.h"
 
@@ -842,7 +841,7 @@ const char* network_status_string(int n) {
     }
 }
 
-const char* rpc_reason_string(int reason) {
+const char* rpc_reason_string(rpc_reason reason) {
     switch (reason) {
     case RPC_REASON_USER_REQ: return "Requested by user";
     case RPC_REASON_NEED_WORK: return "To fetch work";
