@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -79,7 +80,7 @@ void PROJECT::init() {
     min_rpc_time = 0;
     possibly_backed_off = true;
     master_url_fetch_pending = false;
-    sched_rpc_pending = 0;
+    sched_rpc_pending = NO_RPC_REASON;
     next_rpc_time = 0;
     last_rpc_time = 0;
     trickle_up_pending = false;
@@ -166,7 +167,12 @@ int PROJECT::parse_state(MIOFILE& in) {
         if (parse_int(buf, "<master_fetch_failures>", master_fetch_failures)) continue;
         if (parse_double(buf, "<min_rpc_time>", min_rpc_time)) continue;
         if (parse_bool(buf, "master_url_fetch_pending", master_url_fetch_pending)) continue;
-        if (parse_int(buf, "<sched_rpc_pending>", sched_rpc_pending)) continue;
+
+        int itmp;
+        if (parse_int(buf, "<sched_rpc_pending>", itmp)) {
+            sched_rpc_pending = static_cast<rpc_reason>(itmp);
+            continue;
+        }
         if (parse_double(buf, "<next_rpc_time>", next_rpc_time)) continue;
         if (parse_bool(buf, "trickle_up_pending", trickle_up_pending)) continue;
         if (parse_bool(buf, "send_file_list", send_file_list)) continue;

@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -181,17 +182,17 @@ enum SUSPEND_REASON {
 #define NETWORK_STATUS_LOOKUP_PENDING   3
 /// @}
 
-/// \name RPC reasons
 /// Reasons for making a scheduler RPC.
-/// @{
-#define RPC_REASON_USER_REQ         1
-#define RPC_REASON_RESULTS_DUE      2
-#define RPC_REASON_NEED_WORK        3
-#define RPC_REASON_TRICKLE_UP       4
-#define RPC_REASON_ACCT_MGR_REQ     5
-#define RPC_REASON_INIT             6
-#define RPC_REASON_PROJECT_REQ      7
-/// @}
+enum rpc_reason {
+    NO_RPC_REASON = 0,
+    RPC_REASON_USER_REQ,
+    RPC_REASON_RESULTS_DUE,
+    RPC_REASON_NEED_WORK,
+    RPC_REASON_TRICKLE_UP,
+    RPC_REASON_ACCT_MGR_REQ,
+    RPC_REASON_INIT,
+    RPC_REASON_PROJECT_REQ
+};
 
 struct VERSION_INFO {
     int major;

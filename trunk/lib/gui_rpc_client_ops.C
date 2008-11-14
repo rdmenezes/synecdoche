@@ -194,7 +194,13 @@ int PROJECT::parse(MIOFILE& in) {
         if (parse_double(buf, "<long_term_debt>", long_term_debt)) continue;
         if (parse_double(buf, "<duration_correction_factor>", duration_correction_factor)) continue;
         if (parse_bool(buf, "master_url_fetch_pending", master_url_fetch_pending)) continue;
-        if (parse_int(buf, "<sched_rpc_pending>", sched_rpc_pending)) continue;
+
+        int itmp;
+        if (parse_int(buf, "<sched_rpc_pending>", itmp)) {
+            sched_rpc_pending = static_cast<rpc_reason>(itmp);
+            continue;
+        }
+
         if (parse_int(buf, "<rr_sim_deadlines_missed>", rr_sim_deadlines_missed)) continue;
         if (parse_bool(buf, "non_cpu_intensive", non_cpu_intensive)) continue;
         if (parse_bool(buf, "suspended_via_gui", suspended_via_gui)) continue;
@@ -240,7 +246,7 @@ void PROJECT::clear() {
     long_term_debt = 0;
     duration_correction_factor = 0;
     master_url_fetch_pending = false;
-    sched_rpc_pending = 0;
+    sched_rpc_pending = NO_RPC_REASON;
     ended = false;
     non_cpu_intensive = false;
     suspended_via_gui = false;

@@ -64,17 +64,23 @@ private:
 public:
     PROJECT* cur_proj;               ///< project we're currently contacting
     int state;
-    int reason;
+    rpc_reason reason;
     double url_random;              ///< used to randomize order
 
 public:
     SCHEDULER_OP(HTTP_OP_SET*);
     bool poll();
     int init_get_work();
-    int init_op_project(PROJECT*, int);
+
+    /// Try to initiate an RPC to the given project.
+    int init_op_project(PROJECT* p, rpc_reason r);
+
     int init_master_fetch(PROJECT*);
     bool check_master_fetch_start();
-    void backoff(PROJECT* p, const char *error_msg);
+
+    /// Back off contacting this project's schedulers.
+    void backoff(PROJECT* p, const std::string& reason_msg);
+
     /// if we're doing an op to this project, abort it
     void abort(PROJECT*);
 private:

@@ -722,7 +722,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     }
     project->send_time_stats_log = sr.send_time_stats_log;
     project->send_job_log = sr.send_job_log;
-    project->sched_rpc_pending = 0;
+    project->sched_rpc_pending = NO_RPC_REASON;
     project->trickle_up_pending = false;
 
     // The project returns a hostid only if it has created a new host record.
