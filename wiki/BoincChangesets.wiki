@@ -47,9 +47,7 @@
 ||16356||client: cleaned up CPU scheduler logic somewhat||
 ||16366/16383/16386/16391||client: revise round-robin simulation to take variable avg_ncpus into account (I'm not sure if we need this or if this change works with our ncpu-fix.)||
 ||16377/16378/16379/16381||MGR: Move the wxWidget version information to the about box.||
-||16388||client: fix a long-standing error: if prefs say leave X GB free, and BOINC is using Y GB, and there are Z GB free, the limit on BOINC is Y + Z - X (not Z - X)||
 ||16395/16396||client: fix bug that caused occasional assert in pop_heap() for the preemptable_task_list.||
-||16397||client: Fix result state name for aborted results.||
 
 
 == Rejected changes ==
@@ -93,7 +91,6 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16268 16268]||Already fixed in r449.||
 ||[http://boinc.berkeley.edu/trac/changeset/16357 16357]||There is no need for this mess (except the change for rr_sim.cpp).||
 ||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
-||[http://boinc.berkeley.edu/trac/changeset/16387 16387] `*`||client: there were a few places where we had 1e9 instead of 1 gig (2^20^) - Actually 1e9 would be correct when talking about Gigabytes instead of Gibibytes (which would be 2^30^ anyway...)||
 
 `*` These changesets may still be needed.
 
