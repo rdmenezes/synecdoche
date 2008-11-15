@@ -646,6 +646,11 @@ int mysql_timestamp(double dt, char* p, size_t len) {
 
 /// Return a text-string description of a given error.
 /// Must be kept consistent with error_numbers.h
+///
+/// \param[in] which_error The error number for which the string should
+///                        be returned.
+/// \return A string containing the error message corresponding to the
+///         error number in \a which_error.
 const char* boincerror(int which_error) {
     switch (which_error) {
         case BOINC_SUCCESS: return "Success";
@@ -782,6 +787,13 @@ const char* boincerror(int which_error) {
     return buf;
 }
 
+/// Return a text-string description of a given network status.
+/// Must be kept consistent with common_defs.h
+///
+/// \param[in] n The network status identifier for which the string should
+///              be returned.
+/// \return A string containing the network status message corresponding to
+///         the network status number in \a n.
 const char* network_status_string(int n) {
     switch (n) {
     case NETWORK_STATUS_ONLINE: return "online";
@@ -792,6 +804,13 @@ const char* network_status_string(int n) {
     }
 }
 
+/// Return a text-string description of a given reason for a rpc request.
+/// Must be kept consistent with common_defs.h
+///
+/// \param[in] n The rpc request reason identifier for which the string should
+///              be returned.
+/// \return A string containing the rpc request reason corresponding to
+///         the rpc request reason number in \a reason.
 const char* rpc_reason_string(rpc_reason reason) {
     switch (reason) {
     case RPC_REASON_USER_REQ: return "Requested by user";
@@ -807,71 +826,55 @@ const char* rpc_reason_string(rpc_reason reason) {
 
 #ifdef WIN32
 
-// get message for last error
-//
+/// Get a message for the last error.
+///
+/// \param[out] pszBuf Pointer to a buffer that will receive the error
+///                    message. If the buffer is too small it will be cleared.
+/// \param[in] iSize Size of the buffer pointed to by \a pszBuf.
+/// \return Always returns \a pszBuf.
 char* windows_error_string(char* pszBuf, int iSize) {
-    DWORD dwRet;
     LPTSTR lpszTemp = NULL;
+    DWORD dwRet = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ARGUMENT_ARRAY,
+                                NULL, GetLastError(), LANG_NEUTRAL, (LPTSTR)&lpszTemp, 0, NULL);
 
-    dwRet = FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_ARGUMENT_ARRAY,
-        NULL,
-        GetLastError(),
-        LANG_NEUTRAL,
-        (LPTSTR)&lpszTemp,
-        0,
-        NULL
-    );
-
-    // supplied buffer is not long enough
-    if ( !dwRet || ( (long)iSize < (long)dwRet+14 ) ) {
+    if ((!dwRet) || ((long)iSize < (long)dwRet + 14)) {
+        // Supplied buffer is not long enough.
         pszBuf[0] = TEXT('\0');
     } else {
-        lpszTemp[lstrlen(lpszTemp)-2] = TEXT('\0');  //remove cr and newline character
-        sprintf( pszBuf, TEXT("%s (0x%x)"), lpszTemp, GetLastError() );
+        lpszTemp[lstrlen(lpszTemp) - 2] = TEXT('\0'); // Remove cr and newline character.
+        sprintf(pszBuf, TEXT("%s (0x%x)"), lpszTemp, GetLastError());
     }
 
-    if ( lpszTemp ) {
-        LocalFree((HLOCAL) lpszTemp );
+    if (lpszTemp) {
+        LocalFree((HLOCAL)lpszTemp );
     }
-
     return pszBuf;
 }
 
-// get message for given error
-//
-char* windows_format_error_string(
-    unsigned long dwError, char* pszBuf, int iSize
-) {
-    DWORD dwRet;
+/// Get a message for a given error.
+///
+/// \param[in] dwError The error number for which the string representation
+///                    should be returned.
+/// \param[out] pszBuf Pointer to a buffer that will receive the error
+///                    message. If the buffer is too small it will be cleared.
+/// \param[in] iSize Size of the buffer pointed to by \a pszBuf.
+/// \return Always returns \a pszBuf.
+char* windows_format_error_string(unsigned long dwError, char* pszBuf, int iSize) {
     LPTSTR lpszTemp = NULL;
+    DWORD dwRet = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ARGUMENT_ARRAY,
+                                NULL, dwError, LANG_NEUTRAL, (LPTSTR)&lpszTemp, 0, NULL);
 
-    dwRet = FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_ARGUMENT_ARRAY,
-        NULL,
-        dwError,
-        LANG_NEUTRAL,
-        (LPTSTR)&lpszTemp,
-        0,
-        NULL
-    );
-
-    // supplied buffer is not long enough
-    if ( !dwRet || ( (long)iSize < (long)dwRet+14 ) ) {
+    if ((!dwRet) || ((long)iSize < (long)dwRet + 14)) {
+        // Supplied buffer is not long enough.
         pszBuf[0] = TEXT('\0');
     } else {
-        lpszTemp[lstrlen(lpszTemp)-2] = TEXT('\0');  //remove cr and newline character
-        sprintf( pszBuf, TEXT("%s (0x%x)"), lpszTemp, dwError );
+        lpszTemp[lstrlen(lpszTemp) - 2] = TEXT('\0'); // Remove cr and newline character.
+        sprintf(pszBuf, TEXT("%s (0x%x)"), lpszTemp, dwError);
     }
 
-    if ( lpszTemp ) {
-        LocalFree((HLOCAL) lpszTemp );
+    if (lpszTemp) {
+        LocalFree((HLOCAL)lpszTemp);
     }
-
     return pszBuf;
 }
 #endif

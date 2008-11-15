@@ -16,16 +16,20 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _COMMON_DEFS_
-#define _COMMON_DEFS_
+#ifndef COMMON_DEFS_H
+#define COMMON_DEFS_H
 
 #include "miofile.h"
 
 /// \file
-/// \#defines or enums that are shared by more than one BOINC component
+/// \#defines or constants or enums that are shared by more than one BOINC component
 /// (e.g. client, server, Manager, etc.)
 
-#define GUI_RPC_PORT                                31416
+const double KILO = 1024.0;
+const double MEGA = 1024.0 * KILO;
+const double GIGA = 1024.0 * MEGA;
+
+const int GUI_RPC_PORT = 31416;
 
 /// \name Run mode
 /// @{
@@ -214,4 +218,4 @@ struct VERSION_INFO {
 #define GRAPHICS_APP_FILENAME "graphics_app"
 #define ASSIGNED_WU_STR "asgn"
 
-#endif
+#endif // COMMON_DEFS_H
