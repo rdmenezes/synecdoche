@@ -360,8 +360,7 @@ private:
 public:
     int project_disk_usage(PROJECT*, double&);
     int total_disk_usage(double&); ///< returns the total disk usage of Synecdoche on this host
-    double allowed_disk_usage();
-    int allowed_project_disk_usage(double&);
+    double allowed_disk_usage(double boinc_total);
     int suspend_tasks(int reason);
     int resume_tasks(int reason=0);
     int suspend_network(int reason);
