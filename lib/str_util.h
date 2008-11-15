@@ -71,10 +71,12 @@ extern void strip_whitespace(char *str);
 /// Remove leading and trailing whitespace from a string
 extern void strip_whitespace(std::string&);
 
+/// Unescape an URL.
 extern void unescape_url(std::string& url);
-extern void unescape_url(char *url);
+
+/// Escape an URL.
 extern void escape_url(std::string& url);
-extern void escape_url(const char *in, char*out);
+
 extern void escape_url_readable(const char* in, char* out);
 extern void escape_project_url(const char *in, char* out);
 extern bool valid_master_url(const char*);

@@ -343,32 +343,6 @@ std::list<std::string> parse_command_line(const char* p) {
     return result;
 }
 
-static char x2c(const char *what) {
-    register char digit;
-
-    digit = (what[0] >= 'A' ? ((what[0] & 0xdf) - 'A')+10 : (what[0] - '0'));
-    digit *= 16;
-    digit += (what[1] >= 'A' ? ((what[1] & 0xdf) - 'A')+10 : (what[1] - '0'));
-    return(digit);
-}
-
-void c2x(char *what) {
-    char buf[3];
-    char num = atoi(what);
-    char d1 = num / 16;
-    char d2 = num % 16;
-    int abase1, abase2;
-    if (d1 < 10) abase1 = 48;
-    else abase1 = 55;
-    if (d2 < 10) abase2 = 48;
-    else abase2 = 55;
-    buf[0] = d1+abase1;
-    buf[1] = d2+abase2;
-    buf[2] = 0;
-
-    strcpy(what, buf);
-}
-
 /// Remove leading and trailing whitespace from a string
 ///
 /// \param[in,out] str Pointer to the C-string that should get trimmed
@@ -390,85 +364,62 @@ void strip_whitespace(std::string& str) {
     str.erase(pos + 1);
 }
 
-void unescape_url(char *url) {
-    int x,y;
-
-    for (x=0,y=0;url[y];++x,++y) {
-        if ((url[x] = url[y]) == '%') {
-            url[x] = x2c(&url[y+1]);
-            y+=2;
-        }
-    }
-    url[x] = '\0';
+/// Convert a number in hexadecimal representation into an integer.
+/// This is a helper function for unescape_url.
+///
+/// \param[in] what Array of char containing exactly two hexadecimal digits.
+/// \return The character of which the ASCII code matches the value described
+///         by the hexadecimal number in \a what.
+static char x2c(const char* what) {
+    register char digit;
+    digit = ((what[0] >= 'A') ? (((what[0] & 0xdf) - 'A') + 10) : (what[0] - '0'));
+    digit *= 16;
+    digit += ((what[1] >= 'A') ? (((what[1] & 0xdf) - 'A') + 10) : (what[1] - '0'));
+    return digit;
 }
 
-void unescape_url_safe(char *url, int url_size) {
-    int x,y;
-
-    for (x=0,y=0; url[y] && (x<url_size);++x,++y) {
-        if ((url[x] = url[y]) == '%') {
-            url[x] = x2c(&url[y+1]);
-            y+=2;
-        }
-    }
-    url[x] = '\0';
-}
-
-// unescape_url needs to be able to handle potentially hostile
-// urls.
+/// Unescape an URL.
+///
+/// \param[in,out] url Reference to a string containing the URL that should
+///                    get unescaped.
 void unescape_url(std::string& url) {
-    char buf[1024];
-    strncpy(buf, url.c_str(), sizeof(buf));
-    unescape_url_safe(buf, sizeof(buf));
-    url = buf;
-}
-
-void escape_url(const char *in, char*out) {
-    int x, y;
-    for (x=0, y=0; in[x]; ++x) {
-        if (isalnum(in[x])) {
-            out[y] = in[x];
-            ++y;
+    std::string result;
+    result.reserve(url.size());
+    for (std::string::const_iterator c = url.begin(); c != url.end(); ++c) {
+        if (*c == '%') {
+            // Only decode if the input is complete!
+            if (c + 2 >= url.end()) {
+                break;
+            }
+            char buf[2];
+            std::copy(c + 1, c + 3, buf);
+            result += x2c(buf);
+            c += 3;
         } else {
-            out[y] = '%';
-            ++y;
-            out[y] = 0;
-            char buf[256];
-            sprintf(buf, "%d", (char)in[x]);
-            c2x(buf);
-            strcat(out, buf);
-            y += 2;
+            result += *c;
         }
     }
-    out[y] = 0;
+    url = result;
 }
 
-void escape_url_safe(const char *in, char*out, int out_size) {
-    int x, y;
-    for (x=0, y=0; in[x] && (y<out_size); ++x) {
-        if (isalnum(in[x])) {
-            out[y] = in[x];
-            ++y;
-        } else {
-            out[y] = '%';
-            ++y;
-            out[y] = 0;
-            char buf[256];
-            sprintf(buf, "%d", (char)in[x]);
-            c2x(buf);
-            strcat(out, buf);
-            y += 2;
-        }
-    }
-    out[y] = 0;
-}
-
-// escape_url needs to be able to handle potentially hostile
-// urls
+/// Escape an URL.
+///
+/// \param[in,out] url Reference to a string containing the URL that should
+///                    get escaped.
 void escape_url(std::string& url) {
-    char buf[1024];
-    escape_url_safe(url.c_str(), buf, sizeof(buf));
-    url = buf;
+    std::string result;
+    result.reserve(url.size());
+    for (std::string::const_iterator c = url.begin(); c != url.end(); ++c) {
+        if (isalnum(*c)) {
+            result += *c;
+        } else {
+            result += '%';
+            char buf[4];
+            snprintf(buf, 4, "%X", *c);
+            result += std::string(buf, buf + 2);
+        }
+    }
+    url = result;
 }
 
 /// Escape a URL for the project directory, cutting off the "http://",
