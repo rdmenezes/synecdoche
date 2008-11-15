@@ -22,22 +22,20 @@
 #ifndef STR_UTIL_H
 #define STR_UTIL_H
 
-#include <cstdlib>
-#include <ctime>
-#include <cctype>
-#include <cstring>
-#include <string>
+#include <algorithm>
 #include <list>
+#include <string>
+
+#include <cctype>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 
 #ifndef _WIN32
 #include "config.h"
 #endif
 
 #include "common_defs.h"
-
-#define KILO (1024.0)
-#define MEGA (1048576.0)
-#define GIGA (1024.*1048576.0)
 
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
@@ -62,8 +60,6 @@ extern int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t
 
 /// Split a string with space separated words into single words.
 extern std::list<std::string> parse_command_line(const char* p);
-
-extern void c2x(char *what);
 
 /// Remove leading and trailing whitespace from a string
 extern void strip_whitespace(char *str);
@@ -99,20 +95,32 @@ extern std::string precision_time_to_string(double t);
 /// Convert a time difference into a descriptive string.
 extern std::string timediff_format(double);
 
-inline bool ends_with(std::string const& s, std::string const& suffix) {
+/// Check if a string has as specific suffix.
+///
+/// \param[in] s The string that should be tested.
+/// \param[in] suffix The suffix to look for.
+/// \return True if \a s ends with \a suffix, false otherwise.
+inline bool ends_with(const std::string& s, const std::string& suffix) {
     return
         s.size()>=suffix.size() &&
         s.substr(s.size()-suffix.size()) == suffix;
 }
 
-inline bool starts_with(std::string const& s, std::string const& prefix) {
+/// Check if a string has as specific prefix.
+///
+/// \param[in] s The string that should be tested.
+/// \param[in] prefix The prefix to look for.
+/// \return True if \a s starts with \a prefix, false otherwise.
+inline bool starts_with(const std::string& s, const std::string& prefix) {
     return s.substr(0, prefix.size()) == prefix;
 }
 
+/// Turn all characters in a string into their lower case equivalents.
+///
+/// \param[in,out] w Reference to the string of which each character should
+///                  be replaced by its lowercase equivalent.
 inline void downcase_string(std::string& w) {
-    for (std::string::iterator p = w.begin(); p != w.end(); ++p) {
-        *p = tolower(*p);
-    }
+    std::transform(w.begin(), w.end(), w.begin(), tolower);
 }
 
 /// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
@@ -121,20 +129,23 @@ extern std::string mysql_timestamp(double dt);
 /// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
 extern int mysql_timestamp(double dt, char* p, size_t len);
 
-// returns short text description of error corresponding to
-// int errornumber from error_numbers.h
-//
+/// Returns short text description of error numbers.
 extern const char* boincerror(int which_error);
-extern const char* network_status_string(int);
+
+/// Return a text-string description of a given network status.
+extern const char* network_status_string(int n);
+
+/// Return a text-string description of a given reason for a rpc request.
 extern const char* rpc_reason_string(rpc_reason reason);
 
 #ifdef _WIN32
 #include <windows.h>
 
+/// Get a message for the last error.
 extern char* windows_error_string(char* pszBuf, int iSize);
-extern char* windows_format_error_string(
-    unsigned long dwError, char* pszBuf, int iSize
-);
+
+/// Get a message for a given error.
+extern char* windows_format_error_string(unsigned long dwError, char* pszBuf, int iSize);
 #endif
 
 #endif
