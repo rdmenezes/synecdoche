@@ -48,7 +48,10 @@
 ||16366/16383/16386/16391||client: revise round-robin simulation to take variable avg_ncpus into account (I'm not sure if we need this or if this change works with our ncpu-fix.)||
 ||16377/16378/16379/16381||MGR: Move the wxWidget version information to the about box.||
 ||16395/16396||client: fix bug that caused occasional assert in pop_heap() for the preemptable_task_list.||
-
+||16405/16413/16414/16417/16419/16421/16428/16429/16446/16448/16450||MGR: Create an Exit dialog for the Manager. / Allow the manager to shutdown the CC even when it was installed as a daemon.||
+||16406/16415/16420/16426/16427/16434||MGR: Provide a way to enable/disable launching from the BOINC Manager at startup from within the BOINC Manager itself.||
+||16432/16433||client: make host CPID a function of: MAC addresses + hostname + IP addr + OS name||
+||16449||manager: truncate task progress bar (display) at 100%||
 
 == Rejected changes ==
 
@@ -94,4 +97,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16400 16400]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16450 16450]
