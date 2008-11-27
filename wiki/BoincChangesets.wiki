@@ -22,7 +22,6 @@
 ||15998/15999||MGR: Simplify Message display logic; fix possible memory leaks; fix button tooltip||
 ||16003||Is this used by the client or does this belong to the server?||
 ||16121||MGR: show resource requirements of all jobs, running or not||
-||16149||client: show est CPC time of jobs returned by sched RPC, if sched_op_debug||
 ||16150||client: use different temp file names for different purposes / change logic in a pathological file xfer case||
 ||16181/16183||MGR: SimpleGUI: compatibility fixes for wxWidgets 2.8||
 ||16187||client: print a message, and recompute ncpus, when reread cc_config.xml||
@@ -37,7 +36,6 @@
 ||16274||LIB: Fix the windows callstack dump routine for Visual Studio 2008||
 ||16280||MGR: Add a new tab status to the Simple GUI for when the client has been instructed to delay starting applications via the <delay_start> option in cc_config.xml (From Kevin Reed)||
 ||16307||client: --help: alphabetize options||
-||16326||client: fix crash when sched_op_debug is enabled (I'm not sure if we are prone to this crash, too, but this needs more investigation.)||
 ||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::OnConnect()||
 ||16328||client: accept --insecure flag even if not compiled with -DSANDBOX manager: pass --insecure flab only if compiled with -DSANDBOX||
 ||16336/16337/16347||MGR: When removing a row from sorted lists, refresh all rows to ensure proper display update (Does anyone know which bug is fixed by this changeset? Do we need it?)||
