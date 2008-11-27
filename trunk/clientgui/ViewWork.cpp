@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard, Nicolas Alvarez
+// Copyright (C) 2008 David Barnard, Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -600,12 +600,8 @@ wxInt32 CViewWork::RemoveCacheElement() {
 
 
 void CViewWork::UpdateSelection() {
-    CTaskItemGroup*     pGroup = NULL;
-    RESULT*             result = NULL;
     PROJECT*            project = NULL;
-    CC_STATUS           status;
     CMainDocument*      pDoc = wxGetApp().GetDocument();
-    int                 n, row;
 
     wxASSERT(NULL != pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -613,14 +609,14 @@ void CViewWork::UpdateSelection() {
 
     CTaskViewBase::PreUpdateSelection();
 
-    pGroup = m_TaskGroups[0];
+    CTaskItemGroup* pGroup = m_TaskGroups[0];
 
-    row = -1;
-    n = m_pListPane->GetSelectedItemCount();
+    int row = -1;
+    int n = m_pListPane->GetSelectedItemCount();
     if (n == 1) {
         // Single selection
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-        result = pDoc->result(m_iSortedIndexes[row]);
+        RESULT* result = pDoc->result(m_iSortedIndexes[row]);
 
         // Start with everything enabled.
         m_pTaskPane->EnableTaskGroupTasks(pGroup);
@@ -632,37 +628,84 @@ void CViewWork::UpdateSelection() {
             m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
         }
 
-        // Disable Suspend / Resume button
-        if (result->suspended_via_gui) {
-            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
-        } else {
-            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
-        }
-
-        // Disable Abort button if selected task already aborted
-        if (
-            result->active_task_state == PROCESS_ABORT_PENDING ||
+        // Disable the "Abort" button if the selected task already is aborted:
+        if (result->active_task_state == PROCESS_ABORT_PENDING ||
             result->active_task_state == PROCESS_ABORTED ||
-            result->state == RESULT_ABORTED 
-        ) {
+            result->state == RESULT_ABORTED) {
+
             m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_ABORT]);
+            // Disabling the "Abort" button means that all selected tasks are
+            // already aborted. Suspending or resuming them makes no sense
+            // therefore disable these two buttons, too:
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
+        } else {
+            // Disable Suspend / Resume button
+            if (result->suspended_via_gui) {
+                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+            } else {
+                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
+            }
         }
-
         project = pDoc->state.lookup_project(result->project_url);
-
     } else if (n > 1) {
-        // Multiple selection
-        // Allow everything except graphics.
+        // Multiple selection.
+        // Check if all selected tasks are in the same state.
+        // If yes allow only the buttons that should be allowed for this task
+        // state, otherwise allow everything. The graphics button will always
+        // be disabled.
         m_pTaskPane->EnableTaskGroupTasks(pGroup);
         m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
 
+        // First gather the needed information by iterating over all selected
+        // tasks:
+        int num_suspended = 0;
+        int num_aborted = 0;
+        while (true) {
+            row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+            if (row < 0) {
+                break;
+            }
+            RESULT* result = pDoc->result(m_iSortedIndexes[row]);
+
+            // Check aborted tasks:
+            if ((result->active_task_state == PROCESS_ABORT_PENDING)
+                || (result->active_task_state == PROCESS_ABORTED)
+                || (result->state == RESULT_ABORTED)) {
+                    ++num_aborted;
+            } else if (result->suspended_via_gui) { // Check suspended tasks
+                ++num_suspended;
+            }
+
+        }
+
+        // Check if the "Abort" button needs to be disabled:
+        if (num_aborted == n) {
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_ABORT]);
+
+            // Disabling the "Abort" button means that all selected tasks are
+            // already aborted. Suspending or resuming them makes no sense
+            // therefore disable these two buttons, too:
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
+        } else {
+            // Check the "Suspend"/"Resume" buttons:
+            if (num_suspended == 0) {
+                // None of the selected tasks is suspended.
+                // => Disable the "Resume" button.
+                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
+            } else if (num_suspended == (n - num_aborted)) {
+                // All selected tasks which are not aborted are suspended.
+                // => Disable the "Suspend" button.
+                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+            } // else: Leave both buttons enabled.
+        }
     } else {
         // No selection
         m_pTaskPane->DisableTaskGroupTasks(pGroup);
     }
 
     UpdateWebsiteSelection(GRP_WEBSITES, project);
-
     CTaskViewBase::PostUpdateSelection();
 }
 
