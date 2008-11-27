@@ -641,7 +641,8 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
         wup->clear_errors();
         workunits.push_back(wup);
     }
-    for (i=0; i<sr.results.size(); i++) {
+    double sum_est_cpu_time = 0; 
+    for (i = 0; i < sr.results.size(); ++i) {
         if (lookup_result(project, sr.results[i].name)) {
             msg_printf(project, MSG_INTERNAL_ERROR, "Already have task %s\n", sr.results[i].name);
             continue;
@@ -669,6 +670,12 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
         results.push_back(rp);
         rp->set_state(RESULT_NEW, "handle_scheduler_reply");
         nresults++;
+        sum_est_cpu_time += rp->estimated_cpu_time();
+    }
+    if (log_flags.sched_op_debug) {
+        if (!sr.results.empty()) {
+            msg_printf(project, MSG_INFO, "[sched_ops_debug] estimated total CPU time: %.0f seconds", sum_est_cpu_time);
+        }
     }
 
     // update records for ack'ed results
