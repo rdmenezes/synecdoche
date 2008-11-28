@@ -490,6 +490,8 @@ public:
     int parse_statistics(MIOFILE&);
     int parse_statistics(FILE*);
     int write_statistics(MIOFILE&, bool gui_rpc=false) const;
+
+    /// Write the statistics file.
     int write_statistics_file() const;
 };
 

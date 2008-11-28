@@ -87,6 +87,8 @@ TIME_STATS::TIME_STATS() {
 
 /// if log file is over a meg, discard everything older than a year
 ///
+/// TODO: Check this function! It writes the contents to a temporary file
+/// but doesn't do anything with it afterwards!
 void TIME_STATS::trim_stats_log() {
     double size;
     char buf[256];
@@ -98,7 +100,7 @@ void TIME_STATS::trim_stats_log() {
     if (size < 1e6) return;
     FILE* f = fopen(TIME_STATS_LOG, "r");
     if (!f) return;
-    FILE* f2 = fopen(TEMP_FILE_NAME, "w");
+    FILE* f2 = fopen(TEMP_TIME_STATS_FILE_NAME, "w");
     if (!f2) {
         fclose(f);
         return;
