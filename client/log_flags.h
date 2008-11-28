@@ -21,8 +21,8 @@
 
 // NOTE: all writes to stdout should have an if (log_flags.*) {} around them.
 
-#ifndef _LOGFLAGS_H_
-#define _LOGFLAGS_H_
+#ifndef LOGFLAGS_H
+#define LOGFLAGS_H
 
 #include <vector>
 #include <string>
@@ -111,6 +111,8 @@ struct CONFIG {
 
 extern LOG_FLAGS log_flags;
 extern CONFIG config;
-extern int read_config_file();
 
-#endif
+/// Read the config file.
+extern int read_config_file(bool init);
+
+#endif // LOGFLAGS_H
