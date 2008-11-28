@@ -22,10 +22,7 @@
 ||15998/15999||MGR: Simplify Message display logic; fix possible memory leaks; fix button tooltip||
 ||16003||Is this used by the client or does this belong to the server?||
 ||16121||MGR: show resource requirements of all jobs, running or not||
-||16150||client: use different temp file names for different purposes / change logic in a pathological file xfer case||
 ||16181/16183||MGR: SimpleGUI: compatibility fixes for wxWidgets 2.8||
-||16187||client: print a message, and recompute ncpus, when reread cc_config.xml||
-||16189||client: correctly null-terminate file upload handler reply||
 ||16206/16207||client: clarify and fix the semantics of "next RPC time".||
 ||16208||client: new config flags||
 ||16212||MGR: Fix updating task bar icon on disconnect from Client, fix a crash on exiting||
