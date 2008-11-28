@@ -52,7 +52,7 @@
 int PROJECT::write_account_file() const {
     // We write the contents into a temporary file and rename it to the
     // real account file name after it was completly written.
-    FILE* f = boinc_fopen(TEMP_FILE_NAME, "w");
+    FILE* f = boinc_fopen(TEMP_ACCT_FILE_NAME, "w");
     if (!f) {
         return ERR_FOPEN;
     }
@@ -74,7 +74,7 @@ int PROJECT::write_account_file() const {
     fclose(f);
 
     std::string path = get_account_filename(master_url);
-    if (boinc_rename(TEMP_FILE_NAME, path.c_str())) {
+    if (boinc_rename(TEMP_ACCT_FILE_NAME, path.c_str())) {
         return ERR_RENAME;
     }
     return 0;
@@ -349,23 +349,24 @@ int CLIENT_STATE::parse_statistics_files() {
     return 0;
 }
 
+/// Write the statistics file.
+///
+/// \return ERR_FOPEN or ERR_RENAME on error, zero otherwise.
 int PROJECT::write_statistics_file() const {
     char path[256];
-    FILE* f;
-    int retval;
-
     get_statistics_filename(master_url, path);
-    f = boinc_fopen(TEMP_FILE_NAME, "w");
-    if (!f) return ERR_FOPEN;
+
+    FILE* f = boinc_fopen(TEMP_STATS_FILE_NAME, "w");
+    if (!f) {
+        return ERR_FOPEN;
+    }
     fprintf(f,
         "<project_statistics>\n"
         "    <master_url>%s</master_url>\n",
         master_url
     );
 
-    for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
-        i!=statistics.end(); ++i
-    ) {
+    for (std::vector<DAILY_STATS>::const_iterator i = statistics.begin(); i != statistics.end(); ++i) {
         fprintf(f,
             "    <daily_statistics>\n"
             "        <day>%f</day>\n"
@@ -382,13 +383,12 @@ int PROJECT::write_statistics_file() const {
         );
     }
 
-    fprintf(f,
-        "</project_statistics>\n"
-    );
+    fprintf(f, "</project_statistics>\n");
 
     fclose(f);
-    retval = boinc_rename(TEMP_FILE_NAME, path);
-    if (retval) return ERR_RENAME;
+    if (boinc_rename(TEMP_STATS_FILE_NAME, path)) {
+        return ERR_RENAME;
+    }
     return 0;
 }
 
