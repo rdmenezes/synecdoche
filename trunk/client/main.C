@@ -306,14 +306,11 @@ static void init_core_client(int argc, char** argv) {
 
     diagnostics_init(flags, "stdoutdae", "stderrdae");
 
-    // Read config and parse the commandline after initializing the
-    // diagnostics framework.
-    read_config_file();
+    // Read config.
+    read_config_file(true);
 
     // Until the config file has been read, log files are unbounded.
-    diagnostics_set_max_file_sizes(
-        config.max_stdout_file_size, config.max_stderr_file_size
-    );
+    diagnostics_set_max_file_sizes(config.max_stdout_file_size, config.max_stderr_file_size);
 
     // Win32 - detach from console if requested
 #ifdef _WIN32

@@ -28,6 +28,7 @@
 #include <unistd.h>
 #endif
 
+#include "log_flags.h"
 #include "error_numbers.h"
 #include "common_defs.h"
 #include "file_names.h"
@@ -35,8 +36,6 @@
 #include "parse.h"
 #include "str_util.h"
 #include "filesys.h"
-
-using std::string;
 
 LOG_FLAGS log_flags;
 CONFIG config;
@@ -208,7 +207,7 @@ void CONFIG::defaults() {
 int CONFIG::parse_options(XML_PARSER& xp) {
     char tag[1024], path[256];
     bool is_tag;
-    string s;
+    std::string s;
 
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!is_tag) {
@@ -296,14 +295,22 @@ int CONFIG::parse(FILE* f) {
     return ERR_XML_PARSE;
 }
 
-int read_config_file() {
-    FILE* f;
-
+/// Read the config file.
+///
+/// \param[in] init Set this parameter to true when reading the config file
+///                 for the first time and false when re-reading it.
+/// \return Zero on success, ERR_FOPEN if opening the config file failed.
+int read_config_file(bool init) {
     log_flags.defaults();
     config.defaults();
 
-    f = boinc_fopen(CONFIG_FILE, "r");
-    if (!f) return ERR_FOPEN;
+    if (!init) {
+        msg_printf(NULL, MSG_INFO, "Re-reading cc_config.xml");
+    }
+    FILE* f = boinc_fopen(CONFIG_FILE, "r");
+    if (!f) {
+        return ERR_FOPEN;
+    }
     config.parse(f);
     fclose(f);
     return 0;
