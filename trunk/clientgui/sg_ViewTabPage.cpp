@@ -607,7 +607,7 @@ void MyCanvas::OnPaint(wxPaintEvent& WXUNUSED(event))
 }
 
 void MyCanvas::AdvanceSlide() {
-    if ( currentImageIndex+1 == (int) vSlideShow.size() ) {
+    if ( currentImageIndex+1 == vSlideShow.size() ) {
         if ( reloadSlideShow ) {
             vSlideShow.at(currentImageIndex)->Show(false);
             LoadSlideShow();

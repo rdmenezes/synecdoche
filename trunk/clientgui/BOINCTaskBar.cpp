@@ -384,9 +384,9 @@ std::vector<RESULT*> CTaskBarIcon::GetRunningTasks(CMainDocument* pDoc) {
     std::vector<RESULT*> results;
     bool bIsActive, bIsExecuting, bIsDownloaded;
     
-    int iResultCount = pDoc->GetWorkCount();
+    size_t iResultCount = pDoc->GetWorkCount();
 
-    for (int iIndex = 0; iIndex < iResultCount; iIndex++) {
+    for (size_t iIndex = 0; iIndex < iResultCount; iIndex++) {
         RESULT* result = pDoc->result(iIndex);
 
         if (result) {
