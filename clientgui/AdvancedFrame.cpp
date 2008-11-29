@@ -750,8 +750,8 @@ bool CAdvancedFrame::SaveViewState() {
     wxString        strConfigLocation;
     wxString        strPreviousLocation;
     wxString        strBuffer;
-    int             iIndex = 0;
-    int             iItemCount = 0;
+    unsigned int    iIndex = 0;
+    unsigned int    iItemCount = 0;
 
 
     wxASSERT(pConfig);
@@ -776,7 +776,7 @@ bool CAdvancedFrame::SaveViewState() {
     //
  
     // Convert to a zero based index
-    iItemCount = (int)m_pNotebook->GetPageCount() - 1;
+    iItemCount = m_pNotebook->GetPageCount() - 1;
 
     for (iIndex = 0; iIndex <= iItemCount; iIndex++) {   
         pwndNotebookPage = m_pNotebook->GetPage(iIndex);
@@ -846,8 +846,8 @@ bool CAdvancedFrame::RestoreViewState() {
     wxString        strPreviousLocation;
     wxString        strBuffer;
     wxString        strValue;
-    long            iIndex;
-    long            iPageCount;
+    unsigned long   iIndex;
+    unsigned long   iPageCount;
     long            iCurrentPage;
 
 
@@ -881,7 +881,7 @@ bool CAdvancedFrame::RestoreViewState() {
     //
 
     // Convert to a zero based index
-    iPageCount = (long)m_pNotebook->GetPageCount() - 1;
+    iPageCount = m_pNotebook->GetPageCount() - 1;
 
     for (iIndex = 0; iIndex <= iPageCount; iIndex++) {   
 

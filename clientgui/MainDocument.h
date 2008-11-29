@@ -167,7 +167,7 @@ public:
     PROJECT*                    project(const wxString& projectname);
     float                       m_fProjectTotalResourceShare;
 
-    int                         GetProjectCount();
+    size_t                      GetProjectCount();
 
     int                         ProjectNoMoreWork(int iIndex);
     int                         ProjectNoMoreWork(const wxString& projectname);
@@ -208,7 +208,7 @@ public:
     RESULT*                     result(unsigned int);
     RESULT*                     result(const wxString& name, const wxString& project_url);
 
-    int                         GetWorkCount();
+    size_t                      GetWorkCount();
 
     int                         WorkSuspend(
                                     std::string& strProjectURL,
@@ -237,7 +237,7 @@ public:
     MESSAGE*                    message(unsigned int);
     int                         CachedMessageUpdate();
 
-    int                         GetMessageCount();
+    size_t                      GetMessageCount();
 
     int                         ResetMessageState();
 
@@ -256,7 +256,7 @@ public:
     FILE_TRANSFER*              file_transfer(unsigned int);
     FILE_TRANSFER*              file_transfer(const wxString& fileName, const wxString& project_url);
 
-    int                         GetTransferCount();
+    size_t                      GetTransferCount();
 
     int                         TransferRetryNow(int iIndex);
     int                         TransferRetryNow(const wxString& fileName, const wxString& project_url);
@@ -286,7 +286,7 @@ public:
     PROJECTS                    statistics_status;
     PROJECT*                    statistic(unsigned int);
 
-    int                         GetStatisticsCount();
+    size_t                      GetStatisticsCount();
     
 
     //
@@ -308,7 +308,7 @@ private:
     int                         CachedSimpleGUIUpdate();
 
 public:
-    int                         GetSimpleGUIWorkCount();
+    size_t                      GetSimpleGUIWorkCount();
 
 };
 

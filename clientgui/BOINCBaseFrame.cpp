@@ -598,8 +598,8 @@ bool CBOINCBaseFrame::SaveState() {
     wxString        strConfigLocation;
     wxString        strPreviousLocation;
     wxString        strBuffer;
-    int             iIndex;
-    int             iItemCount;
+    unsigned int    iIndex;
+    unsigned int    iItemCount;
 
 
     wxASSERT(pConfig);
@@ -630,7 +630,7 @@ bool CBOINCBaseFrame::SaveState() {
 
     pConfig->SetPath(strConfigLocation);
 
-    iItemCount = (int)m_aSelectedComputerMRU.GetCount() - 1;
+    iItemCount = m_aSelectedComputerMRU.GetCount() - 1;
     for (iIndex = 0; iIndex <= iItemCount; iIndex++) {
         strBuffer.Printf(wxT("%d"), iIndex);
         pConfig->Write(

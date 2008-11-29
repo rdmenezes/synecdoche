@@ -40,8 +40,8 @@ CProgressBar::CProgressBar(wxPanel* parent,wxPoint coord) : wxPanel(parent, wxID
 
 void CProgressBar::LoadIndicators() {
     CSkinSimple* pSkinSimple = wxGetApp().GetSkinManager()->GetSimple();
-    int indIndex = 0;
-    int indSize = 0;
+    size_t indIndex = 0;
+    size_t indSize = 0;
     int x_pos;
 
     wxASSERT(pSkinSimple);
@@ -50,14 +50,14 @@ void CProgressBar::LoadIndicators() {
     wxLogTrace(wxT("Function Start/End"), wxT("CProgressBar::LoadIndicators - Function Start"));
 
     // Remove any currently loaded
-    indSize = (int)m_progInd.size();
-    for(indIndex = 0; indIndex < indSize; indIndex++){
+    indSize = m_progInd.size();
+    for (indIndex = 0; indIndex < indSize; indIndex++){
         delete m_progInd[indIndex];
     }
     m_progInd.clear();
 
     // Load all new ones but do not display
-    for(indIndex=0; indIndex < numOfIndic; indIndex++) {
+    for (indIndex=0; indIndex < numOfIndic; indIndex++) {
         ImageLoader *i_ind = new ImageLoader(this);
         x_pos = rightPosition +((indicatorWidth)*indIndex);
         i_ind->Move(wxPoint(x_pos,topPosition));

@@ -73,7 +73,7 @@ int CNetworkConnection::GetLocalPassword(wxString& strPassword){
     if (!f) return errno;
     fgets(buf, 256, f);
     fclose(f);
-    int n = (int)strlen(buf);
+    size_t n = strlen(buf);
     if (n) {
         n--;
         if (buf[n]=='\n') {
@@ -755,14 +755,14 @@ PROJECT* CMainDocument::project(const wxString& projectname) {
 }
 
 
-int CMainDocument::GetProjectCount() {
-    int iCount = -1;
+size_t CMainDocument::GetProjectCount() {
+    size_t iCount = -1;
 
     CachedProjectStatusUpdate();
     CachedStateUpdate();
 
     if (!state.projects.empty())
-        iCount = (int)state.projects.size();
+        iCount = state.projects.size();
 
     return iCount;
 }
@@ -1003,14 +1003,14 @@ RESULT* CMainDocument::result(const wxString& name, const wxString& project_url)
     return pResult;
 }
 
-int CMainDocument::GetWorkCount() {
-    int iCount = -1;
+size_t CMainDocument::GetWorkCount() {
+    size_t iCount = -1;
 
     CachedResultsStatusUpdate();
     CachedStateUpdate();
 
     if (!results.results.empty())
-        iCount = (int)results.results.size();
+        iCount = results.results.size();
 
     return iCount;
 }
@@ -1355,14 +1355,14 @@ MESSAGE* CMainDocument::message(unsigned int i) {
 }
 
 
-int CMainDocument::GetMessageCount() {
-    int iCount = -1;
+size_t CMainDocument::GetMessageCount() {
+    size_t iCount = -1;
 
     CachedMessageUpdate();
     CachedStateUpdate();
 
     if (!messages.messages.empty())
-        iCount = (int)messages.messages.size();
+        iCount = messages.messages.size();
 
     return iCount;
 }
@@ -1437,14 +1437,14 @@ FILE_TRANSFER* CMainDocument::file_transfer(const wxString& fileName, const wxSt
 }
 
 
-int CMainDocument::GetTransferCount() {
-    int iCount = 0;
+size_t CMainDocument::GetTransferCount() {
+    size_t iCount = 0;
 
     CachedFileTransfersUpdate();
     CachedStateUpdate();
 
     if (!ft.file_transfers.empty())
-        iCount = (int)ft.file_transfers.size();
+        iCount = ft.file_transfers.size();
 
     return iCount;
 }
@@ -1580,14 +1580,14 @@ PROJECT* CMainDocument::statistic(unsigned int i) {
 }
 
 
-int CMainDocument::GetStatisticsCount() {
-    int iCount = -1;
+size_t CMainDocument::GetStatisticsCount() {
+    size_t iCount = -1;
 
     CachedStatisticsStatusUpdate();
     CachedStateUpdate();
 
     if (!statistics_status.projects.empty())
-        iCount = (int)statistics_status.projects.size();
+        iCount = statistics_status.projects.size();
 
     return iCount;
 }
@@ -1653,9 +1653,9 @@ int CMainDocument::CachedSimpleGUIUpdate() {
 }
 
 
-int CMainDocument::GetSimpleGUIWorkCount() {
-    int iCount = 0;
-    unsigned int i = 0;
+size_t CMainDocument::GetSimpleGUIWorkCount() {
+    size_t iCount = 0;
+    size_t i = 0;
 
     CachedSimpleGUIUpdate();
     CachedStateUpdate();
