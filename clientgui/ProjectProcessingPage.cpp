@@ -409,7 +409,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                         strBuffer += 
                             _("An internal server error has occurred.\n");
                     } else {
-                        if (ao->error_msg.size()) {
+                        if (!ao->error_msg.empty()) {
                             strBuffer += wxString(ao->error_msg.c_str(), wxConvUTF8) + wxString(wxT("\n"));
                         }
                     }

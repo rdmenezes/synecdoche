@@ -96,7 +96,7 @@ void CViewTabPage::CreatePage()
     resState = pDoc->state.lookup_result(resultWU->project_url, resultWU->name);
     if(resState){
         projName = wxString(resState->project->project_name.c_str(), wxConvUTF8 );
-        if (resState->app->user_friendly_name.size()) {
+        if (!resState->app->user_friendly_name.empty()) {
             projectFrName = wxString(resState->app->user_friendly_name.c_str(), wxConvUTF8);
         } else {
             projectFrName = wxString(resState->wup->avp->app_name.c_str(), wxConvUTF8);
@@ -197,7 +197,7 @@ void CViewTabPage::LoadSlideShow(std::vector<wxBitmap>* vSlideShow) {
             break;
         }
     }
-    if (vSlideShow->size() == 0) {
+    if (vSlideShow->empty()) {
         for (int i = 0; i < 99; ++i) {
             std::ostringstream file;
             file << urlDirectory << "/slideshow_";
@@ -228,7 +228,7 @@ std::vector<wxBitmap> CViewTabPage::GetSlideShow() {
 
     std::vector<wxBitmap> vSlideShow;
     LoadSlideShow(&vSlideShow);
-    if ( vSlideShow.size() == 0 ) {
+    if ( vSlideShow.empty() ) {
         vSlideShow.push_back(*(pSkinSimple->GetWorkunitAnimationImage()->GetBitmap()));
     }
 
@@ -237,7 +237,7 @@ std::vector<wxBitmap> CViewTabPage::GetSlideShow() {
 
 bool CViewTabPage::Downloading() {
     CMainDocument* pDoc     = wxGetApp().GetDocument();
-    if ( pDoc->results.results.size() > 0 ) {
+    if ( !pDoc->results.results.empty() ) {
         RESULT* result;
         for(unsigned int i=0; i < pDoc->results.results.size(); i++ ) {
             result = pDoc->result(i);
@@ -688,7 +688,7 @@ WorkunitNotebook::WorkunitNotebook(wxWindow* parent, wxWindowID id, const wxPoin
         // would be displayed intially, but that tab itself is not visible if there 
         // are more tabs than fit on page, causing problems.  So we select the 
         // first tab as a default.
-    if (m_windows.size())       // If tab 0 exists
+    if (!m_windows.empty())       // If tab 0 exists
         SetSelection(0);
 #endif
 

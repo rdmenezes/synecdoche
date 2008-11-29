@@ -241,7 +241,7 @@ bool CAdvancedFrame::CreateMenu() {
 
     // Account managers have a different menu arrangement
     pDoc->rpc.acct_mgr_info(ami);
-    is_acct_mgr_detected = ami.acct_mgr_url.size() ? true : false;
+    is_acct_mgr_detected = !ami.acct_mgr_url.empty();
 
     // File menu
     wxMenu *menuFile = new wxMenu;
@@ -1653,7 +1653,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
     pDoc->rpc.get_project_init_status(pis);
     pDoc->rpc.acct_mgr_info(ami);
-    if (ami.acct_mgr_url.size() && !ami.have_credentials) {
+    if (!ami.acct_mgr_url.empty() && !ami.have_credentials) {
         if (!IsShown()) {
             Show();
         }
@@ -1690,7 +1690,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
             // If failure, display the messages tab
             m_pNotebook->SetSelection(ID_LIST_MESSAGESVIEW - ID_LIST_BASE);
         }
-    } else if ((pis.url.size() || (0 >= pDoc->GetProjectCount())) && !status.disallow_attach) {
+    } else if ((!pis.url.empty() || (0 >= pDoc->GetProjectCount())) && !status.disallow_attach) {
         if (!IsShown()) {
             Show();
         }

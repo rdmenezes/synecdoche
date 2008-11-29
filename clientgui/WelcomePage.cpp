@@ -261,7 +261,7 @@ void CWelcomePage::OnPageChanged(wxWizardEvent& event) {
 
     if (CheckWizardTypeByPage<CWizardAttachProject>(this)) {
         pDoc->rpc.acct_mgr_info(ami);
-        is_acct_mgr_detected = ami.acct_mgr_url.size() ? true : false;
+        is_acct_mgr_detected = !ami.acct_mgr_url.empty();
 
         if (is_acct_mgr_detected) {
             m_pTitleStaticCtrl->SetLabel(_("Attach to project"));
