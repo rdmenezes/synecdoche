@@ -555,7 +555,7 @@ void CProjectsComponent::UpdateInterface()
     pDoc->GetCoreClientStatus(status);
     pDoc->rpc.acct_mgr_info(ami);
 
-    is_acct_mgr_detected = ami.acct_mgr_url.size() ? true : false;
+    is_acct_mgr_detected = !ami.acct_mgr_url.empty();
 
     if (is_acct_mgr_detected) {
         btnAddProj->Show(false);

@@ -1327,7 +1327,7 @@ int CMainDocument::CachedMessageUpdate() {
             m_pNetworkConnection->SetStateDisconnected();
             goto done;
         }
-        if (messages.messages.size() != 0) {
+        if (!messages.messages.empty()) {
             size_t last_ind = messages.messages.size()-1;
             m_iMessageSequenceNumber = messages.messages[last_ind]->seqno;
         }

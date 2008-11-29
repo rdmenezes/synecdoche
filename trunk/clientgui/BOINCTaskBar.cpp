@@ -327,7 +327,7 @@ void CTaskBarIcon::OnMouseMove(wxTaskBarIconEvent& WXUNUSED(event)) {
             // Construct a status summary:
             std::vector<RESULT*> tasks = GetRunningTasks(pDoc);
 
-            if ((tasks.size() == 0) || suspended) {
+            if (tasks.empty() || suspended) {
                 message << wxT("\n") << _("No running tasks.");
             } else if (tasks.size() < 3) {
                 // Limit list of running tasks to 2, to avoid overflow.
@@ -572,7 +572,7 @@ wxMenu *CTaskBarIcon::BuildContextMenu() {
 
     // Account managers have a different menu arrangement
     pDoc->rpc.acct_mgr_info(ami);
-    is_acct_mgr_detected = ami.acct_mgr_url.size() ? true : false;
+    is_acct_mgr_detected = !ami.acct_mgr_url.empty();
 
     if (is_acct_mgr_detected) {
         menuName.Printf(

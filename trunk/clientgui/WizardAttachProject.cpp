@@ -348,7 +348,7 @@ bool CWizardAttachProject::HasPrevPage(wxWizardPage* page) {
 wxWizardPage* CWizardAttachProject::_PopPageTransition() {
     wxWizardPage* pPage = NULL;
     if (GetCurrentPage()) {
-        if (m_PageTransition.size() > 0) {
+        if (!m_PageTransition.empty()) {
             pPage = m_PageTransition.top();
             m_PageTransition.pop();
             if ((pPage == m_ProjectPropertiesPage) || (pPage == m_ProjectProcessingPage)) {
@@ -422,7 +422,7 @@ wxWizardPage* CWizardAttachProject::_PushPageTransition(wxWizardPage* pCurrentPa
         }
 
         if (pPage) {
-            if (m_PageTransition.size() == 0) {
+            if (m_PageTransition.empty()) {
                 m_PageTransition.push(NULL);
             }
             if (m_PageTransition.top() != pCurrentPage) {

@@ -829,7 +829,7 @@ void CViewWork::GetDocApplicationName(wxInt32 item, wxString& strBuffer) const {
 
         wxString strLocale = wxString(setlocale(LC_NUMERIC, NULL), wxConvUTF8);
         setlocale(LC_NUMERIC, "C");
-        if (state_result->wup->app->user_friendly_name.size()) {
+        if (!state_result->wup->app->user_friendly_name.empty()) {
             strLocalBuffer = HtmlEntityDecode(wxString(state_result->app->user_friendly_name.c_str(), wxConvUTF8));
         } else {
             strLocalBuffer = HtmlEntityDecode(wxString(state_result->wup->avp->app_name.c_str(), wxConvUTF8));

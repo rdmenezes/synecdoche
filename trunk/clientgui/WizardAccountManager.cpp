@@ -197,19 +197,19 @@ bool CWizardAccountManager::Run(int action) {
 
     pDoc->rpc.acct_mgr_info(ami);
 
-    if (ami.acct_mgr_url.size()) {
+    if (!ami.acct_mgr_url.empty()) {
         m_AccountManagerInfoPage->SetProjectURL( wxString(ami.acct_mgr_url.c_str(), wxConvUTF8) );
         m_strProjectName = wxString(ami.acct_mgr_name.c_str(), wxConvUTF8);
         m_bCredentialsCached = ami.have_credentials;
     }
 
-    if (ami.acct_mgr_url.size() && !ami.have_credentials) {
+    if (!ami.acct_mgr_url.empty() && !ami.have_credentials) {
         return RunWizard(m_AccountManagerPropertiesPage);
-    } else if (ami.acct_mgr_url.size() && ami.have_credentials && (action == ACCOUNTMANAGER_UPDATE)) {
+    } else if (!ami.acct_mgr_url.empty() && ami.have_credentials && (action == ACCOUNTMANAGER_UPDATE)) {
         m_IsUpdateWizard = true;
         m_IsRemoveWizard = false;
         return RunWizard(m_AccountManagerProcessingPage);
-    } else if (ami.acct_mgr_url.size() && ami.have_credentials && (action == ACCOUNTMANAGER_DETACH)) {
+    } else if (!ami.acct_mgr_url.empty() && ami.have_credentials && (action == ACCOUNTMANAGER_DETACH)) {
         m_IsUpdateWizard = false;
         m_IsRemoveWizard = true;
         m_AccountManagerInfoPage->SetProjectURL(wxEmptyString);
@@ -351,7 +351,7 @@ bool CWizardAccountManager::HasPrevPage(wxWizardPage* page) {
 wxWizardPage* CWizardAccountManager::_PopPageTransition() {
     wxWizardPage* pPage = NULL;
     if (GetCurrentPage()) {
-        if (m_PageTransition.size() > 0) {
+        if (!m_PageTransition.empty()) {
             pPage = m_PageTransition.top();
             m_PageTransition.pop();
             if ((pPage == m_AccountManagerPropertiesPage) || (pPage == m_AccountManagerProcessingPage)) {
@@ -417,7 +417,7 @@ wxWizardPage* CWizardAccountManager::_PushPageTransition(wxWizardPage* pCurrentP
                 break;
         }
         if (pPage) {
-            if (m_PageTransition.size() == 0) {
+            if (m_PageTransition.empty()) {
                 m_PageTransition.push(NULL);
             }
             if (m_PageTransition.top() != pCurrentPage) {
