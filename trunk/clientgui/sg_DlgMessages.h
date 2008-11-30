@@ -109,7 +109,7 @@ public:
     bool                    OnRestoreState(wxConfigBase* pConfig);
 
 private:
-    wxInt32                 m_iPreviousDocCount;
+    size_t                  m_iPreviousDocCount;
 
     CSGUIListCtrl*          m_pList;
     wxListItemAttr*         m_pMessageInfoAttr;

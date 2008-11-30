@@ -729,7 +729,7 @@ int CMainDocument::CachedProjectStatusUpdate() {
 }
 
 
-PROJECT* CMainDocument::project(unsigned int i) {
+PROJECT* CMainDocument::project(size_t i) {
     PROJECT* pProject = NULL;
 
     try {
@@ -756,18 +756,13 @@ PROJECT* CMainDocument::project(const wxString& projectname) {
 
 
 size_t CMainDocument::GetProjectCount() {
-    size_t iCount = -1;
-
     CachedProjectStatusUpdate();
     CachedStateUpdate();
 
-    if (!state.projects.empty())
-        iCount = state.projects.size();
-
-    return iCount;
+    return state.projects.size();
 }
 
-int CMainDocument::ProjectDetach(int iIndex) {
+int CMainDocument::ProjectDetach(size_t iIndex) {
     PROJECT* pProject = NULL;
     int iRetVal = -1;
 
@@ -962,7 +957,7 @@ int CMainDocument::CachedResultsStatusUpdate() {
 }
 
 
-RESULT* CMainDocument::result(unsigned int i) {
+RESULT* CMainDocument::result(size_t i) {
     RESULT* pResult = NULL;
 
     try {
@@ -1004,15 +999,10 @@ RESULT* CMainDocument::result(const wxString& name, const wxString& project_url)
 }
 
 size_t CMainDocument::GetWorkCount() {
-    size_t iCount = -1;
-
     CachedResultsStatusUpdate();
     CachedStateUpdate();
 
-    if (!results.results.empty())
-        iCount = results.results.size();
-
-    return iCount;
+    return results.results.size();
 }
 
 
@@ -1340,7 +1330,7 @@ done:
 }
 
 
-MESSAGE* CMainDocument::message(unsigned int i) {
+MESSAGE* CMainDocument::message(size_t i) {
     MESSAGE* pMessage = NULL;
 
     try {
@@ -1356,15 +1346,10 @@ MESSAGE* CMainDocument::message(unsigned int i) {
 
 
 size_t CMainDocument::GetMessageCount() {
-    size_t iCount = -1;
-
     CachedMessageUpdate();
     CachedStateUpdate();
 
-    if (!messages.messages.empty())
-        iCount = messages.messages.size();
-
-    return iCount;
+    return messages.messages.size();
 }
 
 
@@ -1581,15 +1566,10 @@ PROJECT* CMainDocument::statistic(unsigned int i) {
 
 
 size_t CMainDocument::GetStatisticsCount() {
-    size_t iCount = -1;
-
     CachedStatisticsStatusUpdate();
     CachedStateUpdate();
 
-    if (!statistics_status.projects.empty())
-        iCount = statistics_status.projects.size();
-
-    return iCount;
+    return statistics_status.projects.size();
 }
 
 

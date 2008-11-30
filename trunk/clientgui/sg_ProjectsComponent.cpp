@@ -372,7 +372,7 @@ void CProjectsComponent::UpdateDisplayedProjects() {
             if ( size == 6 ) {
                 base = 15;
             }
-            projIcon->Move(wxPoint(base + 40*(i+1-m_leftIndex),37));
+            projIcon->Move(wxPoint(base + 40 * (static_cast<int>(i) + 1 - static_cast<int>(m_leftIndex)), 37));
         }
     }
     Refresh(true);

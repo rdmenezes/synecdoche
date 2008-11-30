@@ -153,7 +153,7 @@ bool CBOINCClientManager::StartupBOINCCore() {
     LPTSTR  szDataDirectory = NULL;
 
     if (IsBOINCConfiguredAsDaemon()) {
-        return (StartBOINCService());
+        return (!!StartBOINCService());
     }
 
     // Append synecd.exe to the end of the strExecute string

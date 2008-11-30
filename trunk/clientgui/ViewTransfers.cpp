@@ -289,7 +289,7 @@ void CViewTransfers::OnTransfersAbort( wxCommandEvent& WXUNUSED(event) ) {
 
 
 wxInt32 CViewTransfers::GetDocCount() {
-    return wxGetApp().GetDocument()->GetTransferCount();
+    return static_cast<wxInt32>(wxGetApp().GetDocument()->GetTransferCount());
 }
 
 

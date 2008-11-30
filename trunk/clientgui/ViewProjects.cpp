@@ -570,7 +570,7 @@ void CViewProjects::OnProjectWebsiteClicked( wxEvent& event ) {
 
 
 wxInt32 CViewProjects::GetDocCount() {
-    return wxGetApp().GetDocument()->GetProjectCount();
+    return static_cast<wxInt32>(wxGetApp().GetDocument()->GetProjectCount());
 }
 
 

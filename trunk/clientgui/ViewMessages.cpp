@@ -227,7 +227,7 @@ void CViewMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
 
 
 wxInt32 CViewMessages::GetDocCount() {
-    return wxGetApp().GetDocument()->GetMessageCount();
+    return static_cast<wxInt32>(wxGetApp().GetDocument()->GetMessageCount());
 }
 
 

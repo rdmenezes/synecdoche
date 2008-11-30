@@ -175,9 +175,9 @@ void StatImageLoader::OnProjectDetach() {
     if (!pDoc->IsUserAuthorized())
         return;
 
-    int indexOfProj = -1;
-    int prjCount = pDoc->GetProjectCount();
-    for(int m = 0; m < prjCount; m++){
+    size_t indexOfProj = 0;
+    size_t prjCount = pDoc->GetProjectCount();
+    for(size_t m = 0; m < prjCount; m++){
         const PROJECT* project = pDoc->project(m);
         project->get_name(strProjectName);
         if(project->master_url == m_prjUrl){
@@ -185,17 +185,9 @@ void StatImageLoader::OnProjectDetach() {
             break;
         }
     }
-    strMessage.Printf(
-        _("Are you sure you want to detach from project '%s'?"), 
-        strProjectName.c_str()
-    );
+    strMessage.Printf(_("Are you sure you want to detach from project '%s'?"), strProjectName.c_str());
 
-    iAnswer = ::wxMessageBox(
-        strMessage,
-        _("Detach from Project"),
-        wxYES_NO | wxICON_QUESTION,
-        this
-    );
+    iAnswer = ::wxMessageBox(strMessage, _("Detach from Project"), wxYES_NO | wxICON_QUESTION, this);
 
     if (wxYES == iAnswer) {
         pDoc->ProjectDetach(indexOfProj);
