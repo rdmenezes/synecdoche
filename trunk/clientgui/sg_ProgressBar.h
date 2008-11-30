@@ -18,6 +18,8 @@
 #ifndef PROGRESSBAR_H
 #define PROGRESSBAR_H
 
+#include <vector>
+
 #include <wx/panel.h>
 
 class ImageLoader;
