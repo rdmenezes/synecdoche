@@ -750,35 +750,27 @@ bool CAdvancedFrame::SaveViewState() {
     wxString        strConfigLocation;
     wxString        strPreviousLocation;
     wxString        strBuffer;
-    unsigned int    iIndex = 0;
-    unsigned int    iItemCount = 0;
-
 
     wxASSERT(pConfig);
     wxASSERT(m_pNotebook);
 
-
     // An odd case happens every once and awhile where wxWidgets looses
-    //   the pointer to the config object, or it is cleaned up before
-    //   the window has finished it's cleanup duty.  If we detect a NULL
-    //   pointer, return false.
-    if (!pConfig) return false;
+    // the pointer to the config object, or it is cleaned up before
+    // the window has finished it's cleanup duty.  If we detect a NULL
+    // pointer, return false.
+    if (!pConfig) {
+        return false;
+    }
 
-    //
     // Save Frame State
-    //
     pConfig->SetPath(strBaseConfigLocation);
-
     pConfig->Write(wxT("CurrentPage"), m_pNotebook->GetSelection());
 
-    //
     // Save Page(s) State
-    //
- 
     // Convert to a zero based index
-    iItemCount = m_pNotebook->GetPageCount() - 1;
+    size_t iItemCount = m_pNotebook->GetPageCount() - 1;
 
-    for (iIndex = 0; iIndex <= iItemCount; iIndex++) {   
+    for (size_t iIndex = 0; iIndex <= iItemCount; ++iIndex) {
         pwndNotebookPage = m_pNotebook->GetPage(iIndex);
         wxASSERT(wxDynamicCast(pwndNotebookPage, CBOINCBaseView));
 
@@ -846,27 +838,22 @@ bool CAdvancedFrame::RestoreViewState() {
     wxString        strPreviousLocation;
     wxString        strBuffer;
     wxString        strValue;
-    unsigned long   iIndex;
-    unsigned long   iPageCount;
     long            iCurrentPage;
-
 
     wxASSERT(pConfig);
     wxASSERT(m_pNotebook);
 
-
     CBOINCBaseFrame::RestoreState();
 
-
     // An odd case happens every once and awhile where wxWidgets looses
-    //   the pointer to the config object, or it is cleaned up before
-    //   the window has finished it's cleanup duty.  If we detect a NULL
-    //   pointer, return false.
-    if (!pConfig) return false;
+    // the pointer to the config object, or it is cleaned up before
+    // the window has finished it's cleanup duty.  If we detect a NULL
+    // pointer, return false.
+    if (!pConfig) {
+        return false;
+    }
 
-    //
     // Restore Frame State
-    //
     pConfig->SetPath(strBaseConfigLocation);
 
     if (wxGetApp().GetSkinManager()->GetAdvanced()->GetDefaultTab()) {
@@ -876,15 +863,11 @@ bool CAdvancedFrame::RestoreViewState() {
         m_pNotebook->SetSelection(iCurrentPage);
     }
 
-    //
     // Restore Page(s) State
-    //
-
     // Convert to a zero based index
-    iPageCount = m_pNotebook->GetPageCount() - 1;
+    size_t iPageCount = m_pNotebook->GetPageCount() - 1;
 
-    for (iIndex = 0; iIndex <= iPageCount; iIndex++) {   
-
+    for (size_t iIndex = 0; iIndex <= iPageCount; ++iIndex) {
         pwndNotebookPage = m_pNotebook->GetPage(iIndex);
         wxASSERT(wxDynamicCast(pwndNotebookPage, CBOINCBaseView));
 
@@ -897,7 +880,6 @@ bool CAdvancedFrame::RestoreViewState() {
         pConfig->SetPath(strConfigLocation);
         pView->FireOnRestoreState(pConfig);
         pConfig->SetPath(strPreviousLocation);
-
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::RestoreViewState - Function End"));
@@ -1690,7 +1672,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
             // If failure, display the messages tab
             m_pNotebook->SetSelection(ID_LIST_MESSAGESVIEW - ID_LIST_BASE);
         }
-    } else if ((!pis.url.empty() || (0 >= pDoc->GetProjectCount())) && !status.disallow_attach) {
+    } else if ((!pis.url.empty() || (pDoc->GetProjectCount() == 0)) && !status.disallow_attach) {
         if (!IsShown()) {
             Show();
         }

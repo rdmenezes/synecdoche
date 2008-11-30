@@ -332,8 +332,8 @@ void CPanelMessages::OnRefresh(wxTimerEvent& event) {
 
         wxASSERT(m_pList);
 
-        wxInt32 iDocCount = wxGetApp().GetDocument()->GetMessageCount();
-        if (0 >= iDocCount) {
+        size_t iDocCount = wxGetApp().GetDocument()->GetMessageCount();
+        if (iDocCount == 0) {
             m_pList->DeleteAllItems();
         } else {
             // If connection status changed, adjust color of messages display
@@ -350,15 +350,15 @@ void CPanelMessages::OnRefresh(wxTimerEvent& event) {
                 }
                 // Force a complete update
                 m_pList->DeleteAllItems();
-                m_pList->SetItemCount(iDocCount);
+                m_pList->SetItemCount(static_cast<long>(iDocCount));
            }
             
             if (m_iPreviousDocCount != iDocCount)
-                m_pList->SetItemCount(iDocCount);
+                m_pList->SetItemCount(static_cast<long>(iDocCount));
         }
 
         if ((iDocCount) && (EnsureLastItemVisible()) && (m_iPreviousDocCount != iDocCount)) {
-            m_pList->EnsureVisible(iDocCount - 1);
+            m_pList->EnsureVisible(static_cast<long>(iDocCount) - 1);
         }
 
         if (m_iPreviousDocCount != iDocCount) {
@@ -578,12 +578,10 @@ bool CPanelMessages::EnsureLastItemVisible() {
     int numVisible = m_pList->GetCountPerPage();
 
     // Auto-scroll only if already at bottom of list
-    if ((m_iPreviousDocCount > numVisible)
-         && ((m_pList->GetTopItem() + numVisible) < (m_iPreviousDocCount-1)) 
-    ) {
+    if ((static_cast<int>(m_iPreviousDocCount) > numVisible)
+            && ((m_pList->GetTopItem() + numVisible) < (static_cast<int>(m_iPreviousDocCount) - 1))) {
         return false;
     }
-    
     return true;
 }
 

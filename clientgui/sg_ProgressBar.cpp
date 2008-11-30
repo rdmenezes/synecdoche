@@ -15,18 +15,19 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_ProgressBar.h" 
+
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
 #include "sg_ImageLoader.h"
-#include "sg_ProgressBar.h" 
 
 BEGIN_EVENT_TABLE(CProgressBar, wxWindow) 
         EVT_ERASE_BACKGROUND(CProgressBar::OnEraseBackground)
 END_EVENT_TABLE() 
 
-CProgressBar::CProgressBar(wxPanel* parent,wxPoint coord) : wxPanel(parent, wxID_ANY, coord, wxSize(258,18), wxNO_BORDER) 
+CProgressBar::CProgressBar(wxPanel* parent, wxPoint coord) : wxPanel(parent, wxID_ANY, coord, wxSize(258,18), wxNO_BORDER) 
 {
     indicatorWidth = 8;
     indicatorHeight = 7;
@@ -59,7 +60,7 @@ void CProgressBar::LoadIndicators() {
     // Load all new ones but do not display
     for (indIndex=0; indIndex < numOfIndic; indIndex++) {
         ImageLoader *i_ind = new ImageLoader(this);
-        x_pos = rightPosition +((indicatorWidth)*indIndex);
+        x_pos = rightPosition + indicatorWidth * static_cast<int>(indIndex);
         i_ind->Move(wxPoint(x_pos,topPosition));
         i_ind->LoadImage(*(pSkinSimple->GetWorkunitGaugeProgressIndicatorImage()->GetBitmap()));
         i_ind->Show(true);
@@ -68,17 +69,18 @@ void CProgressBar::LoadIndicators() {
 
     wxLogTrace(wxT("Function Start/End"), wxT("CProgressBar::LoadIndicators - Function End"));
 }
+
 void CProgressBar::SetValue(double progress)
 {
-    int indIndex = 0;
-    int numOfProgressInd = ((int)progress/(100/numOfIndic));
+    size_t numOfProgressInd = static_cast<size_t>(progress) / (100 / numOfIndic);
 
-    if (numOfProgressInd < 0) numOfProgressInd = 0;
-    if (numOfProgressInd > numOfIndic) numOfProgressInd = numOfIndic;
+    if (numOfProgressInd > numOfIndic) {
+        numOfProgressInd = numOfIndic;
+    }
 
-    for(indIndex = 0; indIndex < numOfIndic; indIndex++){
-        ImageLoader *i_ind = m_progInd[indIndex];
-        if ( indIndex + 1 <= numOfProgressInd ) {
+    for(size_t indIndex = 0; indIndex < numOfIndic; ++indIndex) {
+        ImageLoader* i_ind = m_progInd[indIndex];
+        if (indIndex + 1 <= numOfProgressInd) {
             i_ind->Show(true);
         } else {
             i_ind->Show(false);
@@ -88,11 +90,13 @@ void CProgressBar::SetValue(double progress)
     m_progress = progress;
     m_numOfProgressInd = numOfProgressInd;
 }
+
 void CProgressBar::ReskinInterface()
 {
     LoadIndicators();
     SetValue(m_progress);
 }
+
 void CProgressBar::OnEraseBackground(wxEraseEvent& event){
     CSkinSimple* pSkinSimple = wxGetApp().GetSkinManager()->GetSimple();
 

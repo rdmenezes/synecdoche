@@ -163,7 +163,7 @@ private:
     wxDateTime                  m_dtProjecStatusTimestamp;
 
 public:
-    PROJECT*                    project(unsigned int);
+    PROJECT*                    project(size_t i);
     PROJECT*                    project(const wxString& projectname);
     float                       m_fProjectTotalResourceShare;
 
@@ -174,7 +174,7 @@ public:
     int                         ProjectAllowMoreWork(int iIndex);
     int                         ProjectAllowMoreWork(const wxString& projectname);
     int                         ProjectAttach(const wxString& strURL, const wxString& strAccountKey);
-    int                         ProjectDetach(int iIndex);
+    int                         ProjectDetach(size_t iIndex);
     int                         ProjectDetach(const wxString& projectname);
     int                         ProjectUpdate(int iIndex);
     int                         ProjectUpdate(const wxString& projectname);
@@ -205,7 +205,7 @@ private:
 
 public:
     RESULTS                     results;
-    RESULT*                     result(unsigned int);
+    RESULT*                     result(size_t i);
     RESULT*                     result(const wxString& name, const wxString& project_url);
 
     size_t                      GetWorkCount();
@@ -234,7 +234,7 @@ private:
 
 public:
     MESSAGES                    messages;
-    MESSAGE*                    message(unsigned int);
+    MESSAGE*                    message(size_t i);
     int                         CachedMessageUpdate();
 
     size_t                      GetMessageCount();

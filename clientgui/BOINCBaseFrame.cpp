@@ -598,49 +598,36 @@ bool CBOINCBaseFrame::SaveState() {
     wxString        strConfigLocation;
     wxString        strPreviousLocation;
     wxString        strBuffer;
-    unsigned int    iIndex;
-    unsigned int    iItemCount;
-
 
     wxASSERT(pConfig);
 
     // An odd case happens every once and awhile where wxWidgets looses
-    //   the pointer to the config object, or it is cleaned up before
-    //   the window has finished it's cleanup duty.  If we detect a NULL
-    //   pointer, return false.
-    if (!pConfig) return false;
+    // the pointer to the config object, or it is cleaned up before
+    // the window has finished it's cleanup duty.  If we detect a NULL
+    // pointer, return false.
+    if (!pConfig) {
+        return false;
+    }
 
-    //
     // Save Frame State
-    //
     pConfig->SetPath(strBaseConfigLocation);
-
     pConfig->Write(wxT("Language"), m_iSelectedLanguage);
     pConfig->Write(wxT("ReminderFrequency"), m_iReminderFrequency);
     pConfig->Write(wxT("DisplayExitWarning"), wxGetApp().GetDisplayExitWarning());
-
     pConfig->Write(wxT("NetworkDialupConnectionName"), m_strNetworkDialupConnectionName);
 
-
-    //
     // Save Computer MRU list
-    //
     strPreviousLocation = pConfig->GetPath();
     strConfigLocation = strPreviousLocation + wxT("ComputerMRU");
 
     pConfig->SetPath(strConfigLocation);
-
-    iItemCount = m_aSelectedComputerMRU.GetCount() - 1;
-    for (iIndex = 0; iIndex <= iItemCount; iIndex++) {
+    size_t iItemCount = m_aSelectedComputerMRU.GetCount() - 1;
+    for (size_t iIndex = 0; iIndex <= iItemCount; ++iIndex) {
         strBuffer.Printf(wxT("%d"), iIndex);
-        pConfig->Write(
-            strBuffer,
-            m_aSelectedComputerMRU.Item(iIndex)
-        );
+        pConfig->Write(strBuffer, m_aSelectedComputerMRU.Item(iIndex));
     }
 
     pConfig->SetPath(strPreviousLocation);
-
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::SaveState - Function End"));
     return true;
