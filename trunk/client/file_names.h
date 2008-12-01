@@ -47,7 +47,9 @@ extern bool is_account_file(const std::string& filename);
 /// Check if the given filename if the name of a statistics file.
 extern bool is_statistics_file(const std::string& filename);
 
-extern void get_statistics_filename(const char* master_url, char* path);
+/// Get the name of the statistics file for a given master URL.
+extern std::string get_statistics_filename(const char* master_url);
+
 extern bool is_image_file(const char*);
 
 extern void get_sched_request_filename(const PROJECT&, char*, int len);
