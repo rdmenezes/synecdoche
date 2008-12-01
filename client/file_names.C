@@ -311,10 +311,17 @@ bool is_statistics_file(const std::string& filename) {
     return true;
 }
 
-void get_statistics_filename(const char* master_url, char* path) {
-    char buf[256];
+/// Get the name of the statistics file for a given master URL.
+///
+/// \param[in] master_url The master URL for a project for which the statistics
+///                       file name should be generated.
+/// \return The name of the statistics file for the project specified by \a master_url.
+std::string get_statistics_filename(const char* master_url) {
+    char buf[1024];
     escape_project_url(master_url, buf);
-    sprintf(path, "statistics_%s.xml", buf);
+    std::ostringstream result;
+    result << "statistics_" << buf << ".xml";
+    return result.str();
 }
 
 bool is_image_file(const char* filename) {

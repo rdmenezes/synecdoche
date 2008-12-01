@@ -353,9 +353,6 @@ int CLIENT_STATE::parse_statistics_files() {
 ///
 /// \return ERR_FOPEN or ERR_RENAME on error, zero otherwise.
 int PROJECT::write_statistics_file() const {
-    char path[256];
-    get_statistics_filename(master_url, path);
-
     FILE* f = boinc_fopen(TEMP_STATS_FILE_NAME, "w");
     if (!f) {
         return ERR_FOPEN;
@@ -384,9 +381,10 @@ int PROJECT::write_statistics_file() const {
     }
 
     fprintf(f, "</project_statistics>\n");
-
     fclose(f);
-    if (boinc_rename(TEMP_STATS_FILE_NAME, path)) {
+
+    std::string path = get_statistics_filename(master_url);
+    if (boinc_rename(TEMP_STATS_FILE_NAME, path.c_str())) {
         return ERR_RENAME;
     }
     return 0;

@@ -1429,9 +1429,8 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     }
 
     // Delete statistics file:
-    char path[256];
-    get_statistics_filename(project->master_url, path);
-    int retval = boinc_delete_file(path);
+    std::string sf_path = get_statistics_filename(project->master_url);
+    int retval = boinc_delete_file(sf_path.c_str());
     if (retval) {
         msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete statistics file: %s", boincerror(retval));
     }
@@ -1444,6 +1443,7 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     }
 
     // Delete scheduler request file:
+    char path[256];
     get_sched_request_filename(*project, path, sizeof(path));
     boinc_delete_file(path);
 
