@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -545,22 +546,19 @@ public:
 
     RPC_CLIENT();
     ~RPC_CLIENT();
-    int init(const char* host, int port=0);
-    int init_asynch(
-        const char* host, double timeout, bool retry, int port=GUI_RPC_PORT
-    );
-        // timeout == how long to wait until give up
-        //    If the caller (i.e. Synecdoche Manager) just launched the core client,
-        //    this should be large enough to allow the process to
-        //    run and open its listening socket (e.g. 60 sec)
-        //    If connecting to a remote client, it should be large enough
-        //    for the user to deal with a "personal firewall" popup
-        //    (e.g. 60 sec)
-        // retry: if true, keep retrying until succeed or timeout.
-        //    Use this if just launched the core client.
+
+    /// Initiate a connection to the core client.
+    int init(const char* host, int port = GUI_RPC_PORT);
+
+    /// Initiate a connection to the core client using non-blocking operations.
+    int init_asynch(const char* host, double timeout, bool retry, int port = GUI_RPC_PORT);
+
     int init_poll();
     void close();
+
+    /// Answer an authorization request sent by the server.
     int authorize(const char* passwd);
+
     int exchange_versions(VERSION_INFO&);
     int get_state(CC_STATE&);
     int get_results(RESULTS&);

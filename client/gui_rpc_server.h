@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -44,15 +44,19 @@ public:
         return !write_buffer.empty();
     }
 private:
-    char nonce[256];
+    std::string nonce;
     std::string write_buffer;
 
     GET_PROJECT_CONFIG_OP get_project_config_op;
     LOOKUP_ACCOUNT_OP lookup_account_op;
     CREATE_ACCOUNT_OP create_account_op;
 
-    void handle_auth1(MIOFILE&);
-    void handle_auth2(const char*, MIOFILE&);
+    /// Handle an authorization request by creating and sending a nonce.
+    void handle_auth1(MIOFILE& fout);
+
+    /// Check if the response to the challenge sent by handle_auth1 is correct.
+    void handle_auth2(const char* buf, MIOFILE& fout);
+
     void handle_get_project_config(const char* buf, MIOFILE& fout);
     void handle_get_project_config_poll(const char*, MIOFILE& fout);
     void handle_lookup_account(const char* buf, MIOFILE& fout);
