@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -122,6 +122,13 @@ void CTaskBarIcon::OnClose(wxCloseEvent& event) {
 
 void CTaskBarIcon::OnRefresh(wxTimerEvent& WXUNUSED(event)) {
     //wxLogTrace(wxT("Function Start/End"), wxT("CTaskBarIcon::OnRefresh - Function Begin"));
+
+    // Don't update the icon if we are already shutting down. This would
+    // re-add the icon which would become orphaned and still be shown
+    // after the manager exited.
+    if (m_bTaskbarInitiatedShutdown) {
+        return;
+    }
 
     CMainDocument* pDoc = wxGetApp().GetDocument();
     CC_STATUS      status;
