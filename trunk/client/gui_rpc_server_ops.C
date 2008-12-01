@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -69,20 +70,29 @@ static void auth_failure(MIOFILE& fout) {
     fout.printf("<unauthorized/>\n");
 }
 
+/// Handle an authorization request by creating and sending a nonce.
+///
+/// \param[in] fout Reference to the MIOFILE instance used for the rpc.
 void GUI_RPC_CONN::handle_auth1(MIOFILE& fout) {
-    sprintf(nonce, "%f", dtime());
-    fout.printf("<nonce>%s</nonce>\n", nonce);
+    std::ostringstream buf;
+    buf << dtime();
+    nonce = buf.str();
+    fout.printf("<nonce>%s</nonce>\n", nonce.c_str());
 }
 
+/// Check if the response to the challenge sent by handle_auth1 is correct.
+///
+/// \param[in] buf The string containing the response from the client.
+/// \param[in] fout Reference to the MIOFILE instance used for the rpc.
 void GUI_RPC_CONN::handle_auth2(const char* buf, MIOFILE& fout) {
-    char nonce_hash[256], nonce_hash_correct[256], buf2[256];
-    if (!parse_str(buf, "<nonce_hash>", nonce_hash, 256)) {
+    std::string nonce_hash;
+    if (!parse_str(buf, "<nonce_hash>", nonce_hash)) {
         auth_failure(fout);
         return;
     }
-    sprintf(buf2, "%s%s", nonce, gstate.gui_rpcs.password);
-    md5_block((const unsigned char*)buf2, (int)strlen(buf2), nonce_hash_correct);
-    if (strcmp(nonce_hash, nonce_hash_correct)) {
+    std::string buf2 = nonce + std::string(gstate.gui_rpcs.password);
+    std::string nonce_hash_correct = md5_string(buf2);
+    if (nonce_hash != nonce_hash_correct) {
         auth_failure(fout);
         return;
     }
@@ -91,7 +101,6 @@ void GUI_RPC_CONN::handle_auth2(const char* buf, MIOFILE& fout) {
 }
 
 // client passes its version, but ignore it for now
-//
 static void handle_exchange_versions(MIOFILE& fout) {
     fout.printf(
         "<server_version>\n"
