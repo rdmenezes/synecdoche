@@ -42,10 +42,22 @@
 ||16366/16383/16386/16391||client: revise round-robin simulation to take variable avg_ncpus into account (I'm not sure if we need this or if this change works with our ncpu-fix.)||
 ||16377/16378/16379/16381||MGR: Move the wxWidget version information to the about box.||
 ||16395/16396||client: fix bug that caused occasional assert in pop_heap() for the preemptable_task_list.||
-||16405/16413/16414/16417/16419/16421/16428/16429/16446/16448/16450||MGR: Create an Exit dialog for the Manager. / Allow the manager to shutdown the CC even when it was installed as a daemon.||
+||16405/16413/16414/16417/16419/16421/16428/16429/16446/16448/ 16450/16462/16472/16473||MGR: Create an Exit dialog for the Manager. / Allow the manager to shutdown the CC even when it was installed as a daemon.||
 ||16406/16415/16420/16426/16427/16434||MGR: Provide a way to enable/disable launching from the BOINC Manager at startup from within the BOINC Manager itself.||
 ||16432/16433||client: make host CPID a function of: MAC addresses + hostname + IP addr + OS name||
 ||16449||manager: truncate task progress bar (display) at 100%||
+||16478||client: don't fclose() time_stats_log if it's NULL||
+||16479||API: free project prefs before parsing init file||
+||16484||MGR: Erase and refresh entire Tasks panel when selecting a new tab to try to fix cosmetic bug reported by David on Windows - Which bug? Is it caused by the RPC thread?||
+||16488||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. - Looks like this is only needed for service install on Vista. Do we support/need this?||
+||16496||client: if app uses < 1 CPU, run at nice 10 (not 0) / suppress specious error message||
+||16508||client: Fix a build break when creating new stable branches.||
+||16520||client: if bind fails, print port#||
+||16536||client: use BELOW_NORMAL_PRIORITY_CLASS instead of 0||
+||16539||manager: tweak strings in Options dialog||
+||16545||client: in round-robin simulation, only increment CPU shortfall (per-project or overall) if there are no pending tasks.||
+||16548||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. NOTE: Stackwalker still uses boinc.berkeley.edu as server!||
+
 
 == Rejected changes ==
 
@@ -91,4 +103,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16450 16450]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16550 16550]
