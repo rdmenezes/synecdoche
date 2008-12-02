@@ -28,9 +28,7 @@
 #include "BOINCListCtrl.h"
 #include "Events.h"
 
-
 #include "res/proj.xpm"
-
 
 #define COLUMN_PROJECT              0
 #define COLUMN_ACCOUNTNAME          1
@@ -53,6 +51,11 @@
 #define BTN_RESET        5
 #define BTN_DETACH       6
 
+CProject::CProject() {
+    m_fTotalCredit   = -1.0f;
+    m_fAVGCredit     = -1.0f;
+    m_fResourceShare = -1.0f;
+}
 
 IMPLEMENT_DYNAMIC_CLASS(CViewProjects, CTaskViewBase)
 
@@ -71,48 +74,47 @@ BEGIN_EVENT_TABLE (CViewProjects, CTaskViewBase)
     EVT_LIST_CACHE_HINT(ID_LIST_PROJECTSVIEW, CViewProjects::OnCacheHint)
 END_EVENT_TABLE ()
 
-
 static CViewProjects* myCViewProjects;
 
 static int CompareViewProjectsItems(int *iRowIndex1, int *iRowIndex2) {
     CProject*  project1 = myCViewProjects->m_ProjectCache.at(*iRowIndex1);
     CProject*  project2 = myCViewProjects->m_ProjectCache.at(*iRowIndex2);
-    int             result = 0;
+    int        result = 0;
     
     switch (myCViewProjects->m_iSortColumn) {
         case COLUMN_PROJECT:
-    result = project1->m_strProjectName.CmpNoCase(project2->m_strProjectName);
-        break;
-    case COLUMN_ACCOUNTNAME:
-    result = project1->m_strAccountName.CmpNoCase(project2->m_strAccountName);
-        break;
-    case COLUMN_TEAMNAME:
-    result = project1->m_strTeamName.CmpNoCase(project2->m_strTeamName);
-        break;
-    case COLUMN_TOTALCREDIT:
-        if (project1->m_fTotalCredit < project2->m_fTotalCredit) {
-            result = -1;
-        } else if (project1->m_fTotalCredit > project2->m_fTotalCredit) {
-            result = 1;
-        }
-        break;
-    case COLUMN_AVGCREDIT:
-        if (project1->m_fAVGCredit < project2->m_fAVGCredit) {
-            result = -1;
-        } else if (project1->m_fAVGCredit > project2->m_fAVGCredit) {
-            result = 1;
-        }
-        break;
-    case COLUMN_RESOURCESHARE:
-        if (project1->m_fResourceShare < project2->m_fResourceShare) {
-            result = -1;
-        } else if (project1->m_fResourceShare > project2->m_fResourceShare) {
-            result = 1;
-        }
-        break;
-    case COLUMN_STATUS:
-    result = project1->m_strStatus.CmpNoCase(project2->m_strStatus);
-        break;
+            result = project1->m_strProjectName.CmpNoCase(project2->m_strProjectName);
+            break;
+        case COLUMN_ACCOUNTNAME:
+            result = project1->m_strAccountName.CmpNoCase(project2->m_strAccountName);
+            break;
+        case COLUMN_TEAMNAME:
+            result = project1->m_strTeamName.CmpNoCase(project2->m_strTeamName);
+            break;
+        case COLUMN_TOTALCREDIT:
+            if (project1->m_fTotalCredit < project2->m_fTotalCredit) {
+                result = -1;
+            } else if (project1->m_fTotalCredit > project2->m_fTotalCredit) {
+                result = 1;
+            }
+            break;
+        case COLUMN_AVGCREDIT:
+            if (project1->m_fAVGCredit < project2->m_fAVGCredit) {
+                result = -1;
+            } else if (project1->m_fAVGCredit > project2->m_fAVGCredit) {
+                result = 1;
+            }
+            break;
+        case COLUMN_RESOURCESHARE:
+            if (project1->m_fResourceShare < project2->m_fResourceShare) {
+                result = -1;
+            } else if (project1->m_fResourceShare > project2->m_fResourceShare) {
+                result = 1;
+            }
+            break;
+        case COLUMN_STATUS:
+            result = project1->m_strStatus.CmpNoCase(project2->m_strStatus);
+            break;
     }
 
     // Tie-breaker
@@ -123,30 +125,21 @@ static int CompareViewProjectsItems(int *iRowIndex1, int *iRowIndex2) {
     return (myCViewProjects->m_bReverseSort ? result * (-1) : result);
 }
 
+CViewProjects::CViewProjects() {
+}
 
-CViewProjects::CViewProjects()
-{}
-
-
-CViewProjects::CViewProjects(wxNotebook* pNotebook)
-: CTaskViewBase(pNotebook) {}
-
+CViewProjects::CViewProjects(wxNotebook* pNotebook) : CTaskViewBase(pNotebook) {
+}
 
 CViewProjects::~CViewProjects() {
     EmptyCache();
 }
 
-
 void CViewProjects::DemandLoadView() {
 
     wxASSERT(!m_bViewLoaded);
 
-    CTaskViewBase::DemandLoadView(
-        ID_TASK_PROJECTSVIEW,
-        DEFAULT_TASK_FLAGS,
-        ID_LIST_PROJECTSVIEW,
-        DEFAULT_LIST_MULTI_SEL_FLAGS
-    );
+    CTaskViewBase::DemandLoadView(ID_TASK_PROJECTSVIEW, DEFAULT_TASK_FLAGS, ID_LIST_PROJECTSVIEW, DEFAULT_LIST_MULTI_SEL_FLAGS);
 
     CTaskItemGroup* pGroup = NULL;
     CTaskItem*      pItem = NULL;
@@ -154,67 +147,46 @@ void CViewProjects::DemandLoadView() {
     wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
 
-
-    //
     // Setup View
-    //
     pGroup = new CTaskItemGroup( _("Commands") );
     m_TaskGroups.push_back( pGroup );
 
-    pItem = new CTaskItem(
-        _("Update"),
-        _("Report all completed tasks, get latest credit, "
-          "get latest preferences, and possibly get more tasks."),
-        ID_TASK_PROJECT_UPDATE 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Update"),
+                            _("Report all completed tasks, get latest credit, "
+                              "get latest preferences, and possibly get more tasks."),
+                            ID_TASK_PROJECT_UPDATE);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("Suspend"),
-        _("Suspend tasks for this project."),
-        ID_TASK_PROJECT_SUSPEND 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Suspend"), _("Suspend tasks for this project."),
+                            ID_TASK_PROJECT_SUSPEND);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("Resume"),
-        _("Resume tasks for this project."),
-        ID_TASK_PROJECT_RESUME
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Resume"), _("Resume tasks for this project."),
+                            ID_TASK_PROJECT_RESUME);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("No new tasks"),
-        _("Don't get new tasks for this project."),
-        ID_TASK_PROJECT_NONEWWORK 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("No new tasks"), _("Don't get new tasks for this project."),
+                            ID_TASK_PROJECT_NONEWWORK);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("Allow new tasks"),
-        _("Allow fetching new tasks for this project."),
-        ID_TASK_PROJECT_ALLOWNEWWORK 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Allow new tasks"), _("Allow fetching new tasks for this project."),
+                            ID_TASK_PROJECT_ALLOWNEWWORK);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("Reset project"),
-        _("Delete all files and tasks associated with this project, "
-          "and get new tasks.  "
-          "You can update the project "
-          "first to report any completed tasks."),
-        ID_TASK_PROJECT_RESET 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Reset project"),
+                            _("Delete all files and tasks associated with this project, "
+                              "and get new tasks.  "
+                              "You can update the project "
+                              "first to report any completed tasks."),
+                            ID_TASK_PROJECT_RESET);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("Detach"),
-        _("Detach computer from this project.  "
-          "Tasks in progress will be lost "
-          "(use 'Update' first to report any completed tasks)."),
-        ID_TASK_PROJECT_DETACH 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Detach"),
+                            _("Detach computer from this project.  "
+                              "Tasks in progress will be lost "
+                              "(use 'Update' first to report any completed tasks)."),
+                            ID_TASK_PROJECT_DETACH);
+    pGroup->m_Tasks.push_back(pItem);
 
     // Create Task Pane Items
     m_pTaskPane->UpdateControls();
@@ -237,18 +209,15 @@ void CViewProjects::DemandLoadView() {
     UpdateSelection();
 }
 
-
 wxString& CViewProjects::GetViewName() {
     static wxString strViewName(_("Projects"));
     return strViewName;
 }
 
-
 wxString& CViewProjects::GetViewDisplayName() {
     static wxString strViewName(_("Projects"));
     return strViewName;
 }
-
 
 const char** CViewProjects::GetViewIcon() {
     return proj_xpm;
@@ -286,7 +255,6 @@ void CViewProjects::OnProjectUpdate( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectUpdate - Function End"));
 }
 
-
 void CViewProjects::OnProjectSuspend( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectSuspend - Function Begin"));
 
@@ -322,7 +290,6 @@ void CViewProjects::OnProjectSuspend( wxCommandEvent& WXUNUSED(event) ) {
 
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectSuspend - Function End"));
 }
-
 
 void CViewProjects::OnProjectResume( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectResume - Function Begin"));
@@ -360,7 +327,6 @@ void CViewProjects::OnProjectResume( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectResume - Function End"));
 }
 
-
 void CViewProjects::OnProjectNoNewWork( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectNoNewWork - Function Begin"));
 
@@ -397,7 +363,6 @@ void CViewProjects::OnProjectNoNewWork( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectNoNewWork - Function End"));
 }
 
-
 void CViewProjects::OnProjectAllowNewWork( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectAllowNewWork - Function Begin"));
 
@@ -433,7 +398,6 @@ void CViewProjects::OnProjectAllowNewWork( wxCommandEvent& WXUNUSED(event) ) {
 
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectAllowNewWork - Function End"));
 }
-
 
 void CViewProjects::OnProjectReset( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectReset - Function Begin"));
@@ -489,7 +453,6 @@ void CViewProjects::OnProjectReset( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectReset - Function End"));
 }
 
-
 void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectDetach - Function Begin"));
 
@@ -544,7 +507,6 @@ void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectDetach - Function End"));
 }
 
-
 void CViewProjects::OnProjectWebsiteClicked( wxEvent& event ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectWebsiteClicked - Function Begin"));
 
@@ -568,42 +530,44 @@ void CViewProjects::OnProjectWebsiteClicked( wxEvent& event ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectWebsiteClicked - Function End"));
 }
 
-
 wxInt32 CViewProjects::GetDocCount() {
     return static_cast<wxInt32>(wxGetApp().GetDocument()->GetProjectCount());
 }
 
-
 wxString CViewProjects::OnListGetItemText(long item, long column) const {
-    wxString       strBuffer = wxEmptyString;
+    wxString  strBuffer = wxEmptyString;
 
-    switch(column) {
-    case COLUMN_PROJECT:
-        FormatProjectName(item, strBuffer);
-        break;
-    case COLUMN_ACCOUNTNAME:
-        FormatAccountName(item, strBuffer);
-        break;
-    case COLUMN_TEAMNAME:
-        FormatTeamName(item, strBuffer);
-        break;
-    case COLUMN_TOTALCREDIT:
-        FormatTotalCredit(item, strBuffer);
-        break;
-    case COLUMN_AVGCREDIT:
-        FormatAVGCredit(item, strBuffer);
-        break;
-    case COLUMN_RESOURCESHARE:
-        FormatResourceShare(item, strBuffer);
-        break;
-    case COLUMN_STATUS:
-        FormatStatus(item, strBuffer);
-        break;
+    try {
+        CProject* project   = m_ProjectCache.at(m_iSortedIndexes[item]);
+
+        switch (column) {
+            case COLUMN_PROJECT:
+                strBuffer = project->m_strProjectName;
+                break;
+            case COLUMN_ACCOUNTNAME:
+                strBuffer = project->m_strAccountName;
+                break;
+            case COLUMN_TEAMNAME:
+                strBuffer = project->m_strTeamName;
+                break;
+            case COLUMN_TOTALCREDIT:
+                strBuffer = project->m_strTotalCredit;
+                break;
+            case COLUMN_AVGCREDIT:
+                strBuffer = project->m_strAVGCredit;
+                break;
+            case COLUMN_RESOURCESHARE:
+                strBuffer = project->m_strResourceShare;
+                break;
+            case COLUMN_STATUS:
+                strBuffer = project->m_strStatus;
+            break;
+        }
+    } catch (std::out_of_range) {
+        // Just ignore this exception.
     }
-
     return strBuffer;
 }
-
 
 wxInt32 CViewProjects::AddCacheElement() {
     CProject* pItem = new CProject();
@@ -616,7 +580,6 @@ wxInt32 CViewProjects::AddCacheElement() {
     return -1;
 }
 
-
 wxInt32 CViewProjects::EmptyCache() {
     unsigned int i;
     for (i=0; i<m_ProjectCache.size(); i++) {
@@ -627,11 +590,9 @@ wxInt32 CViewProjects::EmptyCache() {
     return 0;
 }
 
-
 wxInt32 CViewProjects::GetCacheCount() {
     return (wxInt32)m_ProjectCache.size();
 }
-
 
 wxInt32 CViewProjects::RemoveCacheElement() {
     unsigned int i;
@@ -643,7 +604,6 @@ wxInt32 CViewProjects::RemoveCacheElement() {
     }
     return 0;
 }
-
 
 void CViewProjects::UpdateSelection() {
     CTaskItemGroup*     pGroup = NULL;
@@ -704,7 +664,6 @@ void CViewProjects::UpdateSelection() {
     CTaskViewBase::PostUpdateSelection();
 }
 
-
 bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
     wxString    strDocumentText  = wxEmptyString;
     float       fDocumentFloat = 0.0;
@@ -738,6 +697,7 @@ bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex
             GetDocTotalCredit(m_iSortedIndexes[iRowIndex], fDocumentFloat);
             if (fDocumentFloat != project->m_fTotalCredit) {
                 project->m_fTotalCredit = fDocumentFloat;
+                FormatTotalCredit(fDocumentFloat, project->m_strTotalCredit);
                 return true;
             }
             break;
@@ -745,6 +705,7 @@ bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex
             GetDocAVGCredit(m_iSortedIndexes[iRowIndex], fDocumentFloat);
             if (fDocumentFloat != project->m_fAVGCredit) {
                 project->m_fAVGCredit = fDocumentFloat;
+                FormatAVGCredit(fDocumentFloat, project->m_strAVGCredit);
                 return true;
             }
             break;
@@ -752,6 +713,7 @@ bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex
             GetDocResourceShare(m_iSortedIndexes[iRowIndex], fDocumentFloat);
             if (fDocumentFloat != project->m_fResourceShare) {
                 project->m_fResourceShare = fDocumentFloat;
+                FormatResourceShare(fDocumentFloat, project->m_strResourceShare);
                 return true;
             }
             break;
@@ -767,65 +729,58 @@ bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex
     return false;
 }
 
-
 void CViewProjects::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
     PROJECT* project = wxGetApp().GetDocument()->project(item);
     std::string project_name;
 
     if (project) {
         project->get_name(project_name);
-        strBuffer = wxString(project_name.c_str(), wxConvUTF8);
+        strBuffer = HtmlEntityDecode(wxString(project_name.c_str(), wxConvUTF8));
     } else {
         strBuffer = wxEmptyString;
     }
 }
 
-
 wxInt32 CViewProjects::FormatProjectName(wxInt32 item, wxString& strBuffer) const {
     CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = HtmlEntityDecode(project->m_strProjectName);
+    strBuffer = project->m_strProjectName;
 
     return 0;
 }
-
 
 void CViewProjects::GetDocAccountName(wxInt32 item, wxString& strBuffer) const {
     PROJECT* project = wxGetApp().GetDocument()->project(item);
 
     if (project) {
-        strBuffer = wxString(project->user_name.c_str(), wxConvUTF8);
+        strBuffer = HtmlEntityDecode(wxString(project->user_name.c_str(), wxConvUTF8));
     } else {
         strBuffer = wxEmptyString;
     }
 }
 
-
 wxInt32 CViewProjects::FormatAccountName(wxInt32 item, wxString& strBuffer) const {
     CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = HtmlEntityDecode(project->m_strAccountName);
+    strBuffer = project->m_strAccountName;
 
     return 0;
 }
-
 
 void CViewProjects::GetDocTeamName(wxInt32 item, wxString& strBuffer) const {
     PROJECT* project = wxGetApp().GetDocument()->project(item);
 
     if (project) {
-        strBuffer = wxString(project->team_name.c_str(), wxConvUTF8);
+        strBuffer = HtmlEntityDecode(wxString(project->team_name.c_str(), wxConvUTF8));
     } else {
         strBuffer = wxEmptyString;
     }
 }
 
-
 wxInt32 CViewProjects::FormatTeamName(wxInt32 item, wxString& strBuffer) const {
     CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = HtmlEntityDecode(project->m_strTeamName);
+    strBuffer = project->m_strTeamName;
 
     return 0;
 }
-
 
 void CViewProjects::GetDocTotalCredit(wxInt32 item, float& fBuffer) const {
     PROJECT* project = wxGetApp().GetDocument()->project(item);
@@ -837,14 +792,10 @@ void CViewProjects::GetDocTotalCredit(wxInt32 item, float& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewProjects::FormatTotalCredit(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer.Printf(wxT("%0.2f"), project->m_fTotalCredit);
-
+wxInt32 CViewProjects::FormatTotalCredit(float fBuffer, wxString& strBuffer) const {
+    strBuffer.Printf(wxT("%0.2f"), fBuffer);
     return 0;
 }
-
 
 void CViewProjects::GetDocAVGCredit(wxInt32 item, float& fBuffer) const {
     PROJECT* project = wxGetApp().GetDocument()->project(item);
@@ -856,14 +807,10 @@ void CViewProjects::GetDocAVGCredit(wxInt32 item, float& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewProjects::FormatAVGCredit(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer.Printf(wxT("%0.2f"), project->m_fAVGCredit);
-
+wxInt32 CViewProjects::FormatAVGCredit(float fBuffer, wxString& strBuffer) const {
+    strBuffer.Printf(wxT("%0.2f"), fBuffer);
     return 0;
 }
-
 
 void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
     PROJECT* project = wxGetApp().GetDocument()->project(item);
@@ -875,24 +822,19 @@ void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewProjects::FormatResourceShare(wxInt32 item, wxString& strBuffer) const {
+wxInt32 CViewProjects::FormatResourceShare(float fBuffer, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
-    if (project && pDoc) {
-        strBuffer.Printf(wxT("%0.0f (%0.2f%%)"), 
-            project->m_fResourceShare, 
-            ((project->m_fResourceShare / pDoc->m_fProjectTotalResourceShare) * 100)
-        );
+    if (pDoc) {
+        strBuffer.Printf(wxT("%0.0f (%0.2f%%)"), fBuffer,
+                            ((fBuffer / pDoc->m_fProjectTotalResourceShare) * 100));
     }
-        
+
     return 0;
 }
-
 
 void CViewProjects::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
     PROJECT* project = wxGetApp().GetDocument()->project(item);
@@ -926,14 +868,12 @@ void CViewProjects::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
     }
 }
 
-
 wxInt32 CViewProjects::FormatStatus(wxInt32 item, wxString& strBuffer) const {
     CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
     strBuffer = project->m_strStatus;
 
     return 0;
 }
-
 
 double CViewProjects::GetProgressValue(long item) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
@@ -949,7 +889,6 @@ double CViewProjects::GetProgressValue(long item) {
     return 0.0;
 }
 
-
 bool CViewProjects::IsWebsiteLink(const wxString& strLink) {
     bool bReturnValue = false;
 
@@ -959,12 +898,10 @@ bool CViewProjects::IsWebsiteLink(const wxString& strLink) {
     return bReturnValue;
 }
 
-
 wxInt32 CViewProjects::ConvertWebsiteIndexToLink(wxInt32 iProjectIndex, wxInt32 iWebsiteIndex, wxString& strLink) {
     strLink.Printf(wxT("web:%d:%d"), iProjectIndex, iWebsiteIndex);
     return 0;
 }
-
 
 wxInt32 CViewProjects::ConvertLinkToWebsiteIndex(const wxString& strLink, wxInt32& iProjectIndex, wxInt32& iWebsiteIndex) {
     wxString strTemplate = strLink;

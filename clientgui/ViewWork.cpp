@@ -31,7 +31,6 @@
 
 #include "res/result.xpm"
 
-
 #define COLUMN_PROJECT              0
 #define COLUMN_APPLICATION          1
 #define COLUMN_NAME                 2
@@ -51,13 +50,19 @@
 #define BTN_RESUME                  2
 #define BTN_ABORT                   3
 
+CWork::CWork() {
+    m_fCPUTime          = -1.0f;
+ 	m_fProgress         = -1.0f;
+ 	m_fTimeToCompletion = -1.0f;
+ 	m_tReportDeadline   = (time_t)0;
+}
+
 enum DlgButtons {
     Cancel      = 0x01,
     Yes         = 0x02,
     No          = 0x04,
     YesToAll    = 0x08,
 };
-
 
 IMPLEMENT_DYNAMIC_CLASS(DlgYesToAll, wxDialog)
 
@@ -66,8 +71,7 @@ BEGIN_EVENT_TABLE (DlgYesToAll, wxDialog)
 END_EVENT_TABLE ()
 
 DlgYesToAll::DlgYesToAll(wxWindow* parent, const wxString& caption, const wxString& message, long buttons)
-: wxDialog(parent, wxID_ANY, caption, wxDefaultPosition, wxDefaultSize, wxCAPTION)
-{
+                : wxDialog(parent, wxID_ANY, caption, wxDefaultPosition, wxDefaultSize, wxCAPTION) {
     wxBoxSizer* verticalSizer = new wxBoxSizer(wxVERTICAL);
 
     wxStaticText* messageLabel = new wxStaticText(this, wxID_STATIC, message);
@@ -99,12 +103,9 @@ DlgYesToAll::DlgYesToAll(wxWindow* parent, const wxString& caption, const wxStri
     SetSizer(verticalSizer);
 }
 
-
 void DlgYesToAll::OnButton(wxCommandEvent& event) {
-
     EndModal(event.GetId());
 }
-
 
 IMPLEMENT_DYNAMIC_CLASS(CViewWork, CTaskViewBase)
 
@@ -120,7 +121,6 @@ BEGIN_EVENT_TABLE (CViewWork, CTaskViewBase)
     EVT_LIST_CACHE_HINT(ID_LIST_WORKVIEW, CViewWork::OnCacheHint)
 END_EVENT_TABLE ()
 
-
 static CViewWork* myCViewWork;
 
 static int CompareViewWorkItems(int *iRowIndex1, int *iRowIndex2) {
@@ -130,45 +130,45 @@ static int CompareViewWorkItems(int *iRowIndex1, int *iRowIndex2) {
     
     switch (myCViewWork->m_iSortColumn) {
         case COLUMN_PROJECT:
-    result = work1->m_strProjectName.CmpNoCase(work2->m_strProjectName);
-        break;
-    case COLUMN_APPLICATION:
-    result = work1->m_strApplicationName.CmpNoCase(work2->m_strApplicationName);
-        break;
-    case COLUMN_NAME:
-    result = work1->m_strName.CmpNoCase(work2->m_strName);
-        break;
-    case COLUMN_CPUTIME:
-        if (work1->m_fCPUTime < work2->m_fCPUTime) {
-            result = -1;
-        } else if (work1->m_fCPUTime > work2->m_fCPUTime) {
-            result = 1;
-        }
-        break;
-    case COLUMN_PROGRESS:
-        if (work1->m_fProgress < work2->m_fProgress) {
-            result = -1;
-        } else if (work1->m_fProgress > work2->m_fProgress) {
-            result = 1;
-        }
-        break;
-    case COLUMN_TOCOMPLETION:
-        if (work1->m_fTimeToCompletion < work2->m_fTimeToCompletion) {
-            result = -1;
-        } else if (work1->m_fTimeToCompletion > work2->m_fTimeToCompletion) {
-            result = 1;
-        }
-        break;
-    case COLUMN_REPORTDEADLINE:
-        if (work1->m_tReportDeadline < work2->m_tReportDeadline) {
-            result = -1;
-        } else if (work1->m_tReportDeadline > work2->m_tReportDeadline) {
-            result = 1;
-        }
-        break;
-    case COLUMN_STATUS:
-    result = work1->m_strStatus.CmpNoCase(work2->m_strStatus);
-        break;
+            result = work1->m_strProjectName.CmpNoCase(work2->m_strProjectName);
+            break;
+        case COLUMN_APPLICATION:
+            result = work1->m_strApplicationName.CmpNoCase(work2->m_strApplicationName);
+            break;
+        case COLUMN_NAME:
+            result = work1->m_strName.CmpNoCase(work2->m_strName);
+            break;
+        case COLUMN_CPUTIME:
+            if (work1->m_fCPUTime < work2->m_fCPUTime) {
+                result = -1;
+            } else if (work1->m_fCPUTime > work2->m_fCPUTime) {
+                result = 1;
+            }
+            break;
+        case COLUMN_PROGRESS:
+            if (work1->m_fProgress < work2->m_fProgress) {
+                result = -1;
+            } else if (work1->m_fProgress > work2->m_fProgress) {
+                result = 1;
+            }
+            break;
+        case COLUMN_TOCOMPLETION:
+            if (work1->m_fTimeToCompletion < work2->m_fTimeToCompletion) {
+                result = -1;
+            } else if (work1->m_fTimeToCompletion > work2->m_fTimeToCompletion) {
+                result = 1;
+            }
+            break;
+        case COLUMN_REPORTDEADLINE:
+            if (work1->m_tReportDeadline < work2->m_tReportDeadline) {
+                result = -1;
+            } else if (work1->m_tReportDeadline > work2->m_tReportDeadline) {
+                result = 1;
+            }
+            break;
+        case COLUMN_STATUS:
+            result = work1->m_strStatus.CmpNoCase(work2->m_strStatus);
+            break;
     }
 
     // Tie-breaker
@@ -179,29 +179,20 @@ static int CompareViewWorkItems(int *iRowIndex1, int *iRowIndex2) {
     return (myCViewWork->m_bReverseSort ? result * (-1) : result);
 }
 
+CViewWork::CViewWork() {
+}
 
-CViewWork::CViewWork()
-{}
-
-
-CViewWork::CViewWork(wxNotebook* pNotebook) :
-CTaskViewBase(pNotebook) {}
-
+CViewWork::CViewWork(wxNotebook* pNotebook) : CTaskViewBase(pNotebook) {
+}
 
 CViewWork::~CViewWork() {
     EmptyCache();
 }
 
-
 void CViewWork::DemandLoadView() {
     wxASSERT(!m_bViewLoaded);
 
-    CTaskViewBase::DemandLoadView(
-        ID_TASK_WORKVIEW,
-        DEFAULT_TASK_FLAGS,
-        ID_LIST_WORKVIEW,
-        DEFAULT_LIST_MULTI_SEL_FLAGS
-    );
+    CTaskViewBase::DemandLoadView(ID_TASK_WORKVIEW, DEFAULT_TASK_FLAGS, ID_LIST_WORKVIEW, DEFAULT_LIST_MULTI_SEL_FLAGS);
 
     CTaskItemGroup* pGroup = NULL;
     CTaskItem*      pItem = NULL;
@@ -209,41 +200,27 @@ void CViewWork::DemandLoadView() {
     wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
 
-
-    //
     // Setup View
-    //
-    pGroup = new CTaskItemGroup( _("Commands") );
-    m_TaskGroups.push_back( pGroup );
+    pGroup = new CTaskItemGroup(_("Commands"));
+    m_TaskGroups.push_back(pGroup);
 
-    pItem = new CTaskItem(
-        _("Show graphics"),
-        _("Show application graphics in a window."),
-        ID_TASK_WORK_SHOWGRAPHICS 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Show graphics"), _("Show application graphics in a window."),
+                            ID_TASK_WORK_SHOWGRAPHICS);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("Suspend"),
-        _("Suspend work for this result."),
-        ID_TASK_WORK_SUSPEND 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Suspend"), _("Suspend work for this result."),
+                            ID_TASK_WORK_SUSPEND);
+    pGroup->m_Tasks.push_back(pItem);
 
-        pItem = new CTaskItem(
-        _("Resume"),
-        _("Resume work for this result."),
-        ID_TASK_WORK_RESUME
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Resume"), _("Resume work for this result."),
+                            ID_TASK_WORK_RESUME);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("Abort"),
-        _("Abandon work on the result. "
-          "You will get no credit for it."),
-        ID_TASK_WORK_ABORT 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Abort"),
+                            _("Abandon work on the result. "
+                              "You will get no credit for it."),
+                            ID_TASK_WORK_ABORT);
+    pGroup->m_Tasks.push_back(pItem);
 
     // Create Task Pane Items
     m_pTaskPane->UpdateControls();
@@ -267,25 +244,21 @@ void CViewWork::DemandLoadView() {
     UpdateSelection();
 }
 
-
 wxString& CViewWork::GetViewName() {
     static wxString strViewName(_("Tasks"));
     return strViewName;
 }
-
 
 wxString& CViewWork::GetViewDisplayName() {
     static wxString strViewName(_("Tasks"));
     return strViewName;
 }
 
-
 const char** CViewWork::GetViewIcon() {
     return result_xpm;
 }
 
-
-void CViewWork::OnWorkSuspend( wxCommandEvent& WXUNUSED(event) ) {
+void CViewWork::OnWorkSuspend(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkSuspend - Function Begin"));
 
     CMainDocument* pDoc     = wxGetApp().GetDocument();
@@ -303,7 +276,9 @@ void CViewWork::OnWorkSuspend( wxCommandEvent& WXUNUSED(event) ) {
     while (1) {
         // Step through all selected items
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-        if (row < 0) break;
+        if (row < 0) {
+            break;
+        }
         
         RESULT* result = pDoc->result(m_iSortedIndexes[row]);
         if (result) {
@@ -321,8 +296,7 @@ void CViewWork::OnWorkSuspend( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkSuspend - Function End"));
 }
 
-
-void CViewWork::OnWorkResume( wxCommandEvent& WXUNUSED(event) ) {
+void CViewWork::OnWorkResume(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkResume - Function Begin"));
 
     CMainDocument* pDoc     = wxGetApp().GetDocument();
@@ -340,7 +314,9 @@ void CViewWork::OnWorkResume( wxCommandEvent& WXUNUSED(event) ) {
     while (1) {
         // Step through all selected items
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-        if (row < 0) break;
+        if (row < 0) {
+            break;
+        }
         
         RESULT* result = pDoc->result(m_iSortedIndexes[row]);
         if (result) {
@@ -358,8 +334,7 @@ void CViewWork::OnWorkResume( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkResume - Function End"));
 }
 
-
-void CViewWork::OnWorkShowGraphics( wxCommandEvent& WXUNUSED(event) ) {
+void CViewWork::OnWorkShowGraphics(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkShowGraphics - Function Begin"));
 
     wxInt32  iAnswer        = 0; 
@@ -398,7 +373,9 @@ void CViewWork::OnWorkShowGraphics( wxCommandEvent& WXUNUSED(event) ) {
         while (1) {
             // Step through all selected items
             row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-            if (row < 0) break;
+            if (row < 0) {
+                break;
+            }
             
             RESULT* result = pDoc->result(m_iSortedIndexes[row]);
             if (result) {
@@ -414,16 +391,12 @@ void CViewWork::OnWorkShowGraphics( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkShowGraphics - Function End"));
 }
 
-
 void CViewWork::OnWorkAbort( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkAbort - Function Begin"));
 
     wxInt32  iAnswer        = 0;
     wxInt32  iResult        = 0;
     wxString strMessage     = wxEmptyString;
-    wxString strName        = wxEmptyString;
-    wxString strProgress    = wxEmptyString;
-    wxString strStatus      = wxEmptyString;
     CMainDocument* pDoc     = wxGetApp().GetDocument();
     CAdvancedFrame* pFrame  = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
     int row;
@@ -454,24 +427,22 @@ void CViewWork::OnWorkAbort( wxCommandEvent& WXUNUSED(event) ) {
 
         if (!yesToAll) {
             iResult = m_iSortedIndexes[row];
-            FormatName(iResult, strName);
-            FormatProgress(iResult, strProgress);
-            FormatStatus(iResult, strStatus);
+            CWork* work = m_WorkCache.at(m_iSortedIndexes[row]);
 
-            strMessage.Printf(
-                _("Are you sure you want to abort task '%s'?\n"
-                  "(Progress: %s, Status: %s)"), 
-                strName.c_str(),
-                strProgress.c_str(),
-                strStatus.c_str()
-            );
+            strMessage.Printf(_("Are you sure you want to abort task '%s'?\n"
+                                "(Progress: %s, Status: %s)"), work->m_strName.c_str(),
+                                work->m_strProgress.c_str(), work->m_strStatus.c_str());
 
             DlgYesToAll dlg(this, _("Abort task"), strMessage, buttons);
 
             iAnswer = dlg.ShowModal();
 
-            if (wxID_NO == iAnswer) continue;
-            if (wxID_CANCEL == iAnswer) break;
+            if (wxID_NO == iAnswer) {
+                continue;
+            }
+            if (wxID_CANCEL == iAnswer) {
+                break;
+            }
 
             if (wxID_YESTOALL == iAnswer) {
                 yesToAll = true;
@@ -493,8 +464,7 @@ void CViewWork::OnWorkAbort( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkAbort - Function End"));
 }
 
-
-void CViewWork::OnProjectWebsiteClicked( wxEvent& event ) {
+void CViewWork::OnProjectWebsiteClicked(wxEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnProjectWebsiteClicked - Function Begin"));
 
     CAdvancedFrame* pFrame      = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
@@ -507,9 +477,7 @@ void CViewWork::OnProjectWebsiteClicked( wxEvent& event ) {
     pFrame->UpdateStatusText(_("Launching browser..."));
 
     int website_task_index = event.GetId() - ID_TASK_PROJECT_WEB_PROJDEF_MIN;
-    pFrame->ExecuteBrowserLink(
-        m_TaskGroups[1]->m_Tasks[website_task_index]->m_strWebSiteLink
-    );
+    pFrame->ExecuteBrowserLink(m_TaskGroups[1]->m_Tasks[website_task_index]->m_strWebSiteLink);
 
     pFrame->UpdateStatusText(wxT(""));
 
@@ -519,45 +487,47 @@ void CViewWork::OnProjectWebsiteClicked( wxEvent& event ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnProjectWebsiteClicked - Function End"));
 }
 
-
 wxInt32 CViewWork::GetDocCount() {
     return static_cast<wxInt32>(wxGetApp().GetDocument()->GetWorkCount());
 }
 
-
 wxString CViewWork::OnListGetItemText(long item, long column) const {
     wxString       strBuffer = wxEmptyString;
 
-    switch(column) {
-        case COLUMN_PROJECT:
-            FormatProjectName(item, strBuffer);
-            break;
-        case COLUMN_APPLICATION:
-            FormatApplicationName(item, strBuffer);
-            break;
-        case COLUMN_NAME:
-            FormatName(item, strBuffer);
-            break;
-        case COLUMN_CPUTIME:
-            FormatCPUTime(item, strBuffer);
-            break;
-        case COLUMN_PROGRESS:
-            FormatProgress(item, strBuffer);
-            break;
-        case COLUMN_TOCOMPLETION:
-            FormatTimeToCompletion(item, strBuffer);
-            break;
-        case COLUMN_REPORTDEADLINE:
-            FormatReportDeadline(item, strBuffer);
-            break;
-        case COLUMN_STATUS:
-            FormatStatus(item, strBuffer);
-            break;
-    }
+    try {
+        CWork* work = m_WorkCache.at(m_iSortedIndexes[item]);
 
+        switch(column) {
+            case COLUMN_PROJECT:
+                strBuffer = work->m_strProjectName;
+                break;
+            case COLUMN_APPLICATION:
+                strBuffer = work->m_strApplicationName;
+                break;
+            case COLUMN_NAME:
+                strBuffer = work->m_strName;
+                break;
+            case COLUMN_CPUTIME:
+                strBuffer = work->m_strCPUTime;
+                break;
+            case COLUMN_PROGRESS:
+                strBuffer = work->m_strProgress;
+                break;
+            case COLUMN_TOCOMPLETION:
+                strBuffer = work->m_strTimeToCompletion;
+                break;
+            case COLUMN_REPORTDEADLINE:
+                strBuffer = work->m_strReportDeadline;
+                break;
+            case COLUMN_STATUS:
+                strBuffer = work->m_strStatus;
+                break;
+        }
+    } catch (std::out_of_range) {
+        // Just ignore this exception.
+    }
     return strBuffer;
 }
-
 
 wxInt32 CViewWork::AddCacheElement() {
     CWork* pItem = new CWork();
@@ -570,7 +540,6 @@ wxInt32 CViewWork::AddCacheElement() {
     return -1;
 }
 
-
 wxInt32 CViewWork::EmptyCache() {
     unsigned int i;
     for (i=0; i<m_WorkCache.size(); i++) {
@@ -581,11 +550,9 @@ wxInt32 CViewWork::EmptyCache() {
     return 0;
 }
 
-
 wxInt32 CViewWork::GetCacheCount() {
     return (wxInt32)m_WorkCache.size();
 }
-
 
 wxInt32 CViewWork::RemoveCacheElement() {
     unsigned int i;
@@ -597,7 +564,6 @@ wxInt32 CViewWork::RemoveCacheElement() {
     }
     return 0;
 }
-
 
 void CViewWork::UpdateSelection() {
     PROJECT*            project = NULL;
@@ -709,7 +675,6 @@ void CViewWork::UpdateSelection() {
     CTaskViewBase::PostUpdateSelection();
 }
 
-
 bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
     wxString    strDocumentText  = wxEmptyString;
     float       fDocumentFloat = 0.0;
@@ -744,6 +709,7 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             GetDocCPUTime(m_iSortedIndexes[iRowIndex], fDocumentFloat);
             if (fDocumentFloat != work->m_fCPUTime) {
                 work->m_fCPUTime = fDocumentFloat;
+                FormatCPUTime(fDocumentFloat, work->m_strCPUTime);
                 return true;
             }
             break;
@@ -751,6 +717,7 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             GetDocProgress(m_iSortedIndexes[iRowIndex], fDocumentFloat);
             if (fDocumentFloat != work->m_fProgress) {
                 work->m_fProgress = fDocumentFloat;
+                FormatProgress(fDocumentFloat, work->m_strProgress);
                 return true;
             }
             break;
@@ -758,6 +725,7 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             GetDocTimeToCompletion(m_iSortedIndexes[iRowIndex], fDocumentFloat);
             if (fDocumentFloat != work->m_fTimeToCompletion) {
                 work->m_fTimeToCompletion = fDocumentFloat;
+                FormatTimeToCompletion(fDocumentFloat, work->m_strTimeToCompletion);
                 return true;
             }
             break;
@@ -765,6 +733,7 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             GetDocReportDeadline(m_iSortedIndexes[iRowIndex], tDocumentTime);
             if (tDocumentTime != work->m_tReportDeadline) {
                 work->m_tReportDeadline = tDocumentTime;
+                FormatReportDeadline(tDocumentTime, work->m_strReportDeadline);
                 return true;
             }
             break;
@@ -776,10 +745,8 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             }
             break;
     }
-
     return false;
 }
-
 
 void CViewWork::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
     CMainDocument* doc = wxGetApp().GetDocument();
@@ -794,21 +761,12 @@ void CViewWork::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
         state_project = doc->state.lookup_project(result->project_url);
         if (state_project) {
             state_project->get_name(project_name);
-            strBuffer = wxString(project_name.c_str(), wxConvUTF8);
+            strBuffer = HtmlEntityDecode(wxString(project_name.c_str(), wxConvUTF8));
          } else {
             doc->ForceCacheUpdate();
         }
     }
 }
-
-
-wxInt32 CViewWork::FormatProjectName(wxInt32 item, wxString& strBuffer) const {
-    CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]);
-    strBuffer = HtmlEntityDecode(work->m_strProjectName);
-
-    return 0;
-}
-
 
 void CViewWork::GetDocApplicationName(wxInt32 item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
@@ -853,15 +811,6 @@ void CViewWork::GetDocApplicationName(wxInt32 item, wxString& strBuffer) const {
     }
 }
 
-
-wxInt32 CViewWork::FormatApplicationName(wxInt32 item, wxString& strBuffer) const {
-    CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]);
-    strBuffer = work->m_strApplicationName;
-
-    return 0;
-}
-
-
 void CViewWork::GetDocName(wxInt32 item, wxString& strBuffer) const {
     RESULT* result = wxGetApp().GetDocument()->result(item);
 
@@ -871,15 +820,6 @@ void CViewWork::GetDocName(wxInt32 item, wxString& strBuffer) const {
         strBuffer = wxString(result->name.c_str(), wxConvUTF8);
     }
 }
-
-
-wxInt32 CViewWork::FormatName(wxInt32 item, wxString& strBuffer) const {
-    CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]);
-    strBuffer = wxString(work->m_strName.c_str(), wxConvUTF8);
-
-    return 0;
-}
-
 
 void CViewWork::GetDocCPUTime(wxInt32 item, float& fBuffer) const {
     RESULT*        result = wxGetApp().GetDocument()->result(item);
@@ -899,14 +839,11 @@ void CViewWork::GetDocCPUTime(wxInt32 item, float& fBuffer) const {
 }
 
 
-wxInt32 CViewWork::FormatCPUTime(wxInt32 item, wxString& strBuffer) const {
-    CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]);
-
+wxInt32 CViewWork::FormatCPUTime(float fBuffer, wxString& strBuffer) const {
     wxInt32        iHour = 0;
     wxInt32        iMin = 0;
     wxInt32        iSec = 0;
     wxTimeSpan     ts;
-    float          fBuffer = work->m_fCPUTime;
     
     if (0 == fBuffer) {
         strBuffer = wxT("---");
@@ -922,7 +859,6 @@ wxInt32 CViewWork::FormatCPUTime(wxInt32 item, wxString& strBuffer) const {
 
     return 0;
 }
-
 
 void CViewWork::GetDocProgress(wxInt32 item, float& fBuffer) const {
     RESULT*        result = wxGetApp().GetDocument()->result(item);
@@ -941,14 +877,10 @@ void CViewWork::GetDocProgress(wxInt32 item, float& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewWork::FormatProgress(wxInt32 item, wxString& strBuffer) const {
-    CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]);
-    strBuffer.Printf(wxT("%.3f%%"), work->m_fProgress);
-
+wxInt32 CViewWork::FormatProgress(float fBuffer, wxString& strBuffer) const {
+    strBuffer.Printf(wxT("%.3f%%"), fBuffer);
     return 0;
 }
-
 
 void CViewWork::GetDocTimeToCompletion(wxInt32 item, float& fBuffer) const {
     RESULT*        result = wxGetApp().GetDocument()->result(item);
@@ -959,15 +891,15 @@ void CViewWork::GetDocTimeToCompletion(wxInt32 item, float& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewWork::FormatTimeToCompletion(wxInt32 item, wxString& strBuffer) const {
-    CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]); 
-    float          fBuffer = work->m_fTimeToCompletion;
+wxInt32 CViewWork::FormatTimeToCompletion(float fBuffer, wxString& strBuffer) const {
     wxInt32        iHour = 0;
     wxInt32        iMin = 0;
     wxInt32        iSec = 0;
     wxTimeSpan     ts;
 
+    if (fBuffer > 86400.0 * 365.0 * 10.0) {
+        fBuffer = 86400.0 * 365.0 * 10.0;
+    }
     if (0 >= fBuffer) {
         strBuffer = wxT("---");
     } else {
@@ -983,7 +915,6 @@ wxInt32 CViewWork::FormatTimeToCompletion(wxInt32 item, wxString& strBuffer) con
     return 0;
 }
 
-
 void CViewWork::GetDocReportDeadline(wxInt32 item, time_t& time) const {
     RESULT*        result = wxGetApp().GetDocument()->result(item);
 
@@ -994,17 +925,12 @@ void CViewWork::GetDocReportDeadline(wxInt32 item, time_t& time) const {
     }
 }
 
-
-wxInt32 CViewWork::FormatReportDeadline(wxInt32 item, wxString& strBuffer) const {
-    CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]);
+wxInt32 CViewWork::FormatReportDeadline(time_t deadline, wxString& strBuffer) const {
     wxDateTime     dtTemp;
-
-    dtTemp.Set(work->m_tReportDeadline);
+    dtTemp.Set(deadline);
     strBuffer = dtTemp.Format();
-
     return 0;
 }
-
 
 void CViewWork::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
     CMainDocument* doc = wxGetApp().GetDocument();
@@ -1117,14 +1043,11 @@ void CViewWork::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
     }
 }
 
-
 wxInt32 CViewWork::FormatStatus(wxInt32 item, wxString& strBuffer) const {
     CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]);
     strBuffer = work->m_strStatus;
-
     return 0;
 }
-
 
 double CViewWork::GetProgressValue(long item) {
     float          fBuffer = 0;

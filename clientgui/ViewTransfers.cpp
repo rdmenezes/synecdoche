@@ -27,9 +27,7 @@
 #include "Events.h"
 #include "error_numbers.h"
 
-
 #include "res/xfer.xpm"
-
 
 #define COLUMN_PROJECT              0
 #define COLUMN_FILE                 1
@@ -43,6 +41,13 @@
 #define BTN_RETRY       0
 #define BTN_ABORT       1
 
+CTransfer::CTransfer() {
+    m_fProgress = -1.0f;
+    m_fBytesXferred = -1.0f;
+    m_fTotalBytes = -1.0f;
+    m_dTime = -1.0;
+    m_dSpeed = -1.0;
+}
 
 IMPLEMENT_DYNAMIC_CLASS(CViewTransfers, CTaskViewBase)
 
@@ -55,7 +60,6 @@ BEGIN_EVENT_TABLE (CViewTransfers, CTaskViewBase)
     EVT_LIST_CACHE_HINT(ID_LIST_TRANSFERSVIEW, CViewTransfers::OnCacheHint)
 END_EVENT_TABLE ()
 
-
 static CViewTransfers* MyCViewTransfers;
 
 static int CompareViewTransferItems(int *iRowIndex1, int *iRowIndex2) {
@@ -65,42 +69,42 @@ static int CompareViewTransferItems(int *iRowIndex1, int *iRowIndex2) {
     
     switch (MyCViewTransfers->m_iSortColumn) {
         case COLUMN_PROJECT:
-    result = transfer1->m_strProjectName.CmpNoCase(transfer2->m_strProjectName);
-        break;
-    case COLUMN_FILE:
-    result = transfer1->m_strFileName.CmpNoCase(transfer2->m_strFileName);
-        break;
-    case COLUMN_PROGRESS:
-        if (transfer1->m_fProgress < transfer2->m_fProgress) {
-            result = -1;
-        } else if (transfer1->m_fProgress > transfer2->m_fProgress) {
-            result = 1;
-        }
-        break;
-    case COLUMN_SIZE:
-        if (transfer1->m_fBytesXferred < transfer2->m_fBytesXferred) {
-            result = -1;
-        } else if (transfer1->m_fBytesXferred > transfer2->m_fBytesXferred) {
-            result = 1;
-        }
-        break;
-    case COLUMN_TIME:
-        if (transfer1->m_dTime < transfer2->m_dTime) {
-            result = -1;
-        } else if (transfer1->m_dTime > transfer2->m_dTime) {
-            result = 1;
-        }
-        break;
-    case COLUMN_SPEED:
-        if (transfer1->m_dSpeed < transfer2->m_dSpeed) {
-            result = -1;
-        } else if (transfer1->m_dSpeed > transfer2->m_dSpeed) {
-            result = 1;
-        }
-        break;
-    case COLUMN_STATUS:
-    result = transfer1->m_strStatus.CmpNoCase(transfer2->m_strStatus);
-        break;
+            result = transfer1->m_strProjectName.CmpNoCase(transfer2->m_strProjectName);
+            break;
+        case COLUMN_FILE:
+            result = transfer1->m_strFileName.CmpNoCase(transfer2->m_strFileName);
+            break;
+        case COLUMN_PROGRESS:
+            if (transfer1->m_fProgress < transfer2->m_fProgress) {
+                result = -1;
+            } else if (transfer1->m_fProgress > transfer2->m_fProgress) {
+                result = 1;
+            }
+            break;
+        case COLUMN_SIZE:
+            if (transfer1->m_fBytesXferred < transfer2->m_fBytesXferred) {
+                result = -1;
+            } else if (transfer1->m_fBytesXferred > transfer2->m_fBytesXferred) {
+                result = 1;
+            }
+            break;
+        case COLUMN_TIME:
+            if (transfer1->m_dTime < transfer2->m_dTime) {
+                result = -1;
+            } else if (transfer1->m_dTime > transfer2->m_dTime) {
+                result = 1;
+            }
+            break;
+        case COLUMN_SPEED:
+            if (transfer1->m_dSpeed < transfer2->m_dSpeed) {
+                result = -1;
+            } else if (transfer1->m_dSpeed > transfer2->m_dSpeed) {
+                result = 1;
+            }
+            break;
+        case COLUMN_STATUS:
+            result = transfer1->m_strStatus.CmpNoCase(transfer2->m_strStatus);
+            break;
     }
 
     // Tie-breaker
@@ -111,14 +115,11 @@ static int CompareViewTransferItems(int *iRowIndex1, int *iRowIndex2) {
     return (MyCViewTransfers->m_bReverseSort ? result * (-1) : result);
 }
 
+CViewTransfers::CViewTransfers() {
+}
 
-CViewTransfers::CViewTransfers()
-{}
-
-
-CViewTransfers::CViewTransfers(wxNotebook* pNotebook) :
-CTaskViewBase(pNotebook) {}
-
+CViewTransfers::CViewTransfers(wxNotebook* pNotebook) : CTaskViewBase(pNotebook) {
+}
 
 CViewTransfers::~CViewTransfers() {
     EmptyCache();
@@ -127,11 +128,8 @@ CViewTransfers::~CViewTransfers() {
 void CViewTransfers::DemandLoadView() {
     wxASSERT(!m_bViewLoaded);
 
-    CTaskViewBase::DemandLoadView(
-        ID_TASK_TRANSFERSVIEW,
-        DEFAULT_TASK_FLAGS,
-        ID_LIST_TRANSFERSVIEW,
-        DEFAULT_LIST_MULTI_SEL_FLAGS);
+    CTaskViewBase::DemandLoadView(ID_TASK_TRANSFERSVIEW, DEFAULT_TASK_FLAGS,
+                                    ID_LIST_TRANSFERSVIEW, DEFAULT_LIST_MULTI_SEL_FLAGS);
 
     CTaskItemGroup* pGroup = NULL;
     CTaskItem*      pItem = NULL;
@@ -139,28 +137,19 @@ void CViewTransfers::DemandLoadView() {
     wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
 
-
-    //
     // Setup View
-    //
-    pGroup = new CTaskItemGroup( _("Commands") );
-    m_TaskGroups.push_back( pGroup );
+    pGroup = new CTaskItemGroup(_("Commands"));
+    m_TaskGroups.push_back(pGroup);
 
-    pItem = new CTaskItem(
-        _("Retry Now"),
-        _("Click 'Retry now' to transfer the file now"),
-        ID_TASK_TRANSFERS_RETRYNOW 
-    );
-    pGroup->m_Tasks.push_back( pItem );
+    pItem = new CTaskItem(_("Retry Now"), _("Click 'Retry now' to transfer the file now"),
+                            ID_TASK_TRANSFERS_RETRYNOW);
+    pGroup->m_Tasks.push_back(pItem);
 
-    pItem = new CTaskItem(
-        _("Abort Transfer"),
-        _("Click 'Abort transfer' to delete the file from the transfer queue. "
-          "This will prevent you from being granted credit for this result."),
-        ID_TASK_TRANSFERS_ABORT 
-    );
-    pGroup->m_Tasks.push_back( pItem );
-
+    pItem = new CTaskItem(_("Abort Transfer"),
+                            _("Click 'Abort transfer' to delete the file from the transfer queue. "
+                              "This will prevent you from being granted credit for this result."),
+                            ID_TASK_TRANSFERS_ABORT);
+    pGroup->m_Tasks.push_back(pItem);
 
     // Create Task Pane Items
     m_pTaskPane->UpdateControls();
@@ -183,23 +172,19 @@ void CViewTransfers::DemandLoadView() {
     UpdateSelection();
 }
 
-
 wxString& CViewTransfers::GetViewName() {
     static wxString strViewName(_("Transfers"));
     return strViewName;
 }
-
 
 wxString& CViewTransfers::GetViewDisplayName() {
     static wxString strViewName(_("Transfers"));
     return strViewName;
 }
 
-
 const char** CViewTransfers::GetViewIcon() {
     return xfer_xpm;
 }
-
 
 void CViewTransfers::OnTransfersRetryNow( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewTransfers::OnTransfersRetryNow - Function Begin"));
@@ -230,7 +215,6 @@ void CViewTransfers::OnTransfersRetryNow( wxCommandEvent& WXUNUSED(event) ) {
 
     wxLogTrace(wxT("Function Start/End"), wxT("CViewTransfers::OnTransfersRetryNow - Function End"));
 }
-
 
 void CViewTransfers::OnTransfersAbort( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewTransfers::OnTransfersAbort - Function Begin"));
@@ -287,42 +271,44 @@ void CViewTransfers::OnTransfersAbort( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewTransfers::OnTransfersAbort - Function End"));
 }
 
-
 wxInt32 CViewTransfers::GetDocCount() {
     return static_cast<wxInt32>(wxGetApp().GetDocument()->GetTransferCount());
 }
 
-
 wxString CViewTransfers::OnListGetItemText(long item, long column) const {
     wxString   strBuffer  = wxEmptyString;
 
-    switch(column) {
-        case COLUMN_PROJECT:
-            FormatProjectName(item, strBuffer);
-            break;
-        case COLUMN_FILE:
-            FormatFileName(item, strBuffer);
-            break;
-        case COLUMN_PROGRESS:
-            FormatProgress(item, strBuffer);
-            break;
-        case COLUMN_SIZE:
-            FormatSize(item, strBuffer);
-            break;
-        case COLUMN_TIME:
-            FormatTime(item, strBuffer);
-            break;
-        case COLUMN_SPEED:
-            FormatSpeed(item, strBuffer);
-            break;
-        case COLUMN_STATUS:
-            FormatStatus(item, strBuffer);
-            break;
+    try {
+        CTransfer* transfer = m_TransferCache.at(m_iSortedIndexes[item]);
+        
+        switch(column) {
+            case COLUMN_PROJECT:
+                strBuffer = transfer->m_strProjectName;
+                break;
+            case COLUMN_FILE:
+                strBuffer = transfer->m_strFileName;
+                break;
+            case COLUMN_PROGRESS:
+                strBuffer = transfer->m_strProgress;
+                break;
+            case COLUMN_SIZE:
+                strBuffer = transfer->m_strSize;
+                break;
+            case COLUMN_TIME:
+                strBuffer = transfer->m_strTime;
+                break;
+            case COLUMN_SPEED:
+                strBuffer = transfer->m_strSpeed;
+                break;
+            case COLUMN_STATUS:
+                strBuffer = transfer->m_strStatus;
+                break;
+        }
+    } catch (std::out_of_range) {
+        // Just ignore this exception.
     }
-
     return strBuffer;
 }
-
 
 wxInt32 CViewTransfers::AddCacheElement() {
     CTransfer* pItem = new CTransfer();
@@ -335,7 +321,6 @@ wxInt32 CViewTransfers::AddCacheElement() {
     return -1;
 }
 
-
 wxInt32 CViewTransfers::EmptyCache() {
     unsigned int i;
     for (i=0; i<m_TransferCache.size(); i++) {
@@ -346,11 +331,9 @@ wxInt32 CViewTransfers::EmptyCache() {
     return 0;
 }
 
-
 wxInt32 CViewTransfers::GetCacheCount() {
     return (wxInt32)m_TransferCache.size();
 }
-
 
 wxInt32 CViewTransfers::RemoveCacheElement() {
     unsigned int i;
@@ -362,7 +345,6 @@ wxInt32 CViewTransfers::RemoveCacheElement() {
     }
     return 0;
 }
-
 
 void CViewTransfers::UpdateSelection() {
     CTaskItemGroup* pGroup = m_TaskGroups[0];
@@ -378,13 +360,12 @@ void CViewTransfers::UpdateSelection() {
     CTaskViewBase::PostUpdateSelection();
 }
 
-
 bool CViewTransfers::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
     wxString    strDocumentText  = wxEmptyString;
-    float       fDocumentFloat = 0.0;
-    double      fDocumentDouble = 0.0;
-    CTransfer*  transfer = m_TransferCache.at(m_iSortedIndexes[iRowIndex]);
-    bool        bNeedRefresh = false;
+    float       fDocumentFloat   = 0.0f;
+    double      fDocumentDouble  = 0.0;
+    double      fDocumentDouble2 = 0.0;
+    CTransfer*  transfer         = m_TransferCache.at(m_iSortedIndexes[iRowIndex]);
 
     strDocumentText.Empty();
 
@@ -393,47 +374,48 @@ bool CViewTransfers::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnInde
             GetDocProjectName(m_iSortedIndexes[iRowIndex], strDocumentText);
             if (!strDocumentText.IsSameAs(transfer->m_strProjectName)) {
                 transfer->m_strProjectName = strDocumentText;
-                bNeedRefresh =  true;
+                return true;
             }
             break;
         case COLUMN_FILE:
             GetDocFileName(m_iSortedIndexes[iRowIndex], strDocumentText);
             if (!strDocumentText.IsSameAs(transfer->m_strFileName)) {
                 transfer->m_strFileName = strDocumentText;
-                bNeedRefresh =  true;
+                return true;
             }
             break;
         case COLUMN_PROGRESS:
             GetDocProgress(m_iSortedIndexes[iRowIndex], fDocumentFloat);
             if (fDocumentFloat != transfer->m_fProgress) {
                 transfer->m_fProgress = fDocumentFloat;
-                bNeedRefresh =  true;
+                FormatProgress(fDocumentFloat, transfer->m_strProgress);
+                return true;
             }
             break;
         case COLUMN_SIZE:
             GetDocBytesXferred(m_iSortedIndexes[iRowIndex], fDocumentDouble);
-            if (fDocumentDouble != transfer->m_fBytesXferred) {
+            GetDocTotalBytes(m_iSortedIndexes[iRowIndex], fDocumentDouble2);
+            if ((fDocumentDouble != transfer->m_fBytesXferred) || (fDocumentDouble2 != transfer->m_fTotalBytes)) {
                 transfer->m_fBytesXferred = fDocumentDouble;
-                bNeedRefresh =  true;
-            }
-            GetDocTotalBytes(m_iSortedIndexes[iRowIndex], fDocumentDouble);
-            if (fDocumentDouble != transfer->m_fTotalBytes) {
-                transfer->m_fTotalBytes = fDocumentDouble;
-                bNeedRefresh =  true;
+                transfer->m_fTotalBytes = fDocumentDouble2;
+                FormatSize(fDocumentDouble, fDocumentDouble2, transfer->m_strSize);
+                return true;
             }
             break;
         case COLUMN_TIME:
             GetDocTime(m_iSortedIndexes[iRowIndex], fDocumentDouble);
             if (fDocumentDouble != transfer->m_dTime) {
                 transfer->m_dTime = fDocumentDouble;
-                bNeedRefresh =  true;
+                FormatTime(fDocumentDouble, transfer->m_strTime);
+                return true;
             }
             break;
         case COLUMN_SPEED:
             GetDocSpeed(m_iSortedIndexes[iRowIndex], fDocumentDouble);
             if (fDocumentDouble != transfer->m_dSpeed) {
                 transfer->m_dSpeed = fDocumentDouble;
-                bNeedRefresh =  true;
+                FormatSpeed(fDocumentDouble, transfer->m_strSpeed);
+                return true;
             }
             break;
         case COLUMN_STATUS:
@@ -445,27 +427,18 @@ bool CViewTransfers::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnInde
             break;
     }
 
-    return bNeedRefresh;
+    return false;
 }
-
 
 void CViewTransfers::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
     FILE_TRANSFER* transfer = wxGetApp().GetDocument()->file_transfer(item);
 
     if (transfer) {
-        strBuffer = wxString(transfer->project_name.c_str(), wxConvUTF8);
+        strBuffer = HtmlEntityDecode(wxString(transfer->project_name.c_str(), wxConvUTF8));
     } else {
         strBuffer = wxEmptyString;
     }
 }
-
-
-wxInt32 CViewTransfers::FormatProjectName(wxInt32 item, wxString& strBuffer) const {
-    CTransfer*  transfer = m_TransferCache.at(m_iSortedIndexes[item]);
-    strBuffer = HtmlEntityDecode(transfer->m_strProjectName);
-    return 0;
-}
-
 
 void CViewTransfers::GetDocFileName(wxInt32 item, wxString& strBuffer) const {
     FILE_TRANSFER* transfer = wxGetApp().GetDocument()->file_transfer(item);
@@ -476,14 +449,6 @@ void CViewTransfers::GetDocFileName(wxInt32 item, wxString& strBuffer) const {
         strBuffer = wxEmptyString;
     }
 }
-
-
-wxInt32 CViewTransfers::FormatFileName(wxInt32 item, wxString& strBuffer) const {
-    CTransfer*  transfer = m_TransferCache.at(m_iSortedIndexes[item]);
-    strBuffer = transfer->m_strFileName;
-    return 0;
-}
-
 
 void CViewTransfers::GetDocProgress(wxInt32 item, float& fBuffer) const {
     float          fBytesSent = 0;
@@ -498,7 +463,6 @@ void CViewTransfers::GetDocProgress(wxInt32 item, float& fBuffer) const {
 
     // Curl apparently counts the HTTP header in byte count.
     // Prevent this from causing > 100% display
-    //
     if (fBytesSent > fFileSize) {
         fBytesSent = fFileSize;
     }
@@ -508,13 +472,10 @@ void CViewTransfers::GetDocProgress(wxInt32 item, float& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewTransfers::FormatProgress(wxInt32 item, wxString& strBuffer) const {
-    CTransfer*  transfer = m_TransferCache.at(m_iSortedIndexes[item]);
-    strBuffer.Printf(wxT("%.2f%%"), transfer->m_fProgress);
+wxInt32 CViewTransfers::FormatProgress(float fBuffer, wxString& strBuffer) const {
+    strBuffer.Printf(wxT("%.2f%%"), fBuffer);
     return 0;
 }
-
 
 void CViewTransfers::GetDocBytesXferred(wxInt32 item, double& fBuffer) const {
     FILE_TRANSFER* transfer = wxGetApp().GetDocument()->file_transfer(item);
@@ -526,7 +487,6 @@ void CViewTransfers::GetDocBytesXferred(wxInt32 item, double& fBuffer) const {
     }
 }
 
-
 void CViewTransfers::GetDocTotalBytes(wxInt32 item, double& fBuffer) const {
     FILE_TRANSFER* transfer = wxGetApp().GetDocument()->file_transfer(item);
 
@@ -537,18 +497,14 @@ void CViewTransfers::GetDocTotalBytes(wxInt32 item, double& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewTransfers::FormatSize(wxInt32 item, wxString& strBuffer) const {
-    double          xTera = 1099511627776.0;
-    double          xGiga = 1073741824.0;
-    double          xMega = 1048576.0;
-    double          xKilo = 1024.0;
-    CTransfer*      transfer = m_TransferCache.at(m_iSortedIndexes[item]);
-    double          fBytesSent = transfer->m_fBytesXferred;
-    double          fFileSize = transfer->m_fTotalBytes;
+wxInt32 CViewTransfers::FormatSize(double fBytesSent, double fFileSize, wxString& strBuffer) const {
+    const double xTera = 1099511627776.0;
+    const double xGiga = 1073741824.0;
+    const double xMega = 1048576.0;
+    const double xKilo = 1024.0;
 
     if (fFileSize != 0) {
-        if      (fFileSize >= xTera) {
+        if (fFileSize >= xTera) {
             strBuffer.Printf(wxT("%0.2f/%0.2f TB"), fBytesSent/xTera, fFileSize/xTera);
         } else if (fFileSize >= xGiga) {
             strBuffer.Printf(wxT("%0.2f/%0.2f GB"), fBytesSent/xGiga, fFileSize/xGiga);
@@ -560,7 +516,7 @@ wxInt32 CViewTransfers::FormatSize(wxInt32 item, wxString& strBuffer) const {
             strBuffer.Printf(wxT("%0.0f/%0.0f bytes"), fBytesSent, fFileSize);
         }
     } else {
-        if      (fBytesSent >= xTera) {
+        if (fBytesSent >= xTera) {
             strBuffer.Printf(wxT("%0.2f TB"), fBytesSent/xTera);
         } else if (fBytesSent >= xGiga) {
             strBuffer.Printf(wxT("%0.2f GB"), fBytesSent/xGiga);
@@ -572,10 +528,8 @@ wxInt32 CViewTransfers::FormatSize(wxInt32 item, wxString& strBuffer) const {
             strBuffer.Printf(wxT("%0.0f bytes"), fBytesSent);
         }
     }
-
     return 0;
 }
-
 
 void CViewTransfers::GetDocTime(wxInt32 item, double& fBuffer) const {
     FILE_TRANSFER* transfer = wxGetApp().GetDocument()->file_transfer(item);
@@ -587,15 +541,11 @@ void CViewTransfers::GetDocTime(wxInt32 item, double& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewTransfers::FormatTime(wxInt32 item, wxString& strBuffer) const {
+wxInt32 CViewTransfers::FormatTime(float fBuffer, wxString& strBuffer) const {
     wxInt32        iHour = 0;
     wxInt32        iMin = 0;
     wxInt32        iSec = 0;
     wxTimeSpan     ts;
-    CTransfer*  transfer = m_TransferCache.at(m_iSortedIndexes[item]);
-
-    float fBuffer = transfer->m_dTime;
 
     iHour = (wxInt32)(fBuffer / (60 * 60));
     iMin  = (wxInt32)(fBuffer / 60) % 60;
@@ -608,7 +558,6 @@ wxInt32 CViewTransfers::FormatTime(wxInt32 item, wxString& strBuffer) const {
     return 0;
 }
 
-
 void CViewTransfers::GetDocSpeed(wxInt32 item, double& fBuffer) const {
     FILE_TRANSFER* transfer = wxGetApp().GetDocument()->file_transfer(item);
 
@@ -620,14 +569,10 @@ void CViewTransfers::GetDocSpeed(wxInt32 item, double& fBuffer) const {
     }
 }
 
-
-wxInt32 CViewTransfers::FormatSpeed(wxInt32 item, wxString& strBuffer) const {
-    CTransfer*  transfer = m_TransferCache.at(m_iSortedIndexes[item]);
-    strBuffer.Printf(wxT("%.2f KBps"), transfer->m_dSpeed);
-
+wxInt32 CViewTransfers::FormatSpeed(float fBuffer, wxString& strBuffer) const {
+    strBuffer.Printf(wxT("%.2f KBps"), fBuffer);
     return 0;
 }
-
 
 void CViewTransfers::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
     CMainDocument* doc = wxGetApp().GetDocument();
@@ -643,7 +588,7 @@ void CViewTransfers::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
     wxDateTime dtNow(wxDateTime::Now());
 
     if (transfer) {
-        if      (dtNextRequest > dtNow) {
+        if (dtNextRequest > dtNow) {
             wxTimeSpan tsNextRequest(dtNextRequest - dtNow);
             strBuffer = _("Retry in ") + tsNextRequest.Format();
         } else if (ERR_GIVEUP_DOWNLOAD == transfer->status) {
@@ -664,19 +609,10 @@ void CViewTransfers::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
     }
 }
 
-
-wxInt32 CViewTransfers::FormatStatus(wxInt32 item, wxString& strBuffer) const {
-    CTransfer*  transfer = m_TransferCache.at(m_iSortedIndexes[item]);
-    strBuffer = transfer->m_strStatus;
-
-    return 0;
-}
-
-
 double CViewTransfers::GetProgressValue(long item) {
     double          fBytesSent = 0;
     double          fFileSize = 0;
-    FILE_TRANSFER*  transfer = wxGetApp().GetDocument()->file_transfer(item);
+    FILE_TRANSFER*  transfer = wxGetApp().GetDocument()->file_transfer(m_iSortedIndexes[item]);
 
     if (transfer) {
         fBytesSent = transfer->bytes_xferred;
@@ -685,12 +621,13 @@ double CViewTransfers::GetProgressValue(long item) {
 
     // Curl apparently counts the HTTP header in byte count.
     // Prevent this from causing > 100% display
-    //
     if (fBytesSent > fFileSize) {
         fBytesSent = fFileSize;
     }
 
-    if ( 0.0 == fFileSize ) return 0.0;
-    
+    if ( 0.0 == fFileSize ) {
+        return 0.0;
+    }
+
     return (fBytesSent / fFileSize);
 }
