@@ -37,6 +37,7 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <cstring>
+#include <sstream>
 #endif
 
 #include "diagnostics.h"

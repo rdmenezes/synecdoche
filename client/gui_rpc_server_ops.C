@@ -44,6 +44,7 @@
 
 #include <cstdio>
 #include <vector>
+#include <sstream>
 
 #include "gui_rpc_server.h"
 #include "str_util.h"
