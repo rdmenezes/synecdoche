@@ -27,7 +27,6 @@ bin_PROGRAMS = synecmgr
 
 synecmgr_SOURCES = \
     AccountInfoPage.cpp \
-    AccountKeyPage.cpp \
     AccountManagerInfoPage.cpp \
     AccountManagerProcessingPage.cpp \
     AccountManagerPropertiesPage.cpp \
