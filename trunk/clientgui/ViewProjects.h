@@ -16,17 +16,15 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _VIEWPROJECTS_H_
-#define _VIEWPROJECTS_H_
-
+#ifndef VIEWPROJECTS_H
+#define VIEWPROJECTS_H
 
 #include "TaskViewBase.h"
-
 
 class CProject : public wxObject
 {
 public:
-    CProject() {}
+    CProject();
 
     wxString m_strProjectName;
     wxString m_strAccountName;
@@ -35,8 +33,10 @@ public:
     float m_fAVGCredit;
     float m_fResourceShare;
     wxString m_strStatus;
+    wxString m_strTotalCredit;
+ 	wxString m_strAVGCredit;
+ 	wxString m_strResourceShare;
 };
-
 
 class CViewProjects : public CTaskViewBase
 {
@@ -85,11 +85,11 @@ protected:
     void                    GetDocTeamName(wxInt32 item, wxString& strBuffer) const;
     wxInt32                 FormatTeamName( wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocTotalCredit(wxInt32 item, float& fBuffer) const;
-    wxInt32                 FormatTotalCredit( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatTotalCredit(float fBuffer, wxString& strBuffer) const;
     void                    GetDocAVGCredit(wxInt32 item, float& fBuffer) const;
-    wxInt32                 FormatAVGCredit( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatAVGCredit(float fBuffer, wxString& strBuffer) const;
     void                    GetDocResourceShare(wxInt32 item, float& fBuffer) const;
-    wxInt32                 FormatResourceShare( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatResourceShare(float fBuffer, wxString& strBuffer) const;
     void                    GetDocStatus(wxInt32 item, wxString& strBuffer) const;
     wxInt32                 FormatStatus( wxInt32 item, wxString& strBuffer ) const;
 
@@ -102,5 +102,4 @@ protected:
     DECLARE_EVENT_TABLE()
 };
 
-
-#endif
+#endif // VIEWPROJECTS_H
