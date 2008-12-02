@@ -52,9 +52,10 @@
 #define BTN_DETACH       6
 
 CProject::CProject() {
-    m_fTotalCredit   = -1.0f;
-    m_fAVGCredit     = -1.0f;
-    m_fResourceShare = -1.0f;
+    m_fTotalCredit     = -1.0f;
+    m_fAVGCredit       = -1.0f;
+    m_fResourceShare   = -1.0f;
+    m_fResourcePercent = -1.0f;
 }
 
 IMPLEMENT_DYNAMIC_CLASS(CViewProjects, CTaskViewBase)
@@ -537,34 +538,30 @@ wxInt32 CViewProjects::GetDocCount() {
 wxString CViewProjects::OnListGetItemText(long item, long column) const {
     wxString  strBuffer = wxEmptyString;
 
-    try {
-        CProject* project   = m_ProjectCache.at(m_iSortedIndexes[item]);
+    CProject* project   = m_ProjectCache.at(m_iSortedIndexes[item]);
 
-        switch (column) {
-            case COLUMN_PROJECT:
-                strBuffer = project->m_strProjectName;
-                break;
-            case COLUMN_ACCOUNTNAME:
-                strBuffer = project->m_strAccountName;
-                break;
-            case COLUMN_TEAMNAME:
-                strBuffer = project->m_strTeamName;
-                break;
-            case COLUMN_TOTALCREDIT:
-                strBuffer = project->m_strTotalCredit;
-                break;
-            case COLUMN_AVGCREDIT:
-                strBuffer = project->m_strAVGCredit;
-                break;
-            case COLUMN_RESOURCESHARE:
-                strBuffer = project->m_strResourceShare;
-                break;
-            case COLUMN_STATUS:
-                strBuffer = project->m_strStatus;
+    switch (column) {
+        case COLUMN_PROJECT:
+            strBuffer = project->m_strProjectName;
             break;
-        }
-    } catch (std::out_of_range) {
-        // Just ignore this exception.
+        case COLUMN_ACCOUNTNAME:
+            strBuffer = project->m_strAccountName;
+            break;
+        case COLUMN_TEAMNAME:
+            strBuffer = project->m_strTeamName;
+            break;
+        case COLUMN_TOTALCREDIT:
+            strBuffer = project->m_strTotalCredit;
+            break;
+        case COLUMN_AVGCREDIT:
+            strBuffer = project->m_strAVGCredit;
+            break;
+        case COLUMN_RESOURCESHARE:
+            strBuffer = project->m_strResourceShare;
+            break;
+        case COLUMN_STATUS:
+            strBuffer = project->m_strStatus;
+        break;
     }
     return strBuffer;
 }
@@ -667,7 +664,9 @@ void CViewProjects::UpdateSelection() {
 bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
     wxString    strDocumentText  = wxEmptyString;
     float       fDocumentFloat = 0.0;
+    float       fDocumentPercent = 0.0;
     CProject*   project = m_ProjectCache.at(m_iSortedIndexes[iRowIndex]);
+    bool        dirty = false;
 
     strDocumentText.Empty();
 
@@ -713,7 +712,15 @@ bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex
             GetDocResourceShare(m_iSortedIndexes[iRowIndex], fDocumentFloat);
             if (fDocumentFloat != project->m_fResourceShare) {
                 project->m_fResourceShare = fDocumentFloat;
-                FormatResourceShare(fDocumentFloat, project->m_strResourceShare);
+                dirty = true;
+            }
+            GetDocResourcePercent(m_iSortedIndexes[iRowIndex], fDocumentPercent);
+            if (fDocumentPercent != project->m_fResourcePercent) {
+                project->m_fResourcePercent = fDocumentPercent;
+                dirty = true;
+            }
+            if (dirty) {
+                FormatResourceShare(fDocumentFloat, fDocumentPercent, project->m_strResourceShare);
                 return true;
             }
             break;
@@ -822,15 +829,25 @@ void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
     }
 }
 
-wxInt32 CViewProjects::FormatResourceShare(float fBuffer, wxString& strBuffer) const {
+void CViewProjects::GetDocResourcePercent(wxInt32 item, float& fBuffer) const {
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    PROJECT* project = wxGetApp().GetDocument()->project(item);
+
+    if (project && pDoc) {
+        fBuffer = (project->resource_share / pDoc->m_fProjectTotalResourceShare) * 100;
+    } else {
+        fBuffer = 0.0;
+    }
+}
+
+wxInt32 CViewProjects::FormatResourceShare(float fBuffer, float fBufferPercent, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
     if (pDoc) {
-        strBuffer.Printf(wxT("%0.0f (%0.2f%%)"), fBuffer,
-                            ((fBuffer / pDoc->m_fProjectTotalResourceShare) * 100));
+        strBuffer.Printf(wxT("%0.0f (%0.2f%%)"), fBuffer, fBufferPercent);
     }
 
     return 0;
@@ -876,14 +893,10 @@ wxInt32 CViewProjects::FormatStatus(wxInt32 item, wxString& strBuffer) const {
 }
 
 double CViewProjects::GetProgressValue(long item) {
-    CMainDocument* pDoc = wxGetApp().GetDocument();
     CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
 
-    wxASSERT(pDoc);
-    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
-
-    if (project && pDoc) {
-        return (project->m_fResourceShare / pDoc->m_fProjectTotalResourceShare);
+    if (project) {
+        return project->m_fResourcePercent / 100.0;
     }
 
     return 0.0;

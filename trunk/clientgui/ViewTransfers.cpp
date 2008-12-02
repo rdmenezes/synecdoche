@@ -278,34 +278,30 @@ wxInt32 CViewTransfers::GetDocCount() {
 wxString CViewTransfers::OnListGetItemText(long item, long column) const {
     wxString   strBuffer  = wxEmptyString;
 
-    try {
-        CTransfer* transfer = m_TransferCache.at(m_iSortedIndexes[item]);
-        
-        switch(column) {
-            case COLUMN_PROJECT:
-                strBuffer = transfer->m_strProjectName;
-                break;
-            case COLUMN_FILE:
-                strBuffer = transfer->m_strFileName;
-                break;
-            case COLUMN_PROGRESS:
-                strBuffer = transfer->m_strProgress;
-                break;
-            case COLUMN_SIZE:
-                strBuffer = transfer->m_strSize;
-                break;
-            case COLUMN_TIME:
-                strBuffer = transfer->m_strTime;
-                break;
-            case COLUMN_SPEED:
-                strBuffer = transfer->m_strSpeed;
-                break;
-            case COLUMN_STATUS:
-                strBuffer = transfer->m_strStatus;
-                break;
-        }
-    } catch (std::out_of_range) {
-        // Just ignore this exception.
+    CTransfer* transfer = m_TransferCache.at(m_iSortedIndexes[item]);
+    
+    switch (column) {
+        case COLUMN_PROJECT:
+            strBuffer = transfer->m_strProjectName;
+            break;
+        case COLUMN_FILE:
+            strBuffer = transfer->m_strFileName;
+            break;
+        case COLUMN_PROGRESS:
+            strBuffer = transfer->m_strProgress;
+            break;
+        case COLUMN_SIZE:
+            strBuffer = transfer->m_strSize;
+            break;
+        case COLUMN_TIME:
+            strBuffer = transfer->m_strTime;
+            break;
+        case COLUMN_SPEED:
+            strBuffer = transfer->m_strSpeed;
+            break;
+        case COLUMN_STATUS:
+            strBuffer = transfer->m_strStatus;
+            break;
     }
     return strBuffer;
 }
