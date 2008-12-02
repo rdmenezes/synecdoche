@@ -104,9 +104,6 @@ private:
     wxTextCtrl* m_pProxyHTTPUsernameCtrl;
     wxStaticText* m_pProxyHTTPPasswordStaticCtrl;
     wxTextCtrl* m_pProxyHTTPPasswordCtrl;
-#if 0
-    wxButton* m_pProxyHTTPAutodetectCtrl;
-#endif
     wxStaticBox* m_pProxySOCKSDescriptionCtrl; 
     wxStaticText* m_pProxySOCKSServerStaticCtrl;
     wxTextCtrl* m_pProxySOCKSServerCtrl;
