@@ -32,7 +32,6 @@
 #include "ProjectInfoPage.h"
 #include "ProjectPropertiesPage.h"
 #include "AccountInfoPage.h"
-#include "AccountKeyPage.h"
 #include "ProjectProcessingPage.h"
 #include "CompletionPage.h"
 #include "CompletionErrorPage.h"
@@ -75,7 +74,6 @@ bool CWizardAttachProject::Create(wxWindow* parent, wxWindowID id, const wxPoint
     m_WelcomePage = NULL;
     m_ProjectInfoPage = NULL;
     m_ProjectPropertiesPage = NULL;
-    m_AccountKeyPage = NULL;
     m_AccountInfoPage = NULL;
     m_ProjectProcessingPage = NULL;
     m_CompletionPage = NULL;
@@ -137,10 +135,6 @@ void CWizardAttachProject::CreateControls() {
     m_ProjectPropertiesPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ProjectPropertiesPage);
 
-    m_AccountKeyPage = new CAccountKeyPage;
-    m_AccountKeyPage->Create(itemWizard1);
-    GetPageAreaSizer()->Add(m_AccountKeyPage);
-
     m_AccountInfoPage = new CAccountInfoPage;
     m_AccountInfoPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_AccountInfoPage);
@@ -193,7 +187,6 @@ void CWizardAttachProject::CreateControls() {
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_WelcomePage = id: '%d', location: '%p'"), m_WelcomePage->GetId(), m_WelcomePage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ProjectInfoPage = id: '%d', location: '%p'"), m_ProjectInfoPage->GetId(), m_ProjectInfoPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ProjectPropertiesPage = id: '%d', location: '%p'"), m_ProjectPropertiesPage->GetId(), m_ProjectPropertiesPage);
-    wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_AccountKeyPage = id: '%d', location: '%p'"), m_AccountKeyPage->GetId(), m_AccountKeyPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_AccountInfoPage = id: '%d', location: '%p'"), m_AccountInfoPage->GetId(), m_AccountInfoPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ProjectProcessingPage = id: '%d', location: '%p'"), m_ProjectProcessingPage->GetId(), m_ProjectProcessingPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_CompletionPage = id: '%d', location: '%p'"), m_CompletionPage->GetId(), m_CompletionPage);
@@ -231,7 +224,7 @@ bool CWizardAttachProject::Run(wxString& WXUNUSED(strName), wxString& strURL, bo
         if (detect_setup_authenticator(url, authenticator)) {
             m_bCredentialsDetected = true;
             SetCloseWhenCompleted(true);
-            m_AccountKeyPage->SetAccountKey(wxString(authenticator.c_str(), wxConvUTF8));
+            SetProjectAuthenticator(wxString(authenticator.c_str(), wxConvUTF8));
         }
     }
 
@@ -259,13 +252,6 @@ bool CWizardAttachProject::ShowToolTips() {
 /// \return a pointer to the current account info page.
 CAccountInfoPage* CWizardAttachProject::GetAccountInfoPage() const {
     return m_AccountInfoPage;
-}
-
-/// Return a pointer to the current account key page.
-///
-/// \return a pointer to the current account key page.
-CAccountKeyPage* CWizardAttachProject::GetAccountKeyPage() const {
-    return m_AccountKeyPage;
 }
 
 /// Return a pointer to the current completion error page.
@@ -383,9 +369,6 @@ wxWizardPage* CWizardAttachProject::_PushPageTransition(wxWizardPage* pCurrentPa
             case ID_ACCOUNTINFOPAGE:
                 pPage = m_AccountInfoPage;
                 break;
-            case ID_ACCOUNTKEYPAGE:
-                pPage = m_AccountKeyPage;
-                break;
             case ID_PROJECTPROCESSINGPAGE:
                 pPage = m_ProjectProcessingPage;
                 break;
@@ -447,8 +430,6 @@ void CWizardAttachProject::_ProcessCancelEvent(wxWizardEvent& event) {
     if (wxYES == iRetVal) {
         if (page == m_ProjectInfoPage) {
             m_ProjectInfoPage->DisableValidators();
-        } else if (page == m_AccountKeyPage) {
-            m_AccountKeyPage->DisableValidators();
         } else if (page == m_AccountInfoPage) {
             m_AccountInfoPage->DisableValidators();
         } else if (page == m_ErrProxyPage) {

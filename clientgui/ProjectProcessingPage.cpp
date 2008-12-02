@@ -28,7 +28,6 @@
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
 #include "ProjectInfoPage.h"
-#include "AccountKeyPage.h"
 #include "AccountInfoPage.h"
 #include "CompletionErrorPage.h"
 
@@ -306,10 +305,10 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
 
             ai->url = (const char*)pWAP->GetProjectInfoPage()->GetProjectURL().mb_str();
 
-            if (!pWAP->GetAccountKeyPage()->GetAccountKey().IsEmpty() || 
+            if (!pWAP->GetProjectAuthenticator().IsEmpty() || 
                     pWAP->GetCredentialsCached() || pWAP->GetCretentialsDetected()) {
                 if (!pWAP->GetCredentialsCached() || pWAP->GetCretentialsDetected()) {
-                    ao->authenticator = (const char*)pWAP->GetAccountKeyPage()->GetAccountKey().mb_str();
+                    ao->authenticator = (const char*)pWAP->GetProjectAuthenticator().mb_str();
                 }
                 SetProjectCommunitcationsSucceeded(true);
             } else {
