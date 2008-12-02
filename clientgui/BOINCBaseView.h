@@ -51,9 +51,16 @@ public:
 
     ~CBOINCBaseView();
 
+    /// Return the name of the view.
     virtual wxString&       GetViewName();
+
+    /// Return the user friendly name of the view.
     virtual wxString&       GetViewDisplayName();
+
+    /// Return the user friendly icon of the view.
     virtual const char**    GetViewIcon();
+
+    /// The rate at which the view is refreshed.
     virtual const int       GetViewRefreshRate();
 
     bool                    FireOnSaveState( wxConfigBase* pConfig );
@@ -122,8 +129,12 @@ protected:
     virtual bool            EnsureLastItemVisible();
 
     static  void            AppendToStatus(wxString& existing, const wxChar* additional);
-    static  wxString        HtmlEntityEncode(wxString strRaw);
-    static  wxString        HtmlEntityDecode(wxString strRaw);
+
+    /// HTML Entity Encoding.
+    static  wxString        HtmlEntityEncode(const wxString& strRaw);
+
+    /// HTML Entity Decoding.
+    static  wxString        HtmlEntityDecode(const wxString& strRaw);
 
     bool                    m_bProcessingTaskRenderEvent;
     bool                    m_bProcessingListRenderEvent;

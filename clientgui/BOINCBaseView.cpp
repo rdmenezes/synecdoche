@@ -24,15 +24,11 @@
 #include "BOINCListCtrl.h"
 #include "Events.h"
 
-
 IMPLEMENT_DYNAMIC_CLASS(CBOINCBaseView, wxPanel)
-
 
 CBOINCBaseView::CBOINCBaseView() {}
 
-CBOINCBaseView::CBOINCBaseView(wxNotebook* pNotebook) :
-    wxPanel(pNotebook, -1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-{
+CBOINCBaseView::CBOINCBaseView(wxNotebook* pNotebook) : wxPanel(pNotebook, -1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL) {
     wxASSERT(pNotebook);
 
     m_bProcessingTaskRenderEvent = false;
@@ -52,49 +48,47 @@ CBOINCBaseView::CBOINCBaseView(wxNotebook* pNotebook) :
     SetAutoLayout(true);
 }
 
-
 CBOINCBaseView::~CBOINCBaseView() {
 }
 
-
-// The name of the view.
-//   If it has not been defined by the view "Undefined" is returned.
-//
+/// Return the name of the view.
+/// If it has not been defined by the view "Undefined" is returned.
+///
+/// \return A reference to a variable containing the view name.
 wxString& CBOINCBaseView::GetViewName() {
     static wxString strViewName(wxT("Undefined"));
     return strViewName;
 }
 
-
-// The user friendly name of the view.
-//   If it has not been defined by the view "Undefined" is returned.
-//
+/// Return the user friendly name of the view.
+/// If it has not been defined by the view "Undefined" is returned.
+///
+/// \return A reference to a variable containing the user friendly name of
+///         the view.
 wxString& CBOINCBaseView::GetViewDisplayName() {
     static wxString strViewName(wxT("Undefined"));
     return strViewName;
 }
 
-
-// The user friendly icon of the view.
-//
+/// Return the user friendly icon of the view.
+///
+/// \return Always returns a null-pointer.
 const char** CBOINCBaseView::GetViewIcon() {
     return 0;
 }
 
-
-// The rate at which the view is refreshed.
-//   If it has not been defined by the view 1 second is retrned.
-//
+/// The rate at which the view is refreshed.
+/// If it has not been defined by the view 1 second is retrned.
+///
+/// \return Always returns one.
 const int CBOINCBaseView::GetViewRefreshRate() {
     return 1;
 }
-
 
 bool CBOINCBaseView::FireOnSaveState(wxConfigBase* pConfig) {
     if (m_bViewLoaded) return OnSaveState(pConfig);
     return true;
 }
-
 
 bool CBOINCBaseView::FireOnRestoreState(wxConfigBase* pConfig) {
     if (m_bViewLoaded) return OnRestoreState(pConfig);
@@ -102,37 +96,30 @@ bool CBOINCBaseView::FireOnRestoreState(wxConfigBase* pConfig) {
     return true;
 }
 
-
 int CBOINCBaseView::GetListRowCount() {
     wxASSERT(m_pListPane);
     return m_pListPane->GetItemCount();
 }
 
-
 void CBOINCBaseView::FireOnListRender(wxTimerEvent& event) {
     if (m_bViewLoaded) OnListRender(event);
 }
-
 
 void CBOINCBaseView::FireOnListSelected(wxListEvent& event) {
     OnListSelected(event);
 }
 
-
 wxString CBOINCBaseView::FireOnListGetItemText(long item, long column) const {
     return OnListGetItemText(item, column);
 }
-
 
 int CBOINCBaseView::FireOnListGetItemImage(long item) const {
     return OnListGetItemImage(item);
 }
 
-
 wxListItemAttr* CBOINCBaseView::FireOnListGetItemAttr(long item) const {
     return OnListGetItemAttr(item);
 }
-
 
 void CBOINCBaseView::FireOnShowView() {
     if (!m_bViewLoaded) {
@@ -142,7 +129,6 @@ void CBOINCBaseView::FireOnShowView() {
         m_bViewLoaded = true;
     }
 }
-
 
 void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
     if (!m_bProcessingListRenderEvent) {
@@ -214,7 +200,6 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
     event.Skip();
 }
 
-
 bool CBOINCBaseView::OnSaveState(wxConfigBase* pConfig) {
     wxASSERT(pConfig);
     wxASSERT(m_pListPane);
@@ -222,14 +207,12 @@ bool CBOINCBaseView::OnSaveState(wxConfigBase* pConfig) {
     return m_pListPane->OnSaveState(pConfig);
 }
 
-
 bool CBOINCBaseView::OnRestoreState(wxConfigBase* pConfig) {
     wxASSERT(pConfig);
     wxASSERT(m_pListPane);
 
     return m_pListPane->OnRestoreState(pConfig);
 }
-
 
 void CBOINCBaseView::OnListSelected(wxListEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnListSelected - Function Begin"));
@@ -242,7 +225,6 @@ void CBOINCBaseView::OnListSelected(wxListEvent& event) {
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnListSelected - Function End"));
 }
-
 
 // Work around a bug (feature?) in virtual list control 
 //   which does not send deselection events
@@ -259,21 +241,17 @@ void CBOINCBaseView::OnCacheHint(wxListEvent& event) {
     event.Skip();
 }
 
-
 wxString CBOINCBaseView::OnListGetItemText(long WXUNUSED(item), long WXUNUSED(column)) const {
     return wxString(wxT("Undefined"));
 }
-
 
 int CBOINCBaseView::OnListGetItemImage(long WXUNUSED(item)) const {
     return -1;
 }
 
-
 wxListItemAttr* CBOINCBaseView::OnListGetItemAttr(long WXUNUSED(item)) const {
     return NULL;
 }
-
 
 void CBOINCBaseView::OnGridSelectCell( wxGridEvent& event ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnGridSelectCell - Function Begin"));
@@ -299,41 +277,33 @@ void CBOINCBaseView::OnGridSelectRange( wxGridRangeSelectEvent& event ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnGridSelectRange - Function End"));
 }
 
-
 int CBOINCBaseView::GetDocCount() {
     return 0;
 }
-
 
 wxString CBOINCBaseView::OnDocGetItemImage(long WXUNUSED(item)) const {
     return wxString(wxT("Undefined"));
 }
 
-
 wxString CBOINCBaseView::OnDocGetItemAttr(long WXUNUSED(item)) const {
     return wxString(wxT("Undefined"));
 }
 
-
 int CBOINCBaseView::AddCacheElement() {
     return -1;
 }
-
     
 int CBOINCBaseView::EmptyCache() {
     return -1;
 }
 
-
 int CBOINCBaseView::GetCacheCount() {
     return -1;
 }
 
-
 int CBOINCBaseView::RemoveCacheElement() {
     return -1;
 }
-
 
 int CBOINCBaseView::SynchronizeCache() {
     int         iRowIndex        = 0;
@@ -369,11 +339,9 @@ int CBOINCBaseView::SynchronizeCache() {
     return 0;
 }
 
-
 bool CBOINCBaseView::SynchronizeCacheItem(wxInt32 WXUNUSED(iRowIndex), wxInt32 WXUNUSED(iColumnIndex)) {
     return false;
 }
-
 
 void CBOINCBaseView::OnColClick(wxListEvent& event) {
     wxListItem      item;
@@ -397,7 +365,6 @@ void CBOINCBaseView::OnColClick(wxListEvent& event) {
     sortData();
 }
 
-
 void CBOINCBaseView::InitSort() {
     wxListItem      item;
 
@@ -407,7 +374,6 @@ void CBOINCBaseView::InitSort() {
     m_pListPane->SetColumn(m_iSortColumn, item);
     sortData();
 }
-
 
 void CBOINCBaseView::sortData() {
     if (m_iSortColumn < 0) return;
@@ -446,34 +412,27 @@ void CBOINCBaseView::sortData() {
     }
 }
 
-
 void CBOINCBaseView::PreUpdateSelection(){
 }
 
-
 void CBOINCBaseView::UpdateSelection(){
 }
-
 
 void CBOINCBaseView::PostUpdateSelection() {
     Layout();
 }
 
-
 bool CBOINCBaseView::_EnsureLastItemVisible() {
     return EnsureLastItemVisible();
 }
-
 
 bool CBOINCBaseView::EnsureLastItemVisible() {
     return false;
 }
 
-
 double CBOINCBaseView::GetProgressValue(long) {
     return 0.0;
 }
-
 
 void CBOINCBaseView::AppendToStatus(wxString& existing, const wxChar* additional) {
     if (existing.IsEmpty()) {
@@ -483,12 +442,13 @@ void CBOINCBaseView::AppendToStatus(wxString& existing, const wxChar* additional
     }
 }
 
-
-// HTML Entity Conversion:
-// http://www.webreference.com/html/reference/character/
-// Completed: The ISO Latin 1 Character Set
-//
-wxString CBOINCBaseView::HtmlEntityEncode(wxString strRaw) {
+/// HTML Entity Encoding.
+/// See http://www.webreference.com/html/reference/character/
+/// Completed: The ISO Latin 1 Character Set
+///
+/// \param[in] strRaw The string that should be encoded.
+/// \return The encoded version of \a strRaw
+wxString CBOINCBaseView::HtmlEntityEncode(const wxString& strRaw) {
     wxString strEncodedHtml(strRaw);
 
 #ifdef __WXMSW__
@@ -611,11 +571,16 @@ wxString CBOINCBaseView::HtmlEntityEncode(wxString strRaw) {
     strEncodedHtml.Replace(wxT("þ"),  wxT("&thorn;"),  true);
     strEncodedHtml.Replace(wxT("ÿ"),  wxT("&yuml;"),   true);
 #endif
-
     return strEncodedHtml;
 }
 
-wxString CBOINCBaseView::HtmlEntityDecode(wxString strRaw) {
+/// HTML Entity Decoding.
+/// See http://www.webreference.com/html/reference/character/
+/// Completed: The ISO Latin 1 Character Set
+///
+/// \param[in] strRaw The string that should be decoded.
+/// \return The decoded version of \a strRaw
+wxString CBOINCBaseView::HtmlEntityDecode(const wxString& strRaw) {
     wxString strDecodedHtml(strRaw);
 
     if (0 <= strDecodedHtml.Find(wxT("&"))) {
@@ -740,6 +705,5 @@ wxString CBOINCBaseView::HtmlEntityDecode(wxString strRaw) {
         strDecodedHtml.Replace(wxT("&yuml;"),   wxT("ÿ"),  true);
 #endif
     }
-
     return strDecodedHtml;
 }
