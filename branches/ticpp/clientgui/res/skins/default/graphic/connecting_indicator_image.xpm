@@ -1,0 +1,55 @@
+/* XPM */
+// This file is part of Synecdoche.
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2005 University of California
+//
+// Synecdoche is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Synecdoche is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef CONNECTING_INDICATOR_IMAGE_XPM
+#define CONNECTING_INDICATOR_IMAGE_XPM
+static const char *connecting_indicator_image_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"14 15 14 1",
+"  c Black",
+"# c #6080A0",
+"& c #90C0F0",
+"* c #131A20",
+"- c #739AC0",
+"o c #99CCFF",
+"@ c #0A0D10",
+"= c #3A4D60",
+"X c #6A8DB0",
+". c #263340",
+"% c #567390",
+"O c #86B3E0",
+"+ c #4D6680",
+"$ c #7DA6D0",
+/* pixels */
+"   .XooooO+@  ",
+"  #oooooooo$@ ",
+" %oooooooooo$@",
+".oooooooooooo+",
+"#ooooooooooooO",
+"&ooooooooooooo",
+"oooooooooooooo",
+"oooooooooooooo",
+"oooooooooooooo",
+"Oooooooooooooo",
+"#ooooooooooooO",
+"*oooooooooooo=",
+" +oooooooooo$ ",
+"  %oooooooo-@ ",
+"   .#&oooX=   "
+};
+#endif
