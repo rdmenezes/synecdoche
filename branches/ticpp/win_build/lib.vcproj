@@ -710,10 +710,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\lib\ticpp\tinystr.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\lib\ticpp\tinyxml.cpp"
 					>
 				</File>
@@ -845,10 +841,6 @@
 				</File>
 				<File
 					RelativePath="..\lib\ticpp\ticpprc.h"
-					>
-				</File>
-				<File
-					RelativePath="..\lib\ticpp\tinystr.h"
 					>
 				</File>
 				<File
