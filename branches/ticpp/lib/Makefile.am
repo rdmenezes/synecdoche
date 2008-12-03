@@ -40,6 +40,10 @@ mac_sources =
 endif
 
 libboinc_a_SOURCES = \
+    ticpp/ticpp.cpp \
+	ticpp/tinyxml.cpp \
+	ticpp/tinyxmlerror.cpp \
+	ticpp/tinyxmlparser.cpp \
     app_ipc.C \
     base64.C \
     crypt.C \
@@ -67,6 +71,9 @@ libboinc_a_SOURCES = \
 	$(mac_sources)
 
 pkginclude_HEADERS = \
+    ticpp/ticpp.h \
+	ticpp/ticpprc.h \
+	ticpp/tinyxml.h \
     app_ipc.h \
     boinc_win.h \
 	common_defs.h \
