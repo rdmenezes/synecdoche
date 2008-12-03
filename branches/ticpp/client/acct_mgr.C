@@ -23,7 +23,9 @@
 #endif
 
 #include <cstring>
-#include "parse.h"
+
+#include "acct_mgr.h"
+
 #include "error_numbers.h"
 #include "client_msgs.h"
 #include "str_util.h"
@@ -32,18 +34,41 @@
 #include "client_state.h"
 #include "gui_http.h"
 #include "crypt.h"
-
-#include "acct_mgr.h"
+#include "ticpp/ticpp.h"
 
 static const char *run_mode_name[] = {"", "always", "auto", "never"};
 
+/// Read the value for an instance of OPTINAL_BOOL from a stream.
+/// This will be used for xml-parsing.
+///
+/// \param[in] in Reference to the stream object.
+/// \param[in] out Reference to the OPTIONAL_BOOL instance which is the target.
+/// \return The parameter \a in.
+std::istream& operator >> (std::istream& in, OPTIONAL_BOOL& out) {
+    bool tmp;
+    in >> tmp;
+    out.set(tmp);
+    return in;
+}
+
+/// Read the value for an instance of OPTIONAL_DOUBLE from a stream.
+/// This will be used for xml-parsing.
+///
+/// \param[in] in Reference to the stream object.
+/// \param[in] out Reference to the OPTIONAL_DOUBLE instance which is the target.
+/// \return The parameter \a in.
+std::istream& operator >> (std::istream& in, OPTIONAL_DOUBLE& out) {
+    double tmp;
+    in >> tmp;
+    out.set(tmp);
+    return in;
+}
+
 ACCT_MGR_OP::ACCT_MGR_OP() {
-    global_prefs_xml = 0;
 }
 
 /// do an account manager RPC;
 /// if URL is null, detach from current account manager
-///
 int ACCT_MGR_OP::do_rpc(
     const std::string& _url, const std::string& name,
     const std::string& password_hash, bool _via_gui
@@ -55,14 +80,9 @@ int ACCT_MGR_OP::do_rpc(
 
     error_num = ERR_IN_PROGRESS;
     via_gui = _via_gui;
-    if (global_prefs_xml) {
-        free(global_prefs_xml);
-        global_prefs_xml = 0;
-    }
 
     // if null URL, detach from current AMS
-    //
-    if ((url.empty()) && (strlen(gstate.acct_mgr_info.acct_mgr_url))) {
+    if ((url.empty()) && (!gstate.acct_mgr_info.acct_mgr_url.empty())) {
         msg_printf(NULL, MSG_INFO, "Removing account manager info");
         gstate.acct_mgr_info.clear();
         boinc_delete_file(ACCT_MGR_URL_FILENAME);
@@ -82,10 +102,10 @@ int ACCT_MGR_OP::do_rpc(
         return 0;
     }
 
-    strlcpy(ami.acct_mgr_url, url.c_str(), sizeof(ami.acct_mgr_url));
-    strlcpy(ami.acct_mgr_name, "", sizeof(ami.acct_mgr_name));
-    strlcpy(ami.login_name, name.c_str(), sizeof(ami.login_name));
-    strlcpy(ami.password_hash, password_hash.c_str(), sizeof(ami.password_hash));
+    ami.acct_mgr_url = url;
+    ami.acct_mgr_name.clear();
+    ami.login_name = name;
+    ami.password_hash = password_hash;
 
     FILE* f = boinc_fopen(ACCT_MGR_REQUEST_FILENAME, "w");
     if (!f) return ERR_FOPEN;
@@ -105,10 +125,10 @@ int ACCT_MGR_OP::do_rpc(
         gstate.boinc_compat_version.release,
         run_mode_name[gstate.run_mode.get_perm()]
     );
-    if (strlen(gstate.acct_mgr_info.previous_host_cpid)) {
+    if (!gstate.acct_mgr_info.previous_host_cpid.empty()) {
         fprintf(f,
             "   <previous_host_cpid>%s</previous_host_cpid>\n",
-            gstate.acct_mgr_info.previous_host_cpid
+            gstate.acct_mgr_info.previous_host_cpid.c_str()
         );
     }
 
@@ -162,12 +182,8 @@ int ACCT_MGR_OP::do_rpc(
             fclose(fprefs);
         }
     }
-    if (strlen(gstate.acct_mgr_info.opaque)) {
-        fprintf(f,
-            "   <opaque>\n%s\n"
-            "   </opaque>\n",
-            gstate.acct_mgr_info.opaque
-        );
+    if (!gstate.acct_mgr_info.opaque.empty()) {
+        fprintf(f, "   <opaque>\n%s\n   </opaque>\n", gstate.acct_mgr_info.opaque);
     }
     fprintf(f, "</acct_mgr_request>\n");
     fclose(f);
@@ -184,155 +200,80 @@ int ACCT_MGR_OP::do_rpc(
     return 0;
 }
 
-int AM_ACCOUNT::parse(XML_PARSER& xp) {
-    char tag[256];
-    bool is_tag, btemp;
-    int retval;
-    double dtemp;
-
+void AM_ACCOUNT::parse(const ticpp::Element* am_account) {
     detach = false;
     update = false;
     dont_request_more_work.init();
     detach_when_done.init();
-    url = "";
-    strcpy(url_signature, "");
-    authenticator = "";
+    url.clear();
+    url_signature.clear();
+    authenticator.clear();
     resource_share.init();
 
-    while (!xp.get(tag, sizeof(tag), is_tag)) {
-        if (!is_tag) {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] AM_ACCOUNT::parse: unexpected text %s",
-                    tag
-                );
+    // URL field is mandatory, therfore parse it directly. This will throw
+    // an exception if the requested element is not present.
+    am_account->FirstChildElement("url")->GetText(&url);
+
+    std::string child_name;
+    for (ticpp::Element* child = am_account->FirstChildElement(false); child; child = child->NextSiblingElement(false)) {
+        child->GetValue(&child_name);
+
+        if      (child_name == "authenticator")          child->GetText(&authenticator);
+        else if (child_name == "detach")              child->GetText(&detach);
+        else if (child_name == "update")         child->GetText(&update);
+        else if (child_name == "dont_request_more_work")         child->GetText(&dont_request_more_work);
+        else if (child_name == "detach_when_done")         child->GetText(&detach_when_done);
+        else if (child_name == "url_signature") {
+            child->GetText(&url_signature);
+            url_signature += '\n';
+        } else if (child_name == "resource_share") {
+            child->GetText(&resource_share);
+            if (resource_share.value <= 0.0) {
+                msg_printf(NULL, MSG_INFO, "Resource share out of range: %f", resource_share.value);
+                resource_share.init();
             }
-            continue;
+        } else if (log_flags.unparsed_xml) {
+            msg_printf(NULL, MSG_INFO, "[unparsed_xml] AM_ACCOUNT: unrecognized %s", child_name.c_str());
         }
-        if (!strcmp(tag, "/account")) {
-            if (url.length()) return 0;
-            return ERR_XML_PARSE;
-        }
-        if (xp.parse_string(tag, "url", url)) continue;
-        if (!strcmp(tag, "url_signature")) {
-            retval = xp.element_contents("</url_signature>", url_signature, sizeof(url_signature));
-            if (retval) return retval;
-            strcat(url_signature, "\n");
-            continue;
-        }
-        if (xp.parse_string(tag, "authenticator", authenticator)) continue;
-        if (xp.parse_bool(tag, "detach", detach)) continue;
-        if (xp.parse_bool(tag, "update", update)) continue;
-        if (xp.parse_bool(tag, "dont_request_more_work", btemp)) {
-            dont_request_more_work.set(btemp);
-            continue;
-        }
-        if (xp.parse_bool(tag, "detach_when_done", btemp)) {
-            detach_when_done.set(btemp);
-            continue;
-        }
-        if (xp.parse_double(tag, "resource_share", dtemp)) {
-            if (dtemp > 0) {
-                resource_share.set(dtemp);
-            } else {
-                msg_printf(NULL, MSG_INFO,
-                    "Resource share out of range: %f", dtemp
-                );
-            }
-            continue;
-        }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] AM_ACCOUNT: unrecognized %s", tag
-            );
-        }
-        xp.skip_unexpected(tag, log_flags.unparsed_xml, "AM_ACCOUNT::parse");
     }
-    return ERR_XML_PARSE;
 }
 
-int ACCT_MGR_OP::parse(FILE* f) {
-    char tag[1024];
-    bool is_tag;
-    std::string message;
-    int retval;
-    MIOFILE mf;
-    mf.init_file(f);
-    XML_PARSER xp(&mf);
-
+void ACCT_MGR_OP::parse(const ticpp::Element* acct_mgr_reply) {
     accounts.clear();
-    error_str = "";
+    error_str.clear();
     error_num = 0;
     repeat_sec = 0;
-    strcpy(host_venue, "");
-    strcpy(ami.opaque, "");
-    if (!xp.parse_start("acct_mgr_reply")) return ERR_XML_PARSE;
-    while (!xp.get(tag, sizeof(tag), is_tag)) {
-        if (!is_tag) {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] ACCT_MGR_OP::parse: unexpected text %s",
-                    tag
-                );
-            }
-            continue;
-        }
-        if (!strcmp(tag, "/acct_mgr_reply")) return 0;
-        if (xp.parse_str(tag, "name", ami.acct_mgr_name, 256)) continue;
-        if (xp.parse_int(tag, "error_num", error_num)) continue;
-        if (xp.parse_string(tag, "error", error_str)) continue;
-        if (xp.parse_double(tag, "repeat_sec", repeat_sec)) continue;
-        if (xp.parse_string(tag, "message", message)) {
+    host_venue.clear();
+    ami.opaque.clear();
+
+    std::string child_name;
+    for (ticpp::Element* child = acct_mgr_reply->FirstChildElement(false); child; child = child->NextSiblingElement(false)) {
+        child->GetValue(&child_name);
+
+        if      (child_name == "error_num")          child->GetText(&error_num);
+        else if (child_name == "error")              child->GetText(&error_str);
+        else if (child_name == "repeat_sec")         child->GetText(&repeat_sec);
+        else if (child_name == "host_venue")         child->GetText(&host_venue);
+        else if (child_name == "name")               child->GetText(&ami.acct_mgr_name);
+        else if (child_name == "opaque")             child->GetText(&ami.opaque);
+        else if (child_name == "signing_key")        child->GetText(&ami.signing_key);
+        else if (child_name == "global_preferences") child->GetText(&global_prefs_xml);
+        else if (child_name == "message") {
+            std::string message;
+            child->GetText(&message);
             msg_printf(NULL, MSG_INFO, "Account manager: %s", message.c_str());
-            continue;
-        }
-        if (!strcmp(tag, "opaque")) {
-            retval = xp.element_contents("</opaque>", ami.opaque, sizeof(ami.opaque));
-            if (retval) return retval;
-            continue;
-        }
-        if (!strcmp(tag, "signing_key")) {
-            retval = xp.element_contents("</signing_key>", ami.signing_key, sizeof(ami.signing_key));
-            if (retval) return retval;
-            continue;
-        }
-        if (!strcmp(tag, "account")) {
-            AM_ACCOUNT account;
-            retval = account.parse(xp);
-            if (retval) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "Can't parse account in account manager reply: %s",
-                    boincerror(retval)
-                );
-            } else {
+        } else if (child_name == "account") {
+            try {
+                AM_ACCOUNT account;
+                account.parse(child);
                 accounts.push_back(account);
+            } catch (ticpp::Exception& ex) {
+                msg_printf(NULL, MSG_INTERNAL_ERROR, "Can't parse account in account manager reply: %s", ex.what());
             }
-            continue;
+        } else if (log_flags.unparsed_xml) {
+            msg_printf(NULL, MSG_INFO, "[unparsed_xml] ACCT_MGR_OP::parse: unrecognized %s", child_name.c_str());
         }
-        if (!strcmp(tag, "global_preferences")) {
-            retval = dup_element_contents(
-                f,
-                "</global_preferences>",
-                &global_prefs_xml
-            );
-            if (retval) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "Can't parse global prefs in account manager reply: %s",
-                    boincerror(retval)
-                );
-                return retval;
-            }
-            continue;
-        }
-        if (xp.parse_str(tag, "host_venue", host_venue, sizeof(host_venue))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_OP::parse: unrecognized %s", tag
-            );
-        }
-        xp.skip_unexpected(tag, log_flags.unparsed_xml, "ACCT_MGR_OP::parse");
     }
-    return ERR_XML_PARSE;
 }
 
 void ACCT_MGR_OP::handle_reply(int http_op_retval) {
@@ -343,12 +284,13 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
     bool sig_ok;
 
     if (http_op_retval == 0) {
-        FILE* f = fopen(ACCT_MGR_REPLY_FILENAME, "r");
-        if (f) {
-            retval = parse(f);
-            fclose(f);
-        } else {
-            retval = ERR_FOPEN;
+        try {
+            ticpp::Document doc(ACCT_MGR_REPLY_FILENAME);
+            doc.LoadFile();
+            parse(doc.FirstChildElement("acct_mgr_reply"));
+            retval = 0;
+        } catch (ticpp::Exception&) {
+            retval = ERR_XML_PARSE;
         }
     } else {
         error_num = http_op_retval;
@@ -361,7 +303,6 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
     // check both error_str and error_num since an account manager may only
     // return a BOINC based error code for password failures or invalid
     // email addresses
-    //
     if (!error_str.empty()) {
         msg_printf(NULL, MSG_USER_ERROR,
             "Account manager error: %d %s", error_num, error_str.c_str()
@@ -375,48 +316,40 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
         );
     }
 
-    if (error_num) return;
+    if (error_num) {
+        return;
+    }
 
     msg_printf(NULL, MSG_INFO, "Account manager contact succeeded");
 
     // demand a signing key
-    //
     sig_ok = true;
-    if (!strlen(ami.signing_key)) {
-        msg_printf(NULL, MSG_INTERNAL_ERROR,
-            "No signing key from account manager"
-        );
+    if (ami.signing_key.empty()) {
+        msg_printf(NULL, MSG_INTERNAL_ERROR, "No signing key from account manager");
         sig_ok = false;
     }
 
     // don't accept new signing key if we already have one
-    //
-    if (strlen(gstate.acct_mgr_info.signing_key)
-        && strcmp(gstate.acct_mgr_info.signing_key, ami.signing_key)
-    ) {
-        msg_printf(NULL, MSG_INTERNAL_ERROR,
-            "Inconsistent signing key from account manager"
-        );
+    if ((!gstate.acct_mgr_info.signing_key.empty()) && (gstate.acct_mgr_info.signing_key != ami.signing_key)) {
+        msg_printf(NULL, MSG_INTERNAL_ERROR, "Inconsistent signing key from account manager");
         sig_ok = false;
     }
 
     if (sig_ok) {
-        strcpy(gstate.acct_mgr_info.acct_mgr_url, ami.acct_mgr_url);
-        strcpy(gstate.acct_mgr_info.acct_mgr_name, ami.acct_mgr_name);
-        strcpy(gstate.acct_mgr_info.signing_key, ami.signing_key);
-        strcpy(gstate.acct_mgr_info.login_name, ami.login_name);
-        strcpy(gstate.acct_mgr_info.password_hash, ami.password_hash);
-        strcpy(gstate.acct_mgr_info.opaque, ami.opaque);
+        gstate.acct_mgr_info.acct_mgr_url = ami.acct_mgr_url;
+        gstate.acct_mgr_info.acct_mgr_name = ami.acct_mgr_name;
+        gstate.acct_mgr_info.signing_key = ami.signing_key;
+        gstate.acct_mgr_info.login_name = ami.login_name;
+        gstate.acct_mgr_info.password_hash = ami.password_hash;
+        gstate.acct_mgr_info.opaque = ami.opaque;
 
         // process projects
-        //
-        for (i=0; i<accounts.size(); i++) {
+        for (i = 0; i < accounts.size(); ++i) {
             AM_ACCOUNT& acct = accounts[i];
-            retval = verify_string2(acct.url.c_str(), acct.url_signature, ami.signing_key, verified);
+            retval = verify_string2(acct.url.c_str(), acct.url_signature.c_str(), ami.signing_key.c_str(), verified);
             if (retval || !verified) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "Bad signature for URL %s", acct.url.c_str()
-                );
+                    "Bad signature for URL %s", acct.url.c_str());
                 continue;
             }
             pp = gstate.lookup_project(acct.url.c_str());
@@ -426,7 +359,6 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                 } else {
                     // BAM! leaves authenticator blank if our request message
                     // had the current account info
-                    //
                     if (!acct.authenticator.empty() && strcmp(pp->authenticator, acct.authenticator.c_str())) {
                         msg_printf(pp, MSG_INFO,
                             "Already attached under another account"
@@ -445,7 +377,6 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                         }
 
                         // initiate a scheduler RPC if requested by AMS
-                        //
                         if (acct.update) {
                             pp->sched_rpc_pending = RPC_REASON_ACCT_MGR_REQ;
                             pp->min_rpc_time = 0;
@@ -456,7 +387,6 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                         } else {
                             // no host-specific resource share;
                             // if currently have one, restore to value from web
-                            //
                             if (pp->ams_resource_share >= 0) {
                                 pp->ams_resource_share = -1;
                                 PROJECT p2;
@@ -473,12 +403,8 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                 }
             } else {
                 if (!acct.detach) {
-                    msg_printf(NULL, MSG_INFO,
-                        "Attaching to %s", acct.url.c_str()
-                    );
-                    gstate.add_project(
-                        acct.url.c_str(), acct.authenticator.c_str(), "", true
-                    );
+                    msg_printf(NULL, MSG_INFO, "Attaching to %s", acct.url.c_str());
+                    gstate.add_project(acct.url.c_str(), acct.authenticator.c_str(), "", true);
                     if (acct.dont_request_more_work.present) {
                         pp->dont_request_more_work = acct.dont_request_more_work.value;
                     }
@@ -487,17 +413,14 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
         }
 
         bool read_prefs = false;
-        if (strlen(host_venue) && strcmp(host_venue, gstate.main_host_venue)) {
-            strcpy(gstate.main_host_venue, host_venue);
+        if ((!host_venue.empty()) && (host_venue != gstate.main_host_venue)) {
+            strlcpy(gstate.main_host_venue, host_venue.c_str(), sizeof(gstate.main_host_venue));
             read_prefs = true;
         }
 
         // process prefs if any
-        //
-        if (global_prefs_xml) {
-            retval = gstate.save_global_prefs(
-                global_prefs_xml, ami.acct_mgr_url, ami.acct_mgr_url
-            );
+        if (!global_prefs_xml.empty()) {
+            retval = gstate.save_global_prefs(global_prefs_xml.c_str(), ami.acct_mgr_url.c_str(), ami.acct_mgr_url.c_str());
             if (retval) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR, "Can't save global prefs");
             }
@@ -505,13 +428,12 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
         }
 
         // process prefs if prefs or venue changed
-        //
         if (read_prefs) {
             gstate.read_global_prefs();
         }
     }
 
-    strcpy(gstate.acct_mgr_info.previous_host_cpid, gstate.host_info.host_cpid);
+    gstate.acct_mgr_info.previous_host_cpid = gstate.host_info.host_cpid;
     if (repeat_sec) {
         gstate.acct_mgr_info.next_rpc_time = gstate.now + repeat_sec;
     } else {
@@ -523,31 +445,26 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
 
 int ACCT_MGR_INFO::write_info() {
     FILE* p;
-    if (strlen(acct_mgr_url)) {
+    if (!acct_mgr_url.empty()) {
         p = fopen(ACCT_MGR_URL_FILENAME, "w");
         if (p) {
             fprintf(p,
                 "<acct_mgr>\n"
                 "    <name>%s</name>\n"
                 "    <url>%s</url>\n",
-                acct_mgr_name,
-                acct_mgr_url
+                acct_mgr_name.c_str(),
+                acct_mgr_url.c_str()
             );
             if (send_gui_rpc_info) fprintf(p,"    <send_gui_rpc_info/>\n");
-            if (strlen(signing_key)) {
-                fprintf(p,
-                    "    <signing_key>\n%s\n</signing_key>\n",
-                    signing_key
-                );
+            if (!signing_key.empty()) {
+                fprintf(p, "    <signing_key>\n%s\n</signing_key>\n", signing_key.c_str());
             }
-            fprintf(p,
-                "</acct_mgr>\n"
-            );
+            fprintf(p, "</acct_mgr>\n");
             fclose(p);
         }
     }
 
-    if (strlen(login_name)) {
+    if (!login_name.empty()) {
         p = fopen(ACCT_MGR_LOGIN_FILENAME, "w");
         if (p) {
             fprintf(
@@ -560,11 +477,11 @@ int ACCT_MGR_INFO::write_info() {
                 "    <opaque>\n%s\n"
                 "    </opaque>\n"
                 "</acct_mgr_login>\n",
-                login_name,
-                password_hash,
-                previous_host_cpid,
+                login_name.c_str(),
+                password_hash.c_str(),
+                previous_host_cpid.c_str(),
                 next_rpc_time,
-                opaque
+                opaque.c_str()
             );
             fclose(p);
         }
@@ -573,13 +490,13 @@ int ACCT_MGR_INFO::write_info() {
 }
 
 void ACCT_MGR_INFO::clear() {
-    strcpy(acct_mgr_name, "");
-    strcpy(acct_mgr_url, "");
-    strcpy(login_name, "");
-    strcpy(password_hash, "");
-    strcpy(signing_key, "");
-    strcpy(previous_host_cpid, "");
-    strcpy(opaque, "");
+    acct_mgr_name.clear();
+    acct_mgr_url.clear();
+    login_name.clear();
+    password_hash.clear();
+    signing_key.clear();
+    previous_host_cpid.clear();
+    opaque.clear();
     next_rpc_time = 0;
     send_gui_rpc_info = false;
     password_error = false;
@@ -589,84 +506,48 @@ ACCT_MGR_INFO::ACCT_MGR_INFO() {
     clear();
 }
 
-int ACCT_MGR_INFO::parse_login_file(FILE* p) {
-    char tag[1024];
-    bool is_tag;
-    MIOFILE mf;
-    int retval;
+void ACCT_MGR_INFO::parse_login_file(const ticpp::Element* acct_mgr_login) {
+    std::string child_name;
+    for (ticpp::Element* child = acct_mgr_login->FirstChildElement(false); child; child = child->NextSiblingElement(false)) {
+        child->GetValue(&child_name);
 
-    mf.init_file(p);
-    XML_PARSER xp(&mf);
-    if (!xp.parse_start("acct_mgr_login")) {
-        //
+        if      (child_name == "login")              child->GetText(&login_name);
+        else if (child_name == "password_hash")      child->GetText(&password_hash);
+        else if (child_name == "previous_host_cpid") child->GetText(&previous_host_cpid);
+        else if (child_name == "next_rpc_time")      child->GetText(&next_rpc_time);
+        else if (child_name == "opaque")             child->GetText(&opaque);
+        else if (log_flags.unparsed_xml) {
+            msg_printf(NULL, MSG_INFO, "[unparsed_xml] ACCT_MGR_INFO::parse_login: unrecognized %s", child_name.c_str());
+        }
     }
-    while (!xp.get(tag, sizeof(tag), is_tag)) {
-        if (!is_tag) {
-            printf("unexpected text: %s\n", tag);
-            continue;
-        }
-        if (!strcmp(tag, "/acct_mgr_login")) break;
-        else if (xp.parse_str(tag, "login", login_name, 256)) continue;
-        else if (xp.parse_str(tag, "password_hash", password_hash, 256)) continue;
-        else if (xp.parse_str(tag, "previous_host_cpid", previous_host_cpid, sizeof(previous_host_cpid))) continue;
-        else if (xp.parse_double(tag, "next_rpc_time", next_rpc_time)) continue;
-        else if (!strcmp(tag, "opaque")) {
-            retval = xp.element_contents("</opaque>", opaque, sizeof(opaque));
-            continue;
-        }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_INFO::parse_login: unrecognized %s", tag
-            );
-        }
-        xp.skip_unexpected(
-            tag, log_flags.unparsed_xml, "ACCT_MGR_INFO::parse_login_file"
-        );
-    }
-    return 0;
 }
 
 int ACCT_MGR_INFO::init() {
-    char tag[1024];
-    bool is_tag;
-    MIOFILE mf;
-    FILE*   p;
-    int retval;
-
     clear();
-    p = fopen(ACCT_MGR_URL_FILENAME, "r");
-    if (!p) return 0;
-    mf.init_file(p);
-    XML_PARSER xp(&mf);
-    if (!xp.parse_start("acct_mgr_login")) {
-        //
-    }
-    while (!xp.get(tag, sizeof(tag), is_tag)) {
-        if (!is_tag) {
-            printf("unexpected text: %s\n", tag);
-            continue;
-        }
-        if (!strcmp(tag, "/acct_mgr")) break;
-        else if (xp.parse_str(tag, "name", acct_mgr_name, 256)) continue;
-        else if (xp.parse_str(tag, "url", acct_mgr_url, 256)) continue;
-        else if (xp.parse_bool(tag, "send_gui_rpc_info", send_gui_rpc_info)) continue;
-        else if (!strcmp(tag, "signing_key")) {
-            retval = xp.element_contents("</signing_key>", signing_key, sizeof(signing_key));
-            continue;
-        }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_INFO::init: unrecognized %s", tag
-            );
-        }
-        xp.skip_unexpected(tag, log_flags.unparsed_xml, "ACCT_MGR_INFO::init");
-    }
-    fclose(p);
+    try {
+        ticpp::Document acct_mgr_url(ACCT_MGR_URL_FILENAME);
+        acct_mgr_url.LoadFile();
 
-    p = fopen(ACCT_MGR_LOGIN_FILENAME, "r");
-    if (p) {
-        parse_login_file(p);
-        fclose(p);
+        ticpp::Element* acct_mgr = acct_mgr_url.FirstChildElement("acct_mgr");
+        std::string child_name;
+        for (ticpp::Element* child = acct_mgr->FirstChildElement(false); child; child = child->NextSiblingElement(false)) {
+            child->GetValue(&child_name);
+
+            if      (child_name == "name")              child->GetText(&acct_mgr_name);
+            else if (child_name == "url")               child->GetText(&acct_mgr_url);
+            else if (child_name == "send_gui_rpc_info") child->GetText(&send_gui_rpc_info);
+            else if (child_name == "signing_key")       child->GetText(&signing_key);
+            else if (log_flags.unparsed_xml) {
+                msg_printf(NULL, MSG_INFO, "[unparsed_xml] ACCT_MGR_INFO::init: unrecognized %s", child_name.c_str());
+            }
+        }
+
+        ticpp::Document acct_mgr_login(ACCT_MGR_LOGIN_FILENAME);
+        acct_mgr_login.LoadFile();
+
+        parse_login_file(acct_mgr_login.FirstChildElement("acct_mgr_login"));
+    } catch (ticpp::Exception&) {
+        // Those errors were just ignored...
     }
     return 0;
 }
@@ -674,13 +555,13 @@ int ACCT_MGR_INFO::init() {
 bool ACCT_MGR_INFO::poll() {
     if (gstate.acct_mgr_op.error_num == ERR_IN_PROGRESS) return false;
 
-    if (!strlen(login_name) && !strlen(password_hash)) return false;
+    if ((login_name.empty()) && (password_hash.empty())) {
+        return false;
+    }
 
     if (gstate.now > next_rpc_time) {
         next_rpc_time = gstate.now + 86400;
-        gstate.acct_mgr_op.do_rpc(
-            acct_mgr_url, login_name, password_hash, false
-        );
+        gstate.acct_mgr_op.do_rpc(acct_mgr_url, login_name, password_hash, false);
         return true;
     }
     return false;
