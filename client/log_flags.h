@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -26,26 +27,19 @@
 
 #include <vector>
 #include <string>
+#include "ticpp/ticpp.h"
 
 #ifndef _WIN32
 #include <stdio.h>
 #endif
 
-#define MAX_FILE_XFERS_PER_PROJECT      2
-#define MAX_FILE_XFERS                  8
-    // kind of arbitrary
-
-class XML_PARSER;
-
 struct LOG_FLAGS {
     // on by default, user-readable
-    //
     bool task;              ///< task start and finish
     bool file_xfer;         ///< file transfer start and finish
     bool sched_ops;         ///< interactions with schedulers
 
     // off by default; intended for developers and testers
-    //
     bool cpu_sched;         ///< preemption and resumption
     bool cpu_sched_debug;   ///< explain scheduler decisions
     bool rr_simulation;     ///< results of rr simulator
@@ -76,8 +70,13 @@ struct LOG_FLAGS {
     bool checkpoint_debug;
 
     LOG_FLAGS();
+
+    /// Reset the log flags to their default values.
     void defaults();
-    int parse(XML_PARSER&);
+
+    /// Parse log flag preferences.
+    void parse(const ticpp::Element* options);
+
     void show();
 };
 
@@ -104,9 +103,15 @@ struct CONFIG {
     bool allow_multiple_clients;
 
     CONFIG();
+
+    /// Reset the preferences to their default values.
     void defaults();
-    int parse(FILE*);
-    int parse_options(XML_PARSER&);
+
+    /// Read the config file.
+    int parse(const std::string& cfg_file_name);
+
+    /// Parse preferences.
+    void parse_options(const ticpp::Element* options);
 };
 
 extern LOG_FLAGS log_flags;

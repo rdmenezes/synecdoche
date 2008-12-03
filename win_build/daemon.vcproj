@@ -52,7 +52,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../lib;../api;../client/win;../client;..;../openssl/include;../curl/include;../zlib/include"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_MT;_DLL;_WINDOWS;_CONSOLE;_USE_CURL;USE_SSL;USE_SSLEAY;USE_OPENSSL"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_MT;_DLL;_WINDOWS;_CONSOLE;_USE_CURL;USE_SSL;USE_SSLEAY;USE_OPENSSL;TIXML_USE_TICPP"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
