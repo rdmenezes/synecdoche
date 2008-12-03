@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="lib"
 	ProjectGUID="{E8F6BD7E-461A-4733-B7D8-37B09A099ED8}"
 	RootNamespace="libboinc"
@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..;../win_build;../lib;../api;../openssl/include"
-				PreprocessorDefinitions="_WIN32;WIN32;_MT;_DLL;_DEBUG;_LIB_WIN32;_WINDOWS;_CONSOLE;HAVE_STD_MAX;HAVE_STD_MIN;HAVE_STD_TRANSFORM;CLIENT;BOINC_APP_GRAPHICS"
+				PreprocessorDefinitions="_WIN32;WIN32;_MT;_DLL;_DEBUG;_LIB_WIN32;_WINDOWS;_CONSOLE;HAVE_STD_MAX;HAVE_STD_MIN;HAVE_STD_TRANSFORM;CLIENT;BOINC_APP_GRAPHICS;TIXML_USE_TICPP"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -118,7 +118,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../;../win_build;../lib;../api;../openssl/include"
-				PreprocessorDefinitions="_WIN32;WIN32;_MT;_DLL;NDEBUG;_LIB_WIN32;_WINDOWS;_CONSOLE;HAVE_STD_MAX;HAVE_STD_MIN;HAVE_STD_TRANSFORM;CLIENT;BOINC_APP_GRAPHICS"
+				PreprocessorDefinitions="_WIN32;WIN32;_MT;_DLL;NDEBUG;_LIB_WIN32;_WINDOWS;_CONSOLE;HAVE_STD_MAX;HAVE_STD_MIN;HAVE_STD_TRANSFORM;CLIENT;BOINC_APP_GRAPHICS;IXML_USE_TICPP"
 				RuntimeLibrary="0"
 				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
@@ -702,6 +702,30 @@
 				RelativePath="..\lib\win_util.C"
 				>
 			</File>
+			<Filter
+				Name="ticpp"
+				>
+				<File
+					RelativePath="..\lib\ticpp\ticpp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\lib\ticpp\tinystr.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\lib\ticpp\tinyxml.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\lib\ticpp\tinyxmlerror.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\lib\ticpp\tinyxmlparser.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -812,6 +836,26 @@
 				RelativePath="..\lib\win_util.h"
 				>
 			</File>
+			<Filter
+				Name="ticpp"
+				>
+				<File
+					RelativePath="..\lib\ticpp\ticpp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\lib\ticpp\ticpprc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\lib\ticpp\tinystr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\lib\ticpp\tinyxml.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
