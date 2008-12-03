@@ -81,7 +81,6 @@ synecmgr_SOURCES = \
     stdwx.cpp \
     TaskViewBase.cpp \
     UnavailablePage.cpp \
-    ValidateAccountKey.cpp \
     ValidateEmailAddress.cpp \
     ValidateURL.cpp \
     ViewMessages.cpp \
