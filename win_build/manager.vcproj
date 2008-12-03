@@ -2050,14 +2050,6 @@
 				Name="Validators"
 				>
 				<File
-					RelativePath="..\clientgui\ValidateAccountKey.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\clientgui\ValidateAccountKey.h"
-					>
-				</File>
-				<File
 					RelativePath="..\clientgui\ValidateEmailAddress.cpp"
 					>
 				</File>
