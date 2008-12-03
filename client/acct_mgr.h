@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,30 +16,28 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _ACCT_MGR_
-#define _ACCT_MGR_
+#ifndef ACCT_MGR_H
+#define ACCT_MGR_H
 
 #include <string>
 #include <vector>
 
 #include "miofile.h"
-#include "parse.h"
 #include "gui_http.h"
 #include "client_types.h"
+#include "ticpp/ticpp.h"
 
 /// represents info stored in acct_mgr_url.xml and acct_mgr_login.xml
-///
 struct ACCT_MGR_INFO {
     // the following used to be std::string but there
     // were mysterious bugs where setting it to "" didn't work
-    //
-    char acct_mgr_name[256];
-    char acct_mgr_url[256];
-    char login_name[256];
-    char password_hash[256]; ///< md5 of password.lowercase(login_name)
-    char opaque[256]; ///< whatever the AMS sends us
-    char signing_key[MAX_KEY_LEN];
-    char previous_host_cpid[64]; ///< the host CPID sent in last RPC
+    std::string acct_mgr_name;
+    std::string acct_mgr_url;
+    std::string login_name;
+    std::string password_hash; ///< md5 of password.lowercase(login_name)
+    std::string opaque; ///< whatever the AMS sends us
+    std::string signing_key;
+    std::string previous_host_cpid; ///< the host CPID sent in last RPC
     double next_rpc_time;
     /// whether to include GUI RPC port and password hash
     /// in AM RPCs (used for "farm management")
@@ -46,7 +45,7 @@ struct ACCT_MGR_INFO {
     bool password_error;
 
     ACCT_MGR_INFO();
-    int parse_login_file(FILE*);
+    void parse_login_file(const ticpp::Element* acct_mgr_login);
     int write_info();
     int init();
     void clear();
@@ -56,30 +55,37 @@ struct ACCT_MGR_INFO {
 struct OPTIONAL_BOOL {
     bool present;
     bool value;
-    inline void init() {present=false;}
-    inline void set(bool v) {value=v; present=true;}
+    void init() { present = false; }
+    void set(bool v) { value = v; present = true; }
 };
+
+/// Read the value for an instance of OPTINAL_BOOL from a stream.
+std::istream& operator >> (std::istream& in, OPTIONAL_BOOL& out);
 
 struct OPTIONAL_DOUBLE {
     bool present;
     double value;
-    inline void init() {present=false;}
-    inline void set(double v) {value=v; present=true;}
+    void init() { present = false; }
+    void set(double v) { value = v; present = true; }
 };
+
+/// Read the value for an instance of OPTIONAL_DOUBLE from a stream.
+std::istream& operator >> (std::istream& in, OPTIONAL_DOUBLE& out);
+
 
 // stuff after here related to RPCs to account managers
 
 struct AM_ACCOUNT {
     std::string url;
     std::string authenticator;
-    char url_signature[MAX_SIGNATURE_LEN];
+    std::string url_signature;
     bool detach;
     bool update;
     OPTIONAL_BOOL dont_request_more_work;
     OPTIONAL_BOOL detach_when_done;
     OPTIONAL_DOUBLE resource_share;
 
-    int parse(XML_PARSER&);
+    void parse(const ticpp::Element* acct_mgr_reply);
     AM_ACCOUNT() {}
     ~AM_ACCOUNT() {}
 };
@@ -93,18 +99,18 @@ struct ACCT_MGR_OP: public GUI_HTTP_OP {
     std::string error_str;
     std::vector<AM_ACCOUNT> accounts;
     double repeat_sec;
-    char* global_prefs_xml;
-    char host_venue[256];
+    std::string global_prefs_xml;
+    std::string host_venue;
 
     int do_rpc(
         const std::string& url, const std::string& name,
         const std::string& password, bool via_gui
     );
-    int parse(FILE*);
+    void parse(const ticpp::Element* acct_mgr_reply);
     virtual void handle_reply(int http_op_retval);
 
     ACCT_MGR_OP();
     virtual ~ACCT_MGR_OP(){}
 };
 
-#endif
+#endif // ACCT_MGR_H
