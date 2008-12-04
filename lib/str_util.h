@@ -65,7 +65,10 @@ extern std::list<std::string> parse_command_line(const char* p);
 extern void strip_whitespace(char *str);
 
 /// Remove leading and trailing whitespace from a string
-extern void strip_whitespace(std::string&);
+extern void strip_whitespace(std::string& str);
+
+/// Remove enclosing XML-tags.
+extern std::string strip_enclosing_tags(const std::string& in);
 
 /// Unescape an URL.
 extern void unescape_url(std::string& url);

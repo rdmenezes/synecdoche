@@ -223,7 +223,7 @@ void AM_ACCOUNT::parse(const ticpp::Element* am_account) {
         else if (child_name == "detach_when_done")         child->GetText(&detach_when_done);
         else if (child_name == "url_signature") {
             child->GetText(&url_signature);
-            url_signature += '\n';
+            url_signature += "\n";
         } else if (child_name == "resource_share") {
             child->GetText(&resource_share);
             if (resource_share.value <= 0.0) {
@@ -231,7 +231,11 @@ void AM_ACCOUNT::parse(const ticpp::Element* am_account) {
                 resource_share.init();
             }
         } else if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO, "[unparsed_xml] AM_ACCOUNT: unrecognized %s", child_name.c_str());
+            // Ignore <url> here because it is parsed outside the for loop and
+            // is an expected element.
+            if (child_name != "url") {
+                msg_printf(NULL, MSG_INFO, "[unparsed_xml] AM_ACCOUNT: unrecognized %s", child_name.c_str());
+            }
         }
     }
 }
@@ -253,9 +257,15 @@ void ACCT_MGR_OP::parse(const ticpp::Element* acct_mgr_reply) {
         else if (child_name == "repeat_sec")         child->GetText(&repeat_sec);
         else if (child_name == "host_venue")         child->GetText(&host_venue);
         else if (child_name == "name")               child->GetText(&ami.acct_mgr_name);
-        else if (child_name == "opaque")             child->GetText(&ami.opaque);
-        else if (child_name == "signing_key")        child->GetText(&ami.signing_key);
         else if (child_name == "global_preferences") child->GetText(&global_prefs_xml);
+        else if (child_name == "signing_key") {
+            child->GetText(&ami.signing_key);
+            strip_whitespace(ami.signing_key);
+        } else if (child_name == "opaque") {
+            std::ostringstream xml_data;
+            xml_data << *child;
+            ami.opaque = strip_enclosing_tags(xml_data.str());
+        }
         else if (child_name == "message") {
             std::string message;
             child->GetText(&message);
@@ -287,8 +297,9 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
             doc.LoadFile();
             parse(doc.FirstChildElement("acct_mgr_reply"));
             retval = 0;
-        } catch (ticpp::Exception&) {
+        } catch (ticpp::Exception& ex) {
             retval = ERR_XML_PARSE;
+            msg_printf(NULL, MSG_INTERNAL_ERROR, "Can't parse account manager reply: %s", ex.what());
         }
     } else {
         error_num = http_op_retval;
@@ -513,7 +524,11 @@ void ACCT_MGR_INFO::parse_login_file(const ticpp::Element* acct_mgr_login) {
         else if (child_name == "password_hash")      child->GetText(&password_hash);
         else if (child_name == "previous_host_cpid") child->GetText(&previous_host_cpid);
         else if (child_name == "next_rpc_time")      child->GetText(&next_rpc_time);
-        else if (child_name == "opaque")             child->GetText(&opaque);
+        else if (child_name == "opaque") {
+            std::ostringstream xml_data;
+            xml_data << *child;
+            opaque = strip_enclosing_tags(xml_data.str());
+        }
         else if (log_flags.unparsed_xml) {
             msg_printf(NULL, MSG_INFO, "[unparsed_xml] ACCT_MGR_INFO::parse_login: unrecognized %s", child_name.c_str());
         }
@@ -523,10 +538,10 @@ void ACCT_MGR_INFO::parse_login_file(const ticpp::Element* acct_mgr_login) {
 int ACCT_MGR_INFO::init() {
     clear();
     try {
-        ticpp::Document acct_mgr_url(ACCT_MGR_URL_FILENAME);
-        acct_mgr_url.LoadFile();
+        ticpp::Document acct_mgr_url_file(ACCT_MGR_URL_FILENAME);
+        acct_mgr_url_file.LoadFile();
 
-        ticpp::Element* acct_mgr = acct_mgr_url.FirstChildElement("acct_mgr");
+        ticpp::Element* acct_mgr = acct_mgr_url_file.FirstChildElement("acct_mgr");
         std::string child_name;
         for (ticpp::Element* child = acct_mgr->FirstChildElement(false); child; child = child->NextSiblingElement(false)) {
             child->GetValue(&child_name);
@@ -534,8 +549,10 @@ int ACCT_MGR_INFO::init() {
             if      (child_name == "name")              child->GetText(&acct_mgr_name);
             else if (child_name == "url")               child->GetText(&acct_mgr_url);
             else if (child_name == "send_gui_rpc_info") child->GetText(&send_gui_rpc_info);
-            else if (child_name == "signing_key")       child->GetText(&signing_key);
-            else if (log_flags.unparsed_xml) {
+            else if (child_name == "signing_key") {
+                child->GetText(&signing_key);
+                strip_whitespace(signing_key);
+            } else if (log_flags.unparsed_xml) {
                 msg_printf(NULL, MSG_INFO, "[unparsed_xml] ACCT_MGR_INFO::init: unrecognized %s", child_name.c_str());
             }
         }
@@ -544,8 +561,8 @@ int ACCT_MGR_INFO::init() {
         acct_mgr_login.LoadFile();
 
         parse_login_file(acct_mgr_login.FirstChildElement("acct_mgr_login"));
-    } catch (ticpp::Exception&) {
-        // Those errors were just ignored...
+    } catch (ticpp::Exception& ex) {
+        msg_printf(NULL, MSG_INTERNAL_ERROR, "Can't parse account manager url file: %s", ex.what());
     }
     return 0;
 }
