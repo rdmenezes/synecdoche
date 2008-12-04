@@ -183,14 +183,12 @@ int ACCT_MGR_OP::do_rpc(
         }
     }
     if (!gstate.acct_mgr_info.opaque.empty()) {
-        fprintf(f, "   <opaque>\n%s\n   </opaque>\n", gstate.acct_mgr_info.opaque);
+        fprintf(f, "   <opaque>\n%s\n   </opaque>\n", gstate.acct_mgr_info.opaque.c_str());
     }
     fprintf(f, "</acct_mgr_request>\n");
     fclose(f);
     std::string buf = url + std::string("rpc.php");
-    retval = gstate.gui_http.do_rpc_post(
-        this, buf, ACCT_MGR_REQUEST_FILENAME, ACCT_MGR_REPLY_FILENAME
-    );
+    retval = gstate.gui_http.do_rpc_post(this, buf, ACCT_MGR_REQUEST_FILENAME, ACCT_MGR_REPLY_FILENAME);
     if (retval) {
         error_num = retval;
         return retval;
