@@ -30,8 +30,8 @@ distribution.
 #include <iostream>
 #endif
 
-
-bool TiXmlBase::condenseWhiteSpace = true;
+// NOTE: The default value was changed for synecdoche!
+bool TiXmlBase::condenseWhiteSpace = false;
 
 // Microsoft compiler security
 FILE* TiXmlFOpen( const char* filename, const char* mode )

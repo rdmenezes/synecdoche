@@ -364,6 +364,52 @@ void strip_whitespace(std::string& str) {
     str.erase(pos + 1);
 }
 
+/// Remove enclosing XML-tags.
+/// This function expects strings of the form "<foo>bar</foo>". Leading and
+/// trailing whitespaces will be ignored. It will then return "bar". 
+/// If the input does not comply the form mentioned above the function 
+/// will return the unchanged input.
+///
+/// \param[in] in A string containing XML data.
+/// \return A string without enclosing XML-tags.
+std::string strip_enclosing_tags(const std::string& in) {
+    std::string input = in;
+    strip_whitespace(input);
+
+    // Check if the input starts with a tag:
+    if (!starts_with(input, "<")) {
+        return in;
+    }
+
+    // Find the end of the tag:
+    std::string::size_type pos = input.find('>');
+    if ((pos == std::string::npos) || (pos < 2)) {
+        return in;
+    }
+
+    // Extract the tag name:
+    std::string tag = input.substr(1, pos - 1);
+
+    // Check if the tag contains leading or trailing whitespaces:
+    std::string tmp = tag;
+    strip_whitespace(tmp);
+    if (tmp != tag) {
+        return in;
+    }
+
+    // Check if there is the correct end-tag:
+    std::ostringstream end_tag;
+    end_tag << "</" << tag << ">";
+    if (!ends_with(input, end_tag.str())) {
+        return in;
+    }
+
+    // All checks passed, now remove the enclosing tags:
+    input.erase(input.length() - tag.length() - 3);
+    input.erase(0, tag.length() + 2);
+    return input;
+}
+
 /// Convert a number in hexadecimal representation into an integer.
 /// This is a helper function for unescape_url.
 ///
