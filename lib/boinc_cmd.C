@@ -143,7 +143,7 @@ void read_password_from_file(char* buf) {
 
 int main(int argc, char** argv) {
     RPC_CLIENT rpc;
-    int i, retval, port=0;
+    int i, retval, port=GUI_RPC_PORT;
     MESSAGES messages;
     char passwd_buf[256], hostname_buf[256], *hostname=0;
     char* passwd = passwd_buf, *p;
