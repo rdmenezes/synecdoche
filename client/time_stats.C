@@ -24,6 +24,7 @@
 #include <cstdio>
 #include <ctime>
 #include <cmath>
+#include <sstream>
 #endif
 
 #ifdef HAVE_SYS_SOCKET_H
@@ -171,15 +172,15 @@ void TIME_STATS::update(int suspend_reason) {
 
         if (first) {
             // the client has just started; this is the first call.
-            //
             on_frac *= w2;
             first = false;
             log_append("power_off", last_update);
-            char buf[256];
-            sprintf(buf, "platform %s", gstate.get_primary_platform());
-            log_append(buf, gstate.now);
-            sprintf(buf, "version %s", SYNEC_VERSION_STRING);
-            log_append(buf, gstate.now);
+            std::ostringstream pbuf;
+            pbuf << "platform " << gstate.get_primary_platform();
+            log_append(pbuf.str(), gstate.now);
+            std::ostringstream vbuf;
+            vbuf << "version " << SYNEC_VERSION_STRING;
+            log_append(vbuf.str(), gstate.now);
             log_append("power_on", gstate.now);
         } else {
             on_frac = w1 + w2*on_frac;
@@ -301,9 +302,11 @@ void TIME_STATS::quit() {
     log_append("power_off", gstate.now);
 }
 
-void TIME_STATS::log_append(const char* msg, double t) {
-    if (!time_stats_log) return;
-    fprintf(time_stats_log, "%f %s\n", t, msg);
+void TIME_STATS::log_append(const std::string& msg, double t) {
+    if (!time_stats_log) {
+        return;
+    }
+    fprintf(time_stats_log, "%f %s\n", t, msg.c_str());
 }
 
 void TIME_STATS::log_append_net(int new_state) {

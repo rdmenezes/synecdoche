@@ -239,7 +239,7 @@ int CLIENT_STATE::parse_state_file() {
                 continue;
             }
             if (strlen(avp->platform) == 0) {
-                strcpy(avp->platform, get_primary_platform());
+                strlcpy(avp->platform, get_primary_platform().c_str(), sizeof(avp->platform));
             } else {
                 if (!is_supported_platform(avp->platform)) {
                     // if it's a platform we haven't heard of,
@@ -249,9 +249,9 @@ int CLIENT_STATE::parse_state_file() {
                     //
                     msg_printf(project, MSG_INTERNAL_ERROR,
                         "App version has unsupported platform %s; changing to %s",
-                        avp->platform, get_primary_platform()
+                        avp->platform, get_primary_platform().c_str()
                     );
-                    strcpy(avp->platform, get_primary_platform());
+                    strlcpy(avp->platform, get_primary_platform().c_str(), sizeof(avp->platform));
                 }
             }
             retval = link_app_version(project, avp);
@@ -318,7 +318,7 @@ int CLIENT_STATE::parse_state_file() {
                 continue;
             }
             if (!strlen(rp->platform) || !is_supported_platform(rp->platform)) {
-                strcpy(rp->platform, get_primary_platform());
+                strlcpy(rp->platform, get_primary_platform().c_str(), sizeof(rp->platform));
                 rp->version_num = latest_version(rp->wup->app, rp->platform);
             }
             rp->avp = lookup_app_version(
@@ -629,7 +629,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         "<user_run_request>%d</user_run_request>\n"
         "<user_network_request>%d</user_network_request>\n"
         "%s",
-        get_primary_platform(),
+        get_primary_platform().c_str(),
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,
@@ -744,7 +744,7 @@ int CLIENT_STATE::parse_app_info(PROJECT* p, FILE* in) {
                 continue;
             }
             if (strlen(avp->platform) == 0) {
-                strcpy(avp->platform, get_primary_platform());
+                strlcpy(avp->platform, get_primary_platform().c_str(), sizeof(avp->platform));
             }
             if (link_app_version(p, avp)) {
                 delete avp;
@@ -804,7 +804,7 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) {
         "<core_client_release>%d</core_client_release>\n"
         "%s"
         "%s",
-        get_primary_platform(),
+        get_primary_platform().c_str(),
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,

@@ -348,7 +348,7 @@ private:
 
 /// @name cs_platforms.C
 public:
-    const char* get_primary_platform() const;
+    std::string get_primary_platform() const;
 private:
     void add_platform(const char*);
     void detect_platforms();

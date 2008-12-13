@@ -40,8 +40,8 @@
 
 
 /// return the primary platform id.
-const char* CLIENT_STATE::get_primary_platform() const {
-    return platforms[0].name.c_str();
+std::string CLIENT_STATE::get_primary_platform() const {
+    return platforms[0].name;
 }
 
 
@@ -113,7 +113,7 @@ void CLIENT_STATE::write_platforms(PROJECT* p, MIOFILE& mf) {
 
     mf.printf(
         "    <platform_name>%s</platform_name>\n",
-        p->anonymous_platform ? "anonymous" : get_primary_platform()
+        p->anonymous_platform ? "anonymous" : get_primary_platform().c_str()
     );
 
     for (unsigned int i=1; i<platforms.size(); i++) {
