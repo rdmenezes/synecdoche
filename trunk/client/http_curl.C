@@ -114,7 +114,7 @@ void parse_url(const char* url, char* host, int &port, char* file) {
 void get_user_agent_string() {
     sprintf(g_user_agent_string, "Synecdoche/%s (%s)",
         SYNEC_VERSION_STRING,
-        gstate.get_primary_platform()
+        gstate.get_primary_platform().c_str()
     );
 }
 

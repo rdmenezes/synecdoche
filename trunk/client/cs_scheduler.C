@@ -595,7 +595,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     for (i=0; i<sr.app_versions.size(); i++) {
         APP_VERSION& avpp = sr.app_versions[i];
         if (strlen(avpp.platform) == 0) {
-            strcpy(avpp.platform, get_primary_platform());
+            strlcpy(avpp.platform, get_primary_platform().c_str(), sizeof(avpp.platform));
         } else {
             if (!is_supported_platform(avpp.platform)) {
                 msg_printf(project, MSG_INTERNAL_ERROR, "App version has unsupported platform %s", avpp.platform);
@@ -656,7 +656,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
             continue;
         }
         if (strlen(rp->platform) == 0) {
-            strcpy(rp->platform, get_primary_platform());
+            strlcpy(rp->platform, get_primary_platform().c_str(), sizeof(rp->platform));
             rp->version_num = latest_version(rp->wup->app, rp->platform);
         }
         rp->avp = lookup_app_version(rp->wup->app, rp->platform, rp->version_num, rp->plan_class);

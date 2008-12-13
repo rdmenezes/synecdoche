@@ -190,7 +190,7 @@ int CLIENT_STATE::init() {
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,
-        get_primary_platform(),
+        get_primary_platform().c_str(),
 #ifdef _DEBUG
         " (DEBUG)"
 #else
@@ -355,7 +355,7 @@ int CLIENT_STATE::init() {
     if (!statefile_platform_name.empty() && statefile_platform_name != get_primary_platform()) {
         msg_printf(NULL, MSG_INFO,
             "Platform changed from %s to %s",
-            statefile_platform_name.c_str(), get_primary_platform()
+            statefile_platform_name.c_str(), get_primary_platform().c_str()
         );
     }
 
