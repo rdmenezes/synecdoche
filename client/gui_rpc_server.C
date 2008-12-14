@@ -240,20 +240,21 @@ int GUI_RPC_CONN_SET::init(bool last_time) {
 
     retval = bind(lsock, (const sockaddr*)(&addr), (boinc_socklen_t)sizeof(addr));
     if (retval) {
-#ifndef _WIN32
-        retval = errno;     // Display the real error code
-#endif
+#ifdef _WIN32
+        retval = WSAGetLastError(); // Display the real error code
+#else
+        retval = errno;             // Display the real error code
+#endif // _WIN32
         if (last_time) {
             msg_printf(NULL, MSG_INTERNAL_ERROR,
-                "GUI RPC bind failed: %d", retval
-            );
+                "GUI RPC bind to port %d failed: %d", ntohs(addr.sin_port), retval);
         }
         boinc_close_socket(lsock);
         lsock = -1;
         return ERR_BIND;
     }
     if (log_flags.guirpc_debug) {
-        msg_printf(NULL, MSG_INFO, "[guirpc_debug] Listening on port %d", htons(addr.sin_port));
+        msg_printf(NULL, MSG_INFO, "[guirpc_debug] Listening on port %d", ntohs(addr.sin_port));
     }
 
     retval = listen(lsock, 999);

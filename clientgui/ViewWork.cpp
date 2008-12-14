@@ -1052,6 +1052,13 @@ double CViewWork::GetProgressValue(long item) {
     if (result) {
         if (result->active_task) {
             fBuffer = result->fraction_done;
+
+            // Make sure that the progress value is between 0% and 100%:
+            if (fBuffer > 1.0) {
+                fBuffer = 1.0;
+            } else if (fBuffer < 0.0) {
+                fBuffer = 0.0;
+            }
         } else {
             if(result->state < RESULT_COMPUTE_ERROR) {
                 fBuffer = 0.0;
