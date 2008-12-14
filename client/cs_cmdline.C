@@ -41,30 +41,27 @@ static void print_options(char* prog) {
         "Run syneccmd in the same directory as %s.\n"
         "\n"
         "Usage: %s [options]\n"
-        "    --help                          show options\n"
-        "    --version                       show version info\n"
-        "    --exit_when_idle                exit when there are no results\n"
-        "    --run_cpu_benchmarks            run the CPU benchmarks\n"
-        "    --check_all_logins              for idle detection, check remote logins too\n"
+        "    --allow_multiple_clients        allow >1 instances per host\n"
         "    --allow_remote_gui_rpc          allow remote GUI RPC connections\n"
-        "    --gui_rpc_port <port>           port for GUI RPCs\n"
-        "    --no_gui_rpc                    don't allow GUI RPC, don't make socket\n"
-        "    --redirectio                    redirect stdout and stderr to log files\n"
+        "    --check_all_logins              for idle detection, check remote logins too\n"
 #ifdef _WIN32
-        "    --detach                        detach from console\n"
         "    --daemon                        run as system service\n"
+        "    --detach                        detach from console\n"
 #else
         "    --daemon                        run as daemon\n"
 #endif
         "    --dir <path>                    use given dir as Synecdoche home\n"
-        "    --exit_before_start             exit right before starting a job\n"
-        "    --exit_after_finish             exit right after finishing a job\n"
+        "    --gui_rpc_port <port>           port for GUI RPCs\n"
+        "    --help                          show options\n"
 #ifdef SANDBOX
         "    --insecure                      disable app sandboxing\n"
 #endif
         "    --launched_by_manager           core client was launched by Manager\n"
+        "    --no_gui_rpc                    don't allow GUI RPC, don't make socket\n"
+        "    --redirectio                    redirect stdout and stderr to log files\n"
+        "    --run_cpu_benchmarks            run the CPU benchmarks\n"
         "    --start_delay X                 delay starting apps for X secs\n"
-        ,
+        "    --version                       show version info\n", 
         prog, prog, prog
     );
 }
@@ -171,8 +168,8 @@ void CLIENT_STATE::parse_cmdline(int argc, char** argv) {
             }
         } else if (ARG("no_gui_rpc")) {
             no_gui_rpc = true;
-#ifdef SANDBOX
         } else if (ARG("insecure")) {
+#ifdef SANDBOX
             g_use_sandbox = false;
 #endif
         } else if (ARG("launched_by_manager")) {
