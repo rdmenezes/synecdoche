@@ -29,9 +29,7 @@
 ||16247||MGR: More thorough validity checking to prevent crashes||
 ||16274||LIB: Fix the windows callstack dump routine for Visual Studio 2008||
 ||16280||MGR: Add a new tab status to the Simple GUI for when the client has been instructed to delay starting applications via the <delay_start> option in cc_config.xml (From Kevin Reed)||
-||16307||client: --help: alphabetize options||
 ||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::OnConnect()||
-||16328||client: accept --insecure flag even if not compiled with -DSANDBOX manager: pass --insecure flab only if compiled with -DSANDBOX||
 ||16336/16337/16347||MGR: When removing a row from sorted lists, refresh all rows to ensure proper display update (Does anyone know which bug is fixed by this changeset? Do we need it?)||
 ||16338/16339/16340/16344/16348/16357||client: move round-robin simulation to its own file||
 ||16352||MGR: Always sort after a row is added or deleted.||
@@ -43,14 +41,10 @@
 ||16405/16413/16414/16417/16419/16421/16428/16429/16446/16448/ 16450/16462/16472/16473||MGR: Create an Exit dialog for the Manager. / Allow the manager to shutdown the CC even when it was installed as a daemon.||
 ||16406/16415/16420/16426/16427/16434||MGR: Provide a way to enable/disable launching from the BOINC Manager at startup from within the BOINC Manager itself.||
 ||16432/16433||client: make host CPID a function of: MAC addresses + hostname + IP addr + OS name||
-||16449||manager: truncate task progress bar (display) at 100%||
-||16478||client: don't fclose() time_stats_log if it's NULL||
 ||16479||API: free project prefs before parsing init file||
 ||16484||MGR: Erase and refresh entire Tasks panel when selecting a new tab to try to fix cosmetic bug reported by David on Windows - Which bug? Is it caused by the RPC thread?||
 ||16488||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. - Looks like this is only needed for service install on Vista. Do we support/need this?||
 ||16496||client: if app uses < 1 CPU, run at nice 10 (not 0) / suppress specious error message||
-||16508||client: Fix a build break when creating new stable branches.||
-||16520||client: if bind fails, print port#||
 ||16536||client: use BELOW_NORMAL_PRIORITY_CLASS instead of 0||
 ||16539||manager: tweak strings in Options dialog||
 ||16545||client: in round-robin simulation, only increment CPU shortfall (per-project or overall) if there are no pending tasks.||
