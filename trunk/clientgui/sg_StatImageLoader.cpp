@@ -70,8 +70,8 @@ void StatImageLoader::PopUpMenu(wxMouseEvent& WXUNUSED(event))
 #endif
 
 void StatImageLoader::RebuildMenu() {
-    for (size_t i=statPopUpMenu->GetMenuItemCount()-1; i>=0;i--){
-        wxMenuItem* item = statPopUpMenu->FindItemByPosition(i);
+    for (size_t i = statPopUpMenu->GetMenuItemCount(); i > 0; --i){
+        wxMenuItem* item = statPopUpMenu->FindItemByPosition(i - 1);
         statPopUpMenu->Delete(item);
     }
     AddMenuItems();
