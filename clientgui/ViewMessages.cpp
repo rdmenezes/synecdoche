@@ -202,7 +202,7 @@ void CViewMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
 
     wxInt32 iIndex = -1;
 
-    pFrame->UpdateStatusText(_("Aborting transfer..."));
+    pFrame->UpdateStatusText(_("Copying selected messages to the clipboard..."));
     OpenClipboard();
 
     for (;;) {
