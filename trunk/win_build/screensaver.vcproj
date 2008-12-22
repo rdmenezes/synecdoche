@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="screensaver"
 	ProjectGUID="{4A2C5963-6A8D-4CA1-A312-C3D749B2EA81}"
 	RootNamespace="boinc_ss"
@@ -23,7 +23,7 @@
 			IntermediateDirectory=".\Build\$(PlatformName)\$(ConfigurationName)\$(ProjectName)\obj"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="1"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
@@ -52,9 +52,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../,../api/,../lib,../client/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_MT;_WINDOWS;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_MT;_WINDOWS;_CONSOLE;_DLL"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				BufferSecurityCheck="true"
 				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
@@ -63,7 +63,7 @@
 				AssemblerListingLocation=""
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
-				BrowseInformation="1"
+				BrowseInformation="0"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -85,10 +85,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmtd.lib libcpmtd.lib wsock32.lib wininet.lib winmm.lib kernel32.lib user32.lib gdi32.lib advapi32.lib userenv.lib"
+				IgnoreImportLibrary="true"
+				AdditionalDependencies="MSVCRTD.LIB MSVCPRTD.LIB libcmtd.lib libcpmtd.lib wsock32.lib wininet.lib winmm.lib kernel32.lib user32.lib gdi32.lib advapi32.lib userenv.lib libboincd.lib"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\synecdoche.scr"
-				LinkIncremental="0"
+				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="$(OutDir)"
 				IgnoreAllDefaultLibraries="true"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
@@ -131,7 +133,7 @@
 			IntermediateDirectory=".\Build\$(PlatformName)\$(ConfigurationName)\$(ProjectName)\obj"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="1"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
@@ -160,9 +162,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				AdditionalIncludeDirectories="../api/,../lib/,../client,.."
-				PreprocessorDefinitions="WIN32;NDEBUG;_MT;_WINDOWS;_CONSOLE"
-				StringPooling="false"
-				RuntimeLibrary="0"
+				PreprocessorDefinitions="WIN32;NDEBUG;_MT;_DLL;_WINDOWS;_CONSOLE"
+				StringPooling="true"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="false"
 				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
@@ -192,11 +194,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmt.lib libcpmt.lib wsock32.lib wininet.lib winmm.lib kernel32.lib user32.lib gdi32.lib advapi32.lib userenv.lib"
+				IgnoreImportLibrary="true"
+				AdditionalDependencies="MSVCRT.LIB MSVCPRT.LIB libcmt.lib libcpmt.lib wsock32.lib wininet.lib winmm.lib kernel32.lib user32.lib gdi32.lib advapi32.lib userenv.lib libboinc.lib"
 				ShowProgress="0"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\synecdoche.scr"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="$(OutDir)"
 				IgnoreAllDefaultLibraries="true"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc_scr.pdb"
@@ -671,59 +675,11 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\lib\base64.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\diagnostics.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\diagnostics_win.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\filesys.C"
-				>
-			</File>
-			<File
 				RelativePath="..\lib\gui_rpc_client.C"
 				>
 			</File>
 			<File
 				RelativePath="..\lib\gui_rpc_client_ops.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\hostinfo.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\md5.c"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\md5_file.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\mfile.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\miofile.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\network.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\parse.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\prefs.C"
 				>
 			</File>
 			<File
@@ -734,81 +690,17 @@
 				RelativePath="..\clientscr\screensaver_win.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\lib\stackwalker_win.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\str_util.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\util.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\win_util.C"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\lib\base64.h"
-				>
-			</File>
-			<File
 				RelativePath="..\clientscr\boinc_ss.h"
 				>
 			</File>
 			<File
-				RelativePath="..\lib\boinc_win.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\diagnostics.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\filesys.h"
-				>
-			</File>
-			<File
 				RelativePath="..\lib\gui_rpc_client.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\hostinfo.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\md5.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\md5_file.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\mfile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\miofile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\network.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\parse.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\prefs.h"
 				>
 			</File>
 			<File
@@ -817,22 +709,6 @@
 			</File>
 			<File
 				RelativePath="..\clientscr\screensaver_win.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\stackwalker_imports.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\stackwalker_win.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\util.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\win_util.h"
 				>
 			</File>
 		</Filter>
