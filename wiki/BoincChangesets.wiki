@@ -47,6 +47,11 @@
 ||16539||manager: tweak strings in Options dialog||
 ||16545||client: in round-robin simulation, only increment CPU shortfall (per-project or overall) if there are no pending tasks.||
 ||16548||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. NOTE: Stackwalker still uses boinc.berkeley.edu as server!||
+||16557/16558||MGR: Make the error message processing work for the get_project_config rpc, use the same scheme as the ACCOUNT_OUT structure.||
+||16559||client, Win: 32-bit client running on a 64-bit machine should report winx64 as primary platform||
+||16565||client: Fix error from changeset 14415 which caused Mac client to call daemon() if it was passed -daemon argument, causing problems using launchd with KeepAlive? option; fixes #782.||
+||16582||MGR: fix exit dialog so that both the Mac and Linux clients don't display the 'close core client...' checkbox.||
+
 
 
 == Rejected changes ==
@@ -81,7 +86,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16029 16029]||WCG "feature" for the wizards. No need for that.||
 ||[http://boinc.berkeley.edu/trac/changeset/16038 16038] `*`||API: Fix for boinc_exit()||
 ||[http://boinc.berkeley.edu/trac/changeset/16061 16061] `*`||Exclude list for proxy. Useful feature but bad implementation. Additional changesets: 16066||
-||[http://boinc.berkeley.edu/trac/changeset/16087 16087] `*`||"exclusive app" feature. Additional changesets: 16084/16085/16090/16175/16354||
+||[http://boinc.berkeley.edu/trac/changeset/16087 16087] `*`||"exclusive app" feature. Additional changesets: 16084/16085/16090/16175/16354/16552||
 ||[http://boinc.berkeley.edu/trac/changeset/16095 16095]||RPC calls are not obsolete just because the official manager does not use them any more.||
 ||[http://boinc.berkeley.edu/trac/changeset/16118 16118]||Sample wrapper, useless Makefile fix, debug code already removed in r254||
 ||[http://boinc.berkeley.edu/trac/changeset/16119 16119]||Already fixed.||
@@ -90,7 +95,8 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16268 16268]||Already fixed in r449.||
 ||[http://boinc.berkeley.edu/trac/changeset/16357 16357]||There is no need for this mess (except the change for rr_sim.cpp).||
 ||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
+||[http://boinc.berkeley.edu/trac/changeset/16560 16560]||No need for this new page and account key page already removed in r526.||
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16550 16550]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16600 16600]
