@@ -1043,20 +1043,28 @@ std::string FILE_INFO::failure_message() const {
     return buf.str();
 }
 
-#define BUFSIZE 16384
+/// Compress the file using zlib (gzip compression).
+///
+/// \return Zero on success, ERR_FOPEN or ERR_WRITE on error.
 int FILE_INFO::gzip() {
+    const size_t BUFSIZE = 16384;
     char buf[BUFSIZE];
-    char inpath[256], outpath[256];
+    char inpath[256];
 
     get_pathname(this, inpath, sizeof(inpath));
-    strcpy(outpath, inpath);
-    strcat(outpath, ".gz");
+    std::string outpath(inpath);
+    outpath.append(".gz");
     FILE* in = boinc_fopen(inpath, "rb");
-    if (!in) return ERR_FOPEN;
-    gzFile out = gzopen(outpath, "wb");
+    if (!in) {
+        return ERR_FOPEN;
+    }
+
+    gzFile out = gzopen(outpath.c_str(), "wb");
     while (1) {
         int n = (int)fread(buf, 1, BUFSIZE, in);
-        if (n <= 0) break;
+        if (n <= 0) {
+            break;
+        }
         int m = gzwrite(out, buf, n);
         if (m != n) {
             fclose(in);
@@ -1067,7 +1075,7 @@ int FILE_INFO::gzip() {
     fclose(in);
     gzclose(out);
     delete_project_owned_file(inpath, true);
-    boinc_rename(outpath, inpath);
+    boinc_rename(outpath.c_str(), inpath);
     return 0;
 }
 

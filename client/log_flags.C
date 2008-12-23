@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -129,24 +130,24 @@ int LOG_FLAGS::parse(XML_PARSER& xp) {
     return ERR_XML_PARSE;
 }
 
-static void show_flag(char* buf, bool flag, const char* flag_name) {
-    if (!flag) return;
-    int n = (int)strlen(buf);
-    if (!n) {
-        strcpy(buf, flag_name);
+static void show_flag(std::string& buf, bool flag, const char* flag_name) {
+    if (!flag) {
         return;
     }
-    strcat(buf, ", ");
-    strcat(buf, flag_name);
-    if (strlen(buf) > 60) {
-        msg_printf(NULL, MSG_INFO, "log flags: %s", buf);
-        strcpy(buf, "");
+    if (buf.empty()) {
+        buf.append(flag_name);
+        return;
+    }
+    buf.append(", ").append(flag_name);
+    if (buf.size() > 60) {
+        msg_printf(NULL, MSG_INFO, "log flags: %s", buf.c_str());
+        buf.clear();
     }
 }
 
+/// Print a message containing all log flags that are set to true.
 void LOG_FLAGS::show() {
-    char buf[256];
-    strcpy(buf, "");
+    std::string buf;
     show_flag(buf, task, "task");
     show_flag(buf, file_xfer, "file_xfer");
     show_flag(buf, sched_ops, "sched_ops");
@@ -173,8 +174,8 @@ void LOG_FLAGS::show() {
     show_flag(buf, mem_usage_debug, "mem_usage_debug");
     show_flag(buf, network_status_debug, "network_status_debug");
     show_flag(buf, checkpoint_debug, "checkpoint_debug");
-    if (strlen(buf)) {
-        msg_printf(NULL, MSG_INFO, "log flags: %s", buf);
+    if (!buf.empty()) {
+        msg_printf(NULL, MSG_INFO, "log flags: %s", buf.c_str());
     }
 }
 
