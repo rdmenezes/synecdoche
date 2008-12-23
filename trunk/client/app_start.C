@@ -646,13 +646,12 @@ int ACTIVE_TASK::start(bool first_time) {
     //
     //freopen(STDERR_FILE, "a", stderr);
 
-    char cmdline[8192];
-    strcpy(cmdline, wup->command_line.c_str());
-    if (strlen(result->cmdline)) {
-        strcat(cmdline, " ");
-        strcat(cmdline, result->cmdline);
+    std::string cmdline;
+    cmdline = wup->command_line;
+    if (!cmdline.empty()) {
+        cmdline.append(" ").append(result->cmdline);
     }
-    std::list<std::string> argv = parse_command_line(cmdline);
+    std::list<std::string> argv = parse_command_line(cmdline.c_str());
     argv.push_front(exec_name);
     if (log_flags.task_debug) {
         debug_print_argv(argv);

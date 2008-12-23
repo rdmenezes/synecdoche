@@ -29,7 +29,9 @@ extern int switcher_exec(const char* util_filename, const char* cmdline);
 /// Recursively delete everything in the specified directory.
 extern int client_clean_out_dir(const char* dirpath);
 
+/// Delete the file located at path.
 extern int delete_project_owned_file(const char* path, bool retry);
+
 extern int remove_project_owned_dir(const char* name);
 extern int check_security(int use_sandbox, int isManager);
 

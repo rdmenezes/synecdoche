@@ -78,6 +78,8 @@ struct LOG_FLAGS {
     LOG_FLAGS();
     void defaults();
     int parse(XML_PARSER&);
+
+    /// Print a message containing all log flags that are set to true.
     void show();
 };
 

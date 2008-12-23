@@ -113,7 +113,9 @@ public:
 
     int merge_info(const FILE_INFO&);
     int verify_file(bool, bool);
-    int gzip();     ///< gzip file and add .gz to name
+
+    /// Compress the file using zlib (gzip compression).
+    int gzip();
 };
 
 /// Describes a connection between a file and a workunit, result, or application.
