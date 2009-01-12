@@ -16,7 +16,6 @@
 ||15945||Do we need the screensaver stuff? The other fix is already applied.||
 ||15955/15957/15958/15960/15961/15963/15965||Code signing stuff.||
 ||15959/15964/15966||MGR: Save and restore selected items by key values when refreshing||
-||15970/15978/15981/15990/15991/15993/15994/15995/15996/15998/16006/16185||Flickering of the MGR - do we need these fixes? Do they even work?||
 ||15987||MGR: Simple GUI fixes||
 ||16003||Is this used by the client or does this belong to the server?||
 ||16121||MGR: show resource requirements of all jobs, running or not||
@@ -53,6 +52,11 @@
 ||16653||Mac SG: Remove ugly hack added 8/20/07 for slide show alignment problem on Mac.||
 ||16654||Mac SG: Fix vertical position of project names in tabs on Mac.||
 ||16670/16671||MGR: word-wrap !CompletionBrandedMessage static text in Account manager Wizard Completion page for !GridRepublic.||
+||16707||MGR: Always reset messages if client restarted; always scroll messages to bottom if connection status changes; Select Computer: localhost relaunches client if needed.||
+||16728||client: error checking for on/connected/active_frac values from XML||
+||16739||XML_PARSER: in parse_int(), set errno to zero before calling strtol().||
+||16743||client, Win: don't leak thread handlers||
+||16744||client: don't accept 0 for active/on/connected frac; set to 1||
 
 
 
@@ -85,6 +89,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/15942 15942]||Already fixed in r265.||
 ||[http://boinc.berkeley.edu/trac/changeset/15944 15944]||Already fixed in r236.||
 ||[http://boinc.berkeley.edu/trac/changeset/15948 15948]||Already fixed in r298.||
+||[http://boinc.berkeley.edu/trac/changeset/15970 15970]||Flickering of the MGR - Some additional changesets: 15978/15981/15990/15991/15993/15994/15995/15996/15998/16006/16185||
 ||[http://boinc.berkeley.edu/trac/changeset/16029 16029]||WCG "feature" for the wizards. No need for that.||
 ||[http://boinc.berkeley.edu/trac/changeset/16038 16038] `*`||API: Fix for boinc_exit()||
 ||[http://boinc.berkeley.edu/trac/changeset/16061 16061] `*`||Exclude list for proxy. Useful feature but bad implementation. Additional changesets: 16066||
@@ -99,6 +104,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
 ||[http://boinc.berkeley.edu/trac/changeset/16560 16560]||No need for this new page and account key page already removed in r526.||
 
+
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16700 16700]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16750 16750]
