@@ -607,7 +607,7 @@ int boinc_copy(const char* orig, const char* newf) {
     return system(cmd.str().c_str());
 #else
     std::ostringstream cmd;
-    cmd << "cp \"" << orig << "\" \"" << newf << "\"";
+    cmd << "cp -p \"" << orig << "\" \"" << newf << "\"";
     return system(cmd.str().c_str());
 #endif // _WIN32
 }

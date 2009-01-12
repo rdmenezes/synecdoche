@@ -1389,6 +1389,7 @@ int CLIENT_STATE::reset_project(PROJECT* project, bool detaching) {
 
     project->duration_correction_factor = 1;
     project->ams_resource_share = -1;
+    project->min_rpc_time = 0;
     write_state_file();
     return 0;
 }
