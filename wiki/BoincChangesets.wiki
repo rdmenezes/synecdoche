@@ -51,9 +51,6 @@
 ||16654||Mac SG: Fix vertical position of project names in tabs on Mac.||
 ||16670/16671||MGR: word-wrap !CompletionBrandedMessage static text in Account manager Wizard Completion page for !GridRepublic.||
 ||16707||MGR: Always reset messages if client restarted; always scroll messages to bottom if connection status changes; Select Computer: localhost relaunches client if needed.||
-||16827||client: preserve ownership when copying files to slot directory.||
-||16862||client: if reset a project, clear its overall and per-resource backoffs||
-||16883||lib: check return values of RSA_*() functions. Also fix a memory leak, missing RSA_free(). Fixes #823.||
 
 
 == Rejected changes ==
