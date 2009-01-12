@@ -103,8 +103,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16357 16357]||There is no need for this mess (except the change for rr_sim.cpp).||
 ||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
 ||[http://boinc.berkeley.edu/trac/changeset/16560 16560]||No need for this new page and account key page already removed in r526.||
+||[http://boinc.berkeley.edu/trac/changeset/16754 16754]||Another useless hack: "new work fetch logic". Additional changesets: 16755/16756/16765||
 
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16750 16750]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16800 16800]
