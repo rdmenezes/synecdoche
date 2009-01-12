@@ -405,7 +405,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     }
     if (log_flags.sched_op_debug) {
         if (sr.scheduler_version) {
-            msg_printf(project, MSG_INFO, "[sched_ops_debug] Server version %d", sr.scheduler_version);
+            msg_printf(project, MSG_INFO, "[sched_op_debug] Server version %d", sr.scheduler_version);
         }
     }
 
@@ -674,7 +674,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     }
     if (log_flags.sched_op_debug) {
         if (!sr.results.empty()) {
-            msg_printf(project, MSG_INFO, "[sched_ops_debug] estimated total CPU time: %.0f seconds", sum_est_cpu_time);
+            msg_printf(project, MSG_INFO, "[sched_op_debug] estimated total CPU time: %.0f seconds", sum_est_cpu_time);
         }
     }
 

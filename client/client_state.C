@@ -228,14 +228,15 @@ int CLIENT_STATE::init() {
 
     // check for app_info.xml file in project dirs.
     // If find, read app info from there, set project.anonymous_platform
-    //
+    // NOTE: this is being done before CPU speed has been read,
+ 	// so we'll need to patch up avp->flops later;
     check_anonymous();
 
     // Parse the client state file,
     // ignoring any <project> tags (and associated stuff)
     // for projects with no account file
-    //
     host_info.clear_host_info();
+    cpu_benchmarks_set_defaults();  // for first time, make sure p_fpops nonzero
     parse_state_file();
     parse_account_files_venue();
 
@@ -244,10 +245,17 @@ int CLIENT_STATE::init() {
     show_host_info();
     show_proxy_info();
 
+    // fill in avp->flops for anonymous project
+    for (i = 0; i < app_versions.size(); ++i) {
+        APP_VERSION* avp = app_versions[i];
+        if (!avp->flops) {
+            avp->flops = host_info.p_fpops;
+        }
+    }
+
     check_clock_reset();
 
     // Check to see if we can write the state file.
-    //
     retval = write_state_file();
     if (retval) {
         msg_printf(NULL, MSG_USER_ERROR, "Couldn't write state file");
@@ -258,7 +266,6 @@ int CLIENT_STATE::init() {
     }
 
     // scan user prefs; create file records
-    //
     parse_preferences_for_user_files();
 
     print_summary();
@@ -266,7 +273,6 @@ int CLIENT_STATE::init() {
     // if new version of core client,
     // - run CPU benchmarks
     // - contact reference site or some project (to trigger firewall alert)
-    //
     if ((core_client_version.major != old_major_version)
         || (core_client_version.minor != old_minor_version)
         || (core_client_version.release != old_release)
@@ -289,7 +295,6 @@ int CLIENT_STATE::init() {
     }
 
     // show host IDs and venues on various projects
-    //
     for (i=0; i<projects.size(); i++) {
         p = projects[i];
         if (p->hostid) {

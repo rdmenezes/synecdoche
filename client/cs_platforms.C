@@ -24,6 +24,8 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+LPFN_ISWOW64PROCESS fnIsWow64Process;
 #endif
 
 #ifndef _WIN32
@@ -63,9 +65,17 @@ void CLIENT_STATE::detect_platforms() {
     add_platform("windows_intelx86");
 
 #else
-
+    // see if 32-bit client is running on 64-bit machine 
+    fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process"); 
+    if (fnIsWow64Process) { 
+        BOOL bIsWow64 = FALSE; 
+        if (fnIsWow64Process(GetCurrentProcess(), &bIsWow64)) { 
+            if (bIsWow64) { 
+                add_platform("windows_x86_64"); 
+            } 
+        } 
+    } 
     add_platform("windows_intelx86");
-
 #endif
 
 #elif defined(__APPLE__)
