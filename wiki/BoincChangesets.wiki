@@ -53,10 +53,8 @@
 ||16654||Mac SG: Fix vertical position of project names in tabs on Mac.||
 ||16670/16671||MGR: word-wrap !CompletionBrandedMessage static text in Account manager Wizard Completion page for !GridRepublic.||
 ||16707||MGR: Always reset messages if client restarted; always scroll messages to bottom if connection status changes; Select Computer: localhost relaunches client if needed.||
-||16728||client: error checking for on/connected/active_frac values from XML||
 ||16739||XML_PARSER: in parse_int(), set errno to zero before calling strtol().||
 ||16743||client, Win: don't leak thread handlers||
-||16744||client: don't accept 0 for active/on/connected frac; set to 1||
 
 
 
@@ -104,6 +102,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
 ||[http://boinc.berkeley.edu/trac/changeset/16560 16560]||No need for this new page and account key page already removed in r526.||
 ||[http://boinc.berkeley.edu/trac/changeset/16754 16754]||Another useless hack: "new work fetch logic". Additional changesets: 16755/16756/16765||
+||[http://boinc.berkeley.edu/trac/changeset/16859 16859]||Already applied in r563.||
 
 
 `*` These changesets may still be needed.
