@@ -51,6 +51,12 @@
 ||16559||client, Win: 32-bit client running on a 64-bit machine should report winx64 as primary platform||
 ||16565||client: Fix error from changeset 14415 which caused Mac client to call daemon() if it was passed -daemon argument, causing problems using launchd with KeepAlive? option; fixes #782.||
 ||16582||MGR: fix exit dialog so that both the Mac and Linux clients don't display the 'close core client...' checkbox.||
+||16616||client: parse checkpoint_elapsed_time from state file; if missing, use checkpoint CPU time.||
+||16633||client: app_info.xml's are parsed before p_fpops is known, so avp->fpops is zero. Fix this by filling in zero avp->fpops later on.||
+||16645||manager: clamp percentages at [0,100] in prefs dialog||
+||16653||Mac SG: Remove ugly hack added 8/20/07 for slide show alignment problem on Mac.||
+||16654||Mac SG: Fix vertical position of project names in tabs on Mac.||
+||16670/16671||MGR: word-wrap !CompletionBrandedMessage static text in Account manager Wizard Completion page for !GridRepublic.||
 
 
 
@@ -99,4 +105,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16600 16600]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16700 16700]
