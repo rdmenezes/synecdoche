@@ -439,6 +439,8 @@ int CBOINCGUIApp::OnExit() {
         delete m_pLocale;
     }
 
+    diagnostics_finish();
+
     return wxApp::OnExit();
 }
 
