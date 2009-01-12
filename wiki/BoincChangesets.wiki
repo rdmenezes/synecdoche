@@ -22,7 +22,6 @@
 ||16206/16207||client: clarify and fix the semantics of "next RPC time".||
 ||16208||client: new config flags||
 ||16212||MGR: Fix updating task bar icon on disconnect from Client, fix a crash on exiting||
-||16213||Add a call to diagnostics_finish() in BOINCGUIApp::OnExit().||
 ||16242||MGR: fix disk display when talking to pre-6.3 client - do we need this fix?||
 ||16247||MGR: More thorough validity checking to prevent crashes||
 ||16280||MGR: Add a new tab status to the Simple GUI for when the client has been instructed to delay starting applications via the <delay_start> option in cc_config.xml (From Kevin Reed)||
@@ -53,9 +52,6 @@
 ||16654||Mac SG: Fix vertical position of project names in tabs on Mac.||
 ||16670/16671||MGR: word-wrap !CompletionBrandedMessage static text in Account manager Wizard Completion page for !GridRepublic.||
 ||16707||MGR: Always reset messages if client restarted; always scroll messages to bottom if connection status changes; Select Computer: localhost relaunches client if needed.||
-||16739||XML_PARSER: in parse_int(), set errno to zero before calling strtol().||
-||16743||client, Win: don't leak thread handlers||
-
 
 
 == Rejected changes ==
