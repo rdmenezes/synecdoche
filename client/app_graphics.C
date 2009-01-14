@@ -61,7 +61,8 @@ void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
 
     graphics_msg = m;       // save graphics_station, desktop, display
 
-    std::ostringstream buf(xml_graphics_modes[m.mode]);
+    std::ostringstream buf;
+    buf << xml_graphics_modes[m.mode];
 
     if (strlen(m.window_station)) {
         buf << "<window_station>" << m.window_station << "</window_station>";
