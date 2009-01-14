@@ -8,7 +8,7 @@ The idea behind this page is to provide information for the case when changes at
 || Climate Prediction          || _not tested_ ||
 || Cosmology@Home              || _not tested_ ||
 || Docking@Home                || _not tested_ ||
-|| Einstein@home               || _not tested_ ||
+|| Einstein@home               || *OK*         ||
 || GPUGRID                     || _not tested_ ||
 || Leiden Classical            || *OK*         ||
 || LHC@home                    || _not tested_ ||
@@ -22,7 +22,7 @@ The idea behind this page is to provide information for the case when changes at
 || Seti@home                   || _not tested_ ||
 || SHA-1 Collision Search Graz || *OK*         ||
 || SIMAP                       || _not tested_ ||
-|| Spinhenge@home              || _not tested_ ||
+|| Spinhenge@home              || *OK*         ||
 || Sudoku Project              || _not tested_ ||
 || World Community Grid        || _not tested_ ||
 || yoyo@home                   || _not tested_ ||
