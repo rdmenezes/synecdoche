@@ -41,7 +41,6 @@
 #define P_MEDIUM 3
 #define P_HIGH 5
 
-#define MAX_FILE_INFO_LEN   4096
 #define MAX_SIGNATURE_LEN   4096
 #define MAX_KEY_LEN         4096
 
@@ -85,11 +84,14 @@ public:
     /// this is the text that is signed.
     /// Otherwise it is the FILE_INFO's XML descriptor
     /// (without enclosing <file_info> tags).
-    char signed_xml[MAX_FILE_INFO_LEN];
-    char xml_signature[MAX_SIGNATURE_LEN]; ///< the actual signature
+    std::string signed_xml;
+
+    std::string xml_signature;  ///< the actual signature
+
     /// If the file itself is signed (for executable files),
     /// this is the signature
-    char file_signature[MAX_SIGNATURE_LEN];
+    std::string file_signature;
+
     /// If permanent error occurs during file xfer,
     /// it's recorded here
     std::string error_msg;

@@ -134,34 +134,22 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
     if (!strict) return 0;
 
     if (signature_required) {
-        if (!strlen(file_signature)) {
-            msg_printf(project, MSG_INTERNAL_ERROR,
-                "Application file %s missing signature", name
-            );
-            msg_printf(project, MSG_INTERNAL_ERROR,
-                "Synecdoche cannot accept this file"
-            );
+        if (file_signature.empty()) {
+            msg_printf(project, MSG_INTERNAL_ERROR, "Application file %s missing signature", name);
+            msg_printf(project, MSG_INTERNAL_ERROR, "Synecdoche cannot accept this file");
             error_msg = "missing signature";
             status = ERR_NO_SIGNATURE;
             return ERR_NO_SIGNATURE;
         }
-        retval = verify_file2(
-            pathname, file_signature, project->code_sign_key, verified
-        );
+        retval = verify_file2(pathname, file_signature.c_str(), project->code_sign_key, verified);
         if (retval) {
-            msg_printf(project, MSG_INTERNAL_ERROR,
-                "Signature verification error for %s",
-                name
-            );
+            msg_printf(project, MSG_INTERNAL_ERROR, "Signature verification error for %s", name);
             error_msg = "signature verification error";
             status = ERR_RSA_FAILED;
             return ERR_RSA_FAILED;
         }
         if (!verified && show_errors) {
-            msg_printf(project, MSG_INTERNAL_ERROR,
-                "Signature verification failed for %s",
-               name
-            );
+            msg_printf(project, MSG_INTERNAL_ERROR, "Signature verification failed for %s", name);
             error_msg = "signature verification failed";
             status = ERR_RSA_FAILED;
             return ERR_RSA_FAILED;
