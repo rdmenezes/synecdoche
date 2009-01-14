@@ -185,15 +185,14 @@ struct APP_INIT_DATA {
 
     // Items below here are for BOINC runtime system,
     // and should not be directly accessed by apps
-    //
     double checkpoint_period;     // recommended checkpoint period
     SHMEM_SEG_NAME shmem_seg_name;
     double wu_cpu_time;       // cpu time from previous episodes
 
     APP_INIT_DATA();
-    APP_INIT_DATA(const APP_INIT_DATA&);  // copy constructor
-    void operator=(const APP_INIT_DATA&);
-    void copy(const APP_INIT_DATA&);      // actually do the copy here
+    APP_INIT_DATA(const APP_INIT_DATA& a);  // copy constructor
+    APP_INIT_DATA& operator=(const APP_INIT_DATA& a);
+    void copy(const APP_INIT_DATA& a);      // actually do the copy here
     ~APP_INIT_DATA();
 };
 

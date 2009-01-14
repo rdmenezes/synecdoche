@@ -24,7 +24,11 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif // HAVE_STRING_H
+
 #include <math.h>
 #include <errno.h>
 #ifdef HAVE_IEEEFP_H

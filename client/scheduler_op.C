@@ -20,6 +20,8 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+#else
+#include <sstream>
 #endif
 
 #include "str_util.h"

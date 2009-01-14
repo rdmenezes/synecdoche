@@ -23,15 +23,16 @@
 #include "proc_control.h"
 #else
 #include "config.h"
-#include <unistd.h>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
 #include <cstdarg>
+#include <sstream>
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
+#include <unistd.h>
 #endif
 
 #include "parse.h"
