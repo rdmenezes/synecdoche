@@ -31,6 +31,7 @@
 #include "boinc_win.h"
 #else
 #include "config.h"
+#include <sstream>
 #endif
 
 #include "diagnostics.h"

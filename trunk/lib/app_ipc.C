@@ -44,12 +44,13 @@ const char* xml_graphics_modes[NGRAPHICS_MSGS] = {
     "<mode_quit/>"
 };
 
-GRAPHICS_MSG::GRAPHICS_MSG() {
-    memset(this, 0, sizeof(GRAPHICS_MSG));
+GRAPHICS_MSG::GRAPHICS_MSG() : mode(0) {
+    memset(window_station, 0, sizeof(window_station));
+    memset(desktop, 0, sizeof(desktop));
+    memset(display, 0, sizeof(display));
 }
 
-APP_INIT_DATA::APP_INIT_DATA() {
-    project_preferences = 0;
+APP_INIT_DATA::APP_INIT_DATA() : project_preferences(0) {
 }
 
 APP_INIT_DATA::~APP_INIT_DATA() {
@@ -63,15 +64,61 @@ APP_INIT_DATA::APP_INIT_DATA(const APP_INIT_DATA& a) {
     copy(a);
 }
 
-void APP_INIT_DATA::operator=(const APP_INIT_DATA& a) {
-    copy(a);
+APP_INIT_DATA& APP_INIT_DATA::operator=(const APP_INIT_DATA& a) {
+    if (this != &a) {
+        copy(a);
+    }
+    return *this;
 }
 
 void APP_INIT_DATA::copy(const APP_INIT_DATA& a) {
-    memcpy(this, &a, sizeof(APP_INIT_DATA));
+    major_version = a.major_version;
+    minor_version = a.minor_version;
+    release = a.release;
+    app_version = a.app_version;
+    strlcpy(app_name, a.app_name, sizeof(app_name));
+    strlcpy(symstore, a.symstore, sizeof(symstore));
+    strlcpy(acct_mgr_url, a.acct_mgr_url, sizeof(acct_mgr_url));
     if (a.project_preferences) {
         project_preferences = strdup(a.project_preferences);
+    } else {
+        project_preferences = 0;
     }
+    userid = a.userid;
+    teamid = a.teamid;
+    hostid = a.hostid;
+    strlcpy(user_name, a.user_name, sizeof(user_name));
+    strlcpy(team_name, a.team_name, sizeof(team_name));
+    strlcpy(project_dir, a.project_dir, sizeof(project_dir));
+    strlcpy(boinc_dir, a.boinc_dir, sizeof(boinc_dir));
+    strlcpy(wu_name, a.wu_name, sizeof(wu_name));
+    strlcpy(authenticator, a.authenticator, sizeof(authenticator));
+    slot = a.slot;
+    user_total_credit = a.user_total_credit;
+    user_expavg_credit = a.user_expavg_credit;
+    host_total_credit = a.host_total_credit;
+    host_expavg_credit = a.host_expavg_credit;
+    resource_share_fraction = a.resource_share_fraction;
+    host_info = a.host_info;
+    proxy_info = a.proxy_info;
+    global_prefs = a.global_prefs;
+
+    rsc_fpops_est = a.rsc_fpops_est;
+    rsc_fpops_bound = a.rsc_fpops_bound;
+    rsc_memory_bound = a.rsc_memory_bound;
+    rsc_disk_bound = a.rsc_disk_bound;
+    computation_deadline = a.computation_deadline;
+
+    fraction_done_start = a.fraction_done_start;
+    fraction_done_end = a.fraction_done_end;
+
+    checkpoint_period = a.checkpoint_period;
+#ifdef _WIN32
+    strlcpy(shmem_seg_name, a.shmem_seg_name, sizeof(shmem_seg_name));
+#else
+    shmem_seg_name = a.shmem_seg_name;
+#endif
+    wu_cpu_time = a.wu_cpu_time;
 }
 
 int write_init_data_file(FILE* f, APP_INIT_DATA& ai) {
@@ -253,9 +300,9 @@ int parse_init_data_file(FILE* f, APP_INIT_DATA& ai) {
     return ERR_XML_PARSE;
 }
 
-APP_CLIENT_SHM::APP_CLIENT_SHM() {
-    shm = 0;
+APP_CLIENT_SHM::APP_CLIENT_SHM() :shm(0) {
 }
+
 bool MSG_CHANNEL::get_msg(char *msg) {
     if (!buf[0]) return false;
     strlcpy(msg, buf+1, MSG_CHANNEL_SIZE-1);

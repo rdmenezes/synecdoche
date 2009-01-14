@@ -24,12 +24,13 @@
 
 #ifndef _WIN32
 #include "config.h"
-#include <cstdio>
-#include <sys/stat.h>
 #include <cctype>
+#include <cstdio>
+#include <sstream>
 #if HAVE_SYS_IPC_H
 #include <sys/ipc.h>
 #endif
+#include <sys/stat.h>
 #include "shmem.h"
 #endif
 
