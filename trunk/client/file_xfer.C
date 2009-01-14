@@ -118,8 +118,8 @@ int FILE_XFER::init_upload(FILE_INFO& file_info) {
             "<offset>%.0f</offset>\n"
             "<data>\n",
             BOINC_MAJOR_VERSION, BOINC_MINOR_VERSION, BOINC_RELEASE,
-            file_info.signed_xml,
-            file_info.xml_signature,
+            file_info.signed_xml.c_str(),
+            file_info.xml_signature.c_str(),
             file_info.nbytes,
             file_info.md5_cksum,
             file_info.upload_offset

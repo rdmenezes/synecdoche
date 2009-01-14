@@ -638,9 +638,6 @@ FILE_INFO::FILE_INFO() {
     urls.clear();
     start_url = -1;
     current_url = -1;
-    strcpy(signed_xml, "");
-    strcpy(xml_signature, "");
-    strcpy(file_signature, "");
 }
 
 FILE_INFO::~FILE_INFO() {
@@ -726,31 +723,25 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
             return 0;
         }
         if (match_tag(buf, "<xml_signature>")) {
-            retval = copy_element_contents(
-                in,
-                "</xml_signature>",
-                xml_signature,
-                sizeof(xml_signature)
-            );
-            if (retval) return retval;
-            continue;
-        }
-        if (match_tag(buf, "<file_signature>")) {
-            retval = copy_element_contents(
-                in,
-                "</file_signature>",
-                file_signature,
-                sizeof(file_signature)
-            );
-            if (retval) return retval;
-            if (from_server) {
-                strcat(signed_xml, "<file_signature>\n");
-                strcat(signed_xml, file_signature);
-                strcat(signed_xml, "</file_signature>\n");
+            retval = copy_element_contents(in, "</xml_signature>", xml_signature);
+            if (retval) {
+                return retval;
             }
             continue;
         }
-        strcat(signed_xml, buf);
+        if (match_tag(buf, "<file_signature>")) {
+            retval = copy_element_contents(in, "</file_signature>", file_signature);
+            if (retval) {
+                return retval;
+            }
+            if (from_server) {
+                signed_xml += "<file_signature>\n";
+                signed_xml += file_signature;
+                signed_xml += "</file_signature>\n";
+            }
+            continue;
+        }
+        signed_xml = buf;
         if (parse_str(buf, "<name>", name, sizeof(name))) continue;
         if (parse_str(buf, "<url>", url)) {
             urls.push_back(url);
@@ -782,13 +773,10 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
             continue;
         }
         if (!from_server && match_tag(buf, "<signed_xml>")) {
-            retval = copy_element_contents(
-                in,
-                "</signed_xml>",
-                signed_xml,
-                sizeof(signed_xml)
-            );
-            if (retval) return retval;
+            retval = copy_element_contents(in, "</signed_xml>", signed_xml);
+            if (retval) {
+                return retval;
+            }
             continue;
         }
         if (match_tag(buf, "<file_xfer>")) {
@@ -843,7 +831,7 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         if (gzip_when_done) out.printf("    <gzip_when_done/>\n");
         if (signature_required) out.printf("    <signature_required/>\n");
         if (is_user_file) out.printf("    <is_user_file/>\n");
-        if (strlen(file_signature)) out.printf("    <file_signature>\n%s</file_signature>\n", file_signature);
+        if (!file_signature.empty()) out.printf("    <file_signature>\n%s</file_signature>\n", file_signature.c_str());
     }
     for (i=0; i<urls.size(); i++) {
         out.printf("    <url>%s</url>\n", urls[i].c_str());
@@ -853,12 +841,11 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         if (retval) return retval;
     }
     if (!to_server) {
-        if (strlen(signed_xml) && strlen(xml_signature)) {
+        if ((!signed_xml.empty()) && (!xml_signature.empty())) {
             out.printf(
                 "    <signed_xml>\n%s    </signed_xml>\n"
                 "    <xml_signature>\n%s    </xml_signature>\n",
-                signed_xml, xml_signature
-            );
+                signed_xml.c_str(), xml_signature.c_str());
         }
     }
     if (!error_msg.empty()) {
@@ -1008,20 +995,18 @@ int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     if (max_nbytes <= 0 && new_info.max_nbytes) {
         max_nbytes = new_info.max_nbytes;
         sprintf(buf, "    <max_nbytes>%.0f</max_nbytes>\n", new_info.max_nbytes);
-        strcat(signed_xml, buf);
+        signed_xml += buf;
     }
 
     // replace existing URLs with new ones
-    //
     urls.clear();
     for (i=0; i<new_info.urls.size(); i++) {
         urls.push_back(new_info.urls[i]);
     }
 
     // replace signature
-    //
-    if (strlen(new_info.file_signature)) {
-        strcpy(file_signature, new_info.file_signature);
+    if (!new_info.file_signature.empty()) {
+        file_signature = new_info.file_signature;
     }
 
     return 0;
