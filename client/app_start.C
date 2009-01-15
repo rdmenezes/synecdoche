@@ -325,10 +325,7 @@ int ACTIVE_TASK::copy_output_files() {
         get_pathname(fip, projfile, sizeof(projfile));
         int retval = boinc_rename(slotfile.c_str(), projfile);
         if (retval) {
-            msg_printf(wup->project, MSG_INTERNAL_ERROR,
-                "Can't rename output file %s to %s: %s",
-                fip->name, projfile, boincerror(retval)
-            );
+            msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't rename output file %s to %s: %s", fip->name.c_str(), projfile, boincerror(retval));
         }
     }
     return 0;
@@ -438,7 +435,7 @@ int ACTIVE_TASK::start(bool first_time) {
                 retval = ERR_NO_SIGNATURE;
                 goto error;
             }
-            safe_strcpy(exec_name, fip->name);
+            safe_strcpy(exec_name, fip->name.c_str());
             safe_strcpy(exec_path, file_path);
         }
         // anonymous platform may use different files than

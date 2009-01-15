@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 // If you change anything, make sure you also change:
 // client_types.C  (to write and parse it)
 // client_state.C  (to cross-link objects)
-//
 
 #ifndef _CLIENT_TYPES_
 #define _CLIENT_TYPES_
@@ -48,13 +47,12 @@
 // it will be an error code defined in error_numbers.h,
 // indicating an unrecoverable error in the upload or download of the file,
 // or that the file was too big and was deleted
-//
 #define FILE_NOT_PRESENT    0
 #define FILE_PRESENT        1
 
 class FILE_INFO {
 public:
-    char name[256];
+    std::string name;
     char md5_cksum[33];
     double max_nbytes;
     double nbytes;

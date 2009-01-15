@@ -296,7 +296,7 @@ int PROJECT::parse_preferences_for_user_files() {
             fip = new FILE_INFO;
             fip->project = this;
             fip->urls.push_back(url);
-            strcpy(fip->name, filename.c_str());
+            fip->name = filename;
             fip->is_user_file = true;
             gstate.file_infos.push_back(fip);
         }

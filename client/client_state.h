@@ -194,7 +194,7 @@ public:
     bool time_to_exit() const;
     PROJECT* lookup_project(const char* master_url);
     APP* lookup_app(const PROJECT* p, const char* name);
-    FILE_INFO* lookup_file_info(const PROJECT* p, const char* name);
+    FILE_INFO* lookup_file_info(const PROJECT* p, const std::string& name);
     RESULT* lookup_result(const PROJECT* p, const char* name);
     WORKUNIT* lookup_workunit(const PROJECT* p, const char* name);
     APP_VERSION* lookup_app_version(const APP* app, const char* platform, int ver, const char* plan_class);

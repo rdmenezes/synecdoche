@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -50,7 +50,8 @@ extern bool is_statistics_file(const std::string& filename);
 /// Get the name of the statistics file for a given master URL.
 extern std::string get_statistics_filename(const char* master_url);
 
-extern bool is_image_file(const char*);
+/// Check if a file name denotes an image file.
+extern bool is_image_file(std::string filename);
 
 extern void get_sched_request_filename(const PROJECT&, char*, int len);
 extern void get_sched_reply_filename(const PROJECT&, char*, int len);

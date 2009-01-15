@@ -248,8 +248,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
             "        <status>%d</status>\n"
             "        <report_on_rpc/>\n"
             "    </file_info>\n",
-            fip->name, fip->nbytes, fip->status
-        );
+            fip->name.c_str(), fip->nbytes, fip->status);
     }
 
     // NOTE: there's also a send_file_list flag, not currently used
@@ -578,7 +577,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
             *fip = sr.file_infos[i];
             retval = link_file_info(project, fip);
             if (retval) {
-                msg_printf(project, MSG_INTERNAL_ERROR, "Can't handle file %s in scheduler reply", fip->name);
+                msg_printf(project, MSG_INTERNAL_ERROR, "Can't handle file %s in scheduler reply", fip->name.c_str());
                 delete fip;
             } else {
                 file_infos.push_back(fip);
@@ -588,7 +587,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     for (i=0; i<sr.file_deletes.size(); i++) {
         fip = lookup_file_info(project, sr.file_deletes[i].c_str());
         if (fip) {
-            msg_printf(project, MSG_INFO, "Got server request to delete file %s", fip->name);
+            msg_printf(project, MSG_INFO, "Got server request to delete file %s", fip->name.c_str());
             fip->marked_for_delete = true;
         }
     }
