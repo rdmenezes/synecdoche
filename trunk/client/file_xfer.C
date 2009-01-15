@@ -63,10 +63,10 @@ int FILE_XFER::init_download(FILE_INFO& file_info) {
     bytes_xferred = starting_size;
 
     const char* url = fip->get_current_url(is_upload);
-    if (!url) return ERR_INVALID_URL;
-    return HTTP_OP::init_get(
-        url, pathname, false, (int)starting_size
-    );
+    if (!url) {
+		return ERR_INVALID_URL;
+	}
+    return HTTP_OP::init_get(url, pathname, false, (int)starting_size);
 }
 
 /// for uploads, we need to build a header with xml_signature etc.
@@ -93,8 +93,8 @@ int FILE_XFER::init_upload(FILE_INFO& file_info) {
             "    <get_file_size>%s</get_file_size>\n"
             "</data_server_request>\n",
             BOINC_MAJOR_VERSION, BOINC_MINOR_VERSION, BOINC_RELEASE,
-            file_info.name
-        );
+            file_info.name.c_str());
+
         file_size_query = true;
         const char* url = fip->get_current_url(is_upload);
         if (!url) return ERR_INVALID_URL;
@@ -177,7 +177,6 @@ FILE_XFER_SET::FILE_XFER_SET(HTTP_OP_SET* p) {
 
 /// Start a FILE_XFER going (connect to server etc.)
 /// If successful, add to the set.
-///
 int FILE_XFER_SET::insert(FILE_XFER* fxp) {
     int retval;
 
@@ -189,7 +188,6 @@ int FILE_XFER_SET::insert(FILE_XFER* fxp) {
 }
 
 /// Remove a FILE_XFER object from the set.
-///
 int FILE_XFER_SET::remove(FILE_XFER* fxp) {
     vector<FILE_XFER*>::iterator iter;
 
@@ -204,15 +202,12 @@ int FILE_XFER_SET::remove(FILE_XFER* fxp) {
         }
         iter++;
     }
-    msg_printf(NULL, MSG_INTERNAL_ERROR,
-        "File transfer for %s not found", fxp->fip->name
-    );
+    msg_printf(NULL, MSG_INTERNAL_ERROR, "File transfer for %s not found", fxp->fip->name.c_str());
     return ERR_NOT_FOUND;
 }
 
 /// Run through the FILE_XFER_SET and determine if any of the file
 /// transfers are complete or had an error.
-///
 bool FILE_XFER_SET::poll() {
     unsigned int i;
     FILE_XFER* fxp;
@@ -233,20 +228,16 @@ bool FILE_XFER_SET::poll() {
         if (log_flags.file_xfer_debug) {
             msg_printf(0, MSG_INFO,
                 "[file_xfer_debug] FILE_XFER_SET::poll(): http op done; retval %d\n",
-                fxp->http_op_retval
-            );
+                fxp->http_op_retval);
         }
         fxp->file_xfer_retval = fxp->http_op_retval;
         if (fxp->file_xfer_retval == 0) {
             if (fxp->is_upload) {
-                fxp->file_xfer_retval = fxp->parse_upload_response(
-                    fxp->fip->upload_offset
-                );
+                fxp->file_xfer_retval = fxp->parse_upload_response(fxp->fip->upload_offset);
             }
 
             // If this was a file size query, restart the transfer
             // using the remote file size information
-            //
             if (fxp->file_size_query) {
                 if (fxp->file_xfer_retval) {
                     fxp->fip->upload_offset = -1;
@@ -256,14 +247,12 @@ bool FILE_XFER_SET::poll() {
                     // something bad has happened
                     // (like a result got sent to multiple users).
                     // Pretend the file was successfully uploaded
-                    //
                     if (fxp->fip->upload_offset >= fxp->fip->nbytes) {
                         fxp->file_xfer_done = true;
                         fxp->file_xfer_retval = 0;
                     } else {
                         // Restart the upload, using the newly obtained
                         // upload_offset
-                        //
                         fxp->close_socket();
                         fxp->file_xfer_retval = fxp->init_upload(*fxp->fip);
 
@@ -285,7 +274,6 @@ bool FILE_XFER_SET::poll() {
         }
 
         // deal with various error cases for downloads
-        //
         if (!fxp->is_upload) {
             get_pathname(fxp->fip, pathname, sizeof(pathname));
             if (file_size(pathname, size)) continue;
@@ -295,21 +283,18 @@ bool FILE_XFER_SET::poll() {
                 // see if we read less than 5 KB and file is incomplete.
                 // If so truncate the amount read,
                 // since it may be a proxy error message
-                //
                 if (fxp->fip->nbytes) {
                     if (size == fxp->fip->nbytes) continue;
                     if (diff>0 && diff<MIN_DOWNLOAD_INCREMENT) {
                         msg_printf(fxp->fip->project, MSG_INFO,
                             "Incomplete read of %f < 5KB for %s - truncating",
-                            diff, fxp->fip->name
-                        );
+                            diff, fxp->fip->name.c_str());
                         boinc_truncate(pathname, fxp->starting_size);
                     }
                 }
             } else {
                 // got HTTP error; truncate last 5KB of file, since some
                 // error-reporting HTML may have been appended
-                //
                 if (diff < MIN_DOWNLOAD_INCREMENT) {
                     diff = 0;
                 } else {

@@ -684,10 +684,10 @@ APP_VERSION* CLIENT_STATE::lookup_app_version(
     return 0;
 }
 
-FILE_INFO* CLIENT_STATE::lookup_file_info(const PROJECT* p, const char* name) {
+FILE_INFO* CLIENT_STATE::lookup_file_info(const PROJECT* p, const std::string& name) {
     for (unsigned int i=0; i<file_infos.size(); i++) {
         FILE_INFO* fip = file_infos[i];
-        if (fip->project == p && !strcmp(fip->name, name)) {
+        if ((fip->project == p) && (fip->name == name)) {
             return fip;
         }
     }
@@ -846,7 +846,7 @@ void CLIENT_STATE::print_summary() const {
     }
     msg_printf(0, MSG_INFO, "%lu file_infos:\n", file_infos.size());
     for (i=0; i<file_infos.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s status:%d %s\n", file_infos[i]->name, file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
+        msg_printf(0, MSG_INFO, "    %s status:%d %s\n", file_infos[i]->name.c_str(), file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
     }
     msg_printf(0, MSG_INFO, "%lu app_versions\n", app_versions.size());
     for (i=0; i<app_versions.size(); i++) {
@@ -862,7 +862,7 @@ void CLIENT_STATE::print_summary() const {
     }
     msg_printf(0, MSG_INFO, "%lu persistent file xfers\n", pers_file_xfers->pers_file_xfers.size());
     for (i=0; i<pers_file_xfers->pers_file_xfers.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s http op state: %d\n", pers_file_xfers->pers_file_xfers[i]->fip->name, (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
+        msg_printf(0, MSG_INFO, "    %s http op state: %d\n", pers_file_xfers->pers_file_xfers[i]->fip->name.c_str(), (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
     }
     msg_printf(0, MSG_INFO, "%lu active tasks\n", active_tasks.active_tasks.size());
     for (i=0; i<active_tasks.active_tasks.size(); i++) {
@@ -1088,9 +1088,7 @@ bool CLIENT_STATE::garbage_collect_always() {
             }
             fip->delete_file();
             if (log_flags.state_debug) {
-                msg_printf(0, MSG_INFO,
-                    "[state_debug] CLIENT_STATE::garbage_collect(): deleting file %s\n",
-                    fip->name);
+                msg_printf(0, MSG_INFO, "[state_debug] CLIENT_STATE::garbage_collect(): deleting file %s\n", fip->name.c_str());
             }
             delete fip;
             fi_iter = file_infos.erase(fi_iter);

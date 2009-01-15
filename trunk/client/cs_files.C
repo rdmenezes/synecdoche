@@ -135,7 +135,7 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
 
     if (signature_required) {
         if (file_signature.empty()) {
-            msg_printf(project, MSG_INTERNAL_ERROR, "Application file %s missing signature", name);
+            msg_printf(project, MSG_INTERNAL_ERROR, "Application file %s missing signature", name.c_str());
             msg_printf(project, MSG_INTERNAL_ERROR, "Synecdoche cannot accept this file");
             error_msg = "missing signature";
             status = ERR_NO_SIGNATURE;
@@ -143,13 +143,13 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
         }
         retval = verify_file2(pathname, file_signature.c_str(), project->code_sign_key, verified);
         if (retval) {
-            msg_printf(project, MSG_INTERNAL_ERROR, "Signature verification error for %s", name);
+            msg_printf(project, MSG_INTERNAL_ERROR, "Signature verification error for %s", name.c_str());
             error_msg = "signature verification error";
             status = ERR_RSA_FAILED;
             return ERR_RSA_FAILED;
         }
         if (!verified && show_errors) {
-            msg_printf(project, MSG_INTERNAL_ERROR, "Signature verification failed for %s", name);
+            msg_printf(project, MSG_INTERNAL_ERROR, "Signature verification failed for %s", name.c_str());
             error_msg = "signature verification failed";
             status = ERR_RSA_FAILED;
             return ERR_RSA_FAILED;
@@ -157,22 +157,15 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
     } else if (strlen(md5_cksum)) {
         retval = md5_file(pathname, cksum, local_nbytes);
         if (retval) {
-            msg_printf(project, MSG_INTERNAL_ERROR,
-                "MD5 computation error for %s: %s\n",
-                name, boincerror(retval)
-            );
+            msg_printf(project, MSG_INTERNAL_ERROR, "MD5 computation error for %s: %s\n", name.c_str(), boincerror(retval));
             error_msg = "MD5 computation error";
             status = retval;
             return retval;
         }
         if (strcmp(cksum, md5_cksum)) {
             if (show_errors) {
-                msg_printf(project, MSG_INTERNAL_ERROR,
-                    "MD5 check failed for %s", name
-                );
-                msg_printf(project, MSG_INTERNAL_ERROR,
-                    "expected %s, got %s\n", md5_cksum, cksum
-                );
+                msg_printf(project, MSG_INTERNAL_ERROR, "MD5 check failed for %s", name.c_str());
+                msg_printf(project, MSG_INTERNAL_ERROR, "expected %s, got %s\n", md5_cksum, cksum);
             }
             error_msg = "MD5 check failed";
             status = ERR_MD5_FAILED;
@@ -197,7 +190,6 @@ bool CLIENT_STATE::handle_pers_file_xfers() {
 
     // Look for FILE_INFOs for which we should start a transfer,
     // and make PERS_FILE_XFERs for them
-    //
     for (i=0; i<file_infos.size(); i++) {
         fip = file_infos[i];
         pfx = fip->pers_file_xfer;
@@ -214,13 +206,11 @@ bool CLIENT_STATE::handle_pers_file_xfers() {
             fip->pers_file_xfer = pfx;
             pers_file_xfers->insert(fip->pers_file_xfer);
             action = true;
-
         }
     }
 
     // Scan existing PERS_FILE_XFERs, looking for those that are done,
     // and deleting them
-    //
     vector<PERS_FILE_XFER*>::iterator iter;
     iter = pers_file_xfers->pers_file_xfers.begin();
     while (iter != pers_file_xfers->pers_file_xfers.end()) {
@@ -228,12 +218,10 @@ bool CLIENT_STATE::handle_pers_file_xfers() {
 
         // If the transfer finished, remove the PERS_FILE_XFER object
         // from the set and delete it
-        //
         if (pfx->pers_xfer_done) {
             fip = pfx->fip;
             if (fip->generated_locally || fip->upload_when_present) {
                 // file has been uploaded - delete if not sticky
-                //
                 if (!fip->sticky) {
                     fip->delete_file();
                 }
@@ -243,29 +231,23 @@ bool CLIENT_STATE::handle_pers_file_xfers() {
                 // file transfer did not fail (non-negative status)
 
                 // verify the file with RSA or MD5, and change permissions
-                //
                 retval = fip->verify_file(true, true);
                 if (retval) {
-                    msg_printf(fip->project, MSG_INTERNAL_ERROR,
-                        "Checksum or signature error for %s", fip->name
-                    );
+                    msg_printf(fip->project, MSG_INTERNAL_ERROR, "Checksum or signature error for %s", fip->name.c_str());
                     fip->status = retval;
                 } else {
                     // Set the appropriate permissions depending on whether
                     // it's an executable or normal file
-                    //
                     retval = fip->set_permissions();
                     fip->status = FILE_PRESENT;
                 }
 
                 // if it's a user file, tell running apps to reread prefs
-                //
                 if (fip->is_user_file) {
                     active_tasks.request_reread_prefs(fip->project);
                 }
 
                 // if it's a project file, make a link in project dir
-                //
                 if (fip->is_project_file) {
                     PROJECT* p = fip->project;
                     p->write_symlink_for_project_file(fip);

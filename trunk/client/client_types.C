@@ -565,7 +565,7 @@ int PROJECT::write_symlink_for_project_file(const FILE_INFO* fip) const {
             path.append("/").append((*it).open_name);
             FILE* f = boinc_fopen(path.c_str(), "w");
             if (f) {
-                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir, fip->name);
+                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir, fip->name.c_str());
                 fclose(f);
             }
         }
@@ -615,7 +615,6 @@ int APP::write(MIOFILE& out) const {
 }
 
 FILE_INFO::FILE_INFO() {
-    strcpy(name, "");
     strcpy(md5_cksum, "");
     max_nbytes = 0;
     nbytes = 0;
@@ -642,10 +641,7 @@ FILE_INFO::FILE_INFO() {
 
 FILE_INFO::~FILE_INFO() {
     if (pers_file_xfer) {
-        msg_printf(NULL, MSG_INTERNAL_ERROR,
-            "Deleting file %s while in use",
-            name
-        );
+        msg_printf(NULL, MSG_INTERNAL_ERROR, "Deleting file %s while in use", name.c_str());
         pers_file_xfer->fip = NULL;
     }
 }
@@ -717,9 +713,9 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
 
     while (in.fgets(buf, 256)) {
         if (match_tag(buf, "</file_info>")) {
-            if (!strlen(name)) return ERR_BAD_FILENAME;
-            if (strstr(name, "..")) return ERR_BAD_FILENAME;
-            if (strstr(name, "%")) return ERR_BAD_FILENAME;
+            if ((name.empty()) || (name.find("..") != std::string::npos) || (name.find("%") != std::string::npos)) {
+				return ERR_BAD_FILENAME;
+			}
             return 0;
         }
         if (match_tag(buf, "<xml_signature>")) {
@@ -742,7 +738,7 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
             continue;
         }
         signed_xml = buf;
-        if (parse_str(buf, "<name>", name, sizeof(name))) continue;
+        if (parse_str(buf, "<name>", name)) continue;
         if (parse_str(buf, "<url>", url)) {
             urls.push_back(url);
             continue;
@@ -811,13 +807,10 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         "    <name>%s</name>\n"
         "    <nbytes>%f</nbytes>\n"
         "    <max_nbytes>%f</max_nbytes>\n",
-        name, nbytes, max_nbytes
-    );
+        name.c_str(), nbytes, max_nbytes);
+
     if (strlen(md5_cksum)) {
-        out.printf(
-            "    <md5_cksum>%s</md5_cksum>\n",
-            md5_cksum
-        );
+        out.printf("    <md5_cksum>%s</md5_cksum>\n", md5_cksum);
     }
     if (!to_server) {
         if (generated_locally) out.printf("    <generated_locally/>\n");
@@ -866,13 +859,9 @@ int FILE_INFO::write_gui(MIOFILE& out) const {
         "    <nbytes>%f</nbytes>\n"
         "    <max_nbytes>%f</max_nbytes>\n"
         "    <status>%d</status>\n",
-        project->master_url,
-        project->project_name,
-        name,
-        nbytes,
-        max_nbytes,
-        status
-    );
+        project->master_url, project->project_name, name.c_str(),
+        nbytes, max_nbytes, status);
+
     if (generated_locally) out.printf("    <generated_locally/>\n");
     if (uploaded) out.printf("    <uploaded/>\n");
     if (upload_when_present) out.printf("    <upload_when_present/>\n");
@@ -887,7 +876,6 @@ int FILE_INFO::write_gui(MIOFILE& out) const {
 }
 
 /// Delete physical underlying file associated with FILE_INFO.
-///
 int FILE_INFO::delete_file() {
     char path[256];
 
@@ -904,18 +892,16 @@ int FILE_INFO::delete_file() {
 /// Call this to get the initial url,
 /// The is_upload arg says which kind you want.
 /// NULL return means there is no URL of the requested type.
-///
 const char* FILE_INFO::get_init_url(bool is_upload) {
     if (urls.empty()) {
         return NULL;
     }
 
-/// if a project supplies multiple URLs, try them in order
-/// (e.g. in Einstein@home they're ordered by proximity to client).
-/// The commented-out code tries them starting from random place.
-/// This is appropriate if replication is for load-balancing.
-/// TODO: add a flag saying which mode to use.
-///
+	/// if a project supplies multiple URLs, try them in order
+	/// (e.g. in Einstein@home they're ordered by proximity to client).
+	/// The commented-out code tries them starting from random place.
+	/// This is appropriate if replication is for load-balancing.
+	/// TODO: add a flag saying which mode to use.
 #if 1
     current_url = 0;
 #else
@@ -930,8 +916,7 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
         if (!is_correct_url_type(is_upload, urls[current_url])) {
             current_url = (current_url + 1) % ((int)urls.size());
             if (current_url == start_url) {
-                msg_printf(project, MSG_INTERNAL_ERROR,
-                    "Couldn't find suitable URL for %s", name);
+                msg_printf(project, MSG_INTERNAL_ERROR, "Couldn't find suitable URL for %s", name.c_str());
                 return NULL;
             }
         } else {
@@ -943,7 +928,6 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
 
 /// Call this to get the next URL of the indicated type.
 /// NULL return means you've tried them all.
-///
 const char* FILE_INFO::get_next_url(bool is_upload) {
     if (urls.empty()) return NULL;
     while (true) {
@@ -962,9 +946,7 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
         return get_init_url(is_upload);
     }
     if (current_url >= (int)urls.size()) {
-        msg_printf(project, MSG_INTERNAL_ERROR,
-            "File %s has no URL", name
-        );
+        msg_printf(project, MSG_INTERNAL_ERROR, "File %s has no URL", name.c_str());
         return NULL;
     }
     return urls[current_url].c_str();
@@ -972,7 +954,6 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
 
 /// Checks if the URL includes the phrase "file_upload_handler".
 /// This indicates the URL is an upload url.
-///
 bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) const {
     const char* has_str = strstr(url.c_str(), "file_upload_handler");
     if ((is_upload && !has_str) || (!is_upload && has_str)) {
@@ -985,7 +966,6 @@ bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) cons
 /// Merges information from a new FILE_INFO that has the same name as one
 /// that is already present in the client state file.
 /// Potentially changes upload_when_present, max_nbytes, and signed_xml.
-///
 int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     char buf[256];
     unsigned int i;
@@ -1014,7 +994,6 @@ int FILE_INFO::merge_info(const FILE_INFO& new_info) {
 
 /// Returns true if the file had an unrecoverable error
 /// (couldn't download, RSA/MD5 check failed, etc).
-///
 bool FILE_INFO::had_failure(int& failnum) const {
     if (status != FILE_NOT_PRESENT && status != FILE_PRESENT) {
         failnum = status;

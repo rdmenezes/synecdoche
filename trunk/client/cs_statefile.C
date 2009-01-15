@@ -182,10 +182,7 @@ int CLIENT_STATE::parse_state_file() {
                 continue;
             }
             if (retval) {
-                msg_printf(project, MSG_INTERNAL_ERROR,
-                    "Can't handle file info %s in state file",
-                    fip->name
-                );
+                msg_printf(project, MSG_INTERNAL_ERROR, "Can't handle file info %s in state file", fip->name.c_str());
                 delete fip;
                 continue;
             }
@@ -202,17 +199,11 @@ int CLIENT_STATE::parse_state_file() {
             if (fip->pers_file_xfer) {
                 retval = fip->pers_file_xfer->init(fip, fip->upload_when_present);
                 if (retval) {
-                    msg_printf(project, MSG_INTERNAL_ERROR,
-                        "Can't initialize file transfer for %s",
-                        fip->name
-                    );
+                    msg_printf(project, MSG_INTERNAL_ERROR, "Can't initialize file transfer for %s", fip->name.c_str());
                 }
                 retval = pers_file_xfers->insert(fip->pers_file_xfer);
                 if (retval) {
-                    msg_printf(project, MSG_INTERNAL_ERROR,
-                        "Can't start persistent file transfer for %s",
-                        fip->name
-                    );
+                    msg_printf(project, MSG_INTERNAL_ERROR, "Can't start persistent file transfer for %s", fip->name.c_str());
                 }
             }
             continue;
@@ -221,9 +212,7 @@ int CLIENT_STATE::parse_state_file() {
             APP_VERSION* avp = new APP_VERSION;
             retval = avp->parse(mf);
             if (!project) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "Application version outside project in state file"
-                );
+                msg_printf(NULL, MSG_INTERNAL_ERROR, "Application version outside project in state file");
                 delete avp;
                 continue;
             }

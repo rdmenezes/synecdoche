@@ -63,7 +63,7 @@ int PERS_FILE_XFER::init(FILE_INFO* f, bool is_file_upload) {
     pers_xfer_done = false;
     const char* p = f->get_init_url(is_file_upload);
     if (!p) {
-        msg_printf(NULL, MSG_INTERNAL_ERROR, "No URL for file transfer of %s", f->name);
+        msg_printf(NULL, MSG_INTERNAL_ERROR, "No URL for file transfer of %s", f->name.c_str());
         return ERR_NULL;
     }
     return 0;
@@ -86,30 +86,24 @@ int PERS_FILE_XFER::create_xfer() {
     int retval;
 
     // Decide whether to start a new file transfer
-    //
     if (!gstate.start_new_file_xfer(*this)) {
         return ERR_IDLE_PERIOD;
     }
 
     // Does the file exist already? this could happen for example if we are
     // downloading an application which exists from a previous installation
-    //
     if (!is_upload) {
         char pathname[256];
         get_pathname(fip, pathname, sizeof(pathname));
 
         // see if file already exists and is valid
-        //
         if (!fip->verify_file(true, false)) {
             retval = fip->set_permissions();
             fip->status = FILE_PRESENT;
             pers_xfer_done = true;
 
             if (log_flags.file_xfer) {
-                msg_printf(
-                    fip->project, MSG_INFO,
-                    "File %s exists already, skipping download", fip->name
-                );
+                msg_printf(fip->project, MSG_INFO, "File %s exists already, skipping download", fip->name.c_str());
             }
 
             return 0;
@@ -122,17 +116,15 @@ int PERS_FILE_XFER::create_xfer() {
     file_xfer->set_proxy(&gstate.proxy_info);
     fxp = file_xfer;
     retval = start_xfer();
-    if (!retval) retval = gstate.file_xfers->insert(file_xfer);
+    if (!retval) {
+		retval = gstate.file_xfers->insert(file_xfer);
+	}
     if (retval) {
         if (log_flags.http_debug) {
-            msg_printf(
-                fip->project, MSG_INFO, "[file_xfer_debug] Couldn't start %s of %s",
-                (is_upload ? "upload" : "download"), fip->name
-            );
-            msg_printf(
-                fip->project, MSG_INFO, "[file_xfer_debug] URL %s: %s",
-                fip->get_current_url(is_upload), boincerror(retval)
-            );
+            msg_printf(fip->project, MSG_INFO, "[file_xfer_debug] Couldn't start %s of %s",
+		                (is_upload ? "upload" : "download"), fip->name);
+            msg_printf(fip->project, MSG_INFO, "[file_xfer_debug] URL %s: %s",
+		                fip->get_current_url(is_upload), boincerror(retval));
         }
 
         fxp->file_xfer_retval = retval;
@@ -142,16 +134,11 @@ int PERS_FILE_XFER::create_xfer() {
         return retval;
     }
     if (log_flags.file_xfer) {
-        msg_printf(
-            fip->project, MSG_INFO, "Started %s of %s",
-            (is_upload ? "upload" : "download"), fip->name
-        );
+        msg_printf(fip->project, MSG_INFO, "Started %s of %s",
+        		    (is_upload ? "upload" : "download"), fip->name.c_str());
     }
     if (log_flags.file_xfer_debug) {
-        msg_printf(0, MSG_INFO,
-            "[file_xfer_debug] URL: %s\n",
-            fip->get_current_url(is_upload)
-        );
+        msg_printf(0, MSG_INFO, "[file_xfer_debug] URL: %s\n", fip->get_current_url(is_upload));
     }
     return 0;
 }
@@ -169,7 +156,6 @@ bool PERS_FILE_XFER::poll() {
         // No file xfer is active.
         // Either initial or resume after failure.
         // See if it's time to try again.
-        //
         if (gstate.now < next_request_time) {
             return false;
         }
@@ -185,14 +171,12 @@ bool PERS_FILE_XFER::poll() {
     }
 
     // copy bytes_xferred for use in GUI
-    //
     last_bytes_xferred = fxp->bytes_xferred;
     if (fxp->is_upload) {
         last_bytes_xferred += fxp->file_offset;
     }
 
     // don't count suspended periods in total time
-    //
     double diff = gstate.now - last_time;
     if (diff <= 2) {
         time_so_far += diff;
@@ -201,28 +185,20 @@ bool PERS_FILE_XFER::poll() {
 
     if (fxp->file_xfer_done) {
         if (log_flags.file_xfer_debug) {
-            msg_printf(0, MSG_INFO,
-                "[file_xfer_debug] file transfer status %d",
-                fxp->file_xfer_retval
-            );
+            msg_printf(0, MSG_INFO, "[file_xfer_debug] file transfer status %d", fxp->file_xfer_retval);
         }
         switch (fxp->file_xfer_retval) {
         case 0:
             fip->project->file_xfer_succeeded(is_upload);
             if (log_flags.file_xfer) {
-                msg_printf(
-                    fip->project, MSG_INFO, "Finished %s of %s",
-                    is_upload?"upload":"download", fip->name
-                );
+                msg_printf(fip->project, MSG_INFO, "Finished %s of %s", 
+							(is_upload ? "upload" : "download"), fip->name.c_str());
             }
             if (log_flags.file_xfer_debug) {
                 if (fxp->xfer_speed < 0) {
                     msg_printf(fip->project, MSG_INFO, "[file_xfer_debug] No data transferred");
                 } else {
-                    msg_printf(
-                        fip->project, MSG_INFO, "[file_xfer_debug] Throughput %.0f bytes/sec",
-                        fxp->xfer_speed
-                    );
+                    msg_printf(fip->project, MSG_INFO, "[file_xfer_debug] Throughput %.0f bytes/sec", fxp->xfer_speed);
                 }
             }
             pers_xfer_done = true;
@@ -237,10 +213,7 @@ bool PERS_FILE_XFER::poll() {
                 // if we get a "not found" on an upload,
                 // the project must not have a file_upload_handler.
                 // Treat this as a transient error.
-                //
-                msg_printf(fip->project, MSG_INFO,
-                    "Project file upload handler is missing"
-                );
+                msg_printf(fip->project, MSG_INFO, "Project file upload handler is missing");
                 transient_failure(fxp->file_xfer_retval);
             } else {
                 permanent_failure(fxp->file_xfer_retval);
@@ -248,18 +221,14 @@ bool PERS_FILE_XFER::poll() {
             break;
         default:
             if (log_flags.file_xfer) {
-                msg_printf(
-                    fip->project, MSG_INFO, "Temporarily failed %s of %s: %s",
-                    is_upload?"upload":"download", fip->name,
-                    boincerror(fxp->file_xfer_retval)
-                );
+                msg_printf(fip->project, MSG_INFO, "Temporarily failed %s of %s: %s",
+                    		(is_upload ? "upload" : "download"), fip->name.c_str(), boincerror(fxp->file_xfer_retval));
             }
             transient_failure(fxp->file_xfer_retval);
         }
 
         // fxp could have already been freed and zeroed above
         // so check before trying to remove
-        //
         if (fxp) {
             gstate.file_xfers->remove(fxp);
             delete fxp;
@@ -277,10 +246,8 @@ void PERS_FILE_XFER::permanent_failure(int retval) {
     fip->status = retval;
     pers_xfer_done = true;
     if (log_flags.file_xfer) {
-        msg_printf(
-            fip->project, MSG_INFO, "Giving up on %s of %s: %s",
-            is_upload?"upload":"download", fip->name, boincerror(retval)
-        );
+        msg_printf(fip->project, MSG_INFO, "Giving up on %s of %s: %s",
+            		(is_upload ? "upload" : "download"), fip->name.c_str(), boincerror(retval));
     }
     fip->error_msg = boincerror(retval);
 }
@@ -289,14 +256,12 @@ void PERS_FILE_XFER::permanent_failure(int retval) {
 void PERS_FILE_XFER::transient_failure(int retval) {
 
     // If it was a bad range request, delete the file and start over
-    //
     if (retval == HTTP_STATUS_RANGE_REQUEST_ERROR) {
         fip->delete_file();
         return;
     }
 
     // If too much time has elapsed, give up
-    //
     if ((gstate.now - first_request_time) > gstate.file_xfer_giveup_period) {
         permanent_failure(ERR_TIMEOUT);
     }
@@ -304,8 +269,6 @@ void PERS_FILE_XFER::transient_failure(int retval) {
     // Cycle to the next URL to try.
     // If we reach the URL that we started at, then back off.
     // Otherwise immediately try the next URL
-    //
-
     if (fip->get_next_url(is_upload)) {
         start_xfer();
     } else {
@@ -318,29 +281,20 @@ void PERS_FILE_XFER::do_backoff() {
     double backoff = 0;
 
     // don't count it as a server failure if network is down
-    //
     if (!net_status.need_physical_connection) {
         nretry++;
     }
 
     // keep track of transient failures per project (not currently used)
-    //
     fip->project->file_xfer_failed(is_upload);
 
     // Do an exponential backoff of e^nretry seconds,
     // keeping within the bounds of pers_retry_delay_min and
     // pers_retry_delay_max
-    //
-    backoff = calculate_exponential_backoff(
-        nretry, gstate.pers_retry_delay_min, gstate.pers_retry_delay_max
-    );
+    backoff = calculate_exponential_backoff(nretry, gstate.pers_retry_delay_min, gstate.pers_retry_delay_max);
     next_request_time = gstate.now + backoff;
-    msg_printf(fip->project, MSG_INFO,
-        "Backing off %s on %s of %s",
-        timediff_format(backoff).c_str(),
-        is_upload?"upload":"download",
-        fip->name
-    );
+    msg_printf(fip->project, MSG_INFO, "Backing off %s on %s of %s", timediff_format(backoff).c_str(),
+		        (is_upload ? "upload" : "download"), fip->name.c_str());
 }
 
 void PERS_FILE_XFER::abort() {

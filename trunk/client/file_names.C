@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -60,9 +60,9 @@ void get_pathname(const FILE_INFO* fip, char* path, int len) {
     //
     if (p) {
         get_project_dir(p, buf, sizeof(buf));
-        snprintf(path, len, "%s/%s", buf, fip->name);
+        snprintf(path, len, "%s/%s", buf, fip->name.c_str());
     } else {
-        strlcpy(path, fip->name, len);
+        strlcpy(path, fip->name.c_str(), len);
     }
 }
 
@@ -325,11 +325,16 @@ std::string get_statistics_filename(const char* master_url) {
     return result.str();
 }
 
-bool is_image_file(const char* filename) {
-    std::string fn = filename;
-    downcase_string(fn);
-    if (ends_with(fn, std::string(".jpg"))) return true;
-    if (ends_with(fn, std::string(".jpeg"))) return true;
-    if (ends_with(fn, std::string(".png"))) return true;
+/// Check if a file name denotes an image file.
+/// This function checks the file extension and returns true for files
+/// ending with ".jpg", ".jepg" or ".png".
+///
+/// \param[in] filename The file name that should be checked.
+/// \return True if the given file name denotes an image file.
+bool is_image_file(std::string filename) {
+    downcase_string(filename);
+    if (ends_with(filename, std::string(".jpg"))) return true;
+    if (ends_with(filename, std::string(".jpeg"))) return true;
+    if (ends_with(filename, std::string(".png"))) return true;
     return false;
 }
