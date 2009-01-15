@@ -327,7 +327,7 @@ std::string get_statistics_filename(const char* master_url) {
 
 /// Check if a file name denotes an image file.
 /// This function checks the file extension and returns true for files
-/// ending with ".jpg", ".jepg" or ".png".
+/// ending with ".jpg", ".jpeg" or ".png".
 ///
 /// \param[in] filename The file name that should be checked.
 /// \return True if the given file name denotes an image file.

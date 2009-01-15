@@ -1088,7 +1088,9 @@ bool CLIENT_STATE::garbage_collect_always() {
             }
             fip->delete_file();
             if (log_flags.state_debug) {
-                msg_printf(0, MSG_INFO, "[state_debug] CLIENT_STATE::garbage_collect(): deleting file %s\n", fip->name.c_str());
+                msg_printf(0, MSG_INFO,
+                        "[state_debug] CLIENT_STATE::garbage_collect(): deleting file %s\n",
+                        fip->name.c_str());
             }
             delete fip;
             fi_iter = file_infos.erase(fi_iter);

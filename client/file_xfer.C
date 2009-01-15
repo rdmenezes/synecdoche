@@ -64,7 +64,7 @@ int FILE_XFER::init_download(FILE_INFO& file_info) {
 
     const char* url = fip->get_current_url(is_upload);
     if (!url) {
-		return ERR_INVALID_URL;
+        return ERR_INVALID_URL;
 	}
     return HTTP_OP::init_get(url, pathname, false, (int)starting_size);
 }
@@ -72,7 +72,6 @@ int FILE_XFER::init_download(FILE_INFO& file_info) {
 /// for uploads, we need to build a header with xml_signature etc.
 /// (see wiki/FileUpload)
 /// Do this in memory.
-///
 int FILE_XFER::init_upload(FILE_INFO& file_info) {
     // If upload_offset < 0, we need to query the upload handler
     // for the offset information
@@ -202,7 +201,8 @@ int FILE_XFER_SET::remove(FILE_XFER* fxp) {
         }
         iter++;
     }
-    msg_printf(NULL, MSG_INTERNAL_ERROR, "File transfer for %s not found", fxp->fip->name.c_str());
+    msg_printf(NULL, MSG_INTERNAL_ERROR,
+            "File transfer for %s not found", fxp->fip->name.c_str());
     return ERR_NOT_FOUND;
 }
 
