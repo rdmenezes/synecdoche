@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -1268,16 +1268,12 @@ int CMainDocument::WorkShowGraphics(RESULT* result)
         // V5 and Older
         DISPLAY_INFO di;
 
-        strcpy(di.window_station, (const char*)wxGetApp().m_strDefaultWindowStation.mb_str());
-        strcpy(di.desktop, (const char*)wxGetApp().m_strDefaultDesktop.mb_str());
-        strcpy(di.display, (const char*)wxGetApp().m_strDefaultDisplay.mb_str());
+        di.window_station = (const char*)wxGetApp().m_strDefaultWindowStation.mb_str();
+        di.desktop = (const char*)wxGetApp().m_strDefaultDesktop.mb_str();
+        di.display = (const char*)wxGetApp().m_strDefaultDisplay.mb_str();
 
-        iRetVal = rpc.show_graphics(
-            result->project_url.c_str(),
-            result->name.c_str(),
-            MODE_WINDOW,
-            di
-        );
+        iRetVal = rpc.show_graphics(result->project_url.c_str(),
+            result->name.c_str(), MODE_WINDOW, di);
     }
 
     return iRetVal;

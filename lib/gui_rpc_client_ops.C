@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -61,6 +61,8 @@
 #include <locale>
 #endif
 
+#include <sstream>
+
 #include "diagnostics.h"
 #include "parse.h"
 #include "str_util.h"
@@ -73,7 +75,6 @@
 #include "gui_rpc_client.h"
 
 DISPLAY_INFO::DISPLAY_INFO() {
-    memset(this, 0, sizeof(DISPLAY_INFO));
 }
 
 int GUI_URL::parse(MIOFILE& in) {
@@ -1455,53 +1456,48 @@ int RPC_CLIENT::network_available() {
     return retval;
 }
 
-void DISPLAY_INFO::print_str(char* p) const {
-    char buf[768];
-    if (strlen(window_station)) {
-        sprintf(buf,
-            "   <window_station>%s</window_station>\n", window_station
-        );
-        strcat(p, buf);
-    }
-    if (strlen(desktop)) {
-        sprintf(buf,
-            "   <desktop>%s</desktop>\n", desktop
-        );
-        strcat(p, buf);
-    }
-    if (strlen(display)) {
-        sprintf(buf,
-            "   <display>%s</display>\n", display
-        );
-        strcat(p, buf);
-    }
+/// Reset the contents of this structure.
+void DISPLAY_INFO::clear()
+{
+    window_station.clear();
+    desktop.clear();
+    display.clear();
 }
 
-int RPC_CLIENT::show_graphics(
-    const char* project_url, const char* result_name, int graphics_mode,
-    DISPLAY_INFO& di
-) {
-    int retval;
-    SET_LOCALE sl;
-    char buf[1536];
+/// Print the contents of a DISPLAY_INFO instance as xml into a stream.
+///
+/// \param[in] out Reference to the std::ostream object which serves as target.
+/// \param[in] in Reference to the DISPLAY_INFO object that should be printed.
+/// \return The reference given to this operator via the parameter \a out.
+std::ostream& operator <<(std::ostream& out, const DISPLAY_INFO& in) {
+    if (!in.window_station.empty()) {
+        out << "   <window_station>" << in.window_station << "</window_station>\n";
+    }
+    if (!in.desktop.empty()) {
+        out << "   <desktop>" << in.desktop << "</desktop>\n";
+    }
+    if (!in.display.empty()) {
+        out << "   <display>" << in.display << "</display>\n";
+    }
+    return out;
+}
+
+int RPC_CLIENT::show_graphics(const char* project_url, const char* result_name, int graphics_mode, DISPLAY_INFO& di) {
+    std::ostringstream buf;
+    buf << "<result_show_graphics>\n";
+    buf << "   <project_url>" << project_url << "</project_url>\n";
+    buf << "   <result_name>" << result_name << "</result_name>\n";
+    if (graphics_mode == MODE_HIDE_GRAPHICS) {
+        buf << "   <hide/>\n";
+    } else if (graphics_mode == MODE_WINDOW) {
+        buf << "   <window/>\n";
+    } else if (graphics_mode == MODE_FULLSCREEN) {
+        buf << "   <full_screen/>\n";
+    }
+    buf << di << "</result_show_graphics>\n";
+
     RPC rpc(this);
-
-    sprintf(buf, 
-        "<result_show_graphics>\n"
-        "   <project_url>%s</project_url>\n"
-        "   <result_name>%s</result_name>\n"
-        "%s%s%s",
-        project_url,
-        result_name,
-        graphics_mode == MODE_HIDE_GRAPHICS?"   <hide/>\n":"",
-        graphics_mode == MODE_WINDOW       ?"   <window/>\n":"",
-        graphics_mode == MODE_FULLSCREEN   ?"   <full_screen/>\n":""
-    );
-    di.print_str(buf);
-    strcat(buf, "</result_show_graphics>\n");
-
-    retval = rpc.do_rpc(buf);
-    return retval;
+    return rpc.do_rpc(buf.str().c_str());
 }
 
 int RPC_CLIENT::project_op(PROJECT& project, const char* op) {
