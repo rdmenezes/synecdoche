@@ -325,7 +325,8 @@ int ACTIVE_TASK::copy_output_files() {
         get_pathname(fip, projfile, sizeof(projfile));
         int retval = boinc_rename(slotfile.c_str(), projfile);
         if (retval) {
-            msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't rename output file %s to %s: %s", fip->name.c_str(), projfile, boincerror(retval));
+            msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't rename output file %s to %s: %s",
+                    fip->name.c_str(), projfile, boincerror(retval));
         }
     }
     return 0;

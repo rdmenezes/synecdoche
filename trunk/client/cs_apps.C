@@ -124,14 +124,15 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
                 //
                 fip->status = retval;
                 had_error = true;
-                msg_printf(rp->project, MSG_INFO, "Output file %s for task %s absent", fip->name.c_str(), rp->name);
+                msg_printf(rp->project, MSG_INFO, "Output file %s for task %s absent",
+                        fip->name.c_str(), rp->name);
             } else if (size > fip->max_nbytes) {
                 // Note: this is only checked when the application finishes.
                 // The total disk space is checked while the application is running.
-                //
                 msg_printf(rp->project, MSG_INFO, "Output file %s for task %s exceeds size limit.",
-							fip->name.c_str(), rp->name);
-                msg_printf(rp->project, MSG_INFO, "File size: %f bytes.  Limit: %f bytes", size, fip->max_nbytes);
+                        fip->name.c_str(), rp->name);
+                msg_printf(rp->project, MSG_INFO, "File size: %f bytes.  Limit: %f bytes",
+                        size, fip->max_nbytes);
 
                 fip->delete_file();
                 fip->status = ERR_FILE_TOO_BIG;

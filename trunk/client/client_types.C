@@ -641,7 +641,8 @@ FILE_INFO::FILE_INFO() {
 
 FILE_INFO::~FILE_INFO() {
     if (pers_file_xfer) {
-        msg_printf(NULL, MSG_INTERNAL_ERROR, "Deleting file %s while in use", name.c_str());
+        msg_printf(NULL, MSG_INTERNAL_ERROR,
+                "Deleting file %s while in use", name.c_str());
         pers_file_xfer->fip = NULL;
     }
 }
@@ -713,9 +714,9 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
 
     while (in.fgets(buf, 256)) {
         if (match_tag(buf, "</file_info>")) {
-            if ((name.empty()) || (name.find("..") != std::string::npos) || (name.find("%") != std::string::npos)) {
-				return ERR_BAD_FILENAME;
-			}
+            if (name.empty()) return ERR_BAD_FILENAME;
+            if (name.find("..") != std::string::npos) return ERR_BAD_FILENAME;
+            if (name.find("%") != std::string::npos) return ERR_BAD_FILENAME;
             return 0;
         }
         if (match_tag(buf, "<xml_signature>")) {
