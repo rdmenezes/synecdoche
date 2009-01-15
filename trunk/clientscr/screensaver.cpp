@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -188,39 +189,31 @@ int CScreensaver::launch_screensaver(RESULT* rp, int& graphics_application)
 #ifdef _WIN32
         graphics_application = NULL;
 
-        memset(di.window_station, 0, sizeof(di.window_station));
-        memset(di.desktop, 0, sizeof(di.desktop));
-        memset(di.display, 0, sizeof(di.display));
+        di.clear();
 
         if (!m_bIs9x) {
             // Retrieve the current window station and desktop names
-            GetUserObjectInformation(
-                GetProcessWindowStation(), 
-                UOI_NAME, 
-                di.window_station,
-                (sizeof(di.window_station)),
-                NULL
-            );
-            GetUserObjectInformation(
-                GetThreadDesktop(GetCurrentThreadId()), 
-                UOI_NAME, 
-                di.desktop,
-                sizeof(di.desktop),
-                NULL
-            );
+            char buffer[256];
+            if (GetUserObjectInformation(GetProcessWindowStation(), UOI_NAME, 
+                                    buffer, sizeof(buffer), NULL)) {
+                di.window_station = buffer;
+            }
+
+            if (GetUserObjectInformation(GetThreadDesktop(GetCurrentThreadId()), 
+                                    UOI_NAME, buffer, sizeof(buffer), NULL)) {
+                di.desktop = buffer;
+            }
         }
 #else
         char *p = getenv("DISPLAY");
-        if (p) strcpy(di.display, p);
+        if (p) {
+            di.display = p;
+        }
         
         graphics_application = 0;
 #endif
-        retval = rpc->show_graphics(
-            rp->project_url.c_str(),
-            rp->name.c_str(),
-            MODE_FULLSCREEN,
-            di
-        );
+        retval = rpc->show_graphics(rp->project_url.c_str(), rp->name.c_str(),
+            MODE_FULLSCREEN, di);
     }
     return retval;
 }
@@ -247,7 +240,7 @@ int CScreensaver::terminate_screensaver(int& graphics_application, RESULT *worke
     int i;
 
     sprintf(gfx_pid, "%d", graphics_application);
-    getcwd( current_dir, sizeof(current_dir));
+    getcwd(current_dir, sizeof(current_dir));
 
     char* argv[4];
     argv[0] = "gfx_switcher";
@@ -255,15 +248,10 @@ int CScreensaver::terminate_screensaver(int& graphics_application, RESULT *worke
     argv[2] = gfx_pid;
     argv[3] = 0;
 
-   retval = run_program(
-        current_dir,
-        m_gfx_Switcher_Path,
-        3,
-        argv,
-        0,
-        thePID
-    );
-    if (retval) return retval;
+    retval = run_program(current_dir, m_gfx_Switcher_Path, 3, argv, 0, thePID);
+    if (retval) {
+        return retval;
+    }
     
     for (i=0; i<200; i++) {
         boinc_sleep(0.01);      // Wait 2 seconds max
@@ -277,19 +265,14 @@ int CScreensaver::terminate_screensaver(int& graphics_application, RESULT *worke
         // V5 and Older
         DISPLAY_INFO di;
 
-        if (worker_app == NULL) return 0;
-        if (worker_app->name.empty()) return 0;
+        if ((worker_app == NULL) || (worker_app->name.empty())) {
+            return 0;
+        }
 
-        memset(di.window_station, 0, sizeof(di.window_station));
-        memset(di.desktop, 0, sizeof(di.desktop));
-        memset(di.display, 0, sizeof(di.display));
+        di.clear();
 
-        rpc->show_graphics(
-            worker_app->project_url.c_str(),
-            worker_app->name.c_str(),
-            MODE_HIDE_GRAPHICS,
-            di
-        );
+        rpc->show_graphics(worker_app->project_url.c_str(),
+            worker_app->name.c_str(), MODE_HIDE_GRAPHICS, di);
     }
     return 0;
 }

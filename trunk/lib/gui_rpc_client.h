@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@
 
 #if !defined(_WIN32) || defined (__CYGWIN__)
 #include <stdio.h>
-#include <string>
 #include <vector>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -33,6 +32,9 @@
 #include <netdb.h>
 #include <locale.h>
 #endif
+
+#include <sstream>
+#include <string>
 
 #include "miofile.h"
 #include "prefs.h"
@@ -403,13 +405,15 @@ public:
 };
 
 struct DISPLAY_INFO {
-    char window_station[256];   // windows
-    char desktop[256];          // windows
-    char display[256];          // X11
+    std::string window_station;   // windows
+    std::string desktop;          // windows
+    std::string display;          // X11
 
     DISPLAY_INFO();
-    void print_str(char*) const;
+    void clear();
 };
+
+std::ostream& operator <<(std::ostream& out, const DISPLAY_INFO& in);
 
 struct ACCT_MGR_INFO {
     std::string acct_mgr_name;

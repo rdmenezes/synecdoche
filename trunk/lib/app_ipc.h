@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -119,9 +120,9 @@ struct MSG_QUEUE {
 
 struct GRAPHICS_MSG {
     int mode;
-    char window_station[256];
-    char desktop[256];
-    char display[256];
+    std::string window_station;
+    std::string desktop;
+    std::string display;
 
     GRAPHICS_MSG();
 };

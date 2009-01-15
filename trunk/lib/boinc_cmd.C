@@ -95,18 +95,18 @@ Commands:\n\
 }
 
 void parse_display_args(char** argv, int& i, DISPLAY_INFO& di) {
-    strcpy(di.window_station, "winsta0");
-    strcpy(di.desktop, "default");
-    strcpy(di.display, "");
+    di.window_station = "winsta0";
+    di.desktop = "default";
+    di.display = "";
     while (argv[i]) {
         if (!strcmp(argv[i], "--window_station")) {
-            strlcpy(di.window_station, argv[++i], sizeof(di.window_station));
+            di.window_station = argv[++i];
         } else if (!strcpy(argv[i], "--desktop")) {
-            strlcpy(di.desktop, argv[++i], sizeof(di.desktop));
+            di.desktop = argv[++i];
         } else if (!strcpy(argv[i], "--display")) {
-            strlcpy(di.display, argv[++i], sizeof(di.display));
+            di.display = argv[++i];
         }
-        i++;
+        ++i;
     }
 }
 

@@ -45,9 +45,6 @@ const char* xml_graphics_modes[NGRAPHICS_MSGS] = {
 };
 
 GRAPHICS_MSG::GRAPHICS_MSG() : mode(0) {
-    memset(window_station, 0, sizeof(window_station));
-    memset(desktop, 0, sizeof(desktop));
-    memset(display, 0, sizeof(display));
 }
 
 APP_INIT_DATA::APP_INIT_DATA() : project_preferences(0) {
@@ -330,9 +327,9 @@ void MSG_CHANNEL::send_msg_overwrite(const char* msg) {
 int APP_CLIENT_SHM::decode_graphics_msg(char* msg, GRAPHICS_MSG& m) {
     int i;
 
-    parse_str(msg, "<window_station>", m.window_station, sizeof(m.window_station));
-    parse_str(msg, "<desktop>", m.desktop, sizeof(m.desktop));
-    parse_str(msg, "<display>", m.display, sizeof(m.display));
+    parse_str(msg, "<window_station>", m.window_station);
+    parse_str(msg, "<desktop>", m.desktop);
+    parse_str(msg, "<display>", m.display);
 
     m.mode = 0;
     for (i=0; i<NGRAPHICS_MSGS; i++) {

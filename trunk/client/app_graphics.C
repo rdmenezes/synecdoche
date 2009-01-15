@@ -64,21 +64,19 @@ void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
     std::ostringstream buf;
     buf << xml_graphics_modes[m.mode];
 
-    if (strlen(m.window_station)) {
+    if (!m.window_station.empty()) {
         buf << "<window_station>" << m.window_station << "</window_station>";
     }
-    if (strlen(m.desktop)) {
+    if (!m.desktop.empty()) {
         buf << "<desktop>" << m.desktop << "</desktop>";
     }
-    if (strlen(m.display)) {
+    if (!m.display.empty()) {
         buf << "<display>" << m.display << "</display>";
     }
 
     if (log_flags.scrsave_debug) {
-        msg_printf(0, MSG_INFO,
-            "[scrsave_debug] ACTIVE_TASK::request_graphics_mode(): requesting graphics mode %s for %s",
-            xml_graphics_modes[m.mode], result->name
-        );
+        msg_printf(0, MSG_INFO, "[scrsave_debug] ACTIVE_TASK::request_graphics_mode(): requesting graphics mode %s for %s",
+            xml_graphics_modes[m.mode], result->name);
     }
     graphics_request_queue.msg_queue_send(buf.str().c_str(), app_client_shm.shm->graphics_request);
 }
