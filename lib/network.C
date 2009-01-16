@@ -90,7 +90,7 @@ const char* socket_error_str() {
 #endif
 }
 
-/// Resolve a hostname (IPv6 only).
+/// Resolve a hostname (IPv4 only).
 ///
 /// \param[in] hostname The hostname that should be resolved.
 /// \param[out] ip_addr Reference to an int variable that will receive
