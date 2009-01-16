@@ -738,7 +738,7 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
             }
             continue;
         }
-        signed_xml = buf;
+        signed_xml += buf;
         if (parse_str(buf, "<name>", name)) continue;
         if (parse_str(buf, "<url>", url)) {
             urls.push_back(url);
