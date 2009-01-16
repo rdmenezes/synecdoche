@@ -28,21 +28,26 @@
 #include <string>
 
 #include "log_flags.h"
+#include "common_defs.h"
 
 class PROJECT;
 
 /// the following stores a message in memory, where it can be retrieved via RPC
 struct MESSAGE_DESC {
     char project_name[256];
-    int priority;
+    MSG_PRIORITY priority;
     int timestamp;
     int seqno;
     std::string message;
 };
 
 extern std::deque<MESSAGE_DESC*> message_descs;
-extern void record_message(const PROJECT *p, int priority, int now, const char* message);
-extern void show_message(const PROJECT *p, const char* message, int priority);
+
+/// Add message to cache and delete old messages if the cache gets too big.
+extern void record_message(const PROJECT *p, MSG_PRIORITY priority, int now, const char* message);
+
+/// Display a message to the user.
+extern void show_message(const PROJECT *p, const std::string& message, MSG_PRIORITY priority);
 
 // the __attribute((format...)) tags are GCC extensions that let the compiler
 // do like-checking on printf-like arguments
@@ -52,6 +57,6 @@ extern void show_message(const PROJECT *p, const char* message, int priority);
 #endif
 
 /// Show a message, preceded by timestamp and project name
-extern void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) __attribute__ ((format (printf, 3, 4)));
+extern void msg_printf(const PROJECT *p, MSG_PRIORITY priority, const char *fmt, ...) __attribute__ ((format (printf, 3, 4)));
 
 #endif
