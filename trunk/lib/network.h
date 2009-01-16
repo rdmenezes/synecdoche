@@ -40,7 +40,7 @@ struct FDSET_GROUP {
     }
 };
 
-/// Resolve a hostname (IPv6 only).
+/// Resolve a hostname (IPv4 only).
 extern int resolve_hostname(const char* hostname, int& ip_addr);
 
 extern int boinc_socket(int& sock);
