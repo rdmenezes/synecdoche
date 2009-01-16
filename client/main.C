@@ -82,15 +82,20 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 
 int finalize();
 
+/// Used on Windows 95/98/ME to determine when it is safe to leave
+/// the WM_ENDSESSION message handler and allow Windows to finish
+/// cleaning up.
 static bool boinc_cleanup_completed = false;
-    // Used on Windows 95/98/ME to determine when it is safe to leave
-    //   the WM_ENDSESSION message handler and allow Windows to finish
-    //   cleaning up.
 
 /// Display a message to the user.
 /// Depending on the priority, the message may be more or less obtrusive
 ///
-void show_message(const PROJECT *p, const char* msg, int priority) {
+/// \param[in] p Pointer to a project to which the message belongs. May be
+///              set to 0 if the message does not belong to any project.
+/// \param[in] msg A string containing the message that should be displayed.
+/// \param[in] priority A value describing the priority of the
+///                     message. See common_defs.h for possible values.
+void show_message(const PROJECT *p, const std::string& msg, MSG_PRIORITY priority) {
     const char* x;
 
     time_t now = time(0);

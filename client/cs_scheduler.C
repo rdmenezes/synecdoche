@@ -445,8 +445,8 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     for (std::vector<USER_MESSAGE>::const_iterator it = sr.messages.begin(); it != sr.messages.end(); ++it) {
         std::string buf("Message from server: ");
         buf += (*it).message;
-        int prio = ((*it).message == "high") ? MSG_USER_ERROR : MSG_INFO;
-        show_message(project, buf.c_str(), prio);
+        MSG_PRIORITY prio = ((*it).message == "high") ? MSG_USER_ERROR : MSG_INFO;
+        show_message(project, buf, prio);
     }
 
     if (log_flags.sched_op_debug && sr.request_delay) {

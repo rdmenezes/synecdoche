@@ -517,7 +517,12 @@ int MESSAGE::parse(MIOFILE& in) {
             copy_element_contents(in, "</body>", body);
             continue;
         }
-        if (parse_int(buf, "<pri>", priority)) continue;
+        int itmp;
+        if (parse_int(buf, "<pri>", itmp)) {
+            priority = static_cast<MSG_PRIORITY>(itmp);
+            continue;
+        }
+
         if (parse_int(buf, "<time>", timestamp)) continue;
         if (parse_int(buf, "<seqno>", seqno)) continue;
     }
@@ -526,7 +531,7 @@ int MESSAGE::parse(MIOFILE& in) {
 
 void MESSAGE::clear() {
     project.clear();
-    priority = 0;
+    priority = MSG_NO_PRIORITY;
     timestamp = 0;
     body.clear();
 }

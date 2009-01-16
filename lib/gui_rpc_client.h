@@ -271,7 +271,7 @@ public:
 class MESSAGE {
 public:
     std::string project;
-    int priority;
+    MSG_PRIORITY priority;
     int seqno;
     int timestamp;
     std::string body;
@@ -279,7 +279,7 @@ public:
     MESSAGE();
     ~MESSAGE();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
 };
