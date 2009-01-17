@@ -3,7 +3,7 @@
 The idea behind this page is to provide information for the case when changes at BOINC or synecdoche break the compatibility between (certain versions of) the synecdoche client and certain BOINC based projects.
 
 || *Project*                   || *0.1.1*      ||
-|| ABC@home                    || Uploads seem to fail with an "invalid signature" error. Please test and confirm. ||
+|| ABC@home                    || *OK*         ||
 || AQUA@home                   || _not tested_ ||
 || Climate Prediction          || _not tested_ ||
 || Cosmology@Home              || _not tested_ ||
