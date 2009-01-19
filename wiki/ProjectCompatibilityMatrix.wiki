@@ -24,6 +24,6 @@ The idea behind this page is to provide information for the case when changes at
 || SIMAP                       || _not tested_ ||
 || Spinhenge@home              || *OK*         ||
 || Sudoku Project              || _not tested_ ||
-|| World Community Grid        || _not tested_ ||
+|| World Community Grid        || *OK*         ||
 || yoyo@home                   || _not tested_ ||
 || µFluids                     || _not tested_ ||
