@@ -48,6 +48,9 @@
 ||16654||Mac SG: Fix vertical position of project names in tabs on Mac.||
 ||16670/16671||MGR: word-wrap !CompletionBrandedMessage static text in Account manager Wizard Completion page for !GridRepublic.||
 ||16707||MGR: Always reset messages if client restarted; always scroll messages to bottom if connection status changes; Select Computer: localhost relaunches client if needed.||
+||16900/16903/16905||Adds platform information to the project list used when attaching to a new project. We should check if it makes sense to apply this directly or whether we should write an own implementation.||
+||16929||client: fix boinc_copy (again); Mac Mgr: fix bugs showing Mgr when minimized to Dock;||
+
 
 
 == Rejected changes ==
@@ -97,4 +100,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16885 16885]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16960 16960]
