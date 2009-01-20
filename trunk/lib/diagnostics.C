@@ -23,10 +23,6 @@
 #include "boinc_win.h"
 #endif
 
-#ifdef __EMX__
-#include <sys/stat.h>
-#endif
-
 #ifndef _WIN32
 #include "config.h"
 #include <cstring>
@@ -491,16 +487,8 @@ int diagnostics_cycle_logs() {
     fflush(stderr);
 
     // If the stderr.txt or stdout.txt files are too big, cycle them
-    //
     if ((flags & BOINC_DIAG_REDIRECTSTDERR) && (max_stderr_file_size > 0)) {
-#ifdef __EMX__
-        // OS/2 can't stat() open files!
-        struct stat sbuf;
-        fstat(fileno(stderr_file), &sbuf);
-        f_size = (double)sbuf.st_size;
-#else
         file_size(stderr_log, f_size);
-#endif
         if (f_size > max_stderr_file_size) {
             if (NULL == stderr_file) return ERR_FOPEN;
             fclose(stderr_file);
@@ -511,14 +499,7 @@ int diagnostics_cycle_logs() {
     }
 
     if ((flags & BOINC_DIAG_REDIRECTSTDOUT) && (max_stdout_file_size > 0)) {
-#ifdef __EMX__
-        // OS/2 can't stat() open files!
-        struct stat sbuf;
-        fstat(fileno(stdout_file), &sbuf);
-        f_size = (double)sbuf.st_size;
-#else
         file_size(stdout_log, f_size);
-#endif
         if (f_size > max_stdout_file_size) {
             if (NULL == stdout_file) return ERR_FOPEN;
             fclose(stdout_file);

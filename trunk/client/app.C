@@ -170,12 +170,9 @@ void ACTIVE_TASK::cleanup_task() {
     int retval;
 
     if (app_client_shm.shm) {
-#ifndef __EMX__
         if (app_version->api_major_version() >= 6) {
             retval = detach_shmem_mmap(app_client_shm.shm, sizeof(SHARED_MEM));
-        } else
-#endif
-        {
+        } else {
             retval = detach_shmem(app_client_shm.shm);
             if (retval) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR,

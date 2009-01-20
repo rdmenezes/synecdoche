@@ -54,11 +54,6 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 #include "SetupSecurity.h"
 #endif
 
-#ifdef __EMX__
-#define INCL_DOS
-#include <os2.h>
-#endif
-
 #include "diagnostics.h"
 #include "error_numbers.h"
 #include "str_util.h"
@@ -193,10 +188,6 @@ static void signal_handler(int signum) {
     case SIGPWR:
 #endif
         gstate.requested_exit = true;
-#ifdef __EMX__
-        // close socket
-        shutdown(gstate.gui_rpcs.lsock, 2);
-#endif
         break;
     default:
         msg_printf(NULL, MSG_INTERNAL_ERROR, "Signal not handled");
@@ -427,11 +418,6 @@ int boinc_main_loop() {
             requested_resume = false;
         }
 #endif
-#ifdef __EMX__
-        // give timeslice also to other processes,
-        // otherwise we will get 100% cpu
-        DosSleep(0);
-#endif
     }
     return finalize();
 }
@@ -551,7 +537,6 @@ int main(int argc, char** argv) {
             break;
         }
     }
-#elif defined __EMX__
 #else
     // non-Apple Unix
     int i;

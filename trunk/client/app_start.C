@@ -44,10 +44,6 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef __EMX__
-#include <process.h>
-#endif
-
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
 #include <mach-o/loader.h>
 #include <mach-o/fat.h>
@@ -55,7 +51,7 @@
 #include <libkern/OSByteOrder.h>
 #endif
 
-#if(!defined (_WIN32) && !defined (__EMX__))
+#ifndef _WIN32
 #include <fcntl.h>
 #endif
 
@@ -126,13 +122,11 @@ int ACTIVE_TASK::get_shmem_seg_name() {
     if (!h) return ERR_SHMGET;
     sprintf(shmem_seg_name, "boinc_%d", i);
 #else
-#ifndef __EMX__
     // shmem_seg_name is not used with mmap() shared memory 
     if (app_version->api_major_version() >= 6) {
         shmem_seg_name = -1;
         return 0;
     }
-#endif
     std::string init_data_path = std::string(slot_dir) + std::string("/")
                                                        + std::string(INIT_DATA_FILE);
 
@@ -613,72 +607,6 @@ int ACTIVE_TASK::start(bool first_time) {
     pid = process_info.dwProcessId;
     pid_handle = process_info.hProcess;
     CloseHandle(process_info.hThread);  // thread handle is not used
-#elif defined(__EMX__)
-
-    char current_dir[_MAX_PATH];
-
-    // Set up core/app shared memory seg if needed
-    //
-    if (!app_client_shm.shm) {
-        retval = create_shmem(
-            shmem_seg_name, sizeof(SHARED_MEM), (void**)&app_client_shm.shm
-        );
-        if (retval) {
-            return retval;
-        }
-    }
-    app_client_shm.reset_msgs();
-
-    // save current dir
-    getcwd( current_dir, sizeof(current_dir));
-
-    // chdir() into the slot directory
-    //
-    retval = chdir(slot_dir);
-    if (retval) {
-        err_stream << "Can't change directory: " << slot_dir
-                   << " The error message was: " << boincerror(retval);
-        goto error;
-    }
-
-    // hook up stderr to a specially-named file
-    //
-    //freopen(STDERR_FILE, "a", stderr);
-
-    std::string cmdline;
-    cmdline = wup->command_line;
-    if (!cmdline.empty()) {
-        cmdline.append(" ").append(result->cmdline);
-    }
-    std::list<std::string> argv = parse_command_line(cmdline.c_str());
-    argv.push_front(exec_name);
-    if (log_flags.task_debug) {
-        debug_print_argv(argv);
-    }
-    std::string path = std::string("../../") + std::string(exec_path);
-    pid = do_execv(path, argv);
-    if (pid == -1) {
-        err_stream << "Process creation failed: "
-                   << " The error message was: " << boincerror(retval);
-        chdir(current_dir);
-        retval = ERR_EXEC;
-        goto error;
-    }
-
-    // restore current dir
-    chdir(current_dir);
-
-    if (log_flags.task_debug) {
-        msg_printf(0, MSG_INFO,
-            "[task_debug] ACTIVE_TASK::start(): forked process: pid %d\n", pid
-        );
-    }
-
-    // set idle process priority
-    if (setpriority(PRIO_PROCESS, pid, PROCESS_IDLE_PRIORITY)) {
-        perror("setpriority");
-    }
-
 #else
     // Unix/Linux/Mac case
 
