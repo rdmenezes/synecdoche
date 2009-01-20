@@ -93,12 +93,6 @@
 #include <netinet/in.h>
 #endif
 
-#ifdef __EMX__
-#define INCL_DOSMISC
-#include <os2.h>
-#include "win/opt_x86.h"
-#endif
-
 #include "client_types.h"
 #include "filesys.h"
 #include "error_numbers.h"
@@ -690,10 +684,6 @@ int HOST_INFO::get_host_info() {
     size_t len;
 
     get_cpu_info_maxosx(*this);
-#elif defined(__EMX__)
-    CPU_INFO_t    cpuInfo;
-    strlcpy( p_vendor, cpuInfo.vendor.company, sizeof(p_vendor));
-    strlcpy( p_model, cpuInfo.name.fromID, sizeof(p_model));
 #elif defined(HAVE_SYS_SYSCTL_H)
     int mib[2];
     size_t len;
@@ -746,7 +736,7 @@ int HOST_INFO::get_host_info() {
 ///////////// p_ncpus /////////////////
 
 // sysconf not working on OS2
-#if defined(_SC_NPROCESSORS_ONLN) && !defined(__EMX__) && !defined(__APPLE__)
+#if defined(_SC_NPROCESSORS_ONLN) && !defined(__APPLE__)
     p_ncpus = sysconf(_SC_NPROCESSORS_ONLN);
 #elif defined(HAVE_SYS_SYSCTL_H) && defined(CTL_HW) && defined(HW_NCPU)
     // Get number of CPUs
@@ -764,17 +754,7 @@ int HOST_INFO::get_host_info() {
 
 ///////////// m_nbytes, m_swap /////////////////
 
-#ifdef __EMX__
-    {
-        ULONG ulMem;
-        CPU_INFO_t    cpuInfo;
-        DosQuerySysInfo( QSV_TOTPHYSMEM, QSV_TOTPHYSMEM, &ulMem, sizeof(ulMem));
-        m_nbytes = ulMem;
-        // YD this is not the swap free space, but should be enough
-        DosQuerySysInfo( QSV_TOTAVAILMEM, QSV_TOTAVAILMEM, &ulMem, sizeof(ulMem));
-        m_swap = ulMem;
-    }
-#elif LINUX_LIKE_SYSTEM
+#ifdef LINUX_LIKE_SYSTEM
     parse_meminfo_linux(*this);
 #elif defined(_SC_USEABLE_MEMORY)
     // UnixWare
@@ -906,11 +886,7 @@ int HOST_INFO::get_host_info() {
     struct utsname u;
     uname(&u);
     safe_strcpy(os_name, u.sysname);
-#ifdef __EMX__ // OS2: version is in u.version
-    safe_strcpy(os_version, u.version);
-#else
     safe_strcpy(os_version, u.release);
-#endif
 #ifdef _HPUX_SOURCE
     safe_strcpy(p_model, u.machine);
     safe_strcpy(p_vendor, "Hewlett-Packard");
