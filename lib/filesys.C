@@ -601,10 +601,6 @@ int boinc_copy(const char* orig, const char* newf) {
         return GetLastError();
     }
     return 0;
-#elif defined(__EMX__)
-    std::ostringstream cmd;
-    cmd << "copy \"" << orig << "\" \"" << newf << "\"";
-    return system(cmd.str().c_str());
 #else
     std::ostringstream cmd;
     cmd << "cp -p \"" << orig << "\" \"" << newf << "\"";
