@@ -23,11 +23,7 @@
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 
-#ifdef __WXMSW__
 #include "version.h"
-#else
-#include "config.h"
-#endif
 
 IMPLEMENT_DYNAMIC_CLASS(CDlgAbout, wxDialog)
 

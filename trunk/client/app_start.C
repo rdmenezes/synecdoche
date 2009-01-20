@@ -44,6 +44,8 @@
 #include <sys/stat.h>
 #endif
 
+#include "version.h"
+
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
 #include <mach-o/loader.h>
 #include <mach-o/fat.h>

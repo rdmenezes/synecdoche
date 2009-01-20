@@ -33,6 +33,8 @@
 #endif
 #endif
 
+#include "version.h"
+
 #include "error_numbers.h"
 #include "filesys.h"
 #include "client_msgs.h"

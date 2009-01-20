@@ -23,6 +23,8 @@
 #include "config.h"
 #endif
 
+#include "version.h"
+
 #include "util.h"
 #include "file_names.h"
 #include "client_state.h"
