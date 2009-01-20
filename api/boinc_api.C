@@ -186,7 +186,7 @@ static int setup_shared_mem() {
             app_client_shm = NULL;
         }
     } else {
-        // EMX or version 5 Unix/Linux/Mac client
+        // Version 5 Unix/Linux/Mac client
         if (attach_shmem(aid.shmem_seg_name, (void**)&app_client_shm->shm)) {
             delete app_client_shm;
             app_client_shm = NULL;
