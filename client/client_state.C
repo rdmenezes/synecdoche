@@ -35,6 +35,8 @@
 #include <unistd.h>
 #endif
 
+#include "version.h"
+
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"

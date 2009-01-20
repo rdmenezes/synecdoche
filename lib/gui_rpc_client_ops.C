@@ -47,9 +47,8 @@
 #include "boinc_win.h"
 #endif
 
-#ifdef _WIN32
 #include "../version.h"
-#else
+#ifndef _WIN32
 #include "config.h"
 #include <sys/types.h>
 #include <sys/socket.h>
