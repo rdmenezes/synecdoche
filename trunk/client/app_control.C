@@ -140,11 +140,11 @@ int ACTIVE_TASK::kill_task(bool restart) {
     kill(pid, SIGKILL);
 #endif
 
+    cleanup_task();
     if (restart) {
         set_task_state(PROCESS_UNINITIALIZED, "kill_task");
         gstate.request_enforce_schedule("Task restart");
     } else {
-        cleanup_task();
         set_task_state(PROCESS_ABORTED, "kill_task");
     }
     return 0;
@@ -259,7 +259,6 @@ void ACTIVE_TASK::handle_exited_app(int stat)
         set_task_state(PROCESS_ABORTED, "handle_exited_app");
     } else {
 #ifdef _WIN32
-        close_process_handles();
         result->exit_status = exit_code;
         switch(exit_code) {
         case STATUS_SUCCESS:
@@ -372,6 +371,10 @@ void ACTIVE_TASK::handle_exited_app(int stat)
     }
 
     cleanup_task();         // Always release shared memory
+    if (gstate.exit_after_finish) {
+        exit(0);
+    }
+
     if (!will_restart) {
         copy_output_files();
         read_stderr_file();

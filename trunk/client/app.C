@@ -80,7 +80,6 @@
 #define QUIT_TIMEOUT    10
 
 ACTIVE_TASK::~ACTIVE_TASK() {
-    cleanup_task();
 }
 
 ACTIVE_TASK::ACTIVE_TASK() {
@@ -143,25 +142,16 @@ void ACTIVE_TASK::set_task_state(int val, const char* where) {
     }
 }
 
+/// Called when a process has exited or we've killed it.
+void ACTIVE_TASK::cleanup_task() {
 #ifdef _WIN32
-
-/// call this when a process has exited but will be started again
-/// (e.g. suspend via quit, exited but no finish file).
-/// In these cases we want to keep the shmem and events
-void ACTIVE_TASK::close_process_handles() {
     if (pid_handle) {
         CloseHandle(pid_handle);
         pid_handle = NULL;
     }
-}
-#endif
 
-/// called when a process has exited
-void ACTIVE_TASK::cleanup_task() {
-#ifdef _WIN32
     // detach from shared mem.
     // This will destroy shmem seg since we're the last attachment
-    //
     if (app_client_shm.shm) {
         detach_shmem(shm_handle, app_client_shm.shm);
         app_client_shm.shm = NULL;
