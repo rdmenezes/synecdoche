@@ -94,21 +94,25 @@ void CLIENT_STATE::check_project_timeout() {
 }
 
 void PROJECT::set_min_rpc_time(double future_time, const char* reason) {
-    if (future_time > min_rpc_time) {
-        min_rpc_time = future_time;
-        possibly_backed_off = true;
-        if (log_flags.sched_op_debug) {
-            msg_printf(this, MSG_INFO,
-                "[sched_op_debug] Deferring communication for %s",
-                timediff_format(min_rpc_time - gstate.now).c_str()
-            );
-            msg_printf(this, MSG_INFO, "[sched_op_debug] Reason: %s\n", reason);
-        }
+    if (future_time <= min_rpc_time) {
+        return;
+    }
+    if ((next_rpc_time > 0.0) && (future_time > next_rpc_time)) {
+        return;
+    }
+    min_rpc_time = future_time;
+    possibly_backed_off = true;
+    if (log_flags.sched_op_debug) {
+        msg_printf(this, MSG_INFO, "[sched_op_debug] Deferring communication for %s",
+                   timediff_format(min_rpc_time - gstate.now).c_str());
+
+        msg_printf(this, MSG_INFO, "[sched_op_debug] Reason: %s\n", reason);
     }
 }
 
 /// Return true if we should not contact the project yet.
 ///
+/// \return True if the project should not be contacted yet, false otherwise.
 bool PROJECT::waiting_until_min_rpc_time() {
     return (min_rpc_time > gstate.now);
 }
@@ -130,24 +134,23 @@ PROJECT* CLIENT_STATE::next_project_master_pending() {
     return 0;
 }
 
-/// find a project for which a scheduler RPC is pending
-/// and we're not backed off
+/// Find a project for which a scheduler RPC is pending
+/// Do the RPC even if suspended. This is critical for
+/// accountt managers, to propagate new host CPIDs.
 ///
+/// \return A pointer to a PROJECT instance for which a scheduler request is
+///         pending. If there is no such project this function returns zero.
 PROJECT* CLIENT_STATE::next_project_sched_rpc_pending() {
-    unsigned int i;
-    PROJECT* p;
-
-    for (i=0; i<projects.size(); i++) {
-        p = projects[i];
-        if (p->waiting_until_min_rpc_time()) continue;
+    for (size_t i = 0; i < projects.size(); i++) {
+        PROJECT* p = projects.at(i);
+        // Project request overrides backoff:
         if (p->next_rpc_time && p->next_rpc_time<now) {
             p->sched_rpc_pending = RPC_REASON_PROJECT_REQ;
             p->next_rpc_time = 0;
+        } else if (p->waiting_until_min_rpc_time()) {
+            continue;
         }
-        // if (p->suspended_via_gui) continue;
-        // do the RPC even if suspended.
-        // This is critical for acct mgrs, to propagate new host CPIDs
-        //
+
         if (p->sched_rpc_pending) {
             return p;
         }

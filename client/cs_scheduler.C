@@ -754,6 +754,14 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
         print_summary();
     }
 
+    // The following must precede the backoff and request_delay checks,
+    // since it overrides them:
+    if (sr.next_rpc_delay) {
+        project->next_rpc_time = now + sr.next_rpc_delay;
+    } else {
+        project->next_rpc_time = 0;
+    }
+
     // if we asked for work and didn't get any,
     // treat it as an RPC failure; back off this project
     if (project->work_request && nresults==0) {
@@ -767,12 +775,6 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     if (sr.request_delay) {
         double x = now + sr.request_delay;
         project->set_min_rpc_time(x, "requested by project");
-    }
-
-    if (sr.next_rpc_delay) {
-        project->next_rpc_time = now + sr.next_rpc_delay;
-    } else {
-        project->next_rpc_time = 0;
     }
 
     return 0;
