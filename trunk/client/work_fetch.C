@@ -136,7 +136,7 @@ PROJECT* CLIENT_STATE::next_project_master_pending() {
 
 /// Find a project for which a scheduler RPC is pending
 /// Do the RPC even if suspended. This is critical for
-/// accountt managers, to propagate new host CPIDs.
+/// account managers, to propagate new host CPIDs.
 ///
 /// \return A pointer to a PROJECT instance for which a scheduler request is
 ///         pending. If there is no such project this function returns zero.
