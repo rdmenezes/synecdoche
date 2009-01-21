@@ -7,7 +7,6 @@
 ||15827||Screensaver stuff hidden in there.||
 ||15831||Manifest files?||
 ||15840/15874/15877/15885/15967/16001/16252/16253/16372/16385||Screensaver mess||
-||15865||||
 ||15929||Precompiled headers work for the manager, but do they work for the client/lib/etc (windows only)?||
 ||15945||Do we need the screensaver stuff? The other fix is already applied.||
 ||15955/15957/15958/15960/15961/15963/15965||Code signing stuff.||
@@ -15,7 +14,6 @@
 ||15987||MGR: Simple GUI fixes||
 ||16003||Is this used by the client or does this belong to the server?||
 ||16121||MGR: show resource requirements of all jobs, running or not||
-||16206/16207||client: clarify and fix the semantics of "next RPC time".||
 ||16208||client: new config flags||
 ||16212||MGR: Fix updating task bar icon on disconnect from Client, fix a crash on exiting||
 ||16242||MGR: fix disk display when talking to pre-6.3 client - do we need this fix?||
