@@ -42,3 +42,11 @@ stage: all
 dist-hook:
 	rm -rf `find $(distdir) -name .backup -prune -o -name '*~' -o -name CVS`
 #	cd $(distdir) && ./_autosetup
+
+svnversion.cpp: version.sh
+	./version.sh svnversion.cpp
+
+BUILT_SOURCES=svnversion.cpp
+
+.PHONY: svnversion.cpp
+

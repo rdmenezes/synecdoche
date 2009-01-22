@@ -12,6 +12,8 @@
 /* Release part of Synecdoche version number */
 #define SYNEC_RELEASE 1
 
+extern const char* SYNEC_SVN_VERSION;
+
 /* String representation of Synecdoche version number */
 #define SYNEC_VERSION_STRING "0.1.1"
 
