@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -406,22 +406,39 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
         http_ops->get_fdset(all_fds);
         gui_rpcs.get_fdset(all_fds);
         double_to_timeval(x, tv);
-        n = select(
-            all_fds.max_fd+1,
-            &all_fds.read_fds, &all_fds.write_fds, &all_fds.exc_fds,
-            &tv
-        );
-        //printf("select in %d out %d\n", all_fds.max_fd, n);
+        n = select(all_fds.max_fd + 1, &all_fds.read_fds,
+                   &all_fds.write_fds, &all_fds.exc_fds, &tv);
+
+        // Check if there was an error:
+        if (n == -1) {
+#ifdef _WIN32
+            int err_code = WSAGetLastError();
+            int err_code_eintr = WSAEINTR;
+#else
+            int err_code = errno;
+            int err_code_eintr = EINTR;
+#endif // _WIN32
+            if (err_code == err_code_eintr) {
+                // select() was interrupted by a signal - that can be ignored.
+                continue;
+            } else {
+                msg_printf(0, MSG_INTERNAL_ERROR, "select() failed with an unexpected error: %d - quitting.", err_code);
+                gstate.requested_exit = true;
+                break;
+            }
+        }
 
         // Note: curl apparently likes to have curl_multi_perform()
         // (called from net_xfers->got_select())
         // called pretty often, even if no descriptors are enabled.
-        // So do the "if (n==0) break" AFTER the got_selects().
-
+        // So do the "if (n==0) break" AFTER the http_ops->got_select().
         http_ops->got_select(all_fds, x);
-        gui_rpcs.got_select(all_fds);
 
-        if (n==0) break;
+        if (n == 0) {
+            break;
+        }
+
+        gui_rpcs.got_select(all_fds);
 
         // Limit number of times thru this loop.
         // Can get stuck in while loop, if network isn't available,
