@@ -55,7 +55,8 @@ synecd_SOURCES = \
     scheduler_op.C \
     time_stats.C \
     whetstone.C \
-    work_fetch.C
+    work_fetch.C \
+    ../svnversion.cpp
 
 synecd_DEPENDENCIES =
 synecd_CPPFLAGS = -O3 -fomit-frame-pointer -fforce-addr -ffast-math $(AM_CPPFLAGS)

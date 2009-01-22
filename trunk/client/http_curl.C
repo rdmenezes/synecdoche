@@ -114,8 +114,12 @@ void parse_url(const char* url, char* host, int &port, char* file) {
 }
 
 void get_user_agent_string() {
-    sprintf(g_user_agent_string, "Synecdoche/%s (%s)",
-        SYNEC_VERSION_STRING,
+    char svnrev[256] = "";
+    if (SYNEC_SVN_VERSION) {
+        sprintf(svnrev, "r%s ", SYNEC_SVN_VERSION);
+    }
+    sprintf(g_user_agent_string, "Synecdoche/%s (%s%s)",
+        SYNEC_VERSION_STRING, svnrev,
         gstate.get_primary_platform().c_str()
     );
 }
