@@ -333,18 +333,6 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
 
     if (FD_ISSET(lsock, &fg.read_fds)) {
         struct sockaddr_in addr;
-
-        // For unknown reasons, the FD_ISSET() above succeeds
-        // after a SIGTERM, SIGHUP, SIGINT or SIGQUIT is received,
-        // even if there is no data available on the socket.
-        // This causes the accept() call to block, preventing the main
-        // loop from processing the exit request.
-        // This is a workaround for that problem.
-        //
-        if (gstate.requested_exit) {
-            return;
-        }
-
         boinc_socklen_t addr_len = sizeof(addr);
         sock = accept(lsock, (struct sockaddr*)&addr, (boinc_socklen_t*)&addr_len);
         if (sock == -1) {
@@ -352,7 +340,6 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
         }
 
         // apps shouldn't inherit the socket!
-        //
 #ifndef _WIN32
         fcntl(sock, F_SETFD, FD_CLOEXEC);
 #endif
