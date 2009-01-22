@@ -3,7 +3,7 @@
 == Pending merge ==
 
 || *Changesets* || *Additional comments* ||
-||15767||Need to review this mess carefully.||
+||15767||Need to review this mess carefully. (Vista and probably Win7 stuff)||
 ||15827||Screensaver stuff hidden in there.||
 ||15831||Manifest files?||
 ||15840/15874/15877/15885/15967/16001/16252/16253/16372/16385||Screensaver mess||
@@ -12,11 +12,9 @@
 ||15955/15957/15958/15960/15961/15963/15965||Code signing stuff.||
 ||15959/15964/15966||MGR: Save and restore selected items by key values when refreshing||
 ||15987||MGR: Simple GUI fixes||
-||16003||Is this used by the client or does this belong to the server?||
-||16121||MGR: show resource requirements of all jobs, running or not||
 ||16208||client: new config flags||
 ||16212||MGR: Fix updating task bar icon on disconnect from Client, fix a crash on exiting||
-||16242||MGR: fix disk display when talking to pre-6.3 client - do we need this fix?||
+||16242||MGR: fix disk display when talking to pre-6.3 client - do we need this fix? - Probably yes, looks like this is related to BOINC changesets 15190 and and 15199 which were created before synecdoche was created.||
 ||16247||MGR: More thorough validity checking to prevent crashes||
 ||16280||MGR: Add a new tab status to the Simple GUI for when the client has been instructed to delay starting applications via the <delay_start> option in cc_config.xml (From Kevin Reed)||
 ||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::OnConnect()||
