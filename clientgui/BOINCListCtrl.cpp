@@ -333,7 +333,7 @@ void CBOINCListCtrl::DrawBarGraphs()
 
 
 // Returns a solid colour that would result from alpha blending the accent colour over the base.
-wxColour CBOINCListCtrl::GetBlendedColour(const wxColour base, const wxColour accent, float blend) const {
+wxColour CBOINCListCtrl::GetBlendedColour(const wxColour base, const wxColour accent, float blend) {
 
     float r = base.Red() * blend + accent.Red() * (1.0 - blend);
     float g = base.Green() * blend + accent.Green() * (1.0 - blend);
