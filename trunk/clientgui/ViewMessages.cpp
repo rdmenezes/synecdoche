@@ -254,13 +254,17 @@ void CViewMessages::OnListRender (wxTimerEvent& event) {
             if (was_connected != isConnected) {
                 was_connected = isConnected;
                 if (isConnected) {
-                    m_pMessageInfoAttr->SetTextColour(*wxBLACK);
+                    m_pMessageInfoAttr->SetTextColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
                     m_pMessageErrorAttr->SetTextColour(*wxRED);
                 } else {
-                    wxColourDatabase colorBase;
-                    m_pMessageInfoAttr->SetTextColour(wxColour(128, 128, 128));
-                    m_pMessageErrorAttr->SetTextColour(wxColour(255, 128, 128));
+                    m_pMessageInfoAttr->SetTextColour(CBOINCListCtrl::GetBlendedColour(
+                                wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),
+                                wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW), 0.5));
+                    m_pMessageErrorAttr->SetTextColour(CBOINCListCtrl::GetBlendedColour(*wxRED,
+                                wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW), 0.5));
                 }
+                m_pMessageInfoAttr->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+                m_pMessageErrorAttr->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
                 // Force a complete update
                 m_pListPane->DeleteAllItems();
                 m_pListPane->SetItemCount(iDocCount);
