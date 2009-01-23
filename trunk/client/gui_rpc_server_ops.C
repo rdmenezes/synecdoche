@@ -918,11 +918,6 @@ static int set_debt(XML_PARSER& xp) {
             got_ltd = true;
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] set_debt: unrecognized %s", tag
-            );
-        }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "set_debt");
     }
     return 0;
@@ -952,11 +947,6 @@ static void handle_set_debts(const char* buf, MIOFILE& fout) {
                 return;
             }
             continue;
-        }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] handle_set_debts: unrecognized %s", tag
-            );
         }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "handle_set_debts");
     }

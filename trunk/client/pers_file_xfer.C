@@ -328,11 +328,7 @@ int PERS_FILE_XFER::parse(MIOFILE& fin) {
         else if (parse_double(buf, "<time_so_far>", time_so_far)) continue;
         else if (parse_double(buf, "<last_bytes_xferred>", last_bytes_xferred)) continue;
         else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(NULL, MSG_INFO,
-                    "[unparsed_xml] Unparsed line in file transfer info: %s", buf
-                );
-            }
+            handle_unparsed_xml_warning("PERS_FILE_XFER::parse", buf);
         }
     }
     return ERR_XML_PARSE;

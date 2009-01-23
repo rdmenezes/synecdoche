@@ -202,11 +202,7 @@ int PROJECT::parse_state(MIOFILE& in) {
         if (parse_double(buf, "<ams_resource_share>", ams_resource_share)) continue;
         if (parse_bool(buf, "scheduler_rpc_in_progress", btemp)) continue;
         if (parse_bool(buf, "use_symlinks", use_symlinks)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] PROJECT::parse_state(): unrecognized: %s", buf
-            );
-        }
+        handle_unparsed_xml_warning("PROJECT::parse_state", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -495,10 +491,7 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
             file_ref.parse(in);
             project_files.push_back(file_ref);
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] parse_project_files(): unrecognized: %s\n", buf);
-            }
+            handle_unparsed_xml_warning("PROJECT::parse_project_files", buf);
         }
     }
     return ERR_XML_PARSE;
@@ -594,11 +587,7 @@ int APP::parse(MIOFILE& in) {
         }
         if (parse_str(buf, "<name>", name, sizeof(name))) continue;
         if (parse_str(buf, "<user_friendly_name>", user_friendly_name, sizeof(user_friendly_name))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] APP::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("APP::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -790,11 +779,7 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
             error_msg = buf2;
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] FILE_INFO::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("FILE_INFO::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1085,11 +1070,7 @@ int APP_VERSION::parse(MIOFILE& in) {
         if (parse_double(buf, "<max_ncpus>", max_ncpus)) continue;
         if (parse_double(buf, "<flops>", flops)) continue;
         if (parse_str(buf, "<cmdline>", cmdline, sizeof(cmdline))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] APP_VERSION::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("APP_VERSION::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1193,11 +1174,7 @@ int FILE_REF::parse(MIOFILE& in) {
         if (parse_bool(buf, "copy_file", copy_file)) continue;
         if (parse_bool(buf, "optional", optional)) continue;
         if (parse_bool(buf, "no_validate", temp)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] FILE_REF::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("FILE_REF::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1283,11 +1260,7 @@ int WORKUNIT::parse(MIOFILE& in) {
         }
         // unused stuff
         if (parse_double(buf, "<credit>", dtemp)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] WORKUNIT::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("WORKUNIT::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1375,11 +1348,7 @@ int RESULT::parse_name(FILE* in, const char* end_tag) {
     while (fgets(buf, 256, in)) {
         if (match_tag(buf, end_tag)) return 0;
         if (parse_str(buf, "<name>", name, sizeof(name))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] RESULT::parse_name(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("RESULT::parse_name", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1431,11 +1400,7 @@ int RESULT::parse_server(MIOFILE& in) {
             output_files.push_back(file_ref);
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] RESULT::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("RESULT::parse_server", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1496,11 +1461,7 @@ int RESULT::parse_state(MIOFILE& in) {
         if (parse_str(buf, "<platform>", platform, sizeof(platform))) continue;
         if (parse_str(buf, "<plan_class>", plan_class, sizeof(plan_class))) continue;
         if (parse_int(buf, "<version_num>", version_num)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] RESULT::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("RESULT::parse", buf);
     }
     return ERR_XML_PARSE;
 }

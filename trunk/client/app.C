@@ -571,11 +571,7 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
         else if (parse_double(buf, "<working_set_size_smoothed>", procinfo.working_set_size_smoothed)) continue;
         else if (parse_double(buf, "<page_fault_rate>", procinfo.page_fault_rate)) continue;
         else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] ACTIVE_TASK::parse(): unrecognized %s\n", buf
-                );
-            }
+            handle_unparsed_xml_warning("ACTIVE_TASK::parse", buf);
         }
     }
     return ERR_XML_PARSE;
@@ -618,11 +614,7 @@ int ACTIVE_TASK_SET::parse(MIOFILE& fin) {
             if (!retval) active_tasks.push_back(atp);
             else delete atp;
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] ACTIVE_TASK_SET::parse(): unrecognized %s\n", buf
-                );
-            }
+            handle_unparsed_xml_warning("ACTIVE_TASK_SET::parse", buf);
         }
     }
     return ERR_XML_PARSE;

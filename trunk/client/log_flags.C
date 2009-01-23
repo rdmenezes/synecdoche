@@ -316,3 +316,22 @@ int read_config_file(bool init) {
     fclose(f);
     return 0;
 }
+
+/// Print a message about unparsed xml.
+/// If log_flags.unparsed_xml is not set this function does nothing.
+///
+/// \param[in] in_func The name of the parsing function which discovered the
+///                    unparsed xml data.
+/// \param[in] buf The unparsed xml data that should be included in the message.
+void handle_unparsed_xml_warning(const std::string& in_func, const std::string& buf) {
+    if (log_flags.unparsed_xml) {
+        // First check if buf only contains whitespaces. If yes ignore it to
+        // prevent printing empty messages.
+        std::string buf_copy(buf);
+        strip_whitespace(buf_copy);
+        if (!buf_copy.empty()) {
+            msg_printf(0, MSG_INFO, "[unparsed_xml] %s: unrecognized: %s",
+                       in_func.c_str(), buf_copy.c_str());
+        }
+    }
+}
