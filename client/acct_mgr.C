@@ -201,12 +201,7 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
 
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!is_tag) {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] AM_ACCOUNT::parse: unexpected text %s",
-                    tag
-                );
-            }
+            handle_unparsed_xml_warning("AM_ACCOUNT::parse", tag);
             continue;
         }
         if (!strcmp(tag, "/account")) {
@@ -241,11 +236,6 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
             }
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] AM_ACCOUNT: unrecognized %s", tag
-            );
-        }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "AM_ACCOUNT::parse");
     }
     return ERR_XML_PARSE;
@@ -269,12 +259,7 @@ int ACCT_MGR_OP::parse(FILE* f) {
     if (!xp.parse_start("acct_mgr_reply")) return ERR_XML_PARSE;
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!is_tag) {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] ACCT_MGR_OP::parse: unexpected text %s",
-                    tag
-                );
-            }
+            handle_unparsed_xml_warning("ACCT_MGR_OP::parse", tag);
             continue;
         }
         if (!strcmp(tag, "/acct_mgr_reply")) return 0;
@@ -325,11 +310,6 @@ int ACCT_MGR_OP::parse(FILE* f) {
             continue;
         }
         if (xp.parse_str(tag, "host_venue", host_venue, sizeof(host_venue))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_OP::parse: unrecognized %s", tag
-            );
-        }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "ACCT_MGR_OP::parse");
     }
     return ERR_XML_PARSE;
@@ -614,14 +594,7 @@ int ACCT_MGR_INFO::parse_login_file(FILE* p) {
             retval = xp.element_contents("</opaque>", opaque, sizeof(opaque));
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_INFO::parse_login: unrecognized %s", tag
-            );
-        }
-        xp.skip_unexpected(
-            tag, log_flags.unparsed_xml, "ACCT_MGR_INFO::parse_login_file"
-        );
+        xp.skip_unexpected(tag, log_flags.unparsed_xml, "ACCT_MGR_INFO::parse_login_file");
     }
     return 0;
 }
@@ -653,11 +626,6 @@ int ACCT_MGR_INFO::init() {
         else if (!strcmp(tag, "signing_key")) {
             retval = xp.element_contents("</signing_key>", signing_key, sizeof(signing_key));
             continue;
-        }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_INFO::init: unrecognized %s", tag
-            );
         }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "ACCT_MGR_INFO::init");
     }

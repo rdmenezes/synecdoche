@@ -310,9 +310,7 @@ int TIME_STATS::parse(MIOFILE& in) {
             }
             continue;
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO, "[unparsed_xml] TIME_STATS::parse(): unrecognized: %s\n", buf);
-            }
+            handle_unparsed_xml_warning("TIME_STATS::parse", buf);
         }
     }
     return ERR_XML_PARSE;

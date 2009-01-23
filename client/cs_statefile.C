@@ -427,11 +427,7 @@ int CLIENT_STATE::parse_state_file() {
             continue;
         }
 #endif
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] state_file: unrecognized: %s", buf
-            );
-        }
+        handle_unparsed_xml_warning("CLIENT_STATE::parse_state_file", buf);
         skip_unrecognized(buf, mf);
     }
     fclose(f);

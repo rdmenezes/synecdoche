@@ -128,11 +128,8 @@ int PROJECT::parse_account(FILE* in) {
             continue;
         } else {
             // don't show unparsed XML errors if we're in project prefs
-            //
-            if (!in_project_prefs && log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] PROJECT::parse_account(): unrecognized: %s\n", buf
-                );
+            if (!in_project_prefs) {
+                handle_unparsed_xml_warning("PROJECT::parse_account", buf);
             }
         }
     }
@@ -189,9 +186,7 @@ int PROJECT::parse_account_file_venue() {
         } else if (parse_double(buf, "<resource_share>", resource_share)) {
             continue;
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO, "[unparsed_xml] parse_account_file_venue(): unrecognized: %s\n", buf);
-            }
+            handle_unparsed_xml_warning("PROJECT::parse_account_file_venue", buf);
         }
     }
     fclose(in);
@@ -306,11 +301,7 @@ int PROJECT::parse_statistics(FILE* in) {
             canonicalize_master_url(master_url);
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] PROJECT::parse_statistics(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("PROJECT::parse_statistics", buf);
     }
     return ERR_XML_PARSE;
 }

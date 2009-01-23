@@ -767,12 +767,8 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
             retval = project->parse_project_files(mf, true);
         } else if (match_tag(buf, "<!--")) {
             continue;
-        } else if (strlen(buf)>1){
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] SCHEDULER_REPLY::parse(): unrecognized %s\n", buf
-                );
-            }
+        } else {
+            handle_unparsed_xml_warning("SCHEDULER_REPLY::parse", buf);
         }
     }
     if (found_start_tag) {

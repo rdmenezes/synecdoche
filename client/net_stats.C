@@ -109,11 +109,7 @@ int NET_STATS::parse(MIOFILE& in) {
         if (parse_double(buf, "<bwdown>", down.max_rate)) continue;
         if (parse_double(buf, "<avg_down>", down.avg_rate)) continue;
         if (parse_double(buf, "<avg_time_down>", down.avg_time)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] Unrecognized network statistics line: %s", buf
-            );
-        }
+        handle_unparsed_xml_warning("NET_STATS::parse", buf);
     }
     return ERR_XML_PARSE;
 }
