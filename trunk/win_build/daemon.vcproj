@@ -2101,6 +2101,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\svnversion.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Client\time_stats.C"
 				>
 				<FileConfiguration
