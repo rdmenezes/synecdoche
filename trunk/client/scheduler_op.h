@@ -93,7 +93,7 @@ private:
 struct USER_MESSAGE {
     std::string message;
     std::string priority;
-    USER_MESSAGE(char*, char*);
+    USER_MESSAGE(const char* msg, const char* prio);
 };
 
 struct SCHEDULER_REPLY {
