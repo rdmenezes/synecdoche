@@ -77,19 +77,19 @@ public:
     /// Try to initiate an RPC to the given project.
     int init_op_project(PROJECT* p, rpc_reason r);
 
-    int init_master_fetch(PROJECT*);
+    int init_master_fetch(PROJECT* p);
     bool check_master_fetch_start();
 
     /// Back off contacting this project's schedulers.
     void backoff(PROJECT* p, const std::string& reason_msg);
 
     /// if we're doing an op to this project, abort it
-    void abort(PROJECT*);
+    void abort(PROJECT* p);
 private:
-    bool update_urls(PROJECT*, std::vector<std::string> &urls);
-    int start_op(PROJECT*);
-    int start_rpc(PROJECT*);
-    int parse_master_file(PROJECT*, std::vector<std::string>&);
+    bool update_urls(PROJECT* p, std::vector<std::string>& urls);
+    int start_op(PROJECT* p);
+    int start_rpc(PROJECT* p);
+    int parse_master_file(PROJECT* p, std::vector<std::string>& urls);
 };
 
 struct USER_MESSAGE {
@@ -141,7 +141,7 @@ struct SCHEDULER_REPLY {
 
     SCHEDULER_REPLY();
     ~SCHEDULER_REPLY();
-    int parse(FILE*, PROJECT*);
+    int parse(FILE* in, PROJECT* project);
 };
 
 #endif
