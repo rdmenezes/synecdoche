@@ -28,6 +28,7 @@
 #include "error_numbers.h"
 #include "md5_file.h"
 #include "parse.h"
+#include "miofile.h"
 #include "str_util.h"
 #include "filesys.h"
 

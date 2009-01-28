@@ -29,12 +29,13 @@
 #endif
 #endif
 
+#include "client_state.h"
+
 #include <algorithm>
 #include <cstring>
 #include "filesys.h"
 #include "parse.h"
 #include "str_util.h"
-#include "client_state.h"
 #include "client_msgs.h"
 #include "log_flags.h"
 #include "error_numbers.h"

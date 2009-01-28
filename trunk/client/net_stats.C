@@ -32,7 +32,10 @@
 #include <cmath>
 #endif
 
+#include "net_stats.h"
+
 #include "parse.h"
+#include "miofile.h"
 #include "time.h"
 #include "str_util.h"
 #include "error_numbers.h"
@@ -41,8 +44,6 @@
 #include "client_msgs.h"
 #include "client_state.h"
 #include "file_names.h"
-
-#include "net_stats.h"
 
 #define NET_RATE_HALF_LIFE  (7*86400)
 

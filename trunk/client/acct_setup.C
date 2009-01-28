@@ -24,6 +24,8 @@
 #include "config.h"
 #endif
 
+#include "acct_setup.h"
+
 #include <cstring>
 #include <string>
 #include "client_state.h"
@@ -33,8 +35,7 @@
 #include "str_util.h"
 #include "util.h"
 #include "client_msgs.h"
-
-#include "acct_setup.h"
+#include "miofile.h"
 
 void PROJECT_INIT::clear() {
     strcpy(url, "");

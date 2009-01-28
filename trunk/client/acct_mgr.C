@@ -22,6 +22,8 @@
 #include "config.h"
 #endif
 
+#include "acct_mgr.h"
+
 #include <cstring>
 #include "parse.h"
 #include "error_numbers.h"
@@ -32,8 +34,7 @@
 #include "client_state.h"
 #include "gui_http.h"
 #include "crypt.h"
-
-#include "acct_mgr.h"
+#include "miofile.h"
 
 static const char *run_mode_name[] = {"", "always", "auto", "never"};
 

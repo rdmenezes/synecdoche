@@ -57,6 +57,8 @@
 #include <fcntl.h>
 #endif
 
+#include "app.h"
+
 #include "filesys.h"
 #include "error_numbers.h"
 #include "util.h"
@@ -71,9 +73,6 @@
 #ifdef _WIN32
 #include "proc_control.h"
 #endif
-
-#include "app.h"
-
 
 #ifdef _WIN32
 // Dynamically link to these functions at runtime;

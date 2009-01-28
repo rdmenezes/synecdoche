@@ -39,6 +39,7 @@ LPFN_ISWOW64PROCESS fnIsWow64Process;
 #include "log_flags.h"
 #include "str_util.h"
 #include "util.h"
+#include "miofile.h"
 
 
 /// return the primary platform id.

@@ -32,7 +32,6 @@
 #include "gui_rpc_server.h"
 #include "gui_http.h"
 #include "hostinfo.h"
-#include "miofile.h"
 #include "net_stats.h"
 #include "pers_file_xfer.h"
 #include "prefs.h"

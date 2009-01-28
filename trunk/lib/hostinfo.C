@@ -31,12 +31,13 @@
 
 #include <sstream>
 
+#include "hostinfo.h"
+
 #include "util.h"
 #include "parse.h"
+#include "miofile.h"
 #include "md5_file.h"
 #include "error_numbers.h"
-
-#include "hostinfo.h"
 
 HOST_INFO::HOST_INFO() {
     clear_host_info();

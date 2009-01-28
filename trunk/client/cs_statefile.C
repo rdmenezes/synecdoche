@@ -24,6 +24,9 @@
 #include <cstring>
 #include <errno.h>
 
+#include "client_state.h"
+
+#include "miofile.h"
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"
@@ -31,7 +34,6 @@
 #include "filesys.h"
 #include "file_names.h"
 #include "client_msgs.h"
-#include "client_state.h"
 #include "version.h"
 
 #define MAX_STATE_FILE_WRITE_ATTEMPTS 2

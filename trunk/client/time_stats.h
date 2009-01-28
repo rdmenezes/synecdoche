@@ -21,7 +21,7 @@
 #include <cstdio>
 #include <vector>
 
-#include "miofile.h"
+class MIOFILE;
 
 class TIME_STATS {
     bool first;

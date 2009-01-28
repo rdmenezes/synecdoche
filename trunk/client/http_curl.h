@@ -27,8 +27,9 @@
 #include <cstdio>
 #include <vector>
 
-#include "network.h"
 #include "proxy_info.h"
+
+class FDSET_GROUP;
 
 extern int curl_init();
 extern int curl_cleanup();

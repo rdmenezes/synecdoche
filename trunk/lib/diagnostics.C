@@ -40,13 +40,13 @@
 #include <execinfo.h>
 #endif
 
-
+#include "diagnostics.h"
 #include "app_ipc.h"
 #include "error_numbers.h"
 #include "filesys.h"
 #include "util.h"
+#include "miofile.h"
 #include "parse.h"
-#include "diagnostics.h"
 
 
 #if defined(_WIN32) && defined(_MSC_VER)

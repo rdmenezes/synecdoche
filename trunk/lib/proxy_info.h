@@ -18,7 +18,7 @@
 #ifndef _PROXY_INFO_
 #define _PROXY_INFO_
 
-#include "miofile.h"
+class MIOFILE;
 
 struct PROXY_INFO {
     bool use_http_proxy;

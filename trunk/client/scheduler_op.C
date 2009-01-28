@@ -24,9 +24,12 @@
 #include <sstream>
 #endif
 
+#include "scheduler_op.h"
+
 #include "str_util.h"
 #include "util.h"
 #include "parse.h"
+#include "miofile.h"
 #include "error_numbers.h"
 #include "filesys.h"
 
@@ -36,7 +39,6 @@
 #include "file_names.h"
 #include "log_flags.h"
 #include "main.h"
-#include "scheduler_op.h"
 
 SCHEDULER_OP::SCHEDULER_OP(HTTP_OP_SET* h) {
     cur_proj = NULL;
