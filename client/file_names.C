@@ -34,6 +34,8 @@
 #include "shmem.h"
 #endif
 
+#include "file_names.h"
+
 #include "filesys.h"
 #include "error_numbers.h"
 #include "str_util.h"
@@ -41,8 +43,6 @@
 #include "client_msgs.h"
 #include "sandbox.h"
 #include "client_state.h"
-
-#include "file_names.h"
 
 void get_project_dir(const PROJECT* p, char* path, int len) {
     char buf[1024];

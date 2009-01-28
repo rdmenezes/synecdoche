@@ -19,9 +19,11 @@
 #ifndef FILE_NAMES_H
 #define FILE_NAMES_H
 
-#include "client_types.h"
-#include "common_defs.h"
-#include "prefs.h"
+#include <string>
+
+class FILE_INFO;
+class PROJECT;
+class MIOFILE;
 
 /// get the pathname (relative to client home dir) of a project file.
 extern void get_pathname(const FILE_INFO* fip, char* path, int len);
