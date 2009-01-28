@@ -34,6 +34,7 @@
 #include "filesys.h"
 #include "file_names.h"
 #include "client_msgs.h"
+#include "pers_file_xfer.h"
 #include "version.h"
 
 #define MAX_STATE_FILE_WRITE_ATTEMPTS 2

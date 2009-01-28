@@ -60,6 +60,7 @@
 #include "file_names.h"
 #include "client_msgs.h"
 #include "client_state.h"
+#include "pers_file_xfer.h"
 
 /// Maximum size of the write buffer. If this size is exceeded, the connection
 /// will be dropped.

@@ -33,11 +33,13 @@
 #include <sys/socket.h>
 #endif
 #include <unistd.h>
+#include <errno.h>
 #endif
+
+#include "client_state.h"
 
 #include "version.h"
 
-#include "parse.h"
 #include "str_util.h"
 #include "util.h"
 #include "error_numbers.h"
@@ -51,8 +53,8 @@
 #include "client_msgs.h"
 #include "shmem.h"
 #include "sandbox.h"
-#include "client_state.h"
 #include "scheduler_op.h"
+#include "pers_file_xfer.h"
 
 CLIENT_STATE gstate;
 
