@@ -24,24 +24,26 @@
 #include "client_types.h"
 #include "http_curl.h"
 
+// invariant: in this state, our HTTP_OP is not in the HTTP_OP_SET
 #define SCHEDULER_OP_STATE_IDLE         0
-    // invariant: in this state, our HTTP_OP is not in the HTTP_OP_SET
+
 #define SCHEDULER_OP_STATE_GET_MASTER   1
+
 #define SCHEDULER_OP_STATE_RPC          2
 
 // defaults related to scheduler RPC policy
 // See client_state.h for definitions
 
+// fetch and parse master URL if nrpc_failures is a multiple of this
 #define MASTER_FETCH_PERIOD     10
-    // fetch and parse master URL if nrpc_failures is a multiple of this
+// cap on nrpc_failures
 #define RETRY_CAP               10
-    // cap on nrpc_failures
+// after this many master-fetch failures,
+// move into a state in which we retry master fetch
+// at the frequency below
 #define MASTER_FETCH_RETRY_CAP 3
-    // after this many master-fetch failures,
-    // move into a state in which we retry master fetch
-    // at the frequency below
+// See above
 #define MASTER_FETCH_INTERVAL (86400)    // 1 day
-    // See above
 
 // constants used to bound RPC backoff
 #define SCHED_RETRY_DELAY_MIN    60                // 1 minute
@@ -107,14 +109,17 @@ struct SCHEDULER_REPLY {
     double request_delay;
     double next_rpc_delay;
     std::vector<USER_MESSAGE> messages;
+
+    // not including <global_preferences> tags;
+    // may include <venue> elements
     char* global_prefs_xml;
-        // not including <global_preferences> tags;
-        // may include <venue> elements
+    // not including <project_preferences> tags
+    // may include <venue> elements
     char* project_prefs_xml;
-        // not including <project_preferences> tags
-        // may include <venue> elements
+
     char master_url[256];
     char host_venue[256];
+
     unsigned int user_create_time;
     std::vector<APP> apps;
     std::vector<FILE_INFO> file_infos;
