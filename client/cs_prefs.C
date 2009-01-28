@@ -34,6 +34,7 @@
 #endif
 #endif
 
+#include "client_state.h"
 #include "str_util.h"
 #include "util.h"
 #include "filesys.h"
@@ -41,7 +42,7 @@
 #include "file_names.h"
 #include "cpu_benchmark.h"
 #include "client_msgs.h"
-#include "client_state.h"
+#include "miofile.h"
 
 using std::min;
 using std::string;

@@ -57,6 +57,8 @@
 
 #endif
 
+#include "app.h"
+
 #include "client_state.h"
 #include "client_types.h"
 
@@ -64,12 +66,12 @@
 #include "filesys.h"
 #include "file_names.h"
 #include "parse.h"
+#include "miofile.h"
 #include "shmem.h"
 #include "str_util.h"
 #include "client_msgs.h"
 #include "procinfo.h"
 #include "sandbox.h"
-#include "app.h"
 
 /// If we send app <abort> request, wait this long before killing it.
 /// This gives it time to download symbol files (which can be several MB)

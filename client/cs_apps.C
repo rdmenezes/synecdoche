@@ -31,6 +31,7 @@
 #include <csignal>
 #endif
 
+#include "client_state.h"
 #include "md5_file.h"
 #include "util.h"
 #include "error_numbers.h"
@@ -39,7 +40,6 @@
 #include "shmem.h"
 #include "log_flags.h"
 #include "client_msgs.h"
-#include "client_state.h"
 
 using std::vector;
 

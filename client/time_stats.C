@@ -32,7 +32,11 @@
 #endif
 
 #include <cstring>
+
+#include "time_stats.h"
+
 #include "parse.h"
+#include "miofile.h"
 #include "util.h"
 #include "filesys.h"
 #include "error_numbers.h"
@@ -42,7 +46,6 @@
 #include "network.h"
 #include "log_flags.h"
 
-#include "time_stats.h"
 #include "version.h"
 
 #define CONNECTED_STATE_UNINITIALIZED   -1

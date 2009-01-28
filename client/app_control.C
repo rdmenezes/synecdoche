@@ -52,6 +52,8 @@
 
 #endif
 
+#include "app.h"
+
 #include <vector>
 #include <sstream>
 
@@ -66,9 +68,6 @@
 #include "file_names.h"
 #include "procinfo.h"
 #include "sandbox.h"
-
-#include "app.h"
-
 
 #ifdef _WIN32
 bool ACTIVE_TASK::kill_all_children() {

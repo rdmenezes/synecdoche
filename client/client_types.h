@@ -34,7 +34,6 @@
 #include "common_defs.h"
 #include "md5_file.h"
 #include "hostinfo.h"
-#include "miofile.h"
 
 #define P_LOW 1
 #define P_MEDIUM 3

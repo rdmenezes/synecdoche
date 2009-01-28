@@ -19,8 +19,6 @@
 #ifndef COMMON_DEFS_H
 #define COMMON_DEFS_H
 
-#include "miofile.h"
-
 /// \file
 /// \#defines or constants or enums that are shared by more than one BOINC component
 /// (e.g. client, server, Manager, etc.)

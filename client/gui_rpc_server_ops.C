@@ -52,6 +52,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "parse.h"
+#include "miofile.h"
 #include "network.h"
 #include "filesys.h"
 #include "version.h"

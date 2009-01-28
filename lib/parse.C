@@ -42,9 +42,11 @@
 #include <string>
 #include <sstream>
 
+#include "parse.h"
+
+#include "miofile.h"
 #include "error_numbers.h"
 #include "str_util.h"
-#include "parse.h"
 
 /// Parse a boolean; tag is of form "foobar".
 /// Accept either <foobar/> or <foobar>0|1</foobar>

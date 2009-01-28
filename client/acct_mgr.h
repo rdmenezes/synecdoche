@@ -21,7 +21,6 @@
 #include <string>
 #include <vector>
 
-#include "miofile.h"
 #include "parse.h"
 #include "gui_http.h"
 #include "client_types.h"

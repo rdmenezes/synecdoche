@@ -39,20 +39,21 @@
 #include <sstream>
 #endif
 
+#include "client_types.h"
+
 #include "error_numbers.h"
 #include "file_names.h"
 #include "filesys.h"
 #include "client_msgs.h"
 #include "log_flags.h"
 #include "parse.h"
+#include "miofile.h"
 #include "util.h"
 #include "str_util.h"
 #include "client_state.h"
 #include "pers_file_xfer.h"
 #include "sandbox.h"
 #include "scheduler_op.h"
-
-#include "client_types.h"
 
 using std::string;
 using std::vector;

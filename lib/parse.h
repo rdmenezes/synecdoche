@@ -40,7 +40,9 @@ int finite(double);
 #endif
 #endif
 
-#include "miofile.h"
+#include <string>
+
+class MIOFILE;
 
 class XML_PARSER {
     MIOFILE* f;
