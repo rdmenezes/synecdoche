@@ -52,6 +52,7 @@
 #include "shmem.h"
 #include "sandbox.h"
 #include "client_state.h"
+#include "scheduler_op.h"
 
 CLIENT_STATE gstate;
 

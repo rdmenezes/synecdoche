@@ -50,6 +50,7 @@
 #include "client_state.h"
 #include "pers_file_xfer.h"
 #include "sandbox.h"
+#include "scheduler_op.h"
 
 #include "client_types.h"
 

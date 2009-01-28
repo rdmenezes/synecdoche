@@ -36,9 +36,10 @@
 #include "net_stats.h"
 #include "pers_file_xfer.h"
 #include "prefs.h"
-#include "scheduler_op.h"
 #include "time_stats.h"
 #include "http_curl.h"
+
+class SCHEDULER_OP;
 
 // project: suspended, deferred, or no new work (can't ask for more work)
 // overall: not work_fetch_ok (from CPU policy)
