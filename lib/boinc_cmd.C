@@ -45,6 +45,7 @@ using std::string;
 #include "str_util.h"
 #include "version.h"
 #include "common_defs.h"
+#include "hostinfo.h"
 
 void version(){
     printf("syneccmd,  built from %s \n", PACKAGE_STRING );

@@ -60,6 +60,8 @@
 #include <locale>
 #endif
 
+#include "gui_rpc_client.h"
+
 #include <sstream>
 
 #include "diagnostics.h"
@@ -71,7 +73,7 @@
 #include "md5_file.h"
 #include "network.h"
 #include "common_defs.h"
-#include "gui_rpc_client.h"
+#include "hostinfo.h"
 
 DISPLAY_INFO::DISPLAY_INFO() {
 }

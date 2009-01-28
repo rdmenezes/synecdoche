@@ -19,9 +19,11 @@
 #ifndef _MAINDOCUMENT_H_
 #define _MAINDOCUMENT_H_
 
+#include <string>
 #include <vector>
 #include "common_defs.h"
 #include "gui_rpc_client.h"
+#include "hostinfo.h"
 
 typedef struct {
     int slot;
