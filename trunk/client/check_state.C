@@ -32,6 +32,8 @@
 #endif
 
 #include "client_state.h"
+#include "client_types.h"
+#include "pers_file_xfer.h"
 
 void CLIENT_STATE::check_project_pointer(PROJECT* p) {
     unsigned int i;

@@ -24,10 +24,11 @@
 #include <deque>
 #endif
 
+#include "client_msgs.h"
+
 #include "str_util.h"
 #include "log_flags.h"
 #include "client_types.h"
-#include "client_msgs.h"
 
 #define MAX_SAVED_MESSAGES 1000
 

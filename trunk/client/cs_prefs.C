@@ -43,6 +43,7 @@
 #include "cpu_benchmark.h"
 #include "client_msgs.h"
 #include "miofile.h"
+#include "pers_file_xfer.h"
 
 using std::min;
 using std::string;

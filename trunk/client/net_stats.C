@@ -44,6 +44,7 @@
 #include "client_msgs.h"
 #include "client_state.h"
 #include "file_names.h"
+#include "pers_file_xfer.h"
 
 #define NET_RATE_HALF_LIFE  (7*86400)
 

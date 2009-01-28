@@ -33,7 +33,6 @@
 
 #include "common_defs.h"
 #include "md5_file.h"
-#include "hostinfo.h"
 
 #define P_LOW 1
 #define P_MEDIUM 3
@@ -48,6 +47,11 @@
 // or that the file was too big and was deleted
 #define FILE_NOT_PRESENT    0
 #define FILE_PRESENT        1
+
+class MIOFILE;
+class PERS_FILE_XFER;
+class RESULT;
+class PROJECT;
 
 class FILE_INFO {
 public:
@@ -70,9 +74,9 @@ public:
     bool is_user_file;
     bool is_project_file;
     bool gzip_when_done; ///< for output files: gzip file when done, and append .gz to its name
-    class PERS_FILE_XFER* pers_file_xfer; ///< nonzero if in the process of being up/downloaded
-    struct RESULT* result;         ///< for upload files (to authenticate)
-    class PROJECT* project;
+    PERS_FILE_XFER* pers_file_xfer; ///< nonzero if in the process of being up/downloaded
+    RESULT* result;         ///< for upload files (to authenticate)
+    PROJECT* project;
     int ref_cnt;
     std::vector<std::string> urls;
     int start_url;
@@ -419,7 +423,7 @@ public:
     /// @}
 
     /// The next result to run for this project.
-    struct RESULT *next_runnable_result;
+    RESULT *next_runnable_result;
 
     /// Number of results in UPLOADING state.
     /// Don't start new results if these exceeds 2*ncpus.

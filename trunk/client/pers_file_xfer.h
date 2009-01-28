@@ -20,8 +20,10 @@
 
 #include <vector>
 
-#include "client_types.h"
-#include "file_xfer.h"
+class MIOFILE;
+class FILE_INFO;
+class FILE_XFER;
+class FILE_XFER_SET;
 
 /// \file
 /// PERS_FILE_XFER represents a "persistent file transfer",

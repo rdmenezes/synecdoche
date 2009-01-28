@@ -25,6 +25,8 @@
 #include <cstdlib>
 #endif
 
+#include "pers_file_xfer.h"
+
 #include "error_numbers.h"
 #include "md5_file.h"
 #include "parse.h"
