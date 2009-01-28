@@ -24,7 +24,7 @@
 
 #define MIN_DOWNLOAD_INCREMENT  5000
 
-struct FILE_INFO;
+class FILE_INFO;
 
 /// A FILE_XFER object represents a file transfer "episode"
 /// (see pers_file_xfer.h), i.e.\ an HTTP transaction with a

@@ -34,6 +34,7 @@
 #include "common_defs.h"
 #include "util.h"
 #include "gui_rpc_client.h"
+#include "hostinfo.h"
 #include "screensaver.h"
 #include "screensaver_win.h"
 

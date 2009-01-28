@@ -126,7 +126,8 @@ public:
 /// the app will either use open() or fopen() to access the file
 /// (in which case \ref open_name is the name it will use)
 /// or the app will be connected by the given fd (in which case fd is nonzero).
-struct FILE_REF {
+class FILE_REF {
+public:
     char file_name[256];    ///< physical name
     char open_name[256];    ///< logical name
     bool main_program;
@@ -136,6 +137,8 @@ struct FILE_REF {
     /// for output files: app may not generate file;
     /// don't treat as error if file is missing.
     bool optional;
+
+public:
     int parse(MIOFILE&);
     int write(MIOFILE&) const;
 };
@@ -509,7 +512,8 @@ struct APP {
     int write(MIOFILE&) const;
 };
 
-struct APP_VERSION {
+class APP_VERSION {
+public:
     char app_name[256];
     int version_num;
     char platform[256];
@@ -526,6 +530,7 @@ struct APP_VERSION {
     int ref_cnt;
     char graphics_exec_path[512];
 
+public:
     APP_VERSION(){}
     ~APP_VERSION(){}
     int parse(MIOFILE&);
@@ -536,7 +541,8 @@ struct APP_VERSION {
     int api_major_version() const;
 };
 
-struct WORKUNIT {
+class WORKUNIT {
+public:
     char name[256];
     char app_name[256];
     /// Deprecated, but need to keep around to let people revert
@@ -553,6 +559,7 @@ struct WORKUNIT {
     double rsc_memory_bound;
     double rsc_disk_bound;
 
+public:
     WORKUNIT(){}
     ~WORKUNIT(){}
     int parse(MIOFILE&);
@@ -562,7 +569,8 @@ struct WORKUNIT {
     void clear_errors();
 };
 
-struct RESULT {
+class RESULT {
+public:
     char name[256];
     char wu_name[256];
     double report_deadline;
@@ -584,9 +592,6 @@ struct RESULT {
     double fpops_cumulative;    // nonzero if reported by app
     double intops_per_cpu_sec;   // nonzero if reported by app
     double intops_cumulative;    // nonzero if reported by app
-    int _state;                  ///< state of this result: see lib/common_defs.h
-    inline int state() const { return _state; }
-    void set_state(int, const char*);
     int exit_status;            ///< return value from the application
     /// The concatenation of:
     ///
@@ -608,6 +613,10 @@ struct RESULT {
     WORKUNIT* wup; ///< this may be NULL after result is finished
     PROJECT* project;
 
+private:
+    int _state;                  ///< state of this result: see lib/common_defs.h
+
+public:
     RESULT(){}
     ~RESULT(){}
     void clear();
@@ -625,6 +634,9 @@ struct RESULT {
     /// (otherwise you need to abort the active task)
     void abort_inactive(int);
     void append_log_record();
+
+    inline int state() const { return _state; }
+    void set_state(int, const char*);
 
     // stuff related to CPU scheduling
 
