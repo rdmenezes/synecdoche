@@ -96,6 +96,12 @@ struct USER_MESSAGE {
     USER_MESSAGE(const char* msg, const char* prio);
 };
 
+inline USER_MESSAGE::USER_MESSAGE(const char* msg, const char* prio):
+    message(msg),
+    priority(prio)
+{
+}
+
 struct SCHEDULER_REPLY {
     int hostid;
     double request_delay;

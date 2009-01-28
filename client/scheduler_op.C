@@ -779,8 +779,3 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
 
     return ERR_XML_PARSE;
 }
-
-USER_MESSAGE::USER_MESSAGE(const char* msg, const char* prio) {
-    message = m;
-    priority = p;
-}
