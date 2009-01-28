@@ -26,7 +26,8 @@
 #include "boinc_win.h"
 #endif
 
-struct FDSET_GROUP {
+class FDSET_GROUP {
+public:
     fd_set read_fds;
     fd_set write_fds;
     fd_set exc_fds;
