@@ -46,6 +46,12 @@
 ||16707||MGR: Always reset messages if client restarted; always scroll messages to bottom if connection status changes; Select Computer: localhost relaunches client if needed.||
 ||16900/16903/16905||Adds platform information to the project list used when attaching to a new project. We should check if it makes sense to apply this directly or whether we should write an own implementation.||
 ||16929||client: fix boinc_copy (again); Mac Mgr: fix bugs showing Mgr when minimized to Dock;||
+||16994||client sandbox: add details in switcher_exec "execv failed" message||
+||16998||client: clear debts when reset project||
+||17006||call DeleteItem?() rather than SetItemCount?() to reduce # of rows||
+||17025/17029||MGR: allow time for Client to start up before launching repeatedly||
+||17055||lib: comment out perror()s in connection code.||
+
 
 
 
@@ -93,7 +99,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16358 16358]||Already fixed in r72.||
 ||[http://boinc.berkeley.edu/trac/changeset/16560 16560]||No need for this new page and account key page already removed in r526.||
 ||[http://boinc.berkeley.edu/trac/changeset/16754 16754]||Another useless hack: "new work fetch logic". Additional changesets: 16755/16756/16765||
+||[http://boinc.berkeley.edu/trac/changeset/17056 17056]||client: remove the deadlines_missed" and "overworked" clauses - keeping them seems to be the better solution.||
+
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/16960 16960]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17060 17060]
