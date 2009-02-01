@@ -14,6 +14,7 @@ The idea behind this page is to provide information for the case when changes at
 || LHC@home                    || *OK*         ||
 || malariacontrol.net          || _not tested_ ||
 || !MilkyWay@home              || *OK*         ||
+|| NQueens@Home Project        || *OK*         ||
 || POEM@HOME                   || _not tested_ ||
 || !PrimeGrid                  || *OK*         ||
 || QMC@Home                    || *OK*         ||
