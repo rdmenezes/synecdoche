@@ -1,4 +1,4 @@
-#summary This page provides a matrix showing which client works with which project.
+﻿#summary This page provides a matrix showing which client works with which project.
 
 The idea behind this page is to provide information for the case when changes at BOINC or synecdoche break the compatibility between (certain versions of) the synecdoche client and certain BOINC based projects.
 
@@ -22,7 +22,7 @@ The idea behind this page is to provide information for the case when changes at
 || Rosetta@home                || *OK*         ||
 || Seti@home                   || _not tested_ ||
 || SHA-1 Collision Search Graz || *OK*         ||
-|| SIMAP                       || _not tested_ ||
+|| SIMAP                       || *OK*         ||
 || Spinhenge@home              || *OK*         ||
 || Sudoku Project              || _not tested_ ||
 || World Community Grid        || *OK*         ||
