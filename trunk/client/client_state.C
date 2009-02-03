@@ -191,18 +191,18 @@ int CLIENT_STATE::init() {
     detect_platforms();
     time_stats.start();
 
-    msg_printf(
-        NULL, MSG_INFO, "Starting Synecdoche client version %d.%d.%d for %s%s",
-        core_client_version.major,
-        core_client_version.minor,
-        core_client_version.release,
-        get_primary_platform().c_str(),
+    std::ostringstream start_msg;
+    start_msg << "Starting Synecdoche client version " << core_client_version.major;
+    start_msg << '.' << core_client_version.minor << '.' << core_client_version.release;
+    if (SYNEC_SVN_VERSION) {
+        start_msg << " r" << SYNEC_SVN_VERSION;
+    }
+    start_msg << " for " << get_primary_platform();
 #ifdef _DEBUG
-        " (DEBUG)"
-#else
-        ""
-#endif
-    );
+    start_msg << " (DEBUG)";
+#endif // _DEBUG
+
+    msg_printf(NULL, MSG_INFO, start_msg.str().c_str());
 
     if (core_client_version.prerelease) {
         msg_printf(NULL, MSG_USER_ERROR,

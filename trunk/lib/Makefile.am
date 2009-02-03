@@ -11,6 +11,7 @@ syneccmd_SOURCES = \
     boinc_cmd.C \
     gui_rpc_client.h
 
+syneccmd_CPPFLAGS = -O3 $(AM_CPPFLAGS)
 syneccmd_LDADD = $(lib_LIBRARIES) $(PTHREAD_LIBS)
 
 lib_LIBRARIES = libboinc.a 
@@ -86,5 +87,6 @@ pkginclude_HEADERS = \
 
 crypt_prog_SOURCES = crypt_prog.C crypt.C md5.c md5_file.C
 crypt_prog_DEPENDENCIES =
+crypt_prog_CPPFLAGS = -O3 $(AM_CPPFLAGS)
 crypt_prog_LDADD = $(RSA_LIBS) $(PTHREAD_LIBS)
 
