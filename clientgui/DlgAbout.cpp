@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -83,7 +83,11 @@ void CDlgAbout::CreateControls(CSkinAdvanced* pSkinAdvanced) {
     wxStaticText* versionLabel = new wxStaticText(this, wxID_STATIC, _("Version:"));
     copyrightSizer->Add(versionLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
-    wxStaticText* versionText = new wxStaticText(this, wxID_STATIC, wxT(SYNEC_VERSION_STRING));
+    wxString version_str = wxT(SYNEC_VERSION_STRING);
+    if (SYNEC_SVN_VERSION) {
+        version_str << wxT(" r") << wxString(SYNEC_SVN_VERSION, wxConvUTF8);
+    }
+    wxStaticText* versionText = new wxStaticText(this, wxID_STATIC, version_str);
     copyrightSizer->Add(versionText, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
     wxStaticText* copyrightLabel = new wxStaticText(this, wxID_STATIC, _("Copyright:"));
