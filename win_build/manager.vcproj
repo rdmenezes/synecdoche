@@ -1721,6 +1721,10 @@
 			RelativePath="..\clientgui\stdwx.h"
 			>
 		</File>
+		<File
+			RelativePath="..\svnversion.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 		<Global
