@@ -29,6 +29,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Updating svn revision number"
+				CommandLine="..\version.bat ..\svnversion.cpp"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -123,6 +125,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Updating svn revision number"
+				CommandLine="..\version.bat ..\svnversion.cpp"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -220,6 +224,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Updating svn revision number"
+				CommandLine="..\version.bat ..\svnversion.cpp"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
