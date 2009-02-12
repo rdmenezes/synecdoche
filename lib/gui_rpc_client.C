@@ -81,7 +81,6 @@ int RPC_CLIENT::init(const char* host, int port) {
     if (host) {
         hostent* hep = gethostbyname(host);
         if (!hep) {
-            perror("gethostbyname");
             return ERR_GETHOSTBYNAME;
         }
         addr.sin_addr.s_addr = *(int*)hep->h_addr_list[0];
@@ -95,7 +94,6 @@ int RPC_CLIENT::init(const char* host, int port) {
         BOINCTRACE("RPC_CLIENT::init connect 2: Winsock error '%d'\n", WSAGetLastError());
 #endif
         BOINCTRACE("RPC_CLIENT::init connect on %d returned %d\n", sock, retval);
-        perror("connect");
         close();
         return ERR_CONNECT;
     }
@@ -129,7 +127,6 @@ int RPC_CLIENT::init_asynch(const char* host, double _timeout, bool _retry, int 
     if (host) {
         hostent* hep = gethostbyname(host);
         if (!hep) {
-            perror("gethostbyname");
             return ERR_GETHOSTBYNAME;
         }
         addr.sin_addr.s_addr = *(int*)hep->h_addr_list[0];
@@ -150,7 +147,6 @@ int RPC_CLIENT::init_asynch(const char* host, double _timeout, bool _retry, int 
     start_time = dtime();
     retval = connect(sock, (const sockaddr*)(&addr), sizeof(addr));
     if (retval) {
-        perror("connect");
         BOINCTRACE("RPC_CLIENT::init connect returned %d\n", retval);
     }
     BOINCTRACE("RPC_CLIENT::init attempting connect \n");
@@ -278,8 +274,6 @@ int RPC_CLIENT::send_request(const char* p) {
     buf.append(p).append("</boinc_gui_rpc_request>\n\003");
     int n = send(sock, buf.c_str(), static_cast<int>(buf.size()), 0);
     if (n < 0) {
-        printf("send: %d\n", n);
-        perror("send");
         return ERR_WRITE;
     }
     return 0;
