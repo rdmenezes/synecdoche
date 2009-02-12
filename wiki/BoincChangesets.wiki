@@ -48,9 +48,7 @@
 ||16929||client: fix boinc_copy (again); Mac Mgr: fix bugs showing Mgr when minimized to Dock;||
 ||16994||client sandbox: add details in switcher_exec "execv failed" message||
 ||16998||client: clear debts when reset project||
-||17006||call !DeleteItem() rather than !SetItemCount() to reduce # of rows||
 ||17025/17029||MGR: allow time for Client to start up before launching repeatedly||
-||17055||lib: comment out perror()s in connection code.||
 ||17063/17065/17075||MGR: Add a list of account managers. It's included in project_list.xml||
 ||17068||MGR: Save and Restore the last email address/user id used to attach to a project or account manager.||
 ||17070||client: if user requests RPC, do it even if project is backed off (NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago.)||
@@ -58,7 +56,6 @@
 ||17080/17081/17082||MGR: Show Skin Manager error message only if Manager launched with command-line arg -c or --checkSkins||
 ||17133||Move the function reading the GUI-RPC-password from the file from boinc_cmd to lib. We should probably clean this function up while moving it and make sure that *all* programs use it and not just boinc_cmd.||
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
-||17150||MGR: Improve "Copy to clipboard" functionality.||
 
 
 == Changesets for the new OpenGL screensaver (Might be usefull some day) ==
