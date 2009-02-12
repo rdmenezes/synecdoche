@@ -146,12 +146,12 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
                 int iIndex = 0;
                 int iReturnValue = -1;
                 if (iDocCount > iCacheCount) {
-                    for (iIndex = 0; iIndex < (iDocCount - iCacheCount); iIndex++
-                    ) {
+                    for (iIndex = 0; iIndex < (iDocCount - iCacheCount); ++iIndex) {
                         iReturnValue = AddCacheElement();
                         wxASSERT(!iReturnValue);
                     }
                     wxASSERT(GetDocCount() == GetCacheCount());
+                    m_pListPane->SetItemCount(iDocCount);
                 } else {
                     // We can't just call SetItemCount() here because we need to
                     // let the virtual ListCtrl adjust its list of selected rows
@@ -162,6 +162,7 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
                         wxASSERT(!iReturnValue);
                     }
                     wxASSERT(GetDocCount() == GetCacheCount());
+                    m_pListPane->RefreshItems(0, iDocCount - 1);
                 }
             }
         }
