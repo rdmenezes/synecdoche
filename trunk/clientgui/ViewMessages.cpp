@@ -168,13 +168,12 @@ void CViewMessages::OnMessagesCopyAll( wxCommandEvent& WXUNUSED(event) ) {
 
 #ifdef wxUSE_CLIPBOARD
 
-    wxInt32 iIndex          = -1;
-    wxInt32 iRowCount       = 0;
     pFrame->UpdateStatusText(_("Copying all messages to the clipboard..."));
-    OpenClipboard();
 
-    iRowCount = m_pListPane->GetItemCount();
-    for (iIndex = 0; iIndex < iRowCount; iIndex++) {
+    int iRowCount = m_pListPane->GetItemCount();
+    OpenClipboard(iRowCount);
+
+    for (wxInt32 iIndex = 0; iIndex < iRowCount; iIndex++) {
         CopyToClipboard(iIndex);            
     }
 
@@ -203,7 +202,7 @@ void CViewMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
     wxInt32 iIndex = -1;
 
     pFrame->UpdateStatusText(_("Copying selected messages to the clipboard..."));
-    OpenClipboard();
+    OpenClipboard(m_pListPane->GetSelectedItemCount());
 
     for (;;) {
         iIndex = m_pListPane->GetNextItem(
@@ -405,13 +404,17 @@ wxInt32 CViewMessages::FormatMessage(wxInt32 item, wxString& strBuffer) const {
 
 
 #ifdef wxUSE_CLIPBOARD
-bool CViewMessages::OpenClipboard() {
+bool CViewMessages::OpenClipboard(wxInt32 row_count) {
     bool bRetVal = false;
 
     bRetVal = wxTheClipboard->Open();
     if (bRetVal) {
         m_bClipboardOpen = true;
         m_strClipboardData = wxEmptyString;
+
+        // Pre-allocate enough space to store all the lines
+        // that should be copied. We estimate 130 characters per line.
+        m_strClipboardData.Alloc(130 * row_count);
         wxTheClipboard->Clear();
     }
 
