@@ -109,7 +109,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16754 16754]||Another useless hack: "new work fetch logic". Additional changesets: 16755/16756/16765||
 ||[http://boinc.berkeley.edu/trac/changeset/16900 16900]||Adds platform information to the project list used when attaching to a new project. Platforms should be checked directly at the project not in a file maintained by boinc.berkeley.edu. Additional changesets: 16903/16905||
 ||[http://boinc.berkeley.edu/trac/changeset/17056 17056]||client: remove the deadlines_missed" and "overworked" clauses - keeping them seems to be the better solution.||
-||[http://boinc.berkeley.edu/trac/changeset/17067 17067||MGR: Provide a way for skin creators to suppress error messages for missing resources. - This is obsolete, see changeset 17080.||
+||[http://boinc.berkeley.edu/trac/changeset/17067 17067]||MGR: Provide a way for skin creators to suppress error messages for missing resources. - This is obsolete, see changeset 17080.||
 ||[http://boinc.berkeley.edu/trac/changeset/17076 17076]||MGR: Filter project list so that it shows only projects supported by the core client. This relies on an up-to-date all_projects_list.xml instead of asking the projects about supported platforms. Additional changesets: 17077/17143||
 ||[http://boinc.berkeley.edu/trac/changeset/17078 17078]||Looks like we didn't break this.||
 
