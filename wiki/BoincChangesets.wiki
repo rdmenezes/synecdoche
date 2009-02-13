@@ -49,10 +49,9 @@
 ||16994||client sandbox: add details in switcher_exec "execv failed" message||
 ||16998||client: clear debts when reset project||
 ||17025/17029||MGR: allow time for Client to start up before launching repeatedly||
-||17063/17065/17075||MGR: Add a list of account managers. It's included in project_list.xml||
+||17063/17065/17075||MGR: Add a list of account managers. It's included in all_projects_list.xml. As we don't use BOINC's xml file we should either put the account manager list into a separated file or fix the structure of the file. BOINC currently treats account managers as projects in this file, which is wrong.||
 ||17068||MGR: Save and Restore the last email address/user id used to attach to a project or account manager.||
 ||17070||client: if user requests RPC, do it even if project is backed off (NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago.)||
-||17076/17077/17143||MGR: Filter project list so that it shows only projects supported by the core client.||
 ||17080/17081/17082||MGR: Show Skin Manager error message only if Manager launched with command-line arg -c or --checkSkins||
 ||17133||Move the function reading the GUI-RPC-password from the file from boinc_cmd to lib. We should probably clean this function up while moving it and make sure that *all* programs use it and not just boinc_cmd.||
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
@@ -113,6 +112,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/16754 16754]||Another useless hack: "new work fetch logic". Additional changesets: 16755/16756/16765||
 ||[http://boinc.berkeley.edu/trac/changeset/17056 17056]||client: remove the deadlines_missed" and "overworked" clauses - keeping them seems to be the better solution.||
 ||[http://boinc.berkeley.edu/trac/changeset/17067 17067||MGR: Provide a way for skin creators to suppress error messages for missing resources. - This is obsolete, see changeset 17080.||
+||17076/17077/17143||MGR: Filter project list so that it shows only projects supported by the core client. This relies on an up-to-date all_projects_list.xml instead of asking the projects about supported platforms.||
 ||[http://boinc.berkeley.edu/trac/changeset/17078 17078]||Looks like we didn't break this.||
 
 
