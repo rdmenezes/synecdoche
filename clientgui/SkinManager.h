@@ -396,6 +396,7 @@ class CSkinManager : public CSkinItem
 
 public:
     CSkinManager();
+    CSkinManager(bool debugSkins);
     ~CSkinManager();
 
     bool                ReloadSkin(wxLocale* pLocale, wxString strSkin);
