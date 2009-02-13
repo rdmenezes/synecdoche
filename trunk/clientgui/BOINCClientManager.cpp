@@ -20,6 +20,7 @@
 
 #include "stdwx.h"
 #include "diagnostics.h"
+#include "util.h"
 #include "LogBOINC.h"
 #include "BOINCGUIApp.h"
 #include "MainDocument.h"
@@ -28,7 +29,6 @@
 
 #ifdef __WXMAC__
 #include "filesys.h"
-#include "util.h"
 
 enum {
     NewStyleDaemon = 1,
@@ -276,6 +276,13 @@ bool CBOINCClientManager::StartupBOINCCore() {
     if (0 != m_lBOINCCoreProcessId) {
         m_bBOINCStartedByManager = true;
         bReturnValue = true;
+        // Allow time for daemon to start up so we don't keep relaunching it
+        for (int i = 0; i < 100; ++i) { // Wait up to 4 seconds in 40ms increments
+            if (IsBOINCCoreRunning()) {
+                break;
+            }
+            boinc_sleep(0.04);
+        }
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CMainDocument::StartupBOINCCore - Function End"));

@@ -70,6 +70,7 @@ bool CBOINCGUIApp::OnInit() {
     printf("Using %s.\n", (char *)wxString(wxVERSION_STRING).char_str());    // For debugging
 #endif
     m_bGUIVisible = true;
+    m_bDebugSkins = false;
     m_strDefaultWindowStation = wxEmptyString;
     m_strDefaultDesktop = wxEmptyString;
     m_strDefaultDisplay = wxEmptyString;
@@ -308,8 +309,7 @@ bool CBOINCGUIApp::OnInit() {
     wxHelpProvider::Set(new wxHelpControllerHelpProvider());
 
     // Initialize the skin manager
-    m_pSkinManager = new CSkinManager();
-    wxASSERT(m_pSkinManager);
+    m_pSkinManager = new CSkinManager(m_bDebugSkins);
 
     m_pSkinManager->ReloadSkin(
         m_pLocale, 
@@ -318,7 +318,6 @@ bool CBOINCGUIApp::OnInit() {
 
     // Initialize the main document
     m_pDocument = new CMainDocument();
-    wxASSERT(m_pDocument);
 
     m_pDocument->OnInit();
 
@@ -451,6 +450,7 @@ void CBOINCGUIApp::OnInitCmdLine(wxCmdLineParser &parser) {
         { wxCMD_LINE_SWITCH, wxT("s"), wxT("systray"), _("Startup BOINC so only the system tray icon is visible")},
         { wxCMD_LINE_SWITCH, wxT("b"), wxT("boincargs"), _("Startup BOINC with these optional arguments")},
         { wxCMD_LINE_SWITCH, wxT("i"), wxT("insecure"), _("disable BOINC security users and permissions")},
+        { wxCMD_LINE_SWITCH, wxT("c"), wxT("checkskins"), _("set skin debugging mode to enable skin manager error messages")},
         { wxCMD_LINE_NONE}  //DON'T forget this line!!
     };
     parser.SetDesc(cmdLineDesc);
@@ -466,6 +466,9 @@ bool CBOINCGUIApp::OnCmdLineParsed(wxCmdLineParser &parser) {
     }
     if (parser.Found(wxT("insecure"))) {
         g_use_sandbox = false;
+    }
+    if (parser.Found(wxT("checkskins"))) {
+        m_bDebugSkins = true;
     }
     return true;
 }
