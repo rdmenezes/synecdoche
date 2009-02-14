@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="cmd"
 	ProjectGUID="{8F37E1F3-3A68-4A1D-9579-A1210BDD055E}"
 	RootNamespace="boinc_guirpctest"
@@ -683,18 +683,6 @@
 				RelativePath="..\lib\boinc_cmd.C"
 				>
 			</File>
-			<File
-				RelativePath="..\lib\gui_rpc_client.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\gui_rpc_client_ops.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\gui_rpc_client_print.C"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -702,10 +690,6 @@
 			>
 			<File
 				RelativePath="..\client\win\boinc_cmd.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\gui_rpc_client.h"
 				>
 			</File>
 		</Filter>

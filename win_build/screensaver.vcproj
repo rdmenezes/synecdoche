@@ -675,14 +675,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\lib\gui_rpc_client.C"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\gui_rpc_client_ops.C"
-				>
-			</File>
-			<File
 				RelativePath="..\clientscr\screensaver.cpp"
 				>
 			</File>
@@ -697,10 +689,6 @@
 			>
 			<File
 				RelativePath="..\clientscr\boinc_ss.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\gui_rpc_client.h"
 				>
 			</File>
 			<File
