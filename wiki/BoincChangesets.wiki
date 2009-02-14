@@ -51,6 +51,10 @@
 ||17068||MGR: Save and Restore the last email address/user id used to attach to a project or account manager.||
 ||17070||client: if user requests RPC, do it even if project is backed off (NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago.)||
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
+||17203||lib: add time stamps to BOINCTRANCE on non-Windows systems||
+||17207||client: change garbage collection so that an app version is deleted only if there's another version *of the same plan class* with a higher version number.||
+||17208/17209||client and API: eliminate dynamically-allocated parts of GLOBAL_PREFS. This fixes a double-free bug in the API. _This mess mess needs to be reviewed carefully!_||
+||17216||client, API: populate APP_INIT_DATA::hostid. Remove userid and teamid fields, since the client doesn't know these.||
 
 
 == Changesets for the new OpenGL screensaver (Might be usefull some day) ==
@@ -59,7 +63,15 @@
 ||17141/17144||SS: Begin work on upgrading screensaver coordinator for new functionality: add file names, sandbox security||
 ||17146/17147||SS: Implement basic new functionality in screensaver coordinator (tested on Mac only so far)||
 ||17148||SS: Add ss_app to XCode Project, with a temporary icon||
-
+||17162||screensaver: flesh out new SS a bit||
+||17163/17164/17165/17167||SS: Fix ss_app compile errors on Mac, continue work on screensaver coordinator||
+||17168||SS: Screensaver coordinator reads ss_config.xml file; if default ss ran during science phase, shorten next default phase||
+||17193/17194||SS: Fix new screensaver coordinator to work properly on Windows||
+||17199/17204/17205||tweak screensaver||
+||17201||SS: Fix new screensaver coordinator sandbox permissions||
+||17202||ss_app: Replace temporary icon with standard BOINC icon||
+||17217||screensaver tweaks||
+||17218/17219/17220||ss_app: Remove code which adds a Mac icon, restore previous permissions for boincscr||
 
 
 == Rejected changes ==
@@ -111,8 +123,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/17067 17067]||MGR: Provide a way for skin creators to suppress error messages for missing resources. - This is obsolete, see changeset 17080.||
 ||[http://boinc.berkeley.edu/trac/changeset/17076 17076]||MGR: Filter project list so that it shows only projects supported by the core client. This relies on an up-to-date all_projects_list.xml instead of asking the projects about supported platforms. Additional changesets: 17077/17143||
 ||[http://boinc.berkeley.edu/trac/changeset/17078 17078]||Looks like we didn't break this.||
+||[http://boinc.berkeley.edu/trac/changeset/17212 17212]||Already fixed in r575. Additional changesets: 17213/17214||
 
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17150 17150]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17220 17220]
