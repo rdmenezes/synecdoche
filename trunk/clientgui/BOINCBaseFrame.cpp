@@ -380,7 +380,7 @@ void CBOINCBaseFrame::ShowConnectionBadPasswordAlert( bool bUsedDefaultPassword,
     if (bUsedDefaultPassword) {
         passwordErrorReason = _("Authorization failed connecting to running client.");
         if (m_iReadGUIRPCAuthFailure) {
-            passwordErrorReason << wxT("\n") << _("Could not read gui_rpc_auth.cfg");
+            passwordErrorReason << wxT("\n") << _("Could not read ") << _(GUI_RPC_PASSWD_FILE);
         }
     } else {
         passwordErrorReason = _("The password you have provided is incorrect, please try again.");

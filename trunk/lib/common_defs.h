@@ -219,5 +219,6 @@ struct VERSION_INFO {
 
 #define GRAPHICS_APP_FILENAME "graphics_app"
 #define ASSIGNED_WU_STR "asgn"
+#define GUI_RPC_PASSWD_FILE "gui_rpc_auth.cfg"
 
 #endif // COMMON_DEFS_H

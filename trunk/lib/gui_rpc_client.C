@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -343,4 +343,20 @@ int RPC::parse_reply() {
         if (strstr(buf, "success")) return BOINC_SUCCESS;
     }
     return ERR_NOT_FOUND;
+}
+
+/// Read the GUI-RPC-password from a file.
+///
+/// \param[in] file_name The file name containing the password. Defaults to
+///                      GUI_RPC_PASSWD_FILE if omitted.
+/// \return The GUI-RPC-password read from the file specified by \a file_name.
+std::string read_gui_rpc_password(const std::string& file_name) {
+    std::ifstream in(file_name.c_str());
+    if (!in) {
+        throw std::runtime_error(std::string("Can't open GUI-RPC-password file \"")
+                                    + file_name + std::string("\"."));
+    }
+    std::string password;
+    std::getline(in, password);
+    return password;
 }

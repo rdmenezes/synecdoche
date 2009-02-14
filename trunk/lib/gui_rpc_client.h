@@ -658,4 +658,6 @@ struct SET_LOCALE {
     }
 };
 
+std::string read_gui_rpc_password(const std::string& file_name = GUI_RPC_PASSWD_FILE);
+
 #endif // GUI_RPC_CLIENT_H
