@@ -57,6 +57,11 @@
 #include <vector>
 #include <set>
 
+// This function is actually declared in gui_rpc_client.h, but we can't include
+// this file here because it re-defines some classes used by the gui-rpc-server.
+// TODO: Clean this mess up!
+std::string read_gui_rpc_password(const std::string& file_name = GUI_RPC_PASSWD_FILE);
+
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
     sock(s),
     auth_needed(false),
@@ -99,13 +104,8 @@ int GUI_RPC_CONN_SET::get_password() {
 
     strcpy(password, "");
     if (boinc_file_exists(GUI_RPC_PASSWD_FILE)) {
-        f = fopen(GUI_RPC_PASSWD_FILE, "r");
-        if (f) {
-            if (fgets(password, 256, f)) {
-                strip_whitespace(password);
-            }
-            fclose(f);
-        }
+        std::string buf = read_gui_rpc_password();
+        strlcpy(password, buf.c_str(), sizeof(password));
     } else {
         // if no password file, make a random password
         //

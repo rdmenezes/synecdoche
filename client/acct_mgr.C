@@ -36,6 +36,11 @@
 #include "crypt.h"
 #include "miofile.h"
 
+// This function is actually declared in gui_rpc_client.h, but we can't include
+// this file here because it re-defines some classes used by the gui-rpc-server.
+// TODO: Clean this mess up!
+std::string read_gui_rpc_password(const std::string& file_name = GUI_RPC_PASSWD_FILE);
+
 static const char *run_mode_name[] = {"", "always", "auto", "never"};
 
 ACCT_MGR_OP::ACCT_MGR_OP() {
@@ -52,7 +57,6 @@ int ACCT_MGR_OP::do_rpc(
     int retval;
     unsigned int i;
     std::string url(_url);
-    FILE *pwdf;
 
     error_num = ERR_IN_PROGRESS;
     via_gui = _via_gui;
@@ -125,16 +129,8 @@ int ACCT_MGR_OP::do_rpc(
             fprintf(f,"   <gui_rpc_port>%d</gui_rpc_port>\n", GUI_RPC_PORT);
         }
         if (boinc_file_exists(GUI_RPC_PASSWD_FILE)) {
-            char password[256];
-            strcpy(password, "");
-            pwdf = fopen(GUI_RPC_PASSWD_FILE, "r");
-            if (pwdf) {
-                if (fgets(password, 256, pwdf)) {
-                    strip_whitespace(password);
-                }
-                fclose(pwdf);
-            }
-            fprintf(f,"   <gui_rpc_password>%s</gui_rpc_password>\n", password);
+            std::string password = read_gui_rpc_password();
+            fprintf(f,"   <gui_rpc_password>%s</gui_rpc_password>\n", password.c_str());
         }
     }
     for (i=0; i<gstate.projects.size(); i++) {

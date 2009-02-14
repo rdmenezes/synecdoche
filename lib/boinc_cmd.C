@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -49,6 +50,9 @@ using std::string;
 
 void version(){
     printf("syneccmd,  built from %s \n", PACKAGE_STRING );
+#if defined(_WIN32) && defined(USE_WINSOCK)
+    WSACleanup();
+#endif
     exit(0);
 }
 
@@ -92,6 +96,9 @@ Commands:\n\
  --get_cc_status\n\
 "
 );
+#if defined(_WIN32) && defined(USE_WINSOCK)
+    WSACleanup();
+#endif
     exit(1);
 }
 
@@ -119,41 +126,20 @@ char* next_arg(int argc, char** argv, int& i) {
     if (i >= argc) {
         fprintf(stderr, "Missing command-line argument\n");
         usage();
-        exit(1);
     }
     return argv[i++];
 }
 
-
-/// If there's a password file, read it
-void read_password_from_file(char* buf) {
-    FILE* f = fopen("gui_rpc_auth.cfg", "r");
-    if (!f) return;
-    char* p = fgets(buf, 256, f);
-        if (p) {                // Fixes compiler warning
-            int n = (int)strlen(buf);
-
-            // trim CR
-            //
-            if (n && buf[n-1]=='\n') {
-                    buf[n-1] = 0;
-            }
-    }
-    fclose(f);
-}
-
-int main(int argc, char** argv) {
+int main_impl(int argc, char** argv) {
     RPC_CLIENT rpc;
-    int i, retval, port=GUI_RPC_PORT;
+    int retval, port=GUI_RPC_PORT;
     MESSAGES messages;
-    char passwd_buf[256], hostname_buf[256], *hostname=0;
-    char* passwd = passwd_buf, *p;
+    char hostname_buf[256], *hostname=0;
+    char *p;
 
 #ifdef _WIN32
     chdir_to_data_dir();
 #endif
-    strcpy(passwd_buf, "");
-    read_password_from_file(passwd_buf);
 
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSADATA wsdata;
@@ -164,11 +150,13 @@ int main(int argc, char** argv) {
     }
 #endif
     if (argc < 2) usage();
-    i = 1;
+    int i = 1;
     if (!strcmp(argv[i], "--help")) usage();
     if (!strcmp(argv[i], "-h"))     usage();
     if (!strcmp(argv[i], "--version")) version();
     if (!strcmp(argv[i], "-V"))     version();
+
+    std::string passwd = read_gui_rpc_password();
 
     if (!strcmp(argv[i], "--host")) {
         if (++i == argc) usage();
@@ -193,6 +181,9 @@ int main(int argc, char** argv) {
     retval = rpc.init(hostname, port);
     if (retval) {
         fprintf(stderr, "can't connect to %s\n", hostname?hostname:"local host");
+#if defined(_WIN32) && defined(USE_WINSOCK)
+        WSACleanup();
+#endif
         exit(1);
     }
 #else
@@ -206,15 +197,21 @@ int main(int argc, char** argv) {
             continue;
         }
         fprintf(stderr, "can't connect: %d\n", retval);
+#if defined(_WIN32) && defined(USE_WINSOCK)
+        WSACleanup();
+#endif
         exit(1);
     }
     printf("connected\n");
 #endif
 
-    if (passwd) {
-        retval = rpc.authorize(passwd);
+    if (!passwd.empty()) {
+        retval = rpc.authorize(passwd.c_str());
         if (retval) {
             fprintf(stderr, "Authorization failure: %d\n", retval);
+#if defined(_WIN32) && defined(USE_WINSOCK)
+            WSACleanup();
+#endif
             exit(1);
         }
     }
@@ -514,5 +511,16 @@ int main(int argc, char** argv) {
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSACleanup();
 #endif
-    exit(retval);
+    return retval;
+}
+
+int main(int argc, char** argv) {
+    try {
+        return main_impl(argc, argv);
+    } catch (std::exception& ex) {
+        std::cerr << "An error occured: " << ex.what() << std::endl;
+    } catch (...) {
+        std::cerr << "An unspecified error occured. Aborting." << std::endl;
+    }
+    return 1;
 }

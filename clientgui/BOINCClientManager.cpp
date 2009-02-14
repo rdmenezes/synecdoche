@@ -299,7 +299,7 @@ void CBOINCClientManager::ShutdownBOINCCore() {
     wxInt32            iCount = 0;
     DWORD              dwExitCode = 0;
     bool               bClientQuit = false;
-    wxString           strPassword = wxEmptyString;
+    std::string        strPassword;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -308,8 +308,14 @@ void CBOINCClientManager::ShutdownBOINCCore() {
         if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
-                pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
-                rpc.authorize((const char*)strPassword.mb_str());
+                try {
+                    strPassword = read_gui_rpc_password();
+                } catch (...) {
+                    // Ignore any errors here and set an empty password.
+                    // This will happen if the manager does not find the
+                    // GUI-RPC-password file in its working directory.
+                }
+                rpc.authorize(strPassword.c_str());
                 if (GetExitCodeProcess(m_hBOINCCoreProcess, &dwExitCode)) {
                     if (STILL_ACTIVE == dwExitCode) {
                         rpc.quit();
@@ -403,7 +409,7 @@ bool CBOINCClientManager::ProcessExists(pid_t thePID)
 void CBOINCClientManager::ShutdownBOINCCore() {
     CMainDocument*     pDoc = wxGetApp().GetDocument();
     wxInt32            iCount = 0;
-    wxString           strPassword = wxEmptyString;
+    std::string        strPassword;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -413,7 +419,14 @@ void CBOINCClientManager::ShutdownBOINCCore() {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
                 pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
-                rpc.authorize((const char*)strPassword.mb_str());
+                try {
+                    strPassword = read_gui_rpc_password();
+                } catch (...) {
+                    // Ignore any errors here and set an empty password.
+                    // This will happen if the manager does not find the
+                    // GUI-RPC-password file in its working directory.
+                }
+                rpc.authorize(strPassword.c_str());
                 if (ProcessExists(m_lBOINCCoreProcessId)) {
                     rpc.quit();
                     for (iCount = 0; iCount <= 10; iCount++) {
@@ -448,7 +461,7 @@ void CBOINCClientManager::ShutdownBOINCCore() {
     CMainDocument*     pDoc = wxGetApp().GetDocument();
     wxInt32            iCount = 0;
     bool               bClientQuit = false;
-    wxString           strPassword = wxEmptyString;
+    std::string        strPassword;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -457,8 +470,14 @@ void CBOINCClientManager::ShutdownBOINCCore() {
         if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
-                pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
-                rpc.authorize((const char*)strPassword.mb_str());
+                try {
+                    strPassword = read_gui_rpc_password();
+                } catch (...) {
+                    // Ignore any errors here and set an empty password.
+                    // This will happen if the manager does not find the
+                    // GUI-RPC-password file in its working directory.
+                }
+                rpc.authorize(strPassword.c_str());
                 if (wxProcess::Exists(m_lBOINCCoreProcessId)) {
                     rpc.quit();
                     for (iCount = 0; iCount <= 10; iCount++) {
