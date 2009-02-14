@@ -117,7 +117,7 @@ public:
     int                         Connect(
                                     const wxChar* szComputer,
                                     const int iPort,
-                                    const wxChar* szComputerPassword = wxEmptyString,
+                                    const std::string& szComputerPassword = "",
                                     const bool bDisconnect = FALSE,
                                     const bool bUseDefaultPassword = FALSE
                                 );
