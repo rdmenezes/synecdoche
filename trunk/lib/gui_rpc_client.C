@@ -34,6 +34,8 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <cstring>
+#include <stdexcept>
+#include <fstream>
 #include <sstream>
 #endif
 

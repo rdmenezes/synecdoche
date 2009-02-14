@@ -35,10 +35,9 @@
 #include <unistd.h>
 #endif
 
-#include <vector>
+#include <iostream>
 #include <string>
-using std::vector;
-using std::string;
+#include <vector>
 
 #include "gui_rpc_client.h"
 #include "error_numbers.h"
@@ -416,7 +415,7 @@ int main_impl(int argc, char** argv) {
         retval = rpc.run_benchmarks();
     } else if (!strcmp(cmd, "--get_project_config")) {
         char* gpc_url = next_arg(argc, argv,i);
-        retval = rpc.get_project_config(string(gpc_url));
+        retval = rpc.get_project_config(std::string(gpc_url));
     } else if (!strcmp(cmd, "--get_project_config_poll")) {
         PROJECT_CONFIG pc;
         retval = rpc.get_project_config_poll(pc);
@@ -490,10 +489,10 @@ int main_impl(int argc, char** argv) {
             retval = cs.network_status;
         }
     } else if (!strcmp(cmd, "--set_debts")) {
-        vector<PROJECT>projects;
+        std::vector<PROJECT>projects;
         while (i < argc) {
             PROJECT proj;
-            proj.master_url = string(next_arg(argc, argv, i));
+            proj.master_url = std::string(next_arg(argc, argv, i));
             proj.short_term_debt = atoi(next_arg(argc, argv, i));
             proj.long_term_debt = atoi(next_arg(argc, argv, i));
             projects.push_back(proj);

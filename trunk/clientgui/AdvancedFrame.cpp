@@ -1051,7 +1051,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             retVal = pDoc->Connect(
                 wxT("localhost"),
                 GUI_RPC_PORT,
-                wxEmptyString,
+                "",
                 true,
                 true
             );
@@ -1068,7 +1068,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             retVal = pDoc->Connect(
                 sHost,
                 (int)lPort,
-                dlg.GetComputerPassword(),
+                (const char*)dlg.GetComputerPassword().mb_str(),
                 true,
                 false
             );
