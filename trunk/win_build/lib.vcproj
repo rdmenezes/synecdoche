@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="lib"
 	ProjectGUID="{E8F6BD7E-461A-4733-B7D8-37B09A099ED8}"
 	RootNamespace="libboinc"
@@ -527,6 +527,18 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\lib\gui_rpc_client.C"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\gui_rpc_client_ops.C"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\gui_rpc_client_print.C"
+				>
+			</File>
+			<File
 				RelativePath="..\lib\hostinfo.C"
 				>
 			</File>
@@ -738,6 +750,10 @@
 			</File>
 			<File
 				RelativePath="..\lib\filesys.h"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\gui_rpc_client.h"
 				>
 			</File>
 			<File
