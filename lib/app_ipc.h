@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _APP_IPC_
-#define _APP_IPC_
+#ifndef APP_IPC_H
+#define APP_IPC_H
 
 #include <vector>
 #include <string>
@@ -153,8 +153,6 @@ struct APP_INIT_DATA {
     char symstore[256];
     char acct_mgr_url[256];
     char* project_preferences;
-    int userid;
-    int teamid;
     int hostid;
     char user_name[256];
     char team_name[256];
@@ -246,4 +244,4 @@ extern int boinc_resolve_filename_s(const char *virtual_name, std::string& physi
 
 extern void url_to_project_dir(const char* url, char* dir);
 
-#endif
+#endif // APP_IPC_H

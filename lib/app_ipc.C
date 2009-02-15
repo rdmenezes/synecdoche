@@ -81,8 +81,6 @@ void APP_INIT_DATA::copy(const APP_INIT_DATA& a) {
     } else {
         project_preferences = 0;
     }
-    userid = a.userid;
-    teamid = a.teamid;
     hostid = a.hostid;
     strlcpy(user_name, a.user_name, sizeof(user_name));
     strlcpy(team_name, a.team_name, sizeof(team_name));

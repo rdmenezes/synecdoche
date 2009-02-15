@@ -29,6 +29,22 @@
 #include "Events.h"
 #include "error_numbers.h"
 
+namespace {
+    /// Small helper function to trim a value to the interval [0; 100]
+    ///
+    /// \param[in] x The value that should be trimmed.
+    /// \retrn \a x if it lies in the interval [0; 100], otherwise 0 or 100
+    ///        is returned, whichever is closer to \a x.
+    double clamp_pct(double x) { 
+        if (x < 0.0) {
+            return 0.0;
+        } else if (x > 100.0) {
+            return 100.0;
+        }
+        return x;
+ 	} 
+}
+
 IMPLEMENT_DYNAMIC_CLASS(CDlgAdvPreferences, wxDialog)
 
 BEGIN_EVENT_TABLE(CDlgAdvPreferences, wxDialog)
@@ -293,7 +309,9 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
     this->UpdateControlStates();
 }
 
-/* write overridden preferences to disk (global_prefs_override.xml) */
+/// Write overridden preferences to disk (global_prefs_override.xml)
+///
+/// \return Always returns true.
 bool CDlgAdvPreferences::SavePreferencesSettings() {
     double td;
 
@@ -304,22 +322,22 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     //proc page
     prefs.run_on_batteries=m_chkProcOnBatteries->GetValue();
     mask.run_on_batteries=true;
-    //
+
     prefs.run_if_user_active=m_chkProcInUse->GetValue();
     mask.run_if_user_active=true;
-    //
+
     if(m_txtProcIdleFor->IsEnabled()) {
         m_txtProcIdleFor->GetValue().ToDouble(&td);
         prefs.idle_time_to_run=td;
         mask.idle_time_to_run=true;
     }
-    //
+
     prefs.cpu_times.start_hour=TimeStringToDouble(m_txtProcEveryDayStart->GetValue());
     mask.start_hour = true;        
-    //
+
     prefs.cpu_times.end_hour=TimeStringToDouble(m_txtProcEveryDayStop->GetValue());
     mask.end_hour = true;        
-    //
+
     wxCheckBox* aChks[] = {m_chkProcSunday,m_chkProcMonday,m_chkProcTuesday,m_chkProcWednesday,m_chkProcThursday,m_chkProcFriday,m_chkProcSaturday};
     wxTextCtrl* aTxts[] = {m_txtProcSunday,m_txtProcMonday,m_txtProcTuesday,m_txtProcWednesday,m_txtProcThursday,m_txtProcFriday,m_txtProcSaturday};
     for(int i=0; i< 7;i++) {
@@ -336,13 +354,11 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     m_txtProcSwitchEvery->GetValue().ToDouble(&td);
     prefs.cpu_scheduling_period_minutes=td;
     mask.cpu_scheduling_period_minutes=true;
-    //
 
     m_txtProcUseProcessors->GetValue().ToDouble(&td);
-    prefs.max_ncpus_pct=td;
+    prefs.max_ncpus_pct = clamp_pct(td);
     mask.max_ncpus_pct=true;
 
-    //
     m_txtProcUseCPUTime->GetValue().ToDouble(&td);
     prefs.cpu_usage_limit=td;
     mask.cpu_usage_limit=true;
@@ -350,33 +366,33 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     m_txtNetConnectInterval->GetValue().ToDouble(&td);
     prefs.work_buf_min_days=td;
     mask.work_buf_min_days=true;
-    //
+
     m_txtNetDownloadRate->GetValue().ToDouble(&td);
     td = td * 1024;
     prefs.max_bytes_sec_down=td;
     mask.max_bytes_sec_down=true;
-    //
+
     m_txtNetUploadRate->GetValue().ToDouble(&td);
     td = td * 1024;
     prefs.max_bytes_sec_up=td;
     mask.max_bytes_sec_up=true;
-    //
+
     prefs.dont_verify_images=m_chkNetSkipImageVerification->GetValue();
     mask.dont_verify_images=true;
-    //
+
     prefs.confirm_before_connecting= m_chkNetConfirmBeforeConnect->GetValue();
     mask.confirm_before_connecting=true;
-    //
+
     prefs.hangup_if_dialed= m_chkNetDisconnectWhenDone->GetValue();
     mask.hangup_if_dialed=true;
-    //
+
     m_txtNetAdditionalDays->GetValue().ToDouble(&td);
     prefs.work_buf_additional_days = td;
     mask.work_buf_additional_days = true;
-    //
+
     prefs.net_times.start_hour=TimeStringToDouble(m_txtNetEveryDayStart->GetValue());
     mask.net_start_hour = true;        
-    //
+
     prefs.net_times.end_hour=TimeStringToDouble(m_txtNetEveryDayStop->GetValue());
     mask.net_end_hour = true;        
         
@@ -397,34 +413,34 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     m_txtDiskMaxSpace->GetValue().ToDouble(&td);
     prefs.disk_max_used_gb=td;
     mask.disk_max_used_gb=true;
-    //
+
     m_txtDiskLeastFree->GetValue().ToDouble(&td);
     prefs.disk_min_free_gb=td;
     mask.disk_min_free_gb=true;
-    //
+
     m_txtDiskMaxOfTotal->GetValue().ToDouble(&td);
-    prefs.disk_max_used_pct=td;
+    prefs.disk_max_used_pct = clamp_pct(td);
     mask.disk_max_used_pct=true;
-    //
+
     m_txtDiskWriteToDisk->GetValue().ToDouble(&td);
     prefs.disk_interval=td;
     mask.disk_interval=true;
-    //
+
     m_txtDiskMaxSwap->GetValue().ToDouble(&td);
-    td = td / 100.0 ;
+    td = clamp_pct(td) / 100.0 ;
     prefs.vm_max_used_frac=td;
     mask.vm_max_used_frac=true;
     //Memory
     m_txtMemoryMaxInUse->GetValue().ToDouble(&td);
-    td = td / 100.0;
+    td = clamp_pct(td) / 100.0;
     prefs.ram_max_used_busy_frac=td;
     mask.ram_max_used_busy_frac=true;
-    //
+
     m_txtMemoryMaxOnIdle->GetValue().ToDouble(&td);
-    td = td / 100.0;
+    td = clamp_pct(td) / 100.0;
     prefs.ram_max_used_idle_frac=td;
     mask.ram_max_used_idle_frac=true;
-    //
+
     prefs.leave_apps_in_memory = m_chkMemoryWhileSuspended->GetValue();
     mask.leave_apps_in_memory=true;
     return true;

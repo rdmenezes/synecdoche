@@ -1059,7 +1059,9 @@ bool CLIENT_STATE::garbage_collect_always() {
             found = false;
             for (j=0; j<app_versions.size(); j++) {
                 APP_VERSION* avp2 = app_versions[j];
-                if (avp2->app==avp->app && avp2->version_num>avp->version_num) {
+                if ((avp2->app == avp->app)
+                        && (avp2->version_num > avp->version_num)
+                        && (!strcmp(avp2->plan_class, avp->plan_class))) {
                     found = true;
                     break;
                 }
