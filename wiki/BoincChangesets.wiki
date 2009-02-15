@@ -39,22 +39,18 @@
 ||16565||client: Fix error from changeset 14415 which caused Mac client to call daemon() if it was passed -daemon argument, causing problems using launchd with KeepAlive? option; fixes #782.||
 ||16582||MGR: fix exit dialog so that both the Mac and Linux clients don't display the 'close core client...' checkbox.||
 ||16616||client: parse checkpoint_elapsed_time from state file; if missing, use checkpoint CPU time.||
-||16645||manager: clamp percentages at [0,100] in prefs dialog||
 ||16653||Mac SG: Remove ugly hack added 8/20/07 for slide show alignment problem on Mac.||
 ||16654||Mac SG: Fix vertical position of project names in tabs on Mac.||
 ||16670/16671||MGR: word-wrap !CompletionBrandedMessage static text in Account manager Wizard Completion page for !GridRepublic.||
 ||16707||MGR: Always reset messages if client restarted; always scroll messages to bottom if connection status changes; Select Computer: localhost relaunches client if needed.||
 ||16929||client: fix boinc_copy (again); Mac Mgr: fix bugs showing Mgr when minimized to Dock;||
-||16994||client sandbox: add details in switcher_exec "execv failed" message||
 ||16998||client: clear debts when reset project||
 ||17063/17065/17075||MGR: Add a list of account managers. It's included in all_projects_list.xml. As we don't use BOINC's xml file we should either put the account manager list into a separated file or fix the structure of the file. BOINC currently treats account managers as projects in this file, which is wrong.||
 ||17068||MGR: Save and Restore the last email address/user id used to attach to a project or account manager.||
 ||17070||client: if user requests RPC, do it even if project is backed off (NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago.)||
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
 ||17203||lib: add time stamps to BOINCTRANCE on non-Windows systems||
-||17207||client: change garbage collection so that an app version is deleted only if there's another version *of the same plan class* with a higher version number.||
 ||17208/17209||client and API: eliminate dynamically-allocated parts of GLOBAL_PREFS. This fixes a double-free bug in the API. _This mess mess needs to be reviewed carefully!_||
-||17216||client, API: populate APP_INIT_DATA::hostid. Remove userid and teamid fields, since the client doesn't know these.||
 
 
 == Changesets for the new OpenGL screensaver (Might be usefull some day) ==
