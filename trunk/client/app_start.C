@@ -162,11 +162,12 @@ int ACTIVE_TASK::write_app_init_file() {
     safe_strcpy(aid.app_name, wup->app->name);
     safe_strcpy(aid.symstore, wup->project->symstore);
     safe_strcpy(aid.acct_mgr_url, gstate.acct_mgr_info.acct_mgr_url);
-    safe_strcpy(aid.user_name, wup->project->user_name);
-    safe_strcpy(aid.team_name, wup->project->team_name);
     if (wup->project->project_specific_prefs.length()) {
         aid.project_preferences = strdup(wup->project->project_specific_prefs.c_str());
     }
+    aid.hostid = wup->project->hostid;
+    safe_strcpy(aid.user_name, wup->project->user_name);
+    safe_strcpy(aid.team_name, wup->project->team_name);
     get_project_dir(wup->project, project_dir, sizeof(project_dir));
     std::string project_path = relative_to_absolute(project_dir);
     strlcpy(aid.project_dir, project_path.c_str(), sizeof(aid.project_dir));
