@@ -45,7 +45,6 @@
 #include "error_numbers.h"
 #include "filesys.h"
 #include "util.h"
-#include "miofile.h"
 #include "parse.h"
 
 
@@ -286,8 +285,7 @@ int diagnostics_init(
         char    buf[256];
         char    proxy_address[256];
         int     proxy_port;
-        MIOFILE mf;
-        FILE*   p;
+        FILE*   f;
 #ifdef _WIN32
         LONG    lReturnValue;
         HKEY    hkSetupHive;
@@ -298,10 +296,9 @@ int diagnostics_init(
         strcpy(proxy_address, "");
         proxy_port = 0;
 
-        p = fopen(INIT_DATA_FILE, "r");
-        if (p) {
-            mf.init_file(p);
-            while(mf.fgets(buf, sizeof(buf))) {
+        f = fopen(INIT_DATA_FILE, "r");
+        if (f) {
+            while (fgets(buf, sizeof(buf), f)) {
                 if (match_tag(buf, "</app_init_data>")) break;
                 else if (parse_str(buf, "<boinc_dir>", boinc_dir, 256)) continue;
                 else if (parse_str(buf, "<symstore>", symstore, 256)) continue;
@@ -312,7 +309,7 @@ int diagnostics_init(
                 else if (parse_str(buf, "<http_server_name>", proxy_address, 256)) continue;
                 else if (parse_int(buf, "<http_server_port>", proxy_port)) continue;
             }
-            fclose(p);
+            fclose(f);
         }
 
         if (boinc_proxy_enabled) {
