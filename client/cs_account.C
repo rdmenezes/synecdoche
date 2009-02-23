@@ -242,7 +242,7 @@ int CLIENT_STATE::parse_account_files() {
             delete project;
         } else {
             if (lookup_project(project->master_url)) {
-                msg_printf(NULL, MSG_INFO,
+                msg_printf(project, MSG_INFO,
                     "Duplicate account file %s - ignoring", name.c_str()
                 );
                 delete project;

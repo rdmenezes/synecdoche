@@ -681,7 +681,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     // update records for ack'ed results
     for (i=0; i<sr.result_acks.size(); i++) {
         if (log_flags.sched_op_debug) {
-            msg_printf(0, MSG_INFO, "[sched_op_debug] handle_scheduler_reply(): got ack for result %s\n",
+            msg_printf(project, MSG_INFO, "[sched_op_debug] handle_scheduler_reply(): got ack for result %s\n",
                                 sr.result_acks[i].name);
         }
         RESULT* rp = lookup_result(project, sr.result_acks[i].name);
@@ -751,7 +751,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
 
     set_client_state_dirty("handle_scheduler_reply");
     if (log_flags.state_debug) {
-        msg_printf(0, MSG_INFO, "[state_debug] handle_scheduler_reply(): State after handle_scheduler_reply():");
+        msg_printf(project, MSG_INFO, "[state_debug] handle_scheduler_reply(): State after handle_scheduler_reply():");
         print_summary();
     }
 
