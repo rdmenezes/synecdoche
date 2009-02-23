@@ -167,13 +167,13 @@ void ACTIVE_TASK::cleanup_task() {
         } else {
             retval = detach_shmem(app_client_shm.shm);
             if (retval) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
+                msg_printf(wup->project, MSG_INTERNAL_ERROR,
                     "Couldn't detach shared memory: %s", boincerror(retval)
                 );
             }
             retval = destroy_shmem(shmem_seg_name);
             if (retval) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
+                msg_printf(wup->project, MSG_INTERNAL_ERROR,
                     "Couldn't destroy shared memory: %s", boincerror(retval)
                 );
             }
@@ -739,7 +739,7 @@ int ACTIVE_TASK::handle_upload_files() {
                     fip->status = FILE_PRESENT;
                 }
             } else {
-                msg_printf(0, MSG_INTERNAL_ERROR, "Can't find uploadable file %s", p);
+                msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't find uploadable file %s", p);
             }
             sprintf(path, "%s/%s", slot_dir, buf);
             delete_project_owned_file(path, true);  // delete the link file

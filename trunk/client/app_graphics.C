@@ -75,7 +75,7 @@ void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
     }
 
     if (log_flags.scrsave_debug) {
-        msg_printf(0, MSG_INFO, "[scrsave_debug] ACTIVE_TASK::request_graphics_mode(): requesting graphics mode %s for %s",
+        msg_printf(wup->project, MSG_INFO, "[scrsave_debug] ACTIVE_TASK::request_graphics_mode(): requesting graphics mode %s for %s",
             xml_graphics_modes[m.mode], result->name);
     }
     graphics_request_queue.msg_queue_send(buf.str().c_str(), app_client_shm.shm->graphics_request);
@@ -98,7 +98,7 @@ void ACTIVE_TASK::check_graphics_mode_ack() {
     if (app_client_shm.shm->graphics_reply.get_msg(buf)) {
         app_client_shm.decode_graphics_msg(buf, gm);
         if (log_flags.scrsave_debug) {
-            msg_printf(0, MSG_INFO,
+            msg_printf(wup->project, MSG_INFO,
                 "[scrsave_debug] ACTIVE_TASK::check_graphics_mode_ack(): got graphics ack %s for %s, previous mode %s",
                 buf, result->name, xml_graphics_modes[graphics_mode_acked]
             );

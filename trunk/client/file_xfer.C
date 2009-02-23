@@ -205,7 +205,7 @@ int FILE_XFER_SET::remove(FILE_XFER* fxp) {
         }
         iter++;
     }
-    msg_printf(NULL, MSG_INTERNAL_ERROR,
+    msg_printf(fxp->fip->project, MSG_INTERNAL_ERROR,
             "File transfer for %s not found", fxp->fip->name.c_str());
     return ERR_NOT_FOUND;
 }
