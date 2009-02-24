@@ -128,7 +128,7 @@ static FUNC_PTR timer_callback = 0;
 #define HEARTBEAT_GIVEUP_COUNT ((int)(30/TIMER_PERIOD))
     // quit if no heartbeat from core in this #interrupts
 #define LOCKFILE_TIMEOUT_PERIOD 35
-    // quit if we cannot aquire slot lock file in this #secs after startup
+    // quit if we cannot acquire slot lock file in this #secs after startup
 
 #ifdef _WIN32
 static HANDLE hSharedMem;
