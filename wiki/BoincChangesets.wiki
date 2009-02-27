@@ -49,8 +49,18 @@
 ||17068||MGR: Save and Restore the last email address/user id used to attach to a project or account manager.||
 ||17070||client: if user requests RPC, do it even if project is backed off (NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago.)||
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
+||17195||client: add SCHEDULER_OP::rpc_failed(); this gets called when the op fails, either at initialization or later on; it clears the project's sched_rpc_pending flag if needed. This fixes a bug that caused user-requested RPCs to retry every 10 seconds 
+when the network is down.||
+||17196||client: if master file doesn't have URLs, clear RPC request||
 ||17203||lib: add time stamps to BOINCTRANCE on non-Windows systems||
 ||17208/17209||client and API: eliminate dynamically-allocated parts of GLOBAL_PREFS. This fixes a double-free bug in the API. _This mess needs to be reviewed carefully!_||
+||17269||client: fix bug where master fetch failure doesn't clear request flag, leading to infinite retry without backoff (17195 needs to be applied before this one)||
+||17270||client: fix bug in time-of-day limit prefs (both CPU and network)||
+||17271||GUI RPC: add master_url and local_revision to PROJECT_CONFIG struct. The former will allow the Manager to verify project URLs||
+||17300/17301||client: adjust debts at least every minute.T his fixes a bug that can cause debts to NEVER get updated. /  client: added "abort_jobs_on_exit" feature||
+||17309/17311/17312/17213||client: add more info to <work_fetch_debug> messages||
+||17310||client: don't complain that master URLs differ if it's only in case NOTE: *Only* the domain name is case insensitive - this changeset needs to be fixed before beeing applied.||
+
 
 
 == Changesets for the new OpenGL screensaver (Might be useful some day) ==
@@ -66,8 +76,15 @@
 ||17199/17204/17205||tweak screensaver||
 ||17201||SS: Fix new screensaver coordinator sandbox permissions||
 ||17202||ss_app: Replace temporary icon with standard BOINC icon||
-||17217||screensaver tweaks||
+||17217/17221||screensaver tweaks||
 ||17218/17219/17220||ss_app: Remove code which adds a Mac icon, restore previous permissions for boincscr||
+||17222||ss_app: Change Windows build executable file name to boincscr.exe||
+||17223/17224/17225||SS: Minor fix to screensaver coordinator||
+||17255||ss_app: Under sandbox security, set boincscr permissions the same as for BOINC Manager||
+||17256||SS: On Windows, get paths to BOINC data and executable directories from Windows registry||
+||17273||SS: On Windows, make path strings Unicode compatible in ss coordinator||
+||17302/17303||screensaver||
+
 
 
 == Rejected changes ==
@@ -124,4 +141,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17220 17220]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17320 17320]
