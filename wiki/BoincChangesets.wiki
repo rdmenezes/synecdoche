@@ -49,8 +49,7 @@
 ||17068||MGR: Save and Restore the last email address/user id used to attach to a project or account manager.||
 ||17070||client: if user requests RPC, do it even if project is backed off (NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago.)||
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
-||17195||client: add SCHEDULER_OP::rpc_failed(); this gets called when the op fails, either at initialization or later on; it clears the project's sched_rpc_pending flag if needed. This fixes a bug that caused user-requested RPCs to retry every 10 seconds 
-when the network is down.||
+||17195||client: add SCHEDULER_OP::rpc_failed(); this gets called when the op fails, either at initialization or later on; it clears the project's sched_rpc_pending flag if needed. This fixes a bug that caused user-requested RPCs to retry every 10 seconds when the network is down.||
 ||17196||client: if master file doesn't have URLs, clear RPC request||
 ||17203||lib: add time stamps to BOINCTRANCE on non-Windows systems||
 ||17208/17209||client and API: eliminate dynamically-allocated parts of GLOBAL_PREFS. This fixes a double-free bug in the API. _This mess needs to be reviewed carefully!_||
