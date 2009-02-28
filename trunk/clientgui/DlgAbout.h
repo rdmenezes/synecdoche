@@ -23,6 +23,8 @@
 
 class CSkinAdvanced;
 
+#define ID_DIALOG 10000
+
 class CDlgAbout: public wxDialog {
 
     DECLARE_DYNAMIC_CLASS(CDlgAbout)
@@ -31,7 +33,7 @@ public:
     /// Constructors
     CDlgAbout() {}
     CDlgAbout(wxWindow* parent,
-        wxWindowID id = wxID_ANY,
+        wxWindowID id = ID_DIALOG,
         const wxString& caption = wxEmptyString,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
@@ -39,7 +41,7 @@ public:
         );
 
     /// Creation
-    bool Create( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& caption = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+    bool Create( wxWindow* parent, wxWindowID id = ID_DIALOG, const wxString& caption = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
 
 private:
     /// Creates the controls and sizers
