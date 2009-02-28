@@ -62,7 +62,7 @@
 ||17328||client: add <zero_debts> option to cc_config.xml||
 ||17334||client: print message if downloaded file has wrong size||
 ||17373||fixes #712 (Typo in "sg_DlgPreferences.cpp" file)||
-||17376||fixes #785 (about /*xgettext:no-c-format*/)
+||17376||fixes #785 (about /*xgettext:no-c-format*/)||
 ||17379||boinccmd: fix bug in --set_proxy_settings command (it wasn't setting the "use_XXX" flags). Fixes #776 / client: you can now include a <proxy_info> element in your cc_config.xml options.||
 ||17385||MGR: Remove the /s parameter from the argument list on Linux until we know it is supported. Fixes #615||
 ||17388||_A lot of different, partly unrelated fixes that need to be reviewed carefully one by one before applying any of these._||
@@ -70,7 +70,7 @@
 ||17391||API: file descriptor leak in obscure case. fixes #103||
 ||17396||client: make timeout values into #defines _Note: The defines should be turned into constants before applying this changeset.||
 ||17399||client: abort jobs that are unstarted and past deadline||
-||17401||MGR: Remove the ability to display graphics on a remote computer, or from a remote computer on *nix machines using v5 graphics. fixes #674||
+||17401||MGR: Remove the ability to display graphics on a remote computer, or from a remote computer on `*`nix machines using v5 graphics. fixes #674||
 ||17403||small fixes _What exactly is fixed by this changeset? When were these bugs (if any) introduced? Do we need this?_||
 ||17404|| client: shuffle the startup code to avoid showing wrong prefs info on first-time startup. / client: don't do an RPC until we've done CPU benchmarks. We need the benchmark values to fill in app_version.flops||
 ||17407||boinccmd: make --get_messages output more readable||
