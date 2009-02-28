@@ -67,7 +67,6 @@ bool CBOINCGUIApp::OnInit() {
     m_pTaskBarIcon = NULL;
 #ifdef __WXMAC__
     m_pMacSystemMenu = NULL;
-    printf("Using %s.\n", (char *)wxString(wxVERSION_STRING).char_str());    // For debugging
 #endif
     m_bGUIVisible = true;
     m_bDebugSkins = false;
