@@ -61,8 +61,8 @@
 ||17310||client: don't complain that master URLs differ if it's only in case NOTE: *Only* the domain name is case insensitive - this changeset needs to be fixed before beeing applied.||
 ||17328||client: add <zero_debts> option to cc_config.xml||
 ||17334||client: print message if downloaded file has wrong size||
-||17373||fixes #712 (Typo in "sg_DlgPreferences.cpp" file)||
-||17376||fixes #785 (about /*xgettext:no-c-format*/)||
+||17373||fixes #712 (Typo in "sg`_`!DlgPreferences.cpp" file)||
+||17376||fixes #785 (about /`*`xgettext:no-c-format`*`/)||
 ||17379||boinccmd: fix bug in --set_proxy_settings command (it wasn't setting the "use_XXX" flags). Fixes #776 / client: you can now include a <proxy_info> element in your cc_config.xml options.||
 ||17385||MGR: Remove the /s parameter from the argument list on Linux until we know it is supported. Fixes #615||
 ||17388||_A lot of different, partly unrelated fixes that need to be reviewed carefully one by one before applying any of these._||
