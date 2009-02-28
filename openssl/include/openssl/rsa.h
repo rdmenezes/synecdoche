@@ -5,21 +5,21 @@
  * This package is an SSL implementation written
  * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
- * 
+ *
  * This library is free for commercial and non-commercial use as long as
  * the following conditions are aheared to.  The following conditions
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
  * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- * 
+ *
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
  * If this package is used in a product, Eric Young should be given attribution
  * as the author of the parts of the library used.
  * This can be in the form of a textual message at program startup or
  * in documentation (online or textual) provided with the package.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -34,10 +34,10 @@
  *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from 
+ * 4. If you include any Windows specific code (or a derivative thereof) from
  *    the apps directory (application code) you must include an acknowledgement:
  *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,7 +49,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * The licence and distribution terms for any publically available version or
  * derivative of this code cannot be changed.  i.e. this code cannot simply be
  * copied and put under another distribution licence
@@ -72,6 +72,25 @@
 
 #ifdef OPENSSL_NO_RSA
 #error RSA is disabled.
+#endif
+
+/* If this flag is set the RSA method is FIPS compliant and can be used
+ * in FIPS mode. This is set in the validated module method. If an
+ * application sets this flag in its own methods it is its reposibility
+ * to ensure the result is compliant.
+ */
+
+#define RSA_FLAG_FIPS_METHOD			0x0400
+
+/* If this flag is set the operations normally disabled in FIPS mode are
+ * permitted it is then the applications responsibility to ensure that the
+ * usage is compliant.
+ */
+
+#define RSA_FLAG_NON_FIPS_ALLOW			0x0400
+
+#ifdef OPENSSL_FIPS
+#define FIPS_RSA_SIZE_T	int
 #endif
 
 #ifdef  __cplusplus
@@ -163,6 +182,8 @@ struct rsa_st
 # define OPENSSL_RSA_MAX_MODULUS_BITS	16384
 #endif
 
+#define OPENSSL_RSA_FIPS_MIN_MODULUS_BITS 1024
+
 #ifndef OPENSSL_RSA_SMALL_MODULUS_BITS
 # define OPENSSL_RSA_SMALL_MODULUS_BITS	3072
 #endif
@@ -198,13 +219,13 @@ struct rsa_st
 #define RSA_FLAG_NO_CONSTTIME		0x0100 /* new with 0.9.8f; the built-in RSA
 						* implementation now uses constant time
 						* operations by default in private key operations,
-						* e.g., constant time modular exponentiation, 
-                                                * modular inverse without leaking branches, 
-                                                * division without leaking branches. This 
-                                                * flag disables these constant time 
-                                                * operations and results in faster RSA 
+						* e.g., constant time modular exponentiation,
+                                                * modular inverse without leaking branches,
+                                                * division without leaking branches. This
+                                                * flag disables these constant time
+                                                * operations and results in faster RSA
                                                 * private key operations.
-                                                */ 
+                                                */
 #ifndef OPENSSL_NO_DEPRECATED
 #define RSA_FLAG_NO_EXP_CONSTTIME RSA_FLAG_NO_CONSTTIME /* deprecated name for the flag*/
                                                 /* new with 0.9.7h; the built-in RSA
@@ -240,6 +261,11 @@ RSA *	RSA_generate_key(int bits, unsigned long e,void
 
 /* New version */
 int	RSA_generate_key_ex(RSA *rsa, int bits, BIGNUM *e, BN_GENCB *cb);
+int RSA_X931_derive_ex(RSA *rsa, BIGNUM *p1, BIGNUM *p2, BIGNUM *q1, BIGNUM *q2,
+			const BIGNUM *Xp1, const BIGNUM *Xp2, const BIGNUM *Xp,
+			const BIGNUM *Xq1, const BIGNUM *Xq2, const BIGNUM *Xq,
+			const BIGNUM *e, BN_GENCB *cb);
+int RSA_X931_generate_key_ex(RSA *rsa, int bits, const BIGNUM *e, BN_GENCB *cb);
 
 int	RSA_check_key(const RSA *);
 	/* next 4 return -1 on error */
@@ -247,15 +273,20 @@ int	RSA_public_encrypt(int flen, const unsigned char *from,
 		unsigned char *to, RSA *rsa,int padding);
 int	RSA_private_encrypt(int flen, const unsigned char *from,
 		unsigned char *to, RSA *rsa,int padding);
-int	RSA_public_decrypt(int flen, const unsigned char *from, 
+int	RSA_public_decrypt(int flen, const unsigned char *from,
 		unsigned char *to, RSA *rsa,int padding);
-int	RSA_private_decrypt(int flen, const unsigned char *from, 
+int	RSA_private_decrypt(int flen, const unsigned char *from,
 		unsigned char *to, RSA *rsa,int padding);
 void	RSA_free (RSA *r);
 /* "up" the RSA object's reference count */
 int	RSA_up_ref(RSA *r);
 
 int	RSA_flags(const RSA *r);
+
+#ifdef OPENSSL_FIPS
+RSA *FIPS_rsa_new(void);
+void FIPS_rsa_free(RSA *r);
+#endif
 
 void RSA_set_default_method(const RSA_METHOD *meth);
 const RSA_METHOD *RSA_get_default_method(void);
@@ -281,6 +312,7 @@ int	RSA_print_fp(FILE *fp, const RSA *r,int offset);
 int	RSA_print(BIO *bp, const RSA *r,int offset);
 #endif
 
+#ifndef OPENSSL_NO_RC4
 int i2d_RSA_NET(const RSA *a, unsigned char **pp,
 		int (*cb)(char *buf, int len, const char *prompt, int verify),
 		int sgckey);
@@ -294,6 +326,7 @@ int i2d_Netscape_RSA(const RSA *a, unsigned char **pp,
 RSA *d2i_Netscape_RSA(RSA **a, const unsigned char **pp, long length,
 		      int (*cb)(char *buf, int len, const char *prompt,
 				int verify));
+#endif
 
 /* The following 2 functions sign and verify a X509_SIG ASN1 object
  * inside PKCS#1 padded RSA encryption */
@@ -368,6 +401,8 @@ void ERR_load_RSA_strings(void);
 /* Error codes for the RSA functions. */
 
 /* Function codes. */
+#define RSA_F_FIPS_RSA_SIGN				 140
+#define RSA_F_FIPS_RSA_VERIFY				 141
 #define RSA_F_MEMORY_LOCK				 100
 #define RSA_F_RSA_BUILTIN_KEYGEN			 129
 #define RSA_F_RSA_CHECK_KEY				 123
@@ -399,7 +434,11 @@ void ERR_load_RSA_strings(void);
 #define RSA_F_RSA_PADDING_CHECK_X931			 128
 #define RSA_F_RSA_PRINT					 115
 #define RSA_F_RSA_PRINT_FP				 116
+#define RSA_F_RSA_PRIVATE_ENCRYPT			 137
+#define RSA_F_RSA_PUBLIC_DECRYPT			 138
 #define RSA_F_RSA_SETUP_BLINDING			 136
+#define RSA_F_RSA_SET_DEFAULT_METHOD			 139
+#define RSA_F_RSA_SET_METHOD				 142
 #define RSA_F_RSA_SIGN					 117
 #define RSA_F_RSA_SIGN_ASN1_OCTET_STRING		 118
 #define RSA_F_RSA_VERIFY				 119
@@ -433,10 +472,12 @@ void ERR_load_RSA_strings(void);
 #define RSA_R_KEY_SIZE_TOO_SMALL			 120
 #define RSA_R_LAST_OCTET_INVALID			 134
 #define RSA_R_MODULUS_TOO_LARGE				 105
+#define RSA_R_NON_FIPS_METHOD				 141
 #define RSA_R_NO_PUBLIC_EXPONENT			 140
 #define RSA_R_NULL_BEFORE_BLOCK_MISSING			 113
 #define RSA_R_N_DOES_NOT_EQUAL_P_Q			 127
 #define RSA_R_OAEP_DECODING_ERROR			 121
+#define RSA_R_OPERATION_NOT_ALLOWED_IN_FIPS_MODE	 142
 #define RSA_R_PADDING_CHECK_FAILED			 114
 #define RSA_R_P_NOT_PRIME				 128
 #define RSA_R_Q_NOT_PRIME				 129

@@ -5,21 +5,21 @@
  * This package is an SSL implementation written
  * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
- * 
+ *
  * This library is free for commercial and non-commercial use as long as
  * the following conditions are aheared to.  The following conditions
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
  * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- * 
+ *
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
  * If this package is used in a product, Eric Young should be given attribution
  * as the author of the parts of the library used.
  * This can be in the form of a textual message at program startup or
  * in documentation (online or textual) provided with the package.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -34,10 +34,10 @@
  *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from 
+ * 4. If you include any Windows specific code (or a derivative thereof) from
  *    the apps directory (application code) you must include an acknowledgement:
  *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,7 +49,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * The licence and distribution terms for any publically available version or
  * derivative of this code cannot be changed.  i.e. this code cannot simply be
  * copied and put under another distribution licence
@@ -57,7 +57,7 @@
  */
 /* ====================================================================
  * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
- * ECDH support in OpenSSL originally developed by 
+ * ECDH support in OpenSSL originally developed by
  * SUN MICROSYSTEMS, INC., and contributed to the OpenSSL project.
  */
 
@@ -146,8 +146,9 @@ struct X509_algor_st
 	ASN1_TYPE *parameter;
 	} /* X509_ALGOR */;
 
-DECLARE_STACK_OF(X509_ALGOR)
 DECLARE_ASN1_SET_OF(X509_ALGOR)
+
+typedef STACK_OF(X509_ALGOR) X509_ALGORS;
 
 typedef struct X509_val_st
 	{
@@ -202,6 +203,8 @@ typedef struct X509_extension_st
 	ASN1_BOOLEAN critical;
 	ASN1_OCTET_STRING *value;
 	} X509_EXTENSION;
+
+typedef STACK_OF(X509_EXTENSION) X509_EXTENSIONS;
 
 DECLARE_STACK_OF(X509_EXTENSION)
 DECLARE_ASN1_SET_OF(X509_EXTENSION)
@@ -362,7 +365,7 @@ typedef struct x509_cert_pair_st {
 #define	X509_FLAG_NO_AUX		(1L << 10)
 #define	X509_FLAG_NO_ATTRIBUTES		(1L << 11)
 
-/* Flags specific to X509_NAME_print_ex() */	
+/* Flags specific to X509_NAME_print_ex() */
 
 /* The field separator information */
 
@@ -862,6 +865,10 @@ X509_EXTENSION *X509_EXTENSION_dup(X509_EXTENSION *ex);
 X509_CRL *X509_CRL_dup(X509_CRL *crl);
 X509_REQ *X509_REQ_dup(X509_REQ *req);
 X509_ALGOR *X509_ALGOR_dup(X509_ALGOR *xn);
+int X509_ALGOR_set0(X509_ALGOR *alg, ASN1_OBJECT *aobj, int ptype, void *pval);
+void X509_ALGOR_get0(ASN1_OBJECT **paobj, int *pptype, void **ppval,
+						X509_ALGOR *algor);
+
 X509_NAME *X509_NAME_dup(X509_NAME *xn);
 X509_NAME_ENTRY *X509_NAME_ENTRY_dup(X509_NAME_ENTRY *ne);
 
@@ -883,6 +890,7 @@ X509_REQ *	X509_to_X509_REQ(X509 *x, EVP_PKEY *pkey, const EVP_MD *md);
 X509 *		X509_REQ_to_X509(X509_REQ *r, int days,EVP_PKEY *pkey);
 
 DECLARE_ASN1_FUNCTIONS(X509_ALGOR)
+DECLARE_ASN1_ENCODE_FUNCTIONS(X509_ALGORS, X509_ALGORS, X509_ALGORS)
 DECLARE_ASN1_FUNCTIONS(X509_VAL)
 
 DECLARE_ASN1_FUNCTIONS(X509_PUBKEY)
@@ -918,6 +926,7 @@ DECLARE_ASN1_FUNCTIONS(X509_ATTRIBUTE)
 X509_ATTRIBUTE *X509_ATTRIBUTE_create(int nid, int atrtype, void *value);
 
 DECLARE_ASN1_FUNCTIONS(X509_EXTENSION)
+DECLARE_ASN1_ENCODE_FUNCTIONS(X509_EXTENSIONS, X509_EXTENSIONS, X509_EXTENSIONS)
 
 DECLARE_ASN1_FUNCTIONS(X509_NAME_ENTRY)
 
@@ -1191,6 +1200,8 @@ STACK_OF(X509_ATTRIBUTE) *X509at_add1_attr_by_NID(STACK_OF(X509_ATTRIBUTE) **x,
 STACK_OF(X509_ATTRIBUTE) *X509at_add1_attr_by_txt(STACK_OF(X509_ATTRIBUTE) **x,
 			const char *attrname, int type,
 			const unsigned char *bytes, int len);
+void *X509at_get0_data_by_OBJ(STACK_OF(X509_ATTRIBUTE) *x,
+				ASN1_OBJECT *obj, int lastpos, int type);
 X509_ATTRIBUTE *X509_ATTRIBUTE_create_by_NID(X509_ATTRIBUTE **attr, int nid,
 	     int atrtype, const void *data, int len);
 X509_ATTRIBUTE *X509_ATTRIBUTE_create_by_OBJ(X509_ATTRIBUTE **attr,
