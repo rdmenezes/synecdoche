@@ -426,16 +426,17 @@ int CBOINCGUIApp::OnExit() {
     if (m_pDocument) {
         m_pDocument->OnExit();
         delete m_pDocument;
+        m_pDocument = 0;
     }
 
     if (m_pSkinManager) {
         m_pConfig->Write(wxT("Skin"), m_pSkinManager->GetSelectedSkin());
         delete m_pSkinManager;
+        m_pSkinManager = 0;
     }
 
-    if (m_pLocale) {
-        delete m_pLocale;
-    }
+    delete m_pLocale;
+    m_pLocale = 0;
 
     diagnostics_finish();
 

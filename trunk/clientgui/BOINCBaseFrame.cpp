@@ -114,15 +114,17 @@ CBOINCBaseFrame::~CBOINCBaseFrame() {
     if (m_pAlertPollTimer) {
         m_pAlertPollTimer->Stop();
         delete m_pAlertPollTimer;
+        m_pAlertPollTimer = 0;
     }
 
     if (m_pDocumentPollTimer) {
         m_pDocumentPollTimer->Stop();
         delete m_pDocumentPollTimer;
+        m_pDocumentPollTimer = 0;
     }
 
-    if (m_pDialupManager)
-        delete m_pDialupManager;
+    delete m_pDialupManager;
+    m_pDialupManager = 0;
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::~CBOINCBaseFrame - Function End"));
 }

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 David Barnard
-// Copyright (C) 2005 University of California
+// Copyright (C) 2008 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -64,7 +64,7 @@ void CViewResources::DemandLoadView() {
     m_pieCtrlTotal->SetHorLegendBorder(10);
     m_pieCtrlTotal->SetLabelFont(*wxSWISS_FONT);
     m_pieCtrlTotal->SetLabelColour(wxColour(0,0,0));
-    m_pieCtrlTotal->SetLabel(_("total disk usage"));
+    m_pieCtrlTotal->SetLabel(_("Total disk usage"));
 
     // create pie chart ctrl for BOINC disk usage
     m_pieCtrlBOINC = new wxPieCtrl(this, ID_LIST_RESOURCEUTILIZATIONVIEW, wxDefaultPosition, wxSize(-1,-1));
@@ -74,7 +74,7 @@ void CViewResources::DemandLoadView() {
     m_pieCtrlBOINC->SetHorLegendBorder(10);
     m_pieCtrlBOINC->SetLabelFont(*wxSWISS_FONT);
     m_pieCtrlBOINC->SetLabelColour(wxColour(0,0,0));
-    m_pieCtrlBOINC->SetLabel(_("disk usage by projects"));
+    m_pieCtrlBOINC->SetLabel(_("Disk usage by projects"));
     //init the flexGrid
     itemGridSizer->Add(m_pieCtrlTotal,1,wxGROW|wxALL,1);
     itemGridSizer->Add(m_pieCtrlBOINC,1, wxGROW|wxALL,1);
@@ -204,7 +204,7 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
                 double usage = project->disk_usage;
                 project_total += usage;
                 wxPiePart part;
-                part.SetLabel(projectname + wxT(" - ") + diskspace);
+                part.SetLabel(projectname + wxT(": ") + diskspace);
                 part.SetValue(usage);
                 unsigned char r=128+(rand()&127);
                 unsigned char g=128+(rand()&127);
@@ -242,40 +242,53 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
         // used by BOINC
         double boinc_total = project_total + pDoc->disk_usage.d_boinc;
         FormatDiskSpace(boinc_total, diskspace);
-        label.Printf(_("used by %s - "), pSkinAdvanced->GetApplicationName().c_str());
+        label.Printf(_("used by %s: "), pSkinAdvanced->GetApplicationName().c_str());
         part.SetLabel(label + diskspace);
         part.SetValue(boinc_total);
         part.SetColour(wxColour(0,0,0));
         m_pieCtrlTotal->m_Series.Add(part);
 
-        double avail = pDoc->disk_usage.d_allowed - boinc_total;
-        if (avail > 0) {
-            if (avail > free) avail = free;
-            FormatDiskSpace(avail, diskspace);
-            label.Printf(_("free, available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
-            part.SetLabel(label + diskspace);
-            part.SetValue(avail);
-            part.SetColour(wxColour(128, 128, 128));
-            m_pieCtrlTotal->m_Series.Add(part);
-        } else {
-            avail = 0;
-        }
+        if (pDoc->disk_usage.d_allowed > 0.0) {
+            double avail = pDoc->disk_usage.d_allowed - boinc_total;
+            if (avail > 0.0) {
+                if (avail > free) {
+                    avail = free;
+                }
+                FormatDiskSpace(avail, diskspace);
+                label.Printf(_("free, available to %s: "), pSkinAdvanced->GetApplicationName().c_str());
+                part.SetLabel(label + diskspace);
+                part.SetValue(avail);
+                part.SetColour(wxColour(128, 128, 128));
+                m_pieCtrlTotal->m_Series.Add(part);
+            } else {
+                avail = 0;
+            }
 
-        // free disk space
-        double not_avail = free - avail;
-        if (not_avail > 0.0) {
-            FormatDiskSpace(not_avail, diskspace);
-            label.Printf(_("free, not available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
-            part.SetLabel(label + diskspace);
-            part.SetValue(not_avail);
-            part.SetColour(wxColour(238,238,238));
+            // free disk space
+            double not_avail = free - avail;
+            if (not_avail > 0.0) {
+                FormatDiskSpace(not_avail, diskspace);
+                label.Printf(_("free, not available to %s: "), pSkinAdvanced->GetApplicationName().c_str());
+                part.SetLabel(label + diskspace);
+                part.SetValue(not_avail);
+                part.SetColour(wxColour(238, 238, 238));
+                m_pieCtrlTotal->m_Series.Add(part);
+            }
+        } else {
+            // If d_allowed is zero we must be talking to a pre-6.3 client.
+            // Just show free space in this case.
+            FormatDiskSpace(free, diskspace);
+            label.Printf(_("free: ") + diskspace);
+            part.SetLabel(label);
+            part.SetValue(free);
+            part.SetColour(wxColour(238, 238, 238));
             m_pieCtrlTotal->m_Series.Add(part);
         }
 
         // used by others
         double used_by_others = total-boinc_total-free;
         FormatDiskSpace(used_by_others, diskspace);
-        part.SetLabel(_("used by other programs - ") + diskspace);
+        part.SetLabel(_("used by other programs: ") + diskspace);
         part.SetValue(used_by_others);
         part.SetColour(wxColour(192,192,192));
         m_pieCtrlTotal->m_Series.Add(part);
