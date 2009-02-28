@@ -447,10 +447,10 @@ int CBOINCGUIApp::OnExit() {
 void CBOINCGUIApp::OnInitCmdLine(wxCmdLineParser &parser) {
     wxApp::OnInitCmdLine(parser);
     static const wxCmdLineEntryDesc cmdLineDesc[] = {
-        { wxCMD_LINE_SWITCH, wxT("s"), wxT("systray"), _("Startup BOINC so only the system tray icon is visible")},
-        { wxCMD_LINE_SWITCH, wxT("b"), wxT("boincargs"), _("Startup BOINC with these optional arguments")},
-        { wxCMD_LINE_SWITCH, wxT("i"), wxT("insecure"), _("disable BOINC security users and permissions")},
-        { wxCMD_LINE_SWITCH, wxT("c"), wxT("checkskins"), _("set skin debugging mode to enable skin manager error messages")},
+        { wxCMD_LINE_SWITCH, wxT("s"), wxT("systray"), _("start Synecdoche so only the system tray icon is visible")},
+        { wxCMD_LINE_OPTION, wxT("a"), wxT("args"), _("start the daemon with these optional arguments")},
+        { wxCMD_LINE_SWITCH, wxT("i"), wxT("insecure"), _("disable Synecdoche security users and permissions")},
+        { wxCMD_LINE_SWITCH, wxT("c"), wxT("checkskins"), _("enable skin manager error messages (for debugging skins)")},
         { wxCMD_LINE_NONE}  //DON'T forget this line!!
     };
     parser.SetDesc(cmdLineDesc);
@@ -460,7 +460,7 @@ void CBOINCGUIApp::OnInitCmdLine(wxCmdLineParser &parser) {
 bool CBOINCGUIApp::OnCmdLineParsed(wxCmdLineParser &parser) {
     // Give default processing (-?, --help and --verbose) the chance to do something.
     wxApp::OnCmdLineParsed(parser);
-    parser.Found(wxT("boincargs"), &m_strBOINCArguments);
+    parser.Found(wxT("args"), &m_strBOINCArguments);
     if (parser.Found(wxT("systray"))) {
         m_bGUIVisible = false;
     }
