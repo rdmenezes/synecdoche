@@ -1,5 +1,5 @@
 /* x509v3.h */
-/* Written by Dr Stephen N Henson (shenson@bigfoot.com) for the OpenSSL
+/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 1999.
  */
 /* ====================================================================
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -363,6 +363,8 @@ DECLARE_ASN1_FUNCTIONS(PROXY_CERT_INFO_EXTENSION)
 #define EXFLAG_NSCERT		0x8
 
 #define EXFLAG_CA		0x10
+/* Really self issued not necessarily self signed */
+#define EXFLAG_SI		0x20
 #define EXFLAG_SS		0x20
 #define EXFLAG_V1		0x40
 #define EXFLAG_INVALID		0x80
@@ -370,7 +372,7 @@ DECLARE_ASN1_FUNCTIONS(PROXY_CERT_INFO_EXTENSION)
 #define EXFLAG_CRITICAL		0x200
 #define EXFLAG_PROXY		0x400
 
-#define EXFLAG_INVALID_POLICY	0x400
+#define EXFLAG_INVALID_POLICY	0x800
 
 #define KU_DIGITAL_SIGNATURE	0x0080
 #define KU_NON_REPUDIATION	0x0040
@@ -391,7 +393,7 @@ DECLARE_ASN1_FUNCTIONS(PROXY_CERT_INFO_EXTENSION)
 #define NS_OBJSIGN_CA		0x01
 #define NS_ANY_CA		(NS_SSL_CA|NS_SMIME_CA|NS_OBJSIGN_CA)
 
-#define XKU_SSL_SERVER		0x1	
+#define XKU_SSL_SERVER		0x1
 #define XKU_SSL_CLIENT		0x2
 #define XKU_SMIME		0x4
 #define XKU_CODE_SIGN		0x8
@@ -456,9 +458,9 @@ DECLARE_ASN1_FUNCTIONS(BASIC_CONSTRAINTS)
 DECLARE_ASN1_FUNCTIONS(SXNET)
 DECLARE_ASN1_FUNCTIONS(SXNETID)
 
-int SXNET_add_id_asc(SXNET **psx, char *zone, char *user, int userlen); 
-int SXNET_add_id_ulong(SXNET **psx, unsigned long lzone, char *user, int userlen); 
-int SXNET_add_id_INTEGER(SXNET **psx, ASN1_INTEGER *izone, char *user, int userlen); 
+int SXNET_add_id_asc(SXNET **psx, char *zone, char *user, int userlen);
+int SXNET_add_id_ulong(SXNET **psx, unsigned long lzone, char *user, int userlen);
+int SXNET_add_id_INTEGER(SXNET **psx, ASN1_INTEGER *izone, char *user, int userlen);
 
 ASN1_OCTET_STRING *SXNET_get_id_asc(SXNET *sx, char *zone);
 ASN1_OCTET_STRING *SXNET_get_id_ulong(SXNET *sx, unsigned long lzone);
@@ -617,6 +619,7 @@ int X509_PURPOSE_get_id(X509_PURPOSE *);
 STACK *X509_get1_email(X509 *x);
 STACK *X509_REQ_get1_email(X509_REQ *x);
 void X509_email_free(STACK *sk);
+STACK *X509_get1_ocsp(X509 *x);
 
 ASN1_OCTET_STRING *a2i_IPADDRESS(const char *ipasc);
 ASN1_OCTET_STRING *a2i_IPADDRESS_NC(const char *ipasc);
