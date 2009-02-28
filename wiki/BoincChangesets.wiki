@@ -17,7 +17,7 @@
 ||16242||MGR: fix disk display when talking to pre-6.3 client - do we need this fix? - Probably yes, looks like this is related to BOINC changesets 15190 and and 15199 which were created before synecdoche was created.||
 ||16247||MGR: More thorough validity checking to prevent crashes||
 ||16280||MGR: Add a new tab status to the Simple GUI for when the client has been instructed to delay starting applications via the <delay_start> option in cc_config.xml (From Kevin Reed)||
-||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::OnConnect()||
+||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::!OnConnect()||
 ||16336/16337/16347||MGR: When removing a row from sorted lists, refresh all rows to ensure proper display update (Does anyone know which bug is fixed by this changeset? Do we need it?)||
 ||16338/16339/16340/16344/16348/16357||client: move round-robin simulation to its own file||
 ||16352||MGR: Always sort after a row is added or deleted.||
@@ -36,7 +36,7 @@
 ||16545||client: in round-robin simulation, only increment CPU shortfall (per-project or overall) if there are no pending tasks.||
 ||16548||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. NOTE: Stackwalker still uses boinc.berkeley.edu as server!||
 ||16557/16558||MGR: Make the error message processing work for the get_project_config rpc, use the same scheme as the ACCOUNT_OUT structure.||
-||16565||client: Fix error from changeset 14415 which caused Mac client to call daemon() if it was passed -daemon argument, causing problems using launchd with KeepAlive? option; fixes #782.||
+||16565||client: Fix error from changeset 14415 which caused Mac client to call daemon() if it was passed -daemon argument, causing problems using launchd with !KeepAlive option; fixes #782.||
 ||16582||MGR: fix exit dialog so that both the Mac and Linux clients don't display the 'close core client...' checkbox.||
 ||16616||client: parse checkpoint_elapsed_time from state file; if missing, use checkpoint CPU time.||
 ||16653||Mac SG: Remove ugly hack added 8/20/07 for slide show alignment problem on Mac.||
@@ -56,10 +56,26 @@
 ||17269||client: fix bug where master fetch failure doesn't clear request flag, leading to infinite retry without backoff (17195 needs to be applied before this one)||
 ||17270||client: fix bug in time-of-day limit prefs (both CPU and network)||
 ||17271||GUI RPC: add master_url and local_revision to PROJECT_CONFIG struct. The former will allow the Manager to verify project URLs||
-||17300/17301||client: adjust debts at least every minute.T his fixes a bug that can cause debts to NEVER get updated. /  client: added "abort_jobs_on_exit" feature||
+||17300/17301/17375||client: adjust debts at least every minute. This fixes a bug that can cause debts to NEVER get updated. /  client: added "abort_jobs_on_exit" feature||
 ||17309/17311/17312/17213||client: add more info to <work_fetch_debug> messages||
 ||17310||client: don't complain that master URLs differ if it's only in case NOTE: *Only* the domain name is case insensitive - this changeset needs to be fixed before beeing applied.||
-
+||17328||client: add <zero_debts> option to cc_config.xml||
+||17334||client: print message if downloaded file has wrong size||
+||17373||fixes #712 (Typo in "sg_DlgPreferences.cpp" file)||
+||17376||fixes #785 (about /*xgettext:no-c-format*/)
+||17379||boinccmd: fix bug in --set_proxy_settings command (it wasn't setting the "use_XXX" flags). Fixes #776 / client: you can now include a <proxy_info> element in your cc_config.xml options.||
+||17385||MGR: Remove the /s parameter from the argument list on Linux until we know it is supported. Fixes #615||
+||17388||_A lot of different, partly unrelated fixes that need to be reviewed carefully one by one before applying any of these._||
+||17389||client: if you put <host_venue> in global_prefs_override.xml, it should select the venue from the network prefs. Now it does.||
+||17391||API: file descriptor leak in obscure case. fixes #103||
+||17396||client: make timeout values into #defines _Note: The defines should be turned into constants before applying this changeset.||
+||17399||client: abort jobs that are unstarted and past deadline||
+||17401||MGR: Remove the ability to display graphics on a remote computer, or from a remote computer on *nix machines using v5 graphics. fixes #674||
+||17403||small fixes _What exactly is fixed by this changeset? When were these bugs (if any) introduced? Do we need this?_||
+||17404|| client: shuffle the startup code to avoid showing wrong prefs info on first-time startup. / client: don't do an RPC until we've done CPU benchmarks. We need the benchmark values to fill in app_version.flops||
+||17407||boinccmd: make --get_messages output more readable||
+||17409||manager: fix roundoff error in Advanced Prefs; fixes #613 _Note: This is not a real fix but a simple workaround._||
+||17410||MGR: Make CTRL-SHIFT-A the accelerator in the simple GUI that switches back to the advanced view. refs #147||
 
 
 == Changesets for the new OpenGL screensaver (Might be useful some day) ==
@@ -83,7 +99,13 @@
 ||17256||SS: On Windows, get paths to BOINC data and executable directories from Windows registry||
 ||17273||SS: On Windows, make path strings Unicode compatible in ss coordinator||
 ||17302/17303||screensaver||
-
+||17321||screensaver: Implement --test and --retry_connect command-line arguments as requested by Rom||
+||17322||screensaver: Implement new screensaver coordinator logic as requested by Rom.||
+||17336||WINSCR: Fix the BOINC text displayed is the screensaver control panel applet / WINSCR: [...]||
+||17339/17340/17346/17349||screensaver: Code consolidation, fix bug terminating default graphics app on screensaver exit||
+||17370/17393||WINSCR: Remove unneeded header files SCR: Shuffle headers around so that it'll build on both Windows and Mac without having to put in duplicate entries.||
+||17405/17406||screensaver: show correct info if CPU throttling; show correct window title; show "no projects" message.||
+||17408||screensaver: remove error codes & messages handled by new default gfx app, add new error codes; better logic when coordinator window covered on Mac||
 
 
 == Rejected changes ==
@@ -136,8 +158,11 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/17076 17076]||MGR: Filter project list so that it shows only projects supported by the core client. This relies on an up-to-date all_projects_list.xml instead of asking the projects about supported platforms. Additional changesets: 17077/17143||
 ||[http://boinc.berkeley.edu/trac/changeset/17078 17078]||Looks like we didn't break this.||
 ||[http://boinc.berkeley.edu/trac/changeset/17212 17212]||Already fixed in r575. Additional changesets: 17213/17214||
+||[http://boinc.berkeley.edu/trac/changeset/17335 17335]||Already fixed in r650 and r651.||
+||[http://boinc.berkeley.edu/trac/changeset/17394 17394]||Already fixed in r511.||
+||[http://boinc.berkeley.edu/trac/changeset/17398 17398]||See comments in [http://boinc.berkeley.edu/trac/ticket/852 #852]||
 
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17320 17320]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17413 17413]
