@@ -44,8 +44,9 @@
 #include "app_ipc.h"
 #include "error_numbers.h"
 #include "filesys.h"
-#include "util.h"
 #include "parse.h"
+#include "str_util.h"
+#include "util.h"
 
 
 #if defined(_WIN32) && defined(_MSC_VER)
@@ -113,16 +114,14 @@ int __cdecl boinc_message_reporting(int reportType, char *szMsg, int *retVal){
 #endif // _WIN32 && _DEBUG
 
 
-// initialize the app diagnostic environment.
-//
+/// initialize the app diagnostic environment.
 int boinc_init_diagnostics(int _flags) {
     int modified_flags = BOINC_DIAG_BOINCAPPLICATION | _flags;
     return diagnostics_init(modified_flags, BOINC_DIAG_STDOUT, BOINC_DIAG_STDERR);
 }
 
 
-// initialize the graphic diagnostic environment.
-//
+/// initialize the graphic diagnostic environment.
 int boinc_init_graphics_diagnostics(int _flags) {
     return diagnostics_init(
         BOINC_DIAG_BOINCAPPLICATION | _flags,
@@ -131,8 +130,7 @@ int boinc_init_graphics_diagnostics(int _flags) {
 }
 
 
-// Used to cleanup the diagnostics environment.
-//
+/// Used to cleanup the diagnostics environment.
 int boinc_finish_diag() {
     return diagnostics_finish();
 }
@@ -148,7 +146,6 @@ int boinc_install_signal_handlers() {
     // register handlers for fatal internal signals
     // so that they get reported in stderr.txt
     // Do NOT catch SIGQUIT because core client uses that to kill app
-    //
     boinc_set_signal_handler(SIGILL, boinc_catch_signal);
     boinc_set_signal_handler(SIGABRT, boinc_catch_signal);
     boinc_set_signal_handler(SIGBUS, boinc_catch_signal);
@@ -160,11 +157,8 @@ int boinc_install_signal_handlers() {
 }
 
 
-// initialize the diagnostics environment.
-//
-int diagnostics_init(
-    int _flags, const char* stdout_prefix, const char* stderr_prefix
-) {
+/// initialize the diagnostics environment.
+int diagnostics_init(int _flags, const char* stdout_prefix, const char* stderr_prefix) {
     // Check to see if we have already been called
     if (diagnostics_initialized) {
         return ERR_INVALID_PARAM;
@@ -351,8 +345,7 @@ int diagnostics_init(
 }
 
 
-// Cleanup the diagnostic framework before dumping any memory leaks.
-//
+/// Cleanup the diagnostic framework before dumping any memory leaks.
 int diagnostics_finish() {
 
 #ifdef _WIN32
@@ -401,43 +394,37 @@ int diagnostics_finish() {
     return BOINC_SUCCESS;
 }
 
-// has the diagnostics library been initialized?
-//
+/// has the diagnostics library been initialized?
 int diagnostics_is_initialized(){
     return diagnostics_initialized;
 }
 
 
-// return true if the specified flag is set.
-//
+/// return true if the specified flag is set.
 int diagnostics_is_flag_set(int _flags) {
     return flags & _flags;
 }
 
 
-// return the location of the BOINC directory.
-//
+/// return the location of the BOINC directory.
 const char* diagnostics_get_boinc_dir() {
     return boinc_dir;
 }
 
 
-// return the location of the BOINC install directory.
-//
+/// return the location of the BOINC install directory.
 const char* diagnostics_get_boinc_install_dir() {
     return boinc_install_dir;
 }
 
 
-// return the location of the symbol store.
-//
+/// return the location of the symbol store.
 const char* diagnostics_get_symstore() {
     return symstore;
 }
 
 
-// store the location of the symbol store.
-//
+/// store the location of the symbol store.
 int diagnostics_set_symstore(const char* project_symstore) {
     if (!strlen(symstore)) {
         int buffer_used = snprintf(symstore, sizeof(symstore), "%s", project_symstore);
@@ -449,34 +436,31 @@ int diagnostics_set_symstore(const char* project_symstore) {
 }
 
 
-// do we need to worry about a proxy server?
-//
+/// do we need to worry about a proxy server?
 int diagnostics_is_proxy_enabled() {
     return boinc_proxy_enabled;
 }
 
 
-// proxy server address and port
-//
+/// proxy server address and port
 const char* diagnostics_get_proxy() {
     return boinc_proxy;
 }
 
 
-// Set the value of the flag
+/// Set the value of the aborted_via_gui flag
 int diagnostics_set_aborted_via_gui() {
     aborted_via_gui = 1;
     return 0;
 }
 
 
-// Return the value of he flag
+/// Return the value of the aborted_via_gui flag
 int diagnostics_is_aborted_via_gui() {
     return aborted_via_gui;
 }
 
-// Cycle the log files at regular events.
-//
+/// Cycle the log files at regular events.
 int diagnostics_cycle_logs() {
     double f_size;
 
@@ -511,13 +495,11 @@ int diagnostics_cycle_logs() {
 
 
 // Diagnostics for POSIX Compatible systems.
-//
 
 #ifdef HAVE_SIGNAL_H
 
 
-// Set a signal handler only if it is not currently ignored
-//
+/// Set a signal handler only if it is not currently ignored
 void boinc_set_signal_handler(int sig, void(*handler)(int)) {
 #ifdef HAVE_SIGACTION
     struct sigaction temp;
@@ -537,8 +519,7 @@ void boinc_set_signal_handler(int sig, void(*handler)(int)) {
 }
 
 
-// Set a signal handler even if it is currently ignored
-//
+/// Set a signal handler even if it is currently ignored
 void boinc_set_signal_handler_force(int sig, void(*handler)(int)) {
 #ifdef HAVE_SIGACTION
     struct sigaction temp;
@@ -553,7 +534,7 @@ void boinc_set_signal_handler_force(int sig, void(*handler)(int)) {
 #endif /* HAVE_SIGACTION */
 }
 
-// exit code to use if signalled; can be changed
+/// exit code to use if signalled; can be changed
 static int signal_exit_code = EXIT_SIGNAL;
 
 void set_signal_exit_code(int x) {
@@ -593,13 +574,10 @@ void boinc_catch_signal(int signal) {
 
 #endif
 
-//
 // Diagnostics Routines common to all Platforms
-//
 
-// Converts the BOINCTRACE macro into a single string and report it
-//   to the CRT so it can be reported via the normal means.
-//
+/// Converts the BOINCTRACE macro into a single string and report it
+///   to the CRT so it can be reported via the normal means.
 void boinc_trace(const char *pszFormat, ...) {
     static char szBuffer[4096];
     static char szDate[64];
@@ -617,6 +595,19 @@ void boinc_trace(const char *pszFormat, ...) {
 #ifdef _WIN32
         strdate(szDate);
         strtime(szTime);
+#else
+        time_t t;
+        char *theCR;
+        time(&t);
+        strlcpy(szTime, asctime(localtime(&t)), sizeof(szTime));
+        theCR = strrchr(szTime, '\n');
+        if (theCR) {
+            *theCR = '\0';
+        }
+        theCR = strrchr(szTime, '\r');
+        if (theCR) {
+            *theCR = '\0';
+        }
 #endif
 
         va_list ptr;
@@ -633,7 +624,7 @@ void boinc_trace(const char *pszFormat, ...) {
 #ifdef _WIN32
             fprintf(stderr, "[%s %s] TRACE [%d]: %s\n", szDate, szTime, GetCurrentThreadId(), szBuffer);
 #else
-            fprintf(stderr, "TRACE: %s\n", szBuffer);
+            fprintf(stderr, "[%s] TRACE: %s\n", szTime, szBuffer);
 #endif
         }
 
@@ -641,7 +632,7 @@ void boinc_trace(const char *pszFormat, ...) {
 #ifdef _WIN32
             fprintf(stdout, "[%s %s] TRACE [%d]: %s\n", szDate, szTime, GetCurrentThreadId(), szBuffer);
 #else
-            fprintf(stdout, "TRACE: %s\n", szBuffer);
+            fprintf(stdout, "[%s] TRACE: %s\n", szTime, szBuffer);
 #endif
         }
 #endif
@@ -649,9 +640,8 @@ void boinc_trace(const char *pszFormat, ...) {
 }
 
 
-// Converts the BOINCINFO macro into a single string and report it
-//   to stderr so it can be reported via the normal means.
-//
+/// Converts the BOINCINFO macro into a single string and report it
+///   to stderr so it can be reported via the normal means.
 #ifndef BOINC_INFOMSGS
 void boinc_info(const char* /*pszFormat*/, ... ){ return; }
 #else
