@@ -1,4 +1,4 @@
-#summary Tracking BOINC revisions
+﻿#summary Tracking BOINC revisions
 
 == Pending merge ==
 
@@ -13,25 +13,24 @@
 ||15959/15964/15966||MGR: Save and restore selected items by key values when refreshing||
 ||15987||MGR: Simple GUI fixes||
 ||16208||client: new config flags||
-||16247||MGR: More thorough validity checking to prevent crashes||
 ||16280||MGR: Add a new tab status to the Simple GUI for when the client has been instructed to delay starting applications via the <delay_start> option in cc_config.xml (From Kevin Reed)||
 ||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::!OnConnect()||
-||16336/16337/16347||MGR: When removing a row from sorted lists, refresh all rows to ensure proper display update (Does anyone know which bug is fixed by this changeset? Do we need it?)||
+||16336/16337/16347||MGR: When removing a row from sorted lists, refresh all rows to ensure proper display update _Does anyone know which bug is fixed by this changeset? Do we need it?_||
 ||16338/16339/16340/16344/16348/16357||client: move round-robin simulation to its own file||
 ||16352||MGR: Always sort after a row is added or deleted.||
 ||16355/16400||client: the preemptability order was wrong||
 ||16356||client: cleaned up CPU scheduler logic somewhat||
-||16366/16383/16386/16391||client: revise round-robin simulation to take variable avg_ncpus into account (I'm not sure if we need this or if this change works with our ncpu-fix.)||
+||16366/16383/16386/16391||client: revise round-robin simulation to take variable avg_ncpus into account _I'm not sure if we need this or if this change works with our ncpu-fix._||
 ||16395/16396||client: fix bug that caused occasional assert in pop_heap() for the preemptable_task_list.||
 ||16405/16413/16414/16417/16419/16421/16428/16429/16446/16448/ 16450/16462/16472/16473||MGR: Create an Exit dialog for the Manager. / Allow the manager to shutdown the CC even when it was installed as a daemon.||
 ||16406/16415/16420/16426/16427/16434||MGR: Provide a way to enable/disable launching from the BOINC Manager at startup from within the BOINC Manager itself.||
 ||16432/16433||client: make host CPID a function of: MAC addresses + hostname + IP addr + OS name||
 ||16479||API: free project prefs before parsing init file||
-||16484||MGR: Erase and refresh entire Tasks panel when selecting a new tab to try to fix cosmetic bug reported by David on Windows - Which bug? Is it caused by the RPC thread?||
-||16488||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. - Looks like this is only needed for service install on Vista. Do we support/need this?||
+||16484||MGR: Erase and refresh entire Tasks panel when selecting a new tab to try to fix cosmetic bug reported by David on Windows _Which bug? Is it caused by the RPC thread?_||
+||16488||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. _Looks like this is only needed for service install on Vista. Do we support/need this?_||
 ||16539||manager: tweak strings in Options dialog||
 ||16545||client: in round-robin simulation, only increment CPU shortfall (per-project or overall) if there are no pending tasks.||
-||16548||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. NOTE: Stackwalker still uses boinc.berkeley.edu as server!||
+||16548||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. _NOTE: Stackwalker still uses boinc.berkeley.edu as server!_||
 ||16557/16558||MGR: Make the error message processing work for the get_project_config rpc, use the same scheme as the ACCOUNT_OUT structure.||
 ||16565||client: Fix error from changeset 14415 which caused Mac client to call daemon() if it was passed -daemon argument, causing problems using launchd with !KeepAlive option; fixes #782.||
 ||16582||MGR: fix exit dialog so that both the Mac and Linux clients don't display the 'close core client...' checkbox.||
@@ -43,18 +42,17 @@
 ||16929||client: fix boinc_copy (again); Mac Mgr: fix bugs showing Mgr when minimized to Dock;||
 ||16998||client: clear debts when reset project||
 ||17063/17065/17075||MGR: Add a list of account managers. It's included in all_projects_list.xml. As we don't use BOINC's xml file we should either put the account manager list into a separated file or fix the structure of the file. BOINC currently treats account managers as projects in this file, which is wrong.||
-||17070||client: if user requests RPC, do it even if project is backed off (NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago.)||
+||17070||client: if user requests RPC, do it even if project is backed off _NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago._||
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
 ||17195||client: add SCHEDULER_OP::rpc_failed(); this gets called when the op fails, either at initialization or later on; it clears the project's sched_rpc_pending flag if needed. This fixes a bug that caused user-requested RPCs to retry every 10 seconds when the network is down.||
 ||17196||client: if master file doesn't have URLs, clear RPC request||
-||17203||lib: add time stamps to BOINCTRANCE on non-Windows systems||
 ||17208/17209||client and API: eliminate dynamically-allocated parts of GLOBAL_PREFS. This fixes a double-free bug in the API. _This mess needs to be reviewed carefully!_||
 ||17269||client: fix bug where master fetch failure doesn't clear request flag, leading to infinite retry without backoff (17195 needs to be applied before this one)||
 ||17270||client: fix bug in time-of-day limit prefs (both CPU and network)||
 ||17271||GUI RPC: add master_url and local_revision to PROJECT_CONFIG struct. The former will allow the Manager to verify project URLs||
 ||17300/17301/17375||client: adjust debts at least every minute. This fixes a bug that can cause debts to NEVER get updated. /  client: added "abort_jobs_on_exit" feature||
 ||17309/17311/17312/17213||client: add more info to <work_fetch_debug> messages||
-||17310||client: don't complain that master URLs differ if it's only in case NOTE: *Only* the domain name is case insensitive - this changeset needs to be fixed before beeing applied.||
+||17310||client: don't complain that master URLs differ if it's only in case _NOTE: *Only* the domain name is case insensitive - this changeset needs to be fixed before beeing applied._||
 ||17328||client: add <zero_debts> option to cc_config.xml||
 ||17334||client: print message if downloaded file has wrong size||
 ||17373||fixes #712 (Typo in "sg`_`!DlgPreferences.cpp" file)||
@@ -64,7 +62,7 @@
 ||17388||_A lot of different, partly unrelated fixes that need to be reviewed carefully one by one before applying any of these._||
 ||17389||client: if you put <host_venue> in global_prefs_override.xml, it should select the venue from the network prefs. Now it does.||
 ||17391||API: file descriptor leak in obscure case. fixes #103||
-||17396||client: make timeout values into #defines _Note: The defines should be turned into constants before applying this changeset.||
+||17396||client: make timeout values into #defines _Note: The defines should be turned into constants before applying this changeset._||
 ||17399||client: abort jobs that are unstarted and past deadline||
 ||17401||MGR: Remove the ability to display graphics on a remote computer, or from a remote computer on `*`nix machines using v5 graphics. fixes #674||
 ||17403||small fixes _What exactly is fixed by this changeset? When were these bugs (if any) introduced? Do we need this?_||
