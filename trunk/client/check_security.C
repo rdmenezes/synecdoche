@@ -31,6 +31,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "file_names.h"
+#include "common_defs.h"
 
 static int CheckNestedDirectories(char * basepath, int depth, int use_sandbox);
 

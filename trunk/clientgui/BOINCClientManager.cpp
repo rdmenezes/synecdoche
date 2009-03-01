@@ -418,7 +418,6 @@ void CBOINCClientManager::ShutdownBOINCCore() {
         if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
-                //pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
                 try {
                     strPassword = read_gui_rpc_password();
                 } catch (...) {

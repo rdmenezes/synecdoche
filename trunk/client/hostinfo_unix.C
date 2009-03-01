@@ -753,8 +753,20 @@ int HOST_INFO::get_host_info() {
 #endif
 
 ///////////// m_nbytes, m_swap /////////////////
-
-#ifdef LINUX_LIKE_SYSTEM
+	
+#ifdef __APPLE__
+    // On Mac OS X, sysctl with selectors CTL_HW, HW_PHYSMEM returns only a 
+    // 4-byte value, even if passed an 8-byte buffer, and limits the returned 
+    // value to 2GB when the actual RAM size is > 2GB.  The Gestalt selector 
+    // gestaltPhysicalRAMSizeInMegabytes is available starting with OS 10.3.0.
+    SInt32 mem_size;
+    if (Gestalt(gestaltPhysicalRAMSizeInMegabytes, &mem_size)) {
+        msg_printf(NULL, MSG_INTERNAL_ERROR,
+				   "Couldn't determine physical RAM size"
+				   );
+    }
+    m_nbytes = (1024. * 1024.) * (double)mem_size;
+#elif defined(LINUX_LIKE_SYSTEM)
     parse_meminfo_linux(*this);
 #elif defined(_SC_USEABLE_MEMORY)
     // UnixWare
@@ -767,18 +779,6 @@ int HOST_INFO::get_host_info() {
             sysconf(_SC_PAGESIZE), sysconf(_SC_PHYS_PAGES)
         );
     }
-#elif defined(__APPLE__)
-    // On Mac OS X, sysctl with selectors CTL_HW, HW_PHYSMEM returns only a 
-    // 4-byte value, even if passed an 8-byte buffer, and limits the returned 
-    // value to 2GB when the actual RAM size is > 2GB.  The Gestalt selector 
-    // gestaltPhysicalRAMSizeInMegabytes is available starting with OS 10.3.0.
-    SInt32 mem_size;
-    if (Gestalt(gestaltPhysicalRAMSizeInMegabytes, &mem_size)) {
-        msg_printf(NULL, MSG_INTERNAL_ERROR,
-            "Couldn't determine physical RAM size"
-        );
-    }
-    m_nbytes = (1024. * 1024.) * (double)mem_size;
 #elif defined(_HPUX_SOURCE)
     struct pst_static pst; 
     pstat_getstatic(&pst, sizeof(pst), (size_t)1, 0);

@@ -19,7 +19,7 @@
 #include "boinc_win.h"
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
 #include "version.h"
 #else
 #include "config.h"
