@@ -766,59 +766,68 @@ void CViewWork::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
 
 void CViewWork::GetDocApplicationName(wxInt32 item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
-    RESULT* result = wxGetApp().GetDocument()->result(item);
-    RESULT* state_result = NULL;
-    wxString strLocalBuffer;
-
-    wxASSERT(pDoc);
-    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+    RESULT* result = 0;
+    if (pDoc) {
+        result = pDoc->result(item);
+    }
 
     if (result) {
-        state_result = pDoc->state.lookup_result(result->project_url, result->name);
+        RESULT* state_result = pDoc->state.lookup_result(result->project_url, result->name);
         if (!state_result) {
             pDoc->ForceCacheUpdate();
             state_result = pDoc->state.lookup_result(result->project_url, result->name);
         }
-        wxASSERT(state_result);
+        if (!state_result) {
+            return;
+        }
+        WORKUNIT* wup = state_result->wup;
+        if (!wup) {
+            return;
+        }
+        APP* app = wup->app;
+        if (!app) {
+            return;
+        }
 
+        wxString strLocalBuffer;
         wxString strLocale = wxString(setlocale(LC_NUMERIC, NULL), wxConvUTF8);
         setlocale(LC_NUMERIC, "C");
-        if (!state_result->wup->app->user_friendly_name.empty()) {
+        if (!app->user_friendly_name.empty()) {
             strLocalBuffer = HtmlEntityDecode(wxString(state_result->app->user_friendly_name.c_str(), wxConvUTF8));
         } else {
-            strLocalBuffer = HtmlEntityDecode(wxString(state_result->wup->avp->app_name.c_str(), wxConvUTF8));
+            strLocalBuffer = HtmlEntityDecode(wxString(wup->avp->app_name.c_str(), wxConvUTF8));
         }
-        if (state_result->wup->avp->plan_class.empty()) {
-            strBuffer.Printf(
-                wxT("%s %.2f"), 
-                strLocalBuffer.c_str(),
-                state_result->wup->avp->version_num/100.0
-            );
-        } else {
-            wxString planClass = wxString(state_result->wup->avp->plan_class.c_str(), wxConvUTF8);
-            strBuffer.Printf(
-                wxT("%s %.2f (%s)"), 
-                strLocalBuffer.c_str(),
-                state_result->wup->avp->version_num/100.0,
-                planClass.c_str()
-            );
+        APP_VERSION* avp = wup->avp;
+        if (avp) {
+            if (avp->plan_class.empty()) {
+                strBuffer.Printf(wxT("%s %.2f"), strLocalBuffer.c_str(), avp->version_num / 100.0);
+            } else {
+                wxString planClass = wxString(avp->plan_class.c_str(), wxConvUTF8);
+                strBuffer.Printf(wxT("%s %.2f (%s)"), strLocalBuffer.c_str(),
+                                 avp->version_num / 100.0, planClass.c_str());
+            }
         }
         setlocale(LC_NUMERIC, (const char*)strLocale.mb_str());
     }
 }
 
 void CViewWork::GetDocName(wxInt32 item, wxString& strBuffer) const {
-    RESULT* result = wxGetApp().GetDocument()->result(item);
-
-    wxASSERT(result);
-
-    if (result) {
-        strBuffer = wxString(result->name.c_str(), wxConvUTF8);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    RESULT* result = 0;
+    if (pDoc) {
+        result = pDoc->result(item);
+        if (result) {
+            strBuffer = wxString(result->name.c_str(), wxConvUTF8);
+        }
     }
 }
 
 void CViewWork::GetDocCPUTime(wxInt32 item, float& fBuffer) const {
-    RESULT*        result = wxGetApp().GetDocument()->result(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    RESULT* result = 0;
+    if (pDoc) {
+        result = pDoc->result(item);
+    }
 
     fBuffer = 0;
     if (result) {
@@ -857,7 +866,11 @@ wxInt32 CViewWork::FormatCPUTime(float fBuffer, wxString& strBuffer) const {
 }
 
 void CViewWork::GetDocProgress(wxInt32 item, float& fBuffer) const {
-    RESULT*        result = wxGetApp().GetDocument()->result(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    RESULT* result = 0;
+    if (pDoc) {
+        result = pDoc->result(item);
+    }
 
     fBuffer = 0;
     if (result) {
@@ -879,7 +892,11 @@ wxInt32 CViewWork::FormatProgress(float fBuffer, wxString& strBuffer) const {
 }
 
 void CViewWork::GetDocTimeToCompletion(wxInt32 item, float& fBuffer) const {
-    RESULT*        result = wxGetApp().GetDocument()->result(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    RESULT* result = 0;
+    if (pDoc) {
+        result = pDoc->result(item);
+    }
 
     fBuffer = 0;
     if (result) {
@@ -912,12 +929,15 @@ wxInt32 CViewWork::FormatTimeToCompletion(float fBuffer, wxString& strBuffer) co
 }
 
 void CViewWork::GetDocReportDeadline(wxInt32 item, time_t& time) const {
-    RESULT*        result = wxGetApp().GetDocument()->result(item);
-
-    if (result) {
-        time = result->report_deadline;
-    } else {
-        time = (time_t)0;
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    RESULT* result = 0;
+    if (pDoc) {
+        result = pDoc->result(item);
+        if (result) {
+            time = result->report_deadline;
+        } else {
+            time = (time_t)0;
+        }
     }
 }
 
@@ -929,16 +949,15 @@ wxInt32 CViewWork::FormatReportDeadline(time_t deadline, wxString& strBuffer) co
 }
 
 void CViewWork::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
-    CMainDocument* doc = wxGetApp().GetDocument();
-    RESULT*        result = wxGetApp().GetDocument()->result(item);
-    CC_STATUS      status;
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    RESULT* result = 0;
+    if (pDoc) {
+        result = pDoc->result(item);
+    }
+    CC_STATUS status;
+    int retval = pDoc->GetCoreClientStatus(status);
 
-    wxASSERT(doc);
-    wxASSERT(wxDynamicCast(doc, CMainDocument));
-
-    doc->GetCoreClientStatus(status);
-
-    if (!result) {
+    if ((retval) || (!result)) {
         strBuffer.Clear();
         return;
     }
@@ -1047,7 +1066,11 @@ wxInt32 CViewWork::FormatStatus(wxInt32 item, wxString& strBuffer) const {
 
 double CViewWork::GetProgressValue(long item) {
     float          fBuffer = 0;
-    RESULT*        result = wxGetApp().GetDocument()->result(m_iSortedIndexes[item]);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    RESULT* result = 0;
+    if (pDoc) {
+        result = pDoc->result(item);
+    }
 
     if (result) {
         if (result->active_task) {
