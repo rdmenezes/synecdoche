@@ -32,10 +32,10 @@
 #include <unistd.h>
 #include "version.h"
 
-int IsFileCurrent(char* filePath);
-int FixInfoPlistFile(char* myPath);
-int FixInfoPlist_Strings(char* myPath, char* brand);
-int MakeInstallerInfoPlistFile(char* myPath, char* brand);
+int IsFileCurrent(const char* filePath);
+int FixInfoPlistFile(const char* myPath);
+int FixInfoPlist_Strings(const char* myPath, const char* brand);
+int MakeInstallerInfoPlistFile(const char* myPath, const char* brand);
 
 int main(int argc, char** argv) {
     int retval = 0, err;
@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
     return retval;
 }
 
-char* version_string() {
+const char* version_string() {
 #if defined(SYNEC_PRERELEASE) && SYNEC_PRERELEASE == 1
 	return SYNEC_VERSION_STRING "pre";
 #else
@@ -75,7 +75,7 @@ char* version_string() {
 #endif
 }
 
-int IsFileCurrent(char* filePath) {
+int IsFileCurrent(const char* filePath) {
     FILE *f;
     char *c, buf[1024];
     
@@ -97,7 +97,7 @@ int IsFileCurrent(char* filePath) {
 }
 
 
-int FixInfoPlist_Strings(char* myPath, char* brand) {
+int FixInfoPlist_Strings(const char* myPath, const char* brand) {
     int retval = 0;
     FILE *f;
     
@@ -123,7 +123,7 @@ int FixInfoPlist_Strings(char* myPath, char* brand) {
 }
 
 
-int FixInfoPlistFile(char* myPath) {
+int FixInfoPlistFile(const char* myPath) {
     int retval = 0;
     FILE *fin = NULL, *fout = NULL;
     char *c, a, buf[1024];
@@ -205,7 +205,7 @@ bail:
 }
 
 
-int MakeInstallerInfoPlistFile(char* myPath, char* brand) {
+int MakeInstallerInfoPlistFile(const char* myPath, const char* brand) {
     int retval = 0;
     FILE *f;
     
