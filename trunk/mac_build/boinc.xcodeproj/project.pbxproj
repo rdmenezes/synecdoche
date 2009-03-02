@@ -38,6 +38,7 @@
 		0E44E6B90F5889520009950D /* svnversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E44E6AD0F5886880009950D /* svnversion.cpp */; };
 		0E44E6BE0F5889D40009950D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E44E6BD0F5889D40009950D /* OpenGL.framework */; };
 		0E44E6FE0F59BEF50009950D /* libboinc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD407A4A07D2FB1200163EF5 /* libboinc.a */; };
+		0E73D5550F5B409F006596B2 /* svnversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E44E6AD0F5886880009950D /* svnversion.cpp */; };
 		DD01B6790C16723C0023A806 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
 		DD01B7120C16723D0023A806 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD1929D80918A2F100C31BCF /* Security.framework */; };
 		DD0A06F50869A2D2007CD86E /* prefs.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BE407C5B1670043025C /* prefs.C */; };
@@ -519,7 +520,7 @@
 		0E44E6B50F5888E40009950D /* TaskViewBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TaskViewBase.cpp; sourceTree = "<group>"; };
 		0E44E6B60F5888E40009950D /* TaskViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskViewBase.h; sourceTree = "<group>"; };
 		0E44E6BD0F5889D40009950D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		AA8B6B1B046C364400A80164 /* app_ipc.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = app_ipc.C; path = ../lib/app_ipc.C; sourceTree = SOURCE_ROOT; };
 		AA8B6B1C046C364400A80164 /* app_ipc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = app_ipc.h; path = ../lib/app_ipc.h; sourceTree = SOURCE_ROOT; };
 		AAA31C97042157A800A80164 /* shmem.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = shmem.C; path = ../lib/shmem.C; sourceTree = SOURCE_ROOT; };
@@ -1713,6 +1714,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DD9E235D091CBDAE0048316E /* Build configuration list for PBXNativeTarget "SetVersion" */;
 			buildPhases = (
+				0E73D73A0F5B6AB5006596B2 /* ShellScript */,
 				DDAEC9DE07FA583B00A7BC36 /* Sources */,
 				DDAEC9DF07FA583B00A7BC36 /* Frameworks */,
 				DDAD1A380909139E004E7DD0 /* ShellScript */,
@@ -1946,8 +1948,21 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "../version.sh svnversion.cpp";
-			shellScript = "";
+			shellPath = /bin/sh;
+			shellScript = "(cd \"${SRCROOT}/..\" && ./version.sh svnversion.cpp)";
+		};
+		0E73D73A0F5B6AB5006596B2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "(cd \"${SRCROOT}/..\" && ./version.sh svnversion.cpp)";
 		};
 		DD1AFEB10A512D8700EE5B82 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2387,6 +2402,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E73D5550F5B409F006596B2 /* svnversion.cpp in Sources */,
 				DDAEC9FF07FA5A5C00A7BC36 /* SetVersion.C in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2649,6 +2665,366 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0E73D51F0F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_POSTPROCESSING = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				LIBRARY_STYLE = STATIC;
+				MACOSX_DEPLOYMENT_TARGET = "";
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.5;
+				OTHER_CFLAGS = (
+					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
+					"-D_THREAD_SAFE",
+					"-D_DEBUG",
+					"-DSANDBOX",
+					"-include",
+					../clientgui/mac/config.h,
+				);
+				"OTHER_CFLAGS[arch=x86_64]" = (
+					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1050",
+					"-D_THREAD_SAFE",
+					"-DDEBUG",
+					"-DSANDBOX",
+					"-include",
+					../clientgui/mac/config.h,
+				);
+				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -D_THREAD_SAFE -D_DEBUG -DSANDBOX -include ../clientgui/mac/config.h";
+				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -D_THREAD_SAFE -D_DEBUG -DSANDBOX -include ../clientgui/mac/config.h";
+				OTHER_CFLAGS_x86_64 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1050 -D_THREAD_SAFE -D_DEBUG -DSANDBOX -include ../clientgui/mac/config.h";
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Universal_Development;
+		};
+		0E73D5200F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Build_All;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Universal_Development;
+		};
+		0E73D5210F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
+				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Security,
+					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
+					"$(C_ARES_DIR)/i386/lib/libcares.a",
+					"-lcrypto",
+					"-lssl",
+					"-lldap",
+					"-lz",
+				);
+				"OTHER_LDFLAGS[arch=ppc]" = (
+					"-framework",
+					Security,
+					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
+					"$(C_ARES_DIR)/ppc/lib/libcares.a",
+					"-lcrypto",
+					"-lssl",
+					"-lldap",
+					"-lz",
+				);
+				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"-framework",
+					Security,
+					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
+					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"-lcrypto",
+					"-lssl",
+					"-lldap",
+					"-lz",
+				);
+				PRODUCT_NAME = boinc;
+				SKIP_INSTALL = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Universal_Development;
+		};
+		0E73D5220F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = stabs;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION_ppc = 3.3;
+				OTHER_LDFLAGS = "-lboinc";
+				PRODUCT_NAME = boinccmd;
+			};
+			name = Universal_Development;
+		};
+		0E73D5230F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION_ppc = 3.3;
+				PRODUCT_NAME = boinc;
+			};
+			name = Universal_Development;
+		};
+		0E73D5240F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION_ppc = 3.3;
+				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
+				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
+				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				PRODUCT_NAME = boinc_graphics2;
+			};
+			name = Universal_Development;
+		};
+		0E73D5250F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION_ppc = 3.3;
+				PRODUCT_NAME = boinc_api;
+			};
+			name = Universal_Development;
+		};
+		0E73D5260F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "SystemMenu-Info.plist";
+				LIBRARY_SEARCH_PATHS = /usr/lib/gcc/darwin/;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = SystemMenu;
+			};
+			name = Universal_Development;
+		};
+		0E73D5270F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = SetVersion;
+			};
+			name = Universal_Development;
+		};
+		0E73D5280F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "ScreenSaver-Info.plist";
+				OTHER_CFLAGS = (
+					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
+					"-D_THREAD_SAFE",
+					"-include",
+					../clientgui/mac/config.h,
+				);
+				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -D_THREAD_SAFE -include ../clientgui/mac/config.h";
+				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -D_THREAD_SAFE -include ../clientgui/mac/config.h";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = BOINCSaver;
+				WRAPPER_EXTENSION = saver;
+			};
+			name = Universal_Development;
+		};
+		0E73D5290F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = stabs;
+				GCC_VERSION_ppc = 3.3;
+				INFOPLIST_FILE = "PostInstall-Info.plist";
+				OTHER_CFLAGS = (
+					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
+					"-D_THREAD_SAFE",
+					"-D_DEBUG",
+					"-D_MAC_INSTALLER",
+					"-DSANDBOX",
+					"-include",
+					../clientgui/mac/config.h,
+				);
+				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -D_THREAD_SAFE -D_DEBUG -D_MAC_INSTALLER -DSANDBOX -include ../clientgui/mac/config.h";
+				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -D_THREAD_SAFE -D_DEBUG -D_MAC_INSTALLER -DSANDBOX -include ../clientgui/mac/config.h";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PRODUCT_NAME = PostInstall;
+			};
+			name = Universal_Development;
+		};
+		0E73D52A0F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = MakeAppIcon_h;
+			};
+			name = Universal_Development;
+		};
+		0E73D52B0F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PRODUCT_NAME = SetUpSecurity;
+			};
+			name = Universal_Development;
+		};
+		0E73D52C0F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = switcher;
+			};
+			name = Universal_Development;
+		};
+		0E73D52D0F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = stabs;
+				GCC_VERSION_ppc = 3.3;
+				INFOPLIST_FILE = "Installer-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PRODUCT_NAME = "BOINC Installer";
+			};
+			name = Universal_Development;
+		};
+		0E73D52E0F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = setprojectgrp;
+			};
+			name = Universal_Development;
+		};
+		0E73D52F0F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_PFE_FILE_C_DIALECTS = "c++";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ../clientgui/mac/MacGUI.pch;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(WX_DIRECTORY)/src/build/include/",
+					"$(WX_DIRECTORY)/include",
+					../clientgui,
+				);
+				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_5)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_4 = "\"$(WX_DIRECTORY)/src/build/Development/\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_5 = "\"../lib\"";
+				OTHER_CFLAGS = (
+					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
+					"-DHAVE_CONFIG_H",
+					"-D_FILE_OFFSET_BITS=64",
+					"-D_LARGE_FILES",
+					"-DNO_GCC_PRAGMA",
+					"-DNOCLIPBOARD",
+					"-D_THREAD_SAFE",
+					"-D__WXMAC__",
+					"-DSANDBOX",
+					"-D_DEBUG",
+					"-DHAVE_STRCASECMP_IN_STRING_H",
+				);
+				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA -DNOCLIPBOARD -D_THREAD_SAFE -D__WXMAC__ -DSANDBOX -D_DEBUG -DHAVE_STRCASECMP_IN_STRING_H";
+				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA -DNOCLIPBOARD -D_THREAD_SAFE -D__WXMAC__ -DSANDBOX -D_DEBUG -DHAVE_STRCASECMP_IN_STRING_H";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-bind_at_load",
+					"-D_THREAD_SAFE",
+					"-lz",
+					"-lpthread",
+					"-liconv",
+					"-lz",
+					"-lm",
+				);
+				PRODUCT_NAME = Synecdoche;
+				SKIP_INSTALL = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+			};
+			name = Universal_Development;
+		};
+		0E73D5300F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "Uninstaller-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PRODUCT_NAME = "Uninstall BOINC";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Universal_Development;
+		};
+		0E73D5310F5B3EA6006596B2 /* Universal_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = gfx_switcher;
+			};
+			name = Universal_Development;
+		};
 		DD1AFEB60A512D8700EE5B82 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3567,7 +3943,7 @@
 				LIBRARY_STYLE = STATIC;
 				MACOSX_DEPLOYMENT_TARGET = "";
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
 					"-D_THREAD_SAFE",
@@ -3578,9 +3954,9 @@
 				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -D_THREAD_SAFE -D_DEBUG -include ../clientgui/mac/config.h";
 				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -D_THREAD_SAFE -D_DEBUG -include ../clientgui/mac/config.h";
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -3608,7 +3984,7 @@
 				LIBRARY_STYLE = STATIC;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
 					"-D_THREAD_SAFE",
@@ -3621,7 +3997,7 @@
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -3693,7 +4069,7 @@
 				LIBRARY_STYLE = STATIC;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.4;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -3709,7 +4085,7 @@
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = (
@@ -4237,7 +4613,7 @@
 				LIBRARY_STYLE = STATIC;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.5;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -4277,7 +4653,7 @@
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = (
@@ -4656,7 +5032,7 @@
 				LIBRARY_STYLE = STATIC;
 				MACOSX_DEPLOYMENT_TARGET = "";
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.5;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -4678,9 +5054,9 @@
 				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -D_THREAD_SAFE -D_DEBUG -DSANDBOX -include ../clientgui/mac/config.h";
 				OTHER_CFLAGS_x86_64 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1050 -D_THREAD_SAFE -D_DEBUG -DSANDBOX -include ../clientgui/mac/config.h";
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 				WARNING_CFLAGS = (
@@ -4705,7 +5081,7 @@
 				LIBRARY_STYLE = STATIC;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
 					"-D_THREAD_SAFE",
@@ -4717,9 +5093,9 @@
 				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -D_THREAD_SAFE -DNDEBUG -DSANDBOX -include ../clientgui/mac/config.h";
 				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -D_THREAD_SAFE -DNDEBUG -DSANDBOX -include ../clientgui/mac/config.h";
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -4917,7 +5293,7 @@
 				LIBRARY_STYLE = STATIC;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
 					"-D_THREAD_SAFE",
@@ -4931,7 +5307,7 @@
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -5143,6 +5519,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD1AFEB60A512D8700EE5B82 /* Development */,
+				0E73D52D0F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3970A801FB500B3D68A /* Dev_noSandbox */,
 				DD1AFEB70A512D8700EE5B82 /* ppc_Deployment */,
 				DD1AFEB80A512D8700EE5B82 /* i386_Deployment */,
@@ -5157,6 +5534,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD3E153E0A774397007E0084 /* Development */,
+				0E73D52F0F5B3EA6006596B2 /* Universal_Development */,
 				DD62C39D0A801FB500B3D68A /* Dev_noSandbox */,
 				DD3E153F0A774397007E0084 /* ppc_Deployment */,
 				DD3E15400A774397007E0084 /* i386_Deployment */,
@@ -5171,6 +5549,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD4688450C165F3C0089F500 /* Development */,
+				0E73D5300F5B3EA6006596B2 /* Universal_Development */,
 				DD4688460C165F3C0089F500 /* Dev_noSandbox */,
 				DD4688470C165F3C0089F500 /* ppc_Deployment */,
 				DD4688480C165F3C0089F500 /* i386_Deployment */,
@@ -5185,6 +5564,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD7748A60A356CAE0025D05E /* Development */,
+				0E73D52B0F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3930A801FB500B3D68A /* Dev_noSandbox */,
 				DD7748A70A356CAE0025D05E /* ppc_Deployment */,
 				DD7748A80A356CAE0025D05E /* i386_Deployment */,
@@ -5199,6 +5579,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E2352091CBDAE0048316E /* Development */,
+				0E73D5230F5B3EA6006596B2 /* Universal_Development */,
 				DD62C37D0A801FB400B3D68A /* Dev_noSandbox */,
 				DD9E2353091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D1570952A93E00D0B538 /* i386_Deployment */,
@@ -5213,6 +5594,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E235A091CBDAE0048316E /* Development */,
+				0E73D5250F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3810A801FB400B3D68A /* Dev_noSandbox */,
 				DD9E235B091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D1590952A93E00D0B538 /* i386_Deployment */,
@@ -5227,6 +5609,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E235E091CBDAE0048316E /* Development */,
+				0E73D5270F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3830A801FB400B3D68A /* Dev_noSandbox */,
 				DD9E235F091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D15A0952A93E00D0B538 /* i386_Deployment */,
@@ -5241,6 +5624,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E2362091CBDAE0048316E /* Development */,
+				0E73D5280F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3850A801FB400B3D68A /* Dev_noSandbox */,
 				DD9E2363091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D15B0952A93E00D0B538 /* i386_Deployment */,
@@ -5255,6 +5639,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E2366091CBDAE0048316E /* Development */,
+				0E73D5210F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3870A801FB500B3D68A /* Dev_noSandbox */,
 				DD9E2367091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D15C0952A93E00D0B538 /* i386_Deployment */,
@@ -5269,6 +5654,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E236A091CBDAE0048316E /* Development */,
+				0E73D5260F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3890A801FB500B3D68A /* Dev_noSandbox */,
 				DD9E236B091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D15D0952A93E00D0B538 /* i386_Deployment */,
@@ -5283,6 +5669,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E2372091CBDAE0048316E /* Development */,
+				0E73D5290F5B3EA6006596B2 /* Universal_Development */,
 				DD62C38D0A801FB500B3D68A /* Dev_noSandbox */,
 				DD9E2373091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D15F0952A93E00D0B538 /* i386_Deployment */,
@@ -5297,6 +5684,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E2376091CBDAE0048316E /* Development */,
+				0E73D5220F5B3EA6006596B2 /* Universal_Development */,
 				DD62C38F0A801FB500B3D68A /* Dev_noSandbox */,
 				DD9E2377091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D1600952A93E00D0B538 /* i386_Deployment */,
@@ -5311,6 +5699,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E237A091CBDAE0048316E /* Development */,
+				0E73D52A0F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3910A801FB500B3D68A /* Dev_noSandbox */,
 				DD9E237B091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D1610952A93E00D0B538 /* i386_Deployment */,
@@ -5325,6 +5714,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E237E091CBDAE0048316E /* Development */,
+				0E73D5200F5B3EA6006596B2 /* Universal_Development */,
 				DD62C39B0A801FB500B3D68A /* Dev_noSandbox */,
 				DD9E237F091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D1620952A93E00D0B538 /* i386_Deployment */,
@@ -5339,6 +5729,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD9E2382091CBDAE0048316E /* Development */,
+				0E73D51F0F5B3EA6006596B2 /* Universal_Development */,
 				DD62C39F0A801FB500B3D68A /* Dev_noSandbox */,
 				DD9E2383091CBDAE0048316E /* ppc_Deployment */,
 				DDA2D1630952A93E00D0B538 /* i386_Deployment */,
@@ -5353,6 +5744,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DDB873FD0C850BC800E0DE1F /* Development */,
+				0E73D5240F5B3EA6006596B2 /* Universal_Development */,
 				DDB873FE0C850BC800E0DE1F /* Dev_noSandbox */,
 				DDB873FF0C850BC800E0DE1F /* ppc_Deployment */,
 				DDB874000C850BC800E0DE1F /* i386_Deployment */,
@@ -5367,6 +5759,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DDD095420A3EDD4300C95BA4 /* Development */,
+				0E73D52C0F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3950A801FB500B3D68A /* Dev_noSandbox */,
 				DDD095430A3EDD4300C95BA4 /* ppc_Deployment */,
 				DDD095440A3EDD4300C95BA4 /* i386_Deployment */,
@@ -5381,6 +5774,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DDFA60CE0CB337D40037B88C /* Development */,
+				0E73D5310F5B3EA6006596B2 /* Universal_Development */,
 				DDFA60CF0CB337D40037B88C /* Dev_noSandbox */,
 				DDFA60D00CB337D40037B88C /* ppc_Deployment */,
 				DDFA60D10CB337D40037B88C /* i386_Deployment */,
@@ -5395,6 +5789,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DDFF2ACF0A53D4AE002BC19D /* Development */,
+				0E73D52E0F5B3EA6006596B2 /* Universal_Development */,
 				DD62C3990A801FB500B3D68A /* Dev_noSandbox */,
 				DDFF2AD00A53D4AE002BC19D /* ppc_Deployment */,
 				DDFF2AD10A53D4AE002BC19D /* i386_Deployment */,
