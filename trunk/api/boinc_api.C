@@ -21,7 +21,8 @@
 
 #if defined(_WIN32) || defined(__APPLE__)
 #include "version.h"
-#else
+#endif
+#if !defined(_WIN32)
 #include "config.h"
 #include <cstdlib>
 #include <cstring>
