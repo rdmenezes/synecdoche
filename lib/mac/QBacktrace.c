@@ -929,6 +929,7 @@ static int MachInitContextFromTask(
 #pragma mark ***** CPU Specific
 
 #pragma mark - PowerPC
+#if TARGET_CPU_PPC
 
 /*	PowerPC Stack Frame Basics
 	--------------------------
@@ -1034,7 +1035,7 @@ static int PowerPCHandleLeaf(QBTContext *context, QTMAddr *pcPtr, QTMAddr *frame
 	// Get the pc and lr from the thread state.
 	
     err = 0;
-#ifdef __DARWIN_UNIX03
+#if __DARWIN_UNIX03
     switch (context->threadStateFlavor) {
         case PPC_THREAD_STATE:
             pc = ((const ppc_thread_state_t *) context->threadState)->__srr0;
@@ -1482,6 +1483,7 @@ static int PowerPCCrossSignalFrame(QBTContext *context, QTMAddr thisFrame, QTMAd
 	
 	return err;
 }
+#endif // TARGET_CPU_PPC
 
 #pragma mark - Intel
 #if TARGET_CPU_X86 || TARGET_CPU_X86_64
@@ -1589,7 +1591,7 @@ static int IntelHandleLeaf(QBTContext *context, QTMAddr *pcPtr, QTMAddr *framePt
 	
     err = 0;
     switch (context->threadStateFlavor) {
-#if defined(__LP64__) || defined(__DARWIN_UNIX03)
+#if __DARWIN_UNIX03
         case x86_THREAD_STATE64:
 
             pc = ((const x86_thread_state64_t *) context->threadState)->__rip;
@@ -2014,6 +2016,7 @@ static int Intel64CrossSignalFrame(QBTContext *context, QTMAddr thisFrame, QTMAd
 // each field.
 
 static const QBTArchInfo kArchitectures[] = {
+#if TARGET_CPU_PPC
 	{	// PowerPC
         "ppc",                      // name
 		CPU_TYPE_POWERPC,			// cputype
@@ -2027,6 +2030,7 @@ static const QBTArchInfo kArchitectures[] = {
 		PPC_THREAD_STATE,			// stateFlavor
 		PPC_THREAD_STATE_COUNT		// stateCount
 	},
+#endif // TARGET_CPU_PPC
 #if 0       // Not supported by BOINC
 	{	// PowerPC64
         "ppc64",                    // name
@@ -2475,7 +2479,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = PPC_THREAD_STATE;
         state = (ppc_thread_state_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#ifdef __DARWIN_UNIX03
+#if __DARWIN_UNIX03
             state->__srr0 = (uintptr_t) pc;
             state->__r1   = (uintptr_t) fp;
 #else
@@ -2489,7 +2493,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = PPC_THREAD_STATE64;
         state = (ppc_thread_state64_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#ifdef __DARWIN_UNIX03
+#if __DARWIN_UNIX03
             state->__srr0 = (uintptr_t) pc;
             state->__r1   = (uintptr_t) fp;
 #else
@@ -2503,7 +2507,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = x86_THREAD_STATE32;
         state = (x86_thread_state32_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#ifdef __DARWIN_UNIX03
+#if __DARWIN_UNIX03
             state->__eip = (uintptr_t) pc;
             state->__ebp = (uintptr_t) fp;
 #else
@@ -2517,7 +2521,7 @@ extern int QBTCreateThreadStateSelf(
         flavor = x86_THREAD_STATE64;
         state = (x86_thread_state64_t *) calloc(1, sizeof(*state));
         if (state != NULL) {
-#if defined(__LP64__) || defined(__DARWIN_UNIX03)
+#if __DARWIN_UNIX03
             state->__rip = (uintptr_t) pc;
             state->__rbp = (uintptr_t) fp;
 #else
