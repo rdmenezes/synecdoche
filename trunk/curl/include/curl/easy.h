@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.h,v 1.14 2008-05-12 21:43:28 bagder Exp $
+ * $Id: easy.h 16111 2008-10-02 18:32:54Z romw $
  ***************************************************************************/
 #ifdef  __cplusplus
 extern "C" {
