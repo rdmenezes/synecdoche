@@ -186,7 +186,7 @@ int SetBOINCAppOwnersGroupsAndPermissions(char *path) {
 
     // Get the full path to BOINC Clients inside this application's bundle
     strlcpy(fullpath, dir_path, sizeof(fullpath));
-    strlcat(fullpath, "/Contents/Resources/boinc", sizeof(fullpath));
+    strlcat(fullpath, "/Contents/Resources/synecd", sizeof(fullpath));
     if (strlen(fullpath) >= (MAXPATHLEN-1)) {
         ShowSecurityError("SetBOINCAppOwnersGroupsAndPermissions: path to client is too long");
         return -1;

@@ -41,7 +41,7 @@
 
 if [ $# -lt 3 ]; then
 echo "Usage:"
-echo "   cd [path]/boinc"
+echo "   cd [path]/synecd"
 echo "   source [path_to_this_script] major_version minor_version revision_number"
 return 1
 fi
@@ -111,7 +111,7 @@ cp -fpR $BUILDPATH/setprojectgrp ../BOINC_Installer/Pkg_Root/Library/Application
 
 cp -fp curl/ca-bundle.crt ../BOINC_Installer/Pkg_Root/Library/Application\ Support/BOINC\ Data/
 
-cp -fpR $BUILDPATH/BOINCManager.app ../BOINC_Installer/Pkg_Root/Applications/
+cp -fpR $BUILDPATH/Synecdoche.app ../BOINC_Installer/Pkg_Root/Applications/
 
 cp -fpR $BUILDPATH/BOINCSaver.saver ../BOINC_Installer/Pkg_Root/Library/Screen\ Savers/
 

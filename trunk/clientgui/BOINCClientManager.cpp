@@ -227,10 +227,10 @@ bool CBOINCClientManager::StartupBOINCCore() {
 #if 0   // The Mac version of wxExecute(wxString& ...) crashes if there is a space in the path
             strExecute = wxT("\"");            
             strExecute += wxT(buf);
-            strExecute += wxT("/Contents/Resources/boinc\" --redirectio --launched_by_manager");
+            strExecute += wxT("/Contents/Resources/synecd\" --redirectio --launched_by_manager");
             m_lBOINCCoreProcessId = ::wxExecute(strExecute);
 #else   // Use wxExecute(wxChar **argv ...) instead of wxExecute(wxString& ...)
-            strcat(buf, "/Contents/Resources/boinc");
+            strcat(buf, "/Contents/Resources/synecd");
             argv[0] = buf;
             argv[1] = "--redirectio";
             argv[2] = "--launched_by_manager";

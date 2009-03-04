@@ -220,12 +220,12 @@ if [ -f boinc_cmd ] ; then
     set_perm boinc_cmd boinc_master boinc_master 0550
 fi
 
-if [ -x /Applications/BOINCManager.app/Contents/MacOS/BOINCManager ] ; then 
-    set_perm  /Applications/BOINCManager.app/Contents/MacOS/BOINCManager boinc_master boinc_master 2555
+if [ -x /Applications/Synecdoche.app/Contents/MacOS/Synecdoche ] ; then 
+    set_perm  /Applications/Synecdoche.app/Contents/MacOS/Synecdoche boinc_master boinc_master 2555
 fi
 
-if [ -x /Applications/BOINCManager.app/Contents/Resources/boinc ] ; then 
-    set_perm /Applications/BOINCManager.app/Contents/Resources/boinc boinc_master boinc_master 6555
+if [ -x /Applications/Synecdoche.app/Contents/Resources/synecd ] ; then 
+    set_perm /Applications/Synecdoche.app/Contents/Resources/synecd boinc_master boinc_master 6555
 fi
 
 # Version 6 screensaver has its own embedded switcher application, but older versions don't.

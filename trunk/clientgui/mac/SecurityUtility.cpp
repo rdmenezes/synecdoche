@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     getwd(boincPath);
     //ShowSecurityError("Current Working Directory is %s", wd);
 
-    strlcat(boincPath, "/BOINCManager.app", sizeof(boincPath));
+    strlcat(boincPath, "/Synecdoche.app", sizeof(boincPath));
     err = SetBOINCAppOwnersGroupsAndPermissions(boincPath);
     if (err != noErr)
         return err;
