@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     sleep(2);
 
     // Core Client may still be running if it was started without Manager
-    coreClientPID = FindProcessPID("boinc", 0);
+    coreClientPID = FindProcessPID("synecd", 0);
     if (coreClientPID)
         kill(coreClientPID, SIGTERM);   // boinc catches SIGTERM & exits gracefully
 

@@ -227,7 +227,7 @@ OSStatus CScreensaver::initBOINCApp() {
         break;
     }
 
-    m_CoreClientPID = FindProcessPID("boinc", 0);
+    m_CoreClientPID = FindProcessPID("synecd", 0);
     if (m_CoreClientPID) {
         m_wasAlreadyRunning = true;
         saverState = SaverState_LaunchingCoreClient;
@@ -245,11 +245,11 @@ OSStatus CScreensaver::initBOINCApp() {
         if (brandId)
             strcat(boincPath, m_BrandText);
         else
-            strcat(boincPath, "BOINCManager");
+            strcat(boincPath, "Synecdoche");
             strcat(boincPath, ".app");
     }
     
-    strcat(boincPath, "/Contents/Resources/boinc");
+    strcat(boincPath, "/Contents/Resources/synecd");
 
     if ( (myPid = fork()) < 0)
         return -1;
@@ -476,7 +476,7 @@ void CScreensaver::HandleRPCError() {
     // process of shutting down just as ScreenSaver started, so initBOINCApp() 
     // found it already running but now it has shut down.  This code takes 
     // care of that and other situations where the Core Client quits unexpectedy.  
-    if (FindProcessPID("boinc", 0) == 0) {
+    if (FindProcessPID("synecd", 0) == 0) {
         saverState = SaverState_RelaunchCoreClient;
         m_bResetCoreState = true;
      }

@@ -140,7 +140,7 @@ static OSStatus DoUninstall(void) {
     sleep(2);
 
     // Core Client may still be running if it was started without Manager
-    coreClientPID = FindProcessPID("boinc", 0);
+    coreClientPID = FindProcessPID("synecd", 0);
     if (coreClientPID)
         kill(coreClientPID, SIGTERM);   // boinc catches SIGTERM & exits gracefully
 
@@ -195,7 +195,7 @@ static OSStatus DoUninstall(void) {
     // Phase 4: Delete our files and directories at our installer's default locations
     // Remove everything we've installed, whether BOINC or GridRepublic
     // These first 4 should already have been deleted by the above code, but do them anyway for safety
-    system ("rm -rf /Applications/BOINCManager.app");
+    system ("rm -rf /Applications/Synecdoche.app");
     system ("rm -rf \"/Library/Screen Savers/BOINCSaver.saver\"");
     
     system ("rm -rf \"/Applications/GridRepublic Desktop.app\"");

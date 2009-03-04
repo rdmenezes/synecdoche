@@ -93,9 +93,9 @@ then
     exit
 fi
 
-if [ ! -f "boinc" ]
+if [ ! -f "synecd" ]
 then
-    echo "Can't find boinc Client in directory $(pwd); exiting"
+    echo "Can't find Synecdoche daemon in directory $(pwd); exiting"
     exit
 fi
 
@@ -109,14 +109,14 @@ chown root:${group} switcher/AppStats
 chmod 4550 switcher/AppStats
 fi
 
-if [ -x /Applications/BOINCManager.app/Contents/MacOS/BOINCManager ] ; then 
-    chown ${user}:${group} /Applications/BOINCManager.app/Contents/MacOS/BOINCManager
-    chmod -R u+r-w+s,g+r-ws,o+r-ws /Applications/BOINCManager.app/Contents/MacOS/BOINCManager
+if [ -x /Applications/Synecdoche.app/Contents/MacOS/Synecdoche ] ; then 
+    chown ${user}:${group} /Applications/Synecdoche.app/Contents/MacOS/Synecdoche
+    chmod -R u+r-w+s,g+r-ws,o+r-ws /Applications/Synecdoche.app/Contents/MacOS/Synecdoche
 fi
 
-if [ -x /Applications/BOINCManager.app/Contents/Resources/boinc ] ; then 
-    chown ${user}:${group} /Applications/BOINCManager.app/Contents/Resources/boinc
-    chmod -R u+r-ws,g+r-ws,o+r-ws /Applications/BOINCManager.app/Contents/Resources/boinc
+if [ -x /Applications/Synecdoche.app/Contents/Resources/synecd ] ; then 
+    chown ${user}:${group} /Applications/Synecdoche.app/Contents/Resources/synecd
+    chmod -R u+r-ws,g+r-ws,o+r-ws /Applications/Synecdoche.app/Contents/Resources/synecd
 fi
 
 # Version 6 screensaver has its own embedded switcher application, but older versions don't.
