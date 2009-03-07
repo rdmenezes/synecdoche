@@ -252,7 +252,7 @@ int use_sandbox, int isManager
 
         if (use_sandbox) {
             // Does gfx_switcher exist in screensaver bundle?
-            strcpy(full_path, "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher");
+            strcpy(full_path, "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher");
             retval = stat(full_path, &sbuf);
             if (! retval) {
 #ifdef _DEBUG

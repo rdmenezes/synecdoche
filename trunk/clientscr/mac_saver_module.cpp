@@ -240,7 +240,7 @@ OSStatus CScreensaver::initBOINCApp() {
         return -1;
 
     err = GetpathToBOINCManagerApp(boincPath, sizeof(boincPath));
-    if (err) {   // If we couldn't find BOINCManager.app, try default path
+    if (err) {   // If we couldn't find Synecdoche.app, try default path
         strcpy(boincPath, "/Applications/");
         if (brandId)
             strcat(boincPath, m_BrandText);
@@ -702,8 +702,8 @@ pid_t CScreensaver::FindProcessPID(char* name, pid_t thePID)
 
 OSErr CScreensaver::GetpathToBOINCManagerApp(char* path, int maxLen)
 {
-    CFStringRef bundleID = CFSTR("edu.berkeley.boinc");
-    OSType creator = 'BNC!';
+    CFStringRef bundleID = CFSTR("com.googlecode.synecdoche.manager");
+    OSType creator = 'SYNE';
     FSRef theFSRef;
     OSStatus status = noErr;
 

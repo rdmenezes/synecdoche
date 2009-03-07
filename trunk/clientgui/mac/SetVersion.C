@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2005 University of California, 2009 Michael Tughan
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -224,7 +224,7 @@ int MakeInstallerInfoPlistFile(const char* myPath, const char* brand) {
         fprintf(f, "<plist version=\"1.0\">\n<dict>\n");
         fprintf(f, "\t<key>CFBundleGetInfoString</key>\n");
         fprintf(f, "\t<string>%s %s</string>\n", brand, versionString.c_str());
-        fprintf(f, "\t<key>CFBundleIdentifier</key>\n\t<string>edu.berkeley.boinc</string>\n");
+        fprintf(f, "\t<key>CFBundleIdentifier</key>\n\t<string>%s</string>\n", "${BUNDLE_IDENTIFIER}");
         fprintf(f, "\t<key>CFBundleShortVersionString</key>\n");
         fprintf(f, "\t<string>%s</string>\n", versionString.c_str());
         fprintf(f, "\t<key>IFPkgFlagAllowBackRev</key>\n\t<integer>1</integer>\n");

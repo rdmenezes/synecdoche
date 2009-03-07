@@ -94,7 +94,7 @@ int CBOINCClientManager::IsBOINCConfiguredAsDaemon() {
 #if   defined(__WXMSW__)
     if (IsBOINCServiceInstalled()) bReturnValue = 1;
 #elif defined(__WXMAC__)
-    if ( boinc_file_exists("/Library/LaunchDaemons/edu.berkeley.boinc.plist")) {
+    if ( boinc_file_exists("/Library/LaunchDaemons/com.googlecode.synecdoche.plist")) {
         bReturnValue = NewStyleDaemon;                      // New-style daemon uses launchd
     }
     if (boinc_file_exists("/Library/StartupItems/boinc/boinc") ) {
@@ -210,8 +210,8 @@ bool CBOINCClientManager::StartupBOINCCore() {
     OSErr err;
 
     if (IsBOINCConfiguredAsDaemon() == NewStyleDaemon) {
-        system ("launchctl load /Library/LaunchDaemons/edu.berkeley.boinc.plist");
-        system ("launchctl start edu.berkeley.boinc");
+        system ("launchctl load /Library/LaunchDaemons/com.googlecode.synecdoche.plist");
+        system ("launchctl start com.googleccode.synecdoche");
         bReturnValue = IsBOINCCoreRunning();
     } else {
         

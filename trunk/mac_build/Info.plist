@@ -9,14 +9,14 @@
 	<key>CFBundleIconFile</key>
 	<string>synecdoche.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>edu.berkeley.boinc</string>
+	<string>${BUNDLE_IDENTIFIER}.manager</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
-	<string>????</string>
+	<string>SYNE</string>
 	<key>CFBundleVersion</key>
-	<string>0.1.1pre</string>
+	<string>0.1.1 r683M</string>
 </dict>
 </plist>

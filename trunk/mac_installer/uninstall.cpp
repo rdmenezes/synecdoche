@@ -136,7 +136,7 @@ static OSStatus DoUninstall(void) {
     ShowMessage(false, "Permission OK after relaunch");
 #endif
 
-    QuitBOINCManager('BNC!'); // Quit any old instance of BOINC manager
+    QuitBOINCManager('SYNE'); // Quit any old instance of BOINC manager
     sleep(2);
 
     // Core Client may still be running if it was started without Manager
@@ -187,16 +187,16 @@ static OSStatus DoUninstall(void) {
     }
 
     // Phase 2: step through default Applications directory searching for our applications
-    err = DeleteOurBundlesFromDirectory(CFSTR("edu.berkeley.boinc"), "app", "/Applications");
+    err = DeleteOurBundlesFromDirectory(CFSTR("com.googlecode.synecdoche.manager"), "app", "/Applications");
 
     // Phase 3: step through default Screen Savers directory searching for our screen savers
-    err = DeleteOurBundlesFromDirectory(CFSTR("edu.berkeley.boincsaver"), "saver", "/Library/Screen Savers");
+    err = DeleteOurBundlesFromDirectory(CFSTR("com.googlecode.synecdoche.screensaver"), "saver", "/Library/Screen Savers");
 
     // Phase 4: Delete our files and directories at our installer's default locations
     // Remove everything we've installed, whether BOINC or GridRepublic
     // These first 4 should already have been deleted by the above code, but do them anyway for safety
     system ("rm -rf /Applications/Synecdoche.app");
-    system ("rm -rf \"/Library/Screen Savers/BOINCSaver.saver\"");
+    system ("rm -rf \"/Library/Screen Savers/Synecdoche.saver\"");
     
     system ("rm -rf \"/Applications/GridRepublic Desktop.app\"");
     system ("rm -rf \"/Library/Screen Savers/GridRepublic.saver\"");
@@ -222,8 +222,8 @@ static OSStatus DoUninstall(void) {
 
 static OSStatus GetpathToBOINCManagerApp(char* path, int maxLen, FSRef *theFSRef)
 {
-    CFStringRef             bundleID = CFSTR("edu.berkeley.boinc");
-    OSType                  creator = 'BNC!';
+    CFStringRef             bundleID = CFSTR("com.googlecode.synecdoche.manager");
+    OSType                  creator = 'SYNE';
     OSStatus                status = noErr;
 
         status = LSFindApplicationForInfo(creator, bundleID, NULL, theFSRef, NULL);
@@ -390,7 +390,7 @@ static OSStatus CleanupAllVisibleUsers(void)
         f = popen("defaults -currentHost read com.apple.screensaver moduleName", "r");
         if (f) {
             PersistentFGets(s, sizeof(s), f);
-            if (strstr(s, "BOINCSaver"))
+            if (strstr(s, "Synecdoche"))
                 changeSaver = true;
             if (strstr(s, "GridRepublic"))
                 changeSaver = true;

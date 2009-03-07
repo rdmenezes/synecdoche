@@ -229,6 +229,6 @@ if [ -x /Applications/Synecdoche.app/Contents/Resources/synecd ] ; then
 fi
 
 # Version 6 screensaver has its own embedded switcher application, but older versions don't.
-if [ -x "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher" ] ; then 
-    set_perm  "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher" root boinc_master 4555
+if [ -x "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher" ] ; then 
+    set_perm  "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher" root boinc_master 4555
 fi

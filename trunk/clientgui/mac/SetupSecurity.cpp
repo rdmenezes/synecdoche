@@ -140,12 +140,12 @@ int SetBOINCAppOwnersGroupsAndPermissions(char *path) {
     strlcpy(fullpath, dir_path, sizeof(fullpath));
 
 #ifdef _DEBUG
-    // chmod -R u+rw,g+rw,o+r-w path/BOINCManager.app
+    // chmod -R u+rw,g+rw,o+r-w path/Synecdoche.app
     // 0775 = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
     //  read, write permission for user;  read and execute permission for group and others
     err = DoPrivilegedExec(chmodPath, "-R", "u+rw,g+rw,o+r-w", fullpath, NULL, NULL);
 #else
-    // chmod -R u+r-w,g+r-w,o+r-w path/BOINCManager.app
+    // chmod -R u+r-w,g+r-w,o+r-w path/Synecdoche.app
     // 0555 = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
     //  read, write permission for user;  read and execute permission for group and others
     err = DoPrivilegedExec(chmodPath, "-R", "u+r-w,g+r-w,o+r-w", fullpath, NULL, NULL);
@@ -153,7 +153,7 @@ int SetBOINCAppOwnersGroupsAndPermissions(char *path) {
     if (err)
         return err;
 
-    // Get the full path to BOINC Manager executable inside this application's bundle
+    // Get the full path to Synecdoche manager executable inside this application's bundle
     strlcat(fullpath, "/Contents/MacOS/", sizeof(fullpath));
     // To allow for branding, assume name of executable inside bundle is same as name of bundle
     p = strrchr(dir_path, '/');         // Assume name of executable inside bundle is same as name of bundle
@@ -165,18 +165,18 @@ int SetBOINCAppOwnersGroupsAndPermissions(char *path) {
         *p = '\0'; 
 
     sprintf(buf1, "%s:%s", boinc_master_user_name, boinc_master_group_name);
-    // chown boinc_master:boinc_master path/BOINCManager.app/Contents/MacOS/BOINCManager
+    // chown boinc_master:boinc_master path/Synecdoche.app/Contents/MacOS/Synecdoche
     err = DoPrivilegedExec(chownPath, buf1, fullpath, NULL, NULL, NULL);
     if (err)
         return err;
 
 #ifdef _DEBUG
-        // chmod u=rwx,g=rwsx,o=rx path/BOINCManager.app/Contents/MacOS/BOINCManager
+        // chmod u=rwx,g=rwsx,o=rx path/Synedoche.app/Contents/MacOS/Synecdoche
         // 02775 = S_ISGID | S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IXOTH
         //  setgid-on-execution plus read, write and execute permission for user, group & others
         err = DoPrivilegedExec(chmodPath, "u=rwx,g=rwsx,o=rx", fullpath, NULL, NULL, NULL);
 #else
-        // chmod u=rx,g=rsx,o=rx path/BOINCManager.app/Contents/MacOS/BOINCManager
+        // chmod u=rx,g=rsx,o=rx path/Synecdoche.app/Contents/MacOS/Synecdoche
         // 02555 = S_ISGID | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
         //  setgid-on-execution plus read and execute permission for user, group & others
         err = DoPrivilegedExec(chmodPath, "u=rx,g=rsx,o=rx", fullpath, NULL, NULL, NULL);
@@ -184,7 +184,7 @@ int SetBOINCAppOwnersGroupsAndPermissions(char *path) {
     if (err)
         return err;
 
-    // Get the full path to BOINC Clients inside this application's bundle
+    // Get the full path to the Synecdoche core client inside this application's bundle
     strlcpy(fullpath, dir_path, sizeof(fullpath));
     strlcat(fullpath, "/Contents/Resources/synecd", sizeof(fullpath));
     if (strlen(fullpath) >= (MAXPATHLEN-1)) {
@@ -193,18 +193,18 @@ int SetBOINCAppOwnersGroupsAndPermissions(char *path) {
     }
     
     sprintf(buf1, "%s:%s", boinc_master_user_name, boinc_master_group_name);
-    // chown boinc_master:boinc_master path/BOINCManager.app/Contents/Resources/boinc
+    // chown boinc_master:boinc_master path/Synecdoche.app/Contents/Resources/synecd
     err = DoPrivilegedExec(chownPath, buf1, fullpath, NULL, NULL, NULL);
     if (err)
         return err;
 
 #ifdef _DEBUG
-        // chmod u=rwsx,g=rwsx,o=rx path/BOINCManager.app/Contents/Resources/boinc
+        // chmod u=rwsx,g=rwsx,o=rx path/Synecdoche.app/Contents/Resources/synecd
         // 06775 = S_ISUID | S_ISGID | S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IXOTH
         //  setuid-on-execution, setgid-on-execution plus read, write and execute permission for user, group & others
         err = DoPrivilegedExec(chmodPath, "u=rwsx,g=rwsx,o=rx", fullpath, NULL, NULL, NULL);
 #else
-        // chmod u=rsx,g=rsx,o=rx path/BOINCManager.app/Contents/Resources/boinc
+        // chmod u=rsx,g=rsx,o=rx path/Synecdoche.app/Contents/Resources/synecd
         // 06555 = S_ISUID | S_ISGID | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
         //  setuid-on-execution, setgid-on-execution plus read and execute permission for user, group & others
         err = DoPrivilegedExec(chmodPath, "u=rsx,g=rsx,o=rx", fullpath, NULL, NULL, NULL);
@@ -218,17 +218,17 @@ int SetBOINCAppOwnersGroupsAndPermissions(char *path) {
     // The screensaver's switcher application runs as user and group "nobody" to avoid this risk.
 
     // Does switcher exist in screensaver bundle?
-    strcpy(fullpath, "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher");
+    strcpy(fullpath, "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher");
     err = FSPathMakeRef((StringPtr)fullpath, &ref, &isDirectory);   // Does it exist?
     if ((err == noErr) && (! isDirectory)) {
 #ifdef _DEBUG
         sprintf(buf1, "%s:%s", boinc_master_user_name, boinc_master_group_name);
-        // chown boinc_master:boinc_master "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher"
+        // chown boinc_master:boinc_master "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher"
         err = DoPrivilegedExec(chownPath, buf1, fullpath, NULL, NULL, NULL);
         if (err)
             return err;
 
-        // chmod u=rwx,g=rwx,o=rx "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher"
+        // chmod u=rwx,g=rwx,o=rx "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher"
         // 0775 = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IXOTH
         //  read, write and execute permission for user & group;  read and execute permission for others
         err = DoPrivilegedExec(chmodPath, "u=rwx,g=rwx,o=rx", fullpath, NULL, NULL, NULL);
@@ -236,12 +236,12 @@ int SetBOINCAppOwnersGroupsAndPermissions(char *path) {
             return err;
 #else
         sprintf(buf1, "root:%s", boinc_master_group_name);
-        // chown root:boinc_master "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher"
+        // chown root:boinc_master "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher"
         err = DoPrivilegedExec(chownPath, buf1, fullpath, NULL, NULL, NULL);
         if (err)
             return err;
 
-        // chmod u=rsx,g=rx,o=rx "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher"
+        // chmod u=rsx,g=rx,o=rx "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher"
         // 04555 = S_ISUID | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
         //  setuid-on-execution plus read and execute permission for user, group & others
         err = DoPrivilegedExec(chmodPath, "u=rsx,g=rx,o=rx", fullpath, NULL, NULL, NULL);
