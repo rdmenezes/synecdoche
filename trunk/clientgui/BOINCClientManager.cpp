@@ -247,7 +247,7 @@ bool CBOINCClientManager::StartupBOINCCore() {
             // time (about 11% of one CPU on 2GHz Intel Dual-Core Mac).
 //                m_lBOINCCoreProcessId = ::wxExecute(argv);
             run_program(
-                "/Library/Application Support/BOINC Data",
+                "/Library/Application Support/Synecdoche Data",
                 buf, argv[3] ? 4 : 3, argv, 0.0, m_lBOINCCoreProcessId
             );
 #endif

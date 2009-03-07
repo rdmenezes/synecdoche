@@ -207,7 +207,7 @@ bool CBOINCGUIApp::OnInit() {
     success = ::wxSetWorkingDirectory(strDirectory);
     if (success) {
         // If SetWD failed, don't create a directory in wrong place
-        strDirectory += wxT("BOINC Data");  // We don't customize BOINC Data directory name for branding
+        strDirectory += wxT("Synecdoche Data");  // We don't customize BOINC Data directory name for branding
         if (! g_use_sandbox) {
             if (! wxDirExists(strDirectory))
                 success = wxMkdir(strDirectory, 0777);    // Does nothing if dir exists
@@ -216,7 +216,7 @@ bool CBOINCGUIApp::OnInit() {
 //    wxChar *wd = wxGetWorkingDirectory(buf, 1000);  // For debugging
     }
 
-    if (!success)  // wxSetWorkingDirectory("/Library/Application Support/BOINC Data") FAILED
+    if (!success)  // wxSetWorkingDirectory("/Library/Application Support/Synecdoche Data") FAILED
         errCode = -1016;
 #endif      // __WXMAC__
  

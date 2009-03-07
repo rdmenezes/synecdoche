@@ -206,7 +206,7 @@ static OSStatus DoUninstall(void) {
     system ("rm -rf /Library/Receipts/BOINC.pkg");
 
     // We don't customize BOINC Data directory name for branding
-    system ("rm -rf \"/Library/Application Support/BOINC Data\"");
+    system ("rm -rf \"/Library/Application Support/Synecdoche Data\"");
 
     // Phase 5: step through all users and do user-specific cleanup
     CleanupAllVisibleUsers();

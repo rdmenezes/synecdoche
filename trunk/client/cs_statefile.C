@@ -556,7 +556,7 @@ int CLIENT_STATE::write_state_file() const {
                 STATE_FILE_NEXT, STATE_FILE_NAME, errno, strerror(errno)
             );
             if (log_flags.state_debug) {
-                system("ls -al /Library/Application\\ Support/BOINC\\ Data/client*.*");
+                system("ls -al /Library/Application\\ Support/Synecdoche\\ Data/client*.*");
             }
 #else
         msg_printf(0, MSG_USER_ERROR,
