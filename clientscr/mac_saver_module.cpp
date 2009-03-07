@@ -259,10 +259,10 @@ OSStatus CScreensaver::initBOINCApp() {
 #if 0   // Code for separate data in each user's private directory
         char buf[256];
         strcpy(buf, getenv("HOME"));
-        strcat(buf, "/Library/Application Support/BOINC Data");
+        strcat(buf, "/Library/Application Support/Synecdoche Data");
         status = chdir(buf);
 #else   // All users share the same data
-        status = chdir("/Library/Application Support/BOINC Data");
+        status = chdir("/Library/Application Support/Synecdoche Data");
 #endif
         if (status) {
             perror("chdir");
@@ -631,7 +631,7 @@ int CScreensaver::GetBrandID()
     if (err) {     
         // If we couldn't find our application bundle, look in BOINC Data Directory 
         // (the installer put a copy there for us)
-        strcpy(buf, "/Library/Application Support/BOINC Data/Branding");
+        strcpy(buf, "/Library/Application Support/Synecdoche Data/Branding");
     } else
         strcat(buf, "/Contents/Resources/Branding");
 
