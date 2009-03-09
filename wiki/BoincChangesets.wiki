@@ -70,6 +70,15 @@
 ||17407||boinccmd: make --get_messages output more readable||
 ||17409||manager: fix roundoff error in Advanced Prefs; fixes #613 _Note: This is not a real fix but a simple workaround._||
 ||17410||MGR: Make CTRL-SHIFT-A the accelerator in the simple GUI that switches back to the advanced view. refs #147||
+||17432/17434/17436/17438||client: Revise Apple idle time detection for compatibility with OS 10.6||
+||17456/17467||manager: when filtering messages by project, show messages not tagged with a project (fixes #852)||
+||17486/17487||client: change garbage-collect logic. old: reference-count files involved in a PERS_FILE_XFER new: if a PERS_FILE_XFER refers to an unreferenced file, delete it (and the associated FILE_XFER and HTTP_OP if present) May fix #366||
+||17499||client: run CPU benchmarks and contact ref site if platform changes||
+||17501||client: get rid of CPU_PESSIMISM_FACTOR; it wasn't actually being used. _NOTE: Unless 16338 (and related changesets) are applied before this one the change in 17501 needs to be done in cpu_sched.C instead of rr_sim.cpp_||
+||17507||client: if using anonymous platform, ignore (and complain about) app versions in scheduler reply client: when reporting anonymous platform apps in sched request, don't include <file_info>s (not relevant to server)||
+||17511||MGR: Remove previous implementations of the already attached to projects detection code. MGR: Prevent the user from progressing beyond the project selection page if they are already attached to the project they are trying to attach to. Display a dialog box telling they are already attached to that project and to choose a different project. This skips a bunch of steps if they meant to attach to a different project. _NOTE: See issue #39 before applying this one._||
+||17513||MGR: Newer versions of the server-side software publish their master url in the response to the get_project_config.php request. If it exists use it over what was specified by the user. Fixes #259||
+
 
 
 == Changesets for the new OpenGL screensaver (Might be useful some day) ==
@@ -100,6 +109,7 @@
 ||17370/17393||WINSCR: Remove unneeded header files SCR: Shuffle headers around so that it'll build on both Windows and Mac without having to put in duplicate entries.||
 ||17405/17406||screensaver: show correct info if CPU throttling; show correct window title; show "no projects" message.||
 ||17408||screensaver: remove error codes & messages handled by new default gfx app, add new error codes; better logic when coordinator window covered on Mac||
+||17444||WINSCR: fix a bug. Mac screensaver: logic to stop Data Management thread even if hung on an RPC.||
 
 
 == Rejected changes ==
@@ -155,8 +165,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/17335 17335]||Already fixed in r650 and r651.||
 ||[http://boinc.berkeley.edu/trac/changeset/17394 17394]||Already fixed in r511.||
 ||[http://boinc.berkeley.edu/trac/changeset/17398 17398]||See comments in [http://boinc.berkeley.edu/trac/ticket/852 #852]||
+||[http://boinc.berkeley.edu/trac/changeset/17512 17512]||Seems to work correctly even without this changeset.||
 
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17413 17413]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17515 17515]
