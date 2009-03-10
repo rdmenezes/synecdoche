@@ -58,7 +58,7 @@ bool parse_bool(const char* buf, const char* tag, bool& result) {
         return true;
     }
 
-    int x;
+    int x = 0;
     std::ostringstream start_tag;
     start_tag << '<' << tag << '>';
     if (parse_int(buf, start_tag.str().c_str(), x)) {
