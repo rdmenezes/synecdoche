@@ -346,12 +346,12 @@ void CLIENT_STATE::rr_simulation() {
             }
             if (log_flags.rr_simulation) {
                 msg_printf(0, MSG_INFO,
-                    "[rr_sim] total: idle cpus %d, last active %d, active %d, shortfall %f",
+                    "[rr_sim] total: idle cpus %d, last active %d, active %lu, shortfall %f",
                     nidle_cpus, last_active_size, sim_status.nactive(),
                     cpu_shortfall
                 );
                 msg_printf(0, MSG_INFO,
-                    "[rr_sim] proj %s: last active %d, active %d, shortfall %f",
+                    "[rr_sim] proj %s: last active %d, active %lu, shortfall %f",
                     pbest->get_project_name(), last_proj_active_size,
                     pbest->rr_sim_status.cpus_used(),
                     pbest->rr_sim_status.get_cpu_shortfall()

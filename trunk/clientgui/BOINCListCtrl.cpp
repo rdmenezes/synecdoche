@@ -208,7 +208,7 @@ void CBOINCListCtrl::OnClick(wxCommandEvent& event) {
 
     if (m_bIsSingleSelection) {
         if (GetFocusedItem() != GetFirstSelected()) {
-            wxLogTrace(wxT("Function Status"), wxT("CBOINCListCtrl::OnClick - GetFocusedItem() '%d' != GetFirstSelected() '%d'"), GetFocusedItem(), GetFirstSelected());
+            wxLogTrace(wxT("Function Status"), wxT("CBOINCListCtrl::OnClick - GetFocusedItem() '%ld' != GetFirstSelected() '%ld'"), GetFocusedItem(), GetFirstSelected());
 
             if (-1 == GetFirstSelected()) {
                 wxLogTrace(wxT("Function Status"), wxT("CBOINCListCtrl::OnClick - Force Selected State"));
