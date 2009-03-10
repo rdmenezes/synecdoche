@@ -36,10 +36,10 @@
 #include "sandbox.h"
 #include "cpp.h"
 
-static void print_options(char* prog) {
+static void print_options(const char* prog) {
     printf(
         "The command-line options for %s are intended for debugging.\n"
-        "The recommended command-line interface is a separate program,'syneccmd'.\n"
+        "The recommended command-line interface is a separate program, 'syneccmd'.\n"
         "Run syneccmd in the same directory as %s.\n"
         "\n"
         "Usage: %s [options]\n"
@@ -78,7 +78,7 @@ static void print_options(char* prog) {
 ///
 /// Check for both -X (deprecated) and --X
 ///
-void CLIENT_STATE::parse_cmdline(int argc, char** argv) {
+void CLIENT_STATE::parse_cmdline(int argc, const char* const* argv) {
     int i;
     bool show_options = false;
 
