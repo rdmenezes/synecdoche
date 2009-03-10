@@ -243,9 +243,7 @@ private:
     void schedule_cpus();
     bool enforce_schedule();
     bool no_work_for_a_cpu();
-    void rr_simulation();
     void make_running_task_heap(std::vector<ACTIVE_TASK*>&, double&);
-    void print_deadline_misses();
 public:
     /// If we fail to start a task due to no shared-mem segments,
     /// wait until at least this time to try running
@@ -464,6 +462,12 @@ public:
     void scale_duration_correction_factors(double);
     void generate_new_host_cpid();
     void compute_nuploading_results();
+/// @}
+
+/// @name rr_sim.cpp
+private:
+    void rr_simulation();
+    void print_deadline_misses();
 /// @}
 
 };
