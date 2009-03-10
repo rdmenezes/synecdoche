@@ -16,7 +16,7 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 /// \file
-/// command-line parsing, and handling of 1-time actions
+/// command-line parsing
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -74,7 +74,6 @@ static void print_options(const char* prog) {
 /// NOTE: init() has not been called at this point
 /// (i.e. client_state.xml has not been parsed),
 /// so just record the args here.
-/// The actions get done in do_cmdline_actions().
 ///
 /// Check for both -X (deprecated) and --X
 ///
