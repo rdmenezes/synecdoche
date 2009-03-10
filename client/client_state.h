@@ -332,7 +332,7 @@ public:
 
 /// @name cs_cmdline.C
 public:
-    void parse_cmdline(int argc, char** argv);
+    void parse_cmdline(int argc, const char* const* argv);
     void parse_env_vars();
 /// @}
 
