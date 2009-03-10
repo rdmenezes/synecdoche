@@ -51,6 +51,7 @@ synecd_SOURCES = \
     main.C \
     net_stats.C \
     pers_file_xfer.C \
+    rr_sim.cpp \
     sandbox.C \
     scheduler_op.C \
     time_stats.C \

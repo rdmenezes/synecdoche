@@ -301,7 +301,7 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
             "    <rr_sim_deadlines_missed>%d</rr_sim_deadlines_missed>\n"
             "    <last_rpc_time>%f</last_rpc_time>\n"
             "    <project_files_downloaded_time>%f</project_files_downloaded_time>\n",
-            rr_sim_status.deadlines_missed,
+            rr_sim_status.get_deadlines_missed(),
             last_rpc_time,
             project_files_downloaded_time
         );
