@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 David Barnard, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -1639,8 +1639,10 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
         pAMWizard = new CWizardAccountManager(this);
         if (pAMWizard->Run()) {
+#if defined(__WXMSW__) || defined(__WXMAC__)
             // If successful, hide the main window
             Hide();
+#endif
 
             // %s is the application name
             //    i.e. 'BOINC Manager', 'GridRepublic Manager'

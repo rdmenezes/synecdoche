@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -122,14 +122,15 @@ void StatImageLoader::AddMenuItems()
     }
     
     //  Add the 'remove project' option
-    statPopUpMenu->AppendSeparator();
-    wxMenuItemList menuList = statPopUpMenu->GetMenuItems();
+    if (!project->attached_via_acct_mgr) {
+        statPopUpMenu->AppendSeparator();
+        wxMenuItemList menuList = statPopUpMenu->GetMenuItems();
 
-    urlItem = new wxMenuItem(statPopUpMenu, WEBSITE_URL_MENU_ID_REMOVE_PROJECT, _("Remove Project"));
+        urlItem = new wxMenuItem(statPopUpMenu, WEBSITE_URL_MENU_ID_REMOVE_PROJECT, _("Remove Project"));
 
-    Connect( WEBSITE_URL_MENU_ID_REMOVE_PROJECT,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(StatImageLoader::OnMenuLinkClicked) );
-    statPopUpMenu->Append(urlItem);
-
+        Connect( WEBSITE_URL_MENU_ID_REMOVE_PROJECT,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(StatImageLoader::OnMenuLinkClicked) );
+        statPopUpMenu->Append(urlItem);
+    }
 }
 
 
