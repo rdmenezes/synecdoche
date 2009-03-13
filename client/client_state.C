@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -276,9 +276,10 @@ int CLIENT_STATE::init() {
 
     print_summary();
 
-    // if new version of core client,
-    // - run CPU benchmarks
-    // - contact reference site or some project (to trigger firewall alert)
+    // Check if version or platform has changed.
+    // Either of these is evidence that we're running a different
+    // client than previously.
+    bool new_client = false;
     if ((core_client_version.major != old_major_version)
         || (core_client_version.minor != old_minor_version)
         || (core_client_version.release != old_release)
@@ -290,6 +291,17 @@ int CLIENT_STATE::init() {
             core_client_version.minor,
             core_client_version.release
         );
+        new_client = true;
+    }
+    if ((!statefile_platform_name.empty()) && (statefile_platform_name != get_primary_platform())) {
+        msg_printf(0, MSG_INFO, "Platform changed from %s to %s",
+            statefile_platform_name.c_str(), get_primary_platform().c_str());
+        new_client = true;
+    }
+
+    // If new version of client run CPU benchmark and contact
+    // reference site (or some project) to trigger firewall alert.
+    if (new_client) {
         run_cpu_benchmarks = true;
         if (config.dont_contact_ref_site) {
             if (!projects.empty()) {
@@ -322,13 +334,11 @@ int CLIENT_STATE::init() {
     read_global_prefs();
 
     // do CPU scheduler and work fetch
-    //
     request_schedule_cpus("Startup");
     request_work_fetch("Startup");
     debt_interval_start = now;
 
     // set up the project and slot directories
-    //
     delete_old_slot_dirs();
     retval = make_project_dirs();
     if (retval) return retval;
@@ -338,12 +348,10 @@ int CLIENT_STATE::init() {
     active_tasks.handle_upload_files();
 
     // Just to be on the safe side; something may have been modified
-    //
     set_client_state_dirty("init");
 
     // initialize GUI RPC data structures before we start accepting
     // GUI RPC's.
-    //
     acct_mgr_info.init();
     project_init.init();
 
@@ -351,7 +359,6 @@ int CLIENT_STATE::init() {
         // When we're running at boot time,
         // it may be a few seconds before we can socket/bind/listen.
         // So retry a few times.
-        //
         for (i=0; i<30; i++) {
             bool last_time = (i==29);
             retval = gui_rpcs.init(last_time);
@@ -359,15 +366,6 @@ int CLIENT_STATE::init() {
             boinc_sleep(1.0);
         }
         if (retval) return retval;
-    }
-
-    // If platform name changed, print warning
-    //
-    if (!statefile_platform_name.empty() && statefile_platform_name != get_primary_platform()) {
-        msg_printf(NULL, MSG_INFO,
-            "Platform changed from %s to %s",
-            statefile_platform_name.c_str(), get_primary_platform().c_str()
-        );
     }
 
 #ifdef SANDBOX
@@ -689,16 +687,12 @@ WORKUNIT* CLIENT_STATE::lookup_workunit(const PROJECT* p, const char* name) {
     return 0;
 }
 
-APP_VERSION* CLIENT_STATE::lookup_app_version(
-    const APP* app, const char* platform, int version_num, const char* plan_class
-) {
-    for (unsigned int i=0; i<app_versions.size(); i++) {
+APP_VERSION* CLIENT_STATE::lookup_app_version(const APP* app, const char* platform,
+                                              int version_num, const char* plan_class) {
+    for (size_t i = 0; i < app_versions.size(); ++i) {
         APP_VERSION* avp = app_versions[i];
         if (avp->app != app) continue;
         if (version_num != avp->version_num) continue;
-        if (app->project->anonymous_platform) {
-            return avp;
-        }
         if (strcmp(avp->platform, platform)) continue;
         if (strcmp(avp->plan_class, plan_class)) continue;
         return avp;
@@ -719,7 +713,6 @@ FILE_INFO* CLIENT_STATE::lookup_file_info(const PROJECT* p, const std::string& n
 // functions to create links between state objects
 // (which, in their XML form, reference one another by name)
 // Return nonzero if already in client state.
-//
 int CLIENT_STATE::link_app(PROJECT* p, APP* app) {
     if (lookup_app(p, app->name)) return ERR_NOT_UNIQUE;
     app->project = p;
@@ -777,7 +770,6 @@ int CLIENT_STATE::link_app_version(PROJECT* p, APP_VERSION* avp) {
         }
 
         // any file associated with an app version must be signed
-        //
         fip->signature_required = true;
         file_ref.file_info = fip;
     }
