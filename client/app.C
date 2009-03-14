@@ -57,6 +57,8 @@
 
 #endif
 
+#include "app.h"
+
 #include "client_state.h"
 #include "client_types.h"
 
@@ -64,12 +66,12 @@
 #include "filesys.h"
 #include "file_names.h"
 #include "parse.h"
+#include "miofile.h"
 #include "shmem.h"
 #include "str_util.h"
 #include "client_msgs.h"
 #include "procinfo.h"
 #include "sandbox.h"
-#include "app.h"
 
 /// If we send app <abort> request, wait this long before killing it.
 /// This gives it time to download symbol files (which can be several MB)
@@ -80,7 +82,6 @@
 #define QUIT_TIMEOUT    10
 
 ACTIVE_TASK::~ACTIVE_TASK() {
-    cleanup_task();
 }
 
 ACTIVE_TASK::ACTIVE_TASK() {
@@ -143,25 +144,16 @@ void ACTIVE_TASK::set_task_state(int val, const char* where) {
     }
 }
 
+/// Called when a process has exited or we've killed it.
+void ACTIVE_TASK::cleanup_task() {
 #ifdef _WIN32
-
-/// call this when a process has exited but will be started again
-/// (e.g. suspend via quit, exited but no finish file).
-/// In these cases we want to keep the shmem and events
-void ACTIVE_TASK::close_process_handles() {
     if (pid_handle) {
         CloseHandle(pid_handle);
         pid_handle = NULL;
     }
-}
-#endif
 
-/// called when a process has exited
-void ACTIVE_TASK::cleanup_task() {
-#ifdef _WIN32
     // detach from shared mem.
     // This will destroy shmem seg since we're the last attachment
-    //
     if (app_client_shm.shm) {
         detach_shmem(shm_handle, app_client_shm.shm);
         app_client_shm.shm = NULL;
@@ -170,21 +162,18 @@ void ACTIVE_TASK::cleanup_task() {
     int retval;
 
     if (app_client_shm.shm) {
-#ifndef __EMX__
         if (app_version->api_major_version() >= 6) {
             retval = detach_shmem_mmap(app_client_shm.shm, sizeof(SHARED_MEM));
-        } else
-#endif
-        {
+        } else {
             retval = detach_shmem(app_client_shm.shm);
             if (retval) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
+                msg_printf(wup->project, MSG_INTERNAL_ERROR,
                     "Couldn't detach shared memory: %s", boincerror(retval)
                 );
             }
             retval = destroy_shmem(shmem_seg_name);
             if (retval) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
+                msg_printf(wup->project, MSG_INTERNAL_ERROR,
                     "Couldn't destroy shared memory: %s", boincerror(retval)
                 );
             }
@@ -584,11 +573,7 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
         else if (parse_double(buf, "<working_set_size_smoothed>", procinfo.working_set_size_smoothed)) continue;
         else if (parse_double(buf, "<page_fault_rate>", procinfo.page_fault_rate)) continue;
         else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] ACTIVE_TASK::parse(): unrecognized %s\n", buf
-                );
-            }
+            handle_unparsed_xml_warning("ACTIVE_TASK::parse", buf);
         }
     }
     return ERR_XML_PARSE;
@@ -631,11 +616,7 @@ int ACTIVE_TASK_SET::parse(MIOFILE& fin) {
             if (!retval) active_tasks.push_back(atp);
             else delete atp;
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] ACTIVE_TASK_SET::parse(): unrecognized %s\n", buf
-                );
-            }
+            handle_unparsed_xml_warning("ACTIVE_TASK_SET::parse", buf);
         }
     }
     return ERR_XML_PARSE;
@@ -758,7 +739,7 @@ int ACTIVE_TASK::handle_upload_files() {
                     fip->status = FILE_PRESENT;
                 }
             } else {
-                msg_printf(0, MSG_INTERNAL_ERROR, "Can't find uploadable file %s", p);
+                msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't find uploadable file %s", p);
             }
             sprintf(path, "%s/%s", slot_dir, buf);
             delete_project_owned_file(path, true);  // delete the link file

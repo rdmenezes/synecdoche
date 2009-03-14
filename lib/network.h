@@ -26,7 +26,8 @@
 #include "boinc_win.h"
 #endif
 
-struct FDSET_GROUP {
+class FDSET_GROUP {
+public:
     fd_set read_fds;
     fd_set write_fds;
     fd_set exc_fds;
@@ -40,11 +41,15 @@ struct FDSET_GROUP {
     }
 };
 
-extern int resolve_hostname(char* hostname, int& ip_addr);
+/// Resolve a hostname (IPv4 only).
+extern int resolve_hostname(const char* hostname, int& ip_addr);
+
 extern int boinc_socket(int& sock);
 extern int boinc_socket_asynch(int sock, bool asynch);
 extern void boinc_close_socket(int sock);
 extern int get_socket_error(int fd);
+
+/// Return a string describing the current network error value.
 extern const char* socket_error_str();
 
 #if defined(_WIN32) && defined(USE_WINSOCK)

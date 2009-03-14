@@ -5,21 +5,21 @@
  * This package is an SSL implementation written
  * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
- * 
+ *
  * This library is free for commercial and non-commercial use as long as
  * the following conditions are aheared to.  The following conditions
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
  * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- * 
+ *
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
  * If this package is used in a product, Eric Young should be given attribution
  * as the author of the parts of the library used.
  * This can be in the form of a textual message at program startup or
  * in documentation (online or textual) provided with the package.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -34,10 +34,10 @@
  *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from 
+ * 4. If you include any Windows specific code (or a derivative thereof) from
  *    the apps directory (application code) you must include an acknowledgement:
  *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,7 +49,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * The licence and distribution terms for any publically available version or
  * derivative of this code cannot be changed.  i.e. this code cannot simply be
  * copied and put under another distribution licence
@@ -140,6 +140,9 @@ typedef struct err_state_st
 #define ERR_LIB_ECDSA		42
 #define ERR_LIB_ECDH		43
 #define ERR_LIB_STORE           44
+#define ERR_LIB_FIPS		45
+#define ERR_LIB_CMS		46
+#define ERR_LIB_JPAKE		47
 
 #define ERR_LIB_USER		128
 
@@ -171,6 +174,9 @@ typedef struct err_state_st
 #define ECDSAerr(f,r)  ERR_PUT_error(ERR_LIB_ECDSA,(f),(r),__FILE__,__LINE__)
 #define ECDHerr(f,r)  ERR_PUT_error(ERR_LIB_ECDH,(f),(r),__FILE__,__LINE__)
 #define STOREerr(f,r) ERR_PUT_error(ERR_LIB_STORE,(f),(r),__FILE__,__LINE__)
+#define FIPSerr(f,r) ERR_PUT_error(ERR_LIB_FIPS,(f),(r),__FILE__,__LINE__)
+#define CMSerr(f,r) ERR_PUT_error(ERR_LIB_CMS,(f),(r),__FILE__,__LINE__)
+#define JPAKEerr(f,r) ERR_PUT_error(ERR_LIB_JPAKE,(f),(r),__FILE__,__LINE__)
 
 /* Borland C seems too stupid to be able to shift and do longs in
  * the pre-processor :-( */
@@ -301,6 +307,12 @@ int ERR_get_next_error_library(void);
 
 int ERR_set_mark(void);
 int ERR_pop_to_mark(void);
+
+#ifdef OPENSSL_FIPS
+void int_ERR_set_state_func(ERR_STATE *(*get_func)(void),
+				void (*remove_func)(unsigned long pid));
+void int_ERR_lib_init(void);
+#endif
 
 /* Already defined in ossl_typ.h */
 /* typedef struct st_ERR_FNS ERR_FNS; */

@@ -21,7 +21,7 @@
 #include <cstdio>
 #include <vector>
 
-#include "miofile.h"
+class MIOFILE;
 
 class TIME_STATS {
     bool first;
@@ -57,7 +57,7 @@ public:
     int write(MIOFILE&, bool to_server) const;
     int parse(MIOFILE&);
 
-    void log_append(const char*, double);
+    void log_append(const std::string& msg, double t);
     void log_append_net(int);
     void trim_stats_log();
     void get_log_after(double, MIOFILE&);

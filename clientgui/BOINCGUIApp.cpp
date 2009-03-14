@@ -67,9 +67,9 @@ bool CBOINCGUIApp::OnInit() {
     m_pTaskBarIcon = NULL;
 #ifdef __WXMAC__
     m_pMacSystemMenu = NULL;
-    printf("Using %s.\n", (char *)wxString(wxVERSION_STRING).char_str());    // For debugging
 #endif
     m_bGUIVisible = true;
+    m_bDebugSkins = false;
     m_strDefaultWindowStation = wxEmptyString;
     m_strDefaultDesktop = wxEmptyString;
     m_strDefaultDisplay = wxEmptyString;
@@ -207,7 +207,7 @@ bool CBOINCGUIApp::OnInit() {
     success = ::wxSetWorkingDirectory(strDirectory);
     if (success) {
         // If SetWD failed, don't create a directory in wrong place
-        strDirectory += wxT("BOINC Data");  // We don't customize BOINC Data directory name for branding
+        strDirectory += wxT("Synecdoche Data");  // We don't customize BOINC Data directory name for branding
         if (! g_use_sandbox) {
             if (! wxDirExists(strDirectory))
                 success = wxMkdir(strDirectory, 0777);    // Does nothing if dir exists
@@ -216,7 +216,7 @@ bool CBOINCGUIApp::OnInit() {
 //    wxChar *wd = wxGetWorkingDirectory(buf, 1000);  // For debugging
     }
 
-    if (!success)  // wxSetWorkingDirectory("/Library/Application Support/BOINC Data") FAILED
+    if (!success)  // wxSetWorkingDirectory("/Library/Application Support/Synecdoche Data") FAILED
         errCode = -1016;
 #endif      // __WXMAC__
  
@@ -308,8 +308,7 @@ bool CBOINCGUIApp::OnInit() {
     wxHelpProvider::Set(new wxHelpControllerHelpProvider());
 
     // Initialize the skin manager
-    m_pSkinManager = new CSkinManager();
-    wxASSERT(m_pSkinManager);
+    m_pSkinManager = new CSkinManager(m_bDebugSkins);
 
     m_pSkinManager->ReloadSkin(
         m_pLocale, 
@@ -318,7 +317,6 @@ bool CBOINCGUIApp::OnInit() {
 
     // Initialize the main document
     m_pDocument = new CMainDocument();
-    wxASSERT(m_pDocument);
 
     m_pDocument->OnInit();
 
@@ -428,16 +426,19 @@ int CBOINCGUIApp::OnExit() {
     if (m_pDocument) {
         m_pDocument->OnExit();
         delete m_pDocument;
+        m_pDocument = 0;
     }
 
     if (m_pSkinManager) {
         m_pConfig->Write(wxT("Skin"), m_pSkinManager->GetSelectedSkin());
         delete m_pSkinManager;
+        m_pSkinManager = 0;
     }
 
-    if (m_pLocale) {
-        delete m_pLocale;
-    }
+    delete m_pLocale;
+    m_pLocale = 0;
+
+    diagnostics_finish();
 
     return wxApp::OnExit();
 }
@@ -446,9 +447,10 @@ int CBOINCGUIApp::OnExit() {
 void CBOINCGUIApp::OnInitCmdLine(wxCmdLineParser &parser) {
     wxApp::OnInitCmdLine(parser);
     static const wxCmdLineEntryDesc cmdLineDesc[] = {
-        { wxCMD_LINE_SWITCH, wxT("s"), wxT("systray"), _("Startup BOINC so only the system tray icon is visible")},
-        { wxCMD_LINE_SWITCH, wxT("b"), wxT("boincargs"), _("Startup BOINC with these optional arguments")},
-        { wxCMD_LINE_SWITCH, wxT("i"), wxT("insecure"), _("disable BOINC security users and permissions")},
+        { wxCMD_LINE_SWITCH, wxT("s"), wxT("systray"), _("start Synecdoche so only the system tray icon is visible")},
+        { wxCMD_LINE_OPTION, wxT("a"), wxT("args"), _("start the daemon with these optional arguments")},
+        { wxCMD_LINE_SWITCH, wxT("i"), wxT("insecure"), _("disable Synecdoche security users and permissions")},
+        { wxCMD_LINE_SWITCH, wxT("c"), wxT("checkskins"), _("enable skin manager error messages (for debugging skins)")},
         { wxCMD_LINE_NONE}  //DON'T forget this line!!
     };
     parser.SetDesc(cmdLineDesc);
@@ -458,12 +460,15 @@ void CBOINCGUIApp::OnInitCmdLine(wxCmdLineParser &parser) {
 bool CBOINCGUIApp::OnCmdLineParsed(wxCmdLineParser &parser) {
     // Give default processing (-?, --help and --verbose) the chance to do something.
     wxApp::OnCmdLineParsed(parser);
-    parser.Found(wxT("boincargs"), &m_strBOINCArguments);
+    parser.Found(wxT("args"), &m_strBOINCArguments);
     if (parser.Found(wxT("systray"))) {
         m_bGUIVisible = false;
     }
     if (parser.Found(wxT("insecure"))) {
         g_use_sandbox = false;
+    }
+    if (parser.Found(wxT("checkskins"))) {
+        m_bDebugSkins = true;
     }
     return true;
 }

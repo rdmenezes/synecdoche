@@ -37,6 +37,8 @@
 #include <set>
 #endif
 
+#include "client_state.h"
+
 #include "crypt.h"
 #include "error_numbers.h"
 #include "file_names.h"
@@ -44,12 +46,11 @@
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"
+#include "miofile.h"
 
 #include "client_msgs.h"
 #include "scheduler_op.h"
 #include "sandbox.h"
-
-#include "client_state.h"
 
 /// quantities like avg CPU time decay by a factor of e every week
 #define EXP_DECAY_RATE  (1./(SECONDS_PER_DAY*7))
@@ -248,8 +249,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
             "        <status>%d</status>\n"
             "        <report_on_rpc/>\n"
             "    </file_info>\n",
-            fip->name, fip->nbytes, fip->status
-        );
+            fip->name.c_str(), fip->nbytes, fip->status);
     }
 
     // NOTE: there's also a send_file_list flag, not currently used
@@ -405,7 +405,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     }
     if (log_flags.sched_op_debug) {
         if (sr.scheduler_version) {
-            msg_printf(project, MSG_INFO, "[sched_ops_debug] Server version %d", sr.scheduler_version);
+            msg_printf(project, MSG_INFO, "[sched_op_debug] Server version %d", sr.scheduler_version);
         }
     }
 
@@ -446,8 +446,8 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     for (std::vector<USER_MESSAGE>::const_iterator it = sr.messages.begin(); it != sr.messages.end(); ++it) {
         std::string buf("Message from server: ");
         buf += (*it).message;
-        int prio = ((*it).message == "high") ? MSG_USER_ERROR : MSG_INFO;
-        show_message(project, buf.c_str(), prio);
+        MSG_PRIORITY prio = ((*it).message == "high") ? MSG_USER_ERROR : MSG_INFO;
+        show_message(project, buf, prio);
     }
 
     if (log_flags.sched_op_debug && sr.request_delay) {
@@ -578,7 +578,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
             *fip = sr.file_infos[i];
             retval = link_file_info(project, fip);
             if (retval) {
-                msg_printf(project, MSG_INTERNAL_ERROR, "Can't handle file %s in scheduler reply", fip->name);
+                msg_printf(project, MSG_INTERNAL_ERROR, "Can't handle file %s in scheduler reply", fip->name.c_str());
                 delete fip;
             } else {
                 file_infos.push_back(fip);
@@ -588,14 +588,14 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     for (i=0; i<sr.file_deletes.size(); i++) {
         fip = lookup_file_info(project, sr.file_deletes[i].c_str());
         if (fip) {
-            msg_printf(project, MSG_INFO, "Got server request to delete file %s", fip->name);
+            msg_printf(project, MSG_INFO, "Got server request to delete file %s", fip->name.c_str());
             fip->marked_for_delete = true;
         }
     }
     for (i=0; i<sr.app_versions.size(); i++) {
         APP_VERSION& avpp = sr.app_versions[i];
         if (strlen(avpp.platform) == 0) {
-            strcpy(avpp.platform, get_primary_platform());
+            strlcpy(avpp.platform, get_primary_platform().c_str(), sizeof(avpp.platform));
         } else {
             if (!is_supported_platform(avpp.platform)) {
                 msg_printf(project, MSG_INTERNAL_ERROR, "App version has unsupported platform %s", avpp.platform);
@@ -656,7 +656,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
             continue;
         }
         if (strlen(rp->platform) == 0) {
-            strcpy(rp->platform, get_primary_platform());
+            strlcpy(rp->platform, get_primary_platform().c_str(), sizeof(rp->platform));
             rp->version_num = latest_version(rp->wup->app, rp->platform);
         }
         rp->avp = lookup_app_version(rp->wup->app, rp->platform, rp->version_num, rp->plan_class);
@@ -674,14 +674,14 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     }
     if (log_flags.sched_op_debug) {
         if (!sr.results.empty()) {
-            msg_printf(project, MSG_INFO, "[sched_ops_debug] estimated total CPU time: %.0f seconds", sum_est_cpu_time);
+            msg_printf(project, MSG_INFO, "[sched_op_debug] estimated total CPU time: %.0f seconds", sum_est_cpu_time);
         }
     }
 
     // update records for ack'ed results
     for (i=0; i<sr.result_acks.size(); i++) {
         if (log_flags.sched_op_debug) {
-            msg_printf(0, MSG_INFO, "[sched_op_debug] handle_scheduler_reply(): got ack for result %s\n",
+            msg_printf(project, MSG_INFO, "[sched_op_debug] handle_scheduler_reply(): got ack for result %s\n",
                                 sr.result_acks[i].name);
         }
         RESULT* rp = lookup_result(project, sr.result_acks[i].name);
@@ -751,8 +751,16 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
 
     set_client_state_dirty("handle_scheduler_reply");
     if (log_flags.state_debug) {
-        msg_printf(0, MSG_INFO, "[state_debug] handle_scheduler_reply(): State after handle_scheduler_reply():");
+        msg_printf(project, MSG_INFO, "[state_debug] handle_scheduler_reply(): State after handle_scheduler_reply():");
         print_summary();
+    }
+
+    // The following must precede the backoff and request_delay checks,
+    // since it overrides them:
+    if (sr.next_rpc_delay) {
+        project->next_rpc_time = now + sr.next_rpc_delay;
+    } else {
+        project->next_rpc_time = 0;
     }
 
     // if we asked for work and didn't get any,
@@ -768,12 +776,6 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     if (sr.request_delay) {
         double x = now + sr.request_delay;
         project->set_min_rpc_time(x, "requested by project");
-    }
-
-    if (sr.next_rpc_delay) {
-        project->next_rpc_time = now + sr.next_rpc_delay;
-    } else {
-        project->next_rpc_time = 0;
     }
 
     return 0;

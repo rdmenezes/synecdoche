@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -27,9 +27,6 @@
 #include "../version.h"
 #else
 #include "config.h"
-#ifdef __EMX__
-#include <sys/time.h>
-#endif
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -37,6 +34,8 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <cstring>
+#include <stdexcept>
+#include <fstream>
 #include <sstream>
 #endif
 
@@ -84,7 +83,6 @@ int RPC_CLIENT::init(const char* host, int port) {
     if (host) {
         hostent* hep = gethostbyname(host);
         if (!hep) {
-            perror("gethostbyname");
             return ERR_GETHOSTBYNAME;
         }
         addr.sin_addr.s_addr = *(int*)hep->h_addr_list[0];
@@ -98,7 +96,6 @@ int RPC_CLIENT::init(const char* host, int port) {
         BOINCTRACE("RPC_CLIENT::init connect 2: Winsock error '%d'\n", WSAGetLastError());
 #endif
         BOINCTRACE("RPC_CLIENT::init connect on %d returned %d\n", sock, retval);
-        perror("connect");
         close();
         return ERR_CONNECT;
     }
@@ -132,7 +129,6 @@ int RPC_CLIENT::init_asynch(const char* host, double _timeout, bool _retry, int 
     if (host) {
         hostent* hep = gethostbyname(host);
         if (!hep) {
-            perror("gethostbyname");
             return ERR_GETHOSTBYNAME;
         }
         addr.sin_addr.s_addr = *(int*)hep->h_addr_list[0];
@@ -153,7 +149,6 @@ int RPC_CLIENT::init_asynch(const char* host, double _timeout, bool _retry, int 
     start_time = dtime();
     retval = connect(sock, (const sockaddr*)(&addr), sizeof(addr));
     if (retval) {
-        perror("connect");
         BOINCTRACE("RPC_CLIENT::init connect returned %d\n", retval);
     }
     BOINCTRACE("RPC_CLIENT::init attempting connect \n");
@@ -281,8 +276,6 @@ int RPC_CLIENT::send_request(const char* p) {
     buf.append(p).append("</boinc_gui_rpc_request>\n\003");
     int n = send(sock, buf.c_str(), static_cast<int>(buf.size()), 0);
     if (n < 0) {
-        printf("send: %d\n", n);
-        perror("send");
         return ERR_WRITE;
     }
     return 0;
@@ -352,4 +345,20 @@ int RPC::parse_reply() {
         if (strstr(buf, "success")) return BOINC_SUCCESS;
     }
     return ERR_NOT_FOUND;
+}
+
+/// Read the GUI-RPC-password from a file.
+///
+/// \param[in] file_name The file name containing the password. Defaults to
+///                      GUI_RPC_PASSWD_FILE if omitted.
+/// \return The GUI-RPC-password read from the file specified by \a file_name.
+std::string read_gui_rpc_password(const std::string& file_name) {
+    std::ifstream in(file_name.c_str());
+    if (!in) {
+        throw std::runtime_error(std::string("Can't open GUI-RPC-password file \"")
+                                    + file_name + std::string("\"."));
+    }
+    std::string password;
+    std::getline(in, password);
+    return password;
 }

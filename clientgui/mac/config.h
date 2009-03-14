@@ -23,11 +23,6 @@
 #ifndef BOINC_CONFIG_H
 #define BOINC_CONFIG_H
 
-/* Version defines are now in version.h */
-#include "version.h"
-
-
-
 /* Define to the type pointed to by the 5th parameter of getsockopt */
 #define BOINC_SOCKLEN_T socklen_t
 

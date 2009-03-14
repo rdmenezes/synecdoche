@@ -24,6 +24,8 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+LPFN_ISWOW64PROCESS fnIsWow64Process;
 #endif
 
 #ifndef _WIN32
@@ -37,11 +39,12 @@
 #include "log_flags.h"
 #include "str_util.h"
 #include "util.h"
+#include "miofile.h"
 
 
 /// return the primary platform id.
-const char* CLIENT_STATE::get_primary_platform() const {
-    return platforms[0].name.c_str();
+std::string CLIENT_STATE::get_primary_platform() const {
+    return platforms[0].name;
 }
 
 
@@ -63,9 +66,17 @@ void CLIENT_STATE::detect_platforms() {
     add_platform("windows_intelx86");
 
 #else
-
+    // see if 32-bit client is running on 64-bit machine 
+    fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process"); 
+    if (fnIsWow64Process) { 
+        BOOL bIsWow64 = FALSE; 
+        if (fnIsWow64Process(GetCurrentProcess(), &bIsWow64)) { 
+            if (bIsWow64) { 
+                add_platform("windows_x86_64"); 
+            } 
+        } 
+    } 
     add_platform("windows_intelx86");
-
 #endif
 
 #elif defined(__APPLE__)
@@ -113,7 +124,7 @@ void CLIENT_STATE::write_platforms(PROJECT* p, MIOFILE& mf) {
 
     mf.printf(
         "    <platform_name>%s</platform_name>\n",
-        p->anonymous_platform ? "anonymous" : get_primary_platform()
+        p->anonymous_platform ? "anonymous" : get_primary_platform().c_str()
     );
 
     for (unsigned int i=1; i<platforms.size(); i++) {

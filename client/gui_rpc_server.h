@@ -26,8 +26,6 @@
 #include "network.h"
 #include "gui_http.h"
 #include "acct_setup.h"
-#include "miofile.h"
-
 
 class GUI_RPC_CONN {
 public:

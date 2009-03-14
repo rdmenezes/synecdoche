@@ -57,13 +57,15 @@ public:
 
     bool                    m_bIsSingleSelection;
 
+    /// TODO: Move CBOINCListCtrl::GetBlendedColour to a better place so it can used by different classes.
+    static wxColour         GetBlendedColour(const wxColour base, const wxColour accent, float blend);
+
 private:
     virtual void            OnClick(wxCommandEvent& event);
 
     virtual wxString        OnGetItemText(long item, long column) const;
     virtual int             OnGetItemImage(long item) const;
     virtual wxListItemAttr* OnGetItemAttr(long item) const;
-    wxColour                GetBlendedColour(const wxColour base, const wxColour accent, float blend) const;
 
     CBOINCBaseView*         m_pParentView;
     wxImageList *           m_SortArrows;

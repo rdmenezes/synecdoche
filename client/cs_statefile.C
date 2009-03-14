@@ -24,6 +24,9 @@
 #include <cstring>
 #include <errno.h>
 
+#include "client_state.h"
+
+#include "miofile.h"
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"
@@ -31,7 +34,7 @@
 #include "filesys.h"
 #include "file_names.h"
 #include "client_msgs.h"
-#include "client_state.h"
+#include "pers_file_xfer.h"
 #include "version.h"
 
 #define MAX_STATE_FILE_WRITE_ATTEMPTS 2
@@ -183,16 +186,13 @@ int CLIENT_STATE::parse_state_file() {
             }
             if (retval) {
                 msg_printf(project, MSG_INTERNAL_ERROR,
-                    "Can't handle file info %s in state file",
-                    fip->name
-                );
+                        "Can't handle file info %s in state file", fip->name.c_str());
                 delete fip;
                 continue;
             }
             file_infos.push_back(fip);
             // If the file had a failure before,
             // don't start another file transfer
-            //
             if (fip->had_failure(failnum)) {
                 if (fip->pers_file_xfer) {
                     delete fip->pers_file_xfer;
@@ -203,16 +203,12 @@ int CLIENT_STATE::parse_state_file() {
                 retval = fip->pers_file_xfer->init(fip, fip->upload_when_present);
                 if (retval) {
                     msg_printf(project, MSG_INTERNAL_ERROR,
-                        "Can't initialize file transfer for %s",
-                        fip->name
-                    );
+                            "Can't initialize file transfer for %s", fip->name.c_str());
                 }
                 retval = pers_file_xfers->insert(fip->pers_file_xfer);
                 if (retval) {
                     msg_printf(project, MSG_INTERNAL_ERROR,
-                        "Can't start persistent file transfer for %s",
-                        fip->name
-                    );
+                            "Can't start persistent file transfer for %s", fip->name.c_str());
                 }
             }
             continue;
@@ -222,8 +218,7 @@ int CLIENT_STATE::parse_state_file() {
             retval = avp->parse(mf);
             if (!project) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "Application version outside project in state file"
-                );
+                        "Application version outside project in state file");
                 delete avp;
                 continue;
             }
@@ -239,7 +234,7 @@ int CLIENT_STATE::parse_state_file() {
                 continue;
             }
             if (strlen(avp->platform) == 0) {
-                strcpy(avp->platform, get_primary_platform());
+                strlcpy(avp->platform, get_primary_platform().c_str(), sizeof(avp->platform));
             } else {
                 if (!is_supported_platform(avp->platform)) {
                     // if it's a platform we haven't heard of,
@@ -249,9 +244,9 @@ int CLIENT_STATE::parse_state_file() {
                     //
                     msg_printf(project, MSG_INTERNAL_ERROR,
                         "App version has unsupported platform %s; changing to %s",
-                        avp->platform, get_primary_platform()
+                        avp->platform, get_primary_platform().c_str()
                     );
-                    strcpy(avp->platform, get_primary_platform());
+                    strlcpy(avp->platform, get_primary_platform().c_str(), sizeof(avp->platform));
                 }
             }
             retval = link_app_version(project, avp);
@@ -318,7 +313,7 @@ int CLIENT_STATE::parse_state_file() {
                 continue;
             }
             if (!strlen(rp->platform) || !is_supported_platform(rp->platform)) {
-                strcpy(rp->platform, get_primary_platform());
+                strlcpy(rp->platform, get_primary_platform().c_str(), sizeof(rp->platform));
                 rp->version_num = latest_version(rp->wup->app, rp->platform);
             }
             rp->avp = lookup_app_version(
@@ -435,11 +430,7 @@ int CLIENT_STATE::parse_state_file() {
             continue;
         }
 #endif
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] state_file: unrecognized: %s", buf
-            );
-        }
+        handle_unparsed_xml_warning("CLIENT_STATE::parse_state_file", buf);
         skip_unrecognized(buf, mf);
     }
     fclose(f);
@@ -565,7 +556,7 @@ int CLIENT_STATE::write_state_file() const {
                 STATE_FILE_NEXT, STATE_FILE_NAME, errno, strerror(errno)
             );
             if (log_flags.state_debug) {
-                system("ls -al /Library/Application\\ Support/BOINC\\ Data/client*.*");
+                system("ls -al /Library/Application\\ Support/Synecdoche\\ Data/client*.*");
             }
 #else
         msg_printf(0, MSG_USER_ERROR,
@@ -629,7 +620,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         "<user_run_request>%d</user_run_request>\n"
         "<user_network_request>%d</user_network_request>\n"
         "%s",
-        get_primary_platform(),
+        get_primary_platform().c_str(),
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,
@@ -744,7 +735,7 @@ int CLIENT_STATE::parse_app_info(PROJECT* p, FILE* in) {
                 continue;
             }
             if (strlen(avp->platform) == 0) {
-                strcpy(avp->platform, get_primary_platform());
+                strlcpy(avp->platform, get_primary_platform().c_str(), sizeof(avp->platform));
             }
             if (link_app_version(p, avp)) {
                 delete avp;
@@ -804,7 +795,7 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) {
         "<core_client_release>%d</core_client_release>\n"
         "%s"
         "%s",
-        get_primary_platform(),
+        get_primary_platform().c_str(),
         core_client_version.major,
         core_client_version.minor,
         core_client_version.release,

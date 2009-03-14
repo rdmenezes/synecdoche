@@ -24,6 +24,7 @@
 #include <cstdio>
 #include <ctime>
 #include <cmath>
+#include <sstream>
 #endif
 
 #ifdef HAVE_SYS_SOCKET_H
@@ -31,7 +32,11 @@
 #endif
 
 #include <cstring>
+
+#include "time_stats.h"
+
 #include "parse.h"
+#include "miofile.h"
 #include "util.h"
 #include "filesys.h"
 #include "error_numbers.h"
@@ -41,7 +46,6 @@
 #include "network.h"
 #include "log_flags.h"
 
-#include "time_stats.h"
 #include "version.h"
 
 #define CONNECTED_STATE_UNINITIALIZED   -1
@@ -133,7 +137,9 @@ void send_log_after(const char* filename, double t, MIOFILE& mf) {
 /// copy the log file after a given time
 ///
 void TIME_STATS::get_log_after(double t, MIOFILE& mf) {
-    fclose(time_stats_log);     // win: can't open twice
+    if (time_stats_log) {
+        fclose(time_stats_log);     // win: can't open twice
+    }
     send_log_after(TIME_STATS_LOG, t, mf);
     time_stats_log = fopen(TIME_STATS_LOG, "a");
 }
@@ -171,15 +177,15 @@ void TIME_STATS::update(int suspend_reason) {
 
         if (first) {
             // the client has just started; this is the first call.
-            //
             on_frac *= w2;
             first = false;
             log_append("power_off", last_update);
-            char buf[256];
-            sprintf(buf, "platform %s", gstate.get_primary_platform());
-            log_append(buf, gstate.now);
-            sprintf(buf, "version %s", SYNEC_VERSION_STRING);
-            log_append(buf, gstate.now);
+            std::ostringstream pbuf;
+            pbuf << "platform " << gstate.get_primary_platform();
+            log_append(pbuf.str(), gstate.now);
+            std::ostringstream vbuf;
+            vbuf << "version " << SYNEC_VERSION_STRING;
+            log_append(vbuf.str(), gstate.now);
             log_append("power_on", gstate.now);
         } else {
             on_frac = w1 + w2*on_frac;
@@ -265,26 +271,49 @@ int TIME_STATS::write(MIOFILE& out, bool to_server) const {
 }
 
 /// Parse XML based time statistics, usually from client_state.xml
-///
 int TIME_STATS::parse(MIOFILE& in) {
     char buf[256];
+    double x;
 
     while (in.fgets(buf, 256)) {
         if (match_tag(buf, "</time_stats>")) return 0;
-        else if (parse_double(buf, "<last_update>", last_update)) continue;
-        else if (parse_double(buf, "<on_frac>", on_frac)) continue;
-        else if (parse_double(buf, "<connected_frac>", connected_frac)) continue;
-        else if (parse_double(buf, "<active_frac>", active_frac)) continue;
-        else if (parse_double(buf, "<cpu_efficiency>", cpu_efficiency)) {
-            if (cpu_efficiency < 0) cpu_efficiency = 1;
-            if (cpu_efficiency > 1) cpu_efficiency = 1;
+        else if (parse_double(buf, "<last_update>", x)) {
+            if ((x < 0.0) || (x > gstate.now)) {
+                msg_printf(0, MSG_INTERNAL_ERROR, "bad value %f of time stats last update; ignoring", x);
+            } else {
+                last_update = x;
+            }
+            continue;
+        } else if (parse_double(buf, "<on_frac>", x)) {
+            if ((x <= 0.0) || (x > 1.0)) {
+                msg_printf(0, MSG_INTERNAL_ERROR, "bad value %f of time stats on_frac; ignoring", x);
+            } else {
+                on_frac = x;
+            }
+            continue;
+        } else if (parse_double(buf, "<connected_frac>", x)) {
+            if (x > 1.0) {
+                msg_printf(0, MSG_INTERNAL_ERROR, "bad value %f of time stats connected_frac; ignoring", x);
+            } else {
+                connected_frac = x;
+            }
+            continue;
+        } else if (parse_double(buf, "<active_frac>", x)) {
+            if ((x <= 0.0) || (x > 1.0)) {
+                msg_printf(0, MSG_INTERNAL_ERROR, "bad value %f of time stats active_frac; ignoring", x);
+            } else {
+                active_frac = x;
+            }
+            continue;
+        } else if (parse_double(buf, "<cpu_efficiency>", x)) {
+            if ((x < 0.0) || (x > 1.0)) {
+                msg_printf(0, MSG_INTERNAL_ERROR, "bad value %f of time stats cpu_efficiency; ignoring", x);
+            } else {
+                active_frac = x;
+            }
             continue;
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] TIME_STATS::parse(): unrecognized: %s\n", buf
-                );
-            }
+            handle_unparsed_xml_warning("TIME_STATS::parse", buf);
         }
     }
     return ERR_XML_PARSE;
@@ -301,9 +330,11 @@ void TIME_STATS::quit() {
     log_append("power_off", gstate.now);
 }
 
-void TIME_STATS::log_append(const char* msg, double t) {
-    if (!time_stats_log) return;
-    fprintf(time_stats_log, "%f %s\n", t, msg);
+void TIME_STATS::log_append(const std::string& msg, double t) {
+    if (!time_stats_log) {
+        return;
+    }
+    fprintf(time_stats_log, "%f %s\n", t, msg.c_str());
 }
 
 void TIME_STATS::log_append_net(int new_state) {

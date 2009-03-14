@@ -184,7 +184,7 @@ void	SetUpSystemMenu(MenuRef menuToCopy, CGImageRef theIcon) {
                                 0, kEventAttributeUserEvent, &theEvent);
     commandStruct.commandID = [sender tag];
     commandStruct.attributes = kHICommandFromMenu;
-    commandStruct.menu.menuRef = (MenuRef)'BNC!';
+    commandStruct.menu.menuRef = (MenuRef)'SYNE';
         
     if (err == noErr)
         err = SetEventParameter(theEvent, kEventParamDirectObject, 

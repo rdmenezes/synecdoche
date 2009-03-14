@@ -28,9 +28,6 @@
 #include "win_util.h"
 
 extern HINSTANCE g_hClientLibraryDll;
-static HANDLE g_hWin9xMonitorSystemThread = NULL;
-static DWORD g_Win9xMonitorSystemThreadID = NULL;
-static BOOL g_bIsWin9x = FALSE;
 static bool requested_suspend = false;
 static bool requested_resume = false;
 
@@ -57,11 +54,6 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 #include "SetupSecurity.h"
 #endif
 
-#ifdef __EMX__
-#define INCL_DOS
-#include <os2.h>
-#endif
-
 #include "diagnostics.h"
 #include "error_numbers.h"
 #include "str_util.h"
@@ -82,15 +74,20 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 
 int finalize();
 
+/// Used on Windows 95/98/ME to determine when it is safe to leave
+/// the WM_ENDSESSION message handler and allow Windows to finish
+/// cleaning up.
 static bool boinc_cleanup_completed = false;
-    // Used on Windows 95/98/ME to determine when it is safe to leave
-    //   the WM_ENDSESSION message handler and allow Windows to finish
-    //   cleaning up.
 
 /// Display a message to the user.
 /// Depending on the priority, the message may be more or less obtrusive
 ///
-void show_message(const PROJECT *p, const char* msg, int priority) {
+/// \param[in] p Pointer to a project to which the message belongs. May be
+///              set to 0 if the message does not belong to any project.
+/// \param[in] msg A string containing the message that should be displayed.
+/// \param[in] priority A value describing the priority of the
+///                     message. See common_defs.h for possible values.
+void show_message(const PROJECT *p, const std::string& msg, MSG_PRIORITY priority) {
     const char* x;
 
     time_t now = time(0);
@@ -154,75 +151,6 @@ void resume_client() {
     requested_resume = true;
 }
 
-/// Trap logoff and shutdown events on Win9x so we can clean ourselves up.
-LRESULT CALLBACK Win9xMonitorSystemWndProc(
-    HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
-) {
-    if (uMsg == WM_QUERYENDSESSION) {
-        BOINCTRACE("***** Win9x Monitor System Shutdown/Logoff Event Detected *****\n");
-        // Win95 is stupid, we really only need to wait until we have
-        //   successfully shutdown the active tasks and cleaned everything
-        //   up.  Luckly WM_QUERYENDSESSION is sent before Win9x checks for any
-        //   existing console and that gives us a chance to clean-up and
-        //   then clear the console window.  Win9x will not close down
-        //   a console window if anything is displayed on it.
-        quit_client();
-        system("cls");
-        return TRUE;
-    }
-    return (DefWindowProc(hWnd, uMsg, wParam, lParam));
-}
-
-DWORD WINAPI Win9xMonitorSystemThread( LPVOID  ) {
-    HWND hwndMain;
-    WNDCLASS wc;
-    MSG msg;
-
-    wc.style         = CS_GLOBALCLASS;
-    wc.lpfnWndProc   = (WNDPROC)Win9xMonitorSystemWndProc;
-    wc.cbClsExtra    = 0;
-    wc.cbWndExtra    = 0;
-    wc.hInstance     = NULL;
-    wc.hIcon         = NULL;
-    wc.hCursor       = NULL;
-    wc.hbrBackground = NULL;
-    wc.lpszMenuName  = NULL;
-    wc.lpszClassName = "BOINCWin9xMonitorSystem";
-
-    if (!RegisterClass(&wc))
-    {
-        fprintf(stderr, "Failed to register the Win9xMonitorSystem window class.\n");
-        return 1;
-    }
-
-    /* Create an invisible window */
-    hwndMain = CreateWindow(
-        wc.lpszClassName,
-        "Synecdoche Monitor System",
-        WS_OVERLAPPEDWINDOW & ~WS_VISIBLE,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        NULL,
-        NULL,
-        NULL,
-        NULL);
-
-    if (!hwndMain)
-    {
-        fprintf(stderr, "Failed to create the Win9xMonitorSystem window.\n");
-        return 0;
-    }
-
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    return 0;
-}
-
 BOOL WINAPI ConsoleControlHandler( DWORD dwCtrlType ){
     BOOL bReturnStatus = FALSE;
     BOINCTRACE("***** Console Event Detected *****\n");
@@ -260,10 +188,6 @@ static void signal_handler(int signum) {
     case SIGPWR:
 #endif
         gstate.requested_exit = true;
-#ifdef __EMX__
-        // close socket
-        shutdown(gstate.gui_rpcs.lsock, 2);
-#endif
         break;
     default:
         msg_printf(NULL, MSG_INTERNAL_ERROR, "Signal not handled");
@@ -494,11 +418,6 @@ int boinc_main_loop() {
             requested_resume = false;
         }
 #endif
-#ifdef __EMX__
-        // give timeslice also to other processes,
-        // otherwise we will get 100% cpu
-        DosSleep(0);
-#endif
     }
     return finalize();
 }
@@ -550,10 +469,6 @@ int finalize() {
         return ERR_IO;
     }
 #endif
-
-    if (g_bIsWin9x && g_Win9xMonitorSystemThreadID) {
-        PostThreadMessage(g_Win9xMonitorSystemThreadID, WM_QUIT, 0, 0);
-    }
 
 #endif
 
@@ -622,7 +537,6 @@ int main(int argc, char** argv) {
             break;
         }
     }
-#elif defined __EMX__
 #else
     // non-Apple Unix
     int i;
@@ -645,32 +559,6 @@ int main(int argc, char** argv) {
     init_core_client(argc, argv);
 
 #ifdef _WIN32
-
-    // Figure out if we're on Win9x
-    OSVERSIONINFO osvi;
-    osvi.dwOSVersionInfoSize = sizeof(osvi);
-    GetVersionEx(&osvi);
-    g_bIsWin9x = osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS;
-
-    if (g_bIsWin9x) {
-        // Win9x doesn't send us the shutdown or close console
-        //   event, so we are going to create a hidden window
-        //   to trap a WM_QUERYENDSESSION event.
-        g_hWin9xMonitorSystemThread = CreateThread(
-            NULL,
-            0,
-            Win9xMonitorSystemThread,
-            NULL,
-            0,
-            &g_Win9xMonitorSystemThreadID);
-
-        if (g_hWin9xMonitorSystemThread) {
-            CloseHandle(g_hWin9xMonitorSystemThread);
-        } else {
-            g_hWin9xMonitorSystemThread = NULL;
-            g_Win9xMonitorSystemThreadID = NULL;
-        }
-    }
 
     SERVICE_TABLE_ENTRY dispatchTable[] = {
         { TEXT(SZSERVICENAME), (LPSERVICE_MAIN_FUNCTION)service_main },

@@ -24,24 +24,26 @@
 #include "client_types.h"
 #include "http_curl.h"
 
+// invariant: in this state, our HTTP_OP is not in the HTTP_OP_SET
 #define SCHEDULER_OP_STATE_IDLE         0
-    // invariant: in this state, our HTTP_OP is not in the HTTP_OP_SET
+
 #define SCHEDULER_OP_STATE_GET_MASTER   1
+
 #define SCHEDULER_OP_STATE_RPC          2
 
 // defaults related to scheduler RPC policy
 // See client_state.h for definitions
 
+// fetch and parse master URL if nrpc_failures is a multiple of this
 #define MASTER_FETCH_PERIOD     10
-    // fetch and parse master URL if nrpc_failures is a multiple of this
+// cap on nrpc_failures
 #define RETRY_CAP               10
-    // cap on nrpc_failures
+// after this many master-fetch failures,
+// move into a state in which we retry master fetch
+// at the frequency below
 #define MASTER_FETCH_RETRY_CAP 3
-    // after this many master-fetch failures,
-    // move into a state in which we retry master fetch
-    // at the frequency below
+// See above
 #define MASTER_FETCH_INTERVAL (86400)    // 1 day
-    // See above
 
 // constants used to bound RPC backoff
 #define SCHED_RETRY_DELAY_MIN    60                // 1 minute
@@ -75,40 +77,49 @@ public:
     /// Try to initiate an RPC to the given project.
     int init_op_project(PROJECT* p, rpc_reason r);
 
-    int init_master_fetch(PROJECT*);
+    int init_master_fetch(PROJECT* p);
     bool check_master_fetch_start();
 
     /// Back off contacting this project's schedulers.
     void backoff(PROJECT* p, const std::string& reason_msg);
 
     /// if we're doing an op to this project, abort it
-    void abort(PROJECT*);
+    void abort(PROJECT* p);
 private:
-    bool update_urls(PROJECT*, std::vector<std::string> &urls);
-    int start_op(PROJECT*);
-    int start_rpc(PROJECT*);
-    int parse_master_file(PROJECT*, std::vector<std::string>&);
+    bool update_urls(PROJECT* p, std::vector<std::string>& urls);
+    int start_op(PROJECT* p);
+    int start_rpc(PROJECT* p);
+    int parse_master_file(PROJECT* p, std::vector<std::string>& urls);
 };
 
 struct USER_MESSAGE {
     std::string message;
     std::string priority;
-    USER_MESSAGE(char*, char*);
+    USER_MESSAGE(const char* msg, const char* prio);
 };
+
+inline USER_MESSAGE::USER_MESSAGE(const char* msg, const char* prio):
+    message(msg),
+    priority(prio)
+{
+}
 
 struct SCHEDULER_REPLY {
     int hostid;
     double request_delay;
     double next_rpc_delay;
     std::vector<USER_MESSAGE> messages;
+
+    // not including <global_preferences> tags;
+    // may include <venue> elements
     char* global_prefs_xml;
-        // not including <global_preferences> tags;
-        // may include <venue> elements
+    // not including <project_preferences> tags
+    // may include <venue> elements
     char* project_prefs_xml;
-        // not including <project_preferences> tags
-        // may include <venue> elements
+
     char master_url[256];
     char host_venue[256];
+
     unsigned int user_create_time;
     std::vector<APP> apps;
     std::vector<FILE_INFO> file_infos;
@@ -130,7 +141,7 @@ struct SCHEDULER_REPLY {
 
     SCHEDULER_REPLY();
     ~SCHEDULER_REPLY();
-    int parse(FILE*, PROJECT*);
+    int parse(FILE* in, PROJECT* project);
 };
 
 #endif

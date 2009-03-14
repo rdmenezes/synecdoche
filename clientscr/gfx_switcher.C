@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     group       *grp;
     char        user_name[256], group_name[256];
     char	gfx_app_path[MAXPATHLEN], resolved_path[MAXPATHLEN];
-    char        *BOINCDatSlotsPath = "/Library/Application Support/BOINC Data/slots/";
+    char        *BOINCDatSlotsPath = "/Library/Application Support/Synecdoche Data/slots/";
     int         retval;
     int         pid;
 

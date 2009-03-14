@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,8 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _APP_IPC_
-#define _APP_IPC_
+#ifndef APP_IPC_H
+#define APP_IPC_H
 
 #include <vector>
 #include <string>
@@ -119,9 +120,9 @@ struct MSG_QUEUE {
 
 struct GRAPHICS_MSG {
     int mode;
-    char window_station[256];
-    char desktop[256];
-    char display[256];
+    std::string window_station;
+    std::string desktop;
+    std::string display;
 
     GRAPHICS_MSG();
 };
@@ -152,8 +153,6 @@ struct APP_INIT_DATA {
     char symstore[256];
     char acct_mgr_url[256];
     char* project_preferences;
-    int userid;
-    int teamid;
     int hostid;
     char user_name[256];
     char team_name[256];
@@ -185,15 +184,14 @@ struct APP_INIT_DATA {
 
     // Items below here are for BOINC runtime system,
     // and should not be directly accessed by apps
-    //
     double checkpoint_period;     // recommended checkpoint period
     SHMEM_SEG_NAME shmem_seg_name;
     double wu_cpu_time;       // cpu time from previous episodes
 
     APP_INIT_DATA();
-    APP_INIT_DATA(const APP_INIT_DATA&);  // copy constructor
-    void operator=(const APP_INIT_DATA&);
-    void copy(const APP_INIT_DATA&);      // actually do the copy here
+    APP_INIT_DATA(const APP_INIT_DATA& a);  // copy constructor
+    APP_INIT_DATA& operator=(const APP_INIT_DATA& a);
+    void copy(const APP_INIT_DATA& a);      // actually do the copy here
     ~APP_INIT_DATA();
 };
 
@@ -246,4 +244,4 @@ extern int boinc_resolve_filename_s(const char *virtual_name, std::string& physi
 
 extern void url_to_project_dir(const char* url, char* dir);
 
-#endif
+#endif // APP_IPC_H

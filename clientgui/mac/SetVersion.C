@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2005 University of California, 2009 Michael Tughan
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -29,13 +29,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include <unistd.h>
 #include "version.h"
 
-int IsFileCurrent(char* filePath);
-int FixInfoPlistFile(char* myPath);
-int FixInfoPlist_Strings(char* myPath, char* brand);
-int MakeInstallerInfoPlistFile(char* myPath, char* brand);
+int IsFileCurrent(const char* filePath);
+int FixInfoPlistFile(const char* myPath);
+int FixInfoPlist_Strings(const char* myPath, const char* brand);
+int MakeInstallerInfoPlistFile(const char* myPath, const char* brand);
 
 int main(int argc, char** argv) {
     int retval = 0, err;
@@ -49,7 +50,7 @@ int main(int argc, char** argv) {
     printf("%s\n", myPath);       // For debugging
 #endif
 
-    err = FixInfoPlist_Strings("./English.lproj/InfoPlist.strings", "BOINC");
+    err = FixInfoPlist_Strings("./English.lproj/InfoPlist.strings", "Synecdoche");
     if (err) retval = err;
     err = FixInfoPlistFile("./Info.plist");
     if (err) retval = err;
@@ -63,12 +64,20 @@ int main(int argc, char** argv) {
     if (err) retval = err;
     err = FixInfoPlistFile("./Uninstaller-Info.plist");
     if (err) retval = err;
-    err = MakeInstallerInfoPlistFile("./Pkg-Info.plist", "BOINC Manager");
+    err = MakeInstallerInfoPlistFile("./Pkg-Info.plist", "Synecdoche Manager");
     return retval;
 }
 
+std::string version_string() {
+	std::string version = SYNEC_VERSION_STRING;
+	if(SYNEC_SVN_VERSION) {
+		version += " r";
+		version += SYNEC_SVN_VERSION;
+	}
+	return version;
+}
 
-int IsFileCurrent(char* filePath) {
+int IsFileCurrent(const char* filePath) {
     FILE *f;
     char *c, buf[1024];
     
@@ -79,7 +88,7 @@ int IsFileCurrent(char* filePath) {
         c = fgets(buf, sizeof(buf), f);
         if (c == NULL)
             break;   // EOF reached without finding correct version string
-        c = strstr(buf, BOINC_VERSION_STRING);
+        c = strstr(buf, version_string().c_str());
         if (c) {
             fclose(f);
             return true;  // File contains current version string
@@ -90,8 +99,9 @@ int IsFileCurrent(char* filePath) {
 }
 
 
-int FixInfoPlist_Strings(char* myPath, char* brand) {
+int FixInfoPlist_Strings(const char* myPath, const char* brand) {
     int retval = 0;
+    std::string versionString = version_string();
     FILE *f;
     
     if (IsFileCurrent(myPath))
@@ -102,8 +112,8 @@ int FixInfoPlist_Strings(char* myPath, char* brand) {
     {
         fprintf(f, "/* Localized versions of Info.plist keys */\n\n");
         fprintf(f, "CFBundleName = \"%s\";\n", brand);
-        fprintf(f, "CFBundleShortVersionString = \"%s version %s\";\n", brand, BOINC_VERSION_STRING);
-        fprintf(f, "CFBundleGetInfoString = \"%s version %s, Copyright 2007 University of California.\";\n", brand, BOINC_VERSION_STRING);
+        fprintf(f, "CFBundleShortVersionString = \"%s version %s\";\n", brand, versionString.c_str());
+        fprintf(f, "CFBundleGetInfoString = \"%s version %s, Copyright 2009 Synecdoche.\";\n", brand, versionString.c_str());
         fflush(f);
         retval = fclose(f);
     }
@@ -116,7 +126,7 @@ int FixInfoPlist_Strings(char* myPath, char* brand) {
 }
 
 
-int FixInfoPlistFile(char* myPath) {
+int FixInfoPlistFile(const char* myPath) {
     int retval = 0;
     FILE *fin = NULL, *fout = NULL;
     char *c, a, buf[1024];
@@ -162,7 +172,7 @@ int FixInfoPlistFile(char* myPath) {
     a = *(c+8);
     *(c+8) = '\0';                      // Put terminator after "<string>"
     fputs(buf, fout);                   // Copy up to end of "<string>"
-    fputs(BOINC_VERSION_STRING, fout);  // Write the current version number
+    fputs(version_string().c_str(), fout);  // Write the current version number
     *(c+8) = a;                         // Undo terminator we inserted
     c = strstr(buf, "</string>");       // Skip over old version number in input
     fputs(c, fout);                     // Copy rest of input line
@@ -198,8 +208,9 @@ bail:
 }
 
 
-int MakeInstallerInfoPlistFile(char* myPath, char* brand) {
+int MakeInstallerInfoPlistFile(const char* myPath, const char* brand) {
     int retval = 0;
+    std::string versionString = version_string();
     FILE *f;
     
     if (IsFileCurrent(myPath))
@@ -212,10 +223,10 @@ int MakeInstallerInfoPlistFile(char* myPath, char* brand) {
         fprintf(f, "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n");
         fprintf(f, "<plist version=\"1.0\">\n<dict>\n");
         fprintf(f, "\t<key>CFBundleGetInfoString</key>\n");
-        fprintf(f, "\t<string>%s %s</string>\n", brand, BOINC_VERSION_STRING);
-        fprintf(f, "\t<key>CFBundleIdentifier</key>\n\t<string>edu.berkeley.boinc</string>\n");
+        fprintf(f, "\t<string>%s %s</string>\n", brand, versionString.c_str());
+        fprintf(f, "\t<key>CFBundleIdentifier</key>\n\t<string>%s</string>\n", "${BUNDLE_IDENTIFIER}");
         fprintf(f, "\t<key>CFBundleShortVersionString</key>\n");
-        fprintf(f, "\t<string>%s</string>\n", BOINC_VERSION_STRING);
+        fprintf(f, "\t<string>%s</string>\n", versionString.c_str());
         fprintf(f, "\t<key>IFPkgFlagAllowBackRev</key>\n\t<integer>1</integer>\n");
         fprintf(f, "\t<key>IFPkgFlagAuthorizationAction</key>\n\t<string>AdminAuthorization</string>\n");
         fprintf(f, "\t<key>IFPkgFlagDefaultLocation</key>\n\t<string>/</string>\n");

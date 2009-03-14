@@ -34,6 +34,7 @@
 #include "common_defs.h"
 #include "file_names.h"
 #include "client_msgs.h"
+#include "miofile.h"
 #include "str_util.h"
 #include "filesys.h"
 #include "ticpp/ticpp.h"
@@ -120,24 +121,24 @@ void LOG_FLAGS::parse(const ticpp::Element* log_flags) {
     }
 }
 
-static void show_flag(char* buf, bool flag, const char* flag_name) {
-    if (!flag) return;
-    int n = (int)strlen(buf);
-    if (!n) {
-        strcpy(buf, flag_name);
+static void show_flag(std::string& buf, bool flag, const char* flag_name) {
+    if (!flag) {
         return;
     }
-    strcat(buf, ", ");
-    strcat(buf, flag_name);
-    if (strlen(buf) > 60) {
-        msg_printf(NULL, MSG_INFO, "log flags: %s", buf);
-        strcpy(buf, "");
+    if (buf.empty()) {
+        buf.append(flag_name);
+        return;
+    }
+    buf.append(", ").append(flag_name);
+    if (buf.size() > 60) {
+        msg_printf(NULL, MSG_INFO, "log flags: %s", buf.c_str());
+        buf.clear();
     }
 }
 
+/// Print a message containing all log flags that are set to true.
 void LOG_FLAGS::show() {
-    char buf[256];
-    strcpy(buf, "");
+    std::string buf;
     show_flag(buf, task, "task");
     show_flag(buf, file_xfer, "file_xfer");
     show_flag(buf, sched_ops, "sched_ops");
@@ -164,8 +165,8 @@ void LOG_FLAGS::show() {
     show_flag(buf, mem_usage_debug, "mem_usage_debug");
     show_flag(buf, network_status_debug, "network_status_debug");
     show_flag(buf, checkpoint_debug, "checkpoint_debug");
-    if (strlen(buf)) {
-        msg_printf(NULL, MSG_INFO, "log flags: %s", buf);
+    if (!buf.empty()) {
+        msg_printf(NULL, MSG_INFO, "log flags: %s", buf.c_str());
     }
 }
 
@@ -275,4 +276,23 @@ int read_config_file(bool init) {
     }
     int ret_val = config.parse(CONFIG_FILE);
     return ret_val;
+}
+
+/// Print a message about unparsed xml.
+/// If log_flags.unparsed_xml is not set this function does nothing.
+///
+/// \param[in] in_func The name of the parsing function which discovered the
+///                    unparsed xml data.
+/// \param[in] buf The unparsed xml data that should be included in the message.
+void handle_unparsed_xml_warning(const std::string& in_func, const std::string& buf) {
+    if (log_flags.unparsed_xml) {
+        // First check if buf only contains whitespaces. If yes ignore it to
+        // prevent printing empty messages.
+        std::string buf_copy(buf);
+        strip_whitespace(buf_copy);
+        if (!buf_copy.empty()) {
+            msg_printf(0, MSG_INFO, "[unparsed_xml] %s: unrecognized: %s",
+                       in_func.c_str(), buf_copy.c_str());
+        }
+    }
 }

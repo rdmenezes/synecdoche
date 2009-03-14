@@ -108,11 +108,11 @@ int main(int argc, char *argv[])
 
     ::GetCurrentProcess (&ourProcess);
 
-    QuitBOINCManager('BNC!'); // Quit any old instance of BOINC manager
+    QuitBOINCManager('SYNE'); // Quit any old instance of th Synecdoche manager
     sleep(2);
 
     // Core Client may still be running if it was started without Manager
-    coreClientPID = FindProcessPID("boinc", 0);
+    coreClientPID = FindProcessPID("synecd", 0);
     if (coreClientPID)
         kill(coreClientPID, SIGTERM);   // boinc catches SIGTERM & exits gracefully
 
@@ -140,14 +140,14 @@ int main(int argc, char *argv[])
             StandardAlert (kAlertStopAlert, "\pSorry, this version of BOINC requires system 10.3.9 or higher.",
                                                 NULL, NULL, &itemHit);
 	} else {
-            system ("rm -rf /Applications/BOINCManager.app");
-            system ("rm -rf /Library/Screen\\ Savers/BOINCSaver.saver");
+            system ("rm -rf /Applications/Synecdoche.app");
+            system ("rm -rf /Library/Screen\\ Savers/Synecdoche.saver");
 // We don't customize BOINC Data directory name for branding
-//            system ("rm -rf /Library/Application\\ Support/BOINC\\ Data");
+//            system ("rm -rf /Library/Application\\ Support/Synecdoche\\ Data");
             system ("rm -rf /Library/Receipts/BOINC.pkg");
         }
 
-        system ("rm -rf /Library/Application\\ Support/BOINC\\ Data");
+        system ("rm -rf /Library/Application\\ Support/Synecdoche\\ Data");
 
         err = kill(installerPID, SIGKILL);
 
@@ -158,12 +158,12 @@ int main(int argc, char *argv[])
 
     // Install all_projects_list.xml file, but only if one doesn't 
     // already exist, since a pre-existing one is probably newer.
-    f = fopen("/Library/Application Support/BOINC Data/all_projects_list.xml", "r");
+    f = fopen("/Library/Application Support/Synecdoche Data/all_projects_list.xml", "r");
     if (f) {
         fclose(f);      // Already exists
     } else {
-        system ("cp -fp Contents/Resources/all_projects_list.xml /Library/Application\\ Support/BOINC\\ Data/");
-        system ("chmod a-x /Library/Application\\ Support/BOINC\\ Data/all_projects_list.xml");
+        system ("cp -fp Contents/Resources/all_projects_list.xml /Library/Application\\ Support/Synecdoche\\ Data/");
+        system ("chmod a-x /Library/Application\\ Support/Synecdoche\\ Data/all_projects_list.xml");
     }
     
     Success = false;
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
        if (brandID == 1)
             p = "/Applications/GridRepublic Desktop.app";
         else
-            p = "/Applications/BOINCManager.app";
+            p = "/Applications/Synecdoche.app";
 
             err = SetBOINCAppOwnersGroupsAndPermissions(p);
         
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
             continue;
         }
         
-        err = check_security(p, "/Library/Application Support/BOINC Data", true, false);
+        err = check_security(p, "/Library/Application Support/Synecdoche Data", true, false);
         if (err == noErr)
             break;
 //          print_to_log_file("check_security returned %d (repetition=%d)", err, i);
@@ -265,38 +265,38 @@ int main(int argc, char *argv[])
 //      We don't customize BOINC Data directory name for branding
         // Set owner of GridRepublic Data
 //        sprintf(s, "chown -Rf %s /Library/Application\\ Support/GridRepublic\\ Data", p);
-        sprintf(s, "chown -Rf %s /Library/Application\\ Support/BOINC\\ Data", p);
+        sprintf(s, "chown -Rf %s /Library/Application\\ Support/Synecdoche\\ Data", p);
         system (s);
 
 	system ("chmod -R a+s /Applications/GridRepublic\\ Desktop.app");   // Installing GridRepublic over BOINC
     } else {
-        sprintf(s, "chown -Rf %s /Applications/BOINCManager.app", p);
+        sprintf(s, "chown -Rf %s /Applications/Synecdoche.app", p);
         system (s);
 
         // Set owner of BOINC Screen Saver
-        sprintf(s, "chown -Rf %s /Library/Screen\\ Savers/BOINCSaver.saver", p);
+        sprintf(s, "chown -Rf %s /Library/Screen\\ Savers/Synecdoche.saver", p);
         system (s);
 
 // We don't customize BOINC Data directory name for branding
         // Set owner of BOINC Data
-        sprintf(s, "chown -Rf %s /Library/Application\\ Support/BOINC\\ Data", p);
+        sprintf(s, "chown -Rf %s /Library/Application\\ Support/Synecdoche\\ Data", p);
         system (s);
-	system ("chmod -R a+s /Applications/BOINCManager.app");
+	system ("chmod -R a+s /Applications/Synecdoche.app");
     }
 
 #endif   // ! defined(SANDBOX)
 
    if (brandID == 1) {
- 	system ("rm -rf /Applications/BOINCManager.app");                   // Installing GridRepublic over BOINC
-	system ("rm -rf /Library/Screen\\ Savers/BOINCSaver.saver");        // Installing GridRepublic over BOINC
+ 	system ("rm -rf /Applications/Synecdoche.app");                   // Installing GridRepublic over BOINC
+	system ("rm -rf /Library/Screen\\ Savers/Synedoche.saver");        // Installing GridRepublic over BOINC
 
         err_fsref = FSPathMakeRef((StringPtr)"/Applications/GridRepublic Desktop.app", &fileRef, NULL);
     } else {
 	system ("rm -rf /Applications/GridRepublic\\ Desktop.app");     // Installing BOINC over GridRepublic
 	system ("rm -rf /Library/Screen\\ Savers/GridRepublic.saver");  // Installing BOINC over GridRepublic
-	system ("rm -f /Library/Application\\ Support/BOINC\\ Data/Branding");  // Installing BOINC over GridRepublic
+	system ("rm -f /Library/Application\\ Support/Synecdoche\\ Data/Branding");  // Installing BOINC over GridRepublic
 
-        err_fsref = FSPathMakeRef((StringPtr)"/Applications/BOINCManager.app", &fileRef, NULL);
+        err_fsref = FSPathMakeRef((StringPtr)"/Applications/Synecdoche.app", &fileRef, NULL);
     }
     
     if (err_fsref == noErr)
@@ -347,15 +347,15 @@ int DeleteReceipt()
         err_fsref = FSPathMakeRef((StringPtr)"/Applications/GridRepublic Desktop.app", &fileRef, NULL);
     } else {
         system ("rm -rf /Library/Receipts/BOINC.pkg");
-        err_fsref = FSPathMakeRef((StringPtr)"/Applications/BOINCManager.app", &fileRef, NULL);
+        err_fsref = FSPathMakeRef((StringPtr)"/Applications/Synecdoche.app", &fileRef, NULL);
     }
 
     if (finalInstallAction == launchWhenDone) {
         if (err_fsref == noErr) {
             // If system is set up to run BOINC Client as a daemon using launchd, launch it 
             //  as a daemon and allow time for client to start before launching BOINC Manager.
-            system("launchctl unload /Library/LaunchDaemons/edu.berkeley.boinc.plist");
-            i = system("launchctl load /Library/LaunchDaemons/edu.berkeley.boinc.plist");
+            system("launchctl unload /Library/LaunchDaemons/com.googlecode.synecdoche.plist");
+            i = system("launchctl load /Library/LaunchDaemons/com.googlecode.synecdoche.plist");
             if (i == 0) sleep (2);
             err = LSOpenFSRef(&fileRef, NULL);
         }
@@ -453,7 +453,7 @@ void SetLoginItem(long brandID, Boolean deleteLogInItem)
             q++;
         }
             
-        if (strcmp(p, "BOINCMANAGER.APP") == 0)
+        if (strcmp(p, "SYNECDOCHE.APP") == 0)
             Success = RemoveLoginItemAtIndex(kCurrentUser, Counter-1);
         if (strcmp(p, "GRIDREPUBLIC DESKTOP.APP") == 0)
             Success = RemoveLoginItemAtIndex(kCurrentUser, Counter-1);
@@ -467,7 +467,7 @@ void SetLoginItem(long brandID, Boolean deleteLogInItem)
                             "/Applications/GridRepublic Desktop.app", kHideOnLaunch);
     else
         Success = AddLoginItemWithPropertiesToUser(kCurrentUser,
-                            "/Applications/BOINCManager.app", kHideOnLaunch);
+                            "/Applications/Synecdoche.app", kHideOnLaunch);
 }
 
 // Sets the current skin selection to the specified skin in the specified user's preferences
@@ -529,7 +529,7 @@ Boolean CheckDeleteFile(char *name)
     char        buf[64];
     size_t      len;
     
-    f = fopen("/Library/Application Support/BOINC Data/nologinitems.txt", "r");
+    f = fopen("/Library/Application Support/Synecdoche Data/nologinitems.txt", "r");
     if (!f)
         return false;
     

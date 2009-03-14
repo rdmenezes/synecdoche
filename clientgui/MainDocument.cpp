@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -45,9 +45,9 @@ CNetworkConnection::CNetworkConnection(CMainDocument* pDocument) :
     m_pDocument = pDocument;
 
     m_strConnectedComputerName = wxEmptyString;
-    m_strConnectedComputerPassword = wxEmptyString;
+    m_strConnectedComputerPassword.clear();
     m_strNewComputerName = wxEmptyString;
-    m_strNewComputerPassword = wxEmptyString;
+    m_strNewComputerPassword.clear();
     m_bFrameShutdownDetected = false;
     m_bConnectEvent = false;
     m_bConnected = false;
@@ -64,32 +64,9 @@ CNetworkConnection::CNetworkConnection(CMainDocument* pDocument) :
 CNetworkConnection::~CNetworkConnection() {
 }
 
-
-int CNetworkConnection::GetLocalPassword(wxString& strPassword){
-    char buf[256];
-    strcpy(buf, "");
-
-    FILE* f = fopen("gui_rpc_auth.cfg", "r");
-    if (!f) return errno;
-    fgets(buf, 256, f);
-    fclose(f);
-    size_t n = strlen(buf);
-    if (n) {
-        n--;
-        if (buf[n]=='\n') {
-            buf[n] = 0;
-        }
-    }
-
-    strPassword = wxString(buf, wxConvUTF8);
-    return 0;
-}
-
-
 void CNetworkConnection::Poll() {
     int retval;
     wxString strComputer = wxEmptyString;
-    wxString strComputerPassword = wxEmptyString;
 
     if (IsReconnecting()) {
         wxLogTrace(wxT("Function Status"), wxT("CNetworkConnection::Poll - Reconnection Detected"));
@@ -100,14 +77,18 @@ void CNetworkConnection::Poll() {
             // Wait until we can establish a connection to the core client before reading
             //   the password so that the client has time to create one when it needs to.
             if (m_bUseDefaultPassword) {
-                m_iReadGUIRPCAuthFailure = 0;
                 m_bUseDefaultPassword = FALSE;
                 m_bUsedDefaultPassword = true;
 
-                m_iReadGUIRPCAuthFailure = GetLocalPassword(m_strNewComputerPassword);
+                try {
+                    m_strNewComputerPassword = read_gui_rpc_password();
+                    m_iReadGUIRPCAuthFailure = 0;
+                } catch (...) {
+                    m_iReadGUIRPCAuthFailure = ERR_FOPEN;
+                }
             }
 
-            retval = m_pDocument->rpc.authorize(m_strNewComputerPassword.mb_str());
+            retval = m_pDocument->rpc.authorize(m_strNewComputerPassword.c_str());
             if (!retval) {
                 wxLogTrace(wxT("Function Status"), wxT("CNetworkConnection::Poll - Connection Success"));
                 SetStateSuccess(m_strNewComputerName, m_strNewComputerPassword);
@@ -136,14 +117,12 @@ void CNetworkConnection::Poll() {
             // NOTE: Initial connection case.
             if (!m_strNewComputerName.empty()) {
                 strComputer = m_strNewComputerName;
-                strComputerPassword = m_strNewComputerPassword;
             } else {
                 // NOTE: Reconnect after a disconnect case.
                 //       Values are stored after the first successful connect to the host.
                 //       See: SetStateSuccess()
                 if (!m_strConnectedComputerName.empty()) {
                     strComputer = m_strConnectedComputerName;
-                    strComputerPassword = m_strConnectedComputerPassword;
                 }
             }
 
@@ -220,12 +199,11 @@ bool CNetworkConnection::IsComputerNameLocal(const wxString& strMachine) {
 }
 
 
-int CNetworkConnection::SetComputer(
-    const wxChar* szComputer, const int iPort, const wxChar* szPassword,
-    const bool bUseDefaultPassword
-) {
+int CNetworkConnection::SetComputer(const wxChar* szComputer, const int iPort,
+                                    const std::string& szPassword,
+                                    const bool bUseDefaultPassword) {
     m_strNewComputerName.Empty();
-    m_strNewComputerPassword.Empty();
+    m_strNewComputerPassword.clear();
     m_bUseDefaultPassword = FALSE;
 
     m_bNewConnection = true;
@@ -284,7 +262,7 @@ void CNetworkConnection::SetStateReconnecting() {
 }
 
 
-void CNetworkConnection::SetStateSuccess(wxString& strComputer, wxString& strComputerPassword) {
+void CNetworkConnection::SetStateSuccess(const wxString& strComputer, const std::string& strComputerPassword) {
     CBOINCBaseFrame* pFrame = wxGetApp().GetFrame();
     if (pFrame && !m_bFrameShutdownDetected) {
         wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
@@ -294,7 +272,7 @@ void CNetworkConnection::SetStateSuccess(wxString& strComputer, wxString& strCom
         m_strConnectedComputerName = strComputer;
         m_strConnectedComputerPassword = strComputerPassword;
         m_strNewComputerName = wxEmptyString;
-        m_strNewComputerPassword = wxEmptyString;
+        m_strNewComputerPassword.clear();
         m_bNewConnection = false;
 
         // Get the version of the client and cache it
@@ -410,7 +388,7 @@ int CMainDocument::OnPoll() {
         pFrame->UpdateStatusText(_("Starting client services; please wait..."));
 
         if (m_pClientManager->StartupBOINCCore()) {
-            Connect(wxT("localhost"), GUI_RPC_PORT, wxEmptyString, TRUE, TRUE);
+            Connect(wxT("localhost"), GUI_RPC_PORT, "", TRUE, TRUE);
         } else {
             m_pNetworkConnection->ForceDisconnect();
             pFrame->ShowDaemonStartFailedAlert();
@@ -491,7 +469,7 @@ int CMainDocument::ResetState() {
 }
 
 
-int CMainDocument::Connect(const wxChar* szComputer, int iPort, const wxChar* szComputerPassword, const bool bDisconnect, const bool bUseDefaultPassword) {
+int CMainDocument::Connect(const wxChar* szComputer, int iPort, const std::string& szComputerPassword, const bool bDisconnect, const bool bUseDefaultPassword) {
     wxString strOldMachineName = wxEmptyString;
 
    GetConnectedComputerName(strOldMachineName);
@@ -1268,16 +1246,12 @@ int CMainDocument::WorkShowGraphics(RESULT* result)
         // V5 and Older
         DISPLAY_INFO di;
 
-        strcpy(di.window_station, (char*)wxGetApp().m_strDefaultWindowStation.c_str());
-        strcpy(di.desktop, (char*)wxGetApp().m_strDefaultDesktop.c_str());
-        strcpy(di.display, (char*)wxGetApp().m_strDefaultDisplay.c_str());
+        di.window_station = (const char*)wxGetApp().m_strDefaultWindowStation.mb_str();
+        di.desktop = (const char*)wxGetApp().m_strDefaultDesktop.mb_str();
+        di.display = (const char*)wxGetApp().m_strDefaultDisplay.mb_str();
 
-        iRetVal = rpc.show_graphics(
-            result->project_url.c_str(),
-            result->name.c_str(),
-            MODE_WINDOW,
-            di
-        );
+        iRetVal = rpc.show_graphics(result->project_url.c_str(),
+            result->name.c_str(), MODE_WINDOW, di);
     }
 
     return iRetVal;

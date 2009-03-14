@@ -33,6 +33,8 @@
 #endif
 #endif
 
+#include "version.h"
+
 #include "error_numbers.h"
 #include "filesys.h"
 #include "client_msgs.h"
@@ -112,9 +114,13 @@ void parse_url(const char* url, char* host, int &port, char* file) {
 }
 
 void get_user_agent_string() {
-    sprintf(g_user_agent_string, "Synecdoche/%s (%s)",
-        SYNEC_VERSION_STRING,
-        gstate.get_primary_platform()
+    char svnrev[256] = "";
+    if (SYNEC_SVN_VERSION) {
+        sprintf(svnrev, "r%s ", SYNEC_SVN_VERSION);
+    }
+    sprintf(g_user_agent_string, "Synecdoche/%s (%s%s)",
+        SYNEC_VERSION_STRING, svnrev,
+        gstate.get_primary_platform().c_str()
     );
 }
 

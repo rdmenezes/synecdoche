@@ -34,6 +34,7 @@
 #endif
 #endif
 
+#include "client_state.h"
 #include "str_util.h"
 #include "util.h"
 #include "filesys.h"
@@ -41,7 +42,8 @@
 #include "file_names.h"
 #include "cpu_benchmark.h"
 #include "client_msgs.h"
-#include "client_state.h"
+#include "miofile.h"
+#include "pers_file_xfer.h"
 
 using std::min;
 using std::string;
@@ -296,7 +298,7 @@ int PROJECT::parse_preferences_for_user_files() {
             fip = new FILE_INFO;
             fip->project = this;
             fip->urls.push_back(url);
-            strcpy(fip->name, filename.c_str());
+            fip->name = filename;
             fip->is_user_file = true;
             gstate.file_infos.push_back(fip);
         }

@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -19,9 +19,11 @@
 #ifndef FILE_NAMES_H
 #define FILE_NAMES_H
 
-#include "client_types.h"
-#include "common_defs.h"
-#include "prefs.h"
+#include <string>
+
+class FILE_INFO;
+class PROJECT;
+class MIOFILE;
 
 /// get the pathname (relative to client home dir) of a project file.
 extern void get_pathname(const FILE_INFO* fip, char* path, int len);
@@ -50,7 +52,8 @@ extern bool is_statistics_file(const std::string& filename);
 /// Get the name of the statistics file for a given master URL.
 extern std::string get_statistics_filename(const char* master_url);
 
-extern bool is_image_file(const char*);
+/// Check if a file name denotes an image file.
+extern bool is_image_file(std::string filename);
 
 extern void get_sched_request_filename(const PROJECT&, char*, int len);
 extern void get_sched_reply_filename(const PROJECT&, char*, int len);
@@ -81,7 +84,6 @@ extern void send_log_after(const char* filename, double t, MIOFILE& mf);
 #define REMOTEHOST_FILE_NAME        "remote_hosts.cfg"
 #define ACCT_MGR_REQUEST_FILENAME   "acct_mgr_request.xml"
 #define ACCT_MGR_REPLY_FILENAME     "acct_mgr_reply.xml"
-#define GUI_RPC_PASSWD_FILE         "gui_rpc_auth.cfg"
 #define PROJECT_INIT_FILENAME       "project_init.xml"
 #define ACCT_MGR_URL_FILENAME       "acct_mgr_url.xml"
 #define ACCT_MGR_LOGIN_FILENAME     "acct_mgr_login.xml"

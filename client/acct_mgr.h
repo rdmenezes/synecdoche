@@ -22,7 +22,6 @@
 #include <string>
 #include <vector>
 
-#include "miofile.h"
 #include "gui_http.h"
 #include "client_types.h"
 #include "ticpp/ticpp.h"

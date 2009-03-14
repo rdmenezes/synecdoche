@@ -20,10 +20,11 @@
 
 #include <vector>
 
-#include "client_types.h"
 #include "http_curl.h"
 
 #define MIN_DOWNLOAD_INCREMENT  5000
+
+class FILE_INFO;
 
 /// A FILE_XFER object represents a file transfer "episode"
 /// (see pers_file_xfer.h), i.e.\ an HTTP transaction with a

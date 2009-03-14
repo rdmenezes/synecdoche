@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -19,10 +19,9 @@
 // If you change anything, make sure you also change:
 // client_types.C  (to write and parse it)
 // client_state.C  (to cross-link objects)
-//
 
-#ifndef _CLIENT_TYPES_
-#define _CLIENT_TYPES_
+#ifndef CLIENT_TYPES_H
+#define CLIENT_TYPES_H
 
 #if !defined(_WIN32) || defined(__CYGWIN32__)
 #include <stdio.h>
@@ -34,14 +33,12 @@
 
 #include "common_defs.h"
 #include "md5_file.h"
-#include "hostinfo.h"
-#include "miofile.h"
+#include "rr_sim.h"
 
 #define P_LOW 1
 #define P_MEDIUM 3
 #define P_HIGH 5
 
-#define MAX_FILE_INFO_LEN   4096
 #define MAX_SIGNATURE_LEN   4096
 #define MAX_KEY_LEN         4096
 
@@ -49,34 +46,43 @@
 // it will be an error code defined in error_numbers.h,
 // indicating an unrecoverable error in the upload or download of the file,
 // or that the file was too big and was deleted
-//
 #define FILE_NOT_PRESENT    0
 #define FILE_PRESENT        1
 
+class MIOFILE;
+class PERS_FILE_XFER;
+class RESULT;
+class PROJECT;
+
 class FILE_INFO {
 public:
-    char name[256];
+    std::string name;
     char md5_cksum[33];
     double max_nbytes;
     double nbytes;
     double upload_offset;
-    bool generated_locally; ///< file is produced by app
+    bool generated_locally; ///< File is produced by application, not downloaded.
     int status;
-    bool executable;        ///< change file protections to make executable
-    bool uploaded;          ///< file has been uploaded
+    bool executable;        ///< Change file protections to make it executable on the client.
+    bool uploaded;          ///< File has been uploaded to the project server.
     bool upload_when_present;
-    bool sticky;            ///< don't delete unless instructed to do so
-    bool report_on_rpc;     ///< include this in each scheduler request
-    bool marked_for_delete;     ///< server requested delete;
-        ///< if not in use, delete even if sticky is true
-        ///< don't report to server even if report_on_rpc is true
+    /// Don't delete this file unless instructed to do so. In particular, don't
+    /// immediately delete it after the task(s) using it are completed and
+    /// reported.
+    bool sticky;
+    /// Report presence of this file in each scheduler request.
+    bool report_on_rpc;
+    /// Server requested delete;
+    /// if not in use, delete even if sticky is true.
+    /// Don't report to server even if report_on_rpc is true.
+    bool marked_for_delete;
     bool signature_required;    ///< true iff associated with app version
     bool is_user_file;
     bool is_project_file;
     bool gzip_when_done; ///< for output files: gzip file when done, and append .gz to its name
-    class PERS_FILE_XFER* pers_file_xfer; ///< nonzero if in the process of being up/downloaded
-    struct RESULT* result;         ///< for upload files (to authenticate)
-    class PROJECT* project;
+    PERS_FILE_XFER* pers_file_xfer; ///< nonzero if in the process of being up/downloaded
+    RESULT* result;         ///< for upload files (to authenticate)
+    PROJECT* project;
     int ref_cnt;
     std::vector<std::string> urls;
     int start_url;
@@ -85,13 +91,17 @@ public:
     /// this is the text that is signed.
     /// Otherwise it is the FILE_INFO's XML descriptor
     /// (without enclosing <file_info> tags).
-    char signed_xml[MAX_FILE_INFO_LEN];
-    char xml_signature[MAX_SIGNATURE_LEN]; ///< the actual signature
+    std::string signed_xml;
+
+    /// If the file_info is signed, this is the digital signature. Otherwise empty (?).
+    std::string xml_signature;
+
     /// If the file itself is signed (for executable files),
-    /// this is the signature
-    char file_signature[MAX_SIGNATURE_LEN];
-    /// If permanent error occurs during file xfer,
-    /// it's recorded here
+    /// this is the signature.
+    std::string file_signature;
+
+    /// If a permanent error occurs during file xfer,
+    /// it's recorded here.
     std::string error_msg;
 
     FILE_INFO();
@@ -101,7 +111,7 @@ public:
     int parse(MIOFILE&, bool from_server);
     int write(MIOFILE&, bool to_server) const;
     int write_gui(MIOFILE&) const;
-    int delete_file();      ///< attempt to delete the underlying file
+    int delete_file();      ///< Attempt to delete the underlying file.
     const char* get_init_url(bool);
     const char* get_next_url(bool);
     const char* get_current_url(bool);
@@ -113,31 +123,37 @@ public:
 
     int merge_info(const FILE_INFO&);
     int verify_file(bool, bool);
-    int gzip();     ///< gzip file and add .gz to name
+
+    /// Compress the file using zlib (gzip compression).
+    int gzip();
 };
 
-/// Describes a connection between a file and a workunit, result, or application.
-/// In the first two cases,
-/// the app will either use open() or fopen() to access the file
-/// (in which case \ref open_name is the name it will use)
-/// or the app will be connected by the given fd (in which case fd is nonzero).
-struct FILE_REF {
+/// Describes a connection between a file and a workunit, result, or
+/// application. In the first two cases, the app will either use open() or
+/// fopen() to access the file (in which case \ref open_name is the name it
+/// will use) or the app will be connected by the given fd (in which case fd is
+/// nonzero).
+class FILE_REF {
+public:
     char file_name[256];    ///< physical name
     char open_name[256];    ///< logical name
     bool main_program;
     FILE_INFO* file_info;
-    /// if true, core client will copy the file instead of linking
+    /// If true, core client will copy the file instead of making a soft link.
+    /// Works both for input and output files.
     bool copy_file;
-    /// for output files: app may not generate file;
-    /// don't treat as error if file is missing.
+    /// If true, don't treat as an error if the file is missing when the task
+    /// ends.
     bool optional;
+
+public:
     int parse(MIOFILE&);
     int write(MIOFILE&) const;
 };
 typedef std::vector<FILE_REF> FILE_REF_VEC;
 
 
-/// statistics at a specific day
+/// Statistics at a specific day.
 struct DAILY_STATS {
     double user_total_credit;
     double user_expavg_credit;
@@ -146,61 +162,10 @@ struct DAILY_STATS {
     double day;
 
     void clear();
-    DAILY_STATS() {clear();}
+    DAILY_STATS() { clear(); }
     int parse(FILE*);
 };
 bool operator < (const DAILY_STATS&, const DAILY_STATS&);
-
-struct RR_SIM_PROJECT_STATUS {
-    std::vector<RESULT*>active;     ///< jobs currently running (in simulation
-    std::vector<RESULT*>pending;    ///< jobs runnable but not running yet
-    int deadlines_missed;
-
-    /// Fraction of each CPU this project will get
-    /// set in CLIENT_STATE::rr_misses_deadline();
-    double proc_rate;
-
-    double cpu_shortfall;
-
-    inline void clear() {
-        active.clear();
-        pending.clear();
-        deadlines_missed = 0;
-        proc_rate = 0;
-        cpu_shortfall = 0;
-    }
-    inline void activate(RESULT* rp) {
-        active.push_back(rp);
-    }
-    inline void add_pending(RESULT* rp) {
-        pending.push_back(rp);
-    }
-    inline bool none_active() {
-        return active.empty();
-    }
-    inline bool can_run(RESULT*, int ncpus) {
-        return (int)active.size() < ncpus;
-    }
-    inline void remove_active(RESULT* r) {
-        std::vector<RESULT*>::iterator it = active.begin();
-        while (it != active.end()) {
-            if (*it == r) {
-                it = active.erase(it);
-            } else {
-                it++;
-            }
-        }
-    }
-    inline RESULT* get_pending() {
-        if (pending.empty()) return NULL;
-        RESULT* rp = pending[0];
-        pending.erase(pending.begin());
-        return rp;
-    }
-    inline int cpus_used() {
-        return (int) active.size();
-    }
-};
 
 class PROJECT {
 public:
@@ -209,13 +174,14 @@ public:
     /// They are a function only of the user and the project.
     /// @{
 
-    char master_url[256];    ///< URL of site that contains scheduler tags for this project.
+    /// URL of site that contains scheduler tags for this project.
+    char master_url[256];
     char authenticator[256]; ///< User's authenticator on this project.
 
     /// Project preferences without the enclosing <project_preferences> tags.
     /// May include <venue> elements
     /// This field is used only briefly: between handling a
-    /// scheduler RPC reply and writing the account file
+    /// scheduler RPC reply and writing the account file.
     std::string project_prefs;
 
     /// Project-specific preferences without enclosing <project_specific> tags.
@@ -254,7 +220,8 @@ public:
     double host_total_credit;
     double host_expavg_credit;
     double host_create_time;
-    double ams_resource_share; ///< resource share according to AMS; overrides project
+    /// Resource share according to account manager. Overrides project's.
+    double ams_resource_share;
     /// @}
 
     /// @name Scheduler RPCs
@@ -263,15 +230,16 @@ public:
 
     int rpc_seqno;
 
-    /// # of consecutive times we've failed to
-    /// contact all scheduling servers.
-    int nrpc_failures;          
-                                
+    /// Number of consecutive times we've failed to contact all scheduling
+    /// servers.
+    int nrpc_failures;
+    /// Number of consecutive(?) times we've failed to download the master file.
     int master_fetch_failures;
-    double min_rpc_time;           ///< earliest time to contact any server
-                                   ///< of this project (or zero)
+    /// Earliest time to contact any server of this project (or zero). In other
+    /// words, don't contact any server before this timestamp.
+    double min_rpc_time;
     void set_min_rpc_time(double future_time, const char* reason);
-    bool waiting_until_min_rpc_time(); ///< returns true if min_rpc_time > now
+    bool waiting_until_min_rpc_time(); ///< Returns true if min_rpc_time > now
     bool master_url_fetch_pending;  ///< need to fetch and parse the master URL
 
     /// We need to do a scheduler RPC, for various possible reasons:
@@ -296,8 +264,9 @@ public:
     /// @name Others
     /// @{
 
-    /// app_versions.xml file found in project dir;
-    /// use those apps rather than getting from server
+    /// Use anonymous platform for this project. Set if app_versions.xml file
+    /// is found in the project directory. Will use those apps rather than
+    /// getting apps from the server.
     bool anonymous_platform;
 
     bool non_cpu_intensive;
@@ -320,13 +289,15 @@ public:
 
     bool suspended_via_gui;
 
-    /// Return work, but don't request more.
-    /// Used for a clean exit to a project,
-    /// or if a user wants to pause doing work for the project.
+    /// If true, don't request work from this project (but still do scheduler
+    /// requests, like to return finished work). Used for a clean exit to a
+    /// project, or if a user wants to pause doing work for the project.
     bool dont_request_more_work;
 
     bool attached_via_acct_mgr;
-    bool detach_when_done;      ///< When no results for this project, detach it.
+    /// If true, detach this project as soon as there are no more results for
+    /// it.
+    bool detach_when_done;
     bool ended;                 ///< Project has ended; advise user to detach.
     char code_sign_key[MAX_KEY_LEN];
     FILE_REF_VEC user_files;
@@ -368,10 +339,10 @@ public:
     /// Not suspended and not deferred and not no more work.
     bool contactable() const;
 
-    /// Has a runnable result
+    /// Has a runnable result.
     bool runnable() const;
 
-    /// Has a result in downloading state
+    /// Has a result in downloading state.
     bool downloading() const;
 
     /// Runnable or contactable or downloading.
@@ -418,7 +389,7 @@ public:
     /// @}
 
     /// The next result to run for this project.
-    struct RESULT *next_runnable_result;
+    RESULT *next_runnable_result;
 
     /// Number of results in UPLOADING state.
     /// Don't start new results if these exceeds 2*ncpus.
@@ -431,12 +402,12 @@ public:
     /// -# this project's fractional resource share.
     /// -# on_frac, active_frac, and cpu_effiency.
     ///
-    /// see http://boinc.berkeley.edu/trac/wiki/CpuSched
+    /// See http://boinc.berkeley.edu/trac/wiki/CpuSched
     double work_request;
 
     int work_request_urgency;
 
-    /// # of results being returned in current scheduler op.
+    /// Number of results being returned in current scheduler operation.
     int nresults_returned;
 
     /// Get scheduler URL with random offset \a r.
@@ -486,7 +457,7 @@ public:
     int parse_state(MIOFILE&);
     int write_state(MIOFILE&, bool gui_rpc=false) const;
 
-    std::vector<DAILY_STATS> statistics; ///< statistic of the last x days
+    std::vector<DAILY_STATS> statistics; ///< Statistics of the last x days.
     int parse_statistics(MIOFILE&);
     int parse_statistics(FILE*);
     int write_statistics(MIOFILE&, bool gui_rpc=false) const;
@@ -504,7 +475,8 @@ struct APP {
     int write(MIOFILE&) const;
 };
 
-struct APP_VERSION {
+class APP_VERSION {
+public:
     char app_name[256];
     int version_num;
     char platform[256];
@@ -513,7 +485,7 @@ struct APP_VERSION {
     double avg_ncpus;
     double max_ncpus;
     double flops;
-    char cmdline[256];      ///< additional cmdline args
+    char cmdline[256]; ///< Additional command-line arguments.
 
     APP* app;
     PROJECT* project;
@@ -521,6 +493,7 @@ struct APP_VERSION {
     int ref_cnt;
     char graphics_exec_path[512];
 
+public:
     APP_VERSION(){}
     ~APP_VERSION(){}
     int parse(MIOFILE&);
@@ -531,7 +504,8 @@ struct APP_VERSION {
     int api_major_version() const;
 };
 
-struct WORKUNIT {
+class WORKUNIT {
+public:
     char name[256];
     char app_name[256];
     /// Deprecated, but need to keep around to let people revert
@@ -548,6 +522,7 @@ struct WORKUNIT {
     double rsc_memory_bound;
     double rsc_disk_bound;
 
+public:
     WORKUNIT(){}
     ~WORKUNIT(){}
     int parse(MIOFILE&);
@@ -557,32 +532,30 @@ struct WORKUNIT {
     void clear_errors();
 };
 
-struct RESULT {
+class RESULT {
+public:
     char name[256];
     char wu_name[256];
     double report_deadline;
-    int version_num;        ///< identifies the app used
+    int version_num;        ///< Identifies the app used.
     char plan_class[64];
     char platform[256];
     APP_VERSION* avp;
     std::vector<FILE_REF> output_files;
-    /// we're ready to report this result to the server;
-    /// either computation is done and all the files have been uploaded
-    /// or there was an error
+    /// We're ready to report this result to the server;
+    /// either computation is done and all the files have been uploaded,
+    /// or there was an error.
     bool ready_to_report;
-    /// time when ready_to_report was set
+    /// Time when ready_to_report was set.
     double completed_time;
-    /// we're received the ack for this result from the server
+    /// We've received the ack for this result from the server.
     bool got_server_ack;
     double final_cpu_time;
     double fpops_per_cpu_sec;   // nonzero if reported by app
     double fpops_cumulative;    // nonzero if reported by app
     double intops_per_cpu_sec;   // nonzero if reported by app
     double intops_cumulative;    // nonzero if reported by app
-    int _state;                  ///< state of this result: see lib/common_defs.h
-    inline int state() const { return _state; }
-    void set_state(int, const char*);
-    int exit_status;            ///< return value from the application
+    int exit_status;            ///< Return value from the application.
     /// The concatenation of:
     ///
     /// - if report_result_error() is called for this result:
@@ -603,6 +576,10 @@ struct RESULT {
     WORKUNIT* wup; ///< this may be NULL after result is finished
     PROJECT* project;
 
+private:
+    int _state;                  ///< State of this result: see lib/common_defs.h
+
+public:
     RESULT(){}
     ~RESULT(){}
     void clear();
@@ -615,11 +592,14 @@ struct RESULT {
     void clear_uploaded_flags();
     const FILE_REF* lookup_file(const FILE_INFO*) const;
     FILE_INFO* lookup_file_logical(const char*);
-    /// abort the result if it hasn't started computing yet
+    /// Abort the result if it hasn't started computing yet.
     /// Called only for results with no active task
-    /// (otherwise you need to abort the active task)
+    /// (otherwise you need to abort the active task).
     void abort_inactive(int);
     void append_log_record();
+
+    inline int state() const { return _state; }
+    void set_state(int, const char*);
 
     // stuff related to CPU scheduling
 
@@ -627,33 +607,33 @@ struct RESULT {
     double estimated_cpu_time_uncorrected() const;
     double estimated_cpu_time_remaining() const;
     bool computing_done() const;
-    /// downloaded, not finished, not suspended, project not suspended
+    /// Downloaded, not finished, not suspended, project not suspended.
     bool runnable() const;
-    /// downloading or downloaded,
-    /// not finished, suspended, project not suspended
+    /// Downloading or downloaded,
+    /// not finished, suspended, project not suspended.
     bool nearly_runnable() const;
-    /// downloading, not downloaded, not suspended, project not suspended
+    /// Downloading, not downloaded, not suspended, project not suspended.
     bool downloading() const;
-    /// some input or app file is downloading, and backed off
-    /// i.e. it may be a long time before we can run this result
+    /// Some input or app file is downloading, and backed off.
+    /// That is, it may be a long time before we can run this result.
     bool some_download_stalled() const;
 
     // temporaries used in CLIENT_STATE::rr_simulation():
     double rrsim_cpu_left;
     double rrsim_finish_delay;
-    /// used to keep cpu scheduler from scheduling a result twice
-    /// transient; used only within schedule_cpus()
+    /// Result already selected by schedule_cpus(). Used to keep cpu scheduler
+    /// from scheduling a result twice. Transient variable.
     bool already_selected;
     /// report deadline - prefs.work_buf_min - time slice
     double computation_deadline() const;
     bool rr_sim_misses_deadline;
     bool last_rr_sim_missed_deadline;
 
-    /// temporary used to tell GUI that this result is deadline-scheduled
+    /// Temporary used to tell GUI that this result is deadline-scheduled.
     bool edf_scheduled;
 };
 
-/// represents an always/auto/never value, possibly temporarily overridden
+/// Sepresents an always/auto/never value, possibly temporarily overridden.
 class MODE {
 private:
     int perm_mode;
@@ -667,10 +647,10 @@ public:
     double delay() const;
 };
 
-/// a platform supported by the client.
+/// A platform supported by the client.
 class PLATFORM {
 public:
     std::string name;
 };
 
-#endif
+#endif // CLIENT_TYPES_H

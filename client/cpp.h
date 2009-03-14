@@ -28,10 +28,8 @@
 #endif
 
 #if !defined(_WIN32) || defined(__CYGWIN32__)
-#include "config.h"
-#include <cstring>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
+// Please don't create a header of headers for UNIX systems.
+// This is partially causes the mess with looking for symbols named "*open64"
+// Not to mention the assumption that every source file wants these
+// headers is wrong.
 #endif
