@@ -114,15 +114,17 @@ CBOINCBaseFrame::~CBOINCBaseFrame() {
     if (m_pAlertPollTimer) {
         m_pAlertPollTimer->Stop();
         delete m_pAlertPollTimer;
+        m_pAlertPollTimer = 0;
     }
 
     if (m_pDocumentPollTimer) {
         m_pDocumentPollTimer->Stop();
         delete m_pDocumentPollTimer;
+        m_pDocumentPollTimer = 0;
     }
 
-    if (m_pDialupManager)
-        delete m_pDialupManager;
+    delete m_pDialupManager;
+    m_pDialupManager = 0;
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::~CBOINCBaseFrame - Function End"));
 }
@@ -380,7 +382,7 @@ void CBOINCBaseFrame::ShowConnectionBadPasswordAlert( bool bUsedDefaultPassword,
     if (bUsedDefaultPassword) {
         passwordErrorReason = _("Authorization failed connecting to running client.");
         if (m_iReadGUIRPCAuthFailure) {
-            passwordErrorReason << wxT("\n") << _("Could not read gui_rpc_auth.cfg");
+            passwordErrorReason << wxT("\n") << _("Could not read ") << _(GUI_RPC_PASSWD_FILE);
         }
     } else {
         passwordErrorReason = _("The password you have provided is incorrect, please try again.");
@@ -623,7 +625,7 @@ bool CBOINCBaseFrame::SaveState() {
     pConfig->SetPath(strConfigLocation);
     size_t iItemCount = m_aSelectedComputerMRU.GetCount();
     for (size_t iIndex = 0; iIndex < iItemCount; ++iIndex) {
-        strBuffer.Printf(wxT("%d"), iIndex);
+        strBuffer.Printf(wxT("%lu"), iIndex);
         pConfig->Write(strBuffer, m_aSelectedComputerMRU.Item(iIndex));
     }
 

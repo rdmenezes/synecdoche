@@ -51,11 +51,13 @@ synecd_SOURCES = \
     main.C \
     net_stats.C \
     pers_file_xfer.C \
+    rr_sim.cpp \
     sandbox.C \
     scheduler_op.C \
     time_stats.C \
     whetstone.C \
-    work_fetch.C
+    work_fetch.C \
+    ../svnversion.cpp
 
 synecd_DEPENDENCIES =
 synecd_CPPFLAGS = -O3 -fomit-frame-pointer -fforce-addr -ffast-math $(AM_CPPFLAGS)

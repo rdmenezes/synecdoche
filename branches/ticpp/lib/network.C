@@ -35,6 +35,12 @@
 #include "error_numbers.h"
 #include "network.h"
 
+/// Return a string describing the current network error value.
+/// On Windows this function get's the error value by calling WSAGetLastError().
+/// On all other platforms the variable h_errno is used instead.
+/// NOTE: In case of an unknown error calling this function is not thread-safe!
+///
+/// \return A pointer to a C-string describing the current error value.
 const char* socket_error_str() {
     static char buf[80];
 #if defined(_WIN32) && defined(USE_WINSOCK)
@@ -84,18 +90,23 @@ const char* socket_error_str() {
 #endif
 }
 
-int resolve_hostname(char* hostname, int &ip_addr) {
-
-    // if the hostname is in Internet Standard dotted notation, 
+/// Resolve a hostname (IPv4 only).
+///
+/// \param[in] hostname The hostname that should be resolved.
+/// \param[out] ip_addr Reference to an int variable that will receive
+///                     a numeric representation of the IPv4 address if
+///                     resolving \a hostname was successful.
+/// \return Zero on success, ERR_GETHOSTBYNAME if \a hostname could not
+///         be resolved.
+int resolve_hostname(const char* hostname, int& ip_addr) {
+    // If the hostname is in Internet Standard dotted notation, 
     // return that address.
-    //
     ip_addr = inet_addr(hostname);
     if (ip_addr != -1) {
         return 0;
     }
 
     // else resolve the name
-    //
     hostent* hep;
     hep = gethostbyname(hostname);
     if (!hep) {

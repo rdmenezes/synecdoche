@@ -7,7 +7,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -58,21 +58,21 @@
  * This package is an SSL implementation written
  * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
- * 
+ *
  * This library is free for commercial and non-commercial use as long as
  * the following conditions are aheared to.  The following conditions
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
  * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- * 
+ *
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
  * If this package is used in a product, Eric Young should be given attribution
  * as the author of the parts of the library used.
  * This can be in the form of a textual message at program startup or
  * in documentation (online or textual) provided with the package.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -87,10 +87,10 @@
  *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from 
+ * 4. If you include any Windows specific code (or a derivative thereof) from
  *    the apps directory (application code) you must include an acknowledgement:
  *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -102,7 +102,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * The licence and distribution terms for any publically available version or
  * derivative of this code cannot be changed.  i.e. this code cannot simply be
  * copied and put under another distribution licence
@@ -110,7 +110,7 @@
  */
 /* ====================================================================
  * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
- * ECDH support in OpenSSL originally developed by 
+ * ECDH support in OpenSSL originally developed by
  * SUN MICROSYSTEMS, INC., and contributed to the OpenSSL project.
  */
 
@@ -163,7 +163,7 @@ typedef int CRYPTO_EX_new(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
 typedef void CRYPTO_EX_free(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
 					int idx, long argl, void *argp);
 /* Called when we need to dup an object */
-typedef int CRYPTO_EX_dup(CRYPTO_EX_DATA *to, CRYPTO_EX_DATA *from, void *from_d, 
+typedef int CRYPTO_EX_dup(CRYPTO_EX_DATA *to, CRYPTO_EX_DATA *from, void *from_d,
 					int idx, long argl, void *argp);
 #endif
 
@@ -219,7 +219,13 @@ typedef struct openssl_item_st
 #define CRYPTO_LOCK_EC_PRE_COMP		36
 #define CRYPTO_LOCK_STORE		37
 #define CRYPTO_LOCK_COMP		38
+#ifndef OPENSSL_FIPS
 #define CRYPTO_NUM_LOCKS		39
+#else
+#define CRYPTO_LOCK_FIPS		39
+#define CRYPTO_LOCK_FIPS2		40
+#define CRYPTO_NUM_LOCKS		41
+#endif
 
 #define CRYPTO_LOCK		1
 #define CRYPTO_UNLOCK		2
@@ -341,14 +347,7 @@ DECLARE_STACK_OF(CRYPTO_EX_DATA_FUNCS)
 
 /* Set standard debugging functions (not done by default
  * unless CRYPTO_MDEBUG is defined) */
-#define CRYPTO_malloc_debug_init()	do {\
-	CRYPTO_set_mem_debug_functions(\
-		CRYPTO_dbg_malloc,\
-		CRYPTO_dbg_realloc,\
-		CRYPTO_dbg_free,\
-		CRYPTO_dbg_set_options,\
-		CRYPTO_dbg_get_options);\
-	} while(0)
+void CRYPTO_malloc_debug_init(void);
 
 int CRYPTO_mem_ctrl(int mode);
 int CRYPTO_is_mem_check_on(void);
@@ -363,6 +362,7 @@ int CRYPTO_is_mem_check_on(void);
 #define is_MemCheck_on() CRYPTO_is_mem_check_on()
 
 #define OPENSSL_malloc(num)	CRYPTO_malloc((int)num,__FILE__,__LINE__)
+#define OPENSSL_strdup(str)	CRYPTO_strdup((str),__FILE__,__LINE__)
 #define OPENSSL_realloc(addr,num) \
 	CRYPTO_realloc((char *)addr,(int)num,__FILE__,__LINE__)
 #define OPENSSL_realloc_clean(addr,old_num,num) \
@@ -427,6 +427,9 @@ const char *CRYPTO_get_lock_name(int type);
 int CRYPTO_add_lock(int *pointer,int amount,int type, const char *file,
 		    int line);
 
+void int_CRYPTO_set_do_dynlock_callback(
+	void (*do_dynlock_cb)(int mode, int type, const char *file, int line));
+
 int CRYPTO_get_new_dynlockid(void);
 void CRYPTO_destroy_dynlockid(int i);
 struct CRYPTO_dynlock_value *CRYPTO_get_dynlock_value(int i);
@@ -451,6 +454,10 @@ int CRYPTO_set_mem_debug_functions(void (*m)(void *,int,const char *,int,int),
 				   void (*f)(void *,int),
 				   void (*so)(long),
 				   long (*go)(void));
+void CRYPTO_set_mem_info_functions(
+	int  (*push_info_fn)(const char *info, const char *file, int line),
+	int  (*pop_info_fn)(void),
+	int (*remove_all_info_fn)(void));
 void CRYPTO_get_mem_functions(void *(**m)(size_t),void *(**r)(void *, size_t), void (**f)(void *));
 void CRYPTO_get_locked_mem_functions(void *(**m)(size_t), void (**f)(void *));
 void CRYPTO_get_mem_ex_functions(void *(**m)(size_t,const char *,int),
@@ -467,6 +474,7 @@ void CRYPTO_get_mem_debug_functions(void (**m)(void *,int,const char *,int,int),
 void *CRYPTO_malloc_locked(int num, const char *file, int line);
 void CRYPTO_free_locked(void *);
 void *CRYPTO_malloc(int num, const char *file, int line);
+char *CRYPTO_strdup(const char *str, const char *file, int line);
 void CRYPTO_free(void *);
 void *CRYPTO_realloc(void *addr,int num, const char *file, int line);
 void *CRYPTO_realloc_clean(void *addr,int old_num,int num,const char *file,
@@ -506,6 +514,9 @@ void CRYPTO_dbg_free(void *addr,int before_p);
 void CRYPTO_dbg_set_options(long bits);
 long CRYPTO_dbg_get_options(void);
 
+int CRYPTO_dbg_push_info(const char *info, const char *file, int line);
+int CRYPTO_dbg_pop_info(void);
+int CRYPTO_dbg_remove_all_info(void);
 
 #ifndef OPENSSL_NO_FP_API
 void CRYPTO_mem_leaks_fp(FILE *);
@@ -521,12 +532,70 @@ void OpenSSLDie(const char *file,int line,const char *assertion);
 
 unsigned long *OPENSSL_ia32cap_loc(void);
 #define OPENSSL_ia32cap (*(OPENSSL_ia32cap_loc()))
+int OPENSSL_isservice(void);
+
+#ifdef OPENSSL_FIPS
+#define FIPS_ERROR_IGNORED(alg) OpenSSLDie(__FILE__, __LINE__, \
+		alg " previous FIPS forbidden algorithm error ignored");
+
+#define FIPS_BAD_ABORT(alg) OpenSSLDie(__FILE__, __LINE__, \
+		#alg " Algorithm forbidden in FIPS mode");
+
+#ifdef OPENSSL_FIPS_STRICT
+#define FIPS_BAD_ALGORITHM(alg) FIPS_BAD_ABORT(alg)
+#else
+#define FIPS_BAD_ALGORITHM(alg) \
+	{ \
+	FIPSerr(FIPS_F_HASH_FINAL,FIPS_R_NON_FIPS_METHOD); \
+	ERR_add_error_data(2, "Algorithm=", #alg); \
+	return 0; \
+	}
+#endif
+
+/* Low level digest API blocking macro */
+
+#define FIPS_NON_FIPS_MD_Init(alg) \
+	int alg##_Init(alg##_CTX *c) \
+		{ \
+		if (FIPS_mode()) \
+			FIPS_BAD_ALGORITHM(alg) \
+		return private_##alg##_Init(c); \
+		} \
+	int private_##alg##_Init(alg##_CTX *c)
+
+/* For ciphers the API often varies from cipher to cipher and each needs to
+ * be treated as a special case. Variable key length ciphers (Blowfish, RC4,
+ * CAST) however are very similar and can use a blocking macro.
+ */
+
+#define FIPS_NON_FIPS_VCIPHER_Init(alg) \
+	void alg##_set_key(alg##_KEY *key, int len, const unsigned char *data) \
+		{ \
+		if (FIPS_mode()) \
+			FIPS_BAD_ABORT(alg) \
+		private_##alg##_set_key(key, len, data); \
+		} \
+	void private_##alg##_set_key(alg##_KEY *key, int len, \
+					const unsigned char *data)
+
+#else
+
+#define FIPS_NON_FIPS_VCIPHER_Init(alg) \
+	void alg##_set_key(alg##_KEY *key, int len, const unsigned char *data)
+
+#define FIPS_NON_FIPS_MD_Init(alg) \
+	int alg##_Init(alg##_CTX *c)
+
+#endif /* def OPENSSL_FIPS */
 
 /* BEGIN ERROR CODES */
 /* The following lines are auto generated by the script mkerr.pl. Any changes
  * made after this point may be overwritten when the script is next run.
  */
 void ERR_load_CRYPTO_strings(void);
+
+#define OPENSSL_HAVE_INIT	1
+void OPENSSL_init(void);
 
 /* Error codes for the CRYPTO functions. */
 

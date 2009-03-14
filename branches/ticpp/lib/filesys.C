@@ -328,9 +328,9 @@ static int boinc_delete_file_aux(const char* path) {
 }
 
 /// Delete the file located at \a path.
-/// If the first attempt of deleting failes this function retries to delete
-/// the file multiple times until the time limit specified by
-/// FILE_RETRY_INTERVAL is reached.
+/// If the first attempt of deleting fails, this function retries
+/// multiple times until the time limit specified by FILE_RETRY_INTERVAL
+/// is reached.
 ///
 /// \param[in] path The path of the file that should be deleted.
 /// \return Zero on success, ERR_UNLINK on error.
@@ -601,13 +601,9 @@ int boinc_copy(const char* orig, const char* newf) {
         return GetLastError();
     }
     return 0;
-#elif defined(__EMX__)
-    std::ostringstream cmd;
-    cmd << "copy \"" << orig << "\" \"" << newf << "\"";
-    return system(cmd.str().c_str());
 #else
     std::ostringstream cmd;
-    cmd << "cp \"" << orig << "\" \"" << newf << "\"";
+    cmd << "cp -p \"" << orig << "\" \"" << newf << "\"";
     return system(cmd.str().c_str());
 #endif // _WIN32
 }

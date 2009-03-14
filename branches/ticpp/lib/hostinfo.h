@@ -29,7 +29,7 @@
 /// - TIME_STATS (on/connected/active fractions)
 /// - NET_STATS (average network bandwidths)
 
-#include "miofile.h"
+class MIOFILE;
 
 class HOST_INFO {
 public:

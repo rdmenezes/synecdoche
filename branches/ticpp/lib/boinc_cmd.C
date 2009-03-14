@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -34,10 +35,9 @@
 #include <unistd.h>
 #endif
 
-#include <vector>
+#include <iostream>
 #include <string>
-using std::vector;
-using std::string;
+#include <vector>
 
 #include "gui_rpc_client.h"
 #include "error_numbers.h"
@@ -45,9 +45,13 @@ using std::string;
 #include "str_util.h"
 #include "version.h"
 #include "common_defs.h"
+#include "hostinfo.h"
 
 void version(){
     printf("syneccmd,  built from %s \n", PACKAGE_STRING );
+#if defined(_WIN32) && defined(USE_WINSOCK)
+    WSACleanup();
+#endif
     exit(0);
 }
 
@@ -91,22 +95,25 @@ Commands:\n\
  --get_cc_status\n\
 "
 );
+#if defined(_WIN32) && defined(USE_WINSOCK)
+    WSACleanup();
+#endif
     exit(1);
 }
 
 void parse_display_args(char** argv, int& i, DISPLAY_INFO& di) {
-    strcpy(di.window_station, "winsta0");
-    strcpy(di.desktop, "default");
-    strcpy(di.display, "");
+    di.window_station = "winsta0";
+    di.desktop = "default";
+    di.display = "";
     while (argv[i]) {
         if (!strcmp(argv[i], "--window_station")) {
-            strlcpy(di.window_station, argv[++i], sizeof(di.window_station));
+            di.window_station = argv[++i];
         } else if (!strcpy(argv[i], "--desktop")) {
-            strlcpy(di.desktop, argv[++i], sizeof(di.desktop));
+            di.desktop = argv[++i];
         } else if (!strcpy(argv[i], "--display")) {
-            strlcpy(di.display, argv[++i], sizeof(di.display));
+            di.display = argv[++i];
         }
-        i++;
+        ++i;
     }
 }
 
@@ -118,41 +125,20 @@ char* next_arg(int argc, char** argv, int& i) {
     if (i >= argc) {
         fprintf(stderr, "Missing command-line argument\n");
         usage();
-        exit(1);
     }
     return argv[i++];
 }
 
-
-/// If there's a password file, read it
-void read_password_from_file(char* buf) {
-    FILE* f = fopen("gui_rpc_auth.cfg", "r");
-    if (!f) return;
-    char* p = fgets(buf, 256, f);
-        if (p) {                // Fixes compiler warning
-            int n = (int)strlen(buf);
-
-            // trim CR
-            //
-            if (n && buf[n-1]=='\n') {
-                    buf[n-1] = 0;
-            }
-    }
-    fclose(f);
-}
-
-int main(int argc, char** argv) {
+int main_impl(int argc, char** argv) {
     RPC_CLIENT rpc;
-    int i, retval, port=0;
+    int retval, port=GUI_RPC_PORT;
     MESSAGES messages;
-    char passwd_buf[256], hostname_buf[256], *hostname=0;
-    char* passwd = passwd_buf, *p;
+    char hostname_buf[256], *hostname=0;
+    char *p;
 
 #ifdef _WIN32
     chdir_to_data_dir();
 #endif
-    strcpy(passwd_buf, "");
-    read_password_from_file(passwd_buf);
 
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSADATA wsdata;
@@ -163,11 +149,13 @@ int main(int argc, char** argv) {
     }
 #endif
     if (argc < 2) usage();
-    i = 1;
+    int i = 1;
     if (!strcmp(argv[i], "--help")) usage();
     if (!strcmp(argv[i], "-h"))     usage();
     if (!strcmp(argv[i], "--version")) version();
     if (!strcmp(argv[i], "-V"))     version();
+
+    std::string passwd = read_gui_rpc_password();
 
     if (!strcmp(argv[i], "--host")) {
         if (++i == argc) usage();
@@ -192,6 +180,9 @@ int main(int argc, char** argv) {
     retval = rpc.init(hostname, port);
     if (retval) {
         fprintf(stderr, "can't connect to %s\n", hostname?hostname:"local host");
+#if defined(_WIN32) && defined(USE_WINSOCK)
+        WSACleanup();
+#endif
         exit(1);
     }
 #else
@@ -205,15 +196,21 @@ int main(int argc, char** argv) {
             continue;
         }
         fprintf(stderr, "can't connect: %d\n", retval);
+#if defined(_WIN32) && defined(USE_WINSOCK)
+        WSACleanup();
+#endif
         exit(1);
     }
     printf("connected\n");
 #endif
 
-    if (passwd) {
-        retval = rpc.authorize(passwd);
+    if (!passwd.empty()) {
+        retval = rpc.authorize(passwd.c_str());
         if (retval) {
             fprintf(stderr, "Authorization failure: %d\n", retval);
+#if defined(_WIN32) && defined(USE_WINSOCK)
+            WSACleanup();
+#endif
             exit(1);
         }
     }
@@ -418,7 +415,7 @@ int main(int argc, char** argv) {
         retval = rpc.run_benchmarks();
     } else if (!strcmp(cmd, "--get_project_config")) {
         char* gpc_url = next_arg(argc, argv,i);
-        retval = rpc.get_project_config(string(gpc_url));
+        retval = rpc.get_project_config(std::string(gpc_url));
     } else if (!strcmp(cmd, "--get_project_config_poll")) {
         PROJECT_CONFIG pc;
         retval = rpc.get_project_config_poll(pc);
@@ -492,10 +489,10 @@ int main(int argc, char** argv) {
             retval = cs.network_status;
         }
     } else if (!strcmp(cmd, "--set_debts")) {
-        vector<PROJECT>projects;
+        std::vector<PROJECT>projects;
         while (i < argc) {
             PROJECT proj;
-            proj.master_url = string(next_arg(argc, argv, i));
+            proj.master_url = std::string(next_arg(argc, argv, i));
             proj.short_term_debt = atoi(next_arg(argc, argv, i));
             proj.long_term_debt = atoi(next_arg(argc, argv, i));
             projects.push_back(proj);
@@ -513,5 +510,16 @@ int main(int argc, char** argv) {
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSACleanup();
 #endif
-    exit(retval);
+    return retval;
+}
+
+int main(int argc, char** argv) {
+    try {
+        return main_impl(argc, argv);
+    } catch (std::exception& ex) {
+        std::cerr << "An error occured: " << ex.what() << std::endl;
+    } catch (...) {
+        std::cerr << "An unspecified error occured. Aborting." << std::endl;
+    }
+    return 1;
 }

@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -31,8 +32,6 @@
 #include <malloc.h>
 #endif
 #include <unistd.h>
-
-using namespace std;
 #endif
 
 #include "filesys.h"
@@ -55,27 +54,26 @@ int MFILE::open(const char* path, const char* mode) {
     return 0;
 }
 
-#define BUFSIZE 100000
+namespace {
+    #define BUFSIZE 100000
+    char mfile_vprintf_buf2[BUFSIZE];
+}
 
 int MFILE::vprintf(const char* format, va_list ap) {
-    char buf2[BUFSIZE];
-    int n, k;
-
-    k = vsnprintf(buf2, BUFSIZE, format, ap);
+    int k = vsnprintf(mfile_vprintf_buf2, BUFSIZE, format, ap);
     if (k<=-1 || k>=BUFSIZE) {
         fprintf(stderr, "ERROR: buffer too small in MFILE::vprintf()\n");
         fprintf(stderr, "ERROR: format: %s\n", format);
         fprintf(stderr, "ERROR: k=%d, BUFSIZE=%d\n", k, BUFSIZE);
         return -1;
     }
-    n = (int)strlen(buf2);
-    buf = (char*)realloc(buf, len+n+1);
+    buf = (char*)realloc(buf, len + k + 1);
     if (!buf) {
         errno = ERR_MALLOC;
         return ERR_MALLOC;
     }
-    strncpy(buf+len, buf2, n);
-    len += n;
+    strncpy(buf + len, mfile_vprintf_buf2, k);
+    len += k;
     buf[len] = 0;
     return k;
 }

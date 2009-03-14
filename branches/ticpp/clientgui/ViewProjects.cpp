@@ -532,7 +532,12 @@ void CViewProjects::OnProjectWebsiteClicked( wxEvent& event ) {
 }
 
 wxInt32 CViewProjects::GetDocCount() {
-    return static_cast<wxInt32>(wxGetApp().GetDocument()->GetProjectCount());
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    if (pDoc) {
+        return static_cast<wxInt32>(pDoc->GetProjectCount());
+    } else {
+        return -1;
+    }
 }
 
 wxString CViewProjects::OnListGetItemText(long item, long column) const {
@@ -737,10 +742,14 @@ bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex
 }
 
 void CViewProjects::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
-    PROJECT* project = wxGetApp().GetDocument()->project(item);
-    std::string project_name;
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    PROJECT* project = 0;
+    if (pDoc) {
+        project = pDoc->project(item);
+    }
 
     if (project) {
+        std::string project_name;
         project->get_name(project_name);
         strBuffer = HtmlEntityDecode(wxString(project_name.c_str(), wxConvUTF8));
     } else {
@@ -756,7 +765,11 @@ wxInt32 CViewProjects::FormatProjectName(wxInt32 item, wxString& strBuffer) cons
 }
 
 void CViewProjects::GetDocAccountName(wxInt32 item, wxString& strBuffer) const {
-    PROJECT* project = wxGetApp().GetDocument()->project(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    PROJECT* project = 0;
+    if (pDoc) {
+        project = pDoc->project(item);
+    }
 
     if (project) {
         strBuffer = HtmlEntityDecode(wxString(project->user_name.c_str(), wxConvUTF8));
@@ -773,7 +786,11 @@ wxInt32 CViewProjects::FormatAccountName(wxInt32 item, wxString& strBuffer) cons
 }
 
 void CViewProjects::GetDocTeamName(wxInt32 item, wxString& strBuffer) const {
-    PROJECT* project = wxGetApp().GetDocument()->project(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    PROJECT* project = 0;
+    if (pDoc) {
+        project = pDoc->project(item);
+    }
 
     if (project) {
         strBuffer = HtmlEntityDecode(wxString(project->team_name.c_str(), wxConvUTF8));
@@ -790,7 +807,11 @@ wxInt32 CViewProjects::FormatTeamName(wxInt32 item, wxString& strBuffer) const {
 }
 
 void CViewProjects::GetDocTotalCredit(wxInt32 item, float& fBuffer) const {
-    PROJECT* project = wxGetApp().GetDocument()->project(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    PROJECT* project = 0;
+    if (pDoc) {
+        project = pDoc->project(item);
+    }
 
     if (project) {
         fBuffer = project->user_total_credit;
@@ -805,7 +826,11 @@ wxInt32 CViewProjects::FormatTotalCredit(float fBuffer, wxString& strBuffer) con
 }
 
 void CViewProjects::GetDocAVGCredit(wxInt32 item, float& fBuffer) const {
-    PROJECT* project = wxGetApp().GetDocument()->project(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    PROJECT* project = 0;
+    if (pDoc) {
+        project = pDoc->project(item);
+    }
 
     if (project) {
         fBuffer = project->user_expavg_credit;
@@ -820,7 +845,11 @@ wxInt32 CViewProjects::FormatAVGCredit(float fBuffer, wxString& strBuffer) const
 }
 
 void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
-    PROJECT* project = wxGetApp().GetDocument()->project(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    PROJECT* project = 0;
+    if (pDoc) {
+        project = pDoc->project(item);
+    }
 
     if (project) {
         fBuffer = project->resource_share;
@@ -831,7 +860,10 @@ void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
 
 void CViewProjects::GetDocResourcePercent(wxInt32 item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
-    PROJECT* project = wxGetApp().GetDocument()->project(item);
+    PROJECT* project = 0;
+    if (pDoc) {
+        project = pDoc->project(item);
+    }
 
     if (project && pDoc) {
         fBuffer = (project->resource_share / pDoc->m_fProjectTotalResourceShare) * 100;
@@ -841,20 +873,16 @@ void CViewProjects::GetDocResourcePercent(wxInt32 item, float& fBuffer) const {
 }
 
 wxInt32 CViewProjects::FormatResourceShare(float fBuffer, float fBufferPercent, wxString& strBuffer) const {
-    CMainDocument* pDoc = wxGetApp().GetDocument();
-
-    wxASSERT(pDoc);
-    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
-
-    if (pDoc) {
-        strBuffer.Printf(wxT("%0.0f (%0.2f%%)"), fBuffer, fBufferPercent);
-    }
-
+    strBuffer.Printf(wxT("%0.0f (%0.2f%%)"), fBuffer, fBufferPercent);
     return 0;
 }
 
 void CViewProjects::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
-    PROJECT* project = wxGetApp().GetDocument()->project(item);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    PROJECT* project = 0;
+    if (pDoc) {
+        project = pDoc->project(item);
+    }
 
     if (project) {
         if (project->suspended_via_gui) {

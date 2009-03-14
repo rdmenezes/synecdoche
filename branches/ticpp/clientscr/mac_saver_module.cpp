@@ -227,7 +227,7 @@ OSStatus CScreensaver::initBOINCApp() {
         break;
     }
 
-    m_CoreClientPID = FindProcessPID("boinc", 0);
+    m_CoreClientPID = FindProcessPID("synecd", 0);
     if (m_CoreClientPID) {
         m_wasAlreadyRunning = true;
         saverState = SaverState_LaunchingCoreClient;
@@ -240,16 +240,16 @@ OSStatus CScreensaver::initBOINCApp() {
         return -1;
 
     err = GetpathToBOINCManagerApp(boincPath, sizeof(boincPath));
-    if (err) {   // If we couldn't find BOINCManager.app, try default path
+    if (err) {   // If we couldn't find Synecdoche.app, try default path
         strcpy(boincPath, "/Applications/");
         if (brandId)
             strcat(boincPath, m_BrandText);
         else
-            strcat(boincPath, "BOINCManager");
+            strcat(boincPath, "Synecdoche");
             strcat(boincPath, ".app");
     }
     
-    strcat(boincPath, "/Contents/Resources/boinc");
+    strcat(boincPath, "/Contents/Resources/synecd");
 
     if ( (myPid = fork()) < 0)
         return -1;
@@ -259,10 +259,10 @@ OSStatus CScreensaver::initBOINCApp() {
 #if 0   // Code for separate data in each user's private directory
         char buf[256];
         strcpy(buf, getenv("HOME"));
-        strcat(buf, "/Library/Application Support/BOINC Data");
+        strcat(buf, "/Library/Application Support/Synecdoche Data");
         status = chdir(buf);
 #else   // All users share the same data
-        status = chdir("/Library/Application Support/BOINC Data");
+        status = chdir("/Library/Application Support/Synecdoche Data");
 #endif
         if (status) {
             perror("chdir");
@@ -476,7 +476,7 @@ void CScreensaver::HandleRPCError() {
     // process of shutting down just as ScreenSaver started, so initBOINCApp() 
     // found it already running but now it has shut down.  This code takes 
     // care of that and other situations where the Core Client quits unexpectedy.  
-    if (FindProcessPID("boinc", 0) == 0) {
+    if (FindProcessPID("synecd", 0) == 0) {
         saverState = SaverState_RelaunchCoreClient;
         m_bResetCoreState = true;
      }
@@ -631,7 +631,7 @@ int CScreensaver::GetBrandID()
     if (err) {     
         // If we couldn't find our application bundle, look in BOINC Data Directory 
         // (the installer put a copy there for us)
-        strcpy(buf, "/Library/Application Support/BOINC Data/Branding");
+        strcpy(buf, "/Library/Application Support/Synecdoche Data/Branding");
     } else
         strcat(buf, "/Contents/Resources/Branding");
 
@@ -702,8 +702,8 @@ pid_t CScreensaver::FindProcessPID(char* name, pid_t thePID)
 
 OSErr CScreensaver::GetpathToBOINCManagerApp(char* path, int maxLen)
 {
-    CFStringRef bundleID = CFSTR("edu.berkeley.boinc");
-    OSType creator = 'BNC!';
+    CFStringRef bundleID = CFSTR("com.googlecode.synecdoche.manager");
+    OSType creator = 'SYNE';
     FSRef theFSRef;
     OSStatus status = noErr;
 

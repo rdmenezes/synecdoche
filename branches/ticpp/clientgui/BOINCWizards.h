@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _BOINCWIZARDS_H_
-#define _BOINCWIZARDS_H_
+#ifndef BOINCWIZARDS_H
+#define BOINCWIZARDS_H
 
 // Wizard Identifiers
 //
@@ -172,6 +172,18 @@ template<typename wiz> bool CheckWizardTypeByPage(const wxWizardPage* cur_page) 
 #define CHECK_CLOSINGINPROGRESS() \
     ((CBOINCBaseWizard*)GetParent())->IsCancelInProgress()
 
+/// Simple namespace containing constants associated with configuration
+/// options for the wizards.
+namespace WizardCfg {
+    /// Path for wizard settings in the manager's config file:
+    static const wxString baseCfgLocation = wxString(wxT("/Wizards"));
 
-#endif // _BOINCWIZARDS_H_
+    /// Configuration name for last used email address:
+    static const wxString defaultEmailAddress = wxString(wxT("DefaultEmailAddress"));
+
+    /// Configuration name for last used user name:
+    static const wxString defaultUserName = wxString(wxT("DefaultUserName"));
+};
+
+#endif // BOINCWIZARDS_H
 

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 David Barnard, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -149,7 +149,7 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     wxCHECK_RET(CreateNotebook(), _T("Failed to create notebook."));
     wxCHECK_RET(CreateStatusbar(), _T("Failed to create status bar."));
 
-    // Restore view settings
+    // Restore view settings (without sizing frame)
     RestoreViewState();
 
     m_pRefreshStateTimer = new wxTimer(this, ID_REFRESHSTATETIMER);
@@ -172,9 +172,6 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
 
     // We want to disconnect this later, so connect here instead of in the event table.
     Connect(wxEVT_IDLE, wxIdleEventHandler(CAdvancedFrame::OnIdleInit));
-
-    // Restore main application frame settings
-    RestoreState();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CAdvancedFrame - Function End"));
 }
@@ -1051,7 +1048,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             retVal = pDoc->Connect(
                 wxT("localhost"),
                 GUI_RPC_PORT,
-                wxEmptyString,
+                "",
                 true,
                 true
             );
@@ -1068,7 +1065,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             retVal = pDoc->Connect(
                 sHost,
                 (int)lPort,
-                dlg.GetComputerPassword(),
+                (const char*)dlg.GetComputerPassword().mb_str(),
                 true,
                 false
             );
@@ -1642,8 +1639,10 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
         pAMWizard = new CWizardAccountManager(this);
         if (pAMWizard->Run()) {
+#if defined(__WXMSW__) || defined(__WXMAC__)
             // If successful, hide the main window
             Hide();
+#endif
 
             // %s is the application name
             //    i.e. 'BOINC Manager', 'GridRepublic Manager'

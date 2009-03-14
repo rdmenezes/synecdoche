@@ -19,9 +19,10 @@
 #include "boinc_win.h"
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
 #include "version.h"
-#else
+#endif
+#if !defined(_WIN32)
 #include "config.h"
 #include <cstdlib>
 #include <cstring>
@@ -33,9 +34,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <pthread.h>
-#ifndef __EMX__
 #include <sched.h>
-#endif
 using namespace std;
 #endif
 
@@ -130,7 +129,7 @@ static FUNC_PTR timer_callback = 0;
 #define HEARTBEAT_GIVEUP_COUNT ((int)(30/TIMER_PERIOD))
     // quit if no heartbeat from core in this #interrupts
 #define LOCKFILE_TIMEOUT_PERIOD 35
-    // quit if we cannot aquire slot lock file in this #secs after startup
+    // quit if we cannot acquire slot lock file in this #secs after startup
 
 #ifdef _WIN32
 static HANDLE hSharedMem;
@@ -188,7 +187,7 @@ static int setup_shared_mem() {
             app_client_shm = NULL;
         }
     } else {
-        // EMX or version 5 Unix/Linux/Mac client
+        // Version 5 Unix/Linux/Mac client
         if (attach_shmem(aid.shmem_seg_name, (void**)&app_client_shm->shm)) {
             delete app_client_shm;
             app_client_shm = NULL;

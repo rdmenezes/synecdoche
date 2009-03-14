@@ -24,6 +24,8 @@
 #include "config.h"
 #endif
 
+#include "acct_setup.h"
+
 #include <cstring>
 #include <string>
 #include "client_state.h"
@@ -33,8 +35,7 @@
 #include "str_util.h"
 #include "util.h"
 #include "client_msgs.h"
-
-#include "acct_setup.h"
+#include "miofile.h"
 
 void PROJECT_INIT::clear() {
     strcpy(url, "");
@@ -223,7 +224,7 @@ static bool parse_version(FILE* f, char* new_version) {
             return (same_platform && newer_version);
         }
         if (parse_str(buf, "<dbplatform>", buf2, sizeof(buf2))) {
-            same_platform = (strcmp(buf2, gstate.get_primary_platform())==0);
+            same_platform = (gstate.get_primary_platform() == buf2);
         }
         if (parse_str(buf, "<version_num>", buf2, sizeof(buf2))) {
             newer_version = is_version_newer(buf2);

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -23,18 +23,23 @@
 #include "proc_control.h"
 #else
 #include "config.h"
-#include <unistd.h>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
 #include <cstdarg>
+#include <sstream>
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
+#include <unistd.h>
+#include <errno.h>
 #endif
 
-#include "parse.h"
+#include "client_state.h"
+
+#include "version.h"
+
 #include "str_util.h"
 #include "util.h"
 #include "error_numbers.h"
@@ -48,7 +53,8 @@
 #include "client_msgs.h"
 #include "shmem.h"
 #include "sandbox.h"
-#include "client_state.h"
+#include "scheduler_op.h"
+#include "pers_file_xfer.h"
 
 CLIENT_STATE gstate;
 
@@ -185,18 +191,18 @@ int CLIENT_STATE::init() {
     detect_platforms();
     time_stats.start();
 
-    msg_printf(
-        NULL, MSG_INFO, "Starting Synecdoche client version %d.%d.%d for %s%s",
-        core_client_version.major,
-        core_client_version.minor,
-        core_client_version.release,
-        get_primary_platform(),
+    std::ostringstream start_msg;
+    start_msg << "Starting Synecdoche client version " << core_client_version.major;
+    start_msg << '.' << core_client_version.minor << '.' << core_client_version.release;
+    if (SYNEC_SVN_VERSION) {
+        start_msg << " r" << SYNEC_SVN_VERSION;
+    }
+    start_msg << " for " << get_primary_platform();
 #ifdef _DEBUG
-        " (DEBUG)"
-#else
-        ""
-#endif
-    );
+    start_msg << " (DEBUG)";
+#endif // _DEBUG
+
+    msg_printf(NULL, MSG_INFO, start_msg.str().c_str());
 
     if (core_client_version.prerelease) {
         msg_printf(NULL, MSG_USER_ERROR,
@@ -228,14 +234,15 @@ int CLIENT_STATE::init() {
 
     // check for app_info.xml file in project dirs.
     // If find, read app info from there, set project.anonymous_platform
-    //
+    // NOTE: this is being done before CPU speed has been read,
+ 	// so we'll need to patch up avp->flops later;
     check_anonymous();
 
     // Parse the client state file,
     // ignoring any <project> tags (and associated stuff)
     // for projects with no account file
-    //
     host_info.clear_host_info();
+    cpu_benchmarks_set_defaults();  // for first time, make sure p_fpops nonzero
     parse_state_file();
     parse_account_files_venue();
 
@@ -244,10 +251,17 @@ int CLIENT_STATE::init() {
     show_host_info();
     show_proxy_info();
 
+    // fill in avp->flops for anonymous project
+    for (i = 0; i < app_versions.size(); ++i) {
+        APP_VERSION* avp = app_versions[i];
+        if (!avp->flops) {
+            avp->flops = host_info.p_fpops;
+        }
+    }
+
     check_clock_reset();
 
     // Check to see if we can write the state file.
-    //
     retval = write_state_file();
     if (retval) {
         msg_printf(NULL, MSG_USER_ERROR, "Couldn't write state file");
@@ -258,15 +272,14 @@ int CLIENT_STATE::init() {
     }
 
     // scan user prefs; create file records
-    //
     parse_preferences_for_user_files();
 
     print_summary();
 
-    // if new version of core client,
-    // - run CPU benchmarks
-    // - contact reference site or some project (to trigger firewall alert)
-    //
+    // Check if version or platform has changed.
+    // Either of these is evidence that we're running a different
+    // client than previously.
+    bool new_client = false;
     if ((core_client_version.major != old_major_version)
         || (core_client_version.minor != old_minor_version)
         || (core_client_version.release != old_release)
@@ -278,6 +291,17 @@ int CLIENT_STATE::init() {
             core_client_version.minor,
             core_client_version.release
         );
+        new_client = true;
+    }
+    if ((!statefile_platform_name.empty()) && (statefile_platform_name != get_primary_platform())) {
+        msg_printf(0, MSG_INFO, "Platform changed from %s to %s",
+            statefile_platform_name.c_str(), get_primary_platform().c_str());
+        new_client = true;
+    }
+
+    // If new version of client run CPU benchmark and contact
+    // reference site (or some project) to trigger firewall alert.
+    if (new_client) {
         run_cpu_benchmarks = true;
         if (config.dont_contact_ref_site) {
             if (!projects.empty()) {
@@ -289,7 +313,6 @@ int CLIENT_STATE::init() {
     }
 
     // show host IDs and venues on various projects
-    //
     for (i=0; i<projects.size(); i++) {
         p = projects[i];
         if (p->hostid) {
@@ -311,13 +334,11 @@ int CLIENT_STATE::init() {
     read_global_prefs();
 
     // do CPU scheduler and work fetch
-    //
     request_schedule_cpus("Startup");
     request_work_fetch("Startup");
     debt_interval_start = now;
 
     // set up the project and slot directories
-    //
     delete_old_slot_dirs();
     retval = make_project_dirs();
     if (retval) return retval;
@@ -327,12 +348,10 @@ int CLIENT_STATE::init() {
     active_tasks.handle_upload_files();
 
     // Just to be on the safe side; something may have been modified
-    //
     set_client_state_dirty("init");
 
     // initialize GUI RPC data structures before we start accepting
     // GUI RPC's.
-    //
     acct_mgr_info.init();
     project_init.init();
 
@@ -340,7 +359,6 @@ int CLIENT_STATE::init() {
         // When we're running at boot time,
         // it may be a few seconds before we can socket/bind/listen.
         // So retry a few times.
-        //
         for (i=0; i<30; i++) {
             bool last_time = (i==29);
             retval = gui_rpcs.init(last_time);
@@ -348,15 +366,6 @@ int CLIENT_STATE::init() {
             boinc_sleep(1.0);
         }
         if (retval) return retval;
-    }
-
-    // If platform name changed, print warning
-    //
-    if (!statefile_platform_name.empty() && statefile_platform_name != get_primary_platform()) {
-        msg_printf(NULL, MSG_INFO,
-            "Platform changed from %s to %s",
-            statefile_platform_name.c_str(), get_primary_platform()
-        );
     }
 
 #ifdef SANDBOX
@@ -398,22 +407,39 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
         http_ops->get_fdset(all_fds);
         gui_rpcs.get_fdset(all_fds);
         double_to_timeval(x, tv);
-        n = select(
-            all_fds.max_fd+1,
-            &all_fds.read_fds, &all_fds.write_fds, &all_fds.exc_fds,
-            &tv
-        );
-        //printf("select in %d out %d\n", all_fds.max_fd, n);
+        n = select(all_fds.max_fd + 1, &all_fds.read_fds,
+                   &all_fds.write_fds, &all_fds.exc_fds, &tv);
+
+        // Check if there was an error:
+        if (n == -1) {
+#ifdef _WIN32
+            int err_code = WSAGetLastError();
+            int err_code_eintr = WSAEINTR;
+#else
+            int err_code = errno;
+            int err_code_eintr = EINTR;
+#endif // _WIN32
+            if (err_code == err_code_eintr) {
+                // select() was interrupted by a signal - that can be ignored.
+                continue;
+            } else {
+                msg_printf(0, MSG_INTERNAL_ERROR, "select() failed with an unexpected error: %d - quitting.", err_code);
+                gstate.requested_exit = true;
+                break;
+            }
+        }
 
         // Note: curl apparently likes to have curl_multi_perform()
         // (called from net_xfers->got_select())
         // called pretty often, even if no descriptors are enabled.
-        // So do the "if (n==0) break" AFTER the got_selects().
-
+        // So do the "if (n==0) break" AFTER the http_ops->got_select().
         http_ops->got_select(all_fds, x);
-        gui_rpcs.got_select(all_fds);
 
-        if (n==0) break;
+        if (n == 0) {
+            break;
+        }
+
+        gui_rpcs.got_select(all_fds);
 
         // Limit number of times thru this loop.
         // Can get stuck in while loop, if network isn't available,
@@ -661,16 +687,12 @@ WORKUNIT* CLIENT_STATE::lookup_workunit(const PROJECT* p, const char* name) {
     return 0;
 }
 
-APP_VERSION* CLIENT_STATE::lookup_app_version(
-    const APP* app, const char* platform, int version_num, const char* plan_class
-) {
-    for (unsigned int i=0; i<app_versions.size(); i++) {
+APP_VERSION* CLIENT_STATE::lookup_app_version(const APP* app, const char* platform,
+                                              int version_num, const char* plan_class) {
+    for (size_t i = 0; i < app_versions.size(); ++i) {
         APP_VERSION* avp = app_versions[i];
         if (avp->app != app) continue;
         if (version_num != avp->version_num) continue;
-        if (app->project->anonymous_platform) {
-            return avp;
-        }
         if (strcmp(avp->platform, platform)) continue;
         if (strcmp(avp->plan_class, plan_class)) continue;
         return avp;
@@ -678,10 +700,10 @@ APP_VERSION* CLIENT_STATE::lookup_app_version(
     return 0;
 }
 
-FILE_INFO* CLIENT_STATE::lookup_file_info(const PROJECT* p, const char* name) {
+FILE_INFO* CLIENT_STATE::lookup_file_info(const PROJECT* p, const std::string& name) {
     for (unsigned int i=0; i<file_infos.size(); i++) {
         FILE_INFO* fip = file_infos[i];
-        if (fip->project == p && !strcmp(fip->name, name)) {
+        if ((fip->project == p) && (fip->name == name)) {
             return fip;
         }
     }
@@ -691,7 +713,6 @@ FILE_INFO* CLIENT_STATE::lookup_file_info(const PROJECT* p, const char* name) {
 // functions to create links between state objects
 // (which, in their XML form, reference one another by name)
 // Return nonzero if already in client state.
-//
 int CLIENT_STATE::link_app(PROJECT* p, APP* app) {
     if (lookup_app(p, app->name)) return ERR_NOT_UNIQUE;
     app->project = p;
@@ -749,7 +770,6 @@ int CLIENT_STATE::link_app_version(PROJECT* p, APP_VERSION* avp) {
         }
 
         // any file associated with an app version must be signed
-        //
         fip->signature_required = true;
         file_ref.file_info = fip;
     }
@@ -840,7 +860,7 @@ void CLIENT_STATE::print_summary() const {
     }
     msg_printf(0, MSG_INFO, "%lu file_infos:\n", file_infos.size());
     for (i=0; i<file_infos.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s status:%d %s\n", file_infos[i]->name, file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
+        msg_printf(0, MSG_INFO, "    %s status:%d %s\n", file_infos[i]->name.c_str(), file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
     }
     msg_printf(0, MSG_INFO, "%lu app_versions\n", app_versions.size());
     for (i=0; i<app_versions.size(); i++) {
@@ -856,7 +876,7 @@ void CLIENT_STATE::print_summary() const {
     }
     msg_printf(0, MSG_INFO, "%lu persistent file xfers\n", pers_file_xfers->pers_file_xfers.size());
     for (i=0; i<pers_file_xfers->pers_file_xfers.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s http op state: %d\n", pers_file_xfers->pers_file_xfers[i]->fip->name, (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
+        msg_printf(0, MSG_INFO, "    %s http op state: %d\n", pers_file_xfers->pers_file_xfers[i]->fip->name.c_str(), (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
     }
     msg_printf(0, MSG_INFO, "%lu active tasks\n", active_tasks.active_tasks.size());
     for (i=0; i<active_tasks.active_tasks.size(); i++) {
@@ -1031,7 +1051,9 @@ bool CLIENT_STATE::garbage_collect_always() {
             found = false;
             for (j=0; j<app_versions.size(); j++) {
                 APP_VERSION* avp2 = app_versions[j];
-                if (avp2->app==avp->app && avp2->version_num>avp->version_num) {
+                if ((avp2->app == avp->app)
+                        && (avp2->version_num > avp->version_num)
+                        && (!strcmp(avp2->plan_class, avp->plan_class))) {
                     found = true;
                     break;
                 }
@@ -1083,8 +1105,8 @@ bool CLIENT_STATE::garbage_collect_always() {
             fip->delete_file();
             if (log_flags.state_debug) {
                 msg_printf(0, MSG_INFO,
-                    "[state_debug] CLIENT_STATE::garbage_collect(): deleting file %s\n",
-                    fip->name);
+                        "[state_debug] CLIENT_STATE::garbage_collect(): deleting file %s\n",
+                        fip->name.c_str());
             }
             delete fip;
             fi_iter = file_infos.erase(fi_iter);
@@ -1384,6 +1406,7 @@ int CLIENT_STATE::reset_project(PROJECT* project, bool detaching) {
 
     project->duration_correction_factor = 1;
     project->ams_resource_share = -1;
+    project->min_rpc_time = 0;
     write_state_file();
     return 0;
 }

@@ -29,12 +29,13 @@
 #endif
 #endif
 
+#include "client_state.h"
+
 #include <algorithm>
 #include <cstring>
 #include "filesys.h"
 #include "parse.h"
 #include "str_util.h"
-#include "client_state.h"
 #include "client_msgs.h"
 #include "log_flags.h"
 #include "error_numbers.h"
@@ -128,11 +129,8 @@ int PROJECT::parse_account(FILE* in) {
             continue;
         } else {
             // don't show unparsed XML errors if we're in project prefs
-            //
-            if (!in_project_prefs && log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] PROJECT::parse_account(): unrecognized: %s\n", buf
-                );
+            if (!in_project_prefs) {
+                handle_unparsed_xml_warning("PROJECT::parse_account", buf);
             }
         }
     }
@@ -189,9 +187,7 @@ int PROJECT::parse_account_file_venue() {
         } else if (parse_double(buf, "<resource_share>", resource_share)) {
             continue;
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO, "[unparsed_xml] parse_account_file_venue(): unrecognized: %s\n", buf);
-            }
+            handle_unparsed_xml_warning("PROJECT::parse_account_file_venue", buf);
         }
     }
     fclose(in);
@@ -246,7 +242,7 @@ int CLIENT_STATE::parse_account_files() {
             delete project;
         } else {
             if (lookup_project(project->master_url)) {
-                msg_printf(NULL, MSG_INFO,
+                msg_printf(project, MSG_INFO,
                     "Duplicate account file %s - ignoring", name.c_str()
                 );
                 delete project;
@@ -306,11 +302,7 @@ int PROJECT::parse_statistics(FILE* in) {
             canonicalize_master_url(master_url);
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] PROJECT::parse_statistics(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("PROJECT::parse_statistics", buf);
     }
     return ERR_XML_PARSE;
 }

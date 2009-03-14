@@ -19,9 +19,11 @@
 #ifndef _MAINDOCUMENT_H_
 #define _MAINDOCUMENT_H_
 
+#include <string>
 #include <vector>
 #include "common_defs.h"
 #include "gui_rpc_client.h"
+#include "hostinfo.h"
 
 typedef struct {
     int slot;
@@ -54,15 +56,13 @@ public:
     int            GetConnectedComputerVersion(wxString& strVersion);
     int            GetConnectingComputerName(wxString& strMachine);
     bool           IsComputerNameLocal(const wxString& strMachine);
-    int            GetLocalPassword(wxString& strPassword);
-    int SetComputer(
-        const wxChar* szComputer, const int iPort, const wxChar* szPassword,
-        const bool bUseDefaultPassword
-    );
+    int            SetComputer(const wxChar* szComputer, const int iPort,
+                               const std::string& szPassword,
+                               const bool bUseDefaultPassword);
     void           SetStateError();
     void           SetStateErrorAuthentication();
     void           SetStateReconnecting();
-    void           SetStateSuccess(wxString& strComputer, wxString& strComputerPassword);
+    void           SetStateSuccess(const wxString& strComputer, const std::string& strComputerPassword);
     void           SetStateDisconnected();
     bool           IsConnectEventSignaled() { return m_bConnectEvent; };
     bool           IsConnected() { return m_bConnected; };
@@ -81,9 +81,9 @@ private:
     int            m_iReadGUIRPCAuthFailure;
     bool           m_bNewConnection;
     wxString       m_strNewComputerName;
-    wxString       m_strNewComputerPassword;
+    std::string    m_strNewComputerPassword;
     wxString       m_strConnectedComputerName;
-    wxString       m_strConnectedComputerPassword;
+    std::string    m_strConnectedComputerPassword;
     wxString       m_strConnectedComputerVersion;
     int m_iPort;
 };
@@ -117,7 +117,7 @@ public:
     int                         Connect(
                                     const wxChar* szComputer,
                                     const int iPort,
-                                    const wxChar* szComputerPassword = wxEmptyString,
+                                    const std::string& szComputerPassword = "",
                                     const bool bDisconnect = FALSE,
                                     const bool bUseDefaultPassword = FALSE
                                 );

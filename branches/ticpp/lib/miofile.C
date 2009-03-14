@@ -126,7 +126,7 @@ int copy_element_contents(MIOFILE& in, const char* end_tag, char* p, int len) {
 int copy_element_contents(MIOFILE& in, const char* end_tag, string& str) {
     char buf[256];
 
-    str = "";
+    str.clear();
     while (in.fgets(buf, 256)) {
         if (strstr(buf, end_tag)) {
             return 0;

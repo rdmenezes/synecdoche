@@ -52,6 +52,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "parse.h"
+#include "miofile.h"
 #include "network.h"
 #include "filesys.h"
 #include "version.h"
@@ -59,6 +60,7 @@
 #include "file_names.h"
 #include "client_msgs.h"
 #include "client_state.h"
+#include "pers_file_xfer.h"
 
 /// Maximum size of the write buffer. If this size is exceeded, the connection
 /// will be dropped.
@@ -211,9 +213,9 @@ static void handle_result_show_graphics(const char* buf, MIOFILE& fout) {
         gm.mode = MODE_WINDOW;
     }
 
-    parse_str(buf, "<window_station>", gm.window_station, sizeof(gm.window_station));
-    parse_str(buf, "<desktop>", gm.desktop, sizeof(gm.desktop));
-    parse_str(buf, "<display>", gm.display, sizeof(gm.display));
+    parse_str(buf, "<window_station>", gm.window_station);
+    parse_str(buf, "<desktop>", gm.desktop);
+    parse_str(buf, "<display>", gm.display);
 
     if (parse_str(buf, "<result_name>", result_name)) {
         PROJECT* p = get_project(buf, fout);
@@ -919,11 +921,6 @@ static int set_debt(XML_PARSER& xp) {
             got_ltd = true;
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] set_debt: unrecognized %s", tag
-            );
-        }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "set_debt");
     }
     return 0;
@@ -953,11 +950,6 @@ static void handle_set_debts(const char* buf, MIOFILE& fout) {
                 return;
             }
             continue;
-        }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] handle_set_debts: unrecognized %s", tag
-            );
         }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "handle_set_debts");
     }

@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: multi.h 13204 2007-07-20 20:59:23Z romw $
+ * $Id: multi.h 16111 2008-10-02 18:32:54Z romw $
  ***************************************************************************/
 /*
   This is an "external" header file. Don't give away any internals here!
@@ -283,7 +283,7 @@ CURL_EXTERN CURLMcode curl_multi_timeout(CURLM *multi_handle,
 #undef CINIT /* re-using the same name as in curl.h */
 
 #ifdef CURL_ISOCPP
-#define CINIT(name,type,number) CURLMOPT_ ## name = CURLOPTTYPE_ ## type + number
+#define CINIT(name,type,num) CURLMOPT_ ## name = CURLOPTTYPE_ ## type + num
 #else
 /* The macro "##" is ISO C, we assume pre-ISO C doesn't support it. */
 #define LONG          CURLOPTTYPE_LONG

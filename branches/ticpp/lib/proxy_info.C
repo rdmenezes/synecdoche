@@ -27,9 +27,11 @@
 
 using std::string;
 
-#include "parse.h"
-#include "error_numbers.h"
 #include "proxy_info.h"
+
+#include "parse.h"
+#include "miofile.h"
+#include "error_numbers.h"
 
 int PROXY_INFO::parse(MIOFILE& in) {
     char buf[1024];

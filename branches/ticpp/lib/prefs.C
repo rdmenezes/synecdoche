@@ -27,12 +27,13 @@
 #include <time.h>
 #endif
 
-#include "parse.h"
-#include "util.h"
-
-#include "error_numbers.h"
 #include "prefs.h"
 
+#include "parse.h"
+#include "util.h"
+#include "miofile.h"
+
+#include "error_numbers.h"
 
 GLOBAL_PREFS_MASK::GLOBAL_PREFS_MASK() {
     clear();

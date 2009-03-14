@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 David Barnard, Peter Kortschack
+// Copyright (C) 2008 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -23,11 +23,7 @@
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 
-#ifdef __WXMSW__
 #include "version.h"
-#else
-#include "config.h"
-#endif
 
 IMPLEMENT_DYNAMIC_CLASS(CDlgAbout, wxDialog)
 
@@ -87,14 +83,26 @@ void CDlgAbout::CreateControls(CSkinAdvanced* pSkinAdvanced) {
     wxStaticText* versionLabel = new wxStaticText(this, wxID_STATIC, _("Version:"));
     copyrightSizer->Add(versionLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
-    wxStaticText* versionText = new wxStaticText(this, wxID_STATIC, wxT(SYNEC_VERSION_STRING));
+    wxString version_str = wxT(SYNEC_VERSION_STRING);
+    if (SYNEC_SVN_VERSION) {
+        version_str << wxT(" r") << wxString(SYNEC_SVN_VERSION, wxConvUTF8);
+    }
+    wxStaticText* versionText = new wxStaticText(this, wxID_STATIC, version_str);
     copyrightSizer->Add(versionText, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+
+    wxStaticText* wxVersionLabel = new wxStaticText(this, wxID_STATIC, _("wxWidgets Version:"));
+    copyrightSizer->Add(wxVersionLabel, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
+
+    wxString wxVersionStr;
+    wxVersionStr.Printf(wxT("%d.%d.%d"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER);
+    wxStaticText* wxVersionText = new wxStaticText(this, wxID_STATIC, wxVersionStr);
+    copyrightSizer->Add(wxVersionText, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
 
     wxStaticText* copyrightLabel = new wxStaticText(this, wxID_STATIC, _("Copyright:"));
     copyrightSizer->Add(copyrightLabel, 0, wxALIGN_RIGHT|wxALIGN_TOP|wxLEFT|wxRIGHT, 5);
 
     wxStaticText* copyrightText = new wxStaticText(
-        this, wxID_STATIC, _("(C) 2008 Synecdoche contributors.\n(C) 2003-2008 University of California, Berkeley.\nAll rights reserved."));
+        this, wxID_STATIC, _("(C) 2008-2009 Synecdoche contributors.\n(C) 2003-2009 University of California, Berkeley.\nAll rights reserved."));
     copyrightSizer->Add(copyrightText, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 
     // Unbranded about info:
