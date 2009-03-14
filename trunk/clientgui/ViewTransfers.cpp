@@ -62,9 +62,9 @@ END_EVENT_TABLE ()
 
 static CViewTransfers* MyCViewTransfers;
 
-static int CompareViewTransferItems(int *iRowIndex1, int *iRowIndex2) {
-    CTransfer*      transfer1 = MyCViewTransfers->m_TransferCache.at(*iRowIndex1);
-    CTransfer*      transfer2 = MyCViewTransfers->m_TransferCache.at(*iRowIndex2);
+static int CompareViewTransferItems(int iRowIndex1, int iRowIndex2) {
+    CTransfer*      transfer1 = MyCViewTransfers->m_TransferCache.at(iRowIndex1);
+    CTransfer*      transfer2 = MyCViewTransfers->m_TransferCache.at(iRowIndex2);
     int             result = 0;
     
     switch (MyCViewTransfers->m_iSortColumn) {
@@ -109,7 +109,7 @@ static int CompareViewTransferItems(int *iRowIndex1, int *iRowIndex2) {
 
     // Tie-breaker
     if (result == 0) {
-        return (*iRowIndex2 - *iRowIndex1);
+        return (iRowIndex2 - iRowIndex1);
     }
 
     return (MyCViewTransfers->m_bReverseSort ? result * (-1) : result);
@@ -311,7 +311,7 @@ wxInt32 CViewTransfers::AddCacheElement() {
     wxASSERT(pItem);
     if (pItem) {
         m_TransferCache.push_back(pItem);
-        m_iSortedIndexes.Add((int)m_TransferCache.size()-1);
+        m_iSortedIndexes.push_back((int)m_TransferCache.size()-1);
         return 0;
     }
     return -1;
@@ -323,7 +323,7 @@ wxInt32 CViewTransfers::EmptyCache() {
         delete m_TransferCache[i];
     }
     m_TransferCache.clear();
-    m_iSortedIndexes.Clear();
+    m_iSortedIndexes.clear();
     return 0;
 }
 
@@ -335,9 +335,9 @@ wxInt32 CViewTransfers::RemoveCacheElement() {
     unsigned int i;
     delete m_TransferCache.back();
     m_TransferCache.erase(m_TransferCache.end() - 1);
-    m_iSortedIndexes.Clear();
+    m_iSortedIndexes.clear();
     for (i=0; i<m_TransferCache.size(); i++) {
-        m_iSortedIndexes.Add(i);
+        m_iSortedIndexes.push_back(i);
     }
     return 0;
 }

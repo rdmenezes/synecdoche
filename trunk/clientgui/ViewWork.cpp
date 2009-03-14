@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard, Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 David Barnard, Nicolas Alvarez, Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -123,9 +123,9 @@ END_EVENT_TABLE ()
 
 static CViewWork* myCViewWork;
 
-static int CompareViewWorkItems(int *iRowIndex1, int *iRowIndex2) {
-    CWork*          work1 = myCViewWork->m_WorkCache.at(*iRowIndex1);
-    CWork*          work2 = myCViewWork->m_WorkCache.at(*iRowIndex2);
+static int CompareViewWorkItems(int iRowIndex1, int iRowIndex2) {
+    CWork*          work1 = myCViewWork->m_WorkCache.at(iRowIndex1);
+    CWork*          work2 = myCViewWork->m_WorkCache.at(iRowIndex2);
     int             result = 0;
     
     switch (myCViewWork->m_iSortColumn) {
@@ -173,7 +173,7 @@ static int CompareViewWorkItems(int *iRowIndex1, int *iRowIndex2) {
 
     // Tie-breaker
     if (result == 0) {
-        return (*iRowIndex2 - *iRowIndex1);
+        return (iRowIndex2 - iRowIndex1);
     }
 
     return (myCViewWork->m_bReverseSort ? result * (-1) : result);
@@ -280,7 +280,7 @@ void CViewWork::OnWorkSuspend(wxCommandEvent& WXUNUSED(event)) {
             break;
         }
         
-        RESULT* result = pDoc->result(m_iSortedIndexes[row]);
+        RESULT* result = pDoc->result(m_iSortedIndexes.at(row));
         if (result) {
             if (!result->suspended_via_gui) {
                 pFrame->UpdateStatusText(_("Suspending task..."));
@@ -318,7 +318,7 @@ void CViewWork::OnWorkResume(wxCommandEvent& WXUNUSED(event)) {
             break;
         }
         
-        RESULT* result = pDoc->result(m_iSortedIndexes[row]);
+        RESULT* result = pDoc->result(m_iSortedIndexes.at(row));
         if (result) {
             if (result->suspended_via_gui) {
                 pFrame->UpdateStatusText(_("Resuming task..."));
@@ -337,10 +337,8 @@ void CViewWork::OnWorkResume(wxCommandEvent& WXUNUSED(event)) {
 void CViewWork::OnWorkShowGraphics(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewWork::OnWorkShowGraphics - Function Begin"));
 
-    wxInt32  iAnswer        = 0; 
     CMainDocument* pDoc     = wxGetApp().GetDocument();
     CAdvancedFrame* pFrame  = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
-    int row;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -350,37 +348,17 @@ void CViewWork::OnWorkShowGraphics(wxCommandEvent& WXUNUSED(event)) {
 
     pFrame->UpdateStatusText(_("Showing graphics for task..."));
 
-    // We don't change "Show Graphics" button to "Hide Graphics" because Mac allows user to bring 
-    // a graphics window to the foreground when necessary by clicking Show Graphics button again
-    // TODO: shared with simple view
-#if (defined(_WIN32) || defined(__WXMAC__))
-    if (!pDoc->IsLocalClient()) {
-        iAnswer = ::wxMessageBox(
-            _("Are you sure you want to display graphics on a remote machine?"),
-            _("Show graphics"),
-            wxYES_NO | wxICON_QUESTION,
-            this
-        );
-    } else {
-        iAnswer = wxYES;
-    }
-#else
-    iAnswer = wxYES;
-#endif
-
-    if (wxYES == iAnswer) {
-        row = -1;
-        while (1) {
-            // Step through all selected items
-            row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-            if (row < 0) {
-                break;
-            }
-            
-            RESULT* result = pDoc->result(m_iSortedIndexes[row]);
-            if (result) {
-                pDoc->WorkShowGraphics(result);
-            }
+    int row = -1;
+    while (1) {
+        // Step through all selected items
+        row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        if (row < 0) {
+            break;
+        }
+        
+        RESULT* result = pDoc->result(m_iSortedIndexes.at(row));
+        if (result) {
+            pDoc->WorkShowGraphics(result);
         }
     }
     pFrame->UpdateStatusText(wxT(""));
@@ -426,8 +404,8 @@ void CViewWork::OnWorkAbort( wxCommandEvent& WXUNUSED(event) ) {
         if (row < 0) break;
 
         if (!yesToAll) {
-            iResult = m_iSortedIndexes[row];
-            CWork* work = m_WorkCache.at(m_iSortedIndexes[row]);
+            iResult = m_iSortedIndexes.at(row);
+            CWork* work = m_WorkCache.at(m_iSortedIndexes.at(row));
 
             strMessage.Printf(_("Are you sure you want to abort task '%s'?\n"
                                 "(Progress: %s, Status: %s)"), work->m_strName.c_str(),
@@ -450,7 +428,7 @@ void CViewWork::OnWorkAbort( wxCommandEvent& WXUNUSED(event) ) {
         }
 
         // Abort the result:
-        RESULT* result = pDoc->result(m_iSortedIndexes[row]);
+        RESULT* result = pDoc->result(m_iSortedIndexes.at(row));
         if (result) {
             pDoc->WorkAbort(result->project_url, result->name);
         }
@@ -494,7 +472,7 @@ wxInt32 CViewWork::GetDocCount() {
 wxString CViewWork::OnListGetItemText(long item, long column) const {
     wxString       strBuffer = wxEmptyString;
 
-    CWork* work = m_WorkCache.at(m_iSortedIndexes[item]);
+    CWork* work = m_WorkCache.at(m_iSortedIndexes.at(item));
 
     switch (column) {
         case COLUMN_PROJECT:
@@ -530,7 +508,7 @@ wxInt32 CViewWork::AddCacheElement() {
     wxASSERT(pItem);
     if (pItem) {
         m_WorkCache.push_back(pItem);
-        m_iSortedIndexes.Add((int)m_WorkCache.size()-1);
+        m_iSortedIndexes.push_back((int)m_WorkCache.size()-1);
         return 0;
     }
     return -1;
@@ -542,7 +520,7 @@ wxInt32 CViewWork::EmptyCache() {
         delete m_WorkCache[i];
     }
     m_WorkCache.clear();
-    m_iSortedIndexes.Clear();
+    m_iSortedIndexes.clear();
     return 0;
 }
 
@@ -551,12 +529,11 @@ wxInt32 CViewWork::GetCacheCount() {
 }
 
 wxInt32 CViewWork::RemoveCacheElement() {
-    unsigned int i;
     delete m_WorkCache.back();
     m_WorkCache.erase(m_WorkCache.end() - 1);
-    m_iSortedIndexes.Clear();
-    for (i=0; i<m_WorkCache.size(); i++) {
-        m_iSortedIndexes.Add(i);
+    m_iSortedIndexes.clear();
+    for (size_t i = 0; i < m_WorkCache.size(); ++i) {
+        m_iSortedIndexes.push_back(i);
     }
     return 0;
 }
@@ -578,38 +555,47 @@ void CViewWork::UpdateSelection() {
     if (n == 1) {
         // Single selection
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-        RESULT* result = pDoc->result(m_iSortedIndexes[row]);
+        RESULT* result = pDoc->result(m_iSortedIndexes.at(row));
 
-        // Start with everything enabled.
-        m_pTaskPane->EnableTaskGroupTasks(pGroup);
+        if (result) {
+            // Start with everything enabled.
+            m_pTaskPane->EnableTaskGroupTasks(pGroup);
 
-        // Disable Show Graphics button if selected task can't display graphics
-        if (((!result->supports_graphics) || pDoc->GetState()->executing_as_daemon) 
-            && result->graphics_exec_path.empty()) {
+            // Disable Show Graphics button if selected task can't display graphics
+            if (((!result->supports_graphics) || pDoc->GetState()->executing_as_daemon) 
+                && result->graphics_exec_path.empty()) {
 
-            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
-        }
-
-        // Disable the "Abort" button if the selected task already is aborted:
-        if (result->active_task_state == PROCESS_ABORT_PENDING ||
-            result->active_task_state == PROCESS_ABORTED ||
-            result->state == RESULT_ABORTED) {
-
-            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_ABORT]);
-            // Disabling the "Abort" button means that all selected tasks are
-            // already aborted. Suspending or resuming them makes no sense
-            // therefore disable these two buttons, too:
-            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
-            m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
-        } else {
-            // Disable Suspend / Resume button
-            if (result->suspended_via_gui) {
-                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
             } else {
-                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
+                // Disable graphics if the manager is connected to a remote client:
+                wxString strMachineName;
+                pDoc->GetConnectedComputerName(strMachineName);
+                if (!pDoc->IsComputerNameLocal(strMachineName)) {
+                    m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_GRAPHICS]);
+                }
             }
+
+            // Disable the "Abort" button if the selected task already is aborted:
+            if (result->active_task_state == PROCESS_ABORT_PENDING ||
+                result->active_task_state == PROCESS_ABORTED ||
+                result->state == RESULT_ABORTED) {
+
+                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_ABORT]);
+                // Disabling the "Abort" button means that all selected tasks are
+                // already aborted. Suspending or resuming them makes no sense
+                // therefore disable these two buttons, too:
+                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+                m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
+            } else {
+                // Disable Suspend / Resume button
+                if (result->suspended_via_gui) {
+                    m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_SUSPEND]);
+                } else {
+                    m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_RESUME]);
+                }
+            }
+            project = pDoc->state.lookup_project(result->project_url);
         }
-        project = pDoc->state.lookup_project(result->project_url);
     } else if (n > 1) {
         // Multiple selection.
         // Check if all selected tasks are in the same state.
@@ -628,15 +614,17 @@ void CViewWork::UpdateSelection() {
             if (row < 0) {
                 break;
             }
-            RESULT* result = pDoc->result(m_iSortedIndexes[row]);
+            RESULT* result = pDoc->result(m_iSortedIndexes.at(row));
 
-            // Check aborted tasks:
-            if ((result->active_task_state == PROCESS_ABORT_PENDING)
-                || (result->active_task_state == PROCESS_ABORTED)
-                || (result->state == RESULT_ABORTED)) {
-                    ++num_aborted;
-            } else if (result->suspended_via_gui) { // Check suspended tasks
-                ++num_suspended;
+            if (result) {
+                // Check aborted tasks:
+                if ((result->active_task_state == PROCESS_ABORT_PENDING)
+                    || (result->active_task_state == PROCESS_ABORTED)
+                    || (result->state == RESULT_ABORTED)) {
+                        ++num_aborted;
+                } else if (result->suspended_via_gui) { // Check suspended tasks
+                    ++num_suspended;
+                }
             }
 
         }
@@ -675,34 +663,34 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
     wxString    strDocumentText  = wxEmptyString;
     float       fDocumentFloat = 0.0;
     time_t      tDocumentTime = (time_t)0;
-    CWork*      work = m_WorkCache.at(m_iSortedIndexes[iRowIndex]);
+    CWork*      work = m_WorkCache.at(m_iSortedIndexes.at(iRowIndex));
 
     strDocumentText.Empty();
 
     switch (iColumnIndex) {
         case COLUMN_PROJECT:
-            GetDocProjectName(m_iSortedIndexes[iRowIndex], strDocumentText);
+            GetDocProjectName(m_iSortedIndexes.at(iRowIndex), strDocumentText);
             if (!strDocumentText.IsSameAs(work->m_strProjectName)) {
                 work->m_strProjectName = strDocumentText;
                 return true;
             }
             break;
         case COLUMN_APPLICATION:
-            GetDocApplicationName(m_iSortedIndexes[iRowIndex], strDocumentText);
+            GetDocApplicationName(m_iSortedIndexes.at(iRowIndex), strDocumentText);
             if (!strDocumentText.IsSameAs(work->m_strApplicationName)) {
                 work->m_strApplicationName = strDocumentText;
                 return true;
             }
             break;
         case COLUMN_NAME:
-            GetDocName(m_iSortedIndexes[iRowIndex], strDocumentText);
+            GetDocName(m_iSortedIndexes.at(iRowIndex), strDocumentText);
             if (!strDocumentText.IsSameAs(work->m_strName)) {
                 work->m_strName = strDocumentText;
                 return true;
             }
             break;
         case COLUMN_CPUTIME:
-            GetDocCPUTime(m_iSortedIndexes[iRowIndex], fDocumentFloat);
+            GetDocCPUTime(m_iSortedIndexes.at(iRowIndex), fDocumentFloat);
             if (fDocumentFloat != work->m_fCPUTime) {
                 work->m_fCPUTime = fDocumentFloat;
                 FormatCPUTime(fDocumentFloat, work->m_strCPUTime);
@@ -710,7 +698,7 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             }
             break;
         case COLUMN_PROGRESS:
-            GetDocProgress(m_iSortedIndexes[iRowIndex], fDocumentFloat);
+            GetDocProgress(m_iSortedIndexes.at(iRowIndex), fDocumentFloat);
             if (fDocumentFloat != work->m_fProgress) {
                 work->m_fProgress = fDocumentFloat;
                 FormatProgress(fDocumentFloat, work->m_strProgress);
@@ -718,7 +706,7 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             }
             break;
         case COLUMN_TOCOMPLETION:
-            GetDocTimeToCompletion(m_iSortedIndexes[iRowIndex], fDocumentFloat);
+            GetDocTimeToCompletion(m_iSortedIndexes.at(iRowIndex), fDocumentFloat);
             if (fDocumentFloat != work->m_fTimeToCompletion) {
                 work->m_fTimeToCompletion = fDocumentFloat;
                 FormatTimeToCompletion(fDocumentFloat, work->m_strTimeToCompletion);
@@ -726,7 +714,7 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             }
             break;
         case COLUMN_REPORTDEADLINE:
-            GetDocReportDeadline(m_iSortedIndexes[iRowIndex], tDocumentTime);
+            GetDocReportDeadline(m_iSortedIndexes.at(iRowIndex), tDocumentTime);
             if (tDocumentTime != work->m_tReportDeadline) {
                 work->m_tReportDeadline = tDocumentTime;
                 FormatReportDeadline(tDocumentTime, work->m_strReportDeadline);
@@ -734,7 +722,7 @@ bool CViewWork::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex) {
             }
             break;
         case COLUMN_STATUS:
-            GetDocStatus(m_iSortedIndexes[iRowIndex], strDocumentText);
+            GetDocStatus(m_iSortedIndexes.at(iRowIndex), strDocumentText);
             if (!strDocumentText.IsSameAs(work->m_strStatus)) {
                 work->m_strStatus = strDocumentText;
                 return true;
@@ -1059,7 +1047,7 @@ void CViewWork::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
 }
 
 wxInt32 CViewWork::FormatStatus(wxInt32 item, wxString& strBuffer) const {
-    CWork*          work = m_WorkCache.at(m_iSortedIndexes[item]);
+    CWork*          work = m_WorkCache.at(m_iSortedIndexes.at(item));
     strBuffer = work->m_strStatus;
     return 0;
 }
