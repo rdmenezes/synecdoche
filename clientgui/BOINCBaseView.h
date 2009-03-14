@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BOINCBASEVIEW_H_
-#define _BOINCBASEVIEW_H_
+#ifndef BOINCBASEVIEW_H
+#define BOINCBASEVIEW_H
 
+#include <vector>
 #include <wx/panel.h>
 
 #define DEFAULT_TASK_FLAGS             wxTAB_TRAVERSAL | wxADJUST_MINSIZE
@@ -36,7 +37,7 @@ class wxGridRangeSelectEvent;
 class CBOINCListCtrl;
 
 
-typedef int     (*ListSortCompareFunc)(int*, int*);
+typedef int     (*ListSortCompareFunc)(int, int);
 
 
 class CBOINCBaseView : public wxPanel {
@@ -145,7 +146,7 @@ protected:
     int                     m_iProgressColumn;
 
     ListSortCompareFunc     m_funcSortCompare;
-    wxArrayInt              m_iSortedIndexes;
+    std::vector<int>        m_iSortedIndexes;
 
     CBOINCListCtrl*         m_pListPane;
 
@@ -153,4 +154,4 @@ protected:
 };
 
 
-#endif
+#endif // BOINCBASEVIEW_H

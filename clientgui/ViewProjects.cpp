@@ -77,9 +77,9 @@ END_EVENT_TABLE ()
 
 static CViewProjects* myCViewProjects;
 
-static int CompareViewProjectsItems(int *iRowIndex1, int *iRowIndex2) {
-    CProject*  project1 = myCViewProjects->m_ProjectCache.at(*iRowIndex1);
-    CProject*  project2 = myCViewProjects->m_ProjectCache.at(*iRowIndex2);
+static int CompareViewProjectsItems(int iRowIndex1, int iRowIndex2) {
+    CProject*  project1 = myCViewProjects->m_ProjectCache.at(iRowIndex1);
+    CProject*  project2 = myCViewProjects->m_ProjectCache.at(iRowIndex2);
     int        result = 0;
     
     switch (myCViewProjects->m_iSortColumn) {
@@ -120,7 +120,7 @@ static int CompareViewProjectsItems(int *iRowIndex1, int *iRowIndex2) {
 
     // Tie-breaker
     if (result == 0) {
-        return (*iRowIndex2 - *iRowIndex1);
+        return (iRowIndex2 - iRowIndex1);
     }
 
     return (myCViewProjects->m_bReverseSort ? result * (-1) : result);
@@ -576,7 +576,7 @@ wxInt32 CViewProjects::AddCacheElement() {
     wxASSERT(pItem);
     if (pItem) {
         m_ProjectCache.push_back(pItem);
-        m_iSortedIndexes.Add((int)m_ProjectCache.size()-1);
+        m_iSortedIndexes.push_back((int)m_ProjectCache.size()-1);
         return 0;
     }
     return -1;
@@ -588,7 +588,7 @@ wxInt32 CViewProjects::EmptyCache() {
         delete m_ProjectCache[i];
     }
     m_ProjectCache.clear();
-    m_iSortedIndexes.Clear();
+    m_iSortedIndexes.clear();
     return 0;
 }
 
@@ -600,9 +600,9 @@ wxInt32 CViewProjects::RemoveCacheElement() {
     unsigned int i;
     delete m_ProjectCache.back();
     m_ProjectCache.erase(m_ProjectCache.end() - 1);
-    m_iSortedIndexes.Clear();
+    m_iSortedIndexes.clear();
     for (i=0; i<m_ProjectCache.size(); i++) {
-        m_iSortedIndexes.Add(i);
+        m_iSortedIndexes.push_back(i);
     }
     return 0;
 }

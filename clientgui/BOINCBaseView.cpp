@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -140,8 +140,8 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
         int iCacheCount = GetCacheCount();
         if (iDocCount != iCacheCount) {
             if (0 >= iDocCount) {
-                EmptyCache();
                 m_pListPane->DeleteAllItems();
+                EmptyCache();
             } else {
                 int iIndex = 0;
                 int iReturnValue = -1;
@@ -380,34 +380,34 @@ void CBOINCBaseView::InitSort() {
 void CBOINCBaseView::sortData() {
     if (m_iSortColumn < 0) return;
     
-    wxArrayInt oldSortedIndexes(m_iSortedIndexes);
-    wxArrayInt selections;
-    int i, j, m, n = (int)m_iSortedIndexes.GetCount();
+    std::vector<int> oldSortedIndexes(m_iSortedIndexes);
+    std::vector<int> selections;
+    size_t n = m_iSortedIndexes.size();
     
     // Remember which cache elements are selected and deselect them
     m_bIgnoreUIEvents = true;
-    i = -1;
+    int i = -1;
     while (1) {
         i = m_pListPane->GetNextItem(i, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
         if (i < 0) break;
-        selections.Add(m_iSortedIndexes[i]);
+        selections.push_back(m_iSortedIndexes.at(i));
         m_pListPane->SetItemState(i, 0, wxLIST_STATE_SELECTED);
     }
     
-    m_iSortedIndexes.Sort(m_funcSortCompare);
+    std::stable_sort(m_iSortedIndexes.begin(), m_iSortedIndexes.end(), m_funcSortCompare);
     
     // Reselect previously selected cache elements in the sorted list 
-    m = (int)selections.GetCount();
-    for (i=0; i<m; i++) {
+    size_t m = selections.size();
+    for (size_t i = 0; i < m; ++i) {
         if (selections[i] >= 0) {
-            j = m_iSortedIndexes.Index(selections[i]);
+            int j = m_iSortedIndexes.at(selections[i]);
             m_pListPane->SetItemState(j, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
         }
     }
     m_bIgnoreUIEvents = false;
 
     // Refresh rows which have moved
-    for (i=0; i<n; i++) {
+    for (size_t i = 0; i < n; ++i) {
         if (m_iSortedIndexes[i] != oldSortedIndexes[i]) {
             m_pListPane->RefreshItem(i);
          }
