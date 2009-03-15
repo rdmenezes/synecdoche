@@ -37,7 +37,7 @@ class wxGridRangeSelectEvent;
 class CBOINCListCtrl;
 
 
-typedef int     (*ListSortCompareFunc)(int, int);
+typedef bool (*ListSortCompareFunc)(size_t, size_t);
 
 
 class CBOINCBaseView : public wxPanel {
@@ -146,7 +146,7 @@ protected:
     int                     m_iProgressColumn;
 
     ListSortCompareFunc     m_funcSortCompare;
-    std::vector<int>        m_iSortedIndexes;
+    std::vector<size_t>     m_iSortedIndexes;
 
     CBOINCListCtrl*         m_pListPane;
 

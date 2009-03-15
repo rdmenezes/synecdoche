@@ -766,7 +766,7 @@ int CMainDocument::ProjectDetach(const wxString& projectname) {
 }
 
 
-int CMainDocument::ProjectUpdate(int iIndex) {
+int CMainDocument::ProjectUpdate(size_t iIndex) {
     PROJECT* pProject = NULL;
     int iRetVal = -1;
 
@@ -791,7 +791,7 @@ int CMainDocument::ProjectUpdate(const wxString& projectname) {
 }
 
 
-int CMainDocument::ProjectReset(int iIndex) {
+int CMainDocument::ProjectReset(size_t iIndex) {
     PROJECT* pProject = NULL;
     int iRetVal = -1;
 
@@ -816,7 +816,7 @@ int CMainDocument::ProjectReset(const wxString& projectname) {
 }
 
 
-int CMainDocument::ProjectSuspend(int iIndex) {
+int CMainDocument::ProjectSuspend(size_t iIndex) {
     PROJECT* pProject = NULL;
     int iRetVal = -1;
 
@@ -840,7 +840,7 @@ int CMainDocument::ProjectSuspend(const wxString& projectname) {
     return iRetVal;
 }
 
-int CMainDocument::ProjectResume(int iIndex) {
+int CMainDocument::ProjectResume(size_t iIndex) {
     PROJECT* pProject = NULL;
     int iRetVal = -1;
 
@@ -864,7 +864,7 @@ int CMainDocument::ProjectResume(const wxString& projectname) {
     return iRetVal;
 }
 
-int CMainDocument::ProjectNoMoreWork(int iIndex) {
+int CMainDocument::ProjectNoMoreWork(size_t iIndex) {
     PROJECT* pProject = NULL;
     int iRetVal = -1;
 
@@ -888,7 +888,7 @@ int CMainDocument::ProjectNoMoreWork(const wxString& projectname) {
     return iRetVal;
 }
 
-int CMainDocument::ProjectAllowMoreWork(int iIndex) {
+int CMainDocument::ProjectAllowMoreWork(size_t iIndex) {
     PROJECT* pProject = NULL;
     int iRetVal = -1;
 
@@ -1356,7 +1356,7 @@ int CMainDocument::CachedFileTransfersUpdate() {
 }
 
 
-FILE_TRANSFER* CMainDocument::file_transfer(unsigned int i) {
+FILE_TRANSFER* CMainDocument::file_transfer(size_t i) {
     FILE_TRANSFER* pFT = NULL;
 
     try {
@@ -1409,7 +1409,7 @@ size_t CMainDocument::GetTransferCount() {
 }
 
 
-int CMainDocument::TransferRetryNow(int iIndex) {
+int CMainDocument::TransferRetryNow(size_t iIndex) {
     FILE_TRANSFER* pFT = NULL;
     int iRetVal = 0;
 
@@ -1434,7 +1434,7 @@ int CMainDocument::TransferRetryNow(const wxString& fileName, const wxString& pr
 }
 
 
-int CMainDocument::TransferAbort(int iIndex) {
+int CMainDocument::TransferAbort(size_t iIndex) {
     FILE_TRANSFER* pFT = NULL;
     int iRetVal = 0;
 

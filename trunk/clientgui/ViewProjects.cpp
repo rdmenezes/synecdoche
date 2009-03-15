@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ END_EVENT_TABLE ()
 
 static CViewProjects* myCViewProjects;
 
-static int CompareViewProjectsItems(int iRowIndex1, int iRowIndex2) {
+static bool CompareViewProjectsItems(size_t iRowIndex1, size_t iRowIndex2) {
     CProject*  project1 = myCViewProjects->m_ProjectCache.at(iRowIndex1);
     CProject*  project2 = myCViewProjects->m_ProjectCache.at(iRowIndex2);
     int        result = 0;
@@ -118,12 +118,8 @@ static int CompareViewProjectsItems(int iRowIndex1, int iRowIndex2) {
             break;
     }
 
-    // Tie-breaker
-    if (result == 0) {
-        return (iRowIndex2 - iRowIndex1);
-    }
-
-    return (myCViewProjects->m_bReverseSort ? result * (-1) : result);
+    // Always return fals for equality (result == 0).
+    return ((myCViewProjects->m_bReverseSort) ? (result > 0) : (result < 0));
 }
 
 CViewProjects::CViewProjects() {
@@ -741,7 +737,7 @@ bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex
     return false;
 }
 
-void CViewProjects::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
+void CViewProjects::GetDocProjectName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -764,7 +760,7 @@ wxInt32 CViewProjects::FormatProjectName(wxInt32 item, wxString& strBuffer) cons
     return 0;
 }
 
-void CViewProjects::GetDocAccountName(wxInt32 item, wxString& strBuffer) const {
+void CViewProjects::GetDocAccountName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -785,7 +781,7 @@ wxInt32 CViewProjects::FormatAccountName(wxInt32 item, wxString& strBuffer) cons
     return 0;
 }
 
-void CViewProjects::GetDocTeamName(wxInt32 item, wxString& strBuffer) const {
+void CViewProjects::GetDocTeamName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -806,7 +802,7 @@ wxInt32 CViewProjects::FormatTeamName(wxInt32 item, wxString& strBuffer) const {
     return 0;
 }
 
-void CViewProjects::GetDocTotalCredit(wxInt32 item, float& fBuffer) const {
+void CViewProjects::GetDocTotalCredit(size_t item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -825,7 +821,7 @@ wxInt32 CViewProjects::FormatTotalCredit(float fBuffer, wxString& strBuffer) con
     return 0;
 }
 
-void CViewProjects::GetDocAVGCredit(wxInt32 item, float& fBuffer) const {
+void CViewProjects::GetDocAVGCredit(size_t item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -844,7 +840,7 @@ wxInt32 CViewProjects::FormatAVGCredit(float fBuffer, wxString& strBuffer) const
     return 0;
 }
 
-void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
+void CViewProjects::GetDocResourceShare(size_t item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -858,7 +854,7 @@ void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
     }
 }
 
-void CViewProjects::GetDocResourcePercent(wxInt32 item, float& fBuffer) const {
+void CViewProjects::GetDocResourcePercent(size_t item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -877,7 +873,7 @@ wxInt32 CViewProjects::FormatResourceShare(float fBuffer, float fBufferPercent, 
     return 0;
 }
 
-void CViewProjects::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
+void CViewProjects::GetDocStatus(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {

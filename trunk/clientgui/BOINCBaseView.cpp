@@ -380,8 +380,8 @@ void CBOINCBaseView::InitSort() {
 void CBOINCBaseView::sortData() {
     if (m_iSortColumn < 0) return;
     
-    std::vector<int> oldSortedIndexes(m_iSortedIndexes);
-    std::vector<int> selections;
+    std::vector<size_t> oldSortedIndexes(m_iSortedIndexes);
+    std::vector<size_t> selections;
     size_t n = m_iSortedIndexes.size();
     
     // Remember which cache elements are selected and deselect them
@@ -400,8 +400,8 @@ void CBOINCBaseView::sortData() {
     size_t m = selections.size();
     for (size_t i = 0; i < m; ++i) {
         if (selections[i] >= 0) {
-            int j = m_iSortedIndexes.at(selections[i]);
-            m_pListPane->SetItemState(j, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+            size_t j = m_iSortedIndexes.at(selections[i]);
+            m_pListPane->SetItemState(static_cast<long>(j), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
         }
     }
     m_bIgnoreUIEvents = false;
@@ -409,7 +409,7 @@ void CBOINCBaseView::sortData() {
     // Refresh rows which have moved
     for (size_t i = 0; i < n; ++i) {
         if (m_iSortedIndexes[i] != oldSortedIndexes[i]) {
-            m_pListPane->RefreshItem(i);
+            m_pListPane->RefreshItem(static_cast<long>(i));
          }
     }
 }
