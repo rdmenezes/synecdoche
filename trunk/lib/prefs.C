@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -24,8 +25,11 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <sstream>
 #include <time.h>
 #endif
+
+#include <stdexcept>
 
 #include "prefs.h"
 
@@ -122,145 +126,215 @@ bool GLOBAL_PREFS_MASK::are_simple_prefs_set() {
 
 // TIME_SPAN implementation
 
-bool TIME_SPAN::suspended(double hour) const {
-    if (start_hour == end_hour) return false;
-    if (start_hour == 0 && end_hour == 24) return false;
-    if (start_hour == 24 && end_hour == 0) return true;
-    if (start_hour < end_hour) {
-        return (hour < start_hour || hour > end_hour);
+/// Construct a TIME_SPAN instance.
+TIME_SPAN::TIME_SPAN() : m_start(0), m_end(0) {
+}
+
+/// Construct a TIME_SPAN instance.
+///
+/// \param[in] start The beginning of the time span in seconds from midnight.
+/// \param[in] end The end of the time span in seconds from midnight.
+TIME_SPAN::TIME_SPAN(time_t start, time_t end) : m_start(start), m_end(end) {
+    check_range(start);
+    check_range(end);
+}
+
+TIME_SPAN& TIME_SPAN::operator=(const TIME_SPAN& r) {
+    if (this != &r) {
+        m_start = r.m_start;
+        m_end = r.m_end;
+    }
+    return *this;
+}
+
+bool TIME_SPAN::operator==(const TIME_SPAN& r) {
+    return ((m_start == r.m_start) && (m_end == r.m_end));
+}
+
+/// Check if the client should be suspended for a given point in time.
+///
+/// Run always if start==end or start==0, end=24.
+/// Don't run at all if start=24, end=0.
+///
+/// \param[in] point_in_time The point in time which should be checked.
+/// \return True if the client should suspend at the given point in time.
+bool TIME_SPAN::suspended(const time_t point_in_time) const {
+    if (m_start == m_end) return false;
+    if (m_start == 0 && m_end == (24 * 3600)) return false;
+    if (m_start == (24 * 3600) && m_end == 0) return true;
+    if (m_start < m_end) {
+        return (point_in_time < m_start || point_in_time > m_end);
     } else {
-        return (hour >= end_hour && hour < start_hour);
+        return (point_in_time >= m_end && point_in_time < m_start);
     }
 }
 
-
+/// Get the run mode determined by this TIME_SPAN instance.
+///
+/// start == end or start == 0:00 and end == 24:00 => return Always.
+/// start == 24:00 and end == 0:00 => return Never.
+/// Returns Between in all other cases.
+///
+/// \return The run mode determined by this TIME_SPAN instance.
 TIME_SPAN::TimeMode TIME_SPAN::mode() const {
-    if (end_hour == start_hour || (start_hour == 0.0 && end_hour == 24.0)) {
+    if ((m_end == m_start) || ((m_start == 0) && (m_end == (24 * 3600)))) {
         return Always;
-    } else if (start_hour == 24.0 && end_hour == 0.0) {
+    } else if ((m_start == (24 * 3600)) && (m_end == 0)) {
         return Never;
     }
     return Between;
 }
 
+/// Reset this instance to its default values (start = end = 0).
+void TIME_SPAN::clear() {
+    m_start = 0;
+    m_end = 0;
+}
+
+time_t TIME_SPAN::get_start() const {
+    return m_start;
+}
+
+time_t TIME_SPAN::get_end() const {
+    return m_end;
+}
+
+void TIME_SPAN::set_start(const time_t start) {
+    check_range(start);
+    m_start = start;
+}
+
+void TIME_SPAN::set_end(const time_t end) {
+    check_range(end);
+    m_end = end;
+}
+
+void TIME_SPAN::check_range(const time_t point_in_time) const {
+    if ((point_in_time < 0) || (point_in_time > 24 * 3600)) {
+        std::ostringstream msg;
+        msg << "TIME_SPAN::check_range: Value \"" << point_in_time << "\" is not allowed!";
+        throw std::invalid_argument(msg.str());
+    }
+}
 
 // TIME_PREFS implementation
 
+TIME_PREFS::TIME_PREFS() : TIME_SPAN() {
+}
+
+TIME_PREFS::TIME_PREFS(time_t start, time_t end) : TIME_SPAN(start, end) {
+}
+
+/// Reset this instance to its default values.
 void TIME_PREFS::clear() {
-    start_hour = 0;
-    end_hour = 0;
+    TIME_SPAN::clear();
     week.clear();
 }
 
 
+/// Check if the client should be currently suspended based on this TIME_PREFS instance.
+///
+/// \return True if the client should be suspended, false otherwise.
 bool TIME_PREFS::suspended() const {
     time_t now = time(0);
     struct tm* tmp = localtime(&now);
-    double hour = (tmp->tm_hour * 3600 + tmp->tm_min * 60 + tmp->tm_sec) / 3600.;
+    time_t point_in_time = tmp->tm_hour * 3600 + tmp->tm_min * 60 + tmp->tm_sec;
     int day = tmp->tm_wday;
 
     // Use day-specific settings, if they exist:
     const TIME_SPAN* span = week.get(day) ? week.get(day) : this;
 
-    return span->suspended(hour);
+    return span->suspended(point_in_time);
 }
 
 
 // WEEK_PREFS implementation
 
 WEEK_PREFS::WEEK_PREFS() {
-    for (int i=0; i<7; i++) {
-        days[i] = 0;
-    }
+    std::fill(days, days + 7, static_cast<TIME_SPAN*>(0));
 }
 
 
 WEEK_PREFS::WEEK_PREFS(const WEEK_PREFS& original) {
-    for (int i=0; i<7; i++) {
-        TIME_SPAN* time = original.days[i];
-        if (time) {
-            days[i] = new TIME_SPAN(time->start_hour, time->end_hour);
-        } else {
-            days[i] = 0;
-        }
-    }
+    std::fill(days, days + 7, static_cast<TIME_SPAN*>(0));
+    copy(original);
 }
-
-
-WEEK_PREFS& WEEK_PREFS::operator=(const WEEK_PREFS& rhs) {
-    if (this != &rhs) {
-        for (int i=0; i<7; i++) {
-            TIME_SPAN* time = rhs.days[i];
-            if (time) {
-                if (days[i]) {
-                    *days[i] = *time;
-                } else {
-                    days[i] = new TIME_SPAN(*time);
-                }
-            } else {
-                unset(i);
-            }
-        }
-    }
-    return *this;
-}
-
-
-// Create a deep copy.
-void WEEK_PREFS::copy(const WEEK_PREFS& original) {
-    for (int i=0; i<7; i++) {
-        TIME_SPAN* time = original.days[i];
-        if (time) {
-            days[i] = new TIME_SPAN(time->start_hour, time->end_hour);
-        } else {
-            days[i] = 0;
-        }
-    }
-}
-
 
 WEEK_PREFS::~WEEK_PREFS() {
     clear();
 }
 
+WEEK_PREFS& WEEK_PREFS::operator=(const WEEK_PREFS& rhs) {
+    if (this != &rhs) {
+        copy(rhs);
+    }
+    return *this;
+}
 
-void WEEK_PREFS::clear() {
-    for (int i=0; i<7; i++) {
-        if (days[i]) {
-            delete days[i];
-            days[i] = 0;
+/// Create a deep copy.
+void WEEK_PREFS::copy(const WEEK_PREFS& original) {
+    for (int i = 0; i < 7; ++i) {
+        TIME_SPAN* time = original.days[i];
+        if (time) {
+            if (days[i]) {
+                *days[i] = *time;
+            } else {
+                days[i] = new TIME_SPAN(*time);
+            }
+        } else {
+            unset(i);
         }
     }
 }
 
+/// Reset this instance to its default values.
+void WEEK_PREFS::clear() {
+    for (int i = 0; i < 7; ++i) {
+        delete days[i];
+        days[i] = 0;
+    }
+}
 
-TIME_SPAN* WEEK_PREFS::get(int day) const {
-
+/// Get the set time span for a given day.
+///
+/// \return Pointer to a TIME_SPAN instance which is set for the day denoted by \a day.
+///         If no time span is set for requested day this function returns 0.
+const TIME_SPAN* WEEK_PREFS::get(int day) const {
     if (day < 0 || day > 6) return 0;
     return days[day];
 }
 
-
-void WEEK_PREFS::set(int day, double start, double end) {
+/// Set a time span in which the client is allowed to run.
+///
+/// \param[in] day The for which the time span should be set.
+/// \param[in] start The start time on the day denoted by \a day from which on processing will
+///                  be allowed in seconds after midnight.
+/// \param[in] end The end time on the day denoted by \a day from which on no processing will
+///                be allowed in seconds after midnight.
+void WEEK_PREFS::set(int day, time_t start, time_t end) {
     if (day < 0 || day > 6) return;
-    if (days[day]) delete days[day];
+    delete days[day];
     days[day] = new TIME_SPAN(start, end);
 }
 
-
-void WEEK_PREFS::set(int day, TIME_SPAN* time) {
+/// Set a time span in which the client is allowed to run.
+///
+/// \param[in] day The for which the time span should be set.
+/// \param[in] time The time span in which processing is allowed for the day denoted by \a day.
+void WEEK_PREFS::set(int day, const TIME_SPAN& time) {
     if (day < 0 || day > 6) return;
-    if (days[day] == time) return;
-    if (days[day]) delete days[day];
-    days[day] = time;
+    if (*days[day] == time) return;
+    delete days[day];
+    days[day] = new TIME_SPAN(time);
 }
 
+/// Remove the timespan for a given day.
+///
+/// \param[in] day The day for which the set time span should be removed.
 void WEEK_PREFS::unset(int day) {
     if (day < 0 || day > 6) return;
-    if (days[day]) {
-        delete days[day];
-        days[day] = 0;
-    }
+    delete days[day];
+    days[day] = 0;
 }
 
 // The following values determine how the client behaves
@@ -348,10 +422,10 @@ int GLOBAL_PREFS::parse_day(XML_PARSER& xp) {
         if (!strcmp(tag, "/day_prefs")) {
             if (day_of_week < 0 || day_of_week > 6) return ERR_XML_PARSE;
             if (has_cpu) {
-                cpu_times.week.set(day_of_week, start_hour, end_hour);
+                cpu_times.week.set(day_of_week, static_cast<time_t>(start_hour * 3600.0), static_cast<time_t>(end_hour * 3600.0));
             }
             if (has_net) {
-                net_times.week.set(day_of_week, net_start_hour, net_end_hour);
+                net_times.week.set(day_of_week, static_cast<time_t>(net_start_hour * 3600.0), static_cast<time_t>(net_end_hour * 3600.0));
             }
             return 0;
         }
@@ -464,19 +538,24 @@ int GLOBAL_PREFS::parse_override(XML_PARSER& xp, const char* host_venue, bool& f
             mask.suspend_if_no_recent_input = true;
             continue;
         }
-        if (xp.parse_double(tag, "start_hour", cpu_times.start_hour)) {
+        double dtmp = 0.0;
+        if (xp.parse_double(tag, "start_hour", dtmp)) {
+            cpu_times.set_start(static_cast<time_t>(dtmp * 3600.0));
             mask.start_hour = true;
             continue;
         }
-        if (xp.parse_double(tag, "end_hour", cpu_times.end_hour)) {
+        if (xp.parse_double(tag, "end_hour", dtmp)) {
+            cpu_times.set_end(static_cast<time_t>(dtmp * 3600.0));
             mask.end_hour = true;
             continue;
         }
-        if (xp.parse_double(tag, "net_start_hour", net_times.start_hour)) {
+        if (xp.parse_double(tag, "net_start_hour", dtmp)) {
+            net_times.set_start(static_cast<time_t>(dtmp * 3600.0));
             mask.net_start_hour = true;
             continue;
         }
-        if (xp.parse_double(tag, "net_end_hour", net_times.end_hour)) {
+        if (xp.parse_double(tag, "net_end_hour", dtmp)) {
+            net_times.set_end(static_cast<time_t>(dtmp * 3600.0));
             mask.net_end_hour = true;
             continue;
         }
@@ -649,10 +728,10 @@ int GLOBAL_PREFS::write(MIOFILE& f) {
         run_on_batteries?"   <run_on_batteries/>\n":"",
         run_if_user_active?"   <run_if_user_active/>\n":"",
         suspend_if_no_recent_input,
-        cpu_times.start_hour,
-        cpu_times.end_hour,
-        net_times.start_hour,
-        net_times.end_hour,
+        cpu_times.get_start() / 3600.0,
+        cpu_times.get_end() / 3600.0,
+        net_times.get_start() / 3600.0,
+        net_times.get_end() / 3600.0,
         leave_apps_in_memory?"   <leave_apps_in_memory/>\n":"",
         confirm_before_connecting?"   <confirm_before_connecting/>\n":"",
         hangup_if_dialed?"   <hangup_if_dialed/>\n":"",
@@ -676,20 +755,20 @@ int GLOBAL_PREFS::write(MIOFILE& f) {
     );
 
     for (int i = 0; i < 7; i++) {
-        TIME_SPAN* cpu = cpu_times.week.get(i);
-        TIME_SPAN* net = net_times.week.get(i);
+        const TIME_SPAN* cpu = cpu_times.week.get(i);
+        const TIME_SPAN* net = net_times.week.get(i);
 
         //write only when needed
         if (net || cpu) {    
             f.printf("   <day_prefs>\n");                
             f.printf("      <day_of_week>%d</day_of_week>\n", i);
             if (cpu) {
-                f.printf("      <start_hour>%.02f</start_hour>\n", cpu->start_hour);
-                f.printf("      <end_hour>%.02f</end_hour>\n", cpu->end_hour);
+                f.printf("      <start_hour>%.02f</start_hour>\n", cpu->get_start() / 3600.0);
+                f.printf("      <end_hour>%.02f</end_hour>\n", cpu->get_end() / 3600.0);
             }
             if (net) {
-                f.printf("      <net_start_hour>%.02f</net_start_hour>\n", net->start_hour);
-                f.printf("      <net_end_hour>%.02f</net_end_hour>\n", net->end_hour);
+                f.printf("      <net_start_hour>%.02f</net_start_hour>\n", net->get_start() / 3600.0);
+                f.printf("      <net_end_hour>%.02f</net_end_hour>\n", net->get_end() / 3600.0);
             }
             f.printf("   </day_prefs>\n");
         }
@@ -726,16 +805,16 @@ int GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
         );
     }
     if (mask.start_hour) {
-        f.printf("   <start_hour>%f</start_hour>\n", cpu_times.start_hour);
+        f.printf("   <start_hour>%f</start_hour>\n", cpu_times.get_start() / 3600.0);
     }
     if (mask.end_hour) {
-        f.printf("   <end_hour>%f</end_hour>\n", cpu_times.end_hour);
+        f.printf("   <end_hour>%f</end_hour>\n", cpu_times.get_end() / 3600.0);
     }
     if (mask.net_start_hour) {
-        f.printf("   <net_start_hour>%f</net_start_hour>\n", net_times.start_hour);
+        f.printf("   <net_start_hour>%f</net_start_hour>\n", net_times.get_start() / 3600.0);
     }
     if (mask.net_end_hour) {
-        f.printf("   <net_end_hour>%f</net_end_hour>\n", net_times.end_hour);
+        f.printf("   <net_end_hour>%f</net_end_hour>\n", net_times.get_end() / 3600.0);
     }
     if (mask.leave_apps_in_memory) {
         f.printf("   <leave_apps_in_memory>%d</leave_apps_in_memory>\n",
@@ -804,19 +883,19 @@ int GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
     }
 
     for (int i=0; i<7; i++) {
-        TIME_SPAN* cpu = cpu_times.week.get(i);
-        TIME_SPAN* net = net_times.week.get(i);
+        const TIME_SPAN* cpu = cpu_times.week.get(i);
+        const TIME_SPAN* net = net_times.week.get(i);
         //write only when needed
         if (net || cpu) {
             f.printf("   <day_prefs>\n");                
             f.printf("      <day_of_week>%d</day_of_week>\n", i);
             if (cpu) {
-                f.printf("      <start_hour>%.02f</start_hour>\n", cpu->start_hour);
-                f.printf("      <end_hour>%.02f</end_hour>\n", cpu->end_hour);
+                f.printf("      <start_hour>%.02f</start_hour>\n", cpu->get_start() / 3600.0);
+                f.printf("      <end_hour>%.02f</end_hour>\n", cpu->get_end() / 3600.0);
             }
             if (net) {
-                f.printf("      <net_start_hour>%.02f</net_start_hour>\n", net->start_hour);
-                f.printf("      <net_end_hour>%.02f</net_end_hour>\n", net->end_hour);
+                f.printf("      <net_start_hour>%.02f</net_start_hour>\n", net->get_start() / 3600.0);
+                f.printf("      <net_end_hour>%.02f</net_end_hour>\n", net->get_end() / 3600.0);
             }
             f.printf("   </day_prefs>\n");
         }
