@@ -15,7 +15,7 @@ The idea behind this page is to provide information for the case when changes at
 || malariacontrol.net          || _not tested_ ||
 || !MilkyWay@home              || *OK*         ||
 || NQueens@Home Project        || *OK*         ||
-|| POEM@HOME                   || _not tested_ ||
+|| POEM@HOME                   || *OK*         ||
 || !PrimeGrid                  || *OK*         ||
 || QMC@Home                    || *OK*         ||
 || Rectilinear Crossing Number || *OK*         ||
