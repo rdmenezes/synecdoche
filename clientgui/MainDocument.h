@@ -169,20 +169,20 @@ public:
 
     size_t                      GetProjectCount();
 
-    int                         ProjectNoMoreWork(int iIndex);
+    int                         ProjectNoMoreWork(size_t iIndex);
     int                         ProjectNoMoreWork(const wxString& projectname);
-    int                         ProjectAllowMoreWork(int iIndex);
+    int                         ProjectAllowMoreWork(size_t iIndex);
     int                         ProjectAllowMoreWork(const wxString& projectname);
     int                         ProjectAttach(const wxString& strURL, const wxString& strAccountKey);
     int                         ProjectDetach(size_t iIndex);
     int                         ProjectDetach(const wxString& projectname);
-    int                         ProjectUpdate(int iIndex);
+    int                         ProjectUpdate(size_t iIndex);
     int                         ProjectUpdate(const wxString& projectname);
-    int                         ProjectReset(int iIndex);
+    int                         ProjectReset(size_t iIndex);
     int                         ProjectReset(const wxString& projectname);
-    int                         ProjectSuspend(int iIndex);
+    int                         ProjectSuspend(size_t iIndex);
     int                         ProjectSuspend(const wxString& projectname);
-    int                         ProjectResume(int iIndex);
+    int                         ProjectResume(size_t iIndex);
     int                         ProjectResume(const wxString& projectname);
 
 
@@ -253,14 +253,14 @@ private:
 
 public:
     FILE_TRANSFERS              ft;
-    FILE_TRANSFER*              file_transfer(unsigned int);
+    FILE_TRANSFER*              file_transfer(size_t i);
     FILE_TRANSFER*              file_transfer(const wxString& fileName, const wxString& project_url);
 
     size_t                      GetTransferCount();
 
-    int                         TransferRetryNow(int iIndex);
+    int                         TransferRetryNow(size_t iIndex);
     int                         TransferRetryNow(const wxString& fileName, const wxString& project_url);
-    int                         TransferAbort(int iIndex);
+    int                         TransferAbort(size_t iIndex);
     int                         TransferAbort(const wxString& fileName, const wxString& project_url);
 
 
