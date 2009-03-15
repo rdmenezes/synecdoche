@@ -45,7 +45,6 @@
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
 ||17195||client: add SCHEDULER_OP::rpc_failed(); this gets called when the op fails, either at initialization or later on; it clears the project's sched_rpc_pending flag if needed. This fixes a bug that caused user-requested RPCs to retry every 10 seconds when the network is down.||
 ||17196||client: if master file doesn't have URLs, clear RPC request||
-||17208/17209/17270||client and API: eliminate dynamically-allocated parts of GLOBAL_PREFS. This fixes a double-free bug in the API. _This mess needs to be reviewed carefully!_||
 ||17269||client: fix bug where master fetch failure doesn't clear request flag, leading to infinite retry without backoff (17195 needs to be applied before this one)||
 ||17300/17301/17375||client: adjust debts at least every minute. This fixes a bug that can cause debts to NEVER get updated. /  client: added "abort_jobs_on_exit" feature||
 ||17309/17311/17312/17213||client: add more info to <work_fetch_debug> messages||
@@ -165,6 +164,7 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/17519 17519] `*`||Setting a fixed size seems to be a bad solution - Aren't there any better solutions?||
 ||[http://boinc.berkeley.edu/trac/changeset/17542 17542]||This should not be needed. Looks like the faulty changes were not merged and are not on the pending list. Additional changeset: 17560||
 ||[http://boinc.berkeley.edu/trac/changeset/17501 17501]||As jm7 noted on boinc_dev on 03/15/2009 this factor is there for a good reason.||
+||[http://boinc.berkeley.edu/trac/changeset/17208 17208]||Obsolete due to r706. Additional changesets: 17209/17270||
 
 `*` These changesets may still be needed.
 
