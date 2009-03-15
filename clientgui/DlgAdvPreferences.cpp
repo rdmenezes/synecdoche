@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2009 Nicolas Alvarez
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -179,21 +179,20 @@ bool CDlgAdvPreferences::RestoreState() {
     return true;
 }
 
-/// Convert a Timestring HH:MM into a double.
-double CDlgAdvPreferences::TimeStringToDouble(wxString timeStr) {
-    double hour;
-    double minutes;
-    timeStr.SubString(0,timeStr.First(':')).ToDouble(&hour);
-    timeStr.SubString(timeStr.First(':')+1,timeStr.Length()).ToDouble(&minutes);
-    minutes = minutes/60.0;
-    return hour + minutes;
+/// Convert a Timestring HH:MM into a time_t.
+time_t CDlgAdvPreferences::TimeStringToTimeT(wxString timeStr) {
+    unsigned long hour;
+    unsigned long minutes;
+    timeStr.SubString(0, timeStr.First(':')).ToULong(&hour);
+    timeStr.SubString(timeStr.First(':') + 1, timeStr.Length()).ToULong(&minutes);
+    return hour * 3600 + minutes * 60;
 }
 
-/// Convert a double into a timestring HH:MM.
-wxString CDlgAdvPreferences::DoubleToTimeString(double dt) {
-    int hour = (int)dt;
-    int minutes = (int)(60.0 * (dt - hour));
-    return wxString::Format(wxT("%02d:%02d"),hour,minutes);
+/// Convert a time_t into a timestring HH:MM.
+wxString CDlgAdvPreferences::TimeTToTimeString(time_t point_in_time) {
+    int hour = point_in_time / 3600;
+    int minutes = (point_in_time / 60) % 60;
+    return wxString::Format(wxT("%02d:%02d"), hour, minutes);
 }
 
 /// Read preferences from core client and initialize control values.
@@ -216,17 +215,17 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
 
     // ######### proc usage page
     // do work between
-    *m_txtProcEveryDayStart << DoubleToTimeString(prefs.cpu_times.start_hour);
-    *m_txtProcEveryDayStop << DoubleToTimeString(prefs.cpu_times.end_hour);
+    *m_txtProcEveryDayStart << TimeTToTimeString(prefs.cpu_times.get_start());
+    *m_txtProcEveryDayStop << TimeTToTimeString(prefs.cpu_times.get_end());
     //special day times
     wxCheckBox* aChks[] = {m_chkProcSunday,m_chkProcMonday,m_chkProcTuesday,m_chkProcWednesday,m_chkProcThursday,m_chkProcFriday,m_chkProcSaturday};
     wxTextCtrl* aTxts[] = {m_txtProcSunday,m_txtProcMonday,m_txtProcTuesday,m_txtProcWednesday,m_txtProcThursday,m_txtProcFriday,m_txtProcSaturday};
     for (int i=0; i<7; i++) {
-        TIME_SPAN* cpu = prefs.cpu_times.week.get(i);
+        const TIME_SPAN* cpu = prefs.cpu_times.week.get(i);
         if(cpu) {
             aChks[i]->SetValue(true);
-            wxString timeStr = DoubleToTimeString(cpu->start_hour) +
-                               wxT("-") + DoubleToTimeString(cpu->end_hour);
+            wxString timeStr = TimeTToTimeString(cpu->get_start()) +
+                               wxT("-") + TimeTToTimeString(cpu->get_end());
             aTxts[i]->SetValue(timeStr);
         }
     }
@@ -250,17 +249,17 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
 
     // ######### net usage page
     // use network between
-    *m_txtNetEveryDayStart << DoubleToTimeString(prefs.net_times.start_hour);
-    *m_txtNetEveryDayStop << DoubleToTimeString(prefs.net_times.end_hour);
+    *m_txtNetEveryDayStart << TimeTToTimeString(prefs.net_times.get_start());
+    *m_txtNetEveryDayStop << TimeTToTimeString(prefs.net_times.get_end());
     //special day times
     wxCheckBox* aChks2[] = {m_chkNetSunday,m_chkNetMonday,m_chkNetTuesday,m_chkNetWednesday,m_chkNetThursday,m_chkNetFriday,m_chkNetSaturday};
     wxTextCtrl* aTxts2[] = {m_txtNetSunday,m_txtNetMonday,m_txtNetTuesday,m_txtNetWednesday,m_txtNetThursday,m_txtNetFriday,m_txtNetSaturday};
     for(int i=0; i< 7;i++) {
-        TIME_SPAN* net = prefs.net_times.week.get(i);
+        const TIME_SPAN* net = prefs.net_times.week.get(i);
         if(net) {
             aChks2[i]->SetValue(true);
-            wxString timeStr = DoubleToTimeString(net->start_hour) +
-                                wxT("-") + DoubleToTimeString(net->end_hour);
+            wxString timeStr = TimeTToTimeString(net->get_start()) +
+                                wxT("-") + TimeTToTimeString(net->get_end());
             aTxts2[i]->SetValue(timeStr);
         }
     }
@@ -335,23 +334,20 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
         mask.idle_time_to_run=true;
     }
 
-    prefs.cpu_times.start_hour=TimeStringToDouble(m_txtProcEveryDayStart->GetValue());
+    prefs.cpu_times.set_start(TimeStringToTimeT(m_txtProcEveryDayStart->GetValue()));
     mask.start_hour = true;
 
-    prefs.cpu_times.end_hour=TimeStringToDouble(m_txtProcEveryDayStop->GetValue());
+    prefs.cpu_times.set_end(TimeStringToTimeT(m_txtProcEveryDayStop->GetValue()));
     mask.end_hour = true;
 
     wxCheckBox* aChks[] = {m_chkProcSunday,m_chkProcMonday,m_chkProcTuesday,m_chkProcWednesday,m_chkProcThursday,m_chkProcFriday,m_chkProcSaturday};
     wxTextCtrl* aTxts[] = {m_txtProcSunday,m_txtProcMonday,m_txtProcTuesday,m_txtProcWednesday,m_txtProcThursday,m_txtProcFriday,m_txtProcSaturday};
-    for (int i=0; i<7; i++) {
+    for (int i = 0; i < 7; ++i) {
         if (aChks[i]->GetValue()) {
             wxString timeStr = aTxts[i]->GetValue();
-            wxString startStr = timeStr.SubString(0,timeStr.First('-'));
-            wxString endStr = timeStr.SubString(timeStr.First('-')+1,timeStr.Length());
-            prefs.cpu_times.week.set(i,
-                TimeStringToDouble(startStr),
-                TimeStringToDouble(endStr)
-                );
+            wxString startStr = timeStr.SubString(0, timeStr.First('-'));
+            wxString endStr = timeStr.SubString(timeStr.First('-') + 1, timeStr.Length());
+            prefs.cpu_times.week.set(i, TimeStringToTimeT(startStr), TimeStringToTimeT(endStr));
         }
     }
     m_txtProcSwitchEvery->GetValue().ToDouble(&td);
@@ -393,10 +389,10 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     prefs.work_buf_additional_days = td;
     mask.work_buf_additional_days = true;
 
-    prefs.net_times.start_hour=TimeStringToDouble(m_txtNetEveryDayStart->GetValue());
+    prefs.net_times.set_start(TimeStringToTimeT(m_txtNetEveryDayStart->GetValue()));
     mask.net_start_hour = true;
 
-    prefs.net_times.end_hour=TimeStringToDouble(m_txtNetEveryDayStop->GetValue());
+    prefs.net_times.set_end(TimeStringToTimeT(m_txtNetEveryDayStop->GetValue()));
     mask.net_end_hour = true;
 
     wxCheckBox* aChks2[] = {m_chkNetSunday,m_chkNetMonday,m_chkNetTuesday,m_chkNetWednesday,m_chkNetThursday,m_chkNetFriday,m_chkNetSaturday};
@@ -406,10 +402,7 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
             wxString timeStr = aTxts2[i]->GetValue();
             wxString startStr = timeStr.SubString(0,timeStr.First('-'));
             wxString endStr = timeStr.SubString(timeStr.First('-')+1,timeStr.Length());
-            prefs.net_times.week.set(i,
-                TimeStringToDouble(startStr),
-                TimeStringToDouble(endStr)
-                );
+            prefs.net_times.week.set(i, TimeStringToTimeT(startStr), TimeStringToTimeT(endStr));
         }
     }
     //disk usage
