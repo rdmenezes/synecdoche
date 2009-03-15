@@ -904,6 +904,8 @@ int PROJECT_CONFIG::parse(MIOFILE& in) {
         if (match_tag(buf, "</project_config>")) return 0;
         if (parse_int(buf, "<error_num>", error_num)) continue;
         if (parse_str(buf, "<name>", name)) continue;
+        if (parse_str(buf, "<master_url>", master_url)) continue;
+        if (parse_int(buf, "<local_revision>", local_revision)) continue;
         if (parse_int(buf, "<min_passwd_length>", min_passwd_length)) continue;
         if (parse_bool(buf, "account_manager", account_manager)) continue;
         if (parse_bool(buf, "uses_username", uses_username)) continue;
@@ -920,6 +922,8 @@ int PROJECT_CONFIG::parse(MIOFILE& in) {
 void PROJECT_CONFIG::clear() {
     error_num = 0;
     name.clear();
+    master_url.clear();
+    local_revision = 0;
     messages.clear();
     min_passwd_length = 6;
     account_manager = false;
