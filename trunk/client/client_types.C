@@ -1685,14 +1685,20 @@ FILE_INFO* RESULT::lookup_file_logical(const char* lname) {
     return 0;
 }
 
-void RESULT::append_log_record() {
+void RESULT::append_log_record(ACTIVE_TASK& at) {
     char filename[256];
     job_log_filename(*project, filename, sizeof(filename));
     FILE* f = fopen(filename, "ab");
     if (!f) return;
-    fprintf(f, "%f ue %f ct %f fe %f nm %s\n",
-        gstate.now, estimated_cpu_time_uncorrected(), final_cpu_time,
-        wup->rsc_fpops_est, name
+    fprintf(f, "%f ue %f ct %f fe %f sm %f sd %f sc %d nm %s\n",
+        gstate.now,
+        estimated_cpu_time_uncorrected(),
+        final_cpu_time,
+        wup->rsc_fpops_est,
+        at.stats_mem,
+        at.stats_disk,
+        at.stats_checkpoint,
+        name
     );
     fclose(f);
 }

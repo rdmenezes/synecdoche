@@ -535,6 +535,9 @@ bool ACTIVE_TASK::check_max_disk_exceeded() {
             "Can't get task disk usage: %s", boincerror(retval)
         );
     } else {
+        // Track the maximum disk usage:
+        stats_disk = std::max(stats_disk, disk_usage);
+
         if (disk_usage > max_disk_usage) {
             msg_printf(
                 result->project, MSG_INFO,
@@ -1006,6 +1009,7 @@ bool ACTIVE_TASK_SET::get_msgs() {
                         atp->result->name
                     );
                 }
+                atp->stats_checkpoint++;
             }
         }
         atp->get_trickle_up_msg();

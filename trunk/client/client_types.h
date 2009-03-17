@@ -53,6 +53,7 @@ class MIOFILE;
 class PERS_FILE_XFER;
 class RESULT;
 class PROJECT;
+class ACTIVE_TASK;
 
 class FILE_INFO {
 public:
@@ -596,7 +597,7 @@ public:
     /// Called only for results with no active task
     /// (otherwise you need to abort the active task).
     void abort_inactive(int);
-    void append_log_record();
+    void append_log_record(ACTIVE_TASK& at);
 
     inline int state() const { return _state; }
     void set_state(int, const char*);

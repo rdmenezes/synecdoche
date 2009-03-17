@@ -116,6 +116,10 @@ ACTIVE_TASK::ACTIVE_TASK() {
     shm_handle = 0;
 #endif
     premature_exit_count = 0;
+
+    stats_mem = 0;
+    stats_disk = 0;
+    stats_checkpoint = 0;
 }
 
 static const char* task_state_name(int val) {
@@ -250,13 +254,16 @@ void ACTIVE_TASK_SET::get_memory_usage() {
             pi.page_fault_rate = pf/diff;
             if (log_flags.mem_usage_debug) {
                 msg_printf(atp->result->project, MSG_INFO,
-                    "[mem_usage_debug] %s: RAM %.2fMB, page %.2fMB, %.2f page faults/sec, user CPU %.3f, kernel CPU %.3f",
+                    "[mem_usage_debug] %s: RAM %.2fMB, smoothed %.2fMB, page %.2fMB, %.2f page faults/sec, user CPU %.3f, kernel CPU %.3f",
                     atp->result->name,
-                    pi.working_set_size/MEGA, pi.swap_size/MEGA,
+                    pi.working_set_size/MEGA,
+                    pi.working_set_size_smoothed/MEGA,
+                    pi.swap_size/MEGA,
                     pi.page_fault_rate,
                     pi.user_time, pi.kernel_time
                 );
             }
+            atp->stats_mem = std::max(atp->stats_mem, pi.working_set_size);
         }
     }
 
@@ -423,7 +430,10 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         "    <swap_size>%f</swap_size>\n"
         "    <working_set_size>%f</working_set_size>\n"
         "    <working_set_size_smoothed>%f</working_set_size_smoothed>\n"
-        "    <page_fault_rate>%f</page_fault_rate>\n",
+        "    <page_fault_rate>%f</page_fault_rate>\n"
+        "    <stats_mem>%f</stats_mem>\n"
+        "    <stats_disk>%f</stats_disk>\n"
+        "    <stats_checkpoint>%d</stats_checkpoint>\n",
         result->project->master_url,
         result->name,
         task_state(),
@@ -435,7 +445,10 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         procinfo.swap_size,
         procinfo.working_set_size,
         procinfo.working_set_size_smoothed,
-        procinfo.page_fault_rate
+        procinfo.page_fault_rate,
+        stats_mem,
+        stats_disk,
+        stats_checkpoint
     );
     fout.printf("</active_task>\n");
     return 0;
@@ -572,6 +585,10 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
         else if (parse_double(buf, "<working_set_size>", procinfo.working_set_size)) continue;
         else if (parse_double(buf, "<working_set_size_smoothed>", procinfo.working_set_size_smoothed)) continue;
         else if (parse_double(buf, "<page_fault_rate>", procinfo.page_fault_rate)) continue;
+
+        else if (parse_double(buf, "<stats_mem>", stats_mem)) continue;
+        else if (parse_double(buf, "<stats_disk>", stats_disk)) continue;
+        else if (parse_int(buf, "<stats_checkpoint>", stats_checkpoint)) continue;
         else {
             handle_unparsed_xml_warning("ACTIVE_TASK::parse", buf);
         }

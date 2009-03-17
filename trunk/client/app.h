@@ -136,10 +136,15 @@ public:
     MSG_QUEUE graphics_request_queue;
     MSG_QUEUE process_control_queue;
 
-    /// Info related to app's graphics mode (win, screensaver, etc.).
+    // Info related to app's graphics mode (win, screensaver, etc.).
     int graphics_mode_acked;            ///< Mode acked by app.
     int graphics_mode_before_ss;        ///< Mode before last screensaver request.
     double graphics_mode_ack_timeout;
+
+    // Statistics collection (not used for anything else)
+    double stats_mem;           ///< Max size of the working set.
+    double stats_disk;          ///< Max size of the working directory.
+    int stats_checkpoint;       ///< Number of checkpoints.
 
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
     // PowerPC apps emulated on i386 Macs crash if running graphics
