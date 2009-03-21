@@ -1690,12 +1690,14 @@ void RESULT::append_log_record(ACTIVE_TASK& at) {
     job_log_filename(*project, filename, sizeof(filename));
     FILE* f = fopen(filename, "ab");
     if (!f) return;
-    fprintf(f, "%f ue %f ct %f fe %f sm %f sd %f sc %d nm %s\n",
+    fprintf(f, "%f ue %f ct %f fe %f sm %f sp %f sf %f sd %f sc %d nm %s\n",
         gstate.now,
         estimated_cpu_time_uncorrected(),
         final_cpu_time,
         wup->rsc_fpops_est,
         at.stats_mem,
+        at.stats_page,
+        at.stats_pagefault_rate,
         at.stats_disk,
         at.stats_checkpoint,
         name

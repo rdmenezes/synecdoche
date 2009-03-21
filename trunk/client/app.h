@@ -142,9 +142,11 @@ public:
     double graphics_mode_ack_timeout;
 
     // Statistics collection (not used for anything else)
-    double stats_mem;           ///< Max size of the working set.
-    double stats_disk;          ///< Max size of the working directory.
-    int stats_checkpoint;       ///< Number of checkpoints.
+    double stats_mem;               ///< Max size of the working set.
+    double stats_page;              ///< Max size of the page file.
+    double stats_pagefault_rate;    ///< Max page fault rate.
+    double stats_disk;              ///< Max size of the working directory.
+    int stats_checkpoint;           ///< Number of checkpoints.
 
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
     // PowerPC apps emulated on i386 Macs crash if running graphics

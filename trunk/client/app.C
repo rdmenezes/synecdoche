@@ -118,6 +118,8 @@ ACTIVE_TASK::ACTIVE_TASK() {
     premature_exit_count = 0;
 
     stats_mem = 0;
+    stats_page = 0;
+    stats_pagefault_rate = 0;
     stats_disk = 0;
     stats_checkpoint = 0;
 }
@@ -264,6 +266,8 @@ void ACTIVE_TASK_SET::get_memory_usage() {
                 );
             }
             atp->stats_mem = std::max(atp->stats_mem, pi.working_set_size);
+            atp->stats_page = std::max(atp->stats_page, pi.swap_size);
+            atp->stats_pagefault_rate = std::max(atp->stats_pagefault_rate, pi.page_fault_rate);
         }
     }
 
@@ -432,6 +436,8 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         "    <working_set_size_smoothed>%f</working_set_size_smoothed>\n"
         "    <page_fault_rate>%f</page_fault_rate>\n"
         "    <stats_mem>%f</stats_mem>\n"
+        "    <stats_page>%f</stats_page>\n"
+        "    <stats_pagefault_rate>%f</stats_pagefault_rate>\n"
         "    <stats_disk>%f</stats_disk>\n"
         "    <stats_checkpoint>%d</stats_checkpoint>\n",
         result->project->master_url,
@@ -447,6 +453,8 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         procinfo.working_set_size_smoothed,
         procinfo.page_fault_rate,
         stats_mem,
+        stats_page,
+        stats_pagefault_rate,
         stats_disk,
         stats_checkpoint
     );
@@ -587,6 +595,8 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
         else if (parse_double(buf, "<page_fault_rate>", procinfo.page_fault_rate)) continue;
 
         else if (parse_double(buf, "<stats_mem>", stats_mem)) continue;
+        else if (parse_double(buf, "<stats_page>", stats_mem)) continue;
+        else if (parse_double(buf, "<stats_pagefault_rate>", stats_mem)) continue;
         else if (parse_double(buf, "<stats_disk>", stats_disk)) continue;
         else if (parse_int(buf, "<stats_checkpoint>", stats_checkpoint)) continue;
         else {
