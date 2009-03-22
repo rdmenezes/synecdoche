@@ -54,7 +54,7 @@ public:
     XML_PARSER(MIOFILE*);
     bool get(char* buf, int len, bool& is_tag, char* attr_buf = 0, int attr_len = 0);
     bool parse_start(const char*);
-    bool parse_str(char*, const char*, char*, int);
+    bool parse_str(char* parsed_tag, const char* start_tag, char* buf, size_t len);
     bool parse_string(char*, const char*, std::string&);
     bool parse_int(char*, const char*, int&);
     bool parse_double(char*, const char*, double&);
@@ -123,7 +123,7 @@ extern int copy_stream(FILE* in, FILE* out);
 extern int strcatdup(char*& p, char* buf);
 extern int dup_element_contents(FILE* in, const char* end_tag, char** pp);
 extern int dup_element(FILE* in, const char* end_tag, char** pp);
-extern int copy_element_contents(FILE* in, const char* end_tag, char* p, int len);
+extern int copy_element_contents(FILE* in, const char* end_tag, char* p, size_t len);
 extern int copy_element_contents(FILE* in, const char* end_tag, std::string&);
 extern void replace_element_contents(
     char* buf, const char* start, const char* end, const char* replacement

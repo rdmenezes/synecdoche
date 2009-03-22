@@ -560,7 +560,7 @@ bool XML_PARSER::get(char* buf, int len, bool& is_tag, char* attr_buf, int attr_
 /// and by the matching close tag, return the string in "buf",
 /// and return true.
 bool XML_PARSER::parse_str(
-    char* parsed_tag, const char* start_tag, char* buf, int len
+    char* parsed_tag, const char* start_tag, char* buf, size_t len
 ) {
     bool is_tag, eof;
     char end_tag[256], tag[256], tmp[64000];
