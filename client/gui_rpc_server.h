@@ -83,7 +83,7 @@ public:
     GUI_RPC_CONN_SET();
     char password[256];
     void get_fdset(FDSET_GROUP&) const;
-    void got_select(const FDSET_GROUP&);
+    void got_select(FDSET_GROUP&);
     int init(bool last_time);
     void close();
     bool recent_rpc_needs_network(double interval) const;
