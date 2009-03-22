@@ -49,7 +49,7 @@ class XML_PARSER {
     bool scan_nonws(int& first_char);
     int scan_comment();
     int scan_tag(char* tag_buf, size_t tag_len, char* attr_buf = 0, size_t attr_len = 0);
-    bool copy_until_tag(char* buf, size_t len);
+    bool copy_until_tag(char* buf, int len);
 public:
     XML_PARSER(MIOFILE*);
     bool get(char* buf, size_t len, bool& is_tag, char* attr_buf = 0, size_t attr_len = 0);
