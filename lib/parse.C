@@ -514,7 +514,7 @@ int XML_PARSER::scan_tag(char* tag_buf, size_t tag_len, char* attr_buf, size_t a
 /// read and copy text to buf; stop when find a <.
 /// ungetc() that so we read it again
 /// Return true iff reached EOF
-bool XML_PARSER::copy_until_tag(char* buf, size_t len) {
+bool XML_PARSER::copy_until_tag(char* buf, int len) {
     int c;
     while (1) {
         c = f->_getc();
