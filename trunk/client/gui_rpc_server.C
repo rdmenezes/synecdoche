@@ -323,7 +323,7 @@ bool GUI_RPC_CONN_SET::check_allowed_list(unsigned long peer_ip) const {
     return allowed_remote_ip_addresses.count(peer_ip) == 1;
 }
 
-void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
+void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
     int sock, retval;
     std::vector<GUI_RPC_CONN*>::iterator iter;
     GUI_RPC_CONN* gr;
