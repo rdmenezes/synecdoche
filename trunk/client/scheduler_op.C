@@ -602,8 +602,8 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
                 return retval;
             }
         } else if (match_tag(buf, "<gui_urls>")) {
-            std::string foo;
-            retval = copy_element_contents(in, "</gui_urls>", foo);
+            std::string parsed_gui_urls;
+            retval = copy_element_contents(in, "</gui_urls>", parsed_gui_urls);
             if (retval) {
                 msg_printf(project, MSG_INTERNAL_ERROR,
                     "Can't parse GUI URLs in scheduler reply: %s",
@@ -611,7 +611,7 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
                 );
                 return retval;
             }
-            project->gui_urls = "<gui_urls>\n"+foo+"</gui_urls>\n";
+            project->gui_urls = "<gui_urls>\n" + parsed_gui_urls + "</gui_urls>\n";
             continue;
         } else if (match_tag(buf, "<code_sign_key>")) {
             retval = dup_element_contents(
