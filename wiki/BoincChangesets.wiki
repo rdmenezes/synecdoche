@@ -74,6 +74,13 @@
 ||17561||MGR: Fix a long standing bug where the pie control in the disk usage tab was being created but a default pie part wasn't being added to the control. This caused the control to display black circles during window initialization on slower systems. This issue has been around since we started using the pie control based disk usage tab.||
 ||17564/17565/17590/17591/17592||_Multiple fixes for the Manager._||
 ||17567||Mac MGR: Do !RestoreState() before Show() so Disk tab doesn't flash briefly on manual launch.||
+||17617||In linux client, Added code to detect capability to run 64-bit binaries from 32-bit BOINC client, and capability to run 32-bit binaries on a 64-bit linux system. _This one might need some cleanup before applying._||
+||17637||client: initial support for detecting the CPU L2 cache size on Windows.||
+||17638||client: reduce frequency of writing state file: 1) multiply checkpoint period by # of cores (or GPUs) 2) don't write statefile after schedule_cpus() (we write it after enforce_schedule() if anything started or stopped, and that's all that matters) / client: add new log flag <statefile_debug>; tells you when and why statefile is written.||
+||17639|| client: add --no_priority_change cmdline arg (and <no_priority_change> flag in cc_config.xml). If set, run apps at same priority as client.||
+||17644||client: garbage collect after scheduler RPC; if project sent some irrelevant FILE_INFOs, this will avoid starting transfers for them.||
+||17648||client (linux): if don't find libcudart.so in the current dir, look for it in the library search path. Fixes #863||
+||17711||client: (unix): if host name lookup fails, call res_init(). This is an attempt to fix a problem on Linux where, if the client starts before a VPN is set up, it can never communicate||
 
 
 == Changesets for the new OpenGL screensaver (Might be useful some day) ==
@@ -105,6 +112,7 @@
 ||17405/17406||screensaver: show correct info if CPU throttling; show correct window title; show "no projects" message.||
 ||17408||screensaver: remove error codes & messages handled by new default gfx app, add new error codes; better logic when coordinator window covered on Mac||
 ||17444||WINSCR: fix a bug. Mac screensaver: logic to stop Data Management thread even if hung on an RPC.||
+||17646||new screensaver: don't show jobs if suspended||
 
 
 == Rejected changes ==
@@ -165,7 +173,8 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/17542 17542]||This should not be needed. Looks like the faulty changes were not merged and are not on the pending list. Additional changeset: 17560||
 ||[http://boinc.berkeley.edu/trac/changeset/17501 17501]||As jm7 noted on boinc_dev on 03/15/2009 this factor is there for a good reason.||
 ||[http://boinc.berkeley.edu/trac/changeset/17208 17208]||Obsolete due to r706. Additional changesets: 17209/17270||
+||[http://boinc.berkeley.edu/trac/changeset/17596 17596]||We don't need these tabs, do we?||
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17594 17594]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17712 17712]
