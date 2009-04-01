@@ -274,7 +274,9 @@ int CLIENT_STATE::init() {
     // scan user prefs; create file records
     parse_preferences_for_user_files();
 
-    print_summary();
+    if (log_flags.state_debug) {
+        print_summary();
+    }
 
     // Check if version or platform has changed.
     // Either of these is evidence that we're running a different
@@ -846,41 +848,40 @@ int CLIENT_STATE::link_result(PROJECT* p, RESULT* rp) {
 void CLIENT_STATE::print_summary() const {
     unsigned int i;
     double t;
-    if (!log_flags.state_debug) return;
 
-    msg_printf(0, MSG_INFO, "[state_debug] CLIENT_STATE::print_summary(): Client state summary:\n");
-    msg_printf(0, MSG_INFO, "%lu projects:\n", projects.size());
+    msg_printf(0, MSG_INFO, "[state_debug] Client state summary:\n");
+    msg_printf(0, MSG_INFO, "%lu projects:", projects.size());
     for (i=0; i<projects.size(); i++) {
         t = projects[i]->min_rpc_time;
         if (t) {
-            msg_printf(0, MSG_INFO, "    %s min RPC %f.0 seconds from now\n", projects[i]->master_url, t-now);
+            msg_printf(0, MSG_INFO, "    %s min RPC %f.0 seconds from now", projects[i]->master_url, t-now);
         } else {
-            msg_printf(0, MSG_INFO, "    %s\n", projects[i]->master_url);
+            msg_printf(0, MSG_INFO, "    %s", projects[i]->master_url);
         }
     }
-    msg_printf(0, MSG_INFO, "%lu file_infos:\n", file_infos.size());
+    msg_printf(0, MSG_INFO, "%lu file_infos:", file_infos.size());
     for (i=0; i<file_infos.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s status:%d %s\n", file_infos[i]->name.c_str(), file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
+        msg_printf(0, MSG_INFO, "    %s status:%d %s", file_infos[i]->name.c_str(), file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
     }
-    msg_printf(0, MSG_INFO, "%lu app_versions\n", app_versions.size());
+    msg_printf(0, MSG_INFO, "%lu app_versions", app_versions.size());
     for (i=0; i<app_versions.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s %d\n", app_versions[i]->app_name, app_versions[i]->version_num);
+        msg_printf(0, MSG_INFO, "    %s %d", app_versions[i]->app_name, app_versions[i]->version_num);
     }
-    msg_printf(0, MSG_INFO, "%lu workunits\n", workunits.size());
+    msg_printf(0, MSG_INFO, "%lu workunits", workunits.size());
     for (i=0; i<workunits.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s\n", workunits[i]->name);
+        msg_printf(0, MSG_INFO, "    %s", workunits[i]->name);
     }
-    msg_printf(0, MSG_INFO, "%lu results\n", results.size());
+    msg_printf(0, MSG_INFO, "%lu results", results.size());
     for (i=0; i<results.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s state:%d\n", results[i]->name, results[i]->state());
+        msg_printf(0, MSG_INFO, "    %s state:%d", results[i]->name, results[i]->state());
     }
-    msg_printf(0, MSG_INFO, "%lu persistent file xfers\n", pers_file_xfers->pers_file_xfers.size());
+    msg_printf(0, MSG_INFO, "%lu persistent file xfers", pers_file_xfers->pers_file_xfers.size());
     for (i=0; i<pers_file_xfers->pers_file_xfers.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s http op state: %d\n", pers_file_xfers->pers_file_xfers[i]->fip->name.c_str(), (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
+        msg_printf(0, MSG_INFO, "    %s http op state: %d", pers_file_xfers->pers_file_xfers[i]->fip->name.c_str(), (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
     }
-    msg_printf(0, MSG_INFO, "%lu active tasks\n", active_tasks.active_tasks.size());
+    msg_printf(0, MSG_INFO, "%lu active tasks", active_tasks.active_tasks.size());
     for (i=0; i<active_tasks.active_tasks.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s\n", active_tasks.active_tasks[i]->result->name);
+        msg_printf(0, MSG_INFO, "    %s", active_tasks.active_tasks[i]->result->name);
     }
 }
 
@@ -1116,7 +1117,7 @@ bool CLIENT_STATE::garbage_collect_always() {
         }
     }
 
-    if (action) {
+    if ((action) && (log_flags.state_debug)) {
         print_summary();
     }
     return action;

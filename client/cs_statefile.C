@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -40,8 +40,8 @@
 #define MAX_STATE_FILE_WRITE_ATTEMPTS 2
 
 void CLIENT_STATE::set_client_state_dirty(const char* source) {
-    if (log_flags.state_debug) {
-        msg_printf(0, MSG_INFO, "[state_debug] set dirty: %s\n", source);
+    if (log_flags.statefile_debug) {
+        msg_printf(0, MSG_INFO, "[statefile_debug] set dirty: %s\n", source);
     }
     client_state_dirty = true;
 }
@@ -86,9 +86,9 @@ int CLIENT_STATE::parse_state_file() {
     } else if (valid_state_file(STATE_FILE_PREV)) {
         fname = STATE_FILE_PREV;
     } else {
-        if (log_flags.state_debug) {
+        if (log_flags.statefile_debug) {
             msg_printf(0, MSG_INFO,
-                "[state_debug] CLIENT_STATE::parse_state_file(): No state file; will create one"
+                "[statefile_debug] CLIENT_STATE::parse_state_file(): No state file; will create one"
             );
         }
 
@@ -449,9 +449,9 @@ int CLIENT_STATE::write_state_file() const {
     for (attempt=1; attempt<=MAX_STATE_FILE_WRITE_ATTEMPTS; attempt++) {
         if (attempt > 1) boinc_sleep(1.0);
 
-        if (log_flags.state_debug) {
+        if (log_flags.statefile_debug) {
             msg_printf(0, MSG_INFO,
-                "[status_debug] CLIENT_STATE::write_state_file(): Writing state file"
+                "[statefile_debug] CLIENT_STATE::write_state_file(): Writing state file"
             );
         }
 #ifdef _WIN32
@@ -460,7 +460,7 @@ int CLIENT_STATE::write_state_file() const {
         retval = mf.open(STATE_FILE_NEXT, "w");
 #endif
         if (retval) {
-            if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
+            if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
                 msg_printf(0, MSG_INTERNAL_ERROR,
                     "Can't open %s: %s",
                     STATE_FILE_NEXT, boincerror(retval)
@@ -474,7 +474,7 @@ int CLIENT_STATE::write_state_file() const {
         ret1 = write_state(miof);
         ret2 = mf.close();
         if (ret1) {
-            if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
+            if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR,
                     "Couldn't write state file: %s", boincerror(retval)
                 );
@@ -493,7 +493,7 @@ int CLIENT_STATE::write_state_file() const {
             if (boinc_file_exists(STATE_FILE_PREV)) {
                 retval = boinc_delete_file(STATE_FILE_PREV);
                 if (retval) {
-                    if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
+                    if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
 #ifdef _WIN32
                         msg_printf(0, MSG_USER_ERROR,
                             "Can't delete previous state file; %s",
@@ -512,7 +512,7 @@ int CLIENT_STATE::write_state_file() const {
 
             retval = boinc_rename(STATE_FILE_NAME, STATE_FILE_PREV);
             if (retval) {
-                if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
+                if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
 #ifdef _WIN32
                     msg_printf(0, MSG_USER_ERROR,
                         "Can't rename current state file to previous state file; %s",
@@ -530,14 +530,14 @@ int CLIENT_STATE::write_state_file() const {
         }
 
         retval = boinc_rename(STATE_FILE_NEXT, STATE_FILE_NAME);
-        if (log_flags.state_debug) {
+        if (log_flags.statefile_debug) {
             msg_printf(0, MSG_INFO,
-                "[status_debug] CLIENT_STATE::write_state_file(): Done writing state file"
+                "[statefile_debug] CLIENT_STATE::write_state_file(): Done writing state file"
             );
         }
         if (!retval) break;     // Success!
 
-         if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
+         if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
 #ifdef _WIN32
             if (retval == ERROR_ACCESS_DENIED) {
                 msg_printf(0, MSG_USER_ERROR,
@@ -555,7 +555,7 @@ int CLIENT_STATE::write_state_file() const {
                 "rename returned error %d: %s",
                 STATE_FILE_NEXT, STATE_FILE_NAME, errno, strerror(errno)
             );
-            if (log_flags.state_debug) {
+            if (log_flags.statefile_debug) {
                 system("ls -al /Library/Application\\ Support/Synecdoche\\ Data/client*.*");
             }
 #else
