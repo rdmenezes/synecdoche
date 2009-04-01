@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -67,6 +67,7 @@ void LOG_FLAGS::defaults() {
     work_fetch_debug = false;
     unparsed_xml = false;
     state_debug = false;
+    statefile_debug = false;
     file_xfer_debug = false;
     sched_op_debug = false;
     http_debug = false;
@@ -108,6 +109,7 @@ int LOG_FLAGS::parse(XML_PARSER& xp) {
         if (xp.parse_bool(tag, "work_fetch_debug", work_fetch_debug)) continue;
         if (xp.parse_bool(tag, "unparsed_xml", unparsed_xml)) continue;
         if (xp.parse_bool(tag, "state_debug", state_debug)) continue;
+        if (xp.parse_bool(tag, "statefile_debug", statefile_debug)) continue;
         if (xp.parse_bool(tag, "file_xfer_debug", file_xfer_debug)) continue;
         if (xp.parse_bool(tag, "sched_op_debug", sched_op_debug)) continue;
         if (xp.parse_bool(tag, "http_debug", http_debug)) continue;
@@ -160,6 +162,7 @@ void LOG_FLAGS::show() {
     show_flag(buf, work_fetch_debug, "work_fetch_debug");
     show_flag(buf, unparsed_xml, "unparsed_xml");
     show_flag(buf, state_debug, "state_debug");
+    show_flag(buf, statefile_debug, "statefile_debug");
     show_flag(buf, file_xfer_debug, "file_xfer_debug");
     show_flag(buf, sched_op_debug, "sched_op_debug");
     show_flag(buf, http_debug, "http_debug");

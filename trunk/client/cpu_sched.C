@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -534,7 +534,6 @@ void CLIENT_STATE::schedule_cpus() {
     }
 
     request_enforce_schedule("schedule_cpus");
-    set_client_state_dirty("schedule_cpus");
 }
 
 /// Make a list of running tasks, ordered by their preemptability.

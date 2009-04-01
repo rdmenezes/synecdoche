@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -58,7 +58,7 @@ struct LOG_FLAGS {
     bool state_debug;       ///< print textual summary of CLIENT_STATE initially
                             ///< and after each scheduler RPC and garbage collect
                             ///< also show actions of garbage collector
-                            ///< also show when state file is read or written
+    bool statefile_debug;   ///< show when and why state file is written
     bool file_xfer_debug;   ///< show completion of FILE_XFER
     bool sched_op_debug;
     bool http_debug;
