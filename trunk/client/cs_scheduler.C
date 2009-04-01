@@ -65,7 +65,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     char buf[1024];
     MIOFILE mf;
     unsigned int i;
-    RESULT* rp;
+    const RESULT* rp;
     int retval;
     double disk_total, disk_project;
 
@@ -143,7 +143,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     if (p->anonymous_platform) {
         fprintf(f, "    <app_versions>\n");
         for (i=0; i<app_versions.size(); i++) {
-            APP_VERSION* avp = app_versions[i];
+            const APP_VERSION* avp = app_versions[i];
             if (avp->project != p) continue;
             avp->write(mf);
         }
@@ -167,7 +167,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
             copy_stream(fprefs, f);
             fclose(fprefs);
         }
-        PROJECT* pp = lookup_project(global_prefs.source_project);
+        const PROJECT* pp = lookup_project(global_prefs.source_project);
         if (pp && strlen(pp->email_hash)) {
             fprintf(f,
                 "<global_prefs_source_email_hash>%s</global_prefs_source_email_hash>\n",
@@ -180,9 +180,9 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     // send the oldest cross-project ID.
     // Use project URL as tie-breaker.
     //
-    PROJECT* winner = p;
+    const PROJECT* winner = p;
     for (i=0; i<projects.size(); i++ ) {
-        PROJECT* project = projects[i];
+        const PROJECT* project = projects[i];
         if (project == p) continue;
         if (strcmp(project->email_hash, p->email_hash)) continue;
         if (project->cpid_time < winner->cpid_time) {
@@ -238,7 +238,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     // report sticky files as needed
     //
     for (i=0; i<file_infos.size(); i++) {
-        FILE_INFO* fip = file_infos[i];
+        const FILE_INFO* fip = file_infos[i];
         if (fip->project != p) continue;
         if (!fip->report_on_rpc) continue;
         if (fip->marked_for_delete) continue;
@@ -382,7 +382,6 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     bool signature_valid, update_global_prefs=false, update_project_prefs=false;
     char filename[256];
     std::string old_gui_urls = project->gui_urls;
-    PROJECT* p2;
 
     nresults = 0;
     contacted_sched_server = true;
@@ -415,8 +414,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
         if (strcmp(sr.master_url, project->master_url)) {
             msg_printf(project, MSG_USER_ERROR, "You used the wrong URL for this project");
             msg_printf(project, MSG_USER_ERROR, "The correct URL is %s", sr.master_url);
-            p2 = lookup_project(sr.master_url);
-            if (p2) {
+            if (lookup_project(sr.master_url)) {
                 msg_printf(project, MSG_INFO, "You seem to be attached to this project twice");
                 msg_printf(project, MSG_INFO, "We suggest that you detach projects named %s,", project->project_name);
                 msg_printf(project, MSG_INFO, "then reattach to %s", sr.master_url);
@@ -430,7 +428,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     // make sure we don't already have a project of same name
     bool dup_name = false;
     for (i=0; i<projects.size(); i++) {
-        p2 = projects[i];
+        const PROJECT* p2 = projects[i];
         if (project == p2) continue;
         if (!strcmp(p2->project_name, project->project_name)) {
             dup_name = true;
