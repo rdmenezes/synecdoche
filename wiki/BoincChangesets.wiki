@@ -75,7 +75,6 @@
 ||17567||Mac MGR: Do !RestoreState() before Show() so Disk tab doesn't flash briefly on manual launch.||
 ||17617||In linux client, Added code to detect capability to run 64-bit binaries from 32-bit BOINC client, and capability to run 32-bit binaries on a 64-bit linux system. _This one might need some cleanup before applying._||
 ||17637||client: initial support for detecting the CPU L2 cache size on Windows.||
-||17638||client: reduce frequency of writing state file: 1) multiply checkpoint period by # of cores (or GPUs) 2) don't write statefile after schedule_cpus() (we write it after enforce_schedule() if anything started or stopped, and that's all that matters) / client: add new log flag <statefile_debug>; tells you when and why statefile is written.||
 ||17639|| client: add --no_priority_change cmdline arg (and <no_priority_change> flag in cc_config.xml). If set, run apps at same priority as client.||
 ||17644||client: garbage collect after scheduler RPC; if project sent some irrelevant FILE_INFOs, this will avoid starting transfers for them.||
 ||17648||client (linux): if don't find libcudart.so in the current dir, look for it in the library search path. Fixes #863||
