@@ -207,6 +207,7 @@ void CONFIG::defaults() {
     start_delay = 0;
     run_apps_manually = false;
     force_auth = "default";
+    zero_debts = false;
 }
 
 int CONFIG::parse_options(XML_PARSER& xp) {
@@ -256,6 +257,7 @@ int CONFIG::parse_options(XML_PARSER& xp) {
             downcase_string(force_auth);
             continue;
         }
+        if (xp.parse_bool(tag, "zero_debts", zero_debts)) continue;
         msg_printf(NULL, MSG_USER_ERROR, "Unrecognized tag in %s: <%s>\n",
             CONFIG_FILE, tag
         );

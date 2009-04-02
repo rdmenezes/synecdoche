@@ -1,6 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -768,4 +769,16 @@ void CLIENT_STATE::request_work_fetch(const char* where) {
         msg_printf(0, MSG_INFO, "[work_fetch_debug] Request work fetch: %s", where);
     }
     must_check_work_fetch = true;
+}
+
+/// Reset all debts to zero if "zero_debts" is set in the config file.
+void CLIENT_STATE::zero_debts_if_requested() {
+    if (!config.zero_debts) {
+        return;
+    }
+
+    for (std::vector<PROJECT*>::iterator p = projects.begin(); p != projects.end(); ++p) {
+        (*p)->short_term_debt = 0.0;
+        (*p)->long_term_debt = 0.0;
+    }
 }

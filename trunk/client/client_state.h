@@ -449,14 +449,19 @@ public:
 
 /// @name work_fetch.C
 public:
+    PROJECT* next_project_master_pending();
+    PROJECT* next_project_need_work();
+    double overall_cpu_frac();
+
+    /// Reset all debts to zero if "zero_debts" is set in the config file.
+    void zero_debts_if_requested();
+
+private:
     int proj_min_results(PROJECT*, double);
     void check_project_timeout();
-    PROJECT* next_project_master_pending();
     PROJECT* next_project_sched_rpc_pending();
     PROJECT* next_project_trickle_up_pending();
-    PROJECT* next_project_need_work();
     PROJECT* find_project_with_overdue_results();
-    double overall_cpu_frac();
     double time_until_work_done(PROJECT*, int, double);
     bool compute_work_requests();
     void scale_duration_correction_factors(double);
