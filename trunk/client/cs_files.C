@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -129,6 +129,9 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
     }
 
     if (nbytes && (nbytes != size) && (!config.dont_check_file_sizes)) {
+        msg_printf(project, MSG_INTERNAL_ERROR, 
+                   "File %s has wrong size. Expected %.0f, got %.0f",
+                   name, nbytes, size);
         status = ERR_WRONG_SIZE;
         return ERR_WRONG_SIZE;
     }

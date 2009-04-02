@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -43,7 +43,7 @@
 
 // Useful arrays used as templates for arrays created at runtime.
 //
-int iTimeOfDayArraySize = 24;
+int iTimeOfDayArraySize = 25;
 wxString astrTimeOfDayStrings[] = {
     wxT("0:00"),
     wxT("1:00"),
