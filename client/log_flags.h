@@ -104,6 +104,7 @@ struct CONFIG {
     bool run_apps_manually;
     std::string force_auth;
     bool allow_multiple_clients;
+    bool zero_debts;        ///< If true reset all debts to zero.
 
     CONFIG();
     void defaults();

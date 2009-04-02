@@ -338,6 +338,7 @@ int CLIENT_STATE::init() {
     // do CPU scheduler and work fetch
     request_schedule_cpus("Startup");
     request_work_fetch("Startup");
+    zero_debts_if_requested();
     debt_interval_start = now;
 
     // set up the project and slot directories
