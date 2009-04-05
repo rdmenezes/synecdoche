@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -280,18 +281,52 @@ bool CLIENT_STATE::handle_pers_file_xfers() {
 /// called at startup to ensure that if the core client
 /// thinks a file is there, it's actually there.
 void CLIENT_STATE::check_file_existence() {
-    unsigned int i;
-    char path[1024];
-
-    for (i=0; i<file_infos.size(); i++) {
-        FILE_INFO* fip = file_infos[i];
+    for (std::vector<FILE_INFO*>::iterator it = file_infos.begin(); it != file_infos.end(); ++it) {
+        FILE_INFO* fip = *it;
         if (fip->status == FILE_PRESENT) {
-            get_pathname(fip, path, sizeof(path));
+            std::string path = get_pathname(fip);
             if (!boinc_file_exists(path)) {
-                fip->status = FILE_NOT_PRESENT;
-                msg_printf(NULL, MSG_INFO,
-                    "file %s not found", path
-                );
+                // The missing file is still referenced by a project or a workunit,
+                // otherwise it would have been removed by garbage collection.
+                // But if associated project doesn't have any workunit there is
+                // no need to re-transfer this missing file as it may never be
+                // needed again. If it is needed again at some point in the
+                // future it can re-transfered then.
+                // However, there is one exception to this rule: Files that
+                // are directly associated with the project and not with an
+                // app-version or workunit/result aren't checked at any later
+                // point because they are not required as input files for results.
+                // These files (like icon, slideshow, etc.) are mainly used in
+                // the manager and/or screensaver. Therefore we have to
+                // download these files immediately.
+                WORKUNIT_PVEC wus = fip->project->get_workunits();
+                bool file_required = !wus.empty();
+                if (!file_required) {
+                    // No WUs for this project, now check if this file is a
+                    // project file:
+                    const FILE_REF_VEC& pfiles = fip->project->project_files;
+                    for (FILE_REF_VEC::const_iterator it = pfiles.begin(); it != pfiles.end(); ++it) {
+                        if ((*it).file_info == fip) {
+                            // The missing file is a project file. => We need it now.
+                            file_required = true;
+                            break;
+                        }
+                    }
+                }
+                if (file_required) {
+                    // OK, the file is required, mark as mssing.
+                    fip->status = FILE_NOT_PRESENT;
+                    msg_printf(fip->project, MSG_INFO, "File %s not found", path.c_str());
+                } else {
+                    // Although the file is currently not required we
+                    // can't delete the FILE_INFO instance because this would
+                    // prevent re-downloading the file once it is needed.
+                    // Instead mark it as missing but not required.
+                    fip->status = FILE_NOT_PRESENT_NOT_NEEDED;
+                    msg_printf(fip->project, MSG_INFO,
+                        "File %s not found. Currently not required, skipping download.",
+                        path.c_str());
+                }
             }
         }
     }

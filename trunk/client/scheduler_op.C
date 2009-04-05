@@ -755,8 +755,6 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
             continue;
         } else if (parse_bool(buf, "ended", project->ended)) {
             continue;
-        } else if (parse_bool(buf, "verify_files_on_app_start", project->verify_files_on_app_start)) {
-            continue;
         } else if (match_tag(buf, "<request_file_list/>")) {
             send_file_list = true;
         } else if (parse_int(buf, "<send_time_stats_log>", send_time_stats_log)){

@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -61,10 +62,10 @@ public:
     std::vector<PLATFORM> platforms;
     std::vector<PROJECT*> projects;
     std::vector<APP*> apps;
-    std::vector<FILE_INFO*> file_infos;
+    FILE_INFO_PVEC file_infos;
     std::vector<APP_VERSION*> app_versions;
-    std::vector<WORKUNIT*> workunits;
-    std::vector<RESULT*> results;
+    WORKUNIT_PVEC workunits;
+    RESULT_PVEC results;
 
     PERS_FILE_XFER_SET* pers_file_xfers;
     HTTP_OP_SET* http_ops;
@@ -304,7 +305,10 @@ public:
     void set_ncpus();
     double estimate_cpu_time(WORKUNIT&);
     double get_fraction_done(RESULT* result);
-    int input_files_available(RESULT*, bool, FILE_INFO** f=0);
+
+    /// Check if all the input files for a result are present
+    int input_files_available(RESULT* rp, bool verify, FILE_INFO_PVEC* fip_vec = 0);
+
     ACTIVE_TASK* lookup_active_task_by_result(const RESULT*);
     int ncpus; ///< number of usable cpus
 private:

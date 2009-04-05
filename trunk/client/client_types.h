@@ -46,9 +46,11 @@
 // it will be an error code defined in error_numbers.h,
 // indicating an unrecoverable error in the upload or download of the file,
 // or that the file was too big and was deleted
-#define FILE_NOT_PRESENT    0
-#define FILE_PRESENT        1
+#define FILE_NOT_PRESENT 0
+#define FILE_PRESENT 1
+#define FILE_NOT_PRESENT_NOT_NEEDED 2
 
+class APP;
 class MIOFILE;
 class PERS_FILE_XFER;
 class RESULT;
@@ -128,6 +130,7 @@ public:
     /// Compress the file using zlib (gzip compression).
     int gzip();
 };
+typedef std::vector<FILE_INFO*> FILE_INFO_PVEC;
 
 /// Describes a connection between a file and a workunit, result, or
 /// application. In the first two cases, the app will either use open() or
@@ -167,6 +170,35 @@ struct DAILY_STATS {
     int parse(FILE*);
 };
 bool operator < (const DAILY_STATS&, const DAILY_STATS&);
+
+class WORKUNIT {
+public:
+    char name[256];
+    char app_name[256];
+    /// Deprecated, but need to keep around to let people revert
+    /// to versions before multi-platform support.
+    int version_num;
+    std::string command_line;
+    //char env_vars[256];         ///< environment vars in URL format
+    std::vector<FILE_REF> input_files;
+    PROJECT* project;
+    APP* app;
+    int ref_cnt;
+    double rsc_fpops_est;
+    double rsc_fpops_bound;
+    double rsc_memory_bound;
+    double rsc_disk_bound;
+
+public:
+    WORKUNIT(){}
+    ~WORKUNIT(){}
+    int parse(MIOFILE&);
+    int write(MIOFILE&) const;
+    bool had_download_failure(int& failnum) const;
+    void get_file_errors(std::string&) const;
+    void clear_errors();
+};
+typedef std::vector<WORKUNIT*> WORKUNIT_PVEC;
 
 class PROJECT {
 public:
@@ -271,7 +303,6 @@ public:
     bool anonymous_platform;
 
     bool non_cpu_intensive;
-    bool verify_files_on_app_start;
     bool use_symlinks;
     /// @}
 
@@ -465,9 +496,13 @@ public:
 
     /// Write the statistics file.
     int write_statistics_file() const;
+
+    /// Get all workunit for this project.
+    WORKUNIT_PVEC get_workunits() const;
 };
 
-struct APP {
+class APP {
+public:
     char name[256];
     char user_friendly_name[256];
     PROJECT* project;
@@ -503,34 +538,6 @@ public:
     void get_file_errors(std::string&);
     void clear_errors();
     int api_major_version() const;
-};
-
-class WORKUNIT {
-public:
-    char name[256];
-    char app_name[256];
-    /// Deprecated, but need to keep around to let people revert
-    /// to versions before multi-platform support.
-    int version_num;
-    std::string command_line;
-    //char env_vars[256];         ///< environment vars in URL format
-    std::vector<FILE_REF> input_files;
-    PROJECT* project;
-    APP* app;
-    int ref_cnt;
-    double rsc_fpops_est;
-    double rsc_fpops_bound;
-    double rsc_memory_bound;
-    double rsc_disk_bound;
-
-public:
-    WORKUNIT(){}
-    ~WORKUNIT(){}
-    int parse(MIOFILE&);
-    int write(MIOFILE&) const;
-    bool had_download_failure(int& failnum) const;
-    void get_file_errors(std::string&) const;
-    void clear_errors();
 };
 
 class RESULT {
@@ -633,6 +640,7 @@ public:
     /// Temporary used to tell GUI that this result is deadline-scheduled.
     bool edf_scheduled;
 };
+typedef std::vector<RESULT*> RESULT_PVEC;
 
 /// Sepresents an always/auto/never value, possibly temporarily overridden.
 class MODE {

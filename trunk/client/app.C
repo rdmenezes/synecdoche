@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -90,6 +90,7 @@ ACTIVE_TASK::ACTIVE_TASK() {
     app_version = NULL;
     pid = 0;
     slot = 0;
+    full_init_done = false;
     _task_state = PROCESS_UNINITIALIZED;
     scheduler_state = CPU_SCHED_UNINITIALIZED;
     signal = 0;
@@ -124,7 +125,7 @@ ACTIVE_TASK::ACTIVE_TASK() {
     stats_checkpoint = 0;
 }
 
-static const char* task_state_name(int val) {
+static const char* task_state_name(TASK_STATE val) {
     switch (val) {
     case PROCESS_UNINITIALIZED: return "UNINITIALIZED";
     case PROCESS_EXECUTING: return "EXECUTING";
@@ -140,7 +141,7 @@ static const char* task_state_name(int val) {
     return "Unknown";
 }
 
-void ACTIVE_TASK::set_task_state(int val, const char* where) {
+void ACTIVE_TASK::set_task_state(TASK_STATE val, const char* where) {
     _task_state = val;
     if (log_flags.task_debug) {
         msg_printf(result->project, MSG_INFO,
@@ -428,6 +429,7 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         "    <active_task_state>%d</active_task_state>\n"
         "    <app_version_num>%d</app_version_num>\n"
         "    <slot>%d</slot>\n"
+        "    %s\n"
         "    <checkpoint_cpu_time>%f</checkpoint_cpu_time>\n"
         "    <fraction_done>%f</fraction_done>\n"
         "    <current_cpu_time>%f</current_cpu_time>\n"
@@ -445,6 +447,7 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         task_state(),
         app_version->version_num,
         slot,
+        (full_init_done) ? "<full_init_done/>" : "",
         checkpoint_cpu_time,
         fraction_done,
         current_cpu_time,
@@ -584,6 +587,7 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
         else if (parse_str(buf, "<result_name>", result_name, sizeof(result_name))) continue;
         else if (parse_str(buf, "<project_master_url>", project_master_url, sizeof(project_master_url))) continue;
         else if (parse_int(buf, "<slot>", slot)) continue;
+        else if (parse_bool(buf, "full_init_done", full_init_done)) continue;
         else if (parse_int(buf, "<active_task_state>", dummy)) continue;
         else if (parse_double(buf, "<checkpoint_cpu_time>", checkpoint_cpu_time)) continue;
         else if (parse_double(buf, "<fraction_done>", fraction_done)) continue;
@@ -807,6 +811,14 @@ void ACTIVE_TASK::upload_notify_app(const FILE_INFO* fip, const FILE_REF* frp) {
     fprintf(f, "<status>%d</status>\n", fip->status);
     fclose(f);
     send_upload_file_status = true;
+}
+
+/// Check if everything was initialized before, including things like
+/// soft links in the slot directory.
+///
+/// \return true if everything is initialized.
+bool ACTIVE_TASK::is_full_init_done() const {
+    return full_init_done;
 }
 
 /// a file upload has finished.

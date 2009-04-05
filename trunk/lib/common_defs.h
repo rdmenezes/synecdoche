@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -154,30 +154,32 @@ enum SUSPEND_REASON {
 #define RESULT_ABORTED           6
 /// @}
 
-/// \name Task state
 /// Values of ACTIVE_TASK::task_state.
+enum TASK_STATE {
+    /// Process doesn't exist yet
+    PROCESS_UNINITIALIZED = 0,
 
-/// @{
-/// Process doesn't exist yet
-#define PROCESS_UNINITIALIZED   0
-/// Process is running, as far as we know
-#define PROCESS_EXECUTING       1
-/// We've sent it a "suspend" message
-#define PROCESS_SUSPENDED       9
-/// Process exceeded limits; send "abort" message, waiting to exit
-#define PROCESS_ABORT_PENDING   5
-/// We've sent it a "quit" message, waiting to exit
-#define PROCESS_QUIT_PENDING    8
+    /// Process is running, as far as we know
+    PROCESS_EXECUTING,
 
-// states in which the process has exited
-#define PROCESS_EXITED          2
-#define PROCESS_WAS_SIGNALED    3
-#define PROCESS_EXIT_UNKNOWN    4
-/// aborted process has exited
-#define PROCESS_ABORTED         6
-#define PROCESS_COULDNT_START   7
-/// @}
+    /// We've sent it a "suspend" message
+    PROCESS_SUSPENDED,
 
+    /// Process exceeded limits; send "abort" message, waiting to exit
+    PROCESS_ABORT_PENDING,
+
+    /// We've sent it a "quit" message, waiting to exit
+    PROCESS_QUIT_PENDING,
+
+    /// states in which the process has exited
+    PROCESS_EXITED,
+    PROCESS_WAS_SIGNALED,
+    PROCESS_EXIT_UNKNOWN,
+
+    /// aborted process has exited
+    PROCESS_ABORTED,
+    PROCESS_COULDNT_START
+};
 
 /// \name Network status
 /// values of "network status"

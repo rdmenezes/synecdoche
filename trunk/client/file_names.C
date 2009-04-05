@@ -44,20 +44,53 @@
 #include "sandbox.h"
 #include "client_state.h"
 
+/// Get the directory for a given project.
+///
+/// \param[in] p Pointer to a project instance for which the directory
+///              should be generated.
+/// \return The directory for the given project.
+std::string get_project_dir(const PROJECT* p) {
+    char buf[1024];
+    escape_project_url(p->master_url, buf);
+    std::ostringstream result;
+    result << PROJECTS_DIR << '/' << buf;
+    return result.str();
+}
+
+/// Get the directory for a given project.
+///
+/// \deprecated Use get_project_dir(const PROJECT*) instead.
 void get_project_dir(const PROJECT* p, char* path, int len) {
     char buf[1024];
     escape_project_url(p->master_url, buf);
     snprintf(path, len, "%s/%s", PROJECTS_DIR, buf);
 }
 
+/// Gets the pathname (relative to client home dir) of a project file.
+///
+/// \param[in] fip Pointer to a FILE_INFO instance for which the physical file
+///                name should be returned.
+/// \return File name for the given FILE_INFO instance.
+std::string get_pathname(const FILE_INFO* fip) {
+    const PROJECT* p = fip->project;
+    if (p) {
+        std::ostringstream result;
+        result << get_project_dir(p) << '/' << fip->name;
+        return result.str();
+    } else {
+        return fip->name;
+    }
+}
+
 /// Gets the pathname of a file
+///
+/// \deprecated Use get_pathname(const FILE_INFO*) instead.
 void get_pathname(const FILE_INFO* fip, char* path, int len) {
     const PROJECT* p = fip->project;
     char buf[1024];
 
     // for testing purposes, it's handy to allow a FILE_INFO without
     // an associated PROJECT.
-    //
     if (p) {
         get_project_dir(p, buf, sizeof(buf));
         snprintf(path, len, "%s/%s", buf, fip->name.c_str());

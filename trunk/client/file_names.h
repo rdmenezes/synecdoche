@@ -25,9 +25,17 @@ class FILE_INFO;
 class PROJECT;
 class MIOFILE;
 
-/// get the pathname (relative to client home dir) of a project file.
-extern void get_pathname(const FILE_INFO* fip, char* path, int len);
-extern void get_project_dir(const PROJECT*, char*, int);
+/// Gets the pathname (relative to client home dir) of a project file.
+std::string get_pathname(const FILE_INFO* fip);
+
+/// Gets the pathname (relative to client home dir) of a project file.
+void get_pathname(const FILE_INFO* fip, char* path, int len);
+
+/// Get the directory for a given project.
+std::string get_project_dir(const PROJECT* p);
+
+/// Get the directory for a given project.
+void get_project_dir(const PROJECT* p, char* path, int len);
 
 /// get the pathname (relative to client home dir) of the
 /// directory used for a particular application "slot".
