@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -55,7 +56,13 @@ typedef int PROCESS_ID;
 /// thus the task can use the slot directory for temp files
 /// that aren't tracked directly.
 class ACTIVE_TASK {
-    int _task_state;
+private:
+    TASK_STATE _task_state;
+
+    /// Determines if everything is set up for starting the science application
+    /// including all links in the slot directory.
+    bool full_init_done;
+
 public:
 #ifdef _WIN32
     HANDLE pid_handle, shm_handle;
@@ -69,10 +76,10 @@ public:
     PROCINFO procinfo;
 
     int slot;   ///< subdirectory of slots/ where this runs.
-    inline int task_state() const {
+    inline TASK_STATE task_state() const {
         return _task_state;
     }
-    void set_task_state(int, const char*);
+    void set_task_state(TASK_STATE val, const char* where);
     int scheduler_state;
     int next_scheduler_state; // temp
     int signal;
@@ -174,7 +181,7 @@ public:
     void cleanup_task();
 
     /// Start a process.
-    int start(bool first_time);
+    int start();
 
     /// Ask the process to exit gracefully.
     int request_exit();
@@ -228,6 +235,9 @@ public:
     /// Move a trickle file from the slot directory to the project directory.
     int move_trickle_file();
 
+    /// Check if everything was initialized before.
+    bool is_full_init_done() const;
+
     int handle_upload_files();
     void upload_notify_app(const FILE_INFO*, const FILE_REF*);
     int copy_output_files();
@@ -236,11 +246,11 @@ public:
     int write_gui(MIOFILE&) const;
     int parse(MIOFILE&);
 };
+typedef std::vector<ACTIVE_TASK*> ACTIVE_TASK_PVEC;
 
 class ACTIVE_TASK_SET {
 public:
-    typedef std::vector<ACTIVE_TASK*> active_tasks_v;
-    active_tasks_v active_tasks;
+    ACTIVE_TASK_PVEC active_tasks;
     ACTIVE_TASK* lookup_pid(int);
     ACTIVE_TASK* lookup_result(const RESULT*);
     void init();

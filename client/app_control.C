@@ -785,7 +785,7 @@ void ACTIVE_TASK_SET::suspend_all(bool cpu_throttle) {
         leave_in_mem = gstate.global_prefs.leave_apps_in_memory;
     }
 
-    for (active_tasks_v::iterator it = active_tasks.begin(); it != active_tasks.end(); ++it) {
+    for (ACTIVE_TASK_PVEC::iterator it = active_tasks.begin(); it != active_tasks.end(); ++it) {
         ACTIVE_TASK& at = **it;
         if (at.task_state() != PROCESS_EXECUTING) {
             continue;
@@ -809,7 +809,7 @@ void ACTIVE_TASK_SET::unsuspend_all() {
         atp = active_tasks[i];
         if (atp->scheduler_state != CPU_SCHED_SCHEDULED) continue;
         if (atp->task_state() == PROCESS_UNINITIALIZED) {
-            if (atp->start(false)) {
+            if (atp->start()) {
                 msg_printf(atp->wup->project, MSG_INTERNAL_ERROR,
                     "Couldn't restart task %s", atp->result->name
                 );
