@@ -188,10 +188,10 @@ public:
     void show_host_info();
     void show_proxy_info();
     int init();
+
+    /// Poll the client's finite-state machines.
     bool poll_slow_events();
-        // Never blocks.
-        // Returns true if it actually did something,
-        // in which case it should be called again immediately.
+
     void do_io_or_sleep(double dt);
     bool time_to_exit() const;
     PROJECT* lookup_project(const char* master_url);
@@ -219,7 +219,10 @@ private:
     void print_summary() const;
     bool garbage_collect();
     bool garbage_collect_always();
+
+    /// Perform state transitions for results.
     bool update_results();
+
     int nresults_for_project(const PROJECT*) const;
     void check_clock_reset();
 /// @}
@@ -307,7 +310,7 @@ public:
     double get_fraction_done(RESULT* result);
 
     /// Check if all the input files for a result are present
-    int input_files_available(RESULT* rp, bool verify, FILE_INFO_PVEC* fip_vec = 0);
+    int input_files_available(RESULT* rp, bool verify, FILE_INFO_PSET* fip_set = 0);
 
     ACTIVE_TASK* lookup_active_task_by_result(const RESULT*);
     int ncpus; ///< number of usable cpus

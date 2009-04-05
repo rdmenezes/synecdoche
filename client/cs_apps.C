@@ -201,9 +201,9 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
 /// \param[in] rp Result for which the files should be checked.
 /// \param[in] verify If true strict validation (i.e. signature checking)
 ///                   is performed
-/// \param[out] fip_vec Optional pointer to a vector that will receive
+/// \param[out] fip_set Optional pointer to a set that will receive
 ///                     a FILE_INFO pointer for each missing file.
-int CLIENT_STATE::input_files_available(RESULT* rp, bool verify, FILE_INFO_PVEC* fip_vec) {
+int CLIENT_STATE::input_files_available(RESULT* rp, bool verify, FILE_INFO_PSET* fip_set) {
     WORKUNIT* wup = rp->wup;
     FILE_INFO* fip;
     FILE_REF fr;
@@ -215,20 +215,19 @@ int CLIENT_STATE::input_files_available(RESULT* rp, bool verify, FILE_INFO_PVEC*
         fr = avp->app_files[i];
         fip = fr.file_info;
         if (fip->status != FILE_PRESENT) {
-            if (fip_vec) {
-                fip_vec->push_back(fip);
+            if (fip_set) {
+                fip_set->insert(fip);
                 result = ERR_FILE_MISSING;
             } else {
                 return ERR_FILE_MISSING;
             }
-        }
-
-        // don't verify app files if using anonymous platform
-        if (!project->anonymous_platform) {
+        } else if (!project->anonymous_platform) {
+            // Only verify files marked as present.
+            // Don't verify app files if using anonymous platform.
             int retval = fip->verify_file(verify, true);
             if (retval) {
-                if (fip_vec) {
-                    fip_vec->push_back(fip);
+                if (fip_set) {
+                    fip_set->insert(fip);
                     result = retval;
                 } else {
                     return retval;
@@ -241,20 +240,22 @@ int CLIENT_STATE::input_files_available(RESULT* rp, bool verify, FILE_INFO_PVEC*
         fip = wup->input_files[i].file_info;
         if (fip->generated_locally) continue;
         if (fip->status != FILE_PRESENT) {
-            if (fip_vec) {
-                fip_vec->push_back(fip);
+            if (fip_set) {
+                fip_set->insert(fip);
                 result = ERR_FILE_MISSING;
             } else {
                 return ERR_FILE_MISSING;
             }
-        }
-        int retval = fip->verify_file(verify, true);
-        if (retval) {
-            if (fip_vec) {
-                fip_vec->push_back(fip);
-                result = retval;
-            } else {
-                return retval;
+        } else {
+            // Only verify files marked as present.
+            int retval = fip->verify_file(verify, true);
+            if (retval) {
+                if (fip_set) {
+                    fip_set->insert(fip);
+                    result = retval;
+                } else {
+                    return retval;
+                }
             }
         }
     }

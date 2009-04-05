@@ -116,7 +116,6 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
 
     // If the file isn't there at all, set status to FILE_NOT_PRESENT;
     // this will trigger a new download rather than erroring out
-    //
     if (file_size(pathname, size)) {
         status = FILE_NOT_PRESENT;
         return ERR_FILE_MISSING;
