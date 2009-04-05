@@ -131,6 +131,7 @@ public:
     int gzip();
 };
 typedef std::vector<FILE_INFO*> FILE_INFO_PVEC;
+typedef std::set<FILE_INFO*> FILE_INFO_PSET;
 
 /// Describes a connection between a file and a workunit, result, or
 /// application. In the first two cases, the app will either use open() or

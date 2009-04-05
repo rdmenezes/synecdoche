@@ -372,10 +372,10 @@ int ACTIVE_TASK::start() {
 
     // Always check if all required files are present. If not trigger
     // re-downloads and don't start the science application.
-    FILE_INFO_PVEC missing_file_infos;
+    FILE_INFO_PSET missing_file_infos;
     retval = gstate.input_files_available(result, true, &missing_file_infos);
     if (retval) {
-        for (FILE_INFO_PVEC::iterator it = missing_file_infos.begin(); it != missing_file_infos.end(); ++it) {
+        for (FILE_INFO_PSET::iterator it = missing_file_infos.begin(); it != missing_file_infos.end(); ++it) {
             FILE_INFO* fip = *it;
             if (fip) {
                 err_stream << "Input file " << fip->name

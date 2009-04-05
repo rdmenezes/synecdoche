@@ -471,6 +471,9 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
 /// possibly triggering state transitions.
 /// Returns true if something happened
 /// (in which case should call this again immediately)
+/// This function never blocks.
+///
+/// \return True if something happened, false otherwise.
 bool CLIENT_STATE::poll_slow_events() {
     int actions = 0, retval;
     static int last_suspend_reason=0;
@@ -1124,46 +1127,57 @@ bool CLIENT_STATE::garbage_collect_always() {
     return action;
 }
 
+/// Perform state transitions for results.
 /// For results that are waiting for file transfer,
 /// check if the transfer is done,
 /// and if so switch to new state and take other actions.
 /// Also set some fields for newly-aborted results.
+///
+/// \return True if there were some changes.
 bool CLIENT_STATE::update_results() {
-    RESULT* rp;
-    std::vector<RESULT*>::iterator result_iter;
     bool action = false;
     static double last_time=0;
-    int retval;
 
-    if (gstate.now - last_time < 1.0) return false;
+    if (gstate.now - last_time < 1.0) {
+        return false;
+    }
     last_time = gstate.now;
 
-    result_iter = results.begin();
+    RESULT_PVEC::iterator result_iter = results.begin();
     while (result_iter != results.end()) {
-        rp = *result_iter;
+        RESULT* rp = *result_iter;
 
         switch (rp->state()) {
         case RESULT_NEW:
             rp->set_state(RESULT_FILES_DOWNLOADING, "CS::update_results");
             action = true;
             break;
-        case RESULT_FILES_DOWNLOADING:
-            retval = input_files_available(rp, false);
+        case RESULT_FILES_DOWNLOADING: {
+            FILE_INFO_PSET missing_files;
+            int retval = input_files_available(rp, false, &missing_files);
             if (!retval) {
                 rp->set_state(RESULT_FILES_DOWNLOADED, "CS::update_results");
                 if (rp->avp->app_files.empty()) {
                     // if this is a file-transfer app, start the upload phase
-                    //
                     rp->set_state(RESULT_FILES_UPLOADING, "CS::update_results");
                     rp->clear_uploaded_flags();
                 } else {
                     // else try to start the computation
-                    //
                     request_schedule_cpus("files downloaded");
                 }
                 action = true;
+            } else {
+                // Some files are still missing. Make sure there is a download
+                // running for all of them:
+                for (FILE_INFO_PSET::iterator fip = missing_files.begin(); fip != missing_files.end(); ++fip) {
+                    if ((*fip)->status == FILE_NOT_PRESENT_NOT_NEEDED) {
+                        // The file is required now, therefore trigger a download.
+                        (*fip)->status = FILE_NOT_PRESENT;
+                    }
+                }
             }
             break;
+        }
         case RESULT_FILES_UPLOADING:
             if (rp->is_upload_done()) {
                 rp->ready_to_report = true;
