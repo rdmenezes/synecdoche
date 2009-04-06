@@ -870,7 +870,7 @@ bool CLIENT_STATE::enforce_schedule() {
                 retval = atp->resume_or_start(!atp->is_full_init_done());
                 if ((!retval) && (atp->task_state() == PROCESS_UNINITIALIZED)) {
                     // Starting the application failed because of missing files.
-                    // This should not be treated as error but we can't act as
+                    // This should not be treated as error, but we can't act as
                     // if the application was already started and everything is
                     // already initialized. Therefore don't update the task
                     // status here. Just trigger the scheduler and jump to the

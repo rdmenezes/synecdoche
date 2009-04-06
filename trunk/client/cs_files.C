@@ -287,13 +287,13 @@ void CLIENT_STATE::check_file_existence() {
             if (!boinc_file_exists(path)) {
                 // The missing file is still referenced by a project or a workunit,
                 // otherwise it would have been removed by garbage collection.
-                // But if associated project doesn't have any workunit there is
+                // But if the associated project doesn't have any workunit, there is
                 // no need to re-transfer this missing file as it may never be
                 // needed again. If it is needed again at some point in the
-                // future it can re-transfered then.
+                // future, it can re-transfered then.
                 // However, there is one exception to this rule: Files that
                 // are directly associated with the project and not with an
-                // app-version or workunit/result aren't checked at any later
+                // app_version or workunit/result aren't checked at any later
                 // point because they are not required as input files for results.
                 // These files (like icon, slideshow, etc.) are mainly used in
                 // the manager and/or screensaver. Therefore we have to
@@ -313,11 +313,11 @@ void CLIENT_STATE::check_file_existence() {
                     }
                 }
                 if (file_required) {
-                    // OK, the file is required, mark as mssing.
+                    // OK, the file is required, mark as missing.
                     fip->status = FILE_NOT_PRESENT;
                     msg_printf(fip->project, MSG_INFO, "File %s not found", path.c_str());
                 } else {
-                    // Although the file is currently not required we
+                    // Although the file is currently not required, we
                     // can't delete the FILE_INFO instance because this would
                     // prevent re-downloading the file once it is needed.
                     // Instead mark it as missing but not required.

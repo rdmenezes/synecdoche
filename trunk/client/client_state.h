@@ -301,7 +301,7 @@ public:
     /// - task is completed or fails
     /// - tasks are killed
     /// - an RPC completes
-    /// - project suspend/detch/attach/reset GUI RPC
+    /// - project suspend/detach/attach/reset GUI RPC
     /// - result suspend/abort GUI RPC
     void request_work_fetch(const char*);
     int quit_activities();
@@ -309,8 +309,8 @@ public:
     double estimate_cpu_time(WORKUNIT&);
     double get_fraction_done(RESULT* result);
 
-    /// Check if all the input files for a result are present
-    int input_files_available(RESULT* rp, bool verify, FILE_INFO_PSET* fip_set = 0);
+    /// Check if all the input files for a result are present.
+    int input_files_available(const RESULT* rp, bool verify, FILE_INFO_PSET* fip_set = 0);
 
     ACTIVE_TASK* lookup_active_task_by_result(const RESULT*);
     int ncpus; ///< number of usable cpus

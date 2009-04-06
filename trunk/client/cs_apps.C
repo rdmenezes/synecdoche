@@ -195,15 +195,15 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
 /// if all required files are in place before starting the science
 /// application.
 ///
-/// If fip_vec is nonzero, store all missing files in this vector.
-/// Otherwise stop as soon as the first missing file was discovered.
+/// If fip_vec is non-null, store all missing files in this vector.
+/// Otherwise, stop as soon as the first missing file was discovered.
 ///
 /// \param[in] rp Result for which the files should be checked.
-/// \param[in] verify If true strict validation (i.e. signature checking)
+/// \param[in] verify If true, strict validation (i.e. signature checking)
 ///                   is performed
 /// \param[out] fip_set Optional pointer to a set that will receive
 ///                     a FILE_INFO pointer for each missing file.
-int CLIENT_STATE::input_files_available(RESULT* rp, bool verify, FILE_INFO_PSET* fip_set) {
+int CLIENT_STATE::input_files_available(const RESULT* rp, bool verify, FILE_INFO_PSET* fip_set) {
     WORKUNIT* wup = rp->wup;
     FILE_INFO* fip;
     FILE_REF fr;
