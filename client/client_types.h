@@ -29,6 +29,7 @@
 #endif
 
 #include <vector>
+#include <set>
 #include <string>
 
 #include "common_defs.h"
