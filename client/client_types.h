@@ -499,7 +499,7 @@ public:
     /// Write the statistics file.
     int write_statistics_file() const;
 
-    /// Get all workunit for this project.
+    /// Get all workunits for this project.
     WORKUNIT_PVEC get_workunits() const;
 };
 
