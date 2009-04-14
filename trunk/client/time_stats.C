@@ -89,10 +89,12 @@ TIME_STATS::TIME_STATS() {
     time_stats_log = NULL;
 }
 
-/// if log file is over a meg, discard everything older than a year
+/// If log file is over a megabyte, discard everything older than a year.
 ///
-/// TODO: Check this function! It writes the contents to a temporary file
+/// \todo Check this function! It writes the contents to a temporary file
 /// but doesn't do anything with it afterwards!
+/// \todo "megabyte" and "year" should be compile-time constants, not numbers
+/// mixed in the code.
 void TIME_STATS::trim_stats_log() {
     double size;
     char buf[256];

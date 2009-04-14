@@ -146,7 +146,9 @@ bool benchmark_time_to_stop(int which) {
     return true;
 }
 
-/// benchmark a single CPU
+/// Benchmark a single CPU.
+///
+/// \todo Measure the CPU cache.
 int cpu_benchmarks(BENCHMARK_DESC* bdp) {
     HOST_INFO host_info;
     int retval;

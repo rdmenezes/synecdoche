@@ -889,6 +889,10 @@ int FILE_INFO::delete_file() {
 /// Call this to get the initial url,
 /// The is_upload arg says which kind you want.
 /// NULL return means there is no URL of the requested type.
+///
+/// \todo If there are multiple URLs, this function tries them in order. There
+/// is commented out code that picks them randomly. There should be a way for a
+/// project to choose what mode to use.
 const char* FILE_INFO::get_init_url(bool is_upload) {
     if (urls.empty()) {
         return NULL;

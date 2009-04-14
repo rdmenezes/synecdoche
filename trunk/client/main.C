@@ -477,11 +477,12 @@ int finalize() {
     return 0;
 }
 
+/// Entry point.
+///
+/// \todo Clean up the Windows-specific initialization code.
 int main(int argc, char** argv) {
     int retval = 0;
 
-    // TODO: clean up the following
-    //
 #ifdef _WIN32
     int i;
     STARTUPINFO si;

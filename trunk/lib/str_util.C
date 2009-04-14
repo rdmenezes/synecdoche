@@ -284,7 +284,7 @@ enum cmd_line_parser_state {
 
 /// Take a string containing some space separated words.
 /// Return an array of pointers to the null-terminated words.
-/// TODO: use strtok here
+/// \todo use strtok here
 ///
 /// \param[in] p A string with space separated words.
 /// \return A list of strings with all space separated words taken from \a p.
