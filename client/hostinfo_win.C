@@ -572,7 +572,7 @@ int get_processor_info(
 /// \param[out] processor_count Reference to an int variable that will receive
 ///                             the number of processors that are present in the
 ///                             system.
-/// \return Allways returns zero.
+/// \return Always returns zero.
 int get_processor_count(int& processor_count) {
     SYSTEM_INFO SystemInfo;
     memset( &SystemInfo, NULL, sizeof( SystemInfo ) );
