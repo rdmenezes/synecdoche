@@ -55,7 +55,6 @@ using std::vector;
 
 /// Decide whether to consider starting a new file transfer.
 bool CLIENT_STATE::start_new_file_xfer(PERS_FILE_XFER& pfx) {
-    unsigned int i;
     int ntotal=0, nproj=0;
 
     if (network_suspended) return false;
@@ -64,8 +63,8 @@ bool CLIENT_STATE::start_new_file_xfer(PERS_FILE_XFER& pfx) {
     // limit the number of file transfers per project
     // (uploads and downloads are limited separately)
     //
-    for (i=0; i<file_xfers->file_xfers.size(); i++) {
-        FILE_XFER* fxp = file_xfers->file_xfers[i];
+    for (size_t i=0; i<file_xfers->file_xfers.size(); i++) {
+        const FILE_XFER* fxp = file_xfers->file_xfers[i];
         if (pfx.is_upload == fxp->is_upload) {
             ntotal++;
             if (pfx.fip->project == fxp->fip->project) {
