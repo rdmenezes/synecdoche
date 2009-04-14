@@ -748,7 +748,7 @@ FILE_LOCK::~FILE_LOCK() {
 }
 
 /// Lock a file.
-/// TODO: Check if this function is safe. What happens if it is called twice?
+/// \todo Check if this function is safe. What happens if it is called twice?
 ///
 /// \param[in] filename The path to the file that should be locked.
 /// \return Zero on success, -1 on error.

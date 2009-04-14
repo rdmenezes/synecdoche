@@ -649,7 +649,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
 }
 
 /// Write the client_state.xml file if necessary.
-/// TODO: write no more often than X seconds.
+/// \todo Write no more often than X seconds.
 int CLIENT_STATE::write_state_file_if_needed() {
     int retval;
     if (client_state_dirty) {
@@ -660,9 +660,9 @@ int CLIENT_STATE::write_state_file_if_needed() {
     return 0;
 }
 
-/// look for app_versions.xml file in project dir.
-/// If find, get app versions from there,
-/// and use "anonymous platform" mechanism for this project
+/// Look for app_versions.xml file in the project directory.
+/// If it's found get app versions from there,
+/// and use "anonymous platform" mechanism for this project.
 void CLIENT_STATE::check_anonymous() {
     unsigned int i;
     char dir[256], path[256];

@@ -38,7 +38,7 @@ std::deque<MESSAGE_DESC*> message_descs;
 
 /// Takes a printf style formatted string, inserts the proper values,
 /// and passes it to show_message.
-/// TODO: add translation functionality
+/// \todo add translation functionality
 void msg_printf(const PROJECT *p, MSG_PRIORITY priority, const char *fmt, ...) {
     char        buf[8192];  // output can be much longer than format
     va_list     ap;
