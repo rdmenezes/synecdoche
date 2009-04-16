@@ -178,7 +178,7 @@ int cpu_benchmarks(BENCHMARK_DESC* bdp) {
     }
     host_info.p_iops = vax_mips*1e6;
     host_info.p_membw = 1e9;
-    host_info.m_cache = 1e6;    // TODO: measure the cache
+    host_info.m_cache = 1e6;
 #ifdef _WIN32
     }
     bdp->host_info = host_info;

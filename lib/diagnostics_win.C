@@ -2051,6 +2051,7 @@ LONG CALLBACK boinc_catch_signal(PEXCEPTION_POINTERS pExPtrs) {
 /// library this function will write whatever trace information it can and
 /// then throw a breakpoint exception to dump all the rest of the useful
 /// information.
+/// \todo write brief Doxygen description for this function
 void boinc_catch_signal_invalid_parameter(
     const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line, uintptr_t /* pReserved */
 ) {
