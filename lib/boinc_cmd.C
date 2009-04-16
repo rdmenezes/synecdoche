@@ -155,8 +155,6 @@ int main_impl(int argc, char** argv) {
     if (!strcmp(argv[i], "--version")) version();
     if (!strcmp(argv[i], "-V"))     version();
 
-    std::string passwd = read_gui_rpc_password();
-
     if (!strcmp(argv[i], "--host")) {
         if (++i == argc) usage();
         strlcpy(hostname_buf, argv[i], sizeof(hostname_buf));
@@ -168,10 +166,17 @@ int main_impl(int argc, char** argv) {
         }
         i++;
     }
+
+    std::string passwd;
     if ((i<argc)&& !strcmp(argv[i], "--passwd")) {
         if (++i == argc) usage();
         passwd = argv[i];
         i++;
+    }
+
+    if (passwd.empty()) {
+        // No password given via command line, try to read the GUI-RPC-password-file:
+        passwd = read_gui_rpc_password();
     }
 
     // change the following to debug GUI RPC's asynchronous connection mechanism
