@@ -630,11 +630,12 @@ int HTTP_OP::set_proxy(PROXY_INFO *new_pi) {
     return 0;
 }
 
+/// Take the stream param as a FILE* and write to disk.
+///
+/// \todo maybe assert stRead == size*nmemb
+/// \todo add exception handling on phop members
+///
 size_t libcurl_write(void *ptr, size_t size, size_t nmemb, HTTP_OP* phop) {
-    // take the stream param as a FILE* and write to disk
-    // TODO: maybe assert stRead == size*nmemb,
-    // add exception handling on phop members
-    //
     size_t stWrite = fwrite(ptr, size, nmemb, phop->fileOut);
     if (log_flags.http_xfer_debug) {
         msg_printf(NULL, MSG_INFO,
