@@ -1246,6 +1246,9 @@ bool CLIENT_STATE::time_to_exit() const {
 /// \param[in,out] res Reference to the failed result.
 /// \param[in] format Format string to format the error message.
 /// \return Always returns Zero.
+///
+/// \todo This whole message-formatting with variable arguments like printf is
+/// just insane and should be removed as soon as possible.
 int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     // Only do this once per result.
     if (res.ready_to_report) {
@@ -1258,8 +1261,6 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     char err_msg[4096];
     // The above store 1-line messages and short XML snippets.
     // Shouldn't exceed a few hundred bytes.
-    // Note: This whole message-formatting with variable arguments like
-    // printf is just insane and should be removed as soon as possible.
 
     va_list va;
     va_start(va, format);
