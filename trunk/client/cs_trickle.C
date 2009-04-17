@@ -133,6 +133,8 @@ int CLIENT_STATE::remove_trickle_files(const PROJECT* project) {
 /// \return Zero on success, ERR_NULL if the result for the trickle-down
 ///         message could not be found, ERR_FOPEN if creating the trickle-down
 ///         file failed, ERR_XML_PARSE if the input was malformed.
+///
+/// \todo Maybe should use boinc_fopen.
 int CLIENT_STATE::handle_trickle_down(const PROJECT* project, FILE* in) {
     char buf[256];
     char result_name[256];
