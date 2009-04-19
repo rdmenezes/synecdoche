@@ -334,8 +334,8 @@ int ACTIVE_TASK::move_trickle_file() {
 
     std::string old_path(slot_dir);
     old_path.append("/trickle_up.xml");
-    std::ostringstream new_path(project_dir);
-    new_path << "/trickle_up_" << result->name << '_' << time(0) << ".xml";
+    std::ostringstream new_path;
+    new_path << project_dir << "/trickle_up_" << result->name << '_' << time(0) << ".xml";
 
     int retval = boinc_rename(old_path.c_str(), new_path.str().c_str());
 
