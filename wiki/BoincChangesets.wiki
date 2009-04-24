@@ -75,6 +75,12 @@
 ||17644||client: garbage collect after scheduler RPC; if project sent some irrelevant FILE_INFOs, this will avoid starting transfers for them.||
 ||17648||client (linux): if don't find libcudart.so in the current dir, look for it in the library search path. Fixes #863||
 ||17711||client: (unix): if host name lookup fails, call res_init(). This is an attempt to fix a problem on Linux where, if the client starts before a VPN is set up, it can never communicate||
+||17765/17831/17838||client: for each app version, keep track of the largest WSS of tasks using it. In checking whether tasks fit in RAM, use this as an estimate for tasks that haven't started yet. This avoids a situation where the client starts a lot of tasks in sequence, only to find that each one doesn't fit in RAM.||
+||17814||client: eliminate the need to write the state file on each checkpoint. Instead, write the info into a file in the slot directory, and check for these files on startup. This should reduce the overhead of state-file writing on machines with lots of cores. There will still be a flurry of writes each time a job finishes, but reducing that overhead would be a larger job. / client: make sure we write the state file after a failed RPC||
+||17826/17846||Mac MGR: Add keyboard shortcuts command-shift-S, command-shift-A to switch views||
+||17843||client: if detach a project, adjust debts and trigger CPU sched and work fetch||
+||17847||client: improve CPU sched debug messages (say what kind of job and why we're scheduling it)||
+||17874||client: message tweak||
 
 
 == Changesets for the new OpenGL screensaver (Might be useful some day) ==
@@ -107,6 +113,11 @@
 ||17408||screensaver: remove error codes & messages handled by new default gfx app, add new error codes; better logic when coordinator window covered on Mac||
 ||17444||WINSCR: fix a bug. Mac screensaver: logic to stop Data Management thread even if hung on an RPC.||
 ||17646||new screensaver: don't show jobs if suspended||
+||17720||SS: Under Mac Sandbox security, gfx_switcher launches default ss app as user and group boinc_master; don't setgid boincscr||
+||17722/17723||SS: Under Mac Sandbox security, terminate default screensaver graphics app via gfx_switcher||
+||17728/17731||WINSCR: It appears newer notebook models with multiple video chipsets exhibit an interesting situation. It appears as though in certain conditions a single monitor machine actually reports itself as having three monitors. Normally the monitor that contains the primary window (coord 0,0) is on monitor 0, but on these machines coord 0,0 is actually on monitor 2. This led to the screensaver not properly exiting when keyboard and/or mouse activity was detected. Now when we detect that keyboard and/or mouse activity has happened we send the WM_INTERRUPTSAVER event to all windows on all monitors.||
+||17815||SS: launch default screensaver graphics app as user and group boinc_project, not boinc_master||
+
 
 
 == Rejected changes ==
@@ -171,4 +182,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17712 17712]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/17876 17876]
