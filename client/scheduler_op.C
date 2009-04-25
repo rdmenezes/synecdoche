@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
+#include <fstream>
 #include <sstream>
 #endif
 
@@ -256,63 +257,58 @@ int SCHEDULER_OP::init_master_fetch(PROJECT* p) {
 }
 
 /// Parse a master file.
-int SCHEDULER_OP::parse_master_file(PROJECT* p, std::vector<std::string> &urls) {
-    char buf[256], buf2[256];
-    char master_filename[256];
-    std::string str;
-    FILE* f;
-    int n;
-
-    get_master_filename(*p, master_filename, sizeof(master_filename));
-    f = boinc_fopen(master_filename, "r");
-    if (!f) {
+///
+/// \param[in] p Pointer to a PROJECT instance for which the master file
+///              should be parsed.
+/// \return A vector of strings containing all scheduler URLs read from 
+///         the master file.
+std::vector<std::string> SCHEDULER_OP::parse_master_file(PROJECT* p) const {
+    std::vector<std::string> urls;
+    std::string master_filename = get_master_filename(*p);
+    std::ifstream in(master_filename.c_str());
+    if (!in) {
         msg_printf(p, MSG_INTERNAL_ERROR, "Can't open scheduler list file");
-        return ERR_FOPEN;
+        return urls;
     }
     p->scheduler_urls.clear();
-    while (fgets(buf, 256, f)) {
+    std::string buf;
+    while (std::getline(in, buf)) {
 
         // allow for the possibility of > 1 tag per line here
         // (UMTS may collapse lines)
-        //
-        char* q = buf;
-        while (q && parse_str(q, "<scheduler>", str)) {
+        std::string buf2(buf);
+        std::string str;
+        while (parse_str(buf2.c_str(), "<scheduler>", str)) {
             push_unique(str, urls);
-            q = strstr(q, "</scheduler>");
-            if (q) q += strlen("</scheduler>");
+            std::string::size_type pos = buf2.find("</scheduler>");
+            if (pos != std::string::npos) {
+                buf2.erase(0, pos + 12);
+            }
         }
 
         // check for new syntax: <link ...>
-        //
-        q = buf;
-        while (q) {
-            n = sscanf(q, "<link rel=\"boinc_scheduler\" href=\"%s", buf2);
-            if (n == 1) {
-                char* q2 = strchr(buf2, '"');
-                if (q2) *q2 = 0;
-                strip_whitespace(buf2);
-                str = std::string(buf2);
-                push_unique(str, urls);
+        std::string::size_type pos = 0;
+        while (pos != std::string::npos) {
+            pos = buf.find("<link rel=\"boinc_scheduler\" href=\"", pos);
+            if (pos != std::string::npos) {
+                pos += 34;
+                std::string::size_type end = buf.find('\"', pos);
+                if (end != std::string::npos) {
+                    str = buf.substr(pos, end - pos);
+                    strip_whitespace(str);
+                    push_unique(str, urls);
+                }
             }
-            q = strchr(q, '>');
-            if (q) q = strchr(q, '<');
         }
     }
-    fclose(f);
+    in.close();
     if (log_flags.sched_op_debug) {
         msg_printf(p, MSG_INFO,
             "[sched_op_debug] Found %lu scheduler URLs in master file\n",
             urls.size()
         );
     }
-
-    // couldn't find any scheduler URLs in the master file?
-    //
-    if (urls.empty()) {
-        return ERR_XML_PARSE;
-    }
-
-    return 0;
+    return urls;
 }
 
 /// A master file has just been read,
@@ -342,16 +338,16 @@ bool SCHEDULER_OP::update_urls(PROJECT* p, std::vector<std::string> &urls) {
     return any_new;
 }
 
-/// Poll routine.  If an operation is in progress, check for completion.
+/// Poll routine. If an operation is in progress, check for completion.
+///
+/// \return True if some action was performed.
 bool SCHEDULER_OP::poll() {
     int retval, nresults;
-    std::vector<std::string> urls;
     bool changed, scheduler_op_done;
 
     switch(state) {
     case SCHEDULER_OP_STATE_GET_MASTER:
         // here we're fetching the master file for a project
-        //
         if (http_op.http_op_state == HTTP_STATE_DONE) {
             state = SCHEDULER_OP_STATE_IDLE;
             cur_proj->master_url_fetch_pending = false;
@@ -363,21 +359,18 @@ bool SCHEDULER_OP::poll() {
                         "[sched_op_debug] Got master file; parsing"
                     );
                 }
-                retval = parse_master_file(cur_proj, urls);
-                if (retval || urls.empty()) {
+                std::vector<std::string> urls = parse_master_file(cur_proj);
+                if (urls.empty()) {
                     // master file parse failed.
-                    //
                     cur_proj->master_fetch_failures++;
                     backoff(cur_proj, "Couldn't parse scheduler list");
                 } else {
                     // parse succeeded
-                    //
                     msg_printf(cur_proj, MSG_INFO, "Master file download succeeded");
                     cur_proj->master_fetch_failures = 0;
                     changed = update_urls(cur_proj, urls);
 
                     // reenable scheduler RPCs if have new URLs
-                    //
                     if (changed) {
                         cur_proj->min_rpc_time = 0;
                         cur_proj->nrpc_failures = 0;
@@ -385,7 +378,6 @@ bool SCHEDULER_OP::poll() {
                 }
             } else {
                 // master file fetch failed.
-                //
                 char buf[256];
                 sprintf(buf, "Scheduler list fetch failed: %s",
                     boincerror(http_op.http_op_retval)
@@ -401,7 +393,6 @@ bool SCHEDULER_OP::poll() {
     case SCHEDULER_OP_STATE_RPC:
 
         // here we're doing a scheduler RPC
-        //
         scheduler_op_done = false;
         if (http_op.http_op_state == HTTP_STATE_DONE) {
             state = SCHEDULER_OP_STATE_IDLE;
@@ -414,7 +405,6 @@ bool SCHEDULER_OP::poll() {
                 }
 
                 // scheduler RPC failed.  Try another scheduler if one exists
-                //
                 while (1) {
                     url_index++;
                     if (url_index == (int)cur_proj->scheduler_urls.size()) {
@@ -428,7 +418,6 @@ bool SCHEDULER_OP::poll() {
                     scheduler_op_done = true;
 
                     // if project suspended, don't retry failed RPC
-                    //
                     if (cur_proj->suspended_via_gui) {
                         cur_proj->sched_rpc_pending = NO_RPC_REASON;
                     }

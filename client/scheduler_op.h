@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -71,7 +72,10 @@ public:
 
 public:
     SCHEDULER_OP(HTTP_OP_SET*);
+    
+    /// Poll routine. If an operation is in progress, check for completion.
     bool poll();
+    
     int init_get_work();
 
     /// Try to initiate an RPC to the given project.
@@ -89,7 +93,9 @@ private:
     bool update_urls(PROJECT* p, std::vector<std::string>& urls);
     int start_op(PROJECT* p);
     int start_rpc(PROJECT* p);
-    int parse_master_file(PROJECT* p, std::vector<std::string>& urls);
+    
+    /// Parse a master file.
+    std::vector<std::string> parse_master_file(PROJECT* p) const;
 };
 
 struct USER_MESSAGE {
