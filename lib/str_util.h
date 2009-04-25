@@ -37,6 +37,8 @@
 
 #include "common_defs.h"
 
+#include "attributes.h"
+
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
 extern size_t strlcpy(char* dst, const char* src, size_t size);
@@ -78,7 +80,7 @@ extern void escape_project_url(const char *in, char* out);
 extern bool valid_master_url(const char*);
 
 /// Canonicalize a master URL.
-extern void canonicalize_master_url(char *url);
+extern void canonicalize_master_url(char *url) __attribute__((deprecated));
 
 /// Canonicalize a master URL.
 extern void canonicalize_master_url(std::string&);

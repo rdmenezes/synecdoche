@@ -19,6 +19,8 @@
 #ifndef FILE_NAMES_H
 #define FILE_NAMES_H
 
+#include "attributes.h"
+
 #include <string>
 
 class FILE_INFO;
@@ -29,13 +31,13 @@ class MIOFILE;
 std::string get_pathname(const FILE_INFO* fip);
 
 /// Gets the pathname (relative to client home dir) of a project file.
-void get_pathname(const FILE_INFO* fip, char* path, int len);
+void get_pathname(const FILE_INFO* fip, char* path, int len) __attribute__((deprecated));
 
 /// Get the directory for a given project.
 std::string get_project_dir(const PROJECT* p);
 
 /// Get the directory for a given project.
-void get_project_dir(const PROJECT* p, char* path, int len);
+void get_project_dir(const PROJECT* p, char* path, int len) __attribute__((deprecated));
 
 /// get the pathname (relative to client home dir) of the
 /// directory used for a particular application "slot".
