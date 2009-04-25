@@ -671,7 +671,7 @@ int ACTIVE_TASK::request_reread_prefs() {
 }
 
 /// Tell a running app to reread the app_info file
-/// (e.g. because proxy settings have changed)
+/// (e.g.\ because proxy settings have changed)
 int ACTIVE_TASK::request_reread_app_info() {
     int retval = write_app_init_file();
     if (retval) return retval;
