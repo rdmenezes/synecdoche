@@ -300,11 +300,10 @@ int main_impl(int argc, char** argv) {
             fprintf(stderr, "Unknown op %s\n", op);
         }
     } else if (!strcmp(cmd, "--project_attach")) {
-        char url[256];
-        strcpy(url, next_arg(argc, argv, i));
+        std::string url(next_arg(argc, argv, i));
         canonicalize_master_url(url);
         char* auth = next_arg(argc, argv, i);
-        retval = rpc.project_attach(url, auth, "");
+        retval = rpc.project_attach(url.c_str(), auth, "");
     } else if (!strcmp(cmd, "--file_transfer")) {
         FILE_TRANSFER ft;
 
