@@ -22,6 +22,8 @@
 #include <wx/string.h>
 #include <wx/timer.h>
 
+#include "attributes.h"
+
 class CFrameEvent;
 class CFrameAlertEvent;
 class CBOINCDialUpManager;
@@ -88,7 +90,7 @@ public:
                             const FrameAlertEventType alert_event_type = AlertNormal
                         );
 
-    void                ExecuteBrowserLink( const wxString& strLink );
+    void                ExecuteBrowserLink( const wxString& strLink ) __attribute__((deprecated));
 
 #ifdef __WXMAC__
     bool                Show( bool show = true );

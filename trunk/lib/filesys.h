@@ -23,6 +23,7 @@
 /// (virus scan, defrag, index) may have the file open.
 #define FILE_RETRY_INTERVAL 5
 
+#include "attributes.h"
 
 #if defined(_WIN32) && !defined(__CYGWIN32__)
 #else
@@ -120,23 +121,23 @@ typedef struct _DIR_DESC {
     char path[256];
     bool first;
     void* handle;
-} DIR_DESC;
-typedef DIR_DESC *DIRREF;
+} DIR_DESC __attribute__ ((deprecated));
+typedef DIR_DESC *DIRREF  __attribute__ ((deprecated));
 #else
-typedef DIR *DIRREF;
+typedef DIR *DIRREF  __attribute__ ((deprecated));
 #endif
 
 /// Open a directory for scanning with dir_scan.
-extern DIRREF dir_open(const char* p);
+extern DIRREF dir_open(const char* p) __attribute__ ((deprecated));
 
 /// Scan through a directory and return the next file name in it.
-extern int dir_scan(char* p, DIRREF dirp, int p_len);
+extern int dir_scan(char* p, DIRREF dirp, int p_len) __attribute__ ((deprecated));
 
 /// Scan through a directory and return the next file name in it.
-extern int dir_scan(std::string& p, DIRREF dirp);
+extern int dir_scan(std::string& p, DIRREF dirp) __attribute__ ((deprecated));
 
 /// Close a directory previously opened by dir_open.
-extern void dir_close(DIRREF dirp);
+extern void dir_close(DIRREF dirp) __attribute__ ((deprecated));
 
 
 class DirScanner {
