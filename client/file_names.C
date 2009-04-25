@@ -106,11 +106,31 @@ void get_sched_request_filename(const PROJECT& project, char* buf, int len) {
     snprintf(buf, len, "%s%s.xml", SCHED_OP_REQUEST_BASE, url);
 }
 
+/// Get the scheduler request file name for a project.
+///
+/// \param[in] The project for which the file name should be returned.
+/// \return The file name of the scheduler request file for the given project.
+std::string get_sched_request_filename(const PROJECT& project) {
+    std::ostringstream result;
+    result << SCHED_OP_REQUEST_BASE << escape_project_url(project.master_url) << ".xml";
+    return result.str();
+}
+
 void get_sched_reply_filename(const PROJECT& project, char* buf, int len) {
     char url[1024];
 
     escape_project_url(project.master_url, url);
     snprintf(buf, len, "%s%s.xml", SCHED_OP_REPLY_BASE, url);
+}
+
+/// Get the scheduler reply file name for a project.
+///
+/// \param[in] The project for which the file name should be returned.
+/// \return The file name of the scheduler reply file for the given project.
+std::string get_sched_reply_filename(const PROJECT& project) {
+    std::ostringstream result;
+    result << SCHED_OP_REPLY_BASE << escape_project_url(project.master_url) << ".xml";
+    return result.str();
 }
 
 void get_master_filename(const PROJECT& project, char* buf, int len) {
@@ -120,11 +140,31 @@ void get_master_filename(const PROJECT& project, char* buf, int len) {
     snprintf(buf, len, "%s%s.xml", MASTER_BASE, url);
 }
 
+/// Get the name of the master file for a project.
+///
+/// \param[in] The project for which the file name should be returned.
+/// \return The file name of the master file for the given project.
+std::string get_master_filename(const PROJECT& project) {
+    std::ostringstream result;
+    result << MASTER_BASE << escape_project_url(project.master_url) << ".xml";
+    return result.str();
+}
+
 void job_log_filename(const PROJECT& project, char* buf, int len) {
     char url[1024];
 
     escape_project_url(project.master_url, url);
     snprintf(buf, len, "%s%s.txt", JOB_LOG_BASE, url);
+}
+
+/// Get the job log file name for a project.
+///
+/// \param[in] The project for which the file name should be returned.
+/// \return The file name of the sjob log file for the given project.
+std::string job_log_filename(const PROJECT& project) {
+    std::ostringstream result;
+    result << JOB_LOG_BASE << escape_project_url(project.master_url) << ".xml";
+    return result.str();
 }
 
 /// Returns the location of a numbered slot directory

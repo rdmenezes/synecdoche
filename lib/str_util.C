@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -444,6 +444,31 @@ void escape_url_readable(const char *in, char* out) {
     out[y] = 0;
 }
 
+/// Escape a URL for the project directory, cutting off the "http://",
+/// converting everthing other than alphanumbers, ., - and _ to "_".
+///
+/// \param[in] in The URL to escape.
+/// \return The escaped version of \a in.
+std::string escape_url_readable(const std::string& in) {
+    std::string::const_iterator it = in.begin();
+
+    // Skip http:// and similar things:
+    std::string::size_type pos = in.find("://");
+    if (pos != std::string::npos) {
+        it += pos + 3;
+    }
+
+    std::string result;
+    result.reserve(in.end() - it);
+    for (; it != in.end(); ++it) {
+        if ((isalnum(*it)) || ((*it) == '.') || ((*it) == '-') || ((*it) == '_')) {
+            result += *it;
+        } else {
+            result += '_';
+        }
+    }
+    return result;
+}
 
 /// Canonicalize a master URL.
 ///   - Convert the first part of a URL (before the "://") to http://,
@@ -607,6 +632,17 @@ void escape_project_url(const char *in, char* out) {
     if (last == '_') {
         last = '\0';
     }
+}
+
+/// Escape a URL for the project directory
+std::string escape_project_url(const std::string& in) {
+    std::string result = escape_url_readable(in);
+
+    // Remove trailing '_':
+    if (ends_with(result, "_")) {
+        result.erase(result.end() - 1);
+    }
+    return result;
 }
 
 /// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).

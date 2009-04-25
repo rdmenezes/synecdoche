@@ -35,6 +35,7 @@
 #include "config.h"
 #endif
 
+#include "attributes.h"
 #include "common_defs.h"
 
 #include "attributes.h"
@@ -75,8 +76,16 @@ extern void unescape_url(std::string& url);
 /// Escape an URL.
 extern void escape_url(std::string& url);
 
-extern void escape_url_readable(const char* in, char* out);
-extern void escape_project_url(const char *in, char* out);
+void escape_url_readable(const char* in, char* out) __attribute__((deprecated));
+
+/// Escape a URL for the project directory
+std::string escape_url_readable(const std::string& in);
+
+void escape_project_url(const char *in, char* out) __attribute__((deprecated));
+
+/// Escape a URL for the project directory
+std::string escape_project_url(const std::string& in);
+
 extern bool valid_master_url(const char*);
 
 /// Canonicalize a master URL.

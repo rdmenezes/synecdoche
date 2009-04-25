@@ -65,11 +65,24 @@ extern std::string get_statistics_filename(const char* master_url);
 /// Check if a file name denotes an image file.
 extern bool is_image_file(std::string filename);
 
-extern void get_sched_request_filename(const PROJECT&, char*, int len);
-extern void get_sched_reply_filename(const PROJECT&, char*, int len);
-extern void get_master_filename(const PROJECT&, char*, int len);
-extern void job_log_filename(const PROJECT&, char*, int);
-extern void send_log_after(const char* filename, double t, MIOFILE& mf);
+void get_sched_request_filename(const PROJECT&, char*, int len) __attribute__((deprecated));
+void get_sched_reply_filename(const PROJECT&, char*, int len) __attribute__((deprecated));
+void get_master_filename(const PROJECT&, char*, int len) __attribute__((deprecated));
+void job_log_filename(const PROJECT&, char*, int) __attribute__((deprecated));
+
+/// Get the scheduler request file name for a project.
+std::string get_sched_request_filename(const PROJECT& project);
+
+/// Get the scheduler reply file name for a project.
+std::string get_sched_reply_filename(const PROJECT& project);
+
+/// Get the name of the master file for a project.
+std::string get_master_filename(const PROJECT& project);
+
+/// Get the job log file name for a project.
+std::string job_log_filename(const PROJECT& project);
+
+void send_log_after(const char* filename, double t, MIOFILE& mf);
 
 #define PROJECTS_DIR                "projects"
 #define SLOTS_DIR                   "slots"
