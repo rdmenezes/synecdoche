@@ -445,7 +445,7 @@ void escape_url_readable(const char *in, char* out) {
 }
 
 /// Escape a URL for the project directory, cutting off the "http://",
-/// converting everthing other than alphanumbers, ., - and _ to "_".
+/// converting everything other than letters, numbers, ., - and _ to "_".
 ///
 /// \param[in] in The URL to escape.
 /// \return The escaped version of \a in.
