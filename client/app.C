@@ -329,8 +329,7 @@ bool ACTIVE_TASK_SET::poll() {
 ///
 /// \return Zero on success, ERR_RENAME on error.
 int ACTIVE_TASK::move_trickle_file() {
-    char project_dir[256];
-    get_project_dir(result->project, project_dir, sizeof(project_dir));
+    std::string project_dir = get_project_dir(result->project);
 
     std::string old_path(slot_dir);
     old_path.append("/trickle_up.xml");

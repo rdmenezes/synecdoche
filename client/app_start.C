@@ -706,8 +706,7 @@ int ACTIVE_TASK::start() {
         // We use relative paths in case higher-level dirs
         // are not readable to the account under which app runs
         //
-        char pdir[256];
-        get_project_dir(wup->project, pdir, sizeof(pdir));
+        std::string pdir = get_project_dir(wup->project);
 
         std::ostringstream libpath;
         const char* env_lib_path = getenv("LD_LIBRARY_PATH");

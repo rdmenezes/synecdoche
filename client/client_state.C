@@ -769,9 +769,9 @@ int CLIENT_STATE::link_app_version(PROJECT* p, APP_VERSION* avp) {
         }
 
         if (!strcmp(file_ref.open_name, GRAPHICS_APP_FILENAME)) {
-            char relpath[512];
-            get_pathname(fip, relpath, sizeof(relpath));
-            std::string path = relative_to_absolute(relpath);
+            std::string relpath = get_pathname(fip);
+            // XXX change this if relative_to_absolute is changed to take a string
+            std::string path = relative_to_absolute(relpath.c_str());
             strlcpy(avp->graphics_exec_path, path.c_str(), sizeof(avp->graphics_exec_path));
         }
 
