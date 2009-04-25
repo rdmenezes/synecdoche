@@ -64,10 +64,10 @@ extern int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t
 /// Split a string with space separated words into single words.
 extern std::list<std::string> parse_command_line(const char* p);
 
-/// Remove leading and trailing whitespace from a string
+/// Remove leading and trailing whitespace from a string.
 extern void strip_whitespace(char *str);
 
-/// Remove leading and trailing whitespace from a string
+/// Remove leading and trailing whitespace from a string.
 extern void strip_whitespace(std::string&);
 
 /// Unescape an URL.

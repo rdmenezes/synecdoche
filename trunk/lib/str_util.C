@@ -343,20 +343,20 @@ std::list<std::string> parse_command_line(const char* p) {
     return result;
 }
 
-/// Remove leading and trailing whitespace from a string
+/// Remove leading and trailing whitespace from a string.
 ///
-/// \param[in,out] str Pointer to the C-string that should get trimmed
+/// \param[in,out] str Pointer to the null-terminated C string that should get trimmed.
 void strip_whitespace(char* str) {
     std::string buf(str);
     strip_whitespace(buf);
 
-    // This should be save as strip_whitespaces only shortens the string.
+    // This should be safe as strip_whitespace only shortens the string.
     strcpy(str, buf.c_str());
 }
 
-/// Remove leading and trailing whitespace from a string
+/// Remove leading and trailing whitespace from a string.
 ///
-/// \param[in,out] str Reference to the string that should get trimmed
+/// \param[in,out] str Reference to the string that should get trimmed.
 void strip_whitespace(std::string& str) {
     std::string::size_type pos = str.find_first_not_of(" \f\t\v\r\n");
     str.erase(0, pos);
@@ -365,7 +365,7 @@ void strip_whitespace(std::string& str) {
 }
 
 /// Convert a number in hexadecimal representation into an integer.
-/// This is a helper function for unescape_url.
+/// This is a helper function for unescape_url(std::string&).
 ///
 /// \param[in] what Array of char containing exactly two hexadecimal digits.
 /// \return The character of which the ASCII code matches the value described
@@ -584,8 +584,7 @@ std::string precision_time_to_string(double t) {
     }
 }
 
-/// Convert a time difference given as floating point value
-/// into a descriptive string.
+/// Convert a time difference into a descriptive string.
 ///
 /// \param[in] diff The time difference in seconds.
 /// \return A descriptive string representing the given time difference.
