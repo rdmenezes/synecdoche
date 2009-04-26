@@ -25,9 +25,6 @@
 // ANSI C API BEGINS HERE
 // Do not put implementation stuff here
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 typedef struct BOINC_OPTIONS {
     // the following are booleans, implemented as ints for portability
     int main_program;
@@ -101,10 +98,6 @@ extern void boinc_exit(int);    // deprecated
 #ifdef __APPLE__
 extern int setMacPList(void);
 extern int setMacIcon(char *filename, char *iconData, long iconSize);
-#endif
-
-#ifdef __cplusplus
-} // extern "C" {
 #endif
 
 // C++ API follows 
