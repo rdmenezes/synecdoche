@@ -1701,9 +1701,8 @@ FILE_INFO* RESULT::lookup_file_logical(const char* lname) {
 }
 
 void RESULT::append_log_record(ACTIVE_TASK& at) {
-    char filename[256];
-    job_log_filename(*project, filename, sizeof(filename));
-    FILE* f = fopen(filename, "ab");
+    std::string filename = job_log_filename(*project);
+    FILE* f = fopen(filename.c_str(), "ab");
     if (!f) return;
     fprintf(f, "%f ue %f ct %f fe %f sm %f sp %f sf %f sd %f sc %d nm %s\n",
         gstate.now,

@@ -190,7 +190,6 @@ void SCHEDULER_OP::backoff(PROJECT* p, const std::string& reason_msg) {
 /// PRECONDITION: the request file has been created.
 int SCHEDULER_OP::start_rpc(PROJECT* p) {
     int retval;
-    char request_file[1024], reply_file[1024];
 
     // if requesting work, round up to 1 sec
     //
@@ -206,11 +205,11 @@ int SCHEDULER_OP::start_rpc(PROJECT* p) {
         );
     }
 
-    get_sched_request_filename(*p, request_file, sizeof(request_file));
-    get_sched_reply_filename(*p, reply_file, sizeof(reply_file));
+    std::string request_file = get_sched_request_filename(*p);
+    std::string reply_file = get_sched_reply_filename(*p);
 
     http_op.set_proxy(&gstate.proxy_info);
-    retval = http_op.init_post(scheduler_url, request_file, reply_file);
+    retval = http_op.init_post(scheduler_url, request_file.c_str(), reply_file.c_str());
     if (retval) {
         if (log_flags.sched_ops) {
             msg_printf(p, MSG_INFO,
@@ -239,15 +238,14 @@ int SCHEDULER_OP::start_rpc(PROJECT* p) {
 /// Initiate a fetch of a project's master URL file.
 int SCHEDULER_OP::init_master_fetch(PROJECT* p) {
     int retval;
-    char master_filename[256];
 
-    get_master_filename(*p, master_filename, sizeof(master_filename));
+    std::string master_filename = get_master_filename(*p);
 
     if (log_flags.sched_op_debug) {
         msg_printf(p, MSG_INFO, "[sched_op_debug] Fetching master file");
     }
     http_op.set_proxy(&gstate.proxy_info);
-    retval = http_op.init_get(p->master_url, master_filename, true);
+    retval = http_op.init_get(p->master_url, master_filename.c_str(), true);
     if (retval) return retval;
     retval = http_ops->insert(&http_op);
     if (retval) return retval;

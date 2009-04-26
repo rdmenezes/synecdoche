@@ -50,10 +50,8 @@
 ///              should be generated.
 /// \return The directory for the given project.
 std::string get_project_dir(const PROJECT* p) {
-    char buf[1024];
-    escape_project_url(p->master_url, buf);
     std::ostringstream result;
-    result << PROJECTS_DIR << '/' << buf;
+    result << PROJECTS_DIR << '/' << escape_project_url(p->master_url);
     return result.str();
 }
 
@@ -99,13 +97,6 @@ void get_pathname(const FILE_INFO* fip, char* path, int len) {
     }
 }
 
-void get_sched_request_filename(const PROJECT& project, char* buf, int len) {
-    char url[1024];
-
-    escape_project_url(project.master_url, url);
-    snprintf(buf, len, "%s%s.xml", SCHED_OP_REQUEST_BASE, url);
-}
-
 /// Get the scheduler request file name for a project.
 ///
 /// \param[in] The project for which the file name should be returned.
@@ -114,13 +105,6 @@ std::string get_sched_request_filename(const PROJECT& project) {
     std::ostringstream result;
     result << SCHED_OP_REQUEST_BASE << escape_project_url(project.master_url) << ".xml";
     return result.str();
-}
-
-void get_sched_reply_filename(const PROJECT& project, char* buf, int len) {
-    char url[1024];
-
-    escape_project_url(project.master_url, url);
-    snprintf(buf, len, "%s%s.xml", SCHED_OP_REPLY_BASE, url);
 }
 
 /// Get the scheduler reply file name for a project.
@@ -133,13 +117,6 @@ std::string get_sched_reply_filename(const PROJECT& project) {
     return result.str();
 }
 
-void get_master_filename(const PROJECT& project, char* buf, int len) {
-    char url[1024];
-
-    escape_project_url(project.master_url, url);
-    snprintf(buf, len, "%s%s.xml", MASTER_BASE, url);
-}
-
 /// Get the name of the master file for a project.
 ///
 /// \param[in] The project for which the file name should be returned.
@@ -148,13 +125,6 @@ std::string get_master_filename(const PROJECT& project) {
     std::ostringstream result;
     result << MASTER_BASE << escape_project_url(project.master_url) << ".xml";
     return result.str();
-}
-
-void job_log_filename(const PROJECT& project, char* buf, int len) {
-    char url[1024];
-
-    escape_project_url(project.master_url, url);
-    snprintf(buf, len, "%s%s.txt", JOB_LOG_BASE, url);
 }
 
 /// Get the job log file name for a project.
@@ -299,11 +269,9 @@ void delete_old_slot_dirs() {
 /// \param[in] master_url The master URL for a project for which the account
 ///                       file name should be generated.
 /// \return The name of the account file for the project specified by \a master_url.
-std::string get_account_filename(const char* master_url) {
-    char buf[1024];
-    escape_project_url(master_url, buf);
+std::string get_account_filename(const std::string& master_url) {
     std::ostringstream result;
-    result << "account_" << buf << ".xml";
+    result << "account_" << escape_project_url(master_url) << ".xml";
     return result.str();
 }
 
@@ -390,11 +358,9 @@ bool is_statistics_file(const std::string& filename) {
 /// \param[in] master_url The master URL for a project for which the statistics
 ///                       file name should be generated.
 /// \return The name of the statistics file for the project specified by \a master_url.
-std::string get_statistics_filename(const char* master_url) {
-    char buf[1024];
-    escape_project_url(master_url, buf);
+std::string get_statistics_filename(const std::string& master_url) {
     std::ostringstream result;
-    result << "statistics_" << buf << ".xml";
+    result << "statistics_" << escape_project_url(master_url) << ".xml";
     return result.str();
 }
 

@@ -41,34 +41,29 @@ void get_project_dir(const PROJECT* p, char* path, int len) __attribute__((depre
 
 /// get the pathname (relative to client home dir) of the
 /// directory used for a particular application "slot".
-extern void get_slot_dir(int slot, char* path, int len);
+void get_slot_dir(int slot, char* path, int len);
 
-extern int make_project_dir(const PROJECT&);
-extern int remove_project_dir(const PROJECT&);
-extern int make_slot_dir(int);
+int make_project_dir(const PROJECT&);
+int remove_project_dir(const PROJECT&);
+int make_slot_dir(int);
 
 /// Delete unused stuff in the slots/ directory.
-extern void delete_old_slot_dirs();
+void delete_old_slot_dirs();
 
 /// Get the name of the account file for a given master URL.
-extern std::string get_account_filename(const char* master_url);
+std::string get_account_filename(const std::string& master_url);
 
 /// Check if the given filename if the name of an account file.
-extern bool is_account_file(const std::string& filename);
+bool is_account_file(const std::string& filename);
 
 /// Check if the given filename if the name of a statistics file.
-extern bool is_statistics_file(const std::string& filename);
+bool is_statistics_file(const std::string& filename);
 
 /// Get the name of the statistics file for a given master URL.
-extern std::string get_statistics_filename(const char* master_url);
+std::string get_statistics_filename(const std::string& master_url);
 
 /// Check if a file name denotes an image file.
-extern bool is_image_file(std::string filename);
-
-void get_sched_request_filename(const PROJECT&, char*, int len) __attribute__((deprecated));
-void get_sched_reply_filename(const PROJECT&, char*, int len) __attribute__((deprecated));
-void get_master_filename(const PROJECT&, char*, int len) __attribute__((deprecated));
-void job_log_filename(const PROJECT&, char*, int) __attribute__((deprecated));
+bool is_image_file(std::string filename);
 
 /// Get the scheduler request file name for a project.
 std::string get_sched_request_filename(const PROJECT& project);
