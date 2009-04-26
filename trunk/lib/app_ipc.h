@@ -226,22 +226,17 @@ int parse_graphics_file(FILE* f, GRAPHICS_INFO* gi);
 ///@}
 
 extern const char* xml_graphics_modes[NGRAPHICS_MSGS];
-extern int boinc_link(const char* phys_name, const char* logical_name);
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+int boinc_link(const char* phys_name, const char* logical_name);
 
 /// Resolve virtual name (in slot dir) to physical path (in project dir).
-extern int boinc_resolve_filename(const char* virtual_name, char* physical_name, int len);
+int boinc_resolve_filename(const char* virtual_name, char* physical_name, int len);
 
 /// Resolve virtual name (in slot dir) to physical path (in project dir).
-extern int boinc_resolve_filename_s(const char *virtual_name, std::string& physical_name);
+int boinc_resolve_filename_s(const char *virtual_name, std::string& physical_name);
 
-#ifdef __cplusplus
-} // extern "C" {
-#endif
+/// Get the directory for a project denoted by its master-url.
+std::string url_to_project_dir(const std::string& url);
 
-extern void url_to_project_dir(const char* url, char* dir);
+void url_to_project_dir(const char* url, char* dir) __attribute__((deprecated));
 
 #endif // APP_IPC_H

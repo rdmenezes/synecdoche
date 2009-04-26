@@ -62,15 +62,14 @@
 /// Write a scheduler request to a disk file,
 /// to be sent to a scheduling server.
 int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
-    char buf[1024];
     MIOFILE mf;
     unsigned int i;
     const RESULT* rp;
     int retval;
     double disk_total, disk_project;
 
-    get_sched_request_filename(*p, buf, sizeof(buf));
-    FILE* f = boinc_fopen(buf, "wb");
+    std::string sr_file = get_sched_request_filename(*p);
+    FILE* f = boinc_fopen(sr_file.c_str(), "wb");
     if (!f) return ERR_FOPEN;
 
     double trs = total_resource_share();
@@ -261,8 +260,8 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     }
     if (p->send_job_log) {
         fprintf(f, "<job_log>\n");
-        job_log_filename(*p, buf, sizeof(buf));
-        send_log_after(buf, p->send_job_log, mf);
+        std::string jl_filename = job_log_filename(*p);
+        send_log_after(jl_filename.c_str(), p->send_job_log, mf);
         fprintf(f, "</job_log>\n");
     }
 
@@ -380,16 +379,15 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     SCHEDULER_REPLY sr;
     unsigned int i;
     bool signature_valid, update_global_prefs=false, update_project_prefs=false;
-    char filename[256];
     std::string old_gui_urls = project->gui_urls;
 
     nresults = 0;
     contacted_sched_server = true;
     project->last_rpc_time = now;
 
-    get_sched_reply_filename(*project, filename, sizeof(filename));
+    std::string filename = get_sched_reply_filename(*project);
 
-    FILE* f = fopen(filename, "r");
+    FILE* f = fopen(filename.c_str(), "r");
     if (!f) {
         return ERR_FOPEN;
     }

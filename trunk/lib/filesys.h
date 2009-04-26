@@ -37,7 +37,7 @@
 extern "C" {
 #endif // __cplusplus
   /// Delete a file.
-  extern int boinc_delete_file(const char* path);
+  int boinc_delete_file(const std::string& path);
 
   /// Create an empty file.
   extern int boinc_touch_file(const char *path);

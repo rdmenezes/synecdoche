@@ -1469,30 +1469,29 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     }
 
     // Delete statistics file:
-    std::string sf_path = get_statistics_filename(project->master_url);
-    int retval = boinc_delete_file(sf_path.c_str());
+    std::string path = get_statistics_filename(project->master_url);
+    int retval = boinc_delete_file(path);
     if (retval) {
         msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete statistics file: %s", boincerror(retval));
     }
 
     // Delete account file:
-    std::string af_path = get_account_filename(project->master_url);
-    retval = boinc_delete_file(af_path.c_str());
+    path = get_account_filename(project->master_url);
+    retval = boinc_delete_file(path);
     if (retval) {
         msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete account file: %s", boincerror(retval));
     }
 
     // Delete scheduler request file:
-    char path[256];
-    get_sched_request_filename(*project, path, sizeof(path));
+    path = get_sched_request_filename(*project);
     boinc_delete_file(path);
 
     // Delete scheduler reply file:
-    get_sched_reply_filename(*project, path, sizeof(path));
+    path = get_sched_reply_filename(*project);
     boinc_delete_file(path);
 
     // Delete master file:
-    get_master_filename(*project, path, sizeof(path));
+    path = get_master_filename(*project);
     boinc_delete_file(path);
 
     // Remove project directory and its contents:

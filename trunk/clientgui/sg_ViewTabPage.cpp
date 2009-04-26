@@ -178,8 +178,7 @@ void CViewTabPage::LoadSlideShow(std::vector<wxBitmap>* vSlideShow) {
     if (result <= 0) {
         return;
     }
-    char urlDirectory[256];
-    url_to_project_dir(result->project->master_url.c_str(), urlDirectory);
+    std::string urlDirectory = url_to_project_dir(result->project->master_url);
     for(int i = 0; i < 99; ++i) {
         std::ostringstream file;
         file << urlDirectory << "/slideshow_" << result->app->name.c_str() << '_';

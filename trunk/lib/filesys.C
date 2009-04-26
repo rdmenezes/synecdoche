@@ -334,23 +334,23 @@ static int boinc_delete_file_aux(const char* path) {
 ///
 /// \param[in] path The path of the file that should be deleted.
 /// \return Zero on success, ERR_UNLINK on error.
-int boinc_delete_file(const char* path) {
+int boinc_delete_file(const std::string& path) {
     int retval = 0;
 
     if (!boinc_file_exists(path)) {
         return 0;
     }
-    retval = boinc_delete_file_aux(path);
+    retval = boinc_delete_file_aux(path.c_str());
     if (retval) {
         double start = dtime();
         do {
             boinc_sleep(drand()*2);       // avoid lockstep
-            retval = boinc_delete_file_aux(path);
+            retval = boinc_delete_file_aux(path.c_str());
             if (!retval) break;
         } while (dtime() < start + FILE_RETRY_INTERVAL);
     }
     if (retval) {
-        safe_strcpy(boinc_failed_file, path);
+        safe_strcpy(boinc_failed_file, path.c_str());
         return ERR_UNLINK;
     }
     return 0;
