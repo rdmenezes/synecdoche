@@ -429,12 +429,12 @@ int clean_out_dir(const char* dirpath) {
 /// Unix: follow symbolic links
 ///
 /// \param[in] dirpath Path to the directory which size should be calculated.
-/// \param[out] size Referenze to a variable that will receive the size of the
+/// \param[out] size Reference to a variable that will receive the size of the
 ///                  directory specified by \a dirpath.
 /// \param[in] recurse If true the size of all sub-directories will be
 ///                    considered, too.
 int dir_size(const char* dirpath, double& size, bool recurse) {
-#ifdef WIN32
+#ifdef _WIN32
     std::string path2(dirpath);
     path2.append("/*");
     size = 0.0;
