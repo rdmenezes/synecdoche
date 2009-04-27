@@ -623,7 +623,10 @@ static int boinc_rename_aux(const char* old, const char* newf) {
     }
     return GetLastError();
 #else
-    return rename(old, newf);
+    if (rename(old, newf) < 0) {
+        return ERR_RENAME;
+    }
+    return 0;
 #endif // _WIN32
 }
 
@@ -666,7 +669,10 @@ int boinc_mkdir(const char* path) {
     mode_t old_mask = umask(0);
     int retval = mkdir(path, 0771);
     umask(old_mask);
-    return retval;
+    if (retval < 0) {
+        return ERR_MKDIR;
+    }
+    return 0;
 #endif // _WIN32
 }
 
