@@ -845,7 +845,7 @@ std::string boinc_getcwd() {
 /// \return The absolute path based on the current working directory and
 ///         the path given in \a relname. If the current working directory
 ///         could not be determined this function returns an empty string.
-std::string relative_to_absolute(const char* relname) {
+std::string relative_to_absolute(const std::string& relname) {
     std::string result = boinc_getcwd();
     if (!result.empty()) {
         result.append("/").append(relname);
