@@ -112,9 +112,8 @@ extern std::string timediff_format(double);
 /// \param[in] suffix The suffix to look for.
 /// \return True if \a s ends with \a suffix, false otherwise.
 inline bool ends_with(const std::string& s, const std::string& suffix) {
-    return
-        s.size()>=suffix.size() &&
-        s.substr(s.size()-suffix.size()) == suffix;
+    return s.size() >= suffix.size() &&
+        s.compare(s.size() - suffix.size(), suffix.size(), suffix);
 }
 
 /// Check if a string has as specific prefix.
@@ -123,7 +122,7 @@ inline bool ends_with(const std::string& s, const std::string& suffix) {
 /// \param[in] prefix The prefix to look for.
 /// \return True if \a s starts with \a prefix, false otherwise.
 inline bool starts_with(const std::string& s, const std::string& prefix) {
-    return s.substr(0, prefix.size()) == prefix;
+    return s.compare(0, prefix.size(), prefix) == 0;
 }
 
 /// Turn all characters in a string into their lower case equivalents.
