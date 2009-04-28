@@ -225,7 +225,7 @@ int ACTIVE_TASK::write_app_init_file() {
     return retval;
 }
 
-static int make_soft_link(PROJECT* project, const char* link_path, const char* rel_file_path) {
+static int make_soft_link(const PROJECT* project, const char* link_path, const char* rel_file_path) {
     FILE *fp = boinc_fopen(link_path, "w");
     if (!fp) {
         msg_printf(project, MSG_INTERNAL_ERROR,
@@ -243,8 +243,8 @@ static int make_soft_link(PROJECT* project, const char* link_path, const char* r
 /// -# copy the file to slot dir, if reference is by copy
 /// -# else make a soft link
 static int setup_file(
-    PROJECT* project, FILE_INFO* fip, FILE_REF& fref,
-    char* file_path, char* slot_dir, bool input
+    const PROJECT* project, const FILE_INFO* fip, const FILE_REF& fref,
+    const char* file_path, const char* slot_dir, bool input
 ) {
     int retval;
 
@@ -317,7 +317,7 @@ int ACTIVE_TASK::copy_output_files() {
     for (i=0; i<result->output_files.size(); i++) {
         FILE_REF& fref = result->output_files[i];
         if (!fref.copy_file) continue;
-        FILE_INFO* fip = fref.file_info;
+        const FILE_INFO* fip = fref.file_info;
         std::string slotfile = std::string(slot_dir) + std::string("/")
                                                      + std::string(fref.open_name);
         get_pathname(fip, projfile, sizeof(projfile));
@@ -468,7 +468,7 @@ int ACTIVE_TASK::start() {
     if (!full_init_done) {
         for (i=0; i<wup->input_files.size(); i++) {
             fref = wup->input_files[i];
-            FILE_INFO* fip = fref.file_info;
+            const FILE_INFO* fip = fref.file_info;
             get_pathname(fref.file_info, file_path, sizeof(file_path));
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, true);
             if (retval) {
@@ -479,7 +479,7 @@ int ACTIVE_TASK::start() {
         for (i=0; i<result->output_files.size(); i++) {
             fref = result->output_files[i];
             if (fref.copy_file) continue;
-            FILE_INFO* fip = fref.file_info;
+            const FILE_INFO* fip = fref.file_info;
             get_pathname(fref.file_info, file_path, sizeof(file_path));
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, false);
             if (retval) {
