@@ -750,28 +750,30 @@ void ACTIVE_TASK_SET::report_overdue() const {
 /// Then mark file X as being present (and uploadable)
 int ACTIVE_TASK::handle_upload_files() {
     std::string filename;
-    char buf[256], path[1024];
     int retval;
 
     DirScanner dirscan(slot_dir);
     while (dirscan.scan(filename)) {
-        strcpy(buf, filename.c_str());
-        if (strstr(buf, UPLOAD_FILE_REQ_PREFIX) == buf) {
-            char* p = buf+strlen(UPLOAD_FILE_REQ_PREFIX);
-            FILE_INFO* fip = result->lookup_file_logical(p);
+        if (starts_with(filename, UPLOAD_FILE_REQ_PREFIX)) {
+            std::string& link_filename = filename;
+            // strip the prefix
+            std::string real_filename = filename.substr(strlen(UPLOAD_FILE_REQ_PREFIX));
+
+            FILE_INFO* fip = result->lookup_file_logical(real_filename.c_str());
             if (fip) {
-                get_pathname(fip, path, sizeof(path));
-                retval = md5_file(path, fip->md5_cksum, fip->nbytes);
+                std::string path = get_pathname(fip);
+                retval = md5_file(path.c_str(), fip->md5_cksum, fip->nbytes);
                 if (retval) {
                     fip->status = retval;
                 } else {
                     fip->status = FILE_PRESENT;
                 }
             } else {
-                msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't find uploadable file %s", p);
+                msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't find uploadable file %s", real_filename.c_str());
             }
-            sprintf(path, "%s/%s", slot_dir, buf);
-            delete_project_owned_file(path, true);  // delete the link file
+            std::string path(slot_dir);
+            path.append("/").append(link_filename);
+            delete_project_owned_file(path.c_str(), true);  // delete the link file
         }
     }
     return 0;
