@@ -113,7 +113,7 @@ extern std::string timediff_format(double);
 /// \return True if \a s ends with \a suffix, false otherwise.
 inline bool ends_with(const std::string& s, const std::string& suffix) {
     return s.size() >= suffix.size() &&
-        s.compare(s.size() - suffix.size(), suffix.size(), suffix);
+        s.compare(s.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
 /// Check if a string has as specific prefix.
