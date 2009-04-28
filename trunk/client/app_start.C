@@ -168,8 +168,7 @@ int ACTIVE_TASK::write_app_init_file() {
     safe_strcpy(aid.user_name, wup->project->user_name);
     safe_strcpy(aid.team_name, wup->project->team_name);
 
-    std::string project_path = get_project_dir(wup->project);
-    project_path = relative_to_absolute(project_path.c_str());
+    std::string project_path = relative_to_absolute(get_project_dir(wup->project));
     strlcpy(aid.project_dir, project_path.c_str(), sizeof(aid.project_dir));
 
     std::string buf = relative_to_absolute("");

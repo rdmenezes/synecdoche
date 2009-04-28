@@ -98,8 +98,9 @@ extern "C" {
 /// Return the current working directory.
 extern std::string boinc_getcwd();
 
-/// Turn a relative path into an absolute on.
-extern std::string relative_to_absolute(const char* relname);
+/// Turn a relative path into an absolute one.
+extern std::string relative_to_absolute(const std::string& relname);
+//extern std::string relative_to_absolute(const char* relname);
 
 /// Get the size of a file.
 extern int file_size(const char* path, double& size);
