@@ -469,8 +469,7 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
         // This is done when parsing scheduler reply,
         // to ensure that we get rid of sym links for
         // project files no longer in use
-        char project_dir[256];
-        get_project_dir(this, project_dir, sizeof(project_dir));
+        std::string project_dir = get_project_dir(this);
         for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
             std::string path(project_dir);
             path.append("/").append((*it).open_name);
@@ -547,8 +546,7 @@ void PROJECT::write_project_files(MIOFILE& f) const {
 ///                links should be created.
 /// \return Always returns zero.
 int PROJECT::write_symlink_for_project_file(const FILE_INFO* fip) const {
-    char project_dir[256];
-    get_project_dir(this, project_dir, sizeof(project_dir));
+    std::string project_dir = get_project_dir(this);
 
     for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
         if ((*it).file_info == fip) {
@@ -556,7 +554,7 @@ int PROJECT::write_symlink_for_project_file(const FILE_INFO* fip) const {
             path.append("/").append((*it).open_name);
             FILE* f = boinc_fopen(path.c_str(), "w");
             if (f) {
-                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir, fip->name.c_str());
+                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir.c_str(), fip->name.c_str());
                 fclose(f);
             }
         }
@@ -898,11 +896,11 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
         return NULL;
     }
 
-	/// if a project supplies multiple URLs, try them in order
-	/// (e.g. in Einstein@home they're ordered by proximity to client).
-	/// The commented-out code tries them starting from random place.
-	/// This is appropriate if replication is for load-balancing.
-	/// TODO: add a flag saying which mode to use.
+    /// if a project supplies multiple URLs, try them in order
+    /// (e.g. in Einstein@home they're ordered by proximity to client).
+    /// The commented-out code tries them starting from random place.
+    /// This is appropriate if replication is for load-balancing.
+    /// TODO: add a flag saying which mode to use.
 #if 1
     current_url = 0;
 #else
@@ -1023,6 +1021,7 @@ std::string FILE_INFO::failure_message() const {
 /// Compress the file using zlib (gzip compression).
 ///
 /// \return Zero on success, ERR_FOPEN or ERR_WRITE on error.
+/// \todo Replace this with a gzip streambuf? (btw, there is one in boost::iostream)
 int FILE_INFO::gzip() {
     const size_t BUFSIZE = 16384;
     char buf[BUFSIZE];

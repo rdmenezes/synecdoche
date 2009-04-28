@@ -665,15 +665,14 @@ int CLIENT_STATE::write_state_file_if_needed() {
 /// and use "anonymous platform" mechanism for this project.
 void CLIENT_STATE::check_anonymous() {
     unsigned int i;
-    char dir[256], path[256];
     FILE* f;
     int retval;
 
     for (i=0; i<projects.size(); i++) {
         PROJECT* p = projects[i];
-        get_project_dir(p, dir, sizeof(dir));
-        sprintf(path, "%s/%s", dir, APP_INFO_FILE_NAME);
-        f = fopen(path, "r");
+        std::string path(get_project_dir(p));
+        path.append("/" APP_INFO_FILE_NAME);
+        f = fopen(path.c_str(), "r");
         if (!f) continue;
         msg_printf(p, MSG_INFO,
             "Found %s; using anonymous platform", APP_INFO_FILE_NAME
