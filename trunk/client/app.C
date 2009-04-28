@@ -349,17 +349,16 @@ int ACTIVE_TASK::move_trickle_file() {
 /// size of output files and files in slot dir
 int ACTIVE_TASK::current_disk_usage(double& size) const {
     double x;
-    unsigned int i;
     int retval;
-    const FILE_INFO* fip;
-    char path[1024];
+    std::string path;
 
     retval = dir_size(slot_dir, size);
     if (retval) return retval;
-    for (i=0; i<result->output_files.size(); i++) {
-        fip = result->output_files[i].file_info;
-        get_pathname(fip, path, sizeof(path));
-        retval = file_size(path, x);
+    for (size_t i=0; i<result->output_files.size(); i++) {
+        const FILE_INFO* fip = result->output_files[i].file_info;
+
+        path = get_pathname(fip);
+        retval = file_size(path.c_str(), x);
         if (!retval) size += x;
     }
     return 0;
