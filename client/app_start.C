@@ -150,7 +150,6 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 int ACTIVE_TASK::write_app_init_file() {
     APP_INIT_DATA aid;
     FILE *f;
-    char project_dir[256];
     int retval;
 
     memset(&aid, 0, sizeof(aid));
@@ -168,11 +167,14 @@ int ACTIVE_TASK::write_app_init_file() {
     aid.hostid = wup->project->hostid;
     safe_strcpy(aid.user_name, wup->project->user_name);
     safe_strcpy(aid.team_name, wup->project->team_name);
-    get_project_dir(wup->project, project_dir, sizeof(project_dir));
-    std::string project_path = relative_to_absolute(project_dir);
+
+    std::string project_path = get_project_dir(wup->project);
+    project_path = relative_to_absolute(project_path.c_str());
     strlcpy(aid.project_dir, project_path.c_str(), sizeof(aid.project_dir));
+
     std::string buf = relative_to_absolute("");
     strlcpy(aid.boinc_dir, buf.c_str(), sizeof(aid.boinc_dir));
+
     strcpy(aid.authenticator, wup->project->authenticator);
     aid.slot = slot;
     strcpy(aid.wu_name, wup->name);
