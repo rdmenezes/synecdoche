@@ -745,7 +745,7 @@ void ACTIVE_TASK_SET::report_overdue() const {
     }
 }
 
-/// scan the slot directory, looking for files with names
+/// Scan the slot directory, looking for files with names
 /// of the form boinc_ufr_X.
 /// Then mark file X as being present (and uploadable)
 int ACTIVE_TASK::handle_upload_files() {
