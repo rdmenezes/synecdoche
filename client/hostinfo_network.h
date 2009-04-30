@@ -16,4 +16,4 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 
-extern int get_local_network_info(char* dom, int ,char* ip, int iplen);
+int get_local_network_info(char* dom, int ,char* ip, int iplen);

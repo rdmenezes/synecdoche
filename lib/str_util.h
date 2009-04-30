@@ -42,39 +42,39 @@
 
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
-extern size_t strlcpy(char* dst, const char* src, size_t size);
+size_t strlcpy(char* dst, const char* src, size_t size);
 #endif
 
 #if !defined(HAVE_STRLCAT)
 /// Use this instead of strncat().
-extern size_t strlcat(char* dst, const char* src, size_t size);
+size_t strlcat(char* dst, const char* src, size_t size);
 #endif
 
 #if !defined(HAVE_STRCASESTR)
 /// Search for a substring while ignoring upper-/lowercase.
-extern char* strcasestr(const char* s1, const char* s2);
+char* strcasestr(const char* s1, const char* s2);
 #endif
 
 /// Convert a double precision time into a string.
-extern int ndays_to_string(double x, int smallest_timescale, char* str, size_t len);
+int ndays_to_string(double x, int smallest_timescale, char* str, size_t len);
 
 /// Convert \a nbytes into a string.
-extern int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len);
+int nbytes_to_string(double nbytes, double total_bytes, char* str, size_t len);
 
 /// Split a string with space separated words into single words.
-extern std::list<std::string> parse_command_line(const char* p);
+std::list<std::string> parse_command_line(const char* p);
 
 /// Remove leading and trailing whitespace from a string.
-extern void strip_whitespace(char *str);
+void strip_whitespace(char *str);
 
 /// Remove leading and trailing whitespace from a string.
-extern void strip_whitespace(std::string&);
+void strip_whitespace(std::string&);
 
 /// Unescape an URL.
-extern void unescape_url(std::string& url);
+void unescape_url(std::string& url);
 
 /// Escape an URL.
-extern void escape_url(std::string& url);
+void escape_url(std::string& url);
 
 void escape_url_readable(const char* in, char* out) __attribute__((deprecated));
 
@@ -86,25 +86,25 @@ void escape_project_url(const char *in, char* out) __attribute__((deprecated));
 /// Escape a URL for the project directory
 std::string escape_project_url(const std::string& in);
 
-extern bool valid_master_url(const char*);
+bool valid_master_url(const char*);
 
 /// Canonicalize a master URL.
-extern void canonicalize_master_url(char *url) __attribute__((deprecated));
+void canonicalize_master_url(char *url) __attribute__((deprecated));
 
 /// Canonicalize a master URL.
-extern void canonicalize_master_url(std::string&);
+void canonicalize_master_url(std::string&);
 
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
 #define safe_strcat(x, y) if (strlen(x)+strlen(y)<sizeof(x)) strcat(x, y)
 
 /// Convert a timestamp into a string.
-extern std::string time_to_string(double t);
+std::string time_to_string(double t);
 
 /// Convert a timestamp with sub-second precision into a string.
-extern std::string precision_time_to_string(double t);
+std::string precision_time_to_string(double t);
 
 /// Convert a time difference into a descriptive string.
-extern std::string timediff_format(double);
+std::string timediff_format(double);
 
 /// Check if a string has as specific suffix.
 ///
@@ -134,28 +134,28 @@ inline void downcase_string(std::string& w) {
 }
 
 /// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-extern std::string mysql_timestamp(double dt);
+std::string mysql_timestamp(double dt);
 
 /// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-extern int mysql_timestamp(double dt, char* p, size_t len);
+int mysql_timestamp(double dt, char* p, size_t len);
 
 /// Returns short text description of error numbers.
-extern const char* boincerror(int which_error);
+const char* boincerror(int which_error);
 
 /// Return a text-string description of a given network status.
-extern const char* network_status_string(int n);
+const char* network_status_string(int n);
 
 /// Return a text-string description of a given reason for a rpc request.
-extern const char* rpc_reason_string(rpc_reason reason);
+const char* rpc_reason_string(rpc_reason reason);
 
 #ifdef _WIN32
 #include <windows.h>
 
 /// Get a message for the last error.
-extern char* windows_error_string(char* pszBuf, int iSize);
+char* windows_error_string(char* pszBuf, int iSize);
 
 /// Get a message for a given error.
-extern char* windows_format_error_string(unsigned long dwError, char* pszBuf, int iSize);
+char* windows_format_error_string(unsigned long dwError, char* pszBuf, int iSize);
 #endif
 
 #endif

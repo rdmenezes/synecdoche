@@ -116,9 +116,9 @@ extern LOG_FLAGS log_flags;
 extern CONFIG config;
 
 /// Read the config file.
-extern int read_config_file(bool init);
+int read_config_file(bool init);
 
 /// Print a message about unparsed xml.
-extern void handle_unparsed_xml_warning(const std::string& in_func, const std::string& buf);
+void handle_unparsed_xml_warning(const std::string& in_func, const std::string& buf);
 
 #endif // LOGFLAGS_H

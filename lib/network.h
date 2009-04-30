@@ -42,15 +42,15 @@ public:
 };
 
 /// Resolve a hostname (IPv4 only).
-extern int resolve_hostname(const char* hostname, int& ip_addr);
+int resolve_hostname(const char* hostname, int& ip_addr);
 
-extern int boinc_socket(int& sock);
-extern int boinc_socket_asynch(int sock, bool asynch);
-extern void boinc_close_socket(int sock);
-extern int get_socket_error(int fd);
+int boinc_socket(int& sock);
+int boinc_socket_asynch(int sock, bool asynch);
+void boinc_close_socket(int sock);
+int get_socket_error(int fd);
 
 /// Return a string describing the current network error value.
-extern const char* socket_error_str();
+const char* socket_error_str();
 
 #if defined(_WIN32) && defined(USE_WINSOCK)
 typedef int boinc_socklen_t;
@@ -74,7 +74,7 @@ typedef BOINC_SOCKLEN_T boinc_socklen_t;
 
 
 #if defined(_WIN32) && defined(USE_WINSOCK)
-extern int WinsockInitialize();
-extern int WinsockCleanup();
+int WinsockInitialize();
+int WinsockCleanup();
 #endif
 #endif

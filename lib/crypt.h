@@ -66,11 +66,11 @@ typedef struct {
 // functions to convert between OpenSSL's keys (using BIGNUMs)
 // and our binary format
 
-extern void openssl_to_keys(
+void openssl_to_keys(
     RSA* rp, int nbits, R_RSA_PRIVATE_KEY& priv, R_RSA_PUBLIC_KEY& pub
 );
-extern void private_to_openssl(R_RSA_PRIVATE_KEY& priv, RSA* rp);
-extern void public_to_openssl(R_RSA_PUBLIC_KEY& pub, RSA* rp);
+void private_to_openssl(R_RSA_PRIVATE_KEY& priv, RSA* rp);
+void public_to_openssl(R_RSA_PUBLIC_KEY& pub, RSA* rp);
 
 #endif
 
@@ -92,38 +92,38 @@ struct DATA_BLOCK {
 /// size of text-encoded signature
 #define SIGNATURE_SIZE_TEXT (SIGNATURE_SIZE_BINARY*2+20)
 
-extern int print_hex_data(FILE* f, DATA_BLOCK&);
-extern int sprint_hex_data(char* p, DATA_BLOCK&);
-extern int scan_hex_data(FILE* f, DATA_BLOCK&);
-extern int print_key_hex(FILE*, KEY* key, int len);
-extern int scan_key_hex(FILE*, KEY* key, int len);
-extern int sscan_key_hex(const char*, KEY* key, int len);
-extern int encrypt_private(
+int print_hex_data(FILE* f, DATA_BLOCK&);
+int sprint_hex_data(char* p, DATA_BLOCK&);
+int scan_hex_data(FILE* f, DATA_BLOCK&);
+int print_key_hex(FILE*, KEY* key, int len);
+int scan_key_hex(FILE*, KEY* key, int len);
+int sscan_key_hex(const char*, KEY* key, int len);
+int encrypt_private(
     R_RSA_PRIVATE_KEY& key, DATA_BLOCK& in, DATA_BLOCK& out
 );
-extern int decrypt_public(
+int decrypt_public(
     R_RSA_PUBLIC_KEY& key, DATA_BLOCK& in, DATA_BLOCK& out
 );
-extern int sign_file(
+int sign_file(
     const char* path, R_RSA_PRIVATE_KEY&, DATA_BLOCK& signature
 );
-extern int sign_block(
+int sign_block(
     DATA_BLOCK& data, R_RSA_PRIVATE_KEY&, DATA_BLOCK& signature
 );
-extern int verify_file(
+int verify_file(
     const char* path, R_RSA_PUBLIC_KEY&, DATA_BLOCK& signature, bool&
 );
-extern int verify_file2(
+int verify_file2(
     const char* path, const char* signature, const char* key, bool&
 );
-extern int verify_string(
+int verify_string(
     const char* text, const char* signature, R_RSA_PUBLIC_KEY&, bool&
 );
-extern int verify_string2(
+int verify_string2(
     const char* text, const char* signature, const char* key, bool&
 );
-extern int read_key_file(const char* keyfile, R_RSA_PRIVATE_KEY& key);
-extern int generate_signature(
+int read_key_file(const char* keyfile, R_RSA_PRIVATE_KEY& key);
+int generate_signature(
     char* text_to_sign, char* signature_hex, R_RSA_PRIVATE_KEY& key
 );
 

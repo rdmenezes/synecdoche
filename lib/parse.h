@@ -111,37 +111,37 @@ inline bool parse_double(const char* buf, const char* tag, double& result) {
     return false;
 }
 
-extern bool parse_str(const char* buf, const char* tag, char* dest, size_t destlen);
-extern bool parse_str(const char* buf, const char* tag, std::string& dest);
-extern void parse_attr(const char* buf, const char* attrname, char* out, size_t len);
-extern bool parse_bool(const char* buf, const char* tag, bool& result);
+bool parse_str(const char* buf, const char* tag, char* dest, size_t destlen);
+bool parse_str(const char* buf, const char* tag, std::string& dest);
+void parse_attr(const char* buf, const char* attrname, char* out, size_t len);
+bool parse_bool(const char* buf, const char* tag, bool& result);
 
 // END DEPRECATED XML PARSER
 
 /// @}
 
-extern int copy_stream(FILE* in, FILE* out);
-extern int strcatdup(char*& p, char* buf);
-extern int dup_element_contents(FILE* in, const char* end_tag, char** pp);
-extern int dup_element(FILE* in, const char* end_tag, char** pp);
-extern int copy_element_contents(FILE* in, const char* end_tag, char* p, size_t len);
-extern int copy_element_contents(FILE* in, const char* end_tag, std::string&);
-extern void replace_element_contents(
+int copy_stream(FILE* in, FILE* out);
+int strcatdup(char*& p, char* buf);
+int dup_element_contents(FILE* in, const char* end_tag, char** pp);
+int dup_element(FILE* in, const char* end_tag, char** pp);
+int copy_element_contents(FILE* in, const char* end_tag, char* p, size_t len);
+int copy_element_contents(FILE* in, const char* end_tag, std::string&);
+void replace_element_contents(
     char* buf, const char* start, const char* end, const char* replacement
 );
-extern bool remove_element(char* buf, const char* start, const char* end);
-extern bool str_replace(char* str, const char* old, const char* neww);
-extern char* sgets(char* buf, size_t len, char* &in);
+bool remove_element(char* buf, const char* start, const char* end);
+bool str_replace(char* str, const char* old, const char* neww);
+char* sgets(char* buf, size_t len, char* &in);
 
 /// Escape XML.
-extern void xml_escape(const char* in, char* out, int len);
+void xml_escape(const char* in, char* out, int len);
 
 /// Unescape XML.
-extern void xml_unescape(const char* in, char* out, int len);
+void xml_unescape(const char* in, char* out, int len);
 
-extern void extract_venue(const char* in, const char* venue_name, char* out);
+void extract_venue(const char* in, const char* venue_name, char* out);
 
 /// Skip unrecognized line.
-extern int skip_unrecognized(char* buf, MIOFILE& fin);
+int skip_unrecognized(char* buf, MIOFILE& fin);
 
 #endif

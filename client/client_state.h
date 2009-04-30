@@ -487,11 +487,11 @@ private:
 extern CLIENT_STATE gstate;
 
 /// return a random double in the range [MIN,min(e^n,MAX))
-extern double calculate_exponential_backoff(
+double calculate_exponential_backoff(
     int n, double MIN, double MAX
 );
 
-extern void print_suspend_tasks_message(int);
+void print_suspend_tasks_message(int);
 
 /// the client will handle I/O (including GUI RPCs)
 /// for up to POLL_INTERVAL seconds before calling poll_slow_events()

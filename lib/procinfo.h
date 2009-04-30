@@ -31,15 +31,15 @@ struct PROCINFO {
     double kernel_time;
     bool is_boinc_app;
 
-    double page_fault_rate;     // derived by higher-level code
+    double page_fault_rate;     ///< derived by higher-level code
 };
 
-extern int procinfo_setup(std::vector<PROCINFO>&);
+int procinfo_setup(std::vector<PROCINFO>&);
     // call this first to get data structure
-extern void procinfo_app(PROCINFO&, std::vector<PROCINFO>&);
+void procinfo_app(PROCINFO&, std::vector<PROCINFO>&);
     // call this to get mem usage for a given app
     // (marks process as BOINC)
-extern void procinfo_other(PROCINFO&, std::vector<PROCINFO>&);
+void procinfo_other(PROCINFO&, std::vector<PROCINFO>&);
     // After getting mem usage for all BOINC apps,
     // call this to get mem usage for everything else
 

@@ -63,7 +63,7 @@ public:
     }
 };
 
-extern int copy_element_contents(MIOFILE& in, const char* end_tag, char* p, int len);
-extern int copy_element_contents(MIOFILE& in, const char* end_tag, std::string&);
+int copy_element_contents(MIOFILE& in, const char* end_tag, char* p, int len);
+int copy_element_contents(MIOFILE& in, const char* end_tag, std::string&);
 
 #endif

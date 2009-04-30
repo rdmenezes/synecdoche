@@ -89,7 +89,7 @@ extern "C" {
 #include <mach/port.h>
 typedef mach_port_t NXEventHandle;
 NXEventHandle NXOpenEventStatus(void);
-extern double NXIdleTime(NXEventHandle handle);
+double NXIdleTime(NXEventHandle handle);
 #ifdef __cplusplus
 }   // extern "C"
 #endif
