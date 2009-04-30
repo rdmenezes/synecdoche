@@ -20,9 +20,9 @@
 extern HANDLE sandbox_account_interactive_token;
 extern HANDLE sandbox_account_service_token;
 
-extern void get_sandbox_account_interactive_token();
-extern void get_sandbox_account_service_token();
+void get_sandbox_account_interactive_token();
+void get_sandbox_account_service_token();
 
-extern int run_app_windows(
+int run_app_windows(
     const char* path, const char* cdir, int argc, char *const argv[], HANDLE&
 );

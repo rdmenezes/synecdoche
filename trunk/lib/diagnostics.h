@@ -68,66 +68,66 @@ extern "C" {
 
 
 // These are functions common to all platforms
-extern int boinc_init_diagnostics( int flags );
-extern int boinc_init_graphics_diagnostics( int flags );
-extern int boinc_install_signal_handlers();
-extern int boinc_finish_diag();
+int boinc_init_diagnostics( int flags );
+int boinc_init_graphics_diagnostics( int flags );
+int boinc_install_signal_handlers();
+int boinc_finish_diag();
 
-extern int diagnostics_init(
+int diagnostics_init(
     int flags, const char* stdout_prefix, const char* stderr_prefix
 );
-extern int diagnostics_finish();
-extern int diagnostics_is_initialized();
-extern int diagnostics_is_flag_set( int flags );
+int diagnostics_finish();
+int diagnostics_is_initialized();
+int diagnostics_is_flag_set( int flags );
 
 // Properties
-extern const char* diagnostics_get_boinc_dir();
-extern const char* diagnostics_get_boinc_install_dir();
-extern const char* diagnostics_get_symstore();
-extern int diagnostics_set_symstore(const char* symstore);
-extern int diagnostics_is_proxy_enabled();
-extern const char* diagnostics_get_proxy();
+const char* diagnostics_get_boinc_dir();
+const char* diagnostics_get_boinc_install_dir();
+const char* diagnostics_get_symstore();
+int diagnostics_set_symstore(const char* symstore);
+int diagnostics_is_proxy_enabled();
+const char* diagnostics_get_proxy();
 
-extern int diagnostics_is_aborted_via_gui();
-extern int diagnostics_set_aborted_via_gui();
+int diagnostics_is_aborted_via_gui();
+int diagnostics_set_aborted_via_gui();
 
 // Log rotation
-extern int diagnostics_cycle_logs();
-extern void diagnostics_set_max_file_sizes(int stdout_size, int stderr_size);
+int diagnostics_cycle_logs();
+void diagnostics_set_max_file_sizes(int stdout_size, int stderr_size);
 
 // Thread Tracking
-extern int diagnostics_init_thread_list();
-extern int diagnostics_finish_thread_list();
-extern int diagnostics_update_thread_list();
-extern int diagnostics_set_thread_exempt_suspend();
+int diagnostics_init_thread_list();
+int diagnostics_finish_thread_list();
+int diagnostics_update_thread_list();
+int diagnostics_set_thread_exempt_suspend();
 
 // Message Monitoring
-extern int diagnostics_init_message_monitor();
-extern int diagnostics_finish_message_monitor();
+int diagnostics_init_message_monitor();
+int diagnostics_finish_message_monitor();
 #ifdef _WIN32
-extern UINT WINAPI diagnostics_message_monitor(LPVOID lpParameter);
+UINT WINAPI diagnostics_message_monitor(LPVOID lpParameter);
 #endif
 
 // Unhandled exception monitor
-extern int diagnostics_init_unhandled_exception_monitor();
-extern int diagnostics_finish_unhandled_exception_monitor();
+int diagnostics_init_unhandled_exception_monitor();
+int diagnostics_finish_unhandled_exception_monitor();
 #ifdef _WIN32
-extern UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID lpParameter);
-extern LONG CALLBACK boinc_catch_signal(EXCEPTION_POINTERS *ExceptionInfo);
-extern void boinc_catch_signal_invalid_parameter(const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line, uintptr_t pReserved);
+UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID lpParameter);
+LONG CALLBACK boinc_catch_signal(EXCEPTION_POINTERS *ExceptionInfo);
+void boinc_catch_signal_invalid_parameter(const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line, uintptr_t pReserved);
 #else
-extern void boinc_catch_signal(int signal);
-extern void boinc_set_signal_handler(int sig, void(*handler)(int));
-extern void boinc_set_signal_handler_force(int sig, void(*handler)(int));
+void boinc_catch_signal(int signal);
+void boinc_set_signal_handler(int sig, void(*handler)(int));
+void boinc_set_signal_handler_force(int sig, void(*handler)(int));
 #endif
 
 
 // These functions are used to log the various messages that are
 //   defined in the BOINC Diagnostics Library
-extern void boinc_trace(const char *pszFormat, ...);
-extern void boinc_info(const char *pszFormat, ...);
+void boinc_trace(const char *pszFormat, ...);
+void boinc_info(const char *pszFormat, ...);
 
-extern void set_signal_exit_code(int);
+void set_signal_exit_code(int);
 
 #ifdef __cplusplus
 }

@@ -31,8 +31,8 @@
 
 class FDSET_GROUP;
 
-extern int curl_init();
-extern int curl_cleanup();
+int curl_init();
+int curl_cleanup();
 
 #define HTTP_OP_NONE    0
 
@@ -193,6 +193,6 @@ public:
     void cleanup_temp_files();
 };
 
-extern void parse_url(const char* url, char* host, int &port, char* file);
+void parse_url(const char* url, char* host, int &port, char* file);
 
 #endif // HTTP_CURL_H
