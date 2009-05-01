@@ -324,7 +324,7 @@ void MSG_CHANNEL::send_msg_overwrite(const char* msg) {
     buf[0] = 1;
 }
 
-int APP_CLIENT_SHM::decode_graphics_msg(char* msg, GRAPHICS_MSG& m) {
+int APP_CLIENT_SHM::decode_graphics_msg(const char* msg, GRAPHICS_MSG& m) {
     int i;
 
     parse_str(msg, "<window_station>", m.window_station);
@@ -347,7 +347,7 @@ void APP_CLIENT_SHM::reset_msgs() {
 /// Resolve virtual name (in slot dir) to physical path (in project dir).
 /// This function is a C-version of boinc_resolve_filename_s and only exists
 /// for compatibility reasons. See boinc_resolve_filename_s for more
-///information.
+/// information.
 ///
 /// \param[in] virtual_name String describing the virtual file name which
 ///                         should get resolved.

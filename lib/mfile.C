@@ -88,13 +88,13 @@ int MFILE::printf(const char* format, ...) {
     return n;
 }
 
-size_t MFILE::write(const void *ptr, size_t size, size_t nitems) {
-    buf = (char *)realloc( buf, len+(size*nitems)+1 );
+size_t MFILE::write(const void* data, size_t size, size_t nitems) {
+    buf = (char *)realloc(buf, len+(size*nitems)+1);
     if (!buf) {
         errno = ERR_MALLOC;
         return 0;
     }
-    memcpy( buf+len, ptr, size*nitems );
+    memcpy(buf+len, data, size*nitems);
     len += (int)size*(int)nitems;
     buf[len] = 0;
     return nitems;
@@ -112,14 +112,14 @@ int MFILE::_putchar(char c) {
     return c;
 }
 
-int MFILE::puts(const char* p) {
-    int n = (int)strlen(p);
+int MFILE::puts(const char* str) {
+    int n = (int)strlen(str);
     buf = (char*)realloc(buf, len+n+1);
     if (!buf) {
         errno = ERR_MALLOC;
         return EOF;
     }
-    strncpy(buf+len, p, n);
+    strncpy(buf+len, str, n);
     len += n;
     buf[len] = 0;
     return n;
@@ -151,9 +151,9 @@ long MFILE::tell() const {
     return f ? ftell(f) : -1;
 }
 
-void MFILE::get_buf(char*& b, int& l) {
-    b = buf;
-    l = len;
+void MFILE::get_buf(char*& buffer, int& length) {
+    buffer = buf;
+    length = len;
     buf = 0;
     len = 0;
 }

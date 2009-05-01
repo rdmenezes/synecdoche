@@ -31,10 +31,9 @@ class XML_PARSER;
 //      or via a GUI.
 //      For the prefs that it specifies, it overrides the network prefs.
 
-// A struct with one bool per pref.
-// This is passed in GUI RPCs (get/set_global_prefs_override_struct)
-// to indicate which prefs are (or should be) specified in the override file
-//
+/// A struct with one bool per pref.
+/// This is passed in GUI RPCs (get/set_global_prefs_override_struct)
+/// to indicate which prefs are (or should be) specified in the override file.
 struct GLOBAL_PREFS_MASK {
     bool run_on_batteries;
     bool run_if_user_active;
@@ -165,9 +164,9 @@ public:
 
 struct GLOBAL_PREFS {
     double mod_time;
+    /// If false, suspend while on batteries.
+    /// Poorly named...
     bool run_on_batteries;
-        // poorly named; what it really means is:
-        // if false, suspend while on batteries
     bool run_if_user_active;
     double idle_time_to_run;
     double suspend_if_no_recent_input;
@@ -200,12 +199,12 @@ struct GLOBAL_PREFS {
     void defaults();
     void init();
     void clear_bools();
-    int parse(XML_PARSER&, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
-    int parse_day(XML_PARSER&);
-    int parse_override(XML_PARSER&, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
+    int parse(XML_PARSER& xp, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
+    int parse_day(XML_PARSER& xp);
+    int parse_override(XML_PARSER& xp, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
     int parse_file(const char* filename, const char* venue, bool& found_venue);
-    int write(MIOFILE&);
-    int write_subset(MIOFILE&, GLOBAL_PREFS_MASK&);
+    int write(MIOFILE& f);
+    int write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask);
     inline double cpu_scheduling_period() {
         return cpu_scheduling_period_minutes*60;
     }

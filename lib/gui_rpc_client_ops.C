@@ -616,42 +616,42 @@ void CC_STATE::clear() {
     executing_as_daemon = false;
 }
 
-PROJECT* CC_STATE::lookup_project(const std::string& str) {
+PROJECT* CC_STATE::lookup_project(const std::string& url) {
     unsigned int i;
     for (i=0; i<projects.size(); i++) {
-        if (projects[i]->master_url == str) return projects[i];
+        if (projects[i]->master_url == url) return projects[i];
     }
-    BOINCTRACE("CAN'T FIND PROJECT %s\n", str.c_str());
+    BOINCTRACE("CAN'T FIND PROJECT %s\n", url.c_str());
     return 0;
 }
 
-APP* CC_STATE::lookup_app(const std::string& project_url, const std::string& str) {
+APP* CC_STATE::lookup_app(const std::string& project_url, const std::string& name) {
     unsigned int i;
     for (i=0; i<apps.size(); i++) {
         if (apps[i]->project->master_url != project_url) continue;
-        if (apps[i]->name == str) return apps[i];
+        if (apps[i]->name == name) return apps[i];
     }
-    BOINCTRACE("CAN'T FIND APP %s\n", str.c_str());
+    BOINCTRACE("CAN'T FIND APP %s\n", name.c_str());
     return 0;
 }
 
-APP* CC_STATE::lookup_app(const PROJECT* project, const std::string& str) {
+APP* CC_STATE::lookup_app(const PROJECT* project, const std::string& name) {
     unsigned int i;
     for (i=0; i<apps.size(); i++) {
         if (apps[i]->project != project) continue;
-        if (apps[i]->name == str) return apps[i];
+        if (apps[i]->name == name) return apps[i];
     }
-    BOINCTRACE("CAN'T FIND APP %s\n", str.c_str());
+    BOINCTRACE("CAN'T FIND APP %s\n", name.c_str());
     return 0;
 }
 
 APP_VERSION* CC_STATE::lookup_app_version(
-    const std::string& project_url, const std::string& str, int version_num
+    const std::string& project_url, const std::string& name, int version_num
 ) {
     unsigned int i;
     for (i=0; i<app_versions.size(); i++) {
         if (app_versions[i]->project->master_url != project_url) continue;
-        if (app_versions[i]->app_name == str && app_versions[i]->version_num == version_num) {
+        if (app_versions[i]->app_name == name && app_versions[i]->version_num == version_num) {
             return app_versions[i];
         }
     }
@@ -659,55 +659,55 @@ APP_VERSION* CC_STATE::lookup_app_version(
 }
 
 APP_VERSION* CC_STATE::lookup_app_version(
-    const PROJECT* project, const std::string& str, int version_num
+    const PROJECT* project, const std::string& name, int version_num
 ) {
     unsigned int i;
     for (i=0; i<app_versions.size(); i++) {
         if (app_versions[i]->project != project) continue;
-        if (app_versions[i]->app_name == str && app_versions[i]->version_num == version_num) {
+        if (app_versions[i]->app_name == name && app_versions[i]->version_num == version_num) {
             return app_versions[i];
         }
     }
     return 0;
 }
 
-WORKUNIT* CC_STATE::lookup_wu(const std::string& project_url, const std::string& str) {
+WORKUNIT* CC_STATE::lookup_wu(const std::string& project_url, const std::string& name) {
     unsigned int i;
     for (i=0; i<wus.size(); i++) {
         if (wus[i]->project->master_url != project_url) continue;
-        if (wus[i]->name == str) return wus[i];
+        if (wus[i]->name == name) return wus[i];
     }
-    BOINCTRACE("CAN'T FIND WU %s\n", str.c_str());
+    BOINCTRACE("CAN'T FIND WU %s\n", name.c_str());
     return 0;
 }
 
-WORKUNIT* CC_STATE::lookup_wu(const PROJECT* project, const std::string& str) {
+WORKUNIT* CC_STATE::lookup_wu(const PROJECT* project, const std::string& name) {
     unsigned int i;
     for (i=0; i<wus.size(); i++) {
         if (wus[i]->project != project) continue;
-        if (wus[i]->name == str) return wus[i];
+        if (wus[i]->name == name) return wus[i];
     }
-    BOINCTRACE("CAN'T FIND WU %s\n", str.c_str());
+    BOINCTRACE("CAN'T FIND WU %s\n", name.c_str());
     return 0;
 }
 
-RESULT* CC_STATE::lookup_result(const std::string& project_url, const std::string& str) {
+RESULT* CC_STATE::lookup_result(const std::string& project_url, const std::string& name) {
     unsigned int i;
     for (i=0; i<results.size(); i++) {
         if (results[i]->project->master_url != project_url) continue;
-        if (results[i]->name == str) return results[i];
+        if (results[i]->name == name) return results[i];
     }
-    BOINCTRACE("CAN'T FIND RESULT %s\n", str.c_str());
+    BOINCTRACE("CAN'T FIND RESULT %s\n", name.c_str());
     return 0;
 }
 
-RESULT* CC_STATE::lookup_result(const PROJECT* project, const std::string& str) {
+RESULT* CC_STATE::lookup_result(const PROJECT* project, const std::string& name) {
     unsigned int i;
     for (i=0; i<results.size(); i++) {
         if (results[i]->project != project) continue;
-        if (results[i]->name == str) return results[i];
+        if (results[i]->name == name) return results[i];
     }
-    BOINCTRACE("CAN'T FIND RESULT %s\n", str.c_str());
+    BOINCTRACE("CAN'T FIND RESULT %s\n", name.c_str());
     return 0;
 }
 
@@ -1492,7 +1492,7 @@ std::ostream& operator <<(std::ostream& out, const DISPLAY_INFO& in) {
     return out;
 }
 
-int RPC_CLIENT::show_graphics(const char* project_url, const char* result_name, int graphics_mode, DISPLAY_INFO& di) {
+int RPC_CLIENT::show_graphics(const char* project_url, const char* result_name, int graphics_mode, DISPLAY_INFO& display) {
     std::ostringstream buf;
     buf << "<result_show_graphics>\n";
     buf << "   <project_url>" << project_url << "</project_url>\n";
@@ -1504,7 +1504,7 @@ int RPC_CLIENT::show_graphics(const char* project_url, const char* result_name, 
     } else if (graphics_mode == MODE_FULLSCREEN) {
         buf << "   <full_screen/>\n";
     }
-    buf << di << "</result_show_graphics>\n";
+    buf << display << "</result_show_graphics>\n";
 
     RPC rpc(this);
     return rpc.do_rpc(buf.str().c_str());
@@ -1689,7 +1689,7 @@ int RPC_CLIENT::run_benchmarks() {
     return retval;
 }
 
-int RPC_CLIENT::set_proxy_settings(GR_PROXY_INFO& pi) {
+int RPC_CLIENT::set_proxy_settings(const GR_PROXY_INFO& pi) {
     int retval;
     SET_LOCALE sl;
     char buf[1792];
@@ -1726,14 +1726,14 @@ int RPC_CLIENT::set_proxy_settings(GR_PROXY_INFO& pi) {
     return retval;
 }
 
-int RPC_CLIENT::get_proxy_settings(GR_PROXY_INFO& p) {
+int RPC_CLIENT::get_proxy_settings(GR_PROXY_INFO& pi) {
     int retval;
     SET_LOCALE sl;
     RPC rpc(this);
 
     retval = rpc.do_rpc("<get_proxy_settings/>");
     if (!retval) {
-        retval = p.parse(rpc.fin);
+        retval = pi.parse(rpc.fin);
     }
     return retval;
 }
@@ -1832,14 +1832,14 @@ int RPC_CLIENT::result_op(RESULT& result, const char* op) {
     return retval;
 }
 
-int RPC_CLIENT::get_host_info(HOST_INFO& h) {
+int RPC_CLIENT::get_host_info(HOST_INFO& host) {
     int retval;
     SET_LOCALE sl;
     RPC rpc(this);
 
     retval = rpc.do_rpc("<get_host_info/>");
     if (!retval) {
-        retval = h.parse(rpc.fin);
+        retval = host.parse(rpc.fin);
     }
     return retval;
 }
@@ -1880,14 +1880,14 @@ int RPC_CLIENT::acct_mgr_rpc(const char* url, const char* name, const char* pass
     return retval;
 }
 
-int RPC_CLIENT::acct_mgr_rpc_poll(ACCT_MGR_RPC_REPLY& r) {
+int RPC_CLIENT::acct_mgr_rpc_poll(ACCT_MGR_RPC_REPLY& reply) {
     int retval;
     SET_LOCALE sl;
     RPC rpc(this);
 
     retval = rpc.do_rpc("<acct_mgr_rpc_poll/>\n");
     if (!retval) {
-        retval = r.parse(rpc.fin);
+        retval = reply.parse(rpc.fin);
     }
     return retval;
 }

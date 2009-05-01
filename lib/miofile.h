@@ -48,13 +48,13 @@ class MIOFILE {
 public:
     MIOFILE();
     ~MIOFILE();
-    void init_mfile(MFILE*);
-    void init_file(FILE*);
-    void init_buf_read(const char*);
-    void init_buf_write(char*, int len);
+    void init_mfile(MFILE* mfile);
+    void init_file(FILE* file);
+    void init_buf_read(const char* buf);
+    void init_buf_write(char* buf, int len);
     int printf(const char* format, ...);
-    char* fgets(char*, int);
-    int _ungetc(int);
+    char* fgets(char* dst, int dst_len);
+    int _ungetc(int c);
     inline int _getc() {
         if (f) {
             return getc(f);
@@ -64,6 +64,6 @@ public:
 };
 
 int copy_element_contents(MIOFILE& in, const char* end_tag, char* p, int len);
-int copy_element_contents(MIOFILE& in, const char* end_tag, std::string&);
+int copy_element_contents(MIOFILE& in, const char* end_tag, std::string& str);
 
 #endif

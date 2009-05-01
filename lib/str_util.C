@@ -515,16 +515,16 @@ void canonicalize_master_url(char* url) {
 
 // is the string a valid master URL, in canonical form?
 //
-bool valid_master_url(const char* buf) {
+bool valid_master_url(const char* url) {
     const char *p, *q;
     size_t n;
     bool bSSL = false;
 
-    p = strstr(buf, "http://");
-    if (p != buf) {
+    p = strstr(url, "http://");
+    if (p != url) {
         // allow https
-        p = strstr(buf, "https://");
-        if (p == buf) {
+        p = strstr(url, "https://");
+        if (p == url) {
             bSSL = true;
         } else {
             return false; // no http or https, it's bad!
@@ -538,8 +538,8 @@ bool valid_master_url(const char* buf) {
     p = strstr(q, "/");
     if (!p) return false;
     if (p == q) return false;
-    n = strlen(buf);
-    if (buf[n-1] != '/') return false;
+    n = strlen(url);
+    if (url[n-1] != '/') return false;
     return true;
 }
 

@@ -28,10 +28,10 @@ int md5_block(const unsigned char* data, int nbytes, char* output);
 
 std::string md5_string(const unsigned char* data, int nbytes);
 
-inline std::string md5_string(std::string const& data)
+inline std::string md5_string(const std::string& data)
 {
     return md5_string((const unsigned char*) data.c_str(), (int)data.size());
 }
 
-int make_random_string(char*);
+int make_random_string(char* out);
 #endif
