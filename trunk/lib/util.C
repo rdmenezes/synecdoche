@@ -77,13 +77,13 @@ double dtime() {
 #endif
 }
 
-/// return time today 0:00 in seconds since 1970 as a double
+/// Return time today 0:00 in seconds since 1970 as a double.
 double dday() {
     double now=dtime();
     return (now-fmod(now, SECONDS_PER_DAY));
 }
 
-/// sleep for a specified number of seconds
+/// Sleep for a specified number of seconds.
 void boinc_sleep(double seconds) {
 #ifdef _WIN32
     ::Sleep((int)(1000*seconds));
@@ -282,7 +282,10 @@ void boinc_crash() {
 #endif
 }
 
-/// read file (at most max_len chars, if nonzero) into malloc'd buf
+/// Read file (at most \a max_len chars, if nonzero) into malloc'd buf.
+/// \todo Use std::filebuf instead of FILE.
+/// \todo Read into new'd buf? Would need to change callers to use delete
+/// instead of free.
 int read_file_malloc(const char* path, char*& buf, int max_len, bool tail) {
     FILE* f;
     int retval, isize;
@@ -308,7 +311,8 @@ int read_file_malloc(const char* path, char*& buf, int max_len, bool tail) {
     return 0;
 }
 
-/// read file (at most max_len chars, if nonzero) into string
+/// Read file (at most \a max_len chars, if nonzero) into string
+/// \todo Use std::filebuf directly, and don't delegate to read_file_malloc.
 int read_file_string(const char* path, std::string& result, int max_len, bool tail) {
     result.erase();
     int retval;
@@ -411,8 +415,8 @@ int run_program(
 #endif
 
 #ifdef _WIN32
-void kill_program(HANDLE pid) {
-    TerminateProcess(pid, 0);
+void kill_program(HANDLE proc) {
+    TerminateProcess(process, 0);
 }
 #else
 void kill_program(int pid) {
@@ -421,10 +425,10 @@ void kill_program(int pid) {
 #endif
 
 #ifdef _WIN32
-int get_exit_status(HANDLE pid_handle) {
+int get_exit_status(HANDLE proc) {
     unsigned long status=1;
     while (1) {
-        if (GetExitCodeProcess(pid_handle, &status)) {
+        if (GetExitCodeProcess(proc, &status)) {
             if (status == STILL_ACTIVE) {
                 boinc_sleep(1);
             }
@@ -435,9 +439,9 @@ int get_exit_status(HANDLE pid_handle) {
     }
     return (int) status;
 }
-bool process_exists(HANDLE h) {
+bool process_exists(HANDLE proc) {
     unsigned long status=1;
-    if (GetExitCodeProcess(h, &status)) {
+    if (GetExitCodeProcess(proc, &status)) {
         if (status == STILL_ACTIVE) return true;
     }
     return false;

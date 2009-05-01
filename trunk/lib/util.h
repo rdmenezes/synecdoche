@@ -35,8 +35,8 @@
 
 double dtime();
 double dday();
-void boinc_sleep(double);
-void push_unique(std::string, std::vector<std::string>&);
+void boinc_sleep(double seconds);
+void push_unique(std::string s, std::vector<std::string>& v);
 
 // NOTE: use #include <functional>   to get max,min
 
@@ -59,9 +59,9 @@ static const int PROCESS_IDLE_PRIORITY = 19;
 double linux_cpu_time(int pid);
 #endif
 
-void update_average(double, double, double, double&, double&);
+void update_average(double work_start_time, double work, double half_life, double& avg, double& avg_time);
 
-int boinc_calling_thread_cpu_time(double&);
+int boinc_calling_thread_cpu_time(double& cpu);
 
 void boinc_crash();
 int read_file_malloc(const char* path, char*&, int max_len=0, bool tail=false);
@@ -70,20 +70,20 @@ int read_file_string(const char* path, std::string&, int max_len=0, bool tail=fa
 #ifdef _WIN32
 
 int run_program(
-    const char* path, const char* cdir, int argc, char *const argv[], double, HANDLE&
+    const char* path, const char* cdir, int argc, char *const argv[], double, HANDLE& id
 );
 
-void kill_program(HANDLE);
-int get_exit_status(HANDLE);
-bool process_exists(HANDLE);
+void kill_program(HANDLE proc);
+int get_exit_status(HANDLE proc);
+bool process_exists(HANDLE proc);
 
 #else
 int run_program(
     const char* path, const char* cdir, int argc, char *const argv[], double, int&
 );
-void kill_program(int);
-int get_exit_status(int);
-bool process_exists(int);
+void kill_program(int pid);
+int get_exit_status(int pid);
+bool process_exists(int pid);
 
 /// Prepare arguments for execv and call that function.
 int do_execv(const std::string& path, const std::list<std::string>& argv);

@@ -86,7 +86,7 @@ void escape_project_url(const char *in, char* out) __attribute__((deprecated));
 /// Escape a URL for the project directory
 std::string escape_project_url(const std::string& in);
 
-bool valid_master_url(const char*);
+bool valid_master_url(const char* url);
 
 /// Canonicalize a master URL.
 void canonicalize_master_url(char *url) __attribute__((deprecated));
@@ -104,7 +104,7 @@ std::string time_to_string(double t);
 std::string precision_time_to_string(double t);
 
 /// Convert a time difference into a descriptive string.
-std::string timediff_format(double);
+std::string timediff_format(double diff);
 
 /// Check if a string has as specific suffix.
 ///

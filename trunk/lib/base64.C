@@ -28,7 +28,7 @@
 
 using std::string;
 
-// Table of characters coding the 64 values.
+/// Table of characters coding the 64 values.
 static char base64_value_to_char[64] =
 {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',   //  0- 9
@@ -40,7 +40,7 @@ static char base64_value_to_char[64] =
     '8', '9', '+', '/'                                  // 60-63
 };
 
-// Table of base64 values for first 128 characters.
+/// Table of base64 values for first 128 characters.
 static short base64_char_to_value[128] =
 {
     -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,    //   0-  9

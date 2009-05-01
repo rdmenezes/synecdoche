@@ -56,7 +56,7 @@ extern "C" {
 
 #ifndef _WIN32
   /// Change the group of a file or directory.
-  int boinc_chown(const char*, gid_t);
+  int boinc_chown(const char* path, gid_t gid);
 #endif
 
   /// Remove a directory.

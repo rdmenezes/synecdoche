@@ -54,12 +54,14 @@
 
 struct MSG_CHANNEL {
     char buf[MSG_CHANNEL_SIZE];
-    bool get_msg(char*);    // returns a message and clears pending flag
+    /// Returns a message and clears pending flag.
+    bool get_msg(char* msg);
     bool has_msg();
-    bool send_msg(const char*);   // if there is not a message in the segment,
-                            // writes specified message and sets pending flag
-    void send_msg_overwrite(const char*);
-                            // write message, overwriting any msg already there
+    /// If there is not a message in the segment,
+    /// writes specified message and sets pending flag.
+    bool send_msg(const char* msg);
+    /// Write message, overwriting any msg already there.
+    void send_msg_overwrite(const char* msg);
 };
 
 struct SHARED_MEM {
@@ -100,12 +102,12 @@ struct SHARED_MEM {
 };
 
 /// MSG_QUEUE provides a queuing mechanism for shared-mem messages
-/// (which don't have one otherwise)
+/// (which don't have one otherwise).
 
 struct MSG_QUEUE {
     std::vector<std::string> msgs;
     char name[256];
-    double last_block;  // last time we found message channel full
+    double last_block;  ///< last time we found message channel full
     void init(char*);
     void msg_queue_send(const char*, MSG_CHANNEL& channel);
     void msg_queue_poll(MSG_CHANNEL& channel);
@@ -131,8 +133,8 @@ class APP_CLIENT_SHM {
 public:
     SHARED_MEM *shm;
 
-    int decode_graphics_msg(char*, GRAPHICS_MSG&);
-    void reset_msgs();        // resets all messages and clears their flags
+    int decode_graphics_msg(const char* msg, GRAPHICS_MSG&m );
+    void reset_msgs();        ///< Resets all messages and clears their flags
 
     APP_CLIENT_SHM();
 };
@@ -143,7 +145,7 @@ public:
     typedef int SHMEM_SEG_NAME;
 #endif
 
-/// parsed version of main init file
+/// Parsed version of main init file.
 struct APP_INIT_DATA {
     int major_version;
     int minor_version;
@@ -184,14 +186,14 @@ struct APP_INIT_DATA {
 
     // Items below here are for BOINC runtime system,
     // and should not be directly accessed by apps
-    double checkpoint_period;     // recommended checkpoint period
+    double checkpoint_period;     ///< Recommended checkpoint period.
     SHMEM_SEG_NAME shmem_seg_name;
-    double wu_cpu_time;       // cpu time from previous episodes
+    double wu_cpu_time;       /// CPU time from previous episodes.
 
     APP_INIT_DATA();
-    APP_INIT_DATA(const APP_INIT_DATA& a);  // copy constructor
+    APP_INIT_DATA(const APP_INIT_DATA& a);  // Copy constructor.
     APP_INIT_DATA& operator=(const APP_INIT_DATA& a);
-    void copy(const APP_INIT_DATA& a);      // actually do the copy here
+    void copy(const APP_INIT_DATA& a);      // Actually do the copy here.
     ~APP_INIT_DATA();
 };
 
@@ -203,8 +205,8 @@ struct GRAPHICS_INFO {
 
 typedef struct GRAPHICS_INFO GRAPHICS_INFO;
 
-int write_init_data_file(FILE* f, APP_INIT_DATA&);
-int parse_init_data_file(FILE* f, APP_INIT_DATA&);
+int write_init_data_file(FILE* f, APP_INIT_DATA& ai);
+int parse_init_data_file(FILE* f, APP_INIT_DATA& ai);
 int write_graphics_file(FILE* f, GRAPHICS_INFO* gi);
 int parse_graphics_file(FILE* f, GRAPHICS_INFO* gi);
 

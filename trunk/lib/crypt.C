@@ -39,14 +39,14 @@
 /// Write some data in hex notation into a file.
 /// NOTE: since length may not be known to the reader,
 /// we follow the data with a non-hex character '.'
-int print_hex_data(FILE* f, DATA_BLOCK& x) {
+int print_hex_data(FILE* f, DATA_BLOCK& block) {
     unsigned int i;
 
-    for (i=0; i<x.len; i++) {
-        fprintf(f, "%02x", x.data[i]);
+    for (i=0; i<block.len; i++) {
+        fprintf(f, "%02x", block.data[i]);
         if (i%32==31) fprintf(f, "\n");
     }
-    if (x.len%32 != 0) fprintf(f, "\n");
+    if (block.len%32 != 0) fprintf(f, "\n");
     fprintf(f, ".\n");
     return 0;
 }
@@ -54,47 +54,47 @@ int print_hex_data(FILE* f, DATA_BLOCK& x) {
 /// Write some data in hex notation into a buffer.
 /// NOTE: since length may not be known to the reader,
 /// we follow the data with a non-hex character '.'
-int sprint_hex_data(char* out_buf, DATA_BLOCK& x) {
+int sprint_hex_data(char* out_buf, DATA_BLOCK& block) {
     unsigned int i;
     const char hex[] = "0123456789abcdef";
     char* p = out_buf;
 
-    for (i=0; i<x.len; i++) {
-        *p++ = hex[x.data[i]/16];
-        *p++ = hex[x.data[i]%16];
+    for (i=0; i<block.len; i++) {
+        *p++ = hex[block.data[i]/16];
+        *p++ = hex[block.data[i]%16];
         if (i%32==31) *p++ = '\n';
     }
-    if (x.len%32 != 0) *p++ = '\n';
+    if (block.len%32 != 0) *p++ = '\n';
     strcpy(p, ".\n");
 
     return 0;
 }
 
-/// scan data in hex notation from a file.
-/// stop when you reach a non-parsed character.
+/// Scan data in hex notation from a file.
+/// Stop when you reach a non-parsed character.
 /// NOTE: buffer must be big enough; no checking is done.
-int scan_hex_data(FILE* f, DATA_BLOCK& x) {
+int scan_hex_data(FILE* f, DATA_BLOCK& block) {
     int n;
 
-    x.len = 0;
+    block.len = 0;
     while (1) {
         unsigned int j;
         n = fscanf(f, "%2x", &j);
         if (n <= 0) break;
-        x.data[x.len] = j;
-        x.len++;
+        block.data[block.len] = j;
+        block.len++;
     }
     return 0;
 }
 
-/// scan data in hex notation from a buffer.
-/// stop when you reach a non-parsed character.
+/// Scan data in hex notation from a buffer.
+/// Stop when you reach a non-parsed character.
 /// NOTE: buffer must be big enough; no checking is done.
-static int sscan_hex_data(const char* p, DATA_BLOCK& x) {
+static int sscan_hex_data(const char* p, DATA_BLOCK& block) {
     unsigned int m;
-    int n, nleft=x.len;
+    int n, nleft=block.len;
 
-    x.len = 0;
+    block.len = 0;
     while (1) {
         if (isspace(*p)) {
             ++p;
@@ -102,7 +102,7 @@ static int sscan_hex_data(const char* p, DATA_BLOCK& x) {
         }
         n = sscanf(p, "%2x", &m);
         if (n <= 0) break;
-        x.data[x.len++] = m;
+        block.data[block.len++] = m;
         nleft--;
         if (nleft<0) {
             fprintf(stderr, "sscan_hex_data: buffer overflow\n");
@@ -113,16 +113,16 @@ static int sscan_hex_data(const char* p, DATA_BLOCK& x) {
     return 0;
 }
 
-/// print a key in ASCII form
+/// Print a key in ASCII form.
 int print_key_hex(FILE* f, KEY* key, int size) {
     int len;
-    DATA_BLOCK x;
+    DATA_BLOCK block;
 
     fprintf(f, "%d\n", key->bits);
     len = size - sizeof(key->bits);
-    x.data = key->data;
-    x.len = len;
-    return print_hex_data(f, x);
+    block.data = key->data;
+    block.len = len;
+    return print_hex_data(f, block);
 }
 
 int scan_key_hex(FILE* f, KEY* key, int size) {
@@ -141,7 +141,7 @@ int scan_key_hex(FILE* f, KEY* key, int size) {
     return 0;
 }
 
-/// parse a text-encoded key from a memory buffer
+/// Parse a text-encoded key from a memory buffer.
 int sscan_key_hex(const char* buf, KEY* key, int size) {
     int n, retval,num_bits;
     DATA_BLOCK db;
@@ -161,7 +161,7 @@ int sscan_key_hex(const char* buf, KEY* key, int size) {
     return retval;
 }
 
-/// encrypt some data.
+/// Encrypt some data.
 /// The amount encrypted may be less than what's supplied.
 /// The output buffer must be at least MIN_OUT_BUFFER_SIZE.
 /// The output block must be decrypted in its entirety.
@@ -290,7 +290,7 @@ int verify_file2(
     return verify_file(path, key, signature, answer);
 }
 
-/// verify, where both text and signature are char strings
+/// Verify, where both text and signature are char strings.
 int verify_string(
     const char* text, const char* signature_text, R_RSA_PUBLIC_KEY& key, bool& answer
 ) {
@@ -315,7 +315,7 @@ int verify_string(
     return 0;
 }
 
-/// Same, where public key is also encoded as text
+/// Verify, where text, signature, and public key are char strings.
 int verify_string2(
     const char* text, const char* signature_text, const char* key_text, bool& answer
 ) {

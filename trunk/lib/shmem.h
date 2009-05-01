@@ -43,15 +43,14 @@ int detach_shmem(HANDLE hSharedMem, void* p);
 int create_shmem_mmap(const char *path, size_t size, void** pp);
 int attach_shmem_mmap(const char *path, void** pp);
 int detach_shmem_mmap(void* p, size_t size);
-int create_shmem(key_t, int size, gid_t gid, void**);
-int attach_shmem(key_t, void**);
-int detach_shmem(void*);
+int create_shmem(key_t key, int size, gid_t gid, void** pp);
+int attach_shmem(key_t key, void** pp);
+int detach_shmem(void* pp);
 int shmem_info(key_t key);
-// Destroy a shared-memory segment.
-// If there are attachments to it,
-// print a message in a loop until the attachments are gone
-//
-int destroy_shmem(key_t);
+/// Destroy a shared-memory segment.
+/// If there are attachments to it,
+/// print a message in a loop until the attachments are gone
+int destroy_shmem(key_t key);
 #endif      // !defined(_WIN32)
 
 #endif      // BOINC_SHMEM_H
