@@ -416,7 +416,7 @@ int run_program(
 
 #ifdef _WIN32
 void kill_program(HANDLE proc) {
-    TerminateProcess(process, 0);
+    TerminateProcess(proc, 0);
 }
 #else
 void kill_program(int pid) {
