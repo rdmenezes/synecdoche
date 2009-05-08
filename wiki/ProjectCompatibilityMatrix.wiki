@@ -8,7 +8,7 @@ The idea behind this page is to provide information for the case when changes at
 || *Project*                   || *0.1.1*      ||
 || ABC@home                    || *OK*         ||
 || AQUA@home                   || _not tested_ ||
-|| Climate Prediction          || _not tested_ ||
+|| Climate Prediction          || *OK*         ||
 || Cosmology@Home              || _not tested_ ||
 || Docking@Home                || _not tested_ ||
 || Einstein@home               || *OK*         ||
