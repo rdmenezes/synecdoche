@@ -30,35 +30,32 @@
 #endif
 
 #include "log_flags.h"
-#include "error_numbers.h"
-#include "common_defs.h"
-#include "file_names.h"
+
 #include "client_msgs.h"
-#include "parse.h"
-#include "miofile.h"
-#include "str_util.h"
+#include "client_state.h"
+#include "common_defs.h"
+#include "error_numbers.h"
+#include "file_names.h"
 #include "filesys.h"
+#include "miofile.h"
+#include "parse.h"
+#include "str_util.h"
 
 LOG_FLAGS log_flags;
 CONFIG config;
 
 LOG_FLAGS::LOG_FLAGS() {
-
-    memset(this, 0, sizeof(LOG_FLAGS));
-
     defaults();
 }
 
 void LOG_FLAGS::defaults() {
     // on by default
     // (others are off by default)
-    //
     task = true;
     file_xfer = true;
     sched_ops = true;
 
     // off by default; intended for developers and testers
-    //
     cpu_sched = false;
     cpu_sched_debug = false;
     rr_simulation = false;
@@ -258,6 +255,12 @@ int CONFIG::parse_options(XML_PARSER& xp) {
             continue;
         }
         if (xp.parse_bool(tag, "zero_debts", zero_debts)) continue;
+        if (!strncmp(tag, "proxy_info", sizeof(tag))) {
+            int retval = gstate.proxy_info.parse(xp.get_miofile());
+            if (retval) {
+                return retval;
+            }
+        }
         msg_printf(NULL, MSG_USER_ERROR, "Unrecognized tag in %s: <%s>\n",
             CONFIG_FILE, tag
         );

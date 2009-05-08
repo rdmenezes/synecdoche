@@ -39,13 +39,11 @@ class XML_PARSER;
 
 struct LOG_FLAGS {
     // on by default, user-readable
-    //
     bool task;              ///< task start and finish
     bool file_xfer;         ///< file transfer start and finish
     bool sched_ops;         ///< interactions with schedulers
 
     // off by default; intended for developers and testers
-    //
     bool cpu_sched;         ///< preemption and resumption
     bool cpu_sched_debug;   ///< explain scheduler decisions
     bool rr_simulation;     ///< results of rr simulator

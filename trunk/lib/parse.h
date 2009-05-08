@@ -63,6 +63,8 @@ public:
 
     int element_contents(const char* end_tag, char* buf, size_t buflen);
     void skip_unexpected(const char* start_tag, bool verbose, const char* where);
+
+    MIOFILE& get_miofile() const;
 };
 
 /// \name DEPRECATED XML PARSER
