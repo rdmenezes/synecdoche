@@ -328,9 +328,9 @@ int read_file_string(const char* path, std::string& result, int max_len, bool ta
 #ifdef _WIN32
 
 /// chdir into the given directory, and run a program there.
-/// If nsecs is nonzero, make sure it's still running after that many seconds.
+/// If \a nsecs is nonzero, make sure it's still running after that many seconds.
 ///
-/// argv is set up Unix-style, i.e. argv[0] is the program name
+/// \a argv is set up Unix-style, i.e. argv[0] is the program name
 int run_program(
     const char* dir, const char* file, int argc, char *const argv[], double nsecs, HANDLE& id
 ) {
@@ -469,17 +469,17 @@ bool process_exists(int pid) {
 /// \return Only returns -1, if it returns.
 int do_execv(const std::string& path, const std::list<std::string>& argv)
 {
-    char** argv_p = new char*[argv.size() + 1];
+    const char** argv_p = new const char*[argv.size() + 1];
     int i = 0;
     for (std::list<std::string>::const_iterator it = argv.begin();
                 it != argv.end(); ++it) {
-        // Ugly but necessary as you cannot create an array of char* const
-        // without immediate initialization of all members in C++98:
-        argv_p[i++] = const_cast<char*>((*it).c_str());
+        argv_p[i++] = (*it).c_str();
     }
     argv_p[i] = 0;
 
-    int ret_val = execv(path.c_str(), argv_p);
+    // Cast is ugly but necessary as execv takes a char* const* instead of
+    // const char* const*
+    int ret_val = execv(path.c_str(), const_cast<char* const*>(argv_p));
 
     delete[] argv_p;
     return ret_val;
