@@ -829,8 +829,6 @@ bool CAdvancedFrame::RestoreViewState() {
 
     wxString        strBaseConfigLocation = wxString(wxT("/"));
     wxConfigBase*   pConfig = wxConfigBase::Get(FALSE);
-    wxWindow*       pwndNotebookPage = NULL;
-    CBOINCBaseView* pView = NULL;
     wxString        strConfigLocation;
     wxString        strPreviousLocation;
     wxString        strBuffer;
@@ -858,25 +856,6 @@ bool CAdvancedFrame::RestoreViewState() {
     } else {
         pConfig->Read(wxT("CurrentPage"), &iCurrentPage, (ID_LIST_WORKVIEW - ID_LIST_BASE));
         m_pNotebook->SetSelection(iCurrentPage);
-    }
-
-    // Restore Page(s) State
-    // Convert to a zero based index
-    size_t iPageCount = m_pNotebook->GetPageCount() - 1;
-
-    for (size_t iIndex = 0; iIndex <= iPageCount; ++iIndex) {
-        pwndNotebookPage = m_pNotebook->GetPage(iIndex);
-        wxASSERT(wxDynamicCast(pwndNotebookPage, CBOINCBaseView));
-
-        pView = wxDynamicCast(pwndNotebookPage, CBOINCBaseView);
-        wxASSERT(pView);
-
-        strPreviousLocation = pConfig->GetPath();
-        strConfigLocation = strPreviousLocation + pView->GetViewName();
-
-        pConfig->SetPath(strConfigLocation);
-        pView->FireOnRestoreState(pConfig);
-        pConfig->SetPath(strPreviousLocation);
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::RestoreViewState - Function End"));

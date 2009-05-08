@@ -55,7 +55,7 @@ CBOINCBaseView::~CBOINCBaseView() {
 /// If it has not been defined by the view "Undefined" is returned.
 ///
 /// \return A reference to a variable containing the view name.
-wxString& CBOINCBaseView::GetViewName() {
+const wxString& CBOINCBaseView::GetViewName() {
     static wxString strViewName(wxT("Undefined"));
     return strViewName;
 }
@@ -65,7 +65,7 @@ wxString& CBOINCBaseView::GetViewName() {
 ///
 /// \return A reference to a variable containing the user friendly name of
 ///         the view.
-wxString& CBOINCBaseView::GetViewDisplayName() {
+const wxString& CBOINCBaseView::GetViewDisplayName() {
     static wxString strViewName(wxT("Undefined"));
     return strViewName;
 }
@@ -708,4 +708,40 @@ wxString CBOINCBaseView::HtmlEntityDecode(const wxString& strRaw) {
 #endif
     }
     return strDecodedHtml;
+}
+
+/// Add a new column to the tab.
+///
+/// \param[in] column The index of the new column.
+/// \param[in] heading The title of the column. This parameter is used as key
+///                    to identify the column when storing settings. Therefore
+///                    this parameter must not be translated. This function
+///                    handles translation of the title itself before passing
+///                    it to wxWidgets.
+/// \param[in] align Column alignment.
+/// \param[in] width The width of the column.
+void CBOINCBaseView::AddColumn(long column, const char* heading,
+                               wxListColumnFormat align, int width) {
+    m_pListPane->InsertColumn(column, _(heading), align, width);
+    m_column_keys[column] = heading;
+}
+
+/// Get a map containing the keys for all columns.
+///
+/// \return A map containing the keys used to identify the columns when storing
+///         column related settings. This map is filled when AddColumn is
+///         called.
+const std::map<long, const char*>& CBOINCBaseView::GetColumnKeys() const {
+    return m_column_keys;
+}
+
+/// Read and apply stored settings like column widths.
+void CBOINCBaseView::RestoreState() {
+    wxConfigBase* pConfig = wxConfigBase::Get(FALSE);
+    wxString strPreviousLocation = pConfig->GetPath();
+    wxString strConfigLocation = strPreviousLocation + GetViewName();
+
+    pConfig->SetPath(strConfigLocation);
+    OnRestoreState(pConfig);
+    pConfig->SetPath(strPreviousLocation);
 }

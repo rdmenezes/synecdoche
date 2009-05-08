@@ -222,14 +222,14 @@ void CViewWork::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    m_pListPane->InsertColumn(COLUMN_PROJECT, _("Project"), wxLIST_FORMAT_LEFT, 125);
-    m_pListPane->InsertColumn(COLUMN_APPLICATION, _("Application"), wxLIST_FORMAT_LEFT, 95);
-    m_pListPane->InsertColumn(COLUMN_NAME, _("Name"), wxLIST_FORMAT_LEFT, 285);
-    m_pListPane->InsertColumn(COLUMN_CPUTIME, _("CPU time"), wxLIST_FORMAT_RIGHT, 80);
-    m_pListPane->InsertColumn(COLUMN_PROGRESS, _("Progress"), wxLIST_FORMAT_CENTER, 60);
-    m_pListPane->InsertColumn(COLUMN_TOCOMPLETION, _("To completion"), wxLIST_FORMAT_RIGHT, 100);
-    m_pListPane->InsertColumn(COLUMN_REPORTDEADLINE, _("Report deadline"), wxLIST_FORMAT_LEFT, 150);
-    m_pListPane->InsertColumn(COLUMN_STATUS, _("Status"), wxLIST_FORMAT_LEFT, 135);
+    AddColumn(COLUMN_PROJECT, "Project", wxLIST_FORMAT_LEFT, 125);
+    AddColumn(COLUMN_APPLICATION, "Application", wxLIST_FORMAT_LEFT, 95);
+    AddColumn(COLUMN_NAME, "Name", wxLIST_FORMAT_LEFT, 285);
+    AddColumn(COLUMN_CPUTIME, "CPU time", wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_PROGRESS, "Progress", wxLIST_FORMAT_CENTER, 60);
+    AddColumn(COLUMN_TOCOMPLETION, "To completion", wxLIST_FORMAT_RIGHT, 100);
+    AddColumn(COLUMN_REPORTDEADLINE, "Report deadline", wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_STATUS, "Status", wxLIST_FORMAT_LEFT, 135);
 
     m_iProgressColumn = COLUMN_PROGRESS;
 
@@ -237,15 +237,17 @@ void CViewWork::DemandLoadView() {
     myCViewWork = this;
     m_funcSortCompare = CompareViewWorkItems;
 
+    RestoreState();
+
     UpdateSelection();
 }
 
-wxString& CViewWork::GetViewName() {
-    static wxString strViewName(_("Tasks"));
+const wxString& CViewWork::GetViewName() {
+    static wxString strViewName(wxT("Tasks"));
     return strViewName;
 }
 
-wxString& CViewWork::GetViewDisplayName() {
+const wxString& CViewWork::GetViewDisplayName() {
     static wxString strViewName(_("Tasks"));
     return strViewName;
 }
