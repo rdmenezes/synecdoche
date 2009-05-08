@@ -115,7 +115,8 @@ void parse_attr(const char* buf, const char* name, char* dest, size_t len) {
     if (!p) return;
     q = strchr(p+1, '"');
     if (!q) return;
-    if (len > q-p) len = (q-p);
+    size_t diff = static_cast<size_t>(q-p);
+    if (len > diff) len = (diff);
     strlcpy(dest, p+1, len);
 }
 
