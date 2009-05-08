@@ -189,29 +189,31 @@ void CViewProjects::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    m_pListPane->InsertColumn(COLUMN_PROJECT, _("Project"), wxLIST_FORMAT_LEFT, 150);
-    m_pListPane->InsertColumn(COLUMN_ACCOUNTNAME, _("Account"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_TEAMNAME, _("Team"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_TOTALCREDIT, _("Work done"), wxLIST_FORMAT_RIGHT, 80);
-    m_pListPane->InsertColumn(COLUMN_AVGCREDIT, _("Avg. work done"), wxLIST_FORMAT_RIGHT, 80);
-    m_pListPane->InsertColumn(COLUMN_RESOURCESHARE, _("Resource share"), wxLIST_FORMAT_CENTRE, 85);
-    m_pListPane->InsertColumn(COLUMN_STATUS, _("Status"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_PROJECT, "Project", wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_ACCOUNTNAME, "Account", wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TEAMNAME, "Team", wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TOTALCREDIT, "Work done", wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_AVGCREDIT, "Avg. work done", wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_RESOURCESHARE, "Resource share", wxLIST_FORMAT_CENTRE, 85);
+    AddColumn(COLUMN_STATUS, "Status", wxLIST_FORMAT_LEFT, 150);
 
     m_iProgressColumn = COLUMN_RESOURCESHARE;
 
     // Needed by static sort routine;
     myCViewProjects = this;
     m_funcSortCompare = CompareViewProjectsItems;
-   
+
+    RestoreState();
+
     UpdateSelection();
 }
 
-wxString& CViewProjects::GetViewName() {
-    static wxString strViewName(_("Projects"));
+const wxString& CViewProjects::GetViewName() {
+    static wxString strViewName(wxT("Projects"));
     return strViewName;
 }
 
-wxString& CViewProjects::GetViewDisplayName() {
+const wxString& CViewProjects::GetViewDisplayName() {
     static wxString strViewName(_("Projects"));
     return strViewName;
 }

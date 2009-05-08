@@ -151,13 +151,13 @@ void CViewTransfers::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    m_pListPane->InsertColumn(COLUMN_PROJECT, _("Project"), wxLIST_FORMAT_LEFT, 125);
-    m_pListPane->InsertColumn(COLUMN_FILE, _("File"), wxLIST_FORMAT_LEFT, 205);
-    m_pListPane->InsertColumn(COLUMN_PROGRESS, _("Progress"), wxLIST_FORMAT_CENTRE, 60);
-    m_pListPane->InsertColumn(COLUMN_SIZE, _("Size"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_TIME, _("Elapsed Time"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_SPEED, _("Speed"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_STATUS, _("Status"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_PROJECT, "Project", wxLIST_FORMAT_LEFT, 125);
+    AddColumn(COLUMN_FILE, "File", wxLIST_FORMAT_LEFT, 205);
+    AddColumn(COLUMN_PROGRESS, "Progress", wxLIST_FORMAT_CENTRE, 60);
+    AddColumn(COLUMN_SIZE, "Size", wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TIME, "Elapsed Time", wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_SPEED, "Speed", wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_STATUS, "Status", wxLIST_FORMAT_LEFT, 150);
 
     m_iProgressColumn = COLUMN_PROGRESS;
 
@@ -165,15 +165,17 @@ void CViewTransfers::DemandLoadView() {
     MyCViewTransfers = this;
     m_funcSortCompare = CompareViewTransferItems;
 
+    RestoreState();
+
     UpdateSelection();
 }
 
-wxString& CViewTransfers::GetViewName() {
-    static wxString strViewName(_("Transfers"));
+const wxString& CViewTransfers::GetViewName() {
+    static wxString strViewName(wxT("Transfers"));
     return strViewName;
 }
 
-wxString& CViewTransfers::GetViewDisplayName() {
+const wxString& CViewTransfers::GetViewDisplayName() {
     static wxString strViewName(_("Transfers"));
     return strViewName;
 }

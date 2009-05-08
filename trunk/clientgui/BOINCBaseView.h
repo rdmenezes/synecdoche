@@ -19,6 +19,7 @@
 #ifndef BOINCBASEVIEW_H
 #define BOINCBASEVIEW_H
 
+#include <map>
 #include <vector>
 #include <wx/panel.h>
 
@@ -41,22 +42,20 @@ typedef bool (*ListSortCompareFunc)(size_t, size_t);
 
 
 class CBOINCBaseView : public wxPanel {
-    DECLARE_DYNAMIC_CLASS( CBOINCBaseView )
+    DECLARE_DYNAMIC_CLASS(CBOINCBaseView)
 
 public:
 
     CBOINCBaseView();
-    CBOINCBaseView(
-        wxNotebook* pNotebook
-    );
+    CBOINCBaseView(wxNotebook* pNotebook);
 
     ~CBOINCBaseView();
 
     /// Return the name of the view.
-    virtual wxString&       GetViewName();
+    virtual const wxString& GetViewName();
 
     /// Return the user friendly name of the view.
-    virtual wxString&       GetViewDisplayName();
+    virtual const wxString& GetViewDisplayName();
 
     /// Return the user friendly icon of the view.
     virtual const char**    GetViewIcon();
@@ -81,13 +80,16 @@ public:
 
     void                    InitSort();
 
+    /// Get a map containing the keys for all columns.
+    const std::map<long, const char*>& GetColumnKeys() const;
+
     int                     m_iSortColumn;
     bool                    m_bReverseSort;
 
 protected:
 
-    virtual bool            OnSaveState( wxConfigBase* pConfig );
-    virtual bool            OnRestoreState( wxConfigBase* pConfig );
+    virtual bool            OnSaveState(wxConfigBase* pConfig);
+    virtual bool            OnRestoreState(wxConfigBase* pConfig);
 
     virtual void            OnListRender( wxTimerEvent& event );
     virtual void            OnListSelected( wxListEvent& event );
@@ -104,6 +106,13 @@ protected:
     virtual int             GetDocCount();
     virtual wxString        OnDocGetItemImage( long item ) const;
     virtual wxString        OnDocGetItemAttr( long item ) const;
+
+    /// Add a new column to the tab.
+    void                    AddColumn(long column, const char* heading,
+                                      wxListColumnFormat align, int width);
+
+    /// Read and apply stored settings like column widths.
+    void                    RestoreState();
 
     virtual int             AddCacheElement();
     virtual int             EmptyCache();
@@ -151,6 +160,9 @@ protected:
     CBOINCListCtrl*         m_pListPane;
 
     bool                    m_bViewLoaded;
+
+private:
+    std::map<long, const char*> m_column_keys;
 };
 
 
