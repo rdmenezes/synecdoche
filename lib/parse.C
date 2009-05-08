@@ -790,6 +790,10 @@ void XML_PARSER::skip_unexpected(
     }
 }
 
+MIOFILE& XML_PARSER::get_miofile() const {
+    return *f;
+}
+
 // sample use is shown below
 
 #if 0

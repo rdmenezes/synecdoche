@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -366,6 +366,9 @@ int main_impl(int argc, char** argv) {
         pi.socks_version = atoi(next_arg(argc, argv, i));
         pi.socks5_user_name = next_arg(argc, argv, i);
         pi.socks5_user_passwd = next_arg(argc, argv, i);
+        pi.use_http_proxy = !pi.http_server_name.empty();
+        pi.use_http_authentication = !pi.http_user_name.empty();
+        pi.use_socks_proxy = !pi.socks_server_name.empty();
         retval = rpc.set_proxy_settings(pi);
     } else if (!strcmp(cmd, "--get_messages")) {
         int seqno = atoi(next_arg(argc, argv, i));
