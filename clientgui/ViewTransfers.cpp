@@ -151,13 +151,13 @@ void CViewTransfers::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    AddColumn(COLUMN_PROJECT, "Project", wxLIST_FORMAT_LEFT, 125);
-    AddColumn(COLUMN_FILE, "File", wxLIST_FORMAT_LEFT, 205);
-    AddColumn(COLUMN_PROGRESS, "Progress", wxLIST_FORMAT_CENTRE, 60);
-    AddColumn(COLUMN_SIZE, "Size", wxLIST_FORMAT_LEFT, 80);
-    AddColumn(COLUMN_TIME, "Elapsed Time", wxLIST_FORMAT_LEFT, 80);
-    AddColumn(COLUMN_SPEED, "Speed", wxLIST_FORMAT_LEFT, 80);
-    AddColumn(COLUMN_STATUS, "Status", wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_PROJECT,  wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 125);
+    AddColumn(COLUMN_FILE,     wxTRANSLATE("File"), wxLIST_FORMAT_LEFT, 205);
+    AddColumn(COLUMN_PROGRESS, wxTRANSLATE("Progress"), wxLIST_FORMAT_CENTRE, 60);
+    AddColumn(COLUMN_SIZE,     wxTRANSLATE("Size"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TIME,     wxTRANSLATE("Elapsed Time"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_SPEED,    wxTRANSLATE("Speed"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_STATUS,   wxTRANSLATE("Status"), wxLIST_FORMAT_LEFT, 150);
 
     m_iProgressColumn = COLUMN_PROGRESS;
 

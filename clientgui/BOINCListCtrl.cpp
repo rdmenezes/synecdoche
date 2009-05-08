@@ -102,7 +102,7 @@ bool CBOINCListCtrl::OnSaveState(wxConfigBase* pConfig) {
     wxListItem  liColumnInfo;
     liColumnInfo.SetMask(wxLIST_MASK_TEXT | wxLIST_MASK_WIDTH | wxLIST_MASK_FORMAT);
 
-    const std::map<long, const char*>& keys = m_pParentView->GetColumnKeys();
+    const ColumnListMap& keys = m_pParentView->GetColumnKeys();
 
     // Cycle through the columns recording anything interesting
     for (wxInt32 iIndex = 0; iIndex < iColumnCount; ++iIndex) {
@@ -143,7 +143,7 @@ bool CBOINCListCtrl::OnRestoreState(wxConfigBase* pConfig) {
     wxListItem  liColumnInfo;
     liColumnInfo.SetMask(wxLIST_MASK_TEXT | wxLIST_MASK_WIDTH | wxLIST_MASK_FORMAT);
 
-    const std::map<long, const char*>& keys = m_pParentView->GetColumnKeys();
+    const ColumnListMap& keys = m_pParentView->GetColumnKeys();
 
     // Cycle through the columns recording anything interesting
     for (wxInt32 iIndex = 0; iIndex < iColumnCount; ++iIndex) {

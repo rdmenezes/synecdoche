@@ -52,9 +52,9 @@
 
 CWork::CWork() {
     m_fCPUTime          = -1.0f;
- 	m_fProgress         = -1.0f;
- 	m_fTimeToCompletion = -1.0f;
- 	m_tReportDeadline   = (time_t)0;
+    m_fProgress         = -1.0f;
+    m_fTimeToCompletion = -1.0f;
+    m_tReportDeadline   = (time_t)0;
 }
 
 enum DlgButtons {
@@ -222,14 +222,14 @@ void CViewWork::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    AddColumn(COLUMN_PROJECT, "Project", wxLIST_FORMAT_LEFT, 125);
-    AddColumn(COLUMN_APPLICATION, "Application", wxLIST_FORMAT_LEFT, 95);
-    AddColumn(COLUMN_NAME, "Name", wxLIST_FORMAT_LEFT, 285);
-    AddColumn(COLUMN_CPUTIME, "CPU time", wxLIST_FORMAT_RIGHT, 80);
-    AddColumn(COLUMN_PROGRESS, "Progress", wxLIST_FORMAT_CENTER, 60);
-    AddColumn(COLUMN_TOCOMPLETION, "To completion", wxLIST_FORMAT_RIGHT, 100);
-    AddColumn(COLUMN_REPORTDEADLINE, "Report deadline", wxLIST_FORMAT_LEFT, 150);
-    AddColumn(COLUMN_STATUS, "Status", wxLIST_FORMAT_LEFT, 135);
+    AddColumn(COLUMN_PROJECT,        wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 125);
+    AddColumn(COLUMN_APPLICATION,    wxTRANSLATE("Application"), wxLIST_FORMAT_LEFT, 95);
+    AddColumn(COLUMN_NAME,           wxTRANSLATE("Name"), wxLIST_FORMAT_LEFT, 285);
+    AddColumn(COLUMN_CPUTIME,        wxTRANSLATE("CPU time"), wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_PROGRESS,       wxTRANSLATE("Progress"), wxLIST_FORMAT_CENTER, 60);
+    AddColumn(COLUMN_TOCOMPLETION,   wxTRANSLATE("To completion"), wxLIST_FORMAT_RIGHT, 100);
+    AddColumn(COLUMN_REPORTDEADLINE, wxTRANSLATE("Report deadline"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_STATUS,         wxTRANSLATE("Status"), wxLIST_FORMAT_LEFT, 135);
 
     m_iProgressColumn = COLUMN_PROGRESS;
 

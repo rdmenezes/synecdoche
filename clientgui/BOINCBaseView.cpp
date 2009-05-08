@@ -720,9 +720,9 @@ wxString CBOINCBaseView::HtmlEntityDecode(const wxString& strRaw) {
 ///                    it to wxWidgets.
 /// \param[in] align Column alignment.
 /// \param[in] width The width of the column.
-void CBOINCBaseView::AddColumn(long column, const char* heading,
+void CBOINCBaseView::AddColumn(long column, const wxChar* heading,
                                wxListColumnFormat align, int width) {
-    m_pListPane->InsertColumn(column, _(heading), align, width);
+    m_pListPane->InsertColumn(column, wxGetTranslation(heading), align, width);
     m_column_keys[column] = heading;
 }
 
@@ -731,7 +731,7 @@ void CBOINCBaseView::AddColumn(long column, const char* heading,
 /// \return A map containing the keys used to identify the columns when storing
 ///         column related settings. This map is filled when AddColumn is
 ///         called.
-const std::map<long, const char*>& CBOINCBaseView::GetColumnKeys() const {
+const ColumnListMap& CBOINCBaseView::GetColumnKeys() const {
     return m_column_keys;
 }
 

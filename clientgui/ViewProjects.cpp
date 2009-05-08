@@ -189,13 +189,13 @@ void CViewProjects::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    AddColumn(COLUMN_PROJECT, "Project", wxLIST_FORMAT_LEFT, 150);
-    AddColumn(COLUMN_ACCOUNTNAME, "Account", wxLIST_FORMAT_LEFT, 80);
-    AddColumn(COLUMN_TEAMNAME, "Team", wxLIST_FORMAT_LEFT, 80);
-    AddColumn(COLUMN_TOTALCREDIT, "Work done", wxLIST_FORMAT_RIGHT, 80);
-    AddColumn(COLUMN_AVGCREDIT, "Avg. work done", wxLIST_FORMAT_RIGHT, 80);
-    AddColumn(COLUMN_RESOURCESHARE, "Resource share", wxLIST_FORMAT_CENTRE, 85);
-    AddColumn(COLUMN_STATUS, "Status", wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_PROJECT,       wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_ACCOUNTNAME,   wxTRANSLATE("Account"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TEAMNAME,      wxTRANSLATE("Team"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TOTALCREDIT,   wxTRANSLATE("Work done"), wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_AVGCREDIT,     wxTRANSLATE("Avg. work done"), wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_RESOURCESHARE, wxTRANSLATE("Resource share"), wxLIST_FORMAT_CENTRE, 85);
+    AddColumn(COLUMN_STATUS,        wxTRANSLATE("Status"), wxLIST_FORMAT_LEFT, 150);
 
     m_iProgressColumn = COLUMN_RESOURCESHARE;
 

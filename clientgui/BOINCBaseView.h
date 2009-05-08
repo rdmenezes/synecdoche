@@ -42,6 +42,7 @@ class CBOINCListCtrl;
 
 typedef bool (*ListSortCompareFunc)(size_t, size_t);
 
+typedef std::map<long, const wxChar*> ColumnListMap;
 
 class CBOINCBaseView : public wxPanel {
     DECLARE_DYNAMIC_CLASS(CBOINCBaseView)
@@ -83,7 +84,7 @@ public:
     void                    InitSort();
 
     /// Get a map containing the keys for all columns.
-    const std::map<long, const char*>& GetColumnKeys() const;
+    const ColumnListMap&    GetColumnKeys() const;
 
     int                     m_iSortColumn;
     bool                    m_bReverseSort;
@@ -110,7 +111,7 @@ protected:
     virtual wxString        OnDocGetItemAttr( long item ) const;
 
     /// Add a new column to the tab.
-    void                    AddColumn(long column, const char* heading,
+    void                    AddColumn(long column, const wxChar* heading,
                                       wxListColumnFormat align, int width);
 
     /// Read and apply stored settings like column widths.
@@ -164,7 +165,7 @@ protected:
     bool                    m_bViewLoaded;
 
 private:
-    std::map<long, const char*> m_column_keys;
+    ColumnListMap m_column_keys;
 };
 
 
