@@ -130,9 +130,9 @@ void CViewMessages::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    AddColumn(COLUMN_PROJECT, "Project", wxLIST_FORMAT_LEFT, 115);
-    AddColumn(COLUMN_TIME, "Time", wxLIST_FORMAT_LEFT, 145);
-    AddColumn(COLUMN_MESSAGE, "Message", wxLIST_FORMAT_LEFT, 550);
+    AddColumn(COLUMN_PROJECT, wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 115);
+    AddColumn(COLUMN_TIME,    wxTRANSLATE("Time"), wxLIST_FORMAT_LEFT, 145);
+    AddColumn(COLUMN_MESSAGE, wxTRANSLATE("Message"), wxLIST_FORMAT_LEFT, 550);
 
     m_pMessageInfoAttr = new wxListItemAttr(*wxBLACK, *wxWHITE, wxNullFont);
     m_pMessageErrorAttr = new wxListItemAttr(*wxRED, *wxWHITE, wxNullFont);
