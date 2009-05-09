@@ -636,7 +636,7 @@ double CViewTransfers::GetProgressValue(long item) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
-        transfer = pDoc->file_transfer(item);
+        transfer = pDoc->file_transfer(m_iSortedIndexes[item]);
     }
 
     if (transfer) {

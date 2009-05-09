@@ -1052,7 +1052,7 @@ double CViewWork::GetProgressValue(long item) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     RESULT* result = 0;
     if (pDoc) {
-        result = pDoc->result(item);
+        result = pDoc->result(m_iSortedIndexes[item]);
     }
 
     if (result) {
