@@ -26,7 +26,6 @@
 #include <wx/listbase.h> //for wxListColumnFormat
 
 #define DEFAULT_TASK_FLAGS             wxTAB_TRAVERSAL | wxADJUST_MINSIZE
-#define DEFAULT_LIST_SINGLE_SEL_FLAGS  wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL
 #define DEFAULT_LIST_MULTI_SEL_FLAGS   wxLC_REPORT | wxLC_VIRTUAL
 
 class wxNotebook;
@@ -103,9 +102,6 @@ protected:
 
     void                    OnColClick(wxListEvent& event);
     
-    virtual void            OnGridSelectCell( wxGridEvent& event );
-    virtual void            OnGridSelectRange( wxGridRangeSelectEvent& event );
-
     virtual int             GetDocCount();
     virtual wxString        OnDocGetItemImage( long item ) const;
     virtual wxString        OnDocGetItemAttr( long item ) const;
