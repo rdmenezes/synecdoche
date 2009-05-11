@@ -192,13 +192,13 @@ public:
     /// Poll the client's finite-state machines.
     bool poll_slow_events();
 
-    void do_io_or_sleep(double dt);
+    void do_io_or_sleep(double sec);
     bool time_to_exit() const;
     PROJECT* lookup_project(const char* master_url);
-    APP* lookup_app(const PROJECT* p, const char* name);
-    FILE_INFO* lookup_file_info(const PROJECT* p, const std::string& name);
-    RESULT* lookup_result(const PROJECT* p, const char* name);
-    WORKUNIT* lookup_workunit(const PROJECT* p, const char* name);
+    APP* lookup_app(const PROJECT* project, const char* name);
+    FILE_INFO* lookup_file_info(const PROJECT* project, const std::string& name);
+    RESULT* lookup_result(const PROJECT* project, const char* name);
+    WORKUNIT* lookup_workunit(const PROJECT* project, const char* name);
     APP_VERSION* lookup_app_version(const APP* app, const char* platform, int ver, const char* plan_class);
 
     /// "Detach" a project.
@@ -223,7 +223,7 @@ private:
     /// Perform state transitions for results.
     bool update_results();
 
-    int nresults_for_project(const PROJECT*) const;
+    int nresults_for_project(const PROJECT* project) const;
     void check_clock_reset();
 /// @}
 
@@ -247,7 +247,7 @@ private:
     void schedule_cpus();
     bool enforce_schedule();
     bool no_work_for_a_cpu();
-    void make_running_task_heap(std::vector<ACTIVE_TASK*>&, double&);
+    void make_running_task_heap(std::vector<ACTIVE_TASK*>& running_tasks, double& ncpus_used);
 public:
     /// If we fail to start a task due to no shared-mem segments,
     /// wait until at least this time to try running
@@ -264,7 +264,7 @@ public:
         if (x < 1) x = 1;
         return x;
     }
-    void request_enforce_schedule(const char*);
+    void request_enforce_schedule(const char* where);
     /// Check for reschedule CPUs ASAP.  Called when:
     /// - core client starts (CLIENT_STATE::init())
     /// - an app exits (ACTIVE_TASK_STATE::check_app_exited())
@@ -273,7 +273,8 @@ public:
     /// - an app fails to start (CLIENT_STATE::schedule_cpus())
     /// - any project op is done via RPC (suspend/resume)
     /// - any result op is done via RPC (suspend/resume)
-    void request_schedule_cpus(const char*);
+    void request_schedule_cpus(const char* where);
+    ACTIVE_TASK* lookup_active_task_by_result(const RESULT* result);
 /// @}
 
 /// @name cs_account.C
@@ -296,29 +297,19 @@ private:
     double fetchable_resource_share();
 public:
     double runnable_resource_share();
-    /// Check if work fetch needed.  Called when:
-    /// - core client starts (CLIENT_STATE::init())
-    /// - task is completed or fails
-    /// - tasks are killed
-    /// - an RPC completes
-    /// - project suspend/detach/attach/reset GUI RPC
-    /// - result suspend/abort GUI RPC
-    void request_work_fetch(const char*);
     int quit_activities();
     void set_ncpus();
-    double estimate_cpu_time(WORKUNIT&);
     double get_fraction_done(RESULT* result);
 
     /// Check if all the input files for a result are present.
     int input_files_available(const RESULT* rp, bool verify, FILE_INFO_PSET* fip_set = 0);
 
-    ACTIVE_TASK* lookup_active_task_by_result(const RESULT*);
     int ncpus; ///< number of usable cpus
 private:
     int nslots;
 
-    int latest_version(APP*, char*);
-    int app_finished(ACTIVE_TASK&);
+    int latest_version(APP* app, const char* platform);
+    int app_finished(ACTIVE_TASK& at);
     bool start_apps();
     bool handle_finished_apps();
 public:
@@ -346,7 +337,7 @@ public:
 /// @name cs_files.C
 public:
     void check_file_existence();
-    bool start_new_file_xfer(PERS_FILE_XFER&);
+    bool start_new_file_xfer(PERS_FILE_XFER& pfx);
 private:
     int make_project_dirs();
     bool handle_pers_file_xfers();
@@ -356,16 +347,16 @@ private:
 public:
     std::string get_primary_platform() const;
 private:
-    void add_platform(const char*);
+    void add_platform(const char* platform);
     void detect_platforms();
-    void write_platforms(PROJECT*, MIOFILE&);
-    bool is_supported_platform(const char*);
+    void write_platforms(PROJECT* p, MIOFILE& mf);
+    bool is_supported_platform(const char* p);
 /// @}
 
 /// @name cs_prefs.C
 public:
-    int project_disk_usage(PROJECT*, double&);
-    int total_disk_usage(double&); ///< returns the total disk usage of Synecdoche on this host
+    int project_disk_usage(PROJECT* p, double& size);
+    int total_disk_usage(double& size); ///< returns the total disk usage of Synecdoche on this host
     double allowed_disk_usage(double boinc_total);
     int suspend_tasks(int reason);
     int resume_tasks(int reason=0);
@@ -380,12 +371,12 @@ private:
     int check_suspend_network();
     void install_global_prefs();
     PROJECT* global_prefs_source_project();
-    void show_global_prefs_source(bool);
+    void show_global_prefs_source(bool found_venue);
 /// @}
 
 /// @name cs_scheduler.C
 public:
-    int make_scheduler_request(PROJECT*);
+    int make_scheduler_request(PROJECT* p);
 
     /// Handle the reply from a scheduler.
     int handle_scheduler_reply(PROJECT* project, const char* scheduler_url, int& nresults);
@@ -402,16 +393,16 @@ private:
 
 /// @name cs_statefile.C
 public:
-    void set_client_state_dirty(const char*);
+    void set_client_state_dirty(const char* source);
     int parse_state_file();
-    int write_state(MIOFILE&) const;
+    int write_state(MIOFILE& f) const;
     int write_state_file() const;
     int write_state_file_if_needed();
     void check_anonymous();
-    int parse_app_info(PROJECT*, FILE*);
-    int write_state_gui(MIOFILE&);
-    int write_file_transfers_gui(MIOFILE&);
-    int write_tasks_gui(MIOFILE&);
+    int parse_app_info(PROJECT* p, FILE* in);
+    int write_state_gui(MIOFILE& f);
+    int write_file_transfers_gui(MIOFILE& f);
+    int write_tasks_gui(MIOFILE& f);
 /// @}
 
 /// @name cs_trickle.C
@@ -463,15 +454,24 @@ public:
     /// Reset all debts to zero if "zero_debts" is set in the config file.
     void zero_debts_if_requested();
 
+    /// Check if work fetch needed.  Called when:
+    /// - core client starts (CLIENT_STATE::init())
+    /// - task is completed or fails
+    /// - tasks are killed
+    /// - an RPC completes
+    /// - project suspend/detach/attach/reset GUI RPC
+    /// - result suspend/abort GUI RPC
+    void request_work_fetch(const char* where);
+
 private:
-    int proj_min_results(PROJECT*, double);
+    int proj_min_results(PROJECT* p, double subset_resource_share);
     void check_project_timeout();
     PROJECT* next_project_sched_rpc_pending();
     PROJECT* next_project_trickle_up_pending();
     PROJECT* find_project_with_overdue_results();
-    double time_until_work_done(PROJECT*, int, double);
+    double time_until_work_done(PROJECT* p, int k, double subset_resource_share);
     bool compute_work_requests();
-    void scale_duration_correction_factors(double);
+    void scale_duration_correction_factors(double factor);
     void generate_new_host_cpid();
     void compute_nuploading_results();
 /// @}
@@ -491,7 +491,7 @@ double calculate_exponential_backoff(
     int n, double MIN, double MAX
 );
 
-void print_suspend_tasks_message(int);
+void print_suspend_tasks_message(int reason);
 
 /// the client will handle I/O (including GUI RPCs)
 /// for up to POLL_INTERVAL seconds before calling poll_slow_events()

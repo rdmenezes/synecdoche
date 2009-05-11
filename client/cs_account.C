@@ -275,8 +275,8 @@ int DAILY_STATS::parse(FILE* in) {
     return ERR_XML_PARSE;
 }
 
-bool operator <  (const DAILY_STATS& x1, const DAILY_STATS& x2) {
-    return (x1.day < x2.day);
+bool operator <  (const DAILY_STATS& lhs, const DAILY_STATS& rhs) {
+    return (lhs.day < rhs.day);
 }
 
 /// parse an statistics_*.xml file

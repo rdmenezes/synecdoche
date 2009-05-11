@@ -396,12 +396,12 @@ static void double_to_timeval(double x, timeval& t) {
 }
 
 
-/// Spend x seconds either doing I/O (if possible) or sleeping.
-void CLIENT_STATE::do_io_or_sleep(double x) {
+/// Spend \a sec seconds either doing I/O (if possible) or sleeping.
+void CLIENT_STATE::do_io_or_sleep(double sec) {
     int n;
     struct timeval tv;
     now = dtime();
-    double end_time = now + x;
+    double end_time = now + sec;
     int loops = 0;
     FDSET_GROUP all_fds;
 
@@ -409,7 +409,7 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
         all_fds.zero();
         http_ops->get_fdset(all_fds);
         gui_rpcs.get_fdset(all_fds);
-        double_to_timeval(x, tv);
+        double_to_timeval(sec, tv);
         n = select(all_fds.max_fd + 1, &all_fds.read_fds,
                    &all_fds.write_fds, &all_fds.exc_fds, &tv);
 
@@ -436,7 +436,7 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
         // (called from net_xfers->got_select())
         // called pretty often, even if no descriptors are enabled.
         // So do the "if (n==0) break" AFTER the http_ops->got_select().
-        http_ops->got_select(all_fds, x);
+        http_ops->got_select(all_fds, sec);
 
         if (n == 0) {
             break;
@@ -455,7 +455,7 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
 
         now = dtime();
         if (now > end_time) break;
-        x = end_time - now;
+        sec = end_time - now;
     }
 }
 
@@ -669,26 +669,26 @@ PROJECT* CLIENT_STATE::lookup_project(const char* master_url) {
     return 0;
 }
 
-APP* CLIENT_STATE::lookup_app(const PROJECT* p, const char* name) {
+APP* CLIENT_STATE::lookup_app(const PROJECT* project, const char* name) {
     for (unsigned int i=0; i<apps.size(); i++) {
         APP* app = apps[i];
-        if (app->project == p && !strcmp(name, app->name)) return app;
+        if (app->project == project && !strcmp(name, app->name)) return app;
     }
     return 0;
 }
 
-RESULT* CLIENT_STATE::lookup_result(const PROJECT* p, const char* name) {
+RESULT* CLIENT_STATE::lookup_result(const PROJECT* project, const char* name) {
     for (unsigned int i=0; i<results.size(); i++) {
         RESULT* rp = results[i];
-        if (rp->project == p && !strcmp(name, rp->name)) return rp;
+        if (rp->project == project && !strcmp(name, rp->name)) return rp;
     }
     return 0;
 }
 
-WORKUNIT* CLIENT_STATE::lookup_workunit(const PROJECT* p, const char* name) {
+WORKUNIT* CLIENT_STATE::lookup_workunit(const PROJECT* project, const char* name) {
     for (unsigned int i=0; i<workunits.size(); i++) {
         WORKUNIT* wup = workunits[i];
-        if (wup->project == p && !strcmp(name, wup->name)) return wup;
+        if (wup->project == project && !strcmp(name, wup->name)) return wup;
     }
     return 0;
 }
@@ -887,10 +887,10 @@ void CLIENT_STATE::print_summary() const {
     }
 }
 
-int CLIENT_STATE::nresults_for_project(const PROJECT* p) const {
+int CLIENT_STATE::nresults_for_project(const PROJECT* project) const {
     int n=0;
     for (unsigned int i=0; i<results.size(); i++) {
-        if (results[i]->project == p) n++;
+        if (results[i]->project == project) n++;
     }
     return n;
 }
