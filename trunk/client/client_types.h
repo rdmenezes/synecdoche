@@ -112,21 +112,21 @@ public:
     ~FILE_INFO();
     void reset();
     int set_permissions();
-    int parse(MIOFILE&, bool from_server);
-    int write(MIOFILE&, bool to_server) const;
-    int write_gui(MIOFILE&) const;
+    int parse(MIOFILE& in, bool from_server);
+    int write(MIOFILE& out, bool to_server) const;
+    int write_gui(MIOFILE& out) const;
     int delete_file();      ///< Attempt to delete the underlying file.
-    const char* get_init_url(bool);
-    const char* get_next_url(bool);
-    const char* get_current_url(bool);
-    bool is_correct_url_type(bool, const std::string&) const;
+    const char* get_init_url(bool is_upload);
+    const char* get_next_url(bool is_upload);
+    const char* get_current_url(bool is_upload);
+    bool is_correct_url_type(bool is_upload, const std::string& url) const;
     bool had_failure(int& failnum) const;
 
     /// Create a failure message for a failed file-xfer in XML format.
     std::string failure_message() const;
 
-    int merge_info(const FILE_INFO&);
-    int verify_file(bool, bool);
+    int merge_info(const FILE_INFO& new_info);
+    int verify_file(bool strict, bool show_errors);
 
     /// Compress the file using zlib (gzip compression).
     int gzip();
@@ -153,8 +153,8 @@ public:
     bool optional;
 
 public:
-    int parse(MIOFILE&);
-    int write(MIOFILE&) const;
+    int parse(MIOFILE& in);
+    int write(MIOFILE& out) const;
 };
 typedef std::vector<FILE_REF> FILE_REF_VEC;
 
@@ -169,9 +169,9 @@ struct DAILY_STATS {
 
     void clear();
     DAILY_STATS() { clear(); }
-    int parse(FILE*);
+    int parse(FILE* in);
 };
-bool operator < (const DAILY_STATS&, const DAILY_STATS&);
+bool operator < (const DAILY_STATS& lhs, const DAILY_STATS& rhs);
 
 class WORKUNIT {
 public:
@@ -194,10 +194,10 @@ public:
 public:
     WORKUNIT(){}
     ~WORKUNIT(){}
-    int parse(MIOFILE&);
-    int write(MIOFILE&) const;
+    int parse(MIOFILE& in);
+    int write(MIOFILE& out) const;
     bool had_download_failure(int& failnum) const;
-    void get_file_errors(std::string&) const;
+    void get_file_errors(std::string& str) const;
     void clear_errors();
 };
 typedef std::vector<WORKUNIT*> WORKUNIT_PVEC;
@@ -340,10 +340,10 @@ public:
     int parse_preferences_for_user_files();
 
     /// Parse project files from a xml file.
-    int parse_project_files(MIOFILE&, bool delete_existing_symlinks);
+    int parse_project_files(MIOFILE& in, bool delete_existing_symlinks);
 
     /// Write the XML representation of the project files into a file.
-    void write_project_files(MIOFILE&) const;
+    void write_project_files(MIOFILE& out) const;
 
     /// Install pointers from FILE_REFs to FILE_INFOs for project files.
     void link_project_files(bool recreate_symlink_files);
@@ -363,7 +363,7 @@ public:
     /// the factor is set to X.
     double duration_correction_factor;
 
-    void update_duration_correction_factor(RESULT*);
+    void update_duration_correction_factor(const RESULT* result);
 
     /// @name CPU scheduler and work fetch
     /// Fields used by CPU scheduler and work fetch.
@@ -468,15 +468,15 @@ public:
     double next_file_xfer_up;
     double next_file_xfer_down;
 
-    double next_file_xfer_time(const bool) const;
-    void file_xfer_failed(const bool);
-    void file_xfer_succeeded(const bool);
+    double next_file_xfer_time(const bool is_upload) const;
+    void file_xfer_failed(const bool is_upload);
+    void file_xfer_succeeded(const bool is_upload);
     /// @}
 
     PROJECT();
     ~PROJECT(){}
     void init();
-    void copy_state_fields(const PROJECT&);
+    void copy_state_fields(const PROJECT& p);
     const char *get_project_name() const;
 
     /// Write account_*.xml file.
@@ -488,13 +488,12 @@ public:
     int parse_account_file_venue();
 
     int parse_account_file();
-    int parse_state(MIOFILE&);
-    int write_state(MIOFILE&, bool gui_rpc=false) const;
+    int parse_state(MIOFILE& in);
+    int write_state(MIOFILE& out, bool gui_rpc=false) const;
 
     std::vector<DAILY_STATS> statistics; ///< Statistics of the last x days.
-    int parse_statistics(MIOFILE&);
-    int parse_statistics(FILE*);
-    int write_statistics(MIOFILE&, bool gui_rpc=false) const;
+    int parse_statistics(FILE* in);
+    int write_statistics(MIOFILE& out, bool gui_rpc=false) const;
 
     /// Write the statistics file.
     int write_statistics_file() const;
@@ -509,8 +508,8 @@ public:
     char user_friendly_name[256];
     PROJECT* project;
 
-    int parse(MIOFILE&);
-    int write(MIOFILE&) const;
+    int parse(MIOFILE& in);
+    int write(MIOFILE& out) const;
 };
 
 class APP_VERSION {
@@ -534,10 +533,10 @@ public:
 public:
     APP_VERSION(){}
     ~APP_VERSION(){}
-    int parse(MIOFILE&);
-    int write(MIOFILE&) const;
+    int parse(MIOFILE& in);
+    int write(MIOFILE& out) const;
     bool had_download_failure(int& failnum) const;
-    void get_file_errors(std::string&);
+    void get_file_errors(std::string& str);
     void clear_errors();
     int api_major_version() const;
 };
@@ -595,21 +594,21 @@ public:
     void clear();
     int parse_server(MIOFILE&);
     int parse_state(MIOFILE&);
-    int parse_name(FILE*, const char* end_tag);
-    int write(MIOFILE&, bool to_server) const;
-    int write_gui(MIOFILE&);
+    int parse_name(FILE* in, const char* end_tag);
+    int write(MIOFILE& out, bool to_server) const;
+    int write_gui(MIOFILE& out);
     bool is_upload_done() const;    ///< files uploaded?
     void clear_uploaded_flags();
-    const FILE_REF* lookup_file(const FILE_INFO*) const;
-    FILE_INFO* lookup_file_logical(const char*);
+    const FILE_REF* lookup_file(const FILE_INFO* fip) const;
+    FILE_INFO* lookup_file_logical(const char* lname);
     /// Abort the result if it hasn't started computing yet.
     /// Called only for results with no active task
     /// (otherwise you need to abort the active task).
-    void abort_inactive(int);
+    void abort_inactive(int status);
     void append_log_record(ACTIVE_TASK& at);
 
     inline int state() const { return _state; }
-    void set_state(int, const char*);
+    void set_state(int val, const char* where);
 
     // stuff related to CPU scheduling
 

@@ -949,9 +949,9 @@ void CLIENT_STATE::request_schedule_cpus(const char* where) {
 }
 
 /// Find the active task for a given result.
-ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* rep) {
+ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* result) {
     for (unsigned int i = 0; i < active_tasks.active_tasks.size(); i ++) {
-        if (active_tasks.active_tasks[i]->result == rep) {
+        if (active_tasks.active_tasks[i]->result == result) {
             return active_tasks.active_tasks[i];
         }
     }
@@ -1152,9 +1152,9 @@ int ACTIVE_TASK::preempt(bool quit_task) {
 /// The given result has just completed successfully;
 /// update the correction factor used to predict
 /// completion time for this project's results.
-void PROJECT::update_duration_correction_factor(RESULT* rp) {
-    double raw_ratio = rp->final_cpu_time/rp->estimated_cpu_time_uncorrected();
-    double adj_ratio = rp->final_cpu_time/rp->estimated_cpu_time();
+void PROJECT::update_duration_correction_factor(const RESULT* result) {
+    double raw_ratio = result->final_cpu_time/result->estimated_cpu_time_uncorrected();
+    double adj_ratio = result->final_cpu_time/result->estimated_cpu_time();
     double old_dcf = duration_correction_factor;
 
     // it's OK to overestimate completion time,

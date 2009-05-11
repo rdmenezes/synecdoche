@@ -526,16 +526,16 @@ void PROJECT::link_project_files(bool recreate_symlink_files) {
 
 /// Write the XML representation of the project files into a file.
 ///
-/// \param[in] f Reference to a MIOFILE instance representing the target file.
-void PROJECT::write_project_files(MIOFILE& f) const {
+/// \param[in] out Reference to a MIOFILE instance representing the target file.
+void PROJECT::write_project_files(MIOFILE& out) const {
     if (project_files.empty()) {
         return;
     }
-    f.printf("<project_files>\n");
+    out.printf("<project_files>\n");
     for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
-        (*it).write(f);
+        (*it).write(out);
     }
-    f.printf("</project_files>\n");
+    out.printf("</project_files>\n");
 }
 
 /// Write symlinks for project files.

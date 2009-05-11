@@ -290,7 +290,7 @@ double CLIENT_STATE::avg_proc_rate() {
 }
 
 /// Estimate wall-clock time until the number of uncompleted results
-/// for project p will reach k,
+/// for project \a p will reach \a k,
 /// given the total resource share of a set of competing projects.
 double CLIENT_STATE::time_until_work_done(
     PROJECT *p, int k, double subset_resource_share

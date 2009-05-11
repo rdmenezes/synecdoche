@@ -275,7 +275,7 @@ double CLIENT_STATE::get_fraction_done(RESULT* result) {
 
 /// Find latest version of app for given platform
 /// or -1 if can't find one.
-int CLIENT_STATE::latest_version(APP* app, char* platform) {
+int CLIENT_STATE::latest_version(APP* app, const char* platform) {
     unsigned int i;
     int best = -1;
 
