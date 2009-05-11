@@ -27,7 +27,7 @@
 #include "procinfo.h"
 
 //forward declarations
-//(we don't need to include the full declarations from client_state.h)
+//(we don't need to include the full declarations from client_types.h)
 class CLIENT_STATE;
 class PROJECT;
 class WORKUNIT;
