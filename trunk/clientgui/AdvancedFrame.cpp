@@ -727,10 +727,8 @@ bool CAdvancedFrame::SaveState() {
 
     pConfig->Write(wxT("DisplayShutdownClientWarning"), m_bDisplayShutdownClientWarning);
 
-#ifdef __WXMAC__
-    // Reterieve and store the latest window dimensions.
+    // Retrieve and store the latest window dimensions.
     SaveWindowDimensions();
-#endif
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::SaveState - Function End"));
     return true;
@@ -871,17 +869,24 @@ void CAdvancedFrame::SaveWindowDimensions() {
 
     pConfig->SetPath(strBaseConfigLocation);
 
+    /// \todo WindowIconized and WindowMaximized may no longer be required,
+    ///       since they are never restored.
     pConfig->Write(wxT("WindowIconized"), IsIconized());
     pConfig->Write(wxT("WindowMaximized"), IsMaximized());
-    pConfig->Write(wxT("Width"), GetSize().GetWidth());
-    pConfig->Write(wxT("Height"), GetSize().GetHeight());
+
+    // Only save the size if we are saving a normal window.
+    if (!IsIconized() && !IsMaximized()) {
+        pConfig->Write(wxT("Width"), GetSize().GetWidth());
+        pConfig->Write(wxT("Height"), GetSize().GetHeight());
 
 #ifdef __WXMAC__
-    pConfig->Write(wxT("XPos"), GetPosition().x);
-    pConfig->Write(wxT("YPos"), GetPosition().y);
+        pConfig->Write(wxT("XPos"), GetPosition().x);
+        pConfig->Write(wxT("YPos"), GetPosition().y);
 #endif  // ! __WXMAC__
+
+    }
 }
-    
+
 
 void CAdvancedFrame::RestoreWindowDimensions() {
     wxString        strBaseConfigLocation = wxString(wxT("/"));
@@ -906,13 +911,10 @@ void CAdvancedFrame::RestoreWindowDimensions() {
 
 #ifndef __WXMAC__
 
-    if (!bWindowIconized && !bWindowMaximized) {
-        SetSize(-1, -1, iWidth, iHeight);
-    }
-
-    Iconize(bWindowIconized);
-    Maximize(bWindowMaximized);
-
+    // Window is always restored to the last normal size.
+    // Maximized/Iconized are ignored.
+    // Position is ignored.
+    SetSize(-1, -1, iWidth, iHeight);
 
 #else   // ! __WXMAC__
 
@@ -926,7 +928,7 @@ void CAdvancedFrame::RestoreWindowDimensions() {
     menuRect.bottom = GetMBarHeight() + menuRect.top;
     RgnHandle menuRgn = NewRgn();
     RectRgn(menuRgn, &menuRect);                // Region hidden by menu bar
-    DiffRgn(displayRgn, menuRgn, displayRgn);   // Subtract menu bar retion
+    DiffRgn(displayRgn, menuRgn, displayRgn);   // Subtract menu bar region
     if (!RectInRgn(&titleRect, displayRgn))
         iTop = iLeft = 30;
     DisposeRgn(menuRgn);
