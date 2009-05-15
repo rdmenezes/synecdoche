@@ -261,7 +261,7 @@ void CBOINCBaseFrame::OnAlert(CFrameAlertEvent& event) {
 void CBOINCBaseFrame::OnClose(wxCloseEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnClose - Function Begin"));
 
-#if defined(__WXMSW__) || defined(__WXMAC__)
+#ifdef SYNEC_USE_TASKBARICON
     if (!event.CanVeto()) {
         Destroy();
     } else {
@@ -296,7 +296,7 @@ void CBOINCBaseFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
 #endif
 
         // TaskBarIcon isn't used in Linux
-#if defined(__WXMSW__) || defined(__WXMAC__)
+#ifdef SYNEC_USE_TASKBARICON
         CTaskBarIcon* pTBI = wxGetApp().GetTaskBarIcon();
         if (pTBI && !pTBI->m_bTaskbarInitiatedShutdown) {
             delete pTBI;

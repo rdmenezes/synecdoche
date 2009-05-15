@@ -1620,7 +1620,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
         pAMWizard = new CWizardAccountManager(this);
         if (pAMWizard->Run()) {
-#if defined(__WXMSW__) || defined(__WXMAC__)
+#ifdef SYNEC_USE_TASKBARICON
             // If successful, hide the main window
             Hide();
 #endif
