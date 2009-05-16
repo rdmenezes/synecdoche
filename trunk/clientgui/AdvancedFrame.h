@@ -74,7 +74,6 @@ public:
 
     void OnHelpAbout( wxCommandEvent& event );
 
-    void OnShow( wxShowEvent& event );
     void OnSize(wxSizeEvent& event);
     void OnMove(wxMoveEvent& event);
 
