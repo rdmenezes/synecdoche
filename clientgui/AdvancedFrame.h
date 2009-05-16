@@ -75,6 +75,8 @@ public:
     void OnHelpAbout( wxCommandEvent& event );
 
     void OnShow( wxShowEvent& event );
+    void OnSize(wxSizeEvent& event);
+    void OnMove(wxMoveEvent& event);
 
     void OnRefreshState( wxTimerEvent& event );
     void OnFrameRender( wxTimerEvent& event );
@@ -107,6 +109,9 @@ private:
 
     // Next page to load in the background
     size_t          m_pageToLoad;
+
+    /// Store window size and location (but not maximised size)
+    wxRect          m_windowRect;
 
     bool            CreateMenu();
     bool            DeleteMenu();
