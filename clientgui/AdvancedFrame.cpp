@@ -106,7 +106,6 @@ BEGIN_EVENT_TABLE (CAdvancedFrame, CBOINCBaseFrame)
     EVT_MENU(ID_HELPBOINC, CBOINCBaseFrame::OnHelp)
     EVT_MENU(ID_HELPBOINCWEBSITE, CBOINCBaseFrame::OnHelp)
     EVT_MENU(wxID_ABOUT, CAdvancedFrame::OnHelpAbout)
-    EVT_SHOW(CAdvancedFrame::OnShow)
     EVT_SIZE(CAdvancedFrame::OnSize)
     EVT_MOVE(CAdvancedFrame::OnMove)
     EVT_FRAME_REFRESH(CAdvancedFrame::OnRefreshView)
@@ -174,6 +173,8 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
 
     // We want to disconnect this later, so connect here instead of in the event table.
     Connect(wxEVT_IDLE, wxIdleEventHandler(CAdvancedFrame::OnIdleInit));
+
+    RestoreState();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CAdvancedFrame - Function End"));
 }
@@ -1523,29 +1524,6 @@ void CAdvancedFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
     dlg.ShowModal();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpAbout - Function End"));
-}
-
-
-void CAdvancedFrame::OnShow(wxShowEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnShow - Function Begin"));
-    static bool bAlreadyRunning = false;
-
-    if ((event.GetEventObject() == this) && !bAlreadyRunning) {
-        bAlreadyRunning = true;
-
-        wxLogTrace(wxT("Function Status"), wxT("CAdvancedFrame::OnShow - Show/Hide Event for CAdvancedFrame detected"));
-        if (event.GetShow()) {
-            RestoreWindowDimensions();
-        } else {
-            SaveWindowDimensions();
-        }
-
-        bAlreadyRunning = false;
-    } else {
-        event.Skip();
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnShow - Function End"));
 }
 
 
