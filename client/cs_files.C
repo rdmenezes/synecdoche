@@ -47,10 +47,6 @@
 #include "file_xfer.h"
 #include "pers_file_xfer.h"
 
-#define MAX_TRANSFERS_PER_PROJECT   2
-#define MAX_TRANSFERS_TOTAL         8
-    // kind of arbitrary
-
 using std::vector;
 
 /// Decide whether to consider starting a new file transfer.
