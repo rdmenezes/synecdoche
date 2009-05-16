@@ -107,6 +107,8 @@ BEGIN_EVENT_TABLE (CAdvancedFrame, CBOINCBaseFrame)
     EVT_MENU(ID_HELPBOINCWEBSITE, CBOINCBaseFrame::OnHelp)
     EVT_MENU(wxID_ABOUT, CAdvancedFrame::OnHelpAbout)
     EVT_SHOW(CAdvancedFrame::OnShow)
+    EVT_SIZE(CAdvancedFrame::OnSize)
+    EVT_MOVE(CAdvancedFrame::OnMove)
     EVT_FRAME_REFRESH(CAdvancedFrame::OnRefreshView)
     EVT_FRAME_CONNECT(CAdvancedFrame::OnConnect)
     EVT_FRAME_UPDATESTATUS(CAdvancedFrame::OnUpdateStatus)
@@ -869,30 +871,19 @@ void CAdvancedFrame::SaveWindowDimensions() {
 
     pConfig->SetPath(strBaseConfigLocation);
 
-    /// \todo WindowIconized and WindowMaximized may no longer be required,
-    ///       since they are never restored.
-    pConfig->Write(wxT("WindowIconized"), IsIconized());
-    pConfig->Write(wxT("WindowMaximized"), IsMaximized());
-
-    // Only save the size if we are saving a normal window.
-    if (!IsIconized() && !IsMaximized()) {
-        pConfig->Write(wxT("Width"), GetSize().GetWidth());
-        pConfig->Write(wxT("Height"), GetSize().GetHeight());
+    pConfig->Write(wxT("Width"), m_windowRect.GetWidth());
+    pConfig->Write(wxT("Height"), m_windowRect.GetHeight());
 
 #ifdef __WXMAC__
-        pConfig->Write(wxT("XPos"), GetPosition().x);
-        pConfig->Write(wxT("YPos"), GetPosition().y);
-#endif  // ! __WXMAC__
-
-    }
+    pConfig->Write(wxT("XPos"), m_windowRect.GetX());
+    pConfig->Write(wxT("YPos"), m_windowRect.GetY());
+#endif
 }
 
 
 void CAdvancedFrame::RestoreWindowDimensions() {
     wxString        strBaseConfigLocation = wxString(wxT("/"));
     wxConfigBase*   pConfig = wxConfigBase::Get(FALSE);
-    bool            bWindowIconized = false;
-    bool            bWindowMaximized = false;
     int             iHeight = 0;
     int             iWidth = 0;
     int             iTop = 0;
@@ -906,17 +897,14 @@ void CAdvancedFrame::RestoreWindowDimensions() {
     pConfig->Read(wxT("XPos"), &iLeft, 30);
     pConfig->Read(wxT("Width"), &iWidth, 800);
     pConfig->Read(wxT("Height"), &iHeight, 600);
-    pConfig->Read(wxT("WindowIconized"), &bWindowIconized, false);
-    pConfig->Read(wxT("WindowMaximized"), &bWindowMaximized, false);
 
 #ifndef __WXMAC__
 
     // Window is always restored to the last normal size.
-    // Maximized/Iconized are ignored.
     // Position is ignored.
     SetSize(-1, -1, iWidth, iHeight);
 
-#else   // ! __WXMAC__
+#else   // __WXMAC__
 
     // If the user has changed the arrangement of multiple 
     // displays, make sure the window title bar is still on-screen.
@@ -936,7 +924,7 @@ void CAdvancedFrame::RestoreWindowDimensions() {
 
     SetSize(iLeft, iTop, iWidth, iHeight);
 
-#endif  // ! __WXMAC__
+#endif
 }
 
 
@@ -1155,6 +1143,29 @@ void CAdvancedFrame::Onread_prefs(wxCommandEvent& WXUNUSED(event)) {
 void CAdvancedFrame::Onread_config(wxCommandEvent& WXUNUSED(event)) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     pDoc->rpc.read_cc_config();
+}
+
+
+void CAdvancedFrame::OnSize(wxSizeEvent& event) {
+
+    // Minimising doesn't generate a size event on Windows, but other platforms may vary.
+    // Only save the size if we are saving a normal window.
+    if (!IsIconized() && !IsMaximized()) {
+        m_windowRect.SetSize(event.GetSize());
+    }
+
+    event.Skip();
+}
+
+
+void CAdvancedFrame::OnMove(wxMoveEvent& event) {
+
+    // Only save the position if we are saving a normal window.
+    if (!IsIconized() && !IsMaximized()) {
+        m_windowRect.SetTopLeft(event.GetPosition());
+    }
+
+    event.Skip();
 }
 
 
