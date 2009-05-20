@@ -500,7 +500,6 @@ void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
     pFrame->UpdateStatusText(wxT(""));
 
     m_bForceUpdateSelection = true;
-    UpdateSelection();
     pFrame->FireRefreshView();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectDetach - Function End"));

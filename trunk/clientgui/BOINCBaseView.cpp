@@ -356,8 +356,10 @@ void CBOINCBaseView::InitSort() {
 void CBOINCBaseView::sortData() {
     if (m_iSortColumn < 0) return;
     
-    std::vector<size_t> oldSortedIndexes(m_iSortedIndexes);
-    std::vector<size_t> selections;
+    typedef std::vector<size_t> size_t_vec;
+
+    size_t_vec oldSortedIndexes(m_iSortedIndexes);
+    size_t_vec selections;
     size_t n = m_iSortedIndexes.size();
     
     // Remember which cache elements are selected and deselect them
@@ -372,11 +374,17 @@ void CBOINCBaseView::sortData() {
     
     std::stable_sort(m_iSortedIndexes.begin(), m_iSortedIndexes.end(), m_funcSortCompare);
     
+    size_t_vec reverse_lookup;
+    reverse_lookup.resize(m_iSortedIndexes.size());
+    for (size_t i = 0; i < m_iSortedIndexes.size(); ++i) {
+        reverse_lookup[m_iSortedIndexes[i]] = i;
+    }
+
     // Reselect previously selected cache elements in the sorted list 
     size_t m = selections.size();
     for (size_t i = 0; i < m; ++i) {
         if (selections[i] >= 0) {
-            size_t j = m_iSortedIndexes.at(selections[i]);
+            size_t j = reverse_lookup[selections[i]];
             m_pListPane->SetItemState(static_cast<long>(j), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
         }
     }
