@@ -118,7 +118,7 @@ static bool CompareViewProjectsItems(size_t iRowIndex1, size_t iRowIndex2) {
             break;
     }
 
-    // Always return fals for equality (result == 0).
+    // Always return false for equality (result == 0).
     return ((myCViewProjects->m_bReverseSort) ? (result > 0) : (result < 0));
 }
 
