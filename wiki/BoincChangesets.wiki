@@ -29,7 +29,7 @@
 ||16488||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. _Looks like this is only needed for service install on Vista. Do we support/need this?_||
 ||16539||manager: tweak strings in Options dialog||
 ||16545||client: in round-robin simulation, only increment CPU shortfall (per-project or overall) if there are no pending tasks.||
-||16548||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. _NOTE: Stackwalker still uses boinc.berkeley.edu as server!_||
+||16548/18172||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. _NOTE: Stackwalker still uses boinc.berkeley.edu as server!_||
 ||16557/16558||MGR: Make the error message processing work for the get_project_config rpc, use the same scheme as the ACCOUNT_OUT structure.||
 ||16565||client: Fix error from changeset 14415 which caused Mac client to call daemon() if it was passed -daemon argument, causing problems using launchd with !KeepAlive option; fixes #782.||
 ||16582||MGR: fix exit dialog so that both the Mac and Linux clients don't display the 'close core client...' checkbox.||
@@ -84,6 +84,7 @@
 ||18028||client: write message (and show new config info) when config file reread / client: improve cpu_sched_debug messages||
 ||18042||client, Mac: don't do res_init(). It causes a crash. / client (Unix): if client crashes while benchmark processes are going, make sure they detect this and exit. _NOTE: 17711 needs to be applied before this one._||
 ||18054||Mac client: fix parent died test in benchmark_time_to_stop()||
+||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
 
 
 == Changesets for the new OpenGL screensaver (Might be useful some day) ==
@@ -182,7 +183,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/17501 17501]||As jm7 noted on boinc_dev on 03/15/2009 this factor is there for a good reason.||
 ||[http://boinc.berkeley.edu/trac/changeset/17208 17208]||Obsolete due to r706. Additional changesets: 17209/17270||
 ||[http://boinc.berkeley.edu/trac/changeset/17596 17596]||We don't need these tabs, do we?||
+||[http://boinc.berkeley.edu/trac/changeset/18077 18077] `*`||MGR: Include support for Firefox 3.x cookie support for the attach to project wizard.||
+||[http://boinc.berkeley.edu/trac/changeset/18088 18088]||MGR: Merge "Attach to account manager" functionality into "Attach to project" wizard; Synchronize and Remove Acct Mgr not yet merged. Additional changesets: 18112/18113/18114/18115 _Doesn't make any sense to me._||
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18056 18056]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18182 18182]
