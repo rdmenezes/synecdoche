@@ -1658,7 +1658,6 @@ bool PROJECT::some_download_stalled() const {
 
 /// Return true if some file needed by this result (input or application)
 /// is downloading and backed off.
-///
 bool RESULT::some_download_stalled() const {
     unsigned int i;
     const FILE_INFO* fip;
@@ -1679,6 +1678,20 @@ bool RESULT::some_download_stalled() const {
         }
     }
     return false;
+}
+
+/// Get the project this result belongs to.
+///
+/// \return Pointer to the project the current result belongs to.
+PROJECT* RESULT::get_project() const {
+    return project;
+}
+
+/// Get the name of this result.
+///
+/// \return The name of this result.
+std::string RESULT::get_name() const {
+    return name;
 }
 
 const FILE_REF* RESULT::lookup_file(const FILE_INFO* fip) const {

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -225,6 +225,9 @@ private:
 
     int nresults_for_project(const PROJECT* project) const;
     void check_clock_reset();
+    
+    /// Abort all jobs that are not started yet but already missed their deadline.
+    bool abort_unstarted_late_jobs();
 /// @}
 
 /// @name cpu_sched.C

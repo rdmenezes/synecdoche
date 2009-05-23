@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -960,6 +961,13 @@ ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* result) {
 
 bool RESULT::computing_done() const {
     return (state() >= RESULT_COMPUTE_ERROR || ready_to_report);
+}
+
+/// Check if the result was started yet.
+///
+/// \return True if the client didn't start this result yet.
+bool RESULT::not_started() const {
+    return ((!computing_done()) && (!gstate.lookup_active_task_by_result(this)));
 }
 
 /// Find total resource shares of all projects.
