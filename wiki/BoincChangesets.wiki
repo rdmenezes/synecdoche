@@ -54,8 +54,6 @@
 ||17389||client: if you put <host_venue> in global_prefs_override.xml, it should select the venue from the network prefs. Now it does.||
 ||17391||API: file descriptor leak in obscure case. fixes #103||
 ||17396||client: make timeout values into #defines _Note: The defines should be turned into constants before applying this changeset._||
-||17399||client: abort jobs that are unstarted and past deadline||
-||17403||small fixes _What exactly is fixed by this changeset? When were these bugs (if any) introduced? Do we need this?_||
 ||17404|| client: shuffle the startup code to avoid showing wrong prefs info on first-time startup. / client: don't do an RPC until we've done CPU benchmarks. We need the benchmark values to fill in app_version.flops||
 ||17407||boinccmd: make --get_messages output more readable||
 ||17409||manager: fix roundoff error in Advanced Prefs; fixes #613 _Note: This is not a real fix but a simple workaround._||
