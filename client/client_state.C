@@ -895,20 +895,48 @@ int CLIENT_STATE::nresults_for_project(const PROJECT* project) const {
     return n;
 }
 
+/// Abort all jobs that are not started yet but already missed their deadline.
+///
+/// \return True if at least one result was aborted.
+bool CLIENT_STATE::abort_unstarted_late_jobs() {
+    bool action = false;
+    for (RESULT_PVEC::iterator p = results.begin(); p != results.end(); ++p) {
+        if (((*p)->not_started()) && ((*p)->report_deadline <= now)) {
+            // This task is not running yet but already has missed its deadline. Abort it:
+            (*p)->abort_inactive(ERR_UNSTARTED_LATE);
+            
+            if (log_flags.task) {
+                msg_printf((*p)->get_project(), MSG_INFO,
+                    "Result %s was aborted because it was not started yet and already missed its deadline.",
+                    (*p)->get_name().c_str());
+            }
+            
+            action = true;
+        }
+    }
+    return action;
+}
+
 bool CLIENT_STATE::garbage_collect() {
     static double last_time=0;
     if (gstate.now - last_time < 1.0) return false;
     last_time = gstate.now;
 
-    bool action = garbage_collect_always();
-    if (action) return true;
+    // Shortcut evaluation prevents the second line from executing when the first line
+    // already returned true. This is the desired behaviour and much less verbose than checking
+    // the return value of each function with an extra if statement.
+    bool action =  abort_unstarted_late_jobs()
+                || garbage_collect_always();
 
+    if (action) {
+        return true;
+    }
+    
     // Detach projects that are marked for detach when done
     // and are in fact done (have no results).
     // This is done here (not in garbage_collect_always())
     // because detach_project() calls garbage_collect_always(),
     // and we need to avoid infinite recursion
-    //
     for (unsigned i=0; i<projects.size(); i++) {
         PROJECT* p = projects[i];
         if (p->detach_when_done && !nresults_for_project(p)) {

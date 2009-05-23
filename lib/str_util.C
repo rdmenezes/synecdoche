@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -809,6 +809,7 @@ const char* boincerror(int which_error) {
         case ERR_SYMLINK: return "symlink() failed";
         case ERR_DB_CONN_LOST: return "DB connection lost during enumeration";
         case ERR_CRYPTO: return "encryption error";
+        case ERR_UNSTARTED_LATE: return "job is unstarted and past deadline";
         case 404: return "HTTP file not found";
         case 407: return "HTTP proxy authentication failure";
         case 416: return "HTTP range request error";
