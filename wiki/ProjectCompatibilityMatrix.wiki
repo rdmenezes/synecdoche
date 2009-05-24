@@ -15,7 +15,7 @@ The idea behind this page is to provide information for the case when changes at
 || GPUGRID                     || _not tested_ ||
 || Leiden Classical            || *OK*         ||
 || LHC@home                    || *OK*         ||
-|| malariacontrol.net          || _not tested_ ||
+|| malariacontrol.net          || *OK*         ||
 || !MilkyWay@home              || *OK*         ||
 || NQueens@Home Project        || *OK*         ||
 || POEM@HOME                   || *FAILED* (1) ||
