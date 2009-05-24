@@ -71,7 +71,7 @@ Commands:\n\
  --get_project_status               show status of all attached projects\n\
  --get_disk_usage                   show disk usage\n\
  --get_proxy_settings\n\
- --get_messages seqno               show messages > seqno\n\
+ --get_messages [seqno]             show messages > seqno\n\
  --get_host_info\n\
  --version, -V                      show core client version\n\
  --result url result_name op        job operation\n\
@@ -127,6 +127,19 @@ char* next_arg(int argc, char** argv, int& i) {
         usage();
     }
     return argv[i++];
+}
+
+const char* prio_name(int prio) {
+    switch (prio) {
+    case 1: 
+        return "low";
+    case 2:
+        return "medium";
+    case 3:
+        return "high";
+    default:
+        return "unknown";
+    }
 }
 
 int main_impl(int argc, char** argv) {
@@ -371,17 +384,24 @@ int main_impl(int argc, char** argv) {
         pi.use_socks_proxy = !pi.socks_server_name.empty();
         retval = rpc.set_proxy_settings(pi);
     } else if (!strcmp(cmd, "--get_messages")) {
-        int seqno = atoi(next_arg(argc, argv, i));
+        int seqno = 0;
+        if (i != argc) {
+            seqno = atoi(next_arg(argc, argv, i));
+        }
         retval = rpc.get_messages(seqno, messages);
         if (!retval) {
-            unsigned int j;
-            for (j=0; j<messages.messages.size(); j++) {
-                MESSAGE& md = *messages.messages[j];
-                printf("%s %d %d %s\n",
-                    md.project.c_str(), md.priority,
-                    md.timestamp, md.body.c_str()
-                );
+            for (std::vector<MESSAGE*>::const_iterator m = messages.messages.begin();
+                            m != messages.messages.end(); ++m) {
+                MESSAGE& md = **m;
+                strip_whitespace(md.body);
+                std::cout << md.seqno << ":" << time_to_string(md.timestamp)
+                          << " (" << prio_name(md.priority) << ") ";
+                if (!md.project.empty()) {
+                    std::cout << "[" << md.project << "] ";
+                }
+                std::cout << md.body << "\n";
             }
+            std::cout << std::flush;
         }
     } else if (!strcmp(cmd, "--get_host_info")) {
         HOST_INFO hi;
