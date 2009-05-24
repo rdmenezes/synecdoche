@@ -49,7 +49,6 @@
 ||17300/17301/17375||client: adjust debts at least every minute. This fixes a bug that can cause debts to NEVER get updated. /  client: added "abort_jobs_on_exit" feature||
 ||17309/17311/17312/17213||client: add more info to <work_fetch_debug> messages||
 ||17310||client: don't complain that master URLs differ if it's only in case _NOTE: *Only* the domain name is case insensitive - this changeset needs to be fixed before beeing applied._||
-||17385||MGR: Remove the /s parameter from the argument list on Linux until we know it is supported. Fixes #615||
 ||17388||_A lot of different, partly unrelated fixes that need to be reviewed carefully one by one before applying any of these._||
 ||17389||client: if you put <host_venue> in global_prefs_override.xml, it should select the venue from the network prefs. Now it does.||
 ||17391||API: file descriptor leak in obscure case. fixes #103||
@@ -70,7 +69,6 @@
 ||17637||client: initial support for detecting the CPU L2 cache size on Windows.||
 ||17639|| client: add --no_priority_change cmdline arg (and <no_priority_change> flag in cc_config.xml). If set, run apps at same priority as client.||
 ||17644||client: garbage collect after scheduler RPC; if project sent some irrelevant FILE_INFOs, this will avoid starting transfers for them.||
-||17648||client (linux): if don't find libcudart.so in the current dir, look for it in the library search path. Fixes #863||
 ||17711||client: (unix): if host name lookup fails, call res_init(). This is an attempt to fix a problem on Linux where, if the client starts before a VPN is set up, it can never communicate||
 ||17765/17831/17838||client: for each app version, keep track of the largest WSS of tasks using it. In checking whether tasks fit in RAM, use this as an estimate for tasks that haven't started yet. This avoids a situation where the client starts a lot of tasks in sequence, only to find that each one doesn't fit in RAM.||
 ||17814||client: eliminate the need to write the state file on each checkpoint. Instead, write the info into a file in the slot directory, and check for these files on startup. This should reduce the overhead of state-file writing on machines with lots of cores. There will still be a flurry of writes each time a job finishes, but reducing that overhead would be a larger job. / client: make sure we write the state file after a failed RPC||
