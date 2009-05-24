@@ -54,7 +54,6 @@
 ||17391||API: file descriptor leak in obscure case. fixes #103||
 ||17396||client: make timeout values into #defines _Note: The defines should be turned into constants before applying this changeset._||
 ||17404|| client: shuffle the startup code to avoid showing wrong prefs info on first-time startup. / client: don't do an RPC until we've done CPU benchmarks. We need the benchmark values to fill in app_version.flops||
-||17407||boinccmd: make --get_messages output more readable||
 ||17409||manager: fix roundoff error in Advanced Prefs; fixes #613 _Note: This is not a real fix but a simple workaround._||
 ||17410||MGR: Make CTRL-SHIFT-A the accelerator in the simple GUI that switches back to the advanced view. refs #147||
 ||17432/17434/17436/17438||client: Revise Apple idle time detection for compatibility with OS 10.6||
