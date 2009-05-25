@@ -200,7 +200,7 @@ private:
     wxDateTime                  m_dtResultsTimestamp;
     wxDateTime                  m_dtKillInactiveGfxTimestamp;
     std::vector<RUNNING_GFX_APP> m_running_gfx_apps;
-    RUNNING_GFX_APP*            GetRunningGraphicsApp(RESULT* result, int slot);
+    RUNNING_GFX_APP*            GetRunningGraphicsApp(const RESULT* result, int slot);
     void                        KillAllRunningGraphicsApps();
     void                        KillInactiveGraphicsApps();
 #ifdef _WIN32
@@ -217,17 +217,17 @@ public:
     size_t                      GetWorkCount();
 
     int                         WorkSuspend(
-                                    std::string& strProjectURL,
-                                    std::string& strName
+                                    const std::string& strProjectURL,
+                                    const std::string& strName
                                 );
     int                         WorkResume(
-                                    std::string& strProjectURL,
-                                    std::string& strName
+                                    const std::string& strProjectURL,
+                                    const std::string& strName
                                 );
-    int                         WorkShowGraphics(RESULT* result);
+    int                         WorkShowGraphics(const RESULT* result);
     int                         WorkAbort(
-                                    std::string& strProjectURL,
-                                    std::string& strName
+                                    const std::string& strProjectURL,
+                                    const std::string& strName
                                 );
     CC_STATE*                   GetState() { return &state; };
 

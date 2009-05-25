@@ -99,7 +99,7 @@ protected:
     virtual void            UpdateSelection();
     virtual void            PostUpdateSelection();
 
-    virtual void            UpdateWebsiteSelection(long lControlGroup, PROJECT* project);
+    virtual void            UpdateWebsiteSelection(long lControlGroup, const PROJECT* project);
 
     virtual void            DemandLoadView(
                                 wxWindowID iTaskWindowID,
