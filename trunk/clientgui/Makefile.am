@@ -31,7 +31,6 @@ synecmgr_SOURCES = \
     AccountManagerProcessingPage.cpp \
     AccountManagerPropertiesPage.cpp \
     AdvancedFrame.cpp \
-    AlreadyAttachedPage.cpp \
     AlreadyExistsPage.cpp \
     BOINCBaseFrame.cpp \
     BOINCBaseView.cpp \
