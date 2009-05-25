@@ -110,7 +110,7 @@ void CTaskViewBase::PostUpdateSelection(){
 }
 
 
-void CTaskViewBase::UpdateWebsiteSelection(long lControlGroup, PROJECT* project){
+void CTaskViewBase::UpdateWebsiteSelection(long lControlGroup, const PROJECT* project){
     unsigned int        i;
     CTaskItemGroup*     pGroup = NULL;
     CTaskItem*          pItem = NULL;

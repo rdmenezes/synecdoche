@@ -495,7 +495,7 @@ int CMainDocument::Reconnect() {
 }
 
 
-// Gets the last connected computer name, or the new name if reconnecting.
+/// Gets the last connected computer name, or the new name if reconnecting.
 int CMainDocument::GetConnectedComputerName(wxString& strMachine) {
     if (IsReconnecting()) {
         m_pNetworkConnection->GetConnectingComputerName(strMachine);
@@ -517,7 +517,7 @@ bool CMainDocument::IsComputerNameLocal(const wxString strMachine) {
 }
 
 
-// Checks whether the connected (or connecting) computer is local.
+/// Checks whether the connected (or connecting) computer is local.
 bool CMainDocument::IsLocalClient() {
     wxString strComputer;
     GetConnectedComputerName(strComputer);
@@ -998,7 +998,7 @@ size_t CMainDocument::GetWorkCount() {
 }
 
 
-int CMainDocument::WorkSuspend(std::string& strProjectURL, std::string& strName) {
+int CMainDocument::WorkSuspend(const std::string& strProjectURL, const std::string& strName) {
     int iRetVal = 0;
 
     RESULT* pStateResult = state.lookup_result(strProjectURL, strName);
@@ -1012,7 +1012,7 @@ int CMainDocument::WorkSuspend(std::string& strProjectURL, std::string& strName)
 }
 
 
-int CMainDocument::WorkResume(std::string& strProjectURL, std::string& strName) {
+int CMainDocument::WorkResume(const std::string& strProjectURL, const std::string& strName) {
     int iRetVal = 0;
 
     RESULT* pStateResult = state.lookup_result(strProjectURL, strName);
@@ -1026,9 +1026,9 @@ int CMainDocument::WorkResume(std::string& strProjectURL, std::string& strName) 
 }
 
 
-// If the graphics application for the current task is already 
-// running, return a pointer to its RUNNING_GFX_APP struct.
-RUNNING_GFX_APP* CMainDocument::GetRunningGraphicsApp(RESULT* result, int slot)
+/// If the graphics application for the current task is already 
+/// running, return a pointer to its RUNNING_GFX_APP struct.
+RUNNING_GFX_APP* CMainDocument::GetRunningGraphicsApp(const RESULT* result, int slot)
 {
     bool exited = false;
     std::vector<RUNNING_GFX_APP>::iterator gfx_app_iter;
@@ -1071,7 +1071,7 @@ RUNNING_GFX_APP* CMainDocument::GetRunningGraphicsApp(RESULT* result, int slot)
 }
 
 
-// Kill any running graphics apps whose worker tasks aren't running
+/// Kill any running graphics apps whose worker tasks aren't running
 void CMainDocument::KillInactiveGraphicsApps()
 {
 /*
@@ -1162,7 +1162,7 @@ void CMainDocument::KillGraphicsApp(int pid) {
 }
 #endif
 
-int CMainDocument::WorkShowGraphics(RESULT* result)
+int CMainDocument::WorkShowGraphics(const RESULT* result)
 {
     int iRetVal = 0;
     
@@ -1272,7 +1272,7 @@ int CMainDocument::WorkShowGraphics(RESULT* result)
 }
 
 
-int CMainDocument::WorkAbort(std::string& strProjectURL, std::string& strName) {
+int CMainDocument::WorkAbort(const std::string& strProjectURL, const std::string& strName) {
     int iRetVal = 0;
 
     RESULT* pStateResult = state.lookup_result(strProjectURL, strName);

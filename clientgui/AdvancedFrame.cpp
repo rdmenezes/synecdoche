@@ -1838,7 +1838,7 @@ void CAdvancedFrame::ResetReminderTimers() {
 }
 
 
-void CAdvancedFrame::UpdateActivityModeControls( CC_STATUS& status ) {
+void CAdvancedFrame::UpdateActivityModeControls(const CC_STATUS& status) {
     wxMenuBar* pMenuBar      = GetMenuBar();
 
     wxASSERT(pMenuBar);
@@ -1865,7 +1865,7 @@ void CAdvancedFrame::UpdateActivityModeControls( CC_STATUS& status ) {
 }
 
 
-void CAdvancedFrame::UpdateNetworkModeControls( CC_STATUS& status ) {
+void CAdvancedFrame::UpdateNetworkModeControls(const CC_STATUS& status) {
     wxMenuBar* pMenuBar      = GetMenuBar();
 
     wxASSERT(pMenuBar);
@@ -1892,7 +1892,7 @@ void CAdvancedFrame::UpdateNetworkModeControls( CC_STATUS& status ) {
 }
 
 
-void CAdvancedFrame::UpdateRefreshTimerInterval( wxInt32 iCurrentNotebookPage ) {
+void CAdvancedFrame::UpdateRefreshTimerInterval(wxInt32 iCurrentNotebookPage) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::UpdateRefreshTimerInterval - Function Begin"));
 
     if (IsShown()) {
@@ -1932,7 +1932,7 @@ void CAdvancedFrame::UpdateRefreshTimerInterval( wxInt32 iCurrentNotebookPage ) 
 }
 
 
-// Preloads notebook pages when the system is idle.
+/// Preload notebook pages when the system is idle.
 void CAdvancedFrame::OnIdleInit(wxIdleEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnIdleInit - Function Begin"));
     wxASSERT(m_pNotebook);
