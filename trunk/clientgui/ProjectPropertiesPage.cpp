@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -20,14 +20,15 @@
 #include "ProjectPropertiesPage.h"
 
 #include "stdwx.h"
-#include "error_numbers.h"
-#include "BOINCGUIApp.h"
-#include "SkinManager.h"
-#include "MainDocument.h"
-#include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "WizardAttachProject.h"
+#include "BOINCGUIApp.h"
+#include "BOINCWizards.h"
+#include "error_numbers.h"
+#include "MainDocument.h"
 #include "ProjectInfoPage.h"
+#include "SkinManager.h"
+#include "str_util.h"
+#include "WizardAttachProject.h"
 
 #include "res/wizprogress01.xpm"
 #include "res/wizprogress02.xpm"
@@ -148,9 +149,9 @@ wxWizardPage* CProjectPropertiesPage::GetNext() const {
     if (CHECK_CLOSINGINPROGRESS()) {
         // Cancel Event Detected
         return PAGE_TRANSITION_NEXT(ID_COMPLETIONERRORPAGE);
-    } else if (GetProjectPropertiesSucceeded() && GetProjectAlreadyAttached()) {
-        // Already attach to the project
-        return PAGE_TRANSITION_NEXT(ID_ERRALREADYATTACHEDPAGE);
+    } else if ((GetProjectPropertiesSucceeded()) && (GetProjectAlreadyAttached())) {
+        // We are already attached to this project. Return to project selection.
+        return PAGE_TRANSITION_BACK;
     } else if (GetProjectPropertiesSucceeded()) {
         // We were successful in retrieving the project properties
         return PAGE_TRANSITION_NEXT(ID_ACCOUNTINFOPAGE);
@@ -343,17 +344,6 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
                     SetProjectAccountCreationDisabled(false);
                 }
 
-                bSuccessfulCondition = 
-                    (ERR_ALREADY_ATTACHED == pDoc->rpc.project_attach(
-                    (const char*)pWAP->GetProjectInfoPage()->GetProjectURL().mb_str(),
-                        "", "")
-                    );
-                if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTALREADYATTACHED)) {
-                    SetProjectAlreadyAttached(true);
-                } else {
-                    SetProjectAlreadyAttached(false);
-                }
-
                 bSuccessfulCondition = pc->client_account_creation_disabled;
                 if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRCLIENTACCOUNTCREATIONDISABLED)) {
                     SetProjectClientAccountCreationDisabled(true);
@@ -361,6 +351,23 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
                     SetProjectClientAccountCreationDisabled(false);
                 }
  
+                // Check if we are already attached to this project. This may happen if the user
+                // entered a different URL (e. g. primegrid.com instead of www.primegrid.com) to
+                // attach to the project. The project may tell us the correct master URL, therefore
+                // we can check this now:
+                SetProjectAlreadyAttached(false);
+                std::string new_project_url = pWAP->GetProjectConfig()->master_url;
+                if (!new_project_url.empty()) {
+                    canonicalize_master_url(new_project_url);
+                    CMainDocument* pDoc = wxGetApp().GetDocument();
+                    projects_map projects = pDoc->GetProjectsMap();
+                    if (projects.find(new_project_url) != projects.end()) {
+                        wxMessageBox(_("You are already attached to this project. Please choose a different project."),
+                                     _("Already Attached to Project"));
+                        SetProjectAlreadyAttached(true);
+                    }
+                }
+
                 SetNextState(PROJPROP_CLEANUP);
             } else {
                 SetProjectPropertiesSucceeded(false);

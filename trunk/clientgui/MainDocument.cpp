@@ -21,6 +21,7 @@
 #include "MainDocument.h"
 
 #include "error_numbers.h"
+#include "str_util.h"
 #include "util.h"
 #ifdef _WIN32
 #include "proc_control.h"
@@ -732,6 +733,19 @@ PROJECT* CMainDocument::project(const wxString& projectname) {
     return NULL;
 }
 
+/// Return a std::map containing all projects this client is attached to.
+/// The master URL is used as key in this map.
+///
+/// \return A map containing all projects this client is attached to.
+projects_map CMainDocument::GetProjectsMap() const {
+    projects_map ret_val;
+    for (std::vector<PROJECT*>::const_iterator p = state.projects.begin(); p != state.projects.end(); ++p) {
+        std::string key = (*p)->master_url;
+        canonicalize_master_url(key);
+        ret_val.insert(std::make_pair(key, *p));
+    }
+    return ret_val;
+}
 
 size_t CMainDocument::GetProjectCount() {
     CachedProjectStatusUpdate();

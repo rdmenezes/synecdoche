@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -20,14 +20,15 @@
 #include "ProjectInfoPage.h"
 
 #include "stdwx.h"
+#include "BOINCBaseWizard.h"
 #include "BOINCGUIApp.h"
-#include "SkinManager.h"
+#include "BOINCWizards.h"
 #include "MainDocument.h"
 #include "hyperlink.h"
-#include "ValidateURL.h"
-#include "BOINCWizards.h"
-#include "BOINCBaseWizard.h"
 #include "ProjectListCtrl.h"
+#include "SkinManager.h"
+#include "str_util.h"
+#include "ValidateURL.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CProjectInfoPage, wxWizardPage)
 
@@ -140,16 +141,6 @@ wxWizardPage* CProjectInfoPage::GetNext() const {
         // Cancel Event Detected
         return PAGE_TRANSITION_NEXT(ID_COMPLETIONERRORPAGE);
     } else {
-        // Check if we are already attached to that project: 
-        CMainDocument* pDoc = wxGetApp().GetDocument(); 
-        for (size_t i = 0; i < pDoc->GetProjectCount(); ++i) { 
-            PROJECT* project = pDoc->project(i); 
-            if ((project) && (wxString(project->master_url.c_str(), wxConvUTF8) == m_strProjectURL)) { 
-                // We are already attached to that project. Show the error page: 
-                return PAGE_TRANSITION_NEXT(ID_ERRALREADYATTACHEDPAGE); 
-            } 
-        } 
-        // New project, proceed with normal attach procedure:
         return PAGE_TRANSITION_NEXT(ID_PROJECTPROPERTIESPAGE);
     }
 }
@@ -193,7 +184,6 @@ wxIcon CProjectInfoPage::GetIconResource(const wxString& WXUNUSED(name)) {
 void CProjectInfoPage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
 
-    unsigned int   i;
     CMainDocument* pDoc = wxGetApp().GetDocument();
 
     wxASSERT(pDoc);
@@ -210,15 +200,20 @@ void CProjectInfoPage::OnPageChanged(wxWizardEvent& event) {
 
 
     // Populate the combo box with project information
-    //
     if (!bProjectListPopulated) {
+        projects_map attached_projects = pDoc->GetProjectsMap();
         pDoc->rpc.get_all_projects_list(pl);
         std::sort(pl.projects.begin(), pl.projects.end(), PROJECT_LIST_ENTRY::compare_name);
-        for (i=0; i<pl.projects.size(); i++) {
-            m_pProjectListCtrl->Append(
-                wxString(pl.projects[i]->name.c_str(), wxConvUTF8),
-                wxString(pl.projects[i]->url.c_str(), wxConvUTF8)
-            );
+        
+        for (std::vector<PROJECT_LIST_ENTRY*>::const_iterator pe = pl.projects.begin();
+                        pe != pl.projects.end(); ++pe) {
+            // Skip projects this client is already attached to:
+            std::string project_list_url = (*pe)->url;
+            canonicalize_master_url(project_list_url);
+            if (attached_projects.find(project_list_url) == attached_projects.end()) {
+                m_pProjectListCtrl->Append(wxString((*pe)->name.c_str(), wxConvUTF8),
+                                           wxString((*pe)->url.c_str(), wxConvUTF8));
+            }
         }
         bProjectListPopulated = true;
     }
@@ -235,7 +230,18 @@ void CProjectInfoPage::OnPageChanged(wxWizardEvent& event) {
  */
 
 void CProjectInfoPage::OnPageChanging(wxWizardEvent& event) {
-    event.Skip();
+    // Check if we are already attached to that project:
+    std::string new_project_url = static_cast<const char*>(m_strProjectURL.mb_str());
+    canonicalize_master_url(new_project_url);
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    projects_map projects = pDoc->GetProjectsMap();
+    if (projects.find(new_project_url) != projects.end()) {
+        wxMessageBox(_("You are already attached to this project. Please choose a different project."),
+                     _("Already Attached to Project"));
+
+        // We are already attached to that project.
+        event.Veto();
+    }
 }
 
 

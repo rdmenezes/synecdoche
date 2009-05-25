@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -40,7 +40,6 @@
 #define ID_COMPLETIONERRORPAGE 10104
 #define ID_ERRNOTDETECTEDPAGE 10105
 #define ID_ERRUNAVAILABLEPAGE 10106
-#define ID_ERRALREADYATTACHEDPAGE 10107
 #define ID_ERRNOINTERNETCONNECTIONPAGE 10108
 #define ID_ERRNOTFOUNDPAGE 10109
 #define ID_ERRALREADYEXISTSPAGE 10110

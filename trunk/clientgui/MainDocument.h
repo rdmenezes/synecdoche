@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _MAINDOCUMENT_H_
-#define _MAINDOCUMENT_H_
+#ifndef MAINDOCUMENT_H
+#define MAINDOCUMENT_H
 
+#include <map>
 #include <string>
 #include <vector>
 #include "common_defs.h"
@@ -36,6 +37,7 @@ typedef struct {
 #endif
 } RUNNING_GFX_APP;
 
+typedef std::map<std::string, PROJECT*> projects_map;
 
 extern bool g_use_sandbox;
 
@@ -165,6 +167,10 @@ private:
 public:
     PROJECT*                    project(size_t i);
     PROJECT*                    project(const wxString& projectname);
+    
+    /// Return a std::map containing all projects this client is attached to.
+    projects_map                GetProjectsMap() const;
+    
     float                       m_fProjectTotalResourceShare;
 
     size_t                      GetProjectCount();
@@ -312,8 +318,8 @@ public:
 
 };
 
-#endif
-
 #ifdef SANDBOX
 #define BOINC_MASTER_GROUP_NAME "boinc_master"
 #endif
+
+#endif // MAINDOCUMENT_H
