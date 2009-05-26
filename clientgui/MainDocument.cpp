@@ -709,17 +709,15 @@ int CMainDocument::CachedProjectStatusUpdate() {
 
 
 PROJECT* CMainDocument::project(size_t i) {
-    PROJECT* pProject = NULL;
-
     try {
         if (!state.projects.empty())
-            pProject = state.projects.at(i);
+            return state.projects.at(i);
     }
     catch (std::out_of_range e) {
-        pProject = NULL;
+        return NULL;
     }
 
-    return pProject;
+    return NULL;
 }
 
 PROJECT* CMainDocument::project(const wxString& projectname) {
@@ -755,10 +753,8 @@ size_t CMainDocument::GetProjectCount() {
 }
 
 int CMainDocument::ProjectDetach(size_t iIndex) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "detach");
@@ -768,10 +764,8 @@ int CMainDocument::ProjectDetach(size_t iIndex) {
 
 
 int CMainDocument::ProjectDetach(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "detach");
@@ -781,10 +775,8 @@ int CMainDocument::ProjectDetach(const wxString& projectname) {
 
 
 int CMainDocument::ProjectUpdate(size_t iIndex) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "update");
@@ -793,10 +785,8 @@ int CMainDocument::ProjectUpdate(size_t iIndex) {
 }
 
 int CMainDocument::ProjectUpdate(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "update");
@@ -806,10 +796,8 @@ int CMainDocument::ProjectUpdate(const wxString& projectname) {
 
 
 int CMainDocument::ProjectReset(size_t iIndex) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "reset");
@@ -818,10 +806,8 @@ int CMainDocument::ProjectReset(size_t iIndex) {
 }
 
 int CMainDocument::ProjectReset(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "reset");
@@ -831,10 +817,8 @@ int CMainDocument::ProjectReset(const wxString& projectname) {
 
 
 int CMainDocument::ProjectSuspend(size_t iIndex) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "suspend");
@@ -843,10 +827,8 @@ int CMainDocument::ProjectSuspend(size_t iIndex) {
 }
 
 int CMainDocument::ProjectSuspend(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "suspend");
@@ -855,10 +837,8 @@ int CMainDocument::ProjectSuspend(const wxString& projectname) {
 }
 
 int CMainDocument::ProjectResume(size_t iIndex) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "resume");
@@ -867,10 +847,8 @@ int CMainDocument::ProjectResume(size_t iIndex) {
 }
 
 int CMainDocument::ProjectResume(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "resume");
@@ -879,10 +857,8 @@ int CMainDocument::ProjectResume(const wxString& projectname) {
 }
 
 int CMainDocument::ProjectNoMoreWork(size_t iIndex) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "nomorework");
@@ -891,10 +867,8 @@ int CMainDocument::ProjectNoMoreWork(size_t iIndex) {
 }
 
 int CMainDocument::ProjectNoMoreWork(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "nomorework");
@@ -903,10 +877,8 @@ int CMainDocument::ProjectNoMoreWork(const wxString& projectname) {
 }
 
 int CMainDocument::ProjectAllowMoreWork(size_t iIndex) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "allowmorework");
@@ -915,10 +887,8 @@ int CMainDocument::ProjectAllowMoreWork(size_t iIndex) {
 }
 
 int CMainDocument::ProjectAllowMoreWork(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "allowmorework");

@@ -116,7 +116,7 @@ const int CViewResources::GetViewRefreshRate() {
 #endif
 
 
-wxInt32 CViewResources::FormatProjectName(PROJECT* project, wxString& strBuffer) const {
+wxInt32 CViewResources::FormatProjectName(const PROJECT* project, wxString& strBuffer) const {
     CMainDocument* doc = wxGetApp().GetDocument();
     std::string project_name;
 
