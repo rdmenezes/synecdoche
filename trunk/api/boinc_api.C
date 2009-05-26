@@ -52,7 +52,6 @@ using namespace std;
 #include "boinc_api.h"
 
 #ifdef __APPLE__
-#include "mac_backtrace.h"
 #define GETRUSAGE_IN_TIMER_THREAD
     // call getrusage() in the timer thread,
     // rather than in the worker thread's signal handler
@@ -698,8 +697,6 @@ static void handle_process_control_msg() {
 #if   defined(_WIN32)
                 // Cause a controlled assert and dump the callstacks.
                 DebugBreak();
-#elif defined(__APPLE__)
-                PrintBacktrace();
 #endif
                 exit_from_timer_thread(EXIT_ABORTED_BY_CLIENT);
             }
