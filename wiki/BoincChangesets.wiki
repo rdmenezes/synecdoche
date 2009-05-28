@@ -75,7 +75,6 @@
 ||17847||client: improve CPU sched debug messages (say what kind of job and why we're scheduling it)||
 ||17874||client: message tweak||
 ||17992/17998||client: simplify enforce_schedule(), and maybe fix bugs. _NOTE: Review this carefully before applying!_||
-||18028||client: write message (and show new config info) when config file reread / client: improve cpu_sched_debug messages||
 ||18042||client, Mac: don't do res_init(). It causes a crash. / client (Unix): if client crashes while benchmark processes are going, make sure they detect this and exit. _NOTE: 17711 needs to be applied before this one._||
 ||18054||Mac client: fix parent died test in benchmark_time_to_stop()||
 ||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
