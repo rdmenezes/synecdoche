@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -1126,6 +1126,8 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<read_cc_config/>")) {
         mf.printf("<success/>\n");
         read_config_file(false);
+        msg_printf(0, MSG_INFO, "Re-read config file");
+        log_flags.show();
         gstate.zero_debts_if_requested();
         gstate.set_ncpus();
         gstate.request_schedule_cpus("Core client configuration");
