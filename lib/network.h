@@ -15,15 +15,19 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BOINC_NETWORK_H_
-#define _BOINC_NETWORK_H_
+#ifndef BOINC_NETWORK_H
+#define BOINC_NETWORK_H
 
 #include <string.h>
+
 #ifndef _WIN32
-#include <unistd.h>
-#include "config.h"
+# include <unistd.h>
+# include "config.h"
+# if HAVE_SYS_SELECT_H
+#  include <sys/select.h>
+# endif
 #else
-#include "boinc_win.h"
+# include "boinc_win.h"
 #endif
 
 class FDSET_GROUP {
@@ -77,4 +81,5 @@ typedef BOINC_SOCKLEN_T boinc_socklen_t;
 int WinsockInitialize();
 int WinsockCleanup();
 #endif
+
 #endif
