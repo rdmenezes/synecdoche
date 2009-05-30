@@ -19,6 +19,6 @@
 	<key>CFBundleName</key>
 	<string>BOINC Installer</string>
 	<key>CFBundleVersion</key>
-	<string>0.1.1pre</string>
+	<string>0.1.1 r802M</string>
 </dict>
 </plist>
