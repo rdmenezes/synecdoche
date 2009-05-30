@@ -104,7 +104,7 @@ int signof(float x) {
 
            [ self setAutoresizesSubviews:YES ];	// make sure the subview resizes.
 
-            NSString *fileName = [[ NSBundle bundleForClass:[ self class ]] pathForImageResource:@"boinc_ss_logo" ];
+            NSString *fileName = [[ NSBundle bundleForClass:[ self class ]] pathForImageResource:@"screensaver" ];
             if (! fileName) {
                 // What should we do in this case?
                 return self;
@@ -185,7 +185,7 @@ int signof(float x) {
 
    if ([ self isPreview ]) {
 #if 1   // Currently drawRect just draws our logo in the preview window
-        NSString *fileName = [[ NSBundle bundleForClass:[ self class ]] pathForImageResource:@"boinc" ];
+        NSString *fileName = [[ NSBundle bundleForClass:[ self class ]] pathForImageResource:@"synecdoche" ];
         if (fileName) {
             NSImage *myImage = [[ NSImage alloc ] initWithContentsOfFile:fileName ];
             [ myImage setScalesWhenResized:YES ];
