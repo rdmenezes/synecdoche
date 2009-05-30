@@ -130,19 +130,20 @@ int FixInfoPlistFile(const char* myPath) {
     int retval = 0;
     FILE *fin = NULL, *fout = NULL;
     char *c, a, buf[1024];
+	std::string filePath = myPath;
     
-    if (IsFileCurrent(myPath))
+    if (IsFileCurrent((const char*)filePath.c_str()))
         return 0;
 
-    rename(myPath, "./temp");
+    rename((const char*)filePath.c_str(), (const char*)(("./" + filePath + ".back").c_str()));
 //    sprintf(buf, "mv -f %s temp", myPath);
 //    retval = system(buf);
 
-    fin = fopen("temp", "r");
+    fin = fopen((const char*)(filePath + ".template").c_str(), "r");
     if (fin == NULL)
         goto bail;
 
-    fout = fopen(myPath, "w");
+    fout = fopen((const char*)filePath.c_str(), "w");
     if (fout == NULL) {
         goto bail;
     }
@@ -189,7 +190,7 @@ int FixInfoPlistFile(const char* myPath) {
     fflush(fout);
     fclose(fout);
     
-    unlink("temp");
+    unlink((const char*)(filePath + ".back").c_str());
     
     return retval;
 
@@ -199,7 +200,7 @@ bail:
     if (fout)
         fclose(fout);
 
-    rename("./temp", myPath);
+    rename((const char*)("./" + filePath + ".back").c_str(), (const char*)filePath.c_str());
 //    sprintf(buf, "mv -f temp %s", myPath);
 //    retval = system(buf);
     
