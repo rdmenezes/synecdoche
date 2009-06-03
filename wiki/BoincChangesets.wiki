@@ -78,9 +78,13 @@
 ||18042||client, Mac: don't do res_init(). It causes a crash. / client (Unix): if client crashes while benchmark processes are going, make sure they detect this and exit. _NOTE: 17711 needs to be applied before this one._||
 ||18054||Mac client: fix parent died test in benchmark_time_to_stop()||
 ||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
+||18186||MGR: Support for newer versions of wxWidgets _Note: This was applied to BOINC trunk in an earlier revision_||
+||18250||client: include plan class in other_result list in sched request (for resource-specific jobs-in-progress limit)||
+||18259||client: if scheduler request didn't request work, don't report 0 tasks||
 
 
-== Changesets for the new OpenGL screensaver (Might be useful some day) ==
+
+== Changesets for the (new OpenGL) screensaver (Might be useful some day) ==
 ||17128||Checkin the files needed for the new OpenGL based BOINC screensaver.||
 ||17131||renamed boinc_ss_opengl to ss_app.||
 ||17141/17144||SS: Begin work on upgrading screensaver coordinator for new functionality: add file names, sandbox security||
@@ -114,7 +118,7 @@
 ||17722/17723||SS: Under Mac Sandbox security, terminate default screensaver graphics app via gfx_switcher||
 ||17728/17731||WINSCR: It appears newer notebook models with multiple video chipsets exhibit an interesting situation. It appears as though in certain conditions a single monitor machine actually reports itself as having three monitors. Normally the monitor that contains the primary window (coord 0,0) is on monitor 0, but on these machines coord 0,0 is actually on monitor 2. This led to the screensaver not properly exiting when keyboard and/or mouse activity was detected. Now when we detect that keyboard and/or mouse activity has happened we send the WM_INTERRUPTSAVER event to all windows on all monitors.||
 ||17815||SS: launch default screensaver graphics app as user and group boinc_project, not boinc_master||
-
+||18222||SS: Add new optional boolean xml tag <default_ss_first>||
 
 
 == Rejected changes ==
@@ -181,4 +185,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18182 18182]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18274 18274]
