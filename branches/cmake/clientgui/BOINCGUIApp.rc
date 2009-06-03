@@ -29,7 +29,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-APP_ICON                ICON                    "..\\graphics\\icons\\synecdoche.ico"
+mainicon                ICON                    "..\\graphics\\icons\\synecdoche.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -101,8 +101,8 @@ END
 // Version
 //
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION BOINC_MAJOR_VERSION,BOINC_MINOR_VERSION,BOINC_RELEASE,0
- PRODUCTVERSION BOINC_MAJOR_VERSION,BOINC_MINOR_VERSION,BOINC_RELEASE,0
+ FILEVERSION SYNEC_MAJOR_VERSION,SYNEC_MINOR_VERSION,SYNEC_RELEASE,0
+ PRODUCTVERSION SYNEC_MAJOR_VERSION,SYNEC_MINOR_VERSION,SYNEC_RELEASE,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -119,12 +119,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Synecdoche"
             VALUE "FileDescription", "Synecdoche Manager"
-            VALUE "FileVersion", BOINC_VERSION_STRING "\0"
+            VALUE "FileVersion", SYNEC_VERSION_STRING "\0"
             VALUE "InternalName", "synecmgr"
-            VALUE "LegalCopyright", "© 2008 David Barnard, Nicolas Alvarez, University of California et al."
+            VALUE "LegalCopyright", "© 2008 Synecdoche contributors"
             VALUE "OriginalFilename", "synecmgr.exe"
             VALUE "ProductName", "Synecdoche"
-            VALUE "ProductVersion", BOINC_VERSION_STRING "\0"
+            VALUE "ProductVersion", SYNEC_VERSION_STRING "\0"
         END
     END
     BLOCK "VarFileInfo"

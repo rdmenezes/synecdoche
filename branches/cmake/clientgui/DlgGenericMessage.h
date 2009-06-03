@@ -19,19 +19,10 @@
 #ifndef _DLGGENERICMESSAGE_H_
 #define _DLGGENERICMESSAGE_H_
 
-/*!
- * Includes
- */
+#include <wx/dialog.h>
 
-////@begin includes
-////@end includes
-
-/*!
- * Forward declarations
- */
-
-////@begin forward declarations
-////@end forward declarations
+class wxStaticText;
+class wxCheckBox;
 
 /*!
  * Control identifiers

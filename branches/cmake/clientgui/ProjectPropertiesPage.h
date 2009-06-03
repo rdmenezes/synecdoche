@@ -22,6 +22,8 @@
 #include <wx/event.h>
 #include <wx/wizard.h>
 
+class wxStaticText;
+
 class CBOINCBaseWizard;
 
 /// CProjectPropertiesPage custom events

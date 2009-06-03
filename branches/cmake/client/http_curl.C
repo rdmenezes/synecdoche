@@ -111,9 +111,9 @@ void parse_url(const char* url, char* host, int &port, char* file) {
 }
 
 void get_user_agent_string() {
-    sprintf(g_user_agent_string, "BOINC client (%s %d.%d.%d)",
-        gstate.get_primary_platform(),
-        BOINC_MAJOR_VERSION, BOINC_MINOR_VERSION, BOINC_RELEASE
+    sprintf(g_user_agent_string, "Synecdoche/%s (%s)",
+        SYNEC_VERSION_STRING,
+        gstate.get_primary_platform()
     );
 }
 

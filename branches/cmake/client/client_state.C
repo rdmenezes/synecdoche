@@ -57,7 +57,9 @@ CLIENT_STATE gstate;
 
 CLIENT_STATE::CLIENT_STATE():
     lookup_website_op(&gui_http),
+#ifdef ENABLE_UPDATE_CHECK
     get_current_version_op(&gui_http),
+#endif
     get_project_list_op(&gui_http)
 {
     http_ops = new HTTP_OP_SET();
@@ -79,10 +81,14 @@ CLIENT_STATE::CLIENT_STATE():
     network_suspended = false;
     suspend_reason = 0;
     network_suspend_reason = 0;
-    core_client_version.major = BOINC_MAJOR_VERSION;
-    core_client_version.minor = BOINC_MINOR_VERSION;
-    core_client_version.release = BOINC_RELEASE;
-    core_client_version.prerelease = BOINC_PRERELEASE;
+    core_client_version.major = SYNEC_MAJOR_VERSION;
+    core_client_version.minor = SYNEC_MINOR_VERSION;
+    core_client_version.release = SYNEC_RELEASE;
+    core_client_version.prerelease = SYNEC_PRERELEASE;
+    boinc_compat_version.major = BOINC_MAJOR_VERSION;
+    boinc_compat_version.minor = BOINC_MINOR_VERSION;
+    boinc_compat_version.release = BOINC_RELEASE;
+    boinc_compat_version.prerelease = 0;
     exit_after_app_start_secs = 0;
     app_started = 0;
     exit_before_upload = false;
@@ -117,7 +123,9 @@ CLIENT_STATE::CLIENT_STATE():
     must_schedule_cpus = true;
     must_enforce_cpu_schedule = true;
     no_gui_rpc = false;
+#ifdef ENABLE_UPDATE_CHECK
     new_version_check_time = 0;
+#endif
     all_projects_list_check_time = 0;
     detach_console = false;
 #ifdef SANDBOX
@@ -1577,7 +1585,9 @@ void CLIENT_STATE::check_clock_reset() {
     msg_printf(NULL, MSG_INFO,
         "System clock was turned backwards; clearing timeouts"
     );
+#ifdef ENABLE_UPDATE_CHECK
     new_version_check_time = now;
+#endif
     all_projects_list_check_time = now;
 
     unsigned int i;

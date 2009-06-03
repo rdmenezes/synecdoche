@@ -500,7 +500,8 @@ struct ACCOUNT_OUT {
     void print() const;
 };
 
-struct CC_STATUS {
+class CC_STATUS {
+public:
     int network_status;         // values: NETWORK_STATUS_*
     bool ams_password_error;
     bool manager_must_quit;
@@ -614,7 +615,9 @@ public:
     );
     int acct_mgr_rpc_poll(ACCT_MGR_RPC_REPLY&);
 
+#ifdef ENABLE_UPDATE_CHECK
     int get_newer_version(std::string&);
+#endif
     int read_global_prefs_override();
     int read_cc_config();
     int get_cc_status(CC_STATUS&);

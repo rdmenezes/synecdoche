@@ -49,9 +49,6 @@
 #include "common_defs.h"
 #include "gui_rpc_client.h"
 
-using std::string;
-using std::vector;
-
 RPC_CLIENT::RPC_CLIENT() {
     sock = -1;
 }

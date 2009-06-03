@@ -17,14 +17,9 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <wx/wizard.h>
-#include <wx/valgen.h>
-#include <wx/valtext.h>
-#include <wx/hyperlink.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/msgdlg.h>
-#include <wx/radiobut.h>
+#include "AccountInfoPage.h"
+
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "ValidateEmailAddress.h"
@@ -34,7 +29,7 @@
 #include "WizardAccountManager.h"
 #include "ProjectInfoPage.h"
 #include "AccountManagerInfoPage.h"
-#include "AccountInfoPage.h"
+#include "gui_rpc_client.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CAccountInfoPage, wxWizardPage)
 

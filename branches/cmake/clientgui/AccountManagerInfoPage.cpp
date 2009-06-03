@@ -17,17 +17,14 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/hyperlink.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
+#include "AccountManagerInfoPage.h"
+
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "ValidateURL.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "AccountManagerInfoPage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CAccountManagerInfoPage, wxWizardPage)
 

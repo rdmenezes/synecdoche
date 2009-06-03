@@ -16,19 +16,18 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _DLG_PREFERENCES_H_ 
-#define _DLG_PREFERENCES_H_ 
+#ifndef DLG_PREFERENCES_H
+#define DLG_PREFERENCES_H
 
-/*!
- * Includes
- */
+#include <wx/dialog.h>
+#include <wx/panel.h>
+#include <wx/valgen.h>
+#include <wx/valtext.h>
 
-#include "wx/valtext.h"
-#include "wx/valgen.h"
+#include "prefs.h"
 
-/*!
- * Forward declarations
- */
+class wxCheckBox;
+class wxComboBox;
 
 class CTransparentCheckBox;
 
@@ -72,7 +71,7 @@ class CTransparentCheckBox;
  */
 
 class CPanelPreferences: public wxPanel
-{    
+{
     DECLARE_DYNAMIC_CLASS( CPanelPreferences )
     DECLARE_EVENT_TABLE()
 
@@ -87,8 +86,8 @@ public:
     /// Creates the controls and sizers
     void CreateControls();
 
-	/// @name Event handler declarations
-	/// @{
+    /// @name Event handler declarations
+    /// @{
     /// wxEVT_ERASE_BACKGROUND event handler for ID_DLGPREFERENCES
     void OnEraseBackground( wxEraseEvent& event );
 
@@ -104,7 +103,7 @@ public:
     /// wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_SIMPLE_HELP
     void OnButtonHelp( wxCommandEvent& event );
 
-	/// @}
+    /// @}
 
     /// @name Member function declarations
     /// @{
@@ -137,7 +136,7 @@ public:
 
     bool GetCustomizedPreferences() const { return m_bCustomizedPreferences ; }
     void SetCustomizedPreferences(bool value) { m_bCustomizedPreferences = value ; }
-	/// @}
+    /// @}
 
     void OnOK();
 
@@ -182,7 +181,7 @@ private:
  */
 
 class CDlgPreferences: public wxDialog
-{    
+{
     DECLARE_DYNAMIC_CLASS( CDlgPreferences )
     DECLARE_EVENT_TABLE()
 

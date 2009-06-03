@@ -15,12 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_DlgPreferences.h"
+
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "str_util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
 #include "error_numbers.h"
 #include "Events.h"
 #include "BOINCGUIApp.h"
@@ -30,9 +27,6 @@
 #include "version.h"
 
 #include "sg_CustomControls.h"
-#include "sg_DlgPreferences.h"
-
-using std::string;
 
 #ifdef __WXMAC__
 #define TINY_FONT 12
@@ -553,8 +547,7 @@ void CPanelPreferences::OnConnectBetweenBeginSelected( wxCommandEvent& /*event*/
 void CPanelPreferences::OnButtonHelp( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CPanelPreferences::OnHelp - Function Begin"));
 
-    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite();
-    url.append(wxT("/manager_links.php?target=simple"));
+    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
 
     HyperLink::ExecuteLink(url);
 
@@ -1048,13 +1041,11 @@ bool CDlgPreferences::Create( wxWindow* parent, wxWindowID id, const wxString& c
  * wxEVT_HELP event handler for ID_DLGPREFERENCES
  */
 
-void CDlgPreferences::OnHelp(wxHelpEvent& event) {
+void CDlgPreferences::OnHelp(wxHelpEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgPreferences::OnHelp - Function Begin"));
 
     if (IsShown()) {
         wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
-
-        url << wxT("?target=simple_preferences&version=") << wxT(BOINC_VERSION_STRING) << wxT("&controlid=") << event.GetId();
         HyperLink::ExecuteLink(url);
     }
 

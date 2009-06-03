@@ -466,9 +466,6 @@ int boinc_main_loop() {
         msg_printf(NULL, MSG_INFO,
             "This computer is not attached to any projects"
         );
-        msg_printf(NULL, MSG_INFO,
-            "Visit http://boinc.berkeley.edu for instructions"
-        );
     }
 
     while (1) {

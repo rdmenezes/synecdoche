@@ -80,6 +80,7 @@ public:
     COPROCS coprocs;
 
     VERSION_INFO core_client_version;
+    VERSION_INFO boinc_compat_version;
     std::string statefile_platform_name;
     int file_xfer_giveup_period;
     MODE run_mode;
@@ -178,13 +179,17 @@ public:
     PROJECT_INIT project_init;
     PROJECT_ATTACH project_attach;
     LOOKUP_WEBSITE_OP lookup_website_op;
+
+#ifdef ENABLE_UPDATE_CHECK
     GET_CURRENT_VERSION_OP get_current_version_op;
-    GET_PROJECT_LIST_OP get_project_list_op;
     void new_version_check();
-    void all_projects_list_check();
     double new_version_check_time;
-    double all_projects_list_check_time;
     std::string newer_version;
+#endif
+
+    GET_PROJECT_LIST_OP get_project_list_op;
+    void all_projects_list_check();
+    double all_projects_list_check_time;
 /// @}
 
 /// @name auto_update.C

@@ -5,6 +5,8 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
+#include "DlgAdvPreferencesBase.h"
+
 #include "stdwx.h"
 #include "diagnostics.h"
 #include "util.h"
@@ -14,8 +16,6 @@
 #include "LogBOINC.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
-
-#include "DlgAdvPreferencesBase.h"
 
 ///////////////////////////////////////////////////////////////////////////
 

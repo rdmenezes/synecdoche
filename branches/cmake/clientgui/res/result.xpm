@@ -1,3 +1,4 @@
+/* XPM */
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2005 University of California
@@ -17,7 +18,6 @@
 
 #ifndef RESULT_XPM
 #define RESULT_XPM
-/* XPM */
 static const char *result_xpm[] = {
 "16 16 3 1",
 "  	c None",

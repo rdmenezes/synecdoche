@@ -21,6 +21,8 @@
 
 #include <wx/wizard.h>
 
+class wxStaticText;
+
 class CBOINCBaseWizard;
 
 class CErrNotDetectedPage: public wxWizardPage

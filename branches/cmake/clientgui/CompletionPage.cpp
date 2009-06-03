@@ -17,9 +17,9 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
+#include "CompletionPage.h"
+
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
@@ -27,7 +27,6 @@
 #include "BOINCBaseWizard.h"
 #include "WizardAttachProject.h"
 #include "WizardAccountManager.h"
-#include "CompletionPage.h"
 #include "AccountInfoPage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CCompletionPage, wxWizardPage)
