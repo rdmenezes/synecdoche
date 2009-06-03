@@ -24,10 +24,11 @@
 #include <deque>
 #endif
 
+#include "client_msgs.h"
+
 #include "str_util.h"
 #include "log_flags.h"
 #include "client_types.h"
-#include "client_msgs.h"
 
 #define MAX_SAVED_MESSAGES 1000
 
@@ -38,7 +39,7 @@ std::deque<MESSAGE_DESC*> message_descs;
 /// Takes a printf style formatted string, inserts the proper values,
 /// and passes it to show_message.
 /// TODO: add translation functionality
-void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) {
+void msg_printf(const PROJECT *p, MSG_PRIORITY priority, const char *fmt, ...) {
     char        buf[8192];  // output can be much longer than format
     va_list     ap;
 
@@ -53,7 +54,7 @@ void msg_printf(const PROJECT *p, int priority, const char *fmt, ...) {
 }
 
 /// Add message to cache and delete old messages if the cache gets too big.
-void record_message(const PROJECT* p, int priority, int now, const char* message) {
+void record_message(const PROJECT* p, MSG_PRIORITY priority, int now, const char* message) {
     MESSAGE_DESC* mdp = new MESSAGE_DESC;
     static int seqno = 1;
     strcpy(mdp->project_name, "");

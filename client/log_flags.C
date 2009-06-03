@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -28,15 +29,15 @@
 #include <unistd.h>
 #endif
 
+#include "log_flags.h"
 #include "error_numbers.h"
 #include "common_defs.h"
 #include "file_names.h"
 #include "client_msgs.h"
 #include "parse.h"
+#include "miofile.h"
 #include "str_util.h"
 #include "filesys.h"
-
-using std::string;
 
 LOG_FLAGS log_flags;
 CONFIG config;
@@ -130,24 +131,24 @@ int LOG_FLAGS::parse(XML_PARSER& xp) {
     return ERR_XML_PARSE;
 }
 
-static void show_flag(char* buf, bool flag, const char* flag_name) {
-    if (!flag) return;
-    int n = (int)strlen(buf);
-    if (!n) {
-        strcpy(buf, flag_name);
+static void show_flag(std::string& buf, bool flag, const char* flag_name) {
+    if (!flag) {
         return;
     }
-    strcat(buf, ", ");
-    strcat(buf, flag_name);
-    if (strlen(buf) > 60) {
-        msg_printf(NULL, MSG_INFO, "log flags: %s", buf);
-        strcpy(buf, "");
+    if (buf.empty()) {
+        buf.append(flag_name);
+        return;
+    }
+    buf.append(", ").append(flag_name);
+    if (buf.size() > 60) {
+        msg_printf(NULL, MSG_INFO, "log flags: %s", buf.c_str());
+        buf.clear();
     }
 }
 
+/// Print a message containing all log flags that are set to true.
 void LOG_FLAGS::show() {
-    char buf[256];
-    strcpy(buf, "");
+    std::string buf;
     show_flag(buf, task, "task");
     show_flag(buf, file_xfer, "file_xfer");
     show_flag(buf, sched_ops, "sched_ops");
@@ -174,8 +175,8 @@ void LOG_FLAGS::show() {
     show_flag(buf, mem_usage_debug, "mem_usage_debug");
     show_flag(buf, network_status_debug, "network_status_debug");
     show_flag(buf, checkpoint_debug, "checkpoint_debug");
-    if (strlen(buf)) {
-        msg_printf(NULL, MSG_INFO, "log flags: %s", buf);
+    if (!buf.empty()) {
+        msg_printf(NULL, MSG_INFO, "log flags: %s", buf.c_str());
     }
 }
 
@@ -208,7 +209,7 @@ void CONFIG::defaults() {
 int CONFIG::parse_options(XML_PARSER& xp) {
     char tag[1024], path[256];
     bool is_tag;
-    string s;
+    std::string s;
 
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!is_tag) {
@@ -296,15 +297,42 @@ int CONFIG::parse(FILE* f) {
     return ERR_XML_PARSE;
 }
 
-int read_config_file() {
-    FILE* f;
-
+/// Read the config file.
+///
+/// \param[in] init Set this parameter to true when reading the config file
+///                 for the first time and false when re-reading it.
+/// \return Zero on success, ERR_FOPEN if opening the config file failed.
+int read_config_file(bool init) {
     log_flags.defaults();
     config.defaults();
 
-    f = boinc_fopen(CONFIG_FILE, "r");
-    if (!f) return ERR_FOPEN;
+    if (!init) {
+        msg_printf(NULL, MSG_INFO, "Re-reading cc_config.xml");
+    }
+    FILE* f = boinc_fopen(CONFIG_FILE, "r");
+    if (!f) {
+        return ERR_FOPEN;
+    }
     config.parse(f);
     fclose(f);
     return 0;
+}
+
+/// Print a message about unparsed xml.
+/// If log_flags.unparsed_xml is not set this function does nothing.
+///
+/// \param[in] in_func The name of the parsing function which discovered the
+///                    unparsed xml data.
+/// \param[in] buf The unparsed xml data that should be included in the message.
+void handle_unparsed_xml_warning(const std::string& in_func, const std::string& buf) {
+    if (log_flags.unparsed_xml) {
+        // First check if buf only contains whitespaces. If yes ignore it to
+        // prevent printing empty messages.
+        std::string buf_copy(buf);
+        strip_whitespace(buf_copy);
+        if (!buf_copy.empty()) {
+            msg_printf(0, MSG_INFO, "[unparsed_xml] %s: unrecognized: %s",
+                       in_func.c_str(), buf_copy.c_str());
+        }
+    }
 }

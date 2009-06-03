@@ -15,18 +15,18 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_SGUIListControl.h"
+
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
 #include "sg_DlgMessages.h"
-#include "sg_SGUIListControl.h"
-
 
 IMPLEMENT_DYNAMIC_CLASS(CSGUIListCtrl, wxListView)
 
-
-CSGUIListCtrl::CSGUIListCtrl() {}
+CSGUIListCtrl::CSGUIListCtrl() {
+}
 
 CSGUIListCtrl::CSGUIListCtrl(CPanelMessages* pView, wxWindowID iListWindowID, wxInt32 iListWindowFlags)
     :wxListView(pView, iListWindowID, wxDefaultPosition, wxSize(640,480), iListWindowFlags) 
@@ -36,7 +36,6 @@ CSGUIListCtrl::CSGUIListCtrl(CPanelMessages* pView, wxWindowID iListWindowID, wx
     m_bIsSingleSelection = (iListWindowFlags & wxLC_SINGLE_SEL) ? true : false ;
 }
 
-
 wxString CSGUIListCtrl::OnGetItemText(long item, long column) const {
     wxASSERT(m_pParentView);
     wxASSERT(wxDynamicCast(m_pParentView, CPanelMessages));
@@ -44,15 +43,17 @@ wxString CSGUIListCtrl::OnGetItemText(long item, long column) const {
     return m_pParentView->OnListGetItemText(item, column);
 }
 
-
 int CSGUIListCtrl::OnGetItemImage(long /* item */) const {
     return 1;
 }
-
 
 wxListItemAttr* CSGUIListCtrl::OnGetItemAttr(long item) const {
     wxASSERT(m_pParentView);
     wxASSERT(wxDynamicCast(m_pParentView, CPanelMessages));
 
     return m_pParentView->OnListGetItemAttr(item);
+}
+
+wxColour CSGUIListCtrl::GetBackgroundColour() const {
+    return *wxWHITE;
 }

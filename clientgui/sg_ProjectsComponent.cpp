@@ -288,12 +288,12 @@ void CProjectsComponent::UpdateProjectArray() {
     CMainDocument* pDoc = wxGetApp().GetDocument();
 
     if ( pDoc->IsConnected() ) {
-        int m_projCnt = pDoc->GetProjectCount();
+        size_t m_projCnt = pDoc->GetProjectCount();
 
         // If a new project has been added, figure out which one and then add it;
-        if ( m_projCnt > (int) m_statProjects.size() ) {
+        if ( m_projCnt > m_statProjects.size() ) {
             PROJECT* project;
-            for(int i=0; i < m_projCnt; i++) {
+            for (size_t i=0; i < m_projCnt; i++) {
                 project = pDoc->state.projects[i];
                 bool found = false;
                 std::vector<StatImageLoader*>::iterator j;
@@ -311,7 +311,7 @@ void CProjectsComponent::UpdateProjectArray() {
                     UpdateProjectArray();
                 }
             }
-        } else if ( m_projCnt < (int) m_statProjects.size() ) {
+        } else if ( m_projCnt < m_statProjects.size() ) {
             PROJECT* project = NULL;
             std::vector<StatImageLoader*>::iterator i;
             for(i=m_statProjects.begin(); i < m_statProjects.end(); i++) {
@@ -338,18 +338,18 @@ void CProjectsComponent::UpdateProjectArray() {
 }
 
 void CProjectsComponent::UpdateDisplayedProjects() {
-    int size = 7; 
-    if ( (int) m_statProjects.size() > size ) {
+    size_t size = 7; 
+    if ( m_statProjects.size() > size ) {
         size = 6;
-        if ( m_leftIndex + size >= (int) m_statProjects.size() ) {
-            m_leftIndex = (int) m_statProjects.size() - size;
+        if ( m_leftIndex + size >= m_statProjects.size() ) {
+            m_leftIndex = m_statProjects.size() - size;
         }
         if ( m_leftIndex == 0 ) {
             btnArwLeft->Show(false);
             btnArwRight->Show(true);
         } else {
             btnArwLeft->Show(true);
-            if ( m_leftIndex + size < (int) m_statProjects.size() ) {
+            if ( m_leftIndex + size < m_statProjects.size() ) {
                 btnArwRight->Show(true);
             } else {
                 btnArwRight->Show(false);
@@ -361,8 +361,8 @@ void CProjectsComponent::UpdateDisplayedProjects() {
         btnArwRight->Show(false);
     }
 
-    int numProjects = (int) m_statProjects.size();
-    for(int i=0; i < numProjects; i++) {
+    size_t numProjects = m_statProjects.size();
+    for (size_t i=0; i < numProjects; i++) {
         if ( i < m_leftIndex || i >= m_leftIndex + size) {
             m_statProjects.at(i)->Show(false);
         } else {
@@ -372,7 +372,7 @@ void CProjectsComponent::UpdateDisplayedProjects() {
             if ( size == 6 ) {
                 base = 15;
             }
-            projIcon->Move(wxPoint(base + 40*(i+1-m_leftIndex),37));
+            projIcon->Move(wxPoint(base + 40 * (static_cast<int>(i) + 1 - static_cast<int>(m_leftIndex)), 37));
         }
     }
     Refresh(true);
@@ -555,7 +555,7 @@ void CProjectsComponent::UpdateInterface()
     pDoc->GetCoreClientStatus(status);
     pDoc->rpc.acct_mgr_info(ami);
 
-    is_acct_mgr_detected = ami.acct_mgr_url.size() ? true : false;
+    is_acct_mgr_detected = !ami.acct_mgr_url.empty();
 
     if (is_acct_mgr_detected) {
         btnAddProj->Show(false);
@@ -594,7 +594,7 @@ void CProjectsComponent::UpdateInterface()
     UpdateProjectArray();
 
     // Update stat icons
-    for(int m = 0; m < (int)m_statProjects.size(); m++){
+    for (size_t m = 0; m < m_statProjects.size(); m++){
         StatImageLoader *i_statIcon = m_statProjects.at(m);
         i_statIcon->UpdateInterface();
     }
@@ -676,7 +676,7 @@ void CProjectsComponent::ReskinInterface()
     i_spacer2->LoadImage(*(pSkinSimple->GetSpacerImage()->GetBitmap()));
 
     // Rebuild stat menus and reload icons
-    for(int m = 0; m < (int)m_statProjects.size(); m++){
+    for (size_t m = 0; m < m_statProjects.size(); m++){
         StatImageLoader *i_statImage = m_statProjects.at(m);
         i_statImage->LoadImage();
         i_statImage->RebuildMenu();
@@ -715,11 +715,11 @@ void CProjectsComponent::OnMessageCheck(wxTimerEvent& WXUNUSED(event)) {
     CMainDocument* pDoc     = wxGetApp().GetDocument();
     MESSAGE* message;
     // Only look at the messages recieved since the last time we looked
-    if ( pDoc->GetMessageCount() > (int) lastMessageId ) {
+    if ( pDoc->GetMessageCount() > lastMessageId ) {
         // Loop through and check for any messages recieved that are error messages
         for(size_t i=lastMessageId; i < pDoc->messages.messages.size(); i++) {
             lastMessageId = i+1;
-            message = pDoc->message((unsigned int) i);
+            message = pDoc->message(i);
             if ( message != NULL && message->priority == MSG_USER_ERROR ) {
                 receivedErrorMessage = true;
                 checkForMessagesTimer->Stop();

@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -122,6 +122,13 @@ void CTaskBarIcon::OnClose(wxCloseEvent& event) {
 
 void CTaskBarIcon::OnRefresh(wxTimerEvent& WXUNUSED(event)) {
     //wxLogTrace(wxT("Function Start/End"), wxT("CTaskBarIcon::OnRefresh - Function Begin"));
+
+    // Don't update the icon if we are already shutting down. This would
+    // re-add the icon which would become orphaned and still be shown
+    // after the manager exited.
+    if (m_bTaskbarInitiatedShutdown) {
+        return;
+    }
 
     CMainDocument* pDoc = wxGetApp().GetDocument();
     CC_STATUS      status;
@@ -327,7 +334,7 @@ void CTaskBarIcon::OnMouseMove(wxTaskBarIconEvent& WXUNUSED(event)) {
             // Construct a status summary:
             std::vector<RESULT*> tasks = GetRunningTasks(pDoc);
 
-            if ((tasks.size() == 0) || suspended) {
+            if (tasks.empty() || suspended) {
                 message << wxT("\n") << _("No running tasks.");
             } else if (tasks.size() < 3) {
                 // Limit list of running tasks to 2, to avoid overflow.
@@ -384,9 +391,9 @@ std::vector<RESULT*> CTaskBarIcon::GetRunningTasks(CMainDocument* pDoc) {
     std::vector<RESULT*> results;
     bool bIsActive, bIsExecuting, bIsDownloaded;
     
-    int iResultCount = pDoc->GetWorkCount();
+    size_t iResultCount = pDoc->GetWorkCount();
 
-    for (int iIndex = 0; iIndex < iResultCount; iIndex++) {
+    for (size_t iIndex = 0; iIndex < iResultCount; iIndex++) {
         RESULT* result = pDoc->result(iIndex);
 
         if (result) {
@@ -572,7 +579,7 @@ wxMenu *CTaskBarIcon::BuildContextMenu() {
 
     // Account managers have a different menu arrangement
     pDoc->rpc.acct_mgr_info(ami);
-    is_acct_mgr_detected = ami.acct_mgr_url.size() ? true : false;
+    is_acct_mgr_detected = !ami.acct_mgr_url.empty();
 
     if (is_acct_mgr_detected) {
         menuName.Printf(

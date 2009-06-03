@@ -19,9 +19,11 @@
 #ifndef _MAINDOCUMENT_H_
 #define _MAINDOCUMENT_H_
 
+#include <string>
 #include <vector>
 #include "common_defs.h"
 #include "gui_rpc_client.h"
+#include "hostinfo.h"
 
 typedef struct {
     int slot;
@@ -54,15 +56,13 @@ public:
     int            GetConnectedComputerVersion(wxString& strVersion);
     int            GetConnectingComputerName(wxString& strMachine);
     bool           IsComputerNameLocal(const wxString& strMachine);
-    int            GetLocalPassword(wxString& strPassword);
-    int SetComputer(
-        const wxChar* szComputer, const int iPort, const wxChar* szPassword,
-        const bool bUseDefaultPassword
-    );
+    int            SetComputer(const wxChar* szComputer, const int iPort,
+                               const std::string& szPassword,
+                               const bool bUseDefaultPassword);
     void           SetStateError();
     void           SetStateErrorAuthentication();
     void           SetStateReconnecting();
-    void           SetStateSuccess(wxString& strComputer, wxString& strComputerPassword);
+    void           SetStateSuccess(const wxString& strComputer, const std::string& strComputerPassword);
     void           SetStateDisconnected();
     bool           IsConnectEventSignaled() { return m_bConnectEvent; };
     bool           IsConnected() { return m_bConnected; };
@@ -81,9 +81,9 @@ private:
     int            m_iReadGUIRPCAuthFailure;
     bool           m_bNewConnection;
     wxString       m_strNewComputerName;
-    wxString       m_strNewComputerPassword;
+    std::string    m_strNewComputerPassword;
     wxString       m_strConnectedComputerName;
-    wxString       m_strConnectedComputerPassword;
+    std::string    m_strConnectedComputerPassword;
     wxString       m_strConnectedComputerVersion;
     int m_iPort;
 };
@@ -117,7 +117,7 @@ public:
     int                         Connect(
                                     const wxChar* szComputer,
                                     const int iPort,
-                                    const wxChar* szComputerPassword = wxEmptyString,
+                                    const std::string& szComputerPassword = "",
                                     const bool bDisconnect = FALSE,
                                     const bool bUseDefaultPassword = FALSE
                                 );
@@ -163,18 +163,18 @@ private:
     wxDateTime                  m_dtProjecStatusTimestamp;
 
 public:
-    PROJECT*                    project(unsigned int);
+    PROJECT*                    project(size_t i);
     PROJECT*                    project(const wxString& projectname);
     float                       m_fProjectTotalResourceShare;
 
-    int                         GetProjectCount();
+    size_t                      GetProjectCount();
 
     int                         ProjectNoMoreWork(int iIndex);
     int                         ProjectNoMoreWork(const wxString& projectname);
     int                         ProjectAllowMoreWork(int iIndex);
     int                         ProjectAllowMoreWork(const wxString& projectname);
     int                         ProjectAttach(const wxString& strURL, const wxString& strAccountKey);
-    int                         ProjectDetach(int iIndex);
+    int                         ProjectDetach(size_t iIndex);
     int                         ProjectDetach(const wxString& projectname);
     int                         ProjectUpdate(int iIndex);
     int                         ProjectUpdate(const wxString& projectname);
@@ -205,10 +205,10 @@ private:
 
 public:
     RESULTS                     results;
-    RESULT*                     result(unsigned int);
+    RESULT*                     result(size_t i);
     RESULT*                     result(const wxString& name, const wxString& project_url);
 
-    int                         GetWorkCount();
+    size_t                      GetWorkCount();
 
     int                         WorkSuspend(
                                     std::string& strProjectURL,
@@ -234,10 +234,10 @@ private:
 
 public:
     MESSAGES                    messages;
-    MESSAGE*                    message(unsigned int);
+    MESSAGE*                    message(size_t i);
     int                         CachedMessageUpdate();
 
-    int                         GetMessageCount();
+    size_t                      GetMessageCount();
 
     int                         ResetMessageState();
 
@@ -256,7 +256,7 @@ public:
     FILE_TRANSFER*              file_transfer(unsigned int);
     FILE_TRANSFER*              file_transfer(const wxString& fileName, const wxString& project_url);
 
-    int                         GetTransferCount();
+    size_t                      GetTransferCount();
 
     int                         TransferRetryNow(int iIndex);
     int                         TransferRetryNow(const wxString& fileName, const wxString& project_url);
@@ -286,7 +286,7 @@ public:
     PROJECTS                    statistics_status;
     PROJECT*                    statistic(unsigned int);
 
-    int                         GetStatisticsCount();
+    size_t                      GetStatisticsCount();
     
 
     //
@@ -308,7 +308,7 @@ private:
     int                         CachedSimpleGUIUpdate();
 
 public:
-    int                         GetSimpleGUIWorkCount();
+    size_t                      GetSimpleGUIWorkCount();
 
 };
 

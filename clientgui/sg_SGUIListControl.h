@@ -15,12 +15,17 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _SGUILISTCTRL_H_
-#define _SGUILISTCTRL_H_
+#ifndef SGUILISTCTRL_H
+#define SGUILISTCTRL_H
+
+#include <wx/colour.h>
+#include <wx/string.h>
+#include <wx/listctrl.h>
 
 #define DEFAULT_LIST_MULTI_SEL_FLAGS   wxLC_REPORT | wxLC_VIRTUAL
 
 class CPanelMessages;
+class wxListItemAttr;
 
 class CSGUIListCtrl : public wxListView {
     DECLARE_DYNAMIC_CLASS(CSGUIListCtrl)
@@ -34,10 +39,11 @@ private:
     virtual wxString        OnGetItemText(long item, long column) const;
     virtual int             OnGetItemImage(long item) const;
     virtual wxListItemAttr* OnGetItemAttr(long item) const;
+    virtual wxColour        GetBackgroundColour() const;
 
     bool                    m_bIsSingleSelection;
 
     CPanelMessages*         m_pParentView;
 };
 
-#endif
+#endif // SGUILISTCTRL_H

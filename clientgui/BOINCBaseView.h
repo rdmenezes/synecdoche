@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BOINCBASEVIEW_H_
-#define _BOINCBASEVIEW_H_
+#ifndef BOINCBASEVIEW_H
+#define BOINCBASEVIEW_H
 
+#include <vector>
 #include <wx/panel.h>
 
 #define DEFAULT_TASK_FLAGS             wxTAB_TRAVERSAL | wxADJUST_MINSIZE
@@ -36,7 +37,7 @@ class wxGridRangeSelectEvent;
 class CBOINCListCtrl;
 
 
-typedef int     (*ListSortCompareFunc)(int*, int*);
+typedef int     (*ListSortCompareFunc)(int, int);
 
 
 class CBOINCBaseView : public wxPanel {
@@ -51,9 +52,16 @@ public:
 
     ~CBOINCBaseView();
 
+    /// Return the name of the view.
     virtual wxString&       GetViewName();
+
+    /// Return the user friendly name of the view.
     virtual wxString&       GetViewDisplayName();
+
+    /// Return the user friendly icon of the view.
     virtual const char**    GetViewIcon();
+
+    /// The rate at which the view is refreshed.
     virtual const int       GetViewRefreshRate();
 
     bool                    FireOnSaveState( wxConfigBase* pConfig );
@@ -122,8 +130,12 @@ protected:
     virtual bool            EnsureLastItemVisible();
 
     static  void            AppendToStatus(wxString& existing, const wxChar* additional);
-    static  wxString        HtmlEntityEncode(wxString strRaw);
-    static  wxString        HtmlEntityDecode(wxString strRaw);
+
+    /// HTML Entity Encoding.
+    static  wxString        HtmlEntityEncode(const wxString& strRaw);
+
+    /// HTML Entity Decoding.
+    static  wxString        HtmlEntityDecode(const wxString& strRaw);
 
     bool                    m_bProcessingTaskRenderEvent;
     bool                    m_bProcessingListRenderEvent;
@@ -134,7 +146,7 @@ protected:
     int                     m_iProgressColumn;
 
     ListSortCompareFunc     m_funcSortCompare;
-    wxArrayInt              m_iSortedIndexes;
+    std::vector<int>        m_iSortedIndexes;
 
     CBOINCListCtrl*         m_pListPane;
 
@@ -142,4 +154,4 @@ protected:
 };
 
 
-#endif
+#endif // BOINCBASEVIEW_H

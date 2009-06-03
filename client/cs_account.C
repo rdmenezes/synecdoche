@@ -29,12 +29,13 @@
 #endif
 #endif
 
+#include "client_state.h"
+
 #include <algorithm>
 #include <cstring>
 #include "filesys.h"
 #include "parse.h"
 #include "str_util.h"
-#include "client_state.h"
 #include "client_msgs.h"
 #include "log_flags.h"
 #include "error_numbers.h"
@@ -52,7 +53,7 @@
 int PROJECT::write_account_file() const {
     // We write the contents into a temporary file and rename it to the
     // real account file name after it was completly written.
-    FILE* f = boinc_fopen(TEMP_FILE_NAME, "w");
+    FILE* f = boinc_fopen(TEMP_ACCT_FILE_NAME, "w");
     if (!f) {
         return ERR_FOPEN;
     }
@@ -74,7 +75,7 @@ int PROJECT::write_account_file() const {
     fclose(f);
 
     std::string path = get_account_filename(master_url);
-    if (boinc_rename(TEMP_FILE_NAME, path.c_str())) {
+    if (boinc_rename(TEMP_ACCT_FILE_NAME, path.c_str())) {
         return ERR_RENAME;
     }
     return 0;
@@ -128,11 +129,8 @@ int PROJECT::parse_account(FILE* in) {
             continue;
         } else {
             // don't show unparsed XML errors if we're in project prefs
-            //
-            if (!in_project_prefs && log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] PROJECT::parse_account(): unrecognized: %s\n", buf
-                );
+            if (!in_project_prefs) {
+                handle_unparsed_xml_warning("PROJECT::parse_account", buf);
             }
         }
     }
@@ -189,9 +187,7 @@ int PROJECT::parse_account_file_venue() {
         } else if (parse_double(buf, "<resource_share>", resource_share)) {
             continue;
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO, "[unparsed_xml] parse_account_file_venue(): unrecognized: %s\n", buf);
-            }
+            handle_unparsed_xml_warning("PROJECT::parse_account_file_venue", buf);
         }
     }
     fclose(in);
@@ -246,7 +242,7 @@ int CLIENT_STATE::parse_account_files() {
             delete project;
         } else {
             if (lookup_project(project->master_url)) {
-                msg_printf(NULL, MSG_INFO,
+                msg_printf(project, MSG_INFO,
                     "Duplicate account file %s - ignoring", name.c_str()
                 );
                 delete project;
@@ -306,11 +302,7 @@ int PROJECT::parse_statistics(FILE* in) {
             canonicalize_master_url(master_url);
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] PROJECT::parse_statistics(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("PROJECT::parse_statistics", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -349,23 +341,21 @@ int CLIENT_STATE::parse_statistics_files() {
     return 0;
 }
 
+/// Write the statistics file.
+///
+/// \return ERR_FOPEN or ERR_RENAME on error, zero otherwise.
 int PROJECT::write_statistics_file() const {
-    char path[256];
-    FILE* f;
-    int retval;
-
-    get_statistics_filename(master_url, path);
-    f = boinc_fopen(TEMP_FILE_NAME, "w");
-    if (!f) return ERR_FOPEN;
+    FILE* f = boinc_fopen(TEMP_STATS_FILE_NAME, "w");
+    if (!f) {
+        return ERR_FOPEN;
+    }
     fprintf(f,
         "<project_statistics>\n"
         "    <master_url>%s</master_url>\n",
         master_url
     );
 
-    for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
-        i!=statistics.end(); ++i
-    ) {
+    for (std::vector<DAILY_STATS>::const_iterator i = statistics.begin(); i != statistics.end(); ++i) {
         fprintf(f,
             "    <daily_statistics>\n"
             "        <day>%f</day>\n"
@@ -382,13 +372,13 @@ int PROJECT::write_statistics_file() const {
         );
     }
 
-    fprintf(f,
-        "</project_statistics>\n"
-    );
-
+    fprintf(f, "</project_statistics>\n");
     fclose(f);
-    retval = boinc_rename(TEMP_FILE_NAME, path);
-    if (retval) return ERR_RENAME;
+
+    std::string path = get_statistics_filename(master_url);
+    if (boinc_rename(TEMP_STATS_FILE_NAME, path.c_str())) {
+        return ERR_RENAME;
+    }
     return 0;
 }
 

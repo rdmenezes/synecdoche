@@ -29,6 +29,8 @@ class CDlgAdvPreferences : public CDlgAdvPreferencesBase {
     DECLARE_DYNAMIC_CLASS( CDlgAdvPreferences )
     DECLARE_EVENT_TABLE()
     void ReadPreferenceSettings();
+
+    /// Write overridden preferences to disk (global_prefs_override.xml)
     bool SavePreferencesSettings();
     void UpdateControlStates();
     void SetSpecialTooltips();

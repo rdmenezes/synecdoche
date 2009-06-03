@@ -457,13 +457,12 @@ bool process_exists(int pid) {
 }
 
 /// Prepare arguments for execv and call that function.
-/// This function returns only in case of an error or if the platform is OS/2.
+/// This function returns only in case of an error.
 ///
 /// \param[in] path The path name of the executable that should get executed.
 /// \param[in] argv A list containing all command line arguments for the
 ///                 program specified in \a path.
-/// \return Only returns -1, if it returns. On OS/2 the id of the new process
-///         is returned or -1 in case of an error.
+/// \return Only returns -1, if it returns.
 int do_execv(const std::string& path, const std::list<std::string>& argv)
 {
     char** argv_p = new char*[argv.size() + 1];
@@ -476,11 +475,7 @@ int do_execv(const std::string& path, const std::list<std::string>& argv)
     }
     argv_p[i] = 0;
 
-#if defined(__EMX__)
-    int ret_val = spawnv(P_NOWAIT, path.c_str(), argv_p);
-#else
     int ret_val = execv(path.c_str(), argv_p);
-#endif
 
     delete[] argv_p;
     return ret_val;

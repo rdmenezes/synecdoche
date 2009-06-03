@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Nicolas Alvarez
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -29,6 +30,22 @@
 #include "Events.h"
 #include "error_numbers.h"
 
+namespace {
+    /// Small helper function to trim a value to the interval [0; 100]
+    ///
+    /// \param[in] x The value that should be trimmed.
+    /// \retrn \a x if it lies in the interval [0; 100], otherwise 0 or 100
+    ///        is returned, whichever is closer to \a x.
+    double clamp_pct(double x) {
+        if (x < 0.0) {
+            return 0.0;
+        } else if (x > 100.0) {
+            return 100.0;
+        }
+        return x;
+    }
+}
+
 IMPLEMENT_DYNAMIC_CLASS(CDlgAdvPreferences, wxDialog)
 
 BEGIN_EVENT_TABLE(CDlgAdvPreferences, wxDialog)
@@ -41,14 +58,13 @@ BEGIN_EVENT_TABLE(CDlgAdvPreferences, wxDialog)
     EVT_BUTTON(ID_BTN_CLEAR,CDlgAdvPreferences::OnClear)
 END_EVENT_TABLE()
 
-/* Constructor */
 CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBase(parent,ID_ANYDIALOG) {
     m_bInInit=false;
     m_bDataChanged=false;
     m_arrTabPageIds.Add(ID_TABPAGE_PROC);
     m_arrTabPageIds.Add(ID_TABPAGE_NET);
     m_arrTabPageIds.Add(ID_TABPAGE_DISK);
-    
+
     //setting tab page images (not handled by generated code)
     int iImageIndex = 0;
     wxImageList* pImageList = m_Notebook->GetImageList();
@@ -58,31 +74,34 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
         m_Notebook->SetImageList(pImageList);
     }
     iImageIndex = pImageList->Add(wxBitmap(proj_xpm));
-    m_Notebook->SetPageImage(0,iImageIndex);
+    m_Notebook->SetPageImage(0, iImageIndex);
 
     iImageIndex = pImageList->Add(wxBitmap(xfer_xpm));
-    m_Notebook->SetPageImage(1,iImageIndex);
+    m_Notebook->SetPageImage(1, iImageIndex);
 
     iImageIndex = pImageList->Add(wxBitmap(usage_xpm));
-    m_Notebook->SetPageImage(2,iImageIndex);
-    //setting warning bitmap
+    m_Notebook->SetPageImage(2, iImageIndex);
+
+    // setting warning bitmap
     m_bmpWarning->SetBitmap(wxBitmap(warning_xpm));
+
     // init special tooltips
     SetSpecialTooltips();
-    //setting the validators for correct input handling
+
+    // setting the validators for correct input handling
     SetValidators();
-    //read in settings and initialisze controls
+
+    // read in settings and initialize controls
     ReadPreferenceSettings();
-    //
+
     RestoreState();
 }
 
-/* destructor */
 CDlgAdvPreferences::~CDlgAdvPreferences() {
     SaveState();
 }
 
-/* set validators for input filtering purposes only */
+/// Set validators for input filtering purposes only.
 void CDlgAdvPreferences::SetValidators() {
     //proc page
     m_txtProcIdleFor->SetValidator(wxTextValidator(wxFILTER_NUMERIC));
@@ -102,10 +121,10 @@ void CDlgAdvPreferences::SetValidators() {
     m_txtDiskMaxSwap->SetValidator(wxTextValidator(wxFILTER_NUMERIC));
     m_txtMemoryMaxInUse->SetValidator(wxTextValidator(wxFILTER_NUMERIC));
     m_txtMemoryMaxOnIdle->SetValidator(wxTextValidator(wxFILTER_NUMERIC));
-    
+
 }
 
-/* some controls share the same tooltip, set them here */
+/// Set tooltips that are shared with multiple controls.
 void CDlgAdvPreferences::SetSpecialTooltips() {
     m_txtProcMonday->SetToolTip(TXT_PROC_TIME_TOOLTIP);
     m_txtProcTuesday->SetToolTip(TXT_PROC_TIME_TOOLTIP);
@@ -124,7 +143,7 @@ void CDlgAdvPreferences::SetSpecialTooltips() {
     m_txtNetSunday->SetToolTip(TXT_NET_TIME_TOOLTIP);
 }
 
-/* saves selected tab page and dialog size*/
+/// Save selected tab page and dialog size.
 bool CDlgAdvPreferences::SaveState() {
     wxString        strBaseConfigLocation = wxString(wxT("/DlgAdvPreferences/"));
     wxConfigBase*   pConfig = wxConfigBase::Get(FALSE);
@@ -139,7 +158,7 @@ bool CDlgAdvPreferences::SaveState() {
     return true;
 }
 
-/* restores former selected tab page and dialog size*/
+/// Restore former selected tab page and dialog size.
 bool CDlgAdvPreferences::RestoreState() {
     wxString        strBaseConfigLocation = wxString(wxT("/DlgAdvPreferences/"));
     wxConfigBase*   pConfig = wxConfigBase::Get(FALSE);
@@ -160,7 +179,7 @@ bool CDlgAdvPreferences::RestoreState() {
     return true;
 }
 
-// convert a Timestring HH:MM into a double
+/// Convert a Timestring HH:MM into a double.
 double CDlgAdvPreferences::TimeStringToDouble(wxString timeStr) {
     double hour;
     double minutes;
@@ -170,16 +189,16 @@ double CDlgAdvPreferences::TimeStringToDouble(wxString timeStr) {
     return hour + minutes;
 }
 
-// convert a double into a timestring HH:MM
+/// Convert a double into a timestring HH:MM.
 wxString CDlgAdvPreferences::DoubleToTimeString(double dt) {
     int hour = (int)dt;
     int minutes = (int)(60.0 * (dt - hour));
     return wxString::Format(wxT("%02d:%02d"),hour,minutes);
 }
 
-/* read preferences from core client and initialize control values */
+/// Read preferences from core client and initialize control values.
 void CDlgAdvPreferences::ReadPreferenceSettings() {
-    m_bInInit=true;//prevent dialog handlers from doing anything 
+    m_bInInit=true; //prevent dialog handlers from doing anything
     CMainDocument* pDoc = wxGetApp().GetDocument();
     wxString buffer;
     int retval;
@@ -202,31 +221,31 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
     //special day times
     wxCheckBox* aChks[] = {m_chkProcSunday,m_chkProcMonday,m_chkProcTuesday,m_chkProcWednesday,m_chkProcThursday,m_chkProcFriday,m_chkProcSaturday};
     wxTextCtrl* aTxts[] = {m_txtProcSunday,m_txtProcMonday,m_txtProcTuesday,m_txtProcWednesday,m_txtProcThursday,m_txtProcFriday,m_txtProcSaturday};
-    for(int i=0; i< 7;i++) {
+    for (int i=0; i<7; i++) {
         TIME_SPAN* cpu = prefs.cpu_times.week.get(i);
         if(cpu) {
             aChks[i]->SetValue(true);
             wxString timeStr = DoubleToTimeString(cpu->start_hour) +
-                                wxT("-") + DoubleToTimeString(cpu->end_hour);
+                               wxT("-") + DoubleToTimeString(cpu->end_hour);
             aTxts[i]->SetValue(timeStr);
         }
     }
-    
+
     // on batteries
     m_chkProcOnBatteries->SetValue(prefs.run_on_batteries);
     // in use
     m_chkProcInUse->SetValue(prefs.run_if_user_active);
     // idle for X minutes
-    buffer.Printf(wxT("%.2f"),prefs.idle_time_to_run);
+    buffer.Printf(wxT("%.2f"), prefs.idle_time_to_run);
     *m_txtProcIdleFor << buffer;
-    // siwtch every X minutes
-    buffer.Printf(wxT("%.2f"),prefs.cpu_scheduling_period_minutes);
+    // switch every X minutes
+    buffer.Printf(wxT("%.2f"), prefs.cpu_scheduling_period_minutes);
     *m_txtProcSwitchEvery << buffer;
     // max cpus
-    buffer.Printf(wxT("%.2f"),prefs.max_ncpus_pct);
+    buffer.Printf(wxT("%.2f"), prefs.max_ncpus_pct);
     *m_txtProcUseProcessors << buffer;
     //cpu limit
-    buffer.Printf(wxT("%.2f"),prefs.cpu_usage_limit);
+    buffer.Printf(wxT("%.2f"), prefs.cpu_usage_limit);
     *m_txtProcUseCPUTime << buffer;
 
     // ######### net usage page
@@ -246,16 +265,16 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
         }
     }
     // connection interval
-    buffer.Printf(wxT("%01.4f"),prefs.work_buf_min_days);
+    buffer.Printf(wxT("%01.4f"), prefs.work_buf_min_days);
     *m_txtNetConnectInterval << buffer;
     //download rate
-    buffer.Printf(wxT("%.2f"),prefs.max_bytes_sec_down / 1024);
+    buffer.Printf(wxT("%.2f"), prefs.max_bytes_sec_down / 1024);
     *m_txtNetDownloadRate << buffer;
     // upload rate
-    buffer.Printf(wxT("%.2f"),prefs.max_bytes_sec_up / 1024);
+    buffer.Printf(wxT("%.2f"), prefs.max_bytes_sec_up / 1024);
     *m_txtNetUploadRate << buffer;
     //
-    buffer.Printf(wxT("%.2f"),prefs.work_buf_additional_days);
+    buffer.Printf(wxT("%.2f"), prefs.work_buf_additional_days);
     *m_txtNetAdditionalDays << buffer;
     // skip image verification
     m_chkNetSkipImageVerification->SetValue(prefs.dont_verify_images);
@@ -265,35 +284,37 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
     m_chkNetDisconnectWhenDone->SetValue(prefs.hangup_if_dialed);
 
     // ######### disk and memory usage page
-    //max space used
-    buffer.Printf(wxT("%.2f"),prefs.disk_max_used_gb);
+    // max space used
+    buffer.Printf(wxT("%.2f"), prefs.disk_max_used_gb);
     *m_txtDiskMaxSpace << buffer;
-    // min free 
-    buffer.Printf(wxT("%.2f"),prefs.disk_min_free_gb);
+    // min free
+    buffer.Printf(wxT("%.2f"), prefs.disk_min_free_gb);
     *m_txtDiskLeastFree << buffer;
     // max used percentage
-    buffer.Printf(wxT("%.2f"),prefs.disk_max_used_pct);
+    buffer.Printf(wxT("%.2f"), prefs.disk_max_used_pct);
     *m_txtDiskMaxOfTotal << buffer;
     // write to disk every X seconds
-    buffer.Printf(wxT("%.0f"),prefs.disk_interval);
+    buffer.Printf(wxT("%.0f"), prefs.disk_interval);
     *m_txtDiskWriteToDisk << buffer;
     // max swap space (virtual memory)
-    buffer.Printf(wxT("%.2f"),prefs.vm_max_used_frac*100.0);
+    buffer.Printf(wxT("%.2f"), prefs.vm_max_used_frac*100.0);
     *m_txtDiskMaxSwap << buffer;
     // max VM used
-    buffer.Printf(wxT("%.2f"),prefs.ram_max_used_busy_frac*100.0);
+    buffer.Printf(wxT("%.2f"), prefs.ram_max_used_busy_frac*100.0);
     *m_txtMemoryMaxInUse << buffer;
     // max VM idle
-    buffer.Printf(wxT("%.2f"),prefs.ram_max_used_idle_frac*100.0);
+    buffer.Printf(wxT("%.2f"), prefs.ram_max_used_idle_frac*100.0);
     *m_txtMemoryMaxOnIdle << buffer;
     // suspend to memory
     m_chkMemoryWhileSuspended->SetValue(prefs.leave_apps_in_memory);
-    m_bInInit=false;
-    //update control states
+    m_bInInit = false;
+    // update control states
     this->UpdateControlStates();
 }
 
-/* write overridden preferences to disk (global_prefs_override.xml) */
+/// Write overridden preferences to disk (global_prefs_override.xml)
+///
+/// \return Always returns true.
 bool CDlgAdvPreferences::SavePreferencesSettings() {
     double td;
 
@@ -304,26 +325,26 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     //proc page
     prefs.run_on_batteries=m_chkProcOnBatteries->GetValue();
     mask.run_on_batteries=true;
-    //
+
     prefs.run_if_user_active=m_chkProcInUse->GetValue();
     mask.run_if_user_active=true;
-    //
+
     if(m_txtProcIdleFor->IsEnabled()) {
         m_txtProcIdleFor->GetValue().ToDouble(&td);
         prefs.idle_time_to_run=td;
         mask.idle_time_to_run=true;
     }
-    //
+
     prefs.cpu_times.start_hour=TimeStringToDouble(m_txtProcEveryDayStart->GetValue());
-    mask.start_hour = true;        
-    //
+    mask.start_hour = true;
+
     prefs.cpu_times.end_hour=TimeStringToDouble(m_txtProcEveryDayStop->GetValue());
-    mask.end_hour = true;        
-    //
+    mask.end_hour = true;
+
     wxCheckBox* aChks[] = {m_chkProcSunday,m_chkProcMonday,m_chkProcTuesday,m_chkProcWednesday,m_chkProcThursday,m_chkProcFriday,m_chkProcSaturday};
     wxTextCtrl* aTxts[] = {m_txtProcSunday,m_txtProcMonday,m_txtProcTuesday,m_txtProcWednesday,m_txtProcThursday,m_txtProcFriday,m_txtProcSaturday};
-    for(int i=0; i< 7;i++) {
-        if(aChks[i]->GetValue()) {
+    for (int i=0; i<7; i++) {
+        if (aChks[i]->GetValue()) {
             wxString timeStr = aTxts[i]->GetValue();
             wxString startStr = timeStr.SubString(0,timeStr.First('-'));
             wxString endStr = timeStr.SubString(timeStr.First('-')+1,timeStr.Length());
@@ -336,13 +357,11 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     m_txtProcSwitchEvery->GetValue().ToDouble(&td);
     prefs.cpu_scheduling_period_minutes=td;
     mask.cpu_scheduling_period_minutes=true;
-    //
 
     m_txtProcUseProcessors->GetValue().ToDouble(&td);
-    prefs.max_ncpus_pct=td;
+    prefs.max_ncpus_pct = clamp_pct(td);
     mask.max_ncpus_pct=true;
 
-    //
     m_txtProcUseCPUTime->GetValue().ToDouble(&td);
     prefs.cpu_usage_limit=td;
     mask.cpu_usage_limit=true;
@@ -350,39 +369,39 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     m_txtNetConnectInterval->GetValue().ToDouble(&td);
     prefs.work_buf_min_days=td;
     mask.work_buf_min_days=true;
-    //
+
     m_txtNetDownloadRate->GetValue().ToDouble(&td);
     td = td * 1024;
     prefs.max_bytes_sec_down=td;
     mask.max_bytes_sec_down=true;
-    //
+
     m_txtNetUploadRate->GetValue().ToDouble(&td);
     td = td * 1024;
     prefs.max_bytes_sec_up=td;
     mask.max_bytes_sec_up=true;
-    //
+
     prefs.dont_verify_images=m_chkNetSkipImageVerification->GetValue();
     mask.dont_verify_images=true;
-    //
+
     prefs.confirm_before_connecting= m_chkNetConfirmBeforeConnect->GetValue();
     mask.confirm_before_connecting=true;
-    //
+
     prefs.hangup_if_dialed= m_chkNetDisconnectWhenDone->GetValue();
     mask.hangup_if_dialed=true;
-    //
+
     m_txtNetAdditionalDays->GetValue().ToDouble(&td);
     prefs.work_buf_additional_days = td;
     mask.work_buf_additional_days = true;
-    //
+
     prefs.net_times.start_hour=TimeStringToDouble(m_txtNetEveryDayStart->GetValue());
-    mask.net_start_hour = true;        
-    //
+    mask.net_start_hour = true;
+
     prefs.net_times.end_hour=TimeStringToDouble(m_txtNetEveryDayStop->GetValue());
-    mask.net_end_hour = true;        
-        
+    mask.net_end_hour = true;
+
     wxCheckBox* aChks2[] = {m_chkNetSunday,m_chkNetMonday,m_chkNetTuesday,m_chkNetWednesday,m_chkNetThursday,m_chkNetFriday,m_chkNetSaturday};
     wxTextCtrl* aTxts2[] = {m_txtNetSunday,m_txtNetMonday,m_txtNetTuesday,m_txtNetWednesday,m_txtNetThursday,m_txtNetFriday,m_txtNetSaturday};
-    for(int i=0; i< 7;i++) {
+    for (int i=0; i<7; i++) {
         if(aChks2[i]->GetValue()) {
             wxString timeStr = aTxts2[i]->GetValue();
             wxString startStr = timeStr.SubString(0,timeStr.First('-'));
@@ -397,40 +416,40 @@ bool CDlgAdvPreferences::SavePreferencesSettings() {
     m_txtDiskMaxSpace->GetValue().ToDouble(&td);
     prefs.disk_max_used_gb=td;
     mask.disk_max_used_gb=true;
-    //
+
     m_txtDiskLeastFree->GetValue().ToDouble(&td);
     prefs.disk_min_free_gb=td;
     mask.disk_min_free_gb=true;
-    //
+
     m_txtDiskMaxOfTotal->GetValue().ToDouble(&td);
-    prefs.disk_max_used_pct=td;
+    prefs.disk_max_used_pct = clamp_pct(td);
     mask.disk_max_used_pct=true;
-    //
+
     m_txtDiskWriteToDisk->GetValue().ToDouble(&td);
     prefs.disk_interval=td;
     mask.disk_interval=true;
-    //
+
     m_txtDiskMaxSwap->GetValue().ToDouble(&td);
-    td = td / 100.0 ;
+    td = clamp_pct(td) / 100.0 ;
     prefs.vm_max_used_frac=td;
     mask.vm_max_used_frac=true;
     //Memory
     m_txtMemoryMaxInUse->GetValue().ToDouble(&td);
-    td = td / 100.0;
+    td = clamp_pct(td) / 100.0;
     prefs.ram_max_used_busy_frac=td;
     mask.ram_max_used_busy_frac=true;
-    //
+
     m_txtMemoryMaxOnIdle->GetValue().ToDouble(&td);
-    td = td / 100.0;
+    td = clamp_pct(td) / 100.0;
     prefs.ram_max_used_idle_frac=td;
     mask.ram_max_used_idle_frac=true;
-    //
+
     prefs.leave_apps_in_memory = m_chkMemoryWhileSuspended->GetValue();
     mask.leave_apps_in_memory=true;
     return true;
 }
 
-/* set state of control depending on other control's state */
+/// Set state of control depending on other control's state.
 void CDlgAdvPreferences::UpdateControlStates() {
     //proc usage page
     m_txtProcIdleFor->Enable(!m_chkProcInUse->IsChecked());
@@ -452,42 +471,42 @@ void CDlgAdvPreferences::UpdateControlStates() {
     m_txtNetSunday->Enable(m_chkNetSunday->IsChecked());
 }
 
-/* validates the entered informations */
+/// Validate the entered information.
 bool CDlgAdvPreferences::ValidateInput() {
     wxString invMsgFloat = _("invalid float");
     wxString invMsgTime = _("invalid time, format is HH:MM");
     wxString invMsgInterval = _("invalid time interval, format is HH:MM-HH:MM");
     wxString buffer;
     //proc page
-    if(m_txtProcIdleFor->IsEnabled()) {
+    if (m_txtProcIdleFor->IsEnabled()) {
         buffer = m_txtProcIdleFor->GetValue();
-        if(!IsValidFloatValue(buffer)) {
-            ShowErrorMessage(invMsgFloat,m_txtProcIdleFor);
+        if (!IsValidFloatValue(buffer)) {
+            ShowErrorMessage(invMsgFloat, m_txtProcIdleFor);
             return false;
         }
     }
-    
+
     buffer = m_txtProcEveryDayStart->GetValue();
-    if(!IsValidTimeValue(buffer)) {
-        ShowErrorMessage(invMsgTime,m_txtProcEveryDayStart);
+    if (!IsValidTimeValue(buffer)) {
+        ShowErrorMessage(invMsgTime, m_txtProcEveryDayStart);
         return false;
     }
     buffer = m_txtProcEveryDayStop->GetValue();
-    if(!IsValidTimeValue(buffer)) {
-        ShowErrorMessage(invMsgTime,m_txtProcEveryDayStop);
+    if (!IsValidTimeValue(buffer)) {
+        ShowErrorMessage(invMsgTime, m_txtProcEveryDayStop);
         return false;
     }
     //all text ctrls in proc special time panel
     wxWindowList children = m_panelProcSpecialTimes->GetChildren();
     wxWindowListNode* node = children.GetFirst();
-    while(node) {
-        if(node->GetData()->IsKindOf(CLASSINFO(wxTextCtrl))) {
-            wxTextCtrl*  txt = wxDynamicCast(node->GetData(),wxTextCtrl);
-            if(txt) {
-                if(txt->IsEnabled()) {
+    while (node) {
+        if (node->GetData()->IsKindOf(CLASSINFO(wxTextCtrl))) {
+            wxTextCtrl*  txt = wxDynamicCast(node->GetData(), wxTextCtrl);
+            if (txt) {
+                if (txt->IsEnabled()) {
                     buffer = txt->GetValue();
-                    if(!IsValidTimeIntervalValue(buffer)) {
-                        ShowErrorMessage(invMsgInterval,txt);
+                    if (!IsValidTimeIntervalValue(buffer)) {
+                        ShowErrorMessage(invMsgInterval, txt);
                         return false;
                     }
                 }
@@ -498,47 +517,47 @@ bool CDlgAdvPreferences::ValidateInput() {
     //net page
 
     buffer = m_txtNetEveryDayStart->GetValue();
-    if(!IsValidTimeValue(buffer)) {
-        ShowErrorMessage(invMsgTime,m_txtNetEveryDayStart);
+    if (!IsValidTimeValue(buffer)) {
+        ShowErrorMessage(invMsgTime, m_txtNetEveryDayStart);
         return false;
     }
 
     buffer = m_txtNetEveryDayStop->GetValue();
-    if(!IsValidTimeValue(buffer)) {
-        ShowErrorMessage(invMsgTime,m_txtNetEveryDayStop);
+    if (!IsValidTimeValue(buffer)) {
+        ShowErrorMessage(invMsgTime, m_txtNetEveryDayStop);
         return false;
     }
     //limit additional days from 0 to 10
     double td;
     m_txtNetAdditionalDays->GetValue().ToDouble(&td);
-    if(td>10.0 || td < 0.0) {
-        ShowErrorMessage(invMsgFloat,m_txtNetAdditionalDays);
+    if (td > 10.0 || td < 0.0) {
+        ShowErrorMessage(invMsgFloat, m_txtNetAdditionalDays);
         return false;
     }
     //all text ctrls in net special time panel
 
     children = m_panelNetSpecialTimes->GetChildren();
     node = children.GetFirst();
-    while(node) {
-        if(node->GetData()->IsKindOf(CLASSINFO(wxTextCtrl))) {
-            wxTextCtrl*  txt = wxDynamicCast(node->GetData(),wxTextCtrl);
-            if(txt) {
-                if(txt->IsEnabled()) {
+    while (node) {
+        if (node->GetData()->IsKindOf(CLASSINFO(wxTextCtrl))) {
+            wxTextCtrl* txt = wxDynamicCast(node->GetData(), wxTextCtrl);
+            if (txt) {
+                if (txt->IsEnabled()) {
                     buffer = txt->GetValue();
-                    if(!IsValidTimeIntervalValue(buffer)) {
-                        ShowErrorMessage(invMsgInterval,txt);
+                    if (!IsValidTimeIntervalValue(buffer)) {
+                        ShowErrorMessage(invMsgInterval, txt);
                         return false;
                     }
-                }//if(txt->IsEnabled())
-            }//if(txt)
-        }//if(node->GetData()
+                } //if(txt->IsEnabled())
+            } //if(txt)
+        } //if(node->GetData()
         node = node->GetNext();
     }
 
     return true;
 }
 
-/* ensures that the page which contains txtCtrl is selected */
+/// Ensure that the page which contains txtCtrl is selected.
 bool CDlgAdvPreferences::EnsureTabPageVisible(wxTextCtrl* txtCtrl) {
     wxWindow* parent = txtCtrl->GetParent();
     wxASSERT(parent);
@@ -559,7 +578,7 @@ bool CDlgAdvPreferences::EnsureTabPageVisible(wxTextCtrl* txtCtrl) {
     return true;
 }
 
-/* show an error message and set the focus to the control that caused the error */
+/// Show an error message and set the focus to the control that caused the error.
 void CDlgAdvPreferences::ShowErrorMessage(wxString& message,wxTextCtrl* errorCtrl) {
     wxASSERT(this->EnsureTabPageVisible(errorCtrl));
     errorCtrl->SetFocus();
@@ -570,23 +589,23 @@ void CDlgAdvPreferences::ShowErrorMessage(wxString& message,wxTextCtrl* errorCtr
     wxMessageBox(message,_("Validation Error"),wxOK | wxCENTRE | wxICON_ERROR,this);
 }
 
-/* checks if ch is a valid character for float values */
+/// Check if ch is a valid character for float values.
 bool CDlgAdvPreferences::IsValidFloatChar(const wxChar& ch) {
     //don't accept the e
     return wxIsdigit(ch) || ch=='.' || ch==',' || ch=='+' || ch=='-';
 }
 
-/* checks if ch is a valid character for time values */
+/// Check if ch is a valid character for time values.
 bool CDlgAdvPreferences::IsValidTimeChar(const wxChar& ch) {
     return wxIsdigit(ch) || ch==':';
 }
 
-/* checks if ch is a valid character for time interval values */
+/// Check if ch is a valid character for time interval values.
 bool CDlgAdvPreferences::IsValidTimeIntervalChar(const wxChar& ch) {
     return IsValidTimeChar(ch) || ch=='-';
 }
 
-/* checks if the value contains a valid float */
+/// Checks if the value contains a valid float.
 bool CDlgAdvPreferences::IsValidFloatValue(const wxString& value) {
     for(unsigned int i=0; i < value.Length();i++) {
         if(!IsValidFloatChar(value[i])) {
@@ -601,7 +620,7 @@ bool CDlgAdvPreferences::IsValidFloatValue(const wxString& value) {
     return true;
 }
 
-/* checks if the value is a valid time */
+/// Checks if the value is a valid time.
 bool CDlgAdvPreferences::IsValidTimeValue(const wxString& value) {
     for(unsigned int i=0; i < value.Length();i++) {
         if(!IsValidTimeChar(value[i])) {
@@ -617,7 +636,7 @@ bool CDlgAdvPreferences::IsValidTimeValue(const wxString& value) {
     return true;
 }
 
-/* checks if the value is a valid time interval, format HH:MM-HH:MM */
+/// Checks if the value is a valid time interval, format HH:MM-HH:MM.
 bool CDlgAdvPreferences::IsValidTimeIntervalValue(const wxString& value) {
     for(unsigned int i=0; i < value.Length();i++) {
         if(!IsValidTimeIntervalChar(value[i])) {
@@ -631,7 +650,7 @@ bool CDlgAdvPreferences::IsValidTimeIntervalValue(const wxString& value) {
     }
     //split up into start and stop
     wxString start = value.BeforeFirst('-');
-    wxString stop = value.AfterFirst('-');	
+    wxString stop = value.AfterFirst('-');
     //validate start and stop parts
     if(!IsValidTimeValue(start) || !IsValidTimeValue(stop)) {
         return false;
@@ -647,9 +666,9 @@ bool CDlgAdvPreferences::IsValidTimeIntervalValue(const wxString& value) {
     return true;
 }
 
-// ------------ Event handlers starts here
+// ------------ Event handlers start here
 // -------- generic command handler
-// handles all control command events 
+/// Handles all control command events.
 void CDlgAdvPreferences::OnHandleCommandEvent(wxCommandEvent& ev) {
     ev.Skip();
     if(!m_bInInit) {
@@ -659,7 +678,7 @@ void CDlgAdvPreferences::OnHandleCommandEvent(wxCommandEvent& ev) {
 }
 
 // ---- command buttons handlers
-// handles OK button clicked
+/// Handles OK button clicked.
 void CDlgAdvPreferences::OnOK(wxCommandEvent& ev) {
     CMainDocument*    pDoc = wxGetApp().GetDocument();
 
@@ -676,18 +695,18 @@ void CDlgAdvPreferences::OnOK(wxCommandEvent& ev) {
     ev.Skip();
 }
 
-// handles Help button clicked
+/// Handles Help button clicked.
 void CDlgAdvPreferences::OnHelp(wxCommandEvent& ev) {
     wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite();
-    url += wxT("/prefs.php");//this seems not the right url, but which instead ?
+    url += wxT("/prefs.php"); //this seems not the right url, but which instead ?
     HyperLink::ExecuteLink(url);
     ev.Skip();
 }
 
-// handles Clear button clicked 
+/// Handles Clear button clicked.
 void CDlgAdvPreferences::OnClear(wxCommandEvent& ev) {
     if(this->ConfirmClear()) {
-        CMainDocument*    pDoc = wxGetApp().GetDocument();
+        CMainDocument* pDoc = wxGetApp().GetDocument();
 
         wxASSERT(pDoc);
         wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -702,7 +721,7 @@ void CDlgAdvPreferences::OnClear(wxCommandEvent& ev) {
 
 bool CDlgAdvPreferences::ConfirmClear() {
     int res = wxMessageBox(_("Do you really want to clear all local preferences ?"),
-        _("Confirmation"),wxCENTER | wxICON_QUESTION | wxYES_NO | wxNO_DEFAULT,this);
-    
-    return res==wxYES;
+        _("Confirmation"), wxCENTER | wxICON_QUESTION | wxYES_NO | wxNO_DEFAULT, this);
+
+    return res == wxYES;
 }

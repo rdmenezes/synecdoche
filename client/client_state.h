@@ -32,13 +32,14 @@
 #include "gui_rpc_server.h"
 #include "gui_http.h"
 #include "hostinfo.h"
-#include "miofile.h"
 #include "net_stats.h"
-#include "pers_file_xfer.h"
 #include "prefs.h"
-#include "scheduler_op.h"
 #include "time_stats.h"
 #include "http_curl.h"
+
+class SCHEDULER_OP;
+class PERS_FILE_XFER_SET;
+class PERS_FILE_XFER;
 
 // project: suspended, deferred, or no new work (can't ask for more work)
 // overall: not work_fetch_ok (from CPU policy)
@@ -194,7 +195,7 @@ public:
     bool time_to_exit() const;
     PROJECT* lookup_project(const char* master_url);
     APP* lookup_app(const PROJECT* p, const char* name);
-    FILE_INFO* lookup_file_info(const PROJECT* p, const char* name);
+    FILE_INFO* lookup_file_info(const PROJECT* p, const std::string& name);
     RESULT* lookup_result(const PROJECT* p, const char* name);
     WORKUNIT* lookup_workunit(const PROJECT* p, const char* name);
     APP_VERSION* lookup_app_version(const APP* app, const char* platform, int ver, const char* plan_class);
@@ -242,9 +243,7 @@ private:
     void schedule_cpus();
     bool enforce_schedule();
     bool no_work_for_a_cpu();
-    void rr_simulation();
     void make_running_task_heap(std::vector<ACTIVE_TASK*>&, double&);
-    void print_deadline_misses();
 public:
     /// If we fail to start a task due to no shared-mem segments,
     /// wait until at least this time to try running
@@ -333,7 +332,7 @@ public:
 
 /// @name cs_cmdline.C
 public:
-    void parse_cmdline(int argc, char** argv);
+    void parse_cmdline(int argc, const char* const* argv);
     void parse_env_vars();
 /// @}
 
@@ -348,7 +347,7 @@ private:
 
 /// @name cs_platforms.C
 public:
-    const char* get_primary_platform() const;
+    std::string get_primary_platform() const;
 private:
     void add_platform(const char*);
     void detect_platforms();
@@ -463,6 +462,12 @@ public:
     void scale_duration_correction_factors(double);
     void generate_new_host_cpid();
     void compute_nuploading_results();
+/// @}
+
+/// @name rr_sim.cpp
+private:
+    void rr_simulation();
+    void print_deadline_misses();
 /// @}
 
 };

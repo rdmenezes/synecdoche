@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -43,6 +44,7 @@
 
 #include <cstdio>
 #include <vector>
+#include <sstream>
 
 #include "gui_rpc_server.h"
 #include "str_util.h"
@@ -50,6 +52,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "parse.h"
+#include "miofile.h"
 #include "network.h"
 #include "filesys.h"
 #include "version.h"
@@ -57,6 +60,7 @@
 #include "file_names.h"
 #include "client_msgs.h"
 #include "client_state.h"
+#include "pers_file_xfer.h"
 
 /// Maximum size of the write buffer. If this size is exceeded, the connection
 /// will be dropped.
@@ -69,20 +73,29 @@ static void auth_failure(MIOFILE& fout) {
     fout.printf("<unauthorized/>\n");
 }
 
+/// Handle an authorization request by creating and sending a nonce.
+///
+/// \param[in] fout Reference to the MIOFILE instance used for the rpc.
 void GUI_RPC_CONN::handle_auth1(MIOFILE& fout) {
-    sprintf(nonce, "%f", dtime());
-    fout.printf("<nonce>%s</nonce>\n", nonce);
+    std::ostringstream buf;
+    buf << dtime();
+    nonce = buf.str();
+    fout.printf("<nonce>%s</nonce>\n", nonce.c_str());
 }
 
+/// Check if the response to the challenge sent by handle_auth1 is correct.
+///
+/// \param[in] buf The string containing the response from the client.
+/// \param[in] fout Reference to the MIOFILE instance used for the rpc.
 void GUI_RPC_CONN::handle_auth2(const char* buf, MIOFILE& fout) {
-    char nonce_hash[256], nonce_hash_correct[256], buf2[256];
-    if (!parse_str(buf, "<nonce_hash>", nonce_hash, 256)) {
+    std::string nonce_hash;
+    if (!parse_str(buf, "<nonce_hash>", nonce_hash)) {
         auth_failure(fout);
         return;
     }
-    sprintf(buf2, "%s%s", nonce, gstate.gui_rpcs.password);
-    md5_block((const unsigned char*)buf2, (int)strlen(buf2), nonce_hash_correct);
-    if (strcmp(nonce_hash, nonce_hash_correct)) {
+    std::string buf2 = nonce + std::string(gstate.gui_rpcs.password);
+    std::string nonce_hash_correct = md5_string(buf2);
+    if (nonce_hash != nonce_hash_correct) {
         auth_failure(fout);
         return;
     }
@@ -91,7 +104,6 @@ void GUI_RPC_CONN::handle_auth2(const char* buf, MIOFILE& fout) {
 }
 
 // client passes its version, but ignore it for now
-//
 static void handle_exchange_versions(MIOFILE& fout) {
     fout.printf(
         "<server_version>\n"
@@ -201,9 +213,9 @@ static void handle_result_show_graphics(const char* buf, MIOFILE& fout) {
         gm.mode = MODE_WINDOW;
     }
 
-    parse_str(buf, "<window_station>", gm.window_station, sizeof(gm.window_station));
-    parse_str(buf, "<desktop>", gm.desktop, sizeof(gm.desktop));
-    parse_str(buf, "<display>", gm.display, sizeof(gm.display));
+    parse_str(buf, "<window_station>", gm.window_station);
+    parse_str(buf, "<desktop>", gm.desktop);
+    parse_str(buf, "<display>", gm.display);
 
     if (parse_str(buf, "<result_name>", result_name)) {
         PROJECT* p = get_project(buf, fout);
@@ -908,11 +920,6 @@ static int set_debt(XML_PARSER& xp) {
             got_ltd = true;
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] set_debt: unrecognized %s", tag
-            );
-        }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "set_debt");
     }
     return 0;
@@ -942,11 +949,6 @@ static void handle_set_debts(const char* buf, MIOFILE& fout) {
                 return;
             }
             continue;
-        }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] handle_set_debts: unrecognized %s", tag
-            );
         }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "handle_set_debts");
     }
@@ -1123,7 +1125,8 @@ int GUI_RPC_CONN::handle_rpc() {
         handle_set_cc_config(request_msg, mf);
     } else if (match_tag(request_msg, "<read_cc_config/>")) {
         mf.printf("<success/>\n");
-        read_config_file();
+        read_config_file(false);
+        gstate.set_ncpus();
         gstate.request_schedule_cpus("Core client configuration");
         gstate.request_work_fetch("Core client configuration");
     } else if (match_tag(request_msg, "<get_all_projects_list/>")) {

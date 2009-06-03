@@ -19,8 +19,6 @@
 #ifndef COMMON_DEFS_H
 #define COMMON_DEFS_H
 
-#include "miofile.h"
-
 /// \file
 /// \#defines or constants or enums that are shared by more than one BOINC component
 /// (e.g. client, server, Manager, etc.)
@@ -98,23 +96,27 @@ const int GUI_RPC_PORT = 31416;
 #define NGRAPHICS_MSGS  7
 /// @}
 
-/// \name message priorities
-/// @{
+/// Message priorities
+enum MSG_PRIORITY {
+    /// Dummy value used for initialization.
+    MSG_NO_PRIORITY = 0,
 
-/// write to stdout
-/// GUI: write to msg window
-#define MSG_INFO            1
-/// Conditions that require user intervention;
-/// text should be user-friendly.
-/// write to stdout
-/// GUI: write to msg window in bold or red
-#define MSG_USER_ERROR      2
-/// Conditions that indicate a problem or bug with BOINC itself,
-/// or with a BOINC project or account manager.
-/// treat same as MSG_INFO, but prepend with [error]
-#define MSG_INTERNAL_ERROR   3
-/// @}
-    
+    /// Just a simple message, nothing that requires user intervention.
+    /// write to stdout
+    /// GUI: write to msg window
+    MSG_INFO,
+
+    /// Conditions that require user intervention;
+    /// text should be user-friendly.
+    /// write to stdout
+    /// GUI: write to msg window in bold or red
+    MSG_USER_ERROR,
+
+    /// Conditions that indicate a problem or bug with BOINC itself,
+    /// or with a BOINC project or account manager.
+    /// treat same as MSG_INFO, but prepend with [error]
+    MSG_INTERNAL_ERROR
+};
 
 /// bitmap defs for task_suspend_reason, network_suspend_reason
 /// Note: doesn't need to be a bitmap, but keep for compatibility
@@ -217,5 +219,6 @@ struct VERSION_INFO {
 
 #define GRAPHICS_APP_FILENAME "graphics_app"
 #define ASSIGNED_WU_STR "asgn"
+#define GUI_RPC_PASSWD_FILE "gui_rpc_auth.cfg"
 
 #endif // COMMON_DEFS_H

@@ -32,7 +32,10 @@
 #include <cmath>
 #endif
 
+#include "net_stats.h"
+
 #include "parse.h"
+#include "miofile.h"
 #include "time.h"
 #include "str_util.h"
 #include "error_numbers.h"
@@ -41,8 +44,7 @@
 #include "client_msgs.h"
 #include "client_state.h"
 #include "file_names.h"
-
-#include "net_stats.h"
+#include "pers_file_xfer.h"
 
 #define NET_RATE_HALF_LIFE  (7*86400)
 
@@ -109,11 +111,7 @@ int NET_STATS::parse(MIOFILE& in) {
         if (parse_double(buf, "<bwdown>", down.max_rate)) continue;
         if (parse_double(buf, "<avg_down>", down.avg_rate)) continue;
         if (parse_double(buf, "<avg_time_down>", down.avg_time)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] Unrecognized network statistics line: %s", buf
-            );
-        }
+        handle_unparsed_xml_warning("NET_STATS::parse", buf);
     }
     return ERR_XML_PARSE;
 }

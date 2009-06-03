@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -24,14 +24,17 @@
 
 #ifndef _WIN32
 #include "config.h"
-#include <cstdio>
-#include <sys/stat.h>
 #include <cctype>
+#include <cstdio>
+#include <sstream>
 #if HAVE_SYS_IPC_H
 #include <sys/ipc.h>
 #endif
+#include <sys/stat.h>
 #include "shmem.h"
 #endif
+
+#include "file_names.h"
 
 #include "filesys.h"
 #include "error_numbers.h"
@@ -40,8 +43,6 @@
 #include "client_msgs.h"
 #include "sandbox.h"
 #include "client_state.h"
-
-#include "file_names.h"
 
 void get_project_dir(const PROJECT* p, char* path, int len) {
     char buf[1024];
@@ -59,9 +60,9 @@ void get_pathname(const FILE_INFO* fip, char* path, int len) {
     //
     if (p) {
         get_project_dir(p, buf, sizeof(buf));
-        snprintf(path, len, "%s/%s", buf, fip->name);
+        snprintf(path, len, "%s/%s", buf, fip->name.c_str());
     } else {
-        strlcpy(path, fip->name, len);
+        strlcpy(path, fip->name.c_str(), len);
     }
 }
 
@@ -311,17 +312,29 @@ bool is_statistics_file(const std::string& filename) {
     return true;
 }
 
-void get_statistics_filename(const char* master_url, char* path) {
-    char buf[256];
+/// Get the name of the statistics file for a given master URL.
+///
+/// \param[in] master_url The master URL for a project for which the statistics
+///                       file name should be generated.
+/// \return The name of the statistics file for the project specified by \a master_url.
+std::string get_statistics_filename(const char* master_url) {
+    char buf[1024];
     escape_project_url(master_url, buf);
-    sprintf(path, "statistics_%s.xml", buf);
+    std::ostringstream result;
+    result << "statistics_" << buf << ".xml";
+    return result.str();
 }
 
-bool is_image_file(const char* filename) {
-    std::string fn = filename;
-    downcase_string(fn);
-    if (ends_with(fn, std::string(".jpg"))) return true;
-    if (ends_with(fn, std::string(".jpeg"))) return true;
-    if (ends_with(fn, std::string(".png"))) return true;
+/// Check if a file name denotes an image file.
+/// This function checks the file extension and returns true for files
+/// ending with ".jpg", ".jpeg" or ".png".
+///
+/// \param[in] filename The file name that should be checked.
+/// \return True if the given file name denotes an image file.
+bool is_image_file(std::string filename) {
+    downcase_string(filename);
+    if (ends_with(filename, std::string(".jpg"))) return true;
+    if (ends_with(filename, std::string(".jpeg"))) return true;
+    if (ends_with(filename, std::string(".png"))) return true;
     return false;
 }

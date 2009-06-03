@@ -175,12 +175,12 @@ bool wxFlatNotebookBase::InsertPage(size_t index, wxWindow* page, const wxString
     {
         std::vector<wxWindow*>::iterator iter = m_windows.begin() + index;
         m_windows.insert(iter, page);
-        wxLogTrace(wxTraceMask(), "New page inserted. Index = %i", index);
+        wxLogTrace(wxTraceMask(), "New page inserted. Index = %lu", index);
     }
     else
     {
         m_windows.push_back(page);
-        wxLogTrace(wxTraceMask(), "New page appended. Index = %i", index);
+        wxLogTrace(wxTraceMask(), "New page appended. Index = %lu", index);
     }
     m_pages->InsertPage(index, page, text, bSelected, imgindex);
     if((int)index <= curSel) curSel++;

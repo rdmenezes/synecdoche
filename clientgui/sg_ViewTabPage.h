@@ -38,7 +38,7 @@ public:
 
 private:
     std::vector<ImageLoader*> vSlideShow;
-    int currentImageIndex;
+    size_t currentImageIndex;
     std::vector<wxBitmap> ssImages;
     bool reloadSlideShow;
     void LoadSlideShow();

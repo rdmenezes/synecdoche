@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -42,9 +42,11 @@
 #include <string>
 #include <sstream>
 
+#include "parse.h"
+
+#include "miofile.h"
 #include "error_numbers.h"
 #include "str_util.h"
-#include "parse.h"
 
 /// Parse a boolean; tag is of form "foobar".
 /// Accept either <foobar/> or <foobar>0|1</foobar>
@@ -56,7 +58,7 @@ bool parse_bool(const char* buf, const char* tag, bool& result) {
         return true;
     }
 
-    int x;
+    int x = 0;
     std::ostringstream start_tag;
     start_tag << '<' << tag << '>';
     if (parse_int(buf, start_tag.str().c_str(), x)) {
@@ -634,6 +636,7 @@ bool XML_PARSER::parse_int(char* parsed_tag, const char* start_tag, int& i) {
             return false;
         }
     }
+    errno = 0;
     int val = strtol(buf, &end, 0);
     if (errno == ERANGE) return false;
     if (end != buf+strlen(buf)) return false;

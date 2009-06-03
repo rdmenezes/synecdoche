@@ -319,7 +319,7 @@ pascal OSStatus SysMenuEventHandler( EventHandlerCallRef inHandlerCallRef,
                 pMSM->SetOpeningAboutDlg(true);
                 
             // If not our system menu, pass event on to next event handler
-           if (command.menu.menuRef != (MenuRef)'BNC!') {           // Used only in OS 10.5
+           if (command.menu.menuRef != (MenuRef)'SYNE') {           // Used only in OS 10.5
                 if (PLstrcmp("\pBOINC!", (GetMenuTitle((command.menu.menuRef), theMenuTitle) ))) {
                     return eventNotHandledErr;
                 }

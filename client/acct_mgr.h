@@ -21,10 +21,10 @@
 #include <string>
 #include <vector>
 
-#include "miofile.h"
-#include "parse.h"
 #include "gui_http.h"
 #include "client_types.h"
+
+class XML_PARSER;
 
 /// represents info stored in acct_mgr_url.xml and acct_mgr_login.xml
 ///

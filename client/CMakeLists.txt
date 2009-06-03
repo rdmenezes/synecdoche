@@ -45,8 +45,8 @@ ADD_EXECUTABLE(synecd
 	cs_scheduler.C
 	cs_statefile.C
 	cs_trickle.C
-	dhrystone2.C
 	dhrystone.C
+	dhrystone2.C
 	file_names.C
 	file_xfer.C
 	gui_http.C
@@ -58,6 +58,7 @@ ADD_EXECUTABLE(synecd
 	main.C
 	net_stats.C
 	pers_file_xfer.C
+	rr_sim.cpp
 	sandbox.C
 	scheduler_op.C
 	time_stats.C

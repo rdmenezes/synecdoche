@@ -23,11 +23,23 @@
 #include "zlib.h"
 #else
 #include "config.h"
+// Somehow having config.h define _FILE_OFFSET_BITS or _LARGE_FILES is
+// causing open to be redefined to open64 which somehow, in some versions
+// of zlib.h causes gzopen to be redefined as gzopen64 which subsequently gets
+// reported as a linker error.  So for this file, we compile in small files
+// mode, regardless of these settings
+#undef _FILE_OFFSET_BITS
+#undef _LARGE_FILES
+#undef _LARGEFILE_SOURCE
+#undef _LARGEFILE64_SOURCE
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <zlib.h>
 #include <cstring>
+#include <sstream>
 #endif
+
+#include "client_types.h"
 
 #include "error_numbers.h"
 #include "file_names.h"
@@ -35,13 +47,13 @@
 #include "client_msgs.h"
 #include "log_flags.h"
 #include "parse.h"
+#include "miofile.h"
 #include "util.h"
 #include "str_util.h"
 #include "client_state.h"
 #include "pers_file_xfer.h"
 #include "sandbox.h"
-
-#include "client_types.h"
+#include "scheduler_op.h"
 
 using std::string;
 using std::vector;
@@ -192,11 +204,7 @@ int PROJECT::parse_state(MIOFILE& in) {
         if (parse_double(buf, "<ams_resource_share>", ams_resource_share)) continue;
         if (parse_bool(buf, "scheduler_rpc_in_progress", btemp)) continue;
         if (parse_bool(buf, "use_symlinks", use_symlinks)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] PROJECT::parse_state(): unrecognized: %s", buf
-            );
-        }
+        handle_unparsed_xml_warning("PROJECT::parse_state", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -293,7 +301,7 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
             "    <rr_sim_deadlines_missed>%d</rr_sim_deadlines_missed>\n"
             "    <last_rpc_time>%f</last_rpc_time>\n"
             "    <project_files_downloaded_time>%f</project_files_downloaded_time>\n",
-            rr_sim_status.deadlines_missed,
+            rr_sim_status.get_deadlines_missed(),
             last_rpc_time,
             project_files_downloaded_time
         );
@@ -485,10 +493,7 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
             file_ref.parse(in);
             project_files.push_back(file_ref);
         } else {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] parse_project_files(): unrecognized: %s\n", buf);
-            }
+            handle_unparsed_xml_warning("PROJECT::parse_project_files", buf);
         }
     }
     return ERR_XML_PARSE;
@@ -555,7 +560,7 @@ int PROJECT::write_symlink_for_project_file(const FILE_INFO* fip) const {
             path.append("/").append((*it).open_name);
             FILE* f = boinc_fopen(path.c_str(), "w");
             if (f) {
-                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir, fip->name);
+                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir, fip->name.c_str());
                 fclose(f);
             }
         }
@@ -584,11 +589,7 @@ int APP::parse(MIOFILE& in) {
         }
         if (parse_str(buf, "<name>", name, sizeof(name))) continue;
         if (parse_str(buf, "<user_friendly_name>", user_friendly_name, sizeof(user_friendly_name))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] APP::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("APP::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -605,7 +606,6 @@ int APP::write(MIOFILE& out) const {
 }
 
 FILE_INFO::FILE_INFO() {
-    strcpy(name, "");
     strcpy(md5_cksum, "");
     max_nbytes = 0;
     nbytes = 0;
@@ -628,17 +628,12 @@ FILE_INFO::FILE_INFO() {
     urls.clear();
     start_url = -1;
     current_url = -1;
-    strcpy(signed_xml, "");
-    strcpy(xml_signature, "");
-    strcpy(file_signature, "");
 }
 
 FILE_INFO::~FILE_INFO() {
     if (pers_file_xfer) {
         msg_printf(NULL, MSG_INTERNAL_ERROR,
-            "Deleting file %s while in use",
-            name
-        );
+                "Deleting file %s while in use", name.c_str());
         pers_file_xfer->fip = NULL;
     }
 }
@@ -710,38 +705,32 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
 
     while (in.fgets(buf, 256)) {
         if (match_tag(buf, "</file_info>")) {
-            if (!strlen(name)) return ERR_BAD_FILENAME;
-            if (strstr(name, "..")) return ERR_BAD_FILENAME;
-            if (strstr(name, "%")) return ERR_BAD_FILENAME;
+            if (name.empty()) return ERR_BAD_FILENAME;
+            if (name.find("..") != std::string::npos) return ERR_BAD_FILENAME;
+            if (name.find("%") != std::string::npos) return ERR_BAD_FILENAME;
             return 0;
         }
         if (match_tag(buf, "<xml_signature>")) {
-            retval = copy_element_contents(
-                in,
-                "</xml_signature>",
-                xml_signature,
-                sizeof(xml_signature)
-            );
-            if (retval) return retval;
-            continue;
-        }
-        if (match_tag(buf, "<file_signature>")) {
-            retval = copy_element_contents(
-                in,
-                "</file_signature>",
-                file_signature,
-                sizeof(file_signature)
-            );
-            if (retval) return retval;
-            if (from_server) {
-                strcat(signed_xml, "<file_signature>\n");
-                strcat(signed_xml, file_signature);
-                strcat(signed_xml, "</file_signature>\n");
+            retval = copy_element_contents(in, "</xml_signature>", xml_signature);
+            if (retval) {
+                return retval;
             }
             continue;
         }
-        strcat(signed_xml, buf);
-        if (parse_str(buf, "<name>", name, sizeof(name))) continue;
+        if (match_tag(buf, "<file_signature>")) {
+            retval = copy_element_contents(in, "</file_signature>", file_signature);
+            if (retval) {
+                return retval;
+            }
+            if (from_server) {
+                signed_xml += "<file_signature>\n";
+                signed_xml += file_signature;
+                signed_xml += "</file_signature>\n";
+            }
+            continue;
+        }
+        signed_xml += buf;
+        if (parse_str(buf, "<name>", name)) continue;
         if (parse_str(buf, "<url>", url)) {
             urls.push_back(url);
             continue;
@@ -772,13 +761,10 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
             continue;
         }
         if (!from_server && match_tag(buf, "<signed_xml>")) {
-            retval = copy_element_contents(
-                in,
-                "</signed_xml>",
-                signed_xml,
-                sizeof(signed_xml)
-            );
-            if (retval) return retval;
+            retval = copy_element_contents(in, "</signed_xml>", signed_xml);
+            if (retval) {
+                return retval;
+            }
             continue;
         }
         if (match_tag(buf, "<file_xfer>")) {
@@ -795,11 +781,7 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
             error_msg = buf2;
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] FILE_INFO::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("FILE_INFO::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -813,13 +795,10 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         "    <name>%s</name>\n"
         "    <nbytes>%f</nbytes>\n"
         "    <max_nbytes>%f</max_nbytes>\n",
-        name, nbytes, max_nbytes
-    );
+        name.c_str(), nbytes, max_nbytes);
+
     if (strlen(md5_cksum)) {
-        out.printf(
-            "    <md5_cksum>%s</md5_cksum>\n",
-            md5_cksum
-        );
+        out.printf("    <md5_cksum>%s</md5_cksum>\n", md5_cksum);
     }
     if (!to_server) {
         if (generated_locally) out.printf("    <generated_locally/>\n");
@@ -833,7 +812,7 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         if (gzip_when_done) out.printf("    <gzip_when_done/>\n");
         if (signature_required) out.printf("    <signature_required/>\n");
         if (is_user_file) out.printf("    <is_user_file/>\n");
-        if (strlen(file_signature)) out.printf("    <file_signature>\n%s</file_signature>\n", file_signature);
+        if (!file_signature.empty()) out.printf("    <file_signature>\n%s</file_signature>\n", file_signature.c_str());
     }
     for (i=0; i<urls.size(); i++) {
         out.printf("    <url>%s</url>\n", urls[i].c_str());
@@ -843,12 +822,11 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         if (retval) return retval;
     }
     if (!to_server) {
-        if (strlen(signed_xml) && strlen(xml_signature)) {
+        if ((!signed_xml.empty()) && (!xml_signature.empty())) {
             out.printf(
                 "    <signed_xml>\n%s    </signed_xml>\n"
                 "    <xml_signature>\n%s    </xml_signature>\n",
-                signed_xml, xml_signature
-            );
+                signed_xml.c_str(), xml_signature.c_str());
         }
     }
     if (!error_msg.empty()) {
@@ -869,13 +847,9 @@ int FILE_INFO::write_gui(MIOFILE& out) const {
         "    <nbytes>%f</nbytes>\n"
         "    <max_nbytes>%f</max_nbytes>\n"
         "    <status>%d</status>\n",
-        project->master_url,
-        project->project_name,
-        name,
-        nbytes,
-        max_nbytes,
-        status
-    );
+        project->master_url, project->project_name, name.c_str(),
+        nbytes, max_nbytes, status);
+
     if (generated_locally) out.printf("    <generated_locally/>\n");
     if (uploaded) out.printf("    <uploaded/>\n");
     if (upload_when_present) out.printf("    <upload_when_present/>\n");
@@ -890,7 +864,6 @@ int FILE_INFO::write_gui(MIOFILE& out) const {
 }
 
 /// Delete physical underlying file associated with FILE_INFO.
-///
 int FILE_INFO::delete_file() {
     char path[256];
 
@@ -907,18 +880,16 @@ int FILE_INFO::delete_file() {
 /// Call this to get the initial url,
 /// The is_upload arg says which kind you want.
 /// NULL return means there is no URL of the requested type.
-///
 const char* FILE_INFO::get_init_url(bool is_upload) {
     if (urls.empty()) {
         return NULL;
     }
 
-/// if a project supplies multiple URLs, try them in order
-/// (e.g. in Einstein@home they're ordered by proximity to client).
-/// The commented-out code tries them starting from random place.
-/// This is appropriate if replication is for load-balancing.
-/// TODO: add a flag saying which mode to use.
-///
+	/// if a project supplies multiple URLs, try them in order
+	/// (e.g. in Einstein@home they're ordered by proximity to client).
+	/// The commented-out code tries them starting from random place.
+	/// This is appropriate if replication is for load-balancing.
+	/// TODO: add a flag saying which mode to use.
 #if 1
     current_url = 0;
 #else
@@ -933,8 +904,7 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
         if (!is_correct_url_type(is_upload, urls[current_url])) {
             current_url = (current_url + 1) % ((int)urls.size());
             if (current_url == start_url) {
-                msg_printf(project, MSG_INTERNAL_ERROR,
-                    "Couldn't find suitable URL for %s", name);
+                msg_printf(project, MSG_INTERNAL_ERROR, "Couldn't find suitable URL for %s", name.c_str());
                 return NULL;
             }
         } else {
@@ -946,7 +916,6 @@ const char* FILE_INFO::get_init_url(bool is_upload) {
 
 /// Call this to get the next URL of the indicated type.
 /// NULL return means you've tried them all.
-///
 const char* FILE_INFO::get_next_url(bool is_upload) {
     if (urls.empty()) return NULL;
     while (true) {
@@ -965,9 +934,7 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
         return get_init_url(is_upload);
     }
     if (current_url >= (int)urls.size()) {
-        msg_printf(project, MSG_INTERNAL_ERROR,
-            "File %s has no URL", name
-        );
+        msg_printf(project, MSG_INTERNAL_ERROR, "File %s has no URL", name.c_str());
         return NULL;
     }
     return urls[current_url].c_str();
@@ -975,7 +942,6 @@ const char* FILE_INFO::get_current_url(bool is_upload) {
 
 /// Checks if the URL includes the phrase "file_upload_handler".
 /// This indicates the URL is an upload url.
-///
 bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) const {
     const char* has_str = strstr(url.c_str(), "file_upload_handler");
     if ((is_upload && !has_str) || (!is_upload && has_str)) {
@@ -988,7 +954,6 @@ bool FILE_INFO::is_correct_url_type(bool is_upload, const std::string& url) cons
 /// Merges information from a new FILE_INFO that has the same name as one
 /// that is already present in the client state file.
 /// Potentially changes upload_when_present, max_nbytes, and signed_xml.
-///
 int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     char buf[256];
     unsigned int i;
@@ -998,20 +963,18 @@ int FILE_INFO::merge_info(const FILE_INFO& new_info) {
     if (max_nbytes <= 0 && new_info.max_nbytes) {
         max_nbytes = new_info.max_nbytes;
         sprintf(buf, "    <max_nbytes>%.0f</max_nbytes>\n", new_info.max_nbytes);
-        strcat(signed_xml, buf);
+        signed_xml += buf;
     }
 
     // replace existing URLs with new ones
-    //
     urls.clear();
     for (i=0; i<new_info.urls.size(); i++) {
         urls.push_back(new_info.urls[i]);
     }
 
     // replace signature
-    //
-    if (strlen(new_info.file_signature)) {
-        strcpy(file_signature, new_info.file_signature);
+    if (!new_info.file_signature.empty()) {
+        file_signature = new_info.file_signature;
     }
 
     return 0;
@@ -1019,7 +982,6 @@ int FILE_INFO::merge_info(const FILE_INFO& new_info) {
 
 /// Returns true if the file had an unrecoverable error
 /// (couldn't download, RSA/MD5 check failed, etc).
-///
 bool FILE_INFO::had_failure(int& failnum) const {
     if (status != FILE_NOT_PRESENT && status != FILE_PRESENT) {
         failnum = status;
@@ -1043,20 +1005,28 @@ std::string FILE_INFO::failure_message() const {
     return buf.str();
 }
 
-#define BUFSIZE 16384
+/// Compress the file using zlib (gzip compression).
+///
+/// \return Zero on success, ERR_FOPEN or ERR_WRITE on error.
 int FILE_INFO::gzip() {
+    const size_t BUFSIZE = 16384;
     char buf[BUFSIZE];
-    char inpath[256], outpath[256];
+    char inpath[256];
 
     get_pathname(this, inpath, sizeof(inpath));
-    strcpy(outpath, inpath);
-    strcat(outpath, ".gz");
+    std::string outpath(inpath);
+    outpath.append(".gz");
     FILE* in = boinc_fopen(inpath, "rb");
-    if (!in) return ERR_FOPEN;
-    gzFile out = gzopen(outpath, "wb");
+    if (!in) {
+        return ERR_FOPEN;
+    }
+
+    gzFile out = gzopen(outpath.c_str(), "wb");
     while (1) {
         int n = (int)fread(buf, 1, BUFSIZE, in);
-        if (n <= 0) break;
+        if (n <= 0) {
+            break;
+        }
         int m = gzwrite(out, buf, n);
         if (m != n) {
             fclose(in);
@@ -1067,7 +1037,7 @@ int FILE_INFO::gzip() {
     fclose(in);
     gzclose(out);
     delete_project_owned_file(inpath, true);
-    boinc_rename(outpath, inpath);
+    boinc_rename(outpath.c_str(), inpath);
     return 0;
 }
 
@@ -1102,11 +1072,7 @@ int APP_VERSION::parse(MIOFILE& in) {
         if (parse_double(buf, "<max_ncpus>", max_ncpus)) continue;
         if (parse_double(buf, "<flops>", flops)) continue;
         if (parse_str(buf, "<cmdline>", cmdline, sizeof(cmdline))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] APP_VERSION::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("APP_VERSION::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1210,11 +1176,7 @@ int FILE_REF::parse(MIOFILE& in) {
         if (parse_bool(buf, "copy_file", copy_file)) continue;
         if (parse_bool(buf, "optional", optional)) continue;
         if (parse_bool(buf, "no_validate", temp)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] FILE_REF::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("FILE_REF::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1300,11 +1262,7 @@ int WORKUNIT::parse(MIOFILE& in) {
         }
         // unused stuff
         if (parse_double(buf, "<credit>", dtemp)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] WORKUNIT::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("WORKUNIT::parse", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1392,11 +1350,7 @@ int RESULT::parse_name(FILE* in, const char* end_tag) {
     while (fgets(buf, 256, in)) {
         if (match_tag(buf, end_tag)) return 0;
         if (parse_str(buf, "<name>", name, sizeof(name))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] RESULT::parse_name(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("RESULT::parse_name", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1448,11 +1402,7 @@ int RESULT::parse_server(MIOFILE& in) {
             output_files.push_back(file_ref);
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] RESULT::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("RESULT::parse_server", buf);
     }
     return ERR_XML_PARSE;
 }
@@ -1513,11 +1463,7 @@ int RESULT::parse_state(MIOFILE& in) {
         if (parse_str(buf, "<platform>", platform, sizeof(platform))) continue;
         if (parse_str(buf, "<plan_class>", plan_class, sizeof(plan_class))) continue;
         if (parse_int(buf, "<version_num>", version_num)) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(0, MSG_INFO,
-                "[unparsed_xml] RESULT::parse(): unrecognized: %s\n", buf
-            );
-        }
+        handle_unparsed_xml_warning("RESULT::parse", buf);
     }
     return ERR_XML_PARSE;
 }

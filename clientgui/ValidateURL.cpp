@@ -59,7 +59,7 @@ bool CValidateURL::Validate(wxWindow *parent) {
 
     canonicalize_url = control->GetValue().Trim().Trim(false).mb_str();  // trim spaces before and after
 
-    if (canonicalize_url.size() == 0) {
+    if (canonicalize_url.empty()) {
         ok = FALSE;
         m_errortitle = _("Missing URL");
         m_errormsg = _("Please specify a URL.\nFor example:\nhttp://www.example.com/");

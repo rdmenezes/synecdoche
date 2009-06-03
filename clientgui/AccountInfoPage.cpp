@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -328,6 +328,9 @@ void CAccountInfoPage::OnPageChanged(wxWizardEvent& event) {
         m_pAccountQuestionStaticCtrl->SetLabel(strQuestion);
     }
 
+    wxConfigBase* pConfig = wxConfigBase::Get(FALSE);
+    pConfig->SetPath(WizardCfg::baseCfgLocation);
+
     if (pc->uses_username) {
         if (CheckWizardTypeByPage<CWizardAccountManager>(this)) {
             if (pSkinAdvanced->IsBranded() && 
@@ -335,6 +338,9 @@ void CAccountInfoPage::OnPageChanged(wxWizardEvent& event) {
                 m_pAccountInformationStaticCtrl->SetLabel(pSkinWizardATAM->GetAccountInfoMessage());
             }
         }
+
+        // We are entering this page, so retrieve the previously used user name:
+        m_strAccountEmailAddress = pConfig->Read(WizardCfg::defaultUserName, wxT(""));
 
         m_pAccountEmailAddressStaticCtrl->SetLabel(_("&Username:"));
         m_pAccountEmailAddressCtrl->SetValidator(wxTextValidator(wxFILTER_ASCII, &m_strAccountEmailAddress));
@@ -345,6 +351,9 @@ void CAccountInfoPage::OnPageChanged(wxWizardEvent& event) {
                 m_pAccountInformationStaticCtrl->SetLabel(pSkinWizardATAM->GetAccountInfoMessage());
             }
         }
+
+        // We are entering this page, so retrieve the previously used email address:
+        m_strAccountEmailAddress = pConfig->Read(WizardCfg::defaultEmailAddress, wxT(""));
 
         m_pAccountEmailAddressStaticCtrl->SetLabel(_("&Email address:"));
         m_pAccountEmailAddressCtrl->SetValidator(CValidateEmailAddress(&m_strAccountEmailAddress));
@@ -373,6 +382,7 @@ void CAccountInfoPage::OnPageChanged(wxWizardEvent& event) {
     }
 
     Fit();
+    TransferDataToWindow();
     m_pAccountEmailAddressCtrl->SetFocus();
 }
   
@@ -384,6 +394,19 @@ void CAccountInfoPage::OnPageChanging(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
  
     if (!CHECK_CLOSINGINPROGRESS()) {
+        // We are leaving this page, so store the email address for future use.
+        CBOINCBaseWizard* bw = dynamic_cast<CBOINCBaseWizard*>(GetParent());
+        wxASSERT(bw);
+        PROJECT_CONFIG* pc = bw->GetProjectConfig();
+        wxConfigBase* pConfig = wxConfigBase::Get(FALSE);
+        pConfig->SetPath(WizardCfg::baseCfgLocation);
+        if (pc->uses_username) {
+            pConfig->Write(WizardCfg::defaultUserName, m_strAccountEmailAddress);
+        } else {
+            pConfig->Write(WizardCfg::defaultEmailAddress, m_strAccountEmailAddress);
+        }
+
+        // Construct dialog title:
         wxString strTitle;
         if (CheckWizardTypeByPage<CWizardAttachProject>(this)) {
             strTitle = _("Attach to project");

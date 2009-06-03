@@ -168,13 +168,12 @@ void CViewMessages::OnMessagesCopyAll( wxCommandEvent& WXUNUSED(event) ) {
 
 #ifdef wxUSE_CLIPBOARD
 
-    wxInt32 iIndex          = -1;
-    wxInt32 iRowCount       = 0;
     pFrame->UpdateStatusText(_("Copying all messages to the clipboard..."));
-    OpenClipboard();
 
-    iRowCount = m_pListPane->GetItemCount();
-    for (iIndex = 0; iIndex < iRowCount; iIndex++) {
+    int iRowCount = m_pListPane->GetItemCount();
+    OpenClipboard(iRowCount);
+
+    for (wxInt32 iIndex = 0; iIndex < iRowCount; iIndex++) {
         CopyToClipboard(iIndex);            
     }
 
@@ -202,8 +201,8 @@ void CViewMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
 
     wxInt32 iIndex = -1;
 
-    pFrame->UpdateStatusText(_("Aborting transfer..."));
-    OpenClipboard();
+    pFrame->UpdateStatusText(_("Copying selected messages to the clipboard..."));
+    OpenClipboard(m_pListPane->GetSelectedItemCount());
 
     for (;;) {
         iIndex = m_pListPane->GetNextItem(
@@ -227,7 +226,7 @@ void CViewMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
 
 
 wxInt32 CViewMessages::GetDocCount() {
-    return wxGetApp().GetDocument()->GetMessageCount();
+    return static_cast<wxInt32>(wxGetApp().GetDocument()->GetMessageCount());
 }
 
 
@@ -254,13 +253,17 @@ void CViewMessages::OnListRender (wxTimerEvent& event) {
             if (was_connected != isConnected) {
                 was_connected = isConnected;
                 if (isConnected) {
-                    m_pMessageInfoAttr->SetTextColour(*wxBLACK);
+                    m_pMessageInfoAttr->SetTextColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
                     m_pMessageErrorAttr->SetTextColour(*wxRED);
                 } else {
-                    wxColourDatabase colorBase;
-                    m_pMessageInfoAttr->SetTextColour(wxColour(128, 128, 128));
-                    m_pMessageErrorAttr->SetTextColour(wxColour(255, 128, 128));
+                    m_pMessageInfoAttr->SetTextColour(CBOINCListCtrl::GetBlendedColour(
+                                wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),
+                                wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW), 0.5));
+                    m_pMessageErrorAttr->SetTextColour(CBOINCListCtrl::GetBlendedColour(*wxRED,
+                                wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW), 0.5));
                 }
+                m_pMessageInfoAttr->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+                m_pMessageErrorAttr->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
                 // Force a complete update
                 m_pListPane->DeleteAllItems();
                 m_pListPane->SetItemCount(iDocCount);
@@ -401,13 +404,17 @@ wxInt32 CViewMessages::FormatMessage(wxInt32 item, wxString& strBuffer) const {
 
 
 #ifdef wxUSE_CLIPBOARD
-bool CViewMessages::OpenClipboard() {
+bool CViewMessages::OpenClipboard(wxInt32 row_count) {
     bool bRetVal = false;
 
     bRetVal = wxTheClipboard->Open();
     if (bRetVal) {
         m_bClipboardOpen = true;
         m_strClipboardData = wxEmptyString;
+
+        // Pre-allocate enough space to store all the lines
+        // that should be copied. We estimate 130 characters per line.
+        m_strClipboardData.Alloc(130 * row_count);
         wxTheClipboard->Clear();
     }
 

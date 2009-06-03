@@ -5,21 +5,21 @@
  * This package is an SSL implementation written
  * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
- * 
+ *
  * This library is free for commercial and non-commercial use as long as
  * the following conditions are aheared to.  The following conditions
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
  * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- * 
+ *
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
  * If this package is used in a product, Eric Young should be given attribution
  * as the author of the parts of the library used.
  * This can be in the form of a textual message at program startup or
  * in documentation (online or textual) provided with the package.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -34,10 +34,10 @@
  *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from 
+ * 4. If you include any Windows specific code (or a derivative thereof) from
  *    the apps directory (application code) you must include an acknowledgement:
  *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,7 +49,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * The licence and distribution terms for any publically available version or
  * derivative of this code cannot be changed.  i.e. this code cannot simply be
  * copied and put under another distribution licence
@@ -158,7 +158,12 @@ extern "C" {
 #define MBSTRING_BMP		(MBSTRING_FLAG|2)
 #define MBSTRING_UNIV		(MBSTRING_FLAG|4)
 
+#define SMIME_OLDMIME		0x400
+#define SMIME_CRLFEOL		0x800
+#define SMIME_STREAM		0x1000
+
 struct X509_algor_st;
+DECLARE_STACK_OF(X509_ALGOR)
 
 #define DECLARE_ASN1_SET_OF(type) /* filled in by mkstack.pl */
 #define IMPLEMENT_ASN1_SET_OF(type) /* nothing, no longer needed */
@@ -215,9 +220,16 @@ typedef struct asn1_object_st
 #define ASN1_STRING_FLAG_BITS_LEFT 0x08 /* Set if 0x07 has bits left value */
 /* This indicates that the ASN1_STRING is not a real value but just a place
  * holder for the location where indefinite length constructed data should
- * be inserted in the memory buffer 
+ * be inserted in the memory buffer
  */
-#define ASN1_STRING_FLAG_NDEF 0x010 
+#define ASN1_STRING_FLAG_NDEF 0x010
+
+/* This flag is used by the CMS code to indicate that a string is not
+ * complete and is a place holder for content when it had all been
+ * accessed. The flag will be reset when content has been written to it.
+ */
+#define ASN1_STRING_FLAG_CONT 0x020
+
 /* This is the base type that holds just about everything :-) */
 typedef struct asn1_string_st
 	{
@@ -311,8 +323,8 @@ typedef struct ASN1_VALUE_st ASN1_VALUE;
 	int i2d_##name##_NDEF(name *a, unsigned char **out);
 
 #define DECLARE_ASN1_FUNCTIONS_const(name) \
-	name *name##_new(void); \
-	void name##_free(name *a);
+	DECLARE_ASN1_ALLOC_FUNCTIONS(name) \
+	DECLARE_ASN1_ENCODE_FUNCTIONS_const(name, name)
 
 #define DECLARE_ASN1_ALLOC_FUNCTIONS_name(type, name) \
 	type *name##_new(void); \
@@ -358,7 +370,7 @@ TYPEDEF_D2I2D_OF(void);
  *      ...
  *      ASN1_ITEM_EXP *iptr;
  *      ...
- * } SOMETHING; 
+ * } SOMETHING;
  *
  * It would be initialised as e.g.:
  *
@@ -446,7 +458,7 @@ typedef const ASN1_ITEM * ASN1_ITEM_EXP(void);
  */
 
 /* If this is set we convert all character strings
- * to UTF8 first 
+ * to UTF8 first
  */
 
 #define ASN1_STRFLGS_UTF8_CONVERT	0x10
@@ -522,6 +534,7 @@ typedef struct asn1_type_st
 		 * contain the set or sequence bytes */
 		ASN1_STRING *		set;
 		ASN1_STRING *		sequence;
+		ASN1_VALUE  *		asn1_value;
 		} value;
 	} ASN1_TYPE;
 
@@ -752,6 +765,7 @@ DECLARE_ASN1_FUNCTIONS_fname(ASN1_TYPE, ASN1_ANY, ASN1_TYPE)
 
 int ASN1_TYPE_get(ASN1_TYPE *a);
 void ASN1_TYPE_set(ASN1_TYPE *a, int type, void *value);
+int ASN1_TYPE_set1(ASN1_TYPE *a, int type, const void *value);
 
 ASN1_OBJECT *	ASN1_OBJECT_new(void );
 void		ASN1_OBJECT_free(ASN1_OBJECT *a);
@@ -774,6 +788,7 @@ int 		ASN1_STRING_cmp(ASN1_STRING *a, ASN1_STRING *b);
   /* Since this is used to store all sorts of things, via macros, for now, make
      its data void * */
 int 		ASN1_STRING_set(ASN1_STRING *str, const void *data, int len);
+void		ASN1_STRING_set0(ASN1_STRING *str, void *data, int len);
 int ASN1_STRING_length(ASN1_STRING *x);
 void ASN1_STRING_length_set(ASN1_STRING *x, int n);
 int ASN1_STRING_type(ASN1_STRING *x);
@@ -926,6 +941,12 @@ void *ASN1_dup(i2d_of_void *i2d, d2i_of_void *d2i, char *x);
 
 void *ASN1_item_dup(const ASN1_ITEM *it, void *x);
 
+/* ASN1 alloc/free macros for when a type is only used internally */
+
+#define M_ASN1_new_of(type) (type *)ASN1_item_new(ASN1_ITEM_rptr(type))
+#define M_ASN1_free_of(x, type) \
+		ASN1_item_free(CHECKED_PTR_OF(type, x), ASN1_ITEM_rptr(type))
+
 #ifndef OPENSSL_NO_FP_API
 void *ASN1_d2i_fp(void *(*xnew)(void), d2i_of_void *d2i, FILE *in, void **x);
 
@@ -1032,10 +1053,10 @@ unsigned long ASN1_STRING_get_default_mask(void);
 int ASN1_mbstring_copy(ASN1_STRING **out, const unsigned char *in, int len,
 					int inform, unsigned long mask);
 int ASN1_mbstring_ncopy(ASN1_STRING **out, const unsigned char *in, int len,
-					int inform, unsigned long mask, 
+					int inform, unsigned long mask,
 					long minsize, long maxsize);
 
-ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out, 
+ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out,
 		const unsigned char *in, int inlen, int inform, int nid);
 ASN1_STRING_TABLE *ASN1_STRING_TABLE_get(int nid);
 int ASN1_STRING_TABLE_add(int, long, long, unsigned long, unsigned long);
@@ -1054,7 +1075,17 @@ void ASN1_add_oid_module(void);
 
 ASN1_TYPE *ASN1_generate_nconf(char *str, CONF *nconf);
 ASN1_TYPE *ASN1_generate_v3(char *str, X509V3_CTX *cnf);
-	
+
+typedef int asn1_output_data_fn(BIO *out, BIO *data, ASN1_VALUE *val, int flags,
+					const ASN1_ITEM *it);
+
+int int_smime_write_ASN1(BIO *bio, ASN1_VALUE *val, BIO *data, int flags,
+				int ctype_nid, int econt_nid,
+				STACK_OF(X509_ALGOR) *mdalgs,
+				asn1_output_data_fn *data_fn,
+				const ASN1_ITEM *it);
+ASN1_VALUE *SMIME_read_ASN1(BIO *bio, BIO **bcont, const ASN1_ITEM *it);
+
 /* BEGIN ERROR CODES */
 /* The following lines are auto generated by the script mkerr.pl. Any changes
  * made after this point may be overwritten when the script is next run.
@@ -1104,6 +1135,7 @@ void ERR_load_ASN1_strings(void);
 #define ASN1_F_ASN1_ITEM_VERIFY				 197
 #define ASN1_F_ASN1_MBSTRING_NCOPY			 122
 #define ASN1_F_ASN1_OBJECT_NEW				 123
+#define ASN1_F_ASN1_OUTPUT_DATA				 207
 #define ASN1_F_ASN1_PACK_STRING				 124
 #define ASN1_F_ASN1_PCTX_NEW				 205
 #define ASN1_F_ASN1_PKCS5_PBE_SET			 125
@@ -1123,6 +1155,8 @@ void ERR_load_ASN1_strings(void);
 #define ASN1_F_ASN1_UNPACK_STRING			 136
 #define ASN1_F_ASN1_UTCTIME_SET				 187
 #define ASN1_F_ASN1_VERIFY				 137
+#define ASN1_F_B64_READ_ASN1				 208
+#define ASN1_F_B64_WRITE_ASN1				 209
 #define ASN1_F_BITSTR_CB				 180
 #define ASN1_F_BN_TO_ASN1_ENUMERATED			 138
 #define ASN1_F_BN_TO_ASN1_INTEGER			 139
@@ -1163,6 +1197,8 @@ void ERR_load_ASN1_strings(void);
 #define ASN1_F_PARSE_TAGGING				 182
 #define ASN1_F_PKCS5_PBE2_SET				 167
 #define ASN1_F_PKCS5_PBE_SET				 202
+#define ASN1_F_SMIME_READ_ASN1				 210
+#define ASN1_F_SMIME_TEXT				 211
 #define ASN1_F_X509_CINF_NEW				 168
 #define ASN1_F_X509_CRL_ADD0_REVOKED			 169
 #define ASN1_F_X509_INFO_NEW				 170
@@ -1174,6 +1210,8 @@ void ERR_load_ASN1_strings(void);
 
 /* Reason codes. */
 #define ASN1_R_ADDING_OBJECT				 171
+#define ASN1_R_ASN1_PARSE_ERROR				 198
+#define ASN1_R_ASN1_SIG_PARSE_ERROR			 199
 #define ASN1_R_AUX_ERROR				 100
 #define ASN1_R_BAD_CLASS				 101
 #define ASN1_R_BAD_OBJECT_HEADER			 102
@@ -1220,6 +1258,7 @@ void ERR_load_ASN1_strings(void);
 #define ASN1_R_INTEGER_TOO_LARGE_FOR_LONG		 128
 #define ASN1_R_INVALID_BMPSTRING_LENGTH			 129
 #define ASN1_R_INVALID_DIGIT				 130
+#define ASN1_R_INVALID_MIME_TYPE			 200
 #define ASN1_R_INVALID_MODIFIER				 186
 #define ASN1_R_INVALID_NUMBER				 187
 #define ASN1_R_INVALID_SEPARATOR			 131
@@ -1229,6 +1268,9 @@ void ERR_load_ASN1_strings(void);
 #define ASN1_R_IV_TOO_LARGE				 135
 #define ASN1_R_LENGTH_ERROR				 136
 #define ASN1_R_LIST_ERROR				 188
+#define ASN1_R_MIME_NO_CONTENT_TYPE			 201
+#define ASN1_R_MIME_PARSE_ERROR				 202
+#define ASN1_R_MIME_SIG_PARSE_ERROR			 203
 #define ASN1_R_MISSING_EOC				 137
 #define ASN1_R_MISSING_SECOND_NUMBER			 138
 #define ASN1_R_MISSING_VALUE				 189
@@ -1238,7 +1280,11 @@ void ERR_load_ASN1_strings(void);
 #define ASN1_R_NON_HEX_CHARACTERS			 141
 #define ASN1_R_NOT_ASCII_FORMAT				 190
 #define ASN1_R_NOT_ENOUGH_DATA				 142
+#define ASN1_R_NO_CONTENT_TYPE				 204
 #define ASN1_R_NO_MATCHING_CHOICE_TYPE			 143
+#define ASN1_R_NO_MULTIPART_BODY_FAILURE		 205
+#define ASN1_R_NO_MULTIPART_BOUNDARY			 206
+#define ASN1_R_NO_SIG_CONTENT_TYPE			 207
 #define ASN1_R_NULL_IS_WRONG_LENGTH			 144
 #define ASN1_R_OBJECT_NOT_ASCII_FORMAT			 191
 #define ASN1_R_ODD_NUMBER_OF_CHARS			 145
@@ -1248,6 +1294,8 @@ void ERR_load_ASN1_strings(void);
 #define ASN1_R_SEQUENCE_NOT_CONSTRUCTED			 149
 #define ASN1_R_SEQUENCE_OR_SET_NEEDS_CONFIG		 192
 #define ASN1_R_SHORT_LINE				 150
+#define ASN1_R_SIG_INVALID_MIME_TYPE			 208
+#define ASN1_R_STREAMING_NOT_SUPPORTED			 209
 #define ASN1_R_STRING_TOO_LONG				 151
 #define ASN1_R_STRING_TOO_SHORT				 152
 #define ASN1_R_TAG_VALUE_TOO_HIGH			 153

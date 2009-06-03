@@ -69,7 +69,7 @@ private:
     bool m_bCancelInProgress;
 
 public:
-    /// Check if account creation was successfull or not.
+    /// Check if account creation was successful or not.
     bool GetAccountCreatedSuccessfully() const;
 
     /// Set or reset the success flag for account creation.
