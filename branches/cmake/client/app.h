@@ -66,7 +66,7 @@ public:
     WORKUNIT* wup;
     APP_VERSION* app_version;
     PROCESS_ID pid;
-	PROCINFO procinfo;
+    PROCINFO procinfo;
 
     int slot;   ///< subdirectory of slots/ where this runs.
     inline int task_state() const {
@@ -135,23 +135,16 @@ public:
     APP_CLIENT_SHM app_client_shm;        ///< Core/app shared mem.
     MSG_QUEUE graphics_request_queue;
     MSG_QUEUE process_control_queue;
-    bool coprocs_reserved;
-    void reserve_coprocs();
-    void free_coprocs();
 
     /// Info related to app's graphics mode (win, screensaver, etc.).
     int graphics_mode_acked;            ///< Mode acked by app.
     int graphics_mode_before_ss;        ///< Mode before last screensaver request.
     double graphics_mode_ack_timeout;
 
-#ifdef SIM
-    double cpu_time_left;
-#endif
-
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
     // PowerPC apps emulated on i386 Macs crash if running graphics
     int powerpc_emulated_on_i386;
-    int is_native_i386_app(char*);
+    int is_native_i386_app(const char*) const;
 #endif
     GRAPHICS_MSG graphics_msg;
     void request_graphics_mode(GRAPHICS_MSG&);
@@ -162,14 +155,14 @@ public:
 
     /// Make a unique key for core/app shared memory segment.
     int get_shmem_seg_name();
-    bool runnable() {
+    bool runnable() const {
         return _task_state == PROCESS_UNINITIALIZED
             || _task_state == PROCESS_EXECUTING
             || _task_state == PROCESS_SUSPENDED;
     }
 
     ACTIVE_TASK();
-	~ACTIVE_TASK();
+    ~ACTIVE_TASK();
     int init(RESULT*);
     void close_process_handles();
     void cleanup_task();
@@ -218,14 +211,17 @@ public:
 
     bool get_app_status_msg();
     bool get_trickle_up_msg();
-    double est_cpu_time_to_completion(bool for_work_fetch);
+    double est_cpu_time_to_completion() const;
     bool read_stderr_file();
-    bool finish_file_present();
+    bool finish_file_present() const;
     bool supports_graphics() const;
 
     /// Write the app init file.
     int write_app_init_file();
+
+    /// Move a trickle file from the slot directory to the project directory.
     int move_trickle_file();
+
     int handle_upload_files();
     void upload_notify_app(const FILE_INFO*, const FILE_REF*);
     int copy_output_files();
@@ -243,7 +239,10 @@ public:
     ACTIVE_TASK* lookup_result(const RESULT*);
     void init();
     bool poll();
-    void suspend_all(bool leave_apps_in_memory=true);
+
+    /// Suspend all currently running tasks.
+    void suspend_all(bool cpu_throttle);
+
     void unsuspend_all();
     bool is_task_executing();
     void request_tasks_exit(PROJECT* p=0);

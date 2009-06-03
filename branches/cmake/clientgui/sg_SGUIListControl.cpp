@@ -39,7 +39,7 @@ CSGUIListCtrl::CSGUIListCtrl(CPanelMessages* pView, wxWindowID iListWindowID, wx
 
 wxString CSGUIListCtrl::OnGetItemText(long item, long column) const {
     wxASSERT(m_pParentView);
-	wxASSERT(wxDynamicCast(m_pParentView, CPanelMessages));
+    wxASSERT(wxDynamicCast(m_pParentView, CPanelMessages));
 
     return m_pParentView->OnListGetItemText(item, column);
 }

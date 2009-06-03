@@ -154,7 +154,7 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 int ACTIVE_TASK::write_app_init_file() {
     APP_INIT_DATA aid;
     FILE *f;
-    char project_dir[256], project_path[256];
+    char project_dir[256];
     int retval;
 
     memset(&aid, 0, sizeof(aid));
@@ -172,9 +172,10 @@ int ACTIVE_TASK::write_app_init_file() {
         aid.project_preferences = strdup(wup->project->project_specific_prefs.c_str());
     }
     get_project_dir(wup->project, project_dir, sizeof(project_dir));
-    relative_to_absolute(project_dir, project_path);
-    strcpy(aid.project_dir, project_path);
-    relative_to_absolute("", aid.boinc_dir);
+    std::string project_path = relative_to_absolute(project_dir);
+    strlcpy(aid.project_dir, project_path.c_str(), sizeof(aid.project_dir));
+    std::string buf = relative_to_absolute("");
+    strlcpy(aid.boinc_dir, buf.c_str(), sizeof(aid.boinc_dir));
     strcpy(aid.authenticator, wup->project->authenticator);
     aid.slot = slot;
     strcpy(aid.wu_name, wup->name);
@@ -355,12 +356,11 @@ int ACTIVE_TASK::start(bool first_time) {
     FILE_REF fref;
     FILE_INFO* fip;
     int retval;
+    // F*** goto, need to define some variables here instead of where they are used!
     std::ostringstream err_stream;
 #ifdef _WIN32
     std::string cmd_line;
-
-    get_sandbox_account_service_token();
-        // do this first because it affects how we create shmem seg
+    std::string slotdirpath;
 #else
     // Needs to be defined here because those gotos would skip the
     // initialization of 'cmdline' and 'argv' if it would be defined later.
@@ -494,7 +494,6 @@ int ACTIVE_TASK::start(bool first_time) {
     PROCESS_INFORMATION process_info;
     STARTUPINFO startup_info;
     LPVOID environment_block = NULL;
-    char slotdirpath[256];
     char error_msg[1024];
     char error_msg2[1024];
 
@@ -520,7 +519,7 @@ int ACTIVE_TASK::start(bool first_time) {
     if (strlen(app_version->cmdline)) {
         cmd_line += std::string(" ") + app_version->cmdline;
     }
-    relative_to_absolute(slot_dir, slotdirpath);
+    slotdirpath = relative_to_absolute(slot_dir);
     bool success = false;
 
     for (i=0; i<5; i++) {
@@ -554,7 +553,7 @@ int ACTIVE_TASK::start(bool first_time) {
                 FALSE,
                 CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW|IDLE_PRIORITY_CLASS|CREATE_UNICODE_ENVIRONMENT,
                 environment_block,
-                slotdirpath,
+                slotdirpath.c_str(),
                 &startup_info,
                 &process_info
             )) {
@@ -592,7 +591,7 @@ int ACTIVE_TASK::start(bool first_time) {
                 FALSE,
                 CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW|IDLE_PRIORITY_CLASS,
                 NULL,
-                slotdirpath,
+                slotdirpath.c_str(),
                 &startup_info,
                 &process_info
             )) {
@@ -845,7 +844,6 @@ int ACTIVE_TASK::start(bool first_time) {
 
 #endif
     set_task_state(PROCESS_EXECUTING, "start");
-    reserve_coprocs();
     return 0;
 
     // go here on error; "error_msg" contains error message, "retval" is nonzero
@@ -926,25 +924,25 @@ union headeru {
 /// Read the mach-o headers to determine the architectures
 /// supported by executable file.
 /// Returns 1 if application can run natively on i386 / x86_64 Macs, else returns 0.
-int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
+int ACTIVE_TASK::is_native_i386_app(const char* exec_path) const {
     FILE *f;
     int result = 0;
-    
+
     headeru myHeader;
     fat_arch fatHeader;
-    
+
     uint32_t n, i, len;
     uint32_t theMagic;
     integer_t theType;
-    
+
     f = boinc_fopen(exec_path, "rb");
     if (!f) {
         return result;          // Should never happen
     }
-    
+
     myHeader.fat.magic = 0;
     myHeader.fat.nfat_arch = 0;
-    
+
     fread(&myHeader, 1, sizeof(fat_header), f);
     theMagic = myHeader.mach.magic;
     switch (theMagic) {
@@ -990,5 +988,3 @@ int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     return result;
 }
 #endif
-
-const char *BOINC_RCSID_be8bae8cbb = "$Id: app_start.C 15477 2008-06-26 03:50:03Z davea $";

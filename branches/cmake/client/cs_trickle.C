@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -22,7 +23,6 @@
 #include "config.h"
 #endif
 
-#include <cstring>
 #include "error_numbers.h"
 #include "file_names.h"
 #include "filesys.h"
@@ -32,75 +32,90 @@
 #include "sandbox.h"
 #include "client_state.h"
 
-using std::string;
-
 /// Scan project dir for file names of the form trickle_up_X_Y
 /// where X is a result name and Y is a timestamp.
 /// Convert them to XML (for sched request message).
-int CLIENT_STATE::read_trickle_files(PROJECT* project, FILE* f) {
-    char project_dir[256], *p, *q, result_name[256], fname[256];
-    char* file_contents, path[256], newpath[256];
-    string fn;
-    time_t t;
-    int retval;
-
+///
+/// \param[in] project Pointer to a PROJECT instance for the project for which
+///                    trickle files should be read.
+/// \param[in] f Pointer to a file that should receive the xml-version of the
+///              content of the trickle files.
+/// \return Always returns zero.
+int CLIENT_STATE::read_trickle_files(const PROJECT* project, FILE* f) {
+    char project_dir[256];
     get_project_dir(project, project_dir, sizeof(project_dir));
+
     DirScanner ds(project_dir);
+    std::string fn;
 
-    // trickle-up filenames are of the form trickle_up_RESULTNAME_TIME[.sent]
-    //
+    // Trickle-up filenames are of the form trickle_up_RESULTNAME_TIME[.sent]
     while (ds.scan(fn)) {
-        strcpy(fname, fn.c_str());
-        if (strstr(fname, "trickle_up_") != fname) continue;
-        q = fname + strlen("trickle_up_");
-        p = strrchr(fname, '_');
-        if (p <= q) continue;
-        *p = 0;
-        strcpy(result_name, q);
-        *p = '_';
-        t = atoi(p+1);
+        // Check if the current file is a trickle file:
+        if (!starts_with(fn, "trickle_up_")) {
+            continue;
+        }
+        std::string::size_type res_begin = strlen("trickle_up_");
+        std::string::size_type res_end = fn.rfind('_');
+        if (res_end <= res_begin) {
+            continue;
+        }
 
-        sprintf(path, "%s/%s", project_dir, fname);
-        retval = read_file_malloc(path, file_contents);
-        if (retval) continue;
+        // Extract the result name:
+        std::string result_name = fn.substr(res_begin, res_end - res_begin);
+
+        // Extract the timestamp:
+        std::stringstream tmp(fn.substr(res_end + 1));
+        time_t t;
+        tmp >> t;
+
+        // Read the content of the trickle file:
+        std::string path(project_dir);
+        path.append("/").append(fn);
+        char* file_contents;
+        if (read_file_malloc(path.c_str(), file_contents)) {
+            continue;
+        }
         fprintf(f,
             "  <msg_from_host>\n"
             "      <result_name>%s</result_name>\n"
             "      <time>%d</time>\n"
             "%s\n"
             "  </msg_from_host>\n",
-            result_name,
+            result_name.c_str(),
             (int)t,
             file_contents
         );
         free(file_contents);
 
-        // append .sent to filename, so we'll know which ones to delete later
-        //
-        if (!ends_with(fname, ".sent")) {
-            sprintf(newpath, "%s/%s.sent", project_dir, fname);
-            boinc_rename(path, newpath);
+        // Append .sent to filename, so we'll know which ones to delete later.
+        if (!ends_with(fn, ".sent")) {
+            std::ostringstream newpath;
+            newpath << project_dir << '/' << fn << ".sent";
+            boinc_rename(path.c_str(), newpath.str().c_str());
         }
     }
     return 0;
 }
 
-/// Remove files when ack has been received.
+/// Remove trickle files when ack has been received.
 /// Remove only this ending with ".sent"
-/// (others arrived from application while RPC was happening)
-int CLIENT_STATE::remove_trickle_files(PROJECT* project) {
-    char project_dir[256], path[256], fname[256];
-    string fn;
-
+/// (others arrived from application while RPC was happening).
+///
+/// \param[in] project Pointer to a PROJECT instance of the project for which
+///                    the trickle files should be removed.
+/// \return Always returns zero.
+int CLIENT_STATE::remove_trickle_files(const PROJECT* project) {
+    char project_dir[256];
     get_project_dir(project, project_dir, sizeof(project_dir));
-    DirScanner ds(project_dir);
 
+    DirScanner ds(project_dir);
+    std::string fn;
     while (ds.scan(fn)) {
-        strcpy(fname, fn.c_str());
-        if (!starts_with(fname, "trickle_up")) continue;
-        if (!ends_with(fname, ".sent")) continue;
-        sprintf(path, "%s/%s", project_dir, fname);
-        delete_project_owned_file(path, true);
+        if ((starts_with(fn, "trickle_up")) && (ends_with(fn, ".sent"))) {
+            std::string path(project_dir);
+            path.append("/").append(fn);
+            delete_project_owned_file(path.c_str(), true);
+        }
     }
     return 0;
 }
@@ -109,22 +124,37 @@ int CLIENT_STATE::remove_trickle_files(PROJECT* project) {
 /// Locate the corresponding active task,
 /// write a file in the slot directory,
 /// and notify the task.
-int CLIENT_STATE::handle_trickle_down(PROJECT* project, FILE* in) {
+///
+/// \param[in] project A pointer to the PROJECT instance of the project for
+///                    which a trickle-down message was received.
+/// \param[in] in A pointer to the file containing the scheduler reply with
+///               the trickle-down message.
+/// \return Zero on success, ERR_NULL if the result for the trickle-down
+///         message could not be found, ERR_FOPEN if creating the trickle-down
+///         file failed, ERR_XML_PARSE if the input was malformed.
+int CLIENT_STATE::handle_trickle_down(const PROJECT* project, FILE* in) {
     char buf[256];
-    char result_name[256], path[256];
-    string body;
-    int send_time=0;
+    char result_name[256];
+    std::string body;
+    int send_time = 0;
 
-    strcpy(result_name, "");
+    result_name[0] = 0;
     while (fgets(buf, 256, in)) {
         if (match_tag(buf, "</trickle_down>")) {
             RESULT* rp = lookup_result(project, result_name);
-            if (!rp) return ERR_NULL;
+            if (!rp) {
+                return ERR_NULL;
+            }
             ACTIVE_TASK* atp = lookup_active_task_by_result(rp);
-            if (!atp) return ERR_NULL;
-            sprintf(path, "%s/trickle_down_%d", atp->slot_dir, send_time);
-            FILE* f = fopen(path, "w");
-            if (!f) return ERR_FOPEN;
+            if (!atp) {
+                return ERR_NULL;
+            }
+            std::ostringstream path;
+            path << atp->slot_dir << "/trickle_down_" << send_time;
+            FILE* f = fopen(path.str().c_str(), "w"); // Shouldn't this use boinc_fopen?
+            if (!f) {
+                return ERR_FOPEN;
+            }
             fputs(body.c_str(), f);
             fclose(f);
             atp->have_trickle_down = true;
@@ -139,5 +169,3 @@ int CLIENT_STATE::handle_trickle_down(PROJECT* project, FILE* in) {
     }
     return ERR_XML_PARSE;
 }
-
-const char *BOINC_RCSID_acbefbad3d = "$Id: cs_trickle.C 14811 2008-02-27 23:26:38Z davea $";

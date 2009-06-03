@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,9 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#ifndef _HTTP_
-#define _HTTP_
+#ifndef HTTP_CURL_H
+#define HTTP_CURL_H
 
 // SOCKS #defines
 #define SOCKS_VERSION_4             0x04
@@ -34,12 +34,16 @@ extern int curl_init();
 extern int curl_cleanup();
 
 #define HTTP_OP_NONE    0
+
 /// Data sink is a file. Used for file download.
 #define HTTP_OP_GET     1
+
 /// Data source and sink are files. Used for scheduler op.
 #define HTTP_OP_POST    2
+
 /// No data. Used for file upload.
 #define HTTP_OP_HEAD    4
+
 /// A POST operation where the request comes from a combination
 /// of a string and a file w/offset,
 /// and the reply goes into a memory buffer.
@@ -60,7 +64,7 @@ public:
 
     PROXY_INFO pi;
 
-    char m_url[256];  
+    char m_url[256];
     char m_curl_ca_bundle_location[256]; ///< string needed for ssl support
     char szCurlProxyUserPwd[128]; ///< string needed for proxy username/password
 
@@ -77,7 +81,7 @@ public:
     struct curl_httppost *pcurlFormEnd; ///< a pointer to a form item for POST
     unsigned char* pByte;  ///< pointer to bytes for reading via libcurl_read function
 
-    long lSeek; // offset within the file or memory buffer we're reading,
+    long lSeek; ///< offset within the file or memory buffer we're reading,
     char infile[256];
     char outfile[256];
     char error_msg[256];    ///< put Curl error message here
@@ -89,26 +93,34 @@ public:
 
     bool want_download;     ///< at most one should be true
     bool want_upload;
+
     /// errno from connect() (not used for anything).
     /// MUST be long (not int) otherwise breaks on 64-bit machines.
     long connect_error;
+
     /// HTTP status code from server.
     /// MUST be long (not int) otherwise breaks on 64-bit machines.
     long response;
+
     double start_time;
+
     /// Uncompressed bytes transferred.
     /// In the case of "post2" this includes only the file part
     /// In the case of restartable ops (file upload/download)
     /// this includes previous count (i.e. file offset)
     double bytes_xferred;
+
     /// Bytes_xferred at the start of this operation.
     /// Used to compute transfer speed.
     double start_bytes_xferred;
+
     /// Transfer rate based on elapsed time and bytes_xferred
     /// (hence doesn't reflect compression; used only for GUI)
     double xfer_speed;
-    int http_op_state;      /// values above
-    int http_op_type;       /// HTTP_OP_* (see above)
+
+    int http_op_state;      ///< values above
+    int http_op_type;       ///< HTTP_OP_* (see above)
+
     /// Either:
     /// - 0 (success)
     /// - ERR_GETHOSTBYNAME (if no such host)
@@ -146,7 +158,7 @@ public:
 private:
     /// Takes an init_get/post/post2 and turns it into
     /// an appropriate libcurl request.
-    int libcurl_exec(const char* url, const char* in, const char* out, 
+    int libcurl_exec(const char* url, const char* in, const char* out,
         double offset, bool bPost
     );
 };
@@ -156,8 +168,7 @@ size_t libcurl_write(void *ptr, size_t size, size_t nmemb, HTTP_OP* phop);
 size_t libcurl_read( void *ptr, size_t size, size_t nmemb, HTTP_OP* phop);
 curlioerr libcurl_ioctl(CURL *handle, curliocmd cmd, HTTP_OP* phop);
 int libcurl_debugfunction(CURL *handle, curl_infotype type,
-    unsigned char *data, size_t size, HTTP_OP* phop
-);
+    unsigned char *data, size_t size, HTTP_OP* phop);
 
 /// represents a set of HTTP requests in progress
 class HTTP_OP_SET {
@@ -173,11 +184,14 @@ public:
 
     void get_fdset(FDSET_GROUP&);
     void got_select(FDSET_GROUP&, double);
-    HTTP_OP* lookup_curl(CURL* pcurl);   /// lookup by easycurl handle
-    void cleanup_temp_files();
 
+    /// Lookup by easycurl handle.
+    HTTP_OP* lookup_curl(CURL* pcurl);
+
+    /// Delete all temporary files.
+    void cleanup_temp_files();
 };
 
 extern void parse_url(const char* url, char* host, int &port, char* file);
 
-#endif //__HTTP_H
+#endif // HTTP_CURL_H

@@ -44,45 +44,45 @@ public:
     CSimplePanel(wxWindow* parent);
 
    ~CSimplePanel();
-	//
-	// Flat Neotebook
-	WorkunitNotebook *wrkUnitNB;
+    //
+    // Flat Neotebook
+    WorkunitNotebook *wrkUnitNB;
     wxBitmap const workWUico;
-	// My projects component
-	CProjectsComponent *projComponent;
-	// Client State Indicator
-	ClientStateIndicator *clientState;
-	//Collapse button
-	bool midAppCollapsed;
-	bool btmAppCollapsed;
-	////////////////////////////;
-	bool projectViewInitialized;
-	bool emptyViewInitialized;
-	bool notebookViewInitialized;
+    // My projects component
+    CProjectsComponent *projComponent;
+    // Client State Indicator
+    ClientStateIndicator *clientState;
+    //Collapse button
+    bool midAppCollapsed;
+    bool btmAppCollapsed;
+    ////////////////////////////;
+    bool projectViewInitialized;
+    bool emptyViewInitialized;
+    bool notebookViewInitialized;
 
     void ReskinInterface();
-	void InitEmptyView();
-	void UpdateEmptyView();
-	void DestroyEmptyView();
-	void InitResultView();
-	void InitProjectView();
-	void UpdateProjectView();
-	void InitNotebook();
-	void DestroyNotebook();
-	void OnProjectsAttachToProject();
-	void SetDlgOpen(bool newDlgState) { dlgOpen = newDlgState; }
-	bool GetDlgOpen() { return dlgOpen; }
-	//////////
-	wxFlexGridSizer *mainSizer;
-	wxSize wxNotebookSize;
-	//////////
-	wxBitmap *frameBg;
-	wxBitmap *bm13cImg0;
-	wxBitmap *btmpIcnWorking;
-	wxBitmap *bm39cImg0;
+    void InitEmptyView();
+    void UpdateEmptyView();
+    void DestroyEmptyView();
+    void InitResultView();
+    void InitProjectView();
+    void UpdateProjectView();
+    void InitNotebook();
+    void DestroyNotebook();
+    void OnProjectsAttachToProject();
+    void SetDlgOpen(bool newDlgState) { dlgOpen = newDlgState; }
+    bool GetDlgOpen() { return dlgOpen; }
+    //////////
+    wxFlexGridSizer *mainSizer;
+    wxSize wxNotebookSize;
+    //////////
+    wxBitmap *frameBg;
+    wxBitmap *bm13cImg0;
+    wxBitmap *btmpIcnWorking;
+    wxBitmap *bm39cImg0;
 
-	wxBitmap *btmpIcnSleeping;
-	wxTimer* m_pFrameRenderTimer;
+    wxBitmap *btmpIcnSleeping;
+    wxTimer* m_pFrameRenderTimer;
 
     DECLARE_EVENT_TABLE()
 
@@ -109,7 +109,7 @@ public:
     void OnHelp( wxHelpEvent& event );
     void OnHelpBOINC( wxCommandEvent& event );
 
-	void OnConnect(CFrameEvent& event );
+    void OnConnect(CFrameEvent& event );
     void OnProjectsAttachToProject();
     void OnReloadSkin( CFrameEvent& event );
 
@@ -120,17 +120,15 @@ private:
 protected:
 
 #ifdef __WXMAC__
-	wxMenuBar* m_pMenubar;
+    wxMenuBar* m_pMenubar;
 #endif
 
-	wxAcceleratorEntry  m_Shortcuts[1];
+    wxAcceleratorEntry  m_Shortcuts[1];
     wxAcceleratorTable* m_pAccelTable;
 
-	CSimplePanel* m_pBackgroundPanel;
+    CSimplePanel* m_pBackgroundPanel;
 
     DECLARE_EVENT_TABLE()
 };
 
 #endif
-
-

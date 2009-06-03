@@ -46,16 +46,11 @@
 #include "str_util.h"
 #include "util.h"
 #include "error_numbers.h"
-#include "coproc.h"
 
 #include "client_msgs.h"
 #include "log_flags.h"
 
-#ifdef SIM
-#include "sim.h"
-#else
 #include "client_state.h"
-#endif
 
 using std::vector;
 
@@ -69,60 +64,10 @@ using std::vector;
 /// try to finish jobs this much in advance of their deadline
 #define DEADLINE_CUSHION    0
 
-bool COPROCS::sufficient_coprocs(COPROCS& needed, bool verbose) {
-    for (unsigned int i=0; i<needed.coprocs.size(); i++) {
-        COPROC* cp = needed.coprocs[i];
-        COPROC* cp2 = lookup(cp->type);
-        if (!cp2) {
-            msg_printf(NULL, MSG_INFO,
-                "Missing a %s coprocessor", cp->type
-            );
-            return false;
-        }
-        if (cp2->used + cp->count > cp2->count) {
-            if (verbose) {
-                msg_printf(NULL, MSG_INFO,
-                    "insufficient coproc %s (%d + %d > %d)",
-                    cp2->type, cp2->used, cp->count, cp2->count
-                );
-            }
-            return false;
-        }
-    }
-    return true;
-}
-
-void COPROCS::reserve_coprocs(COPROCS& needed, bool verbose) {
-    for (unsigned int i=0; i<needed.coprocs.size(); i++) {
-        COPROC* cp = needed.coprocs[i];
-        COPROC* cp2 = lookup(cp->type);
-        if (!cp2) continue;
-        if (verbose) {
-            msg_printf(NULL, MSG_INFO,
-                "reserving %d of coproc %s", cp->count, cp2->type
-            );
-        }
-        cp2->used += cp->count;
-    }
-}
-
-void COPROCS::free_coprocs(COPROCS& needed, bool verbose) {
-    for (unsigned int i=0; i<needed.coprocs.size(); i++) {
-        COPROC* cp = needed.coprocs[i];
-        COPROC* cp2 = lookup(cp->type);
-        if (!cp2) continue;
-        if (verbose) {
-            msg_printf(NULL, MSG_INFO,
-                "freeing %d of coproc %s", cp->count, cp2->type
-            );
-        }
-        cp2->used -= cp->count;
-    }
-}
 
 static bool more_preemptable(ACTIVE_TASK* t0, ACTIVE_TASK* t1) {
     // returning true means t1 is more preemptable than t0,
-    // the "largest" result is at the front of a heap, 
+    // the "largest" result is at the front of a heap,
     // and we want the best replacement at the front,
     //
     if (t0->result->project->deadlines_missed && !t1->result->project->deadlines_missed) return false;
@@ -283,8 +228,8 @@ RESULT* CLIENT_STATE::earliest_deadline_result() {
         //
         ACTIVE_TASK* atp = lookup_active_task_by_result(rp);
         if (best_atp && !atp) continue;
-        if (rp->estimated_cpu_time_remaining(false)
-            < best_result->estimated_cpu_time_remaining(false)
+        if (rp->estimated_cpu_time_remaining()
+            < best_result->estimated_cpu_time_remaining()
             || (!best_atp && atp)
         ) {
             best_result = rp;
@@ -517,18 +462,6 @@ static bool schedule_if_possible(
     ACTIVE_TASK* atp;
 
     atp = gstate.lookup_active_task_by_result(rp);
-    if (!atp || atp->task_state() == PROCESS_UNINITIALIZED) {
-        if (!gstate.coprocs.sufficient_coprocs(
-            rp->avp->coprocs, log_flags.cpu_sched_debug)
-        ) {
-            if (log_flags.cpu_sched_debug) {
-                msg_printf(rp->project, MSG_INFO,
-                    "[cpu_sched_debug] insufficient coprocessors for %s", rp->name
-                );
-            }
-            return false;
-        }
-    }
     if (atp) {
         // see if it fits in available RAM
         //
@@ -543,7 +476,7 @@ static bool schedule_if_possible(
             return false;
         }
         atp->too_large = false;
-        
+
         if (gstate.retry_shmem_time > gstate.now) {
             if (atp->app_client_shm.shm == NULL) {
                 atp->needs_shmem = true;
@@ -610,9 +543,6 @@ void CLIENT_STATE::schedule_cpus() {
 
     // First choose results from projects with P.deadlines_missed>0
     //
-#ifdef SIM
-    if (!cpu_sched_rr_only) {
-#endif
     while (ncpus_used < ncpus) {
         rp = earliest_deadline_result();
         if (!rp) break;
@@ -624,9 +554,6 @@ void CLIENT_STATE::schedule_cpus() {
         rp->edf_scheduled = true;
         ordered_scheduled_results.push_back(rp);
     }
-#ifdef SIM
-    }
-#endif
 
     // Next, choose results from projects with large debt
     //
@@ -681,7 +608,8 @@ void CLIENT_STATE::make_running_task_heap(
 ///   - This function sets each task's next_scheduler_state,
 ///     and at the end it starts/resumes and preempts tasks
 ///     based on scheduler_state and next_scheduler_state.
-/// 
+///
+/// \return True if something changed, false otherwise.
 bool CLIENT_STATE::enforce_schedule() {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -691,7 +619,6 @@ bool CLIENT_STATE::enforce_schedule() {
     double ncpus_used;
 
     // Do this when requested, and once a minute as a safety net
-    //
     if (now - last_time > 60) {
         must_enforce_cpu_schedule = true;
     }
@@ -712,7 +639,6 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // set temporary variables
-    //
     for (i=0; i<projects.size(); i++){
         projects[i]->deadlines_missed = projects[i]->rr_sim_status.deadlines_missed;
     }
@@ -727,12 +653,10 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // make heap of currently running tasks, ordered by preemptibility
-    //
     make_running_task_heap(running_tasks, ncpus_used);
 
     // if there are more running tasks than ncpus,
-    // then mark the extras for preemption 
-    //
+    // then mark the extras for preemption
     while (ncpus_used > ncpus) {
         atp = running_tasks[0];
         atp->next_scheduler_state = CPU_SCHED_PREEMPTED;
@@ -755,7 +679,6 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // Loop through the scheduled results
-    //
     for (i=0; i<ordered_scheduled_results.size(); i++) {
         RESULT* rp = ordered_scheduled_results[i];
         if (log_flags.cpu_sched_debug) {
@@ -765,13 +688,11 @@ bool CLIENT_STATE::enforce_schedule() {
         }
 
         // See if it's already running.
-        //
         atp = NULL;
         for (vector<ACTIVE_TASK*>::iterator it = running_tasks.begin(); it != running_tasks.end(); it++) {
             ACTIVE_TASK *atp1 = *it;
             if (atp1 && atp1->result == rp) {
                 // The task is already running; remove it from the heap
-                //
                 atp = atp1;
                 it = running_tasks.erase(it);
                 std::make_heap(
@@ -785,7 +706,6 @@ bool CLIENT_STATE::enforce_schedule() {
 
         // if it's already running, see if it fits in mem;
         // If not, flag for preemption
-        //
         if (atp) {
             if (log_flags.cpu_sched_debug) {
                 msg_printf(rp->project, MSG_INFO,
@@ -812,7 +732,6 @@ bool CLIENT_STATE::enforce_schedule() {
 
         // Here if the result is not already running.
         // If it already has an active task and won't fit in mem, skip it
-        //
         atp = lookup_active_task_by_result(rp);
         if (atp) {
             if (atp->procinfo.working_set_size_smoothed > ram_left) {
@@ -830,7 +749,6 @@ bool CLIENT_STATE::enforce_schedule() {
         }
 
         // Preempt something if needed (and possible).
-        //
         bool run_task = false;
         bool need_to_preempt = (ncpus_used >= ncpus) && !running_tasks.empty();
             // the 2nd half of the above is redundant
@@ -839,7 +757,6 @@ bool CLIENT_STATE::enforce_schedule() {
             // Preempt it if either
             // 1) it's completed its time slice and has checkpointed recently
             // 2) the scheduled result is in deadline trouble
-            //
             atp = running_tasks[0];
             double time_running = now - atp->run_interval_start_wall_time;
             bool running_beyond_sched_period = time_running >= global_prefs.cpu_scheduling_period();
@@ -892,7 +809,6 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // make sure we don't exceed RAM limits
-    //
     for (i=0; i<running_tasks.size(); i++) {
         atp = running_tasks[i];
         if (atp->procinfo.working_set_size_smoothed > ram_left) {
@@ -920,7 +836,6 @@ bool CLIENT_STATE::enforce_schedule() {
     }
 
     // schedule new non CPU intensive tasks
-    //
     for (i=0; i<results.size(); i++) {
         RESULT* rp = results[i];
         if (rp->project->non_cpu_intensive && rp->runnable()) {
@@ -931,10 +846,9 @@ bool CLIENT_STATE::enforce_schedule() {
 
     double swap_left = (global_prefs.vm_max_used_frac)*host_info.m_swap;
     bool check_swap = (host_info.m_swap != 0);
-        // in case couldn't measure swap on this host
+    // in case couldn't measure swap on this host
 
     // preempt and start tasks as needed
-    //
     for (i=0; i<active_tasks.active_tasks.size(); i++) {
         atp = active_tasks.active_tasks[i];
         if (log_flags.cpu_sched_debug) {
@@ -946,10 +860,11 @@ bool CLIENT_STATE::enforce_schedule() {
         }
         switch (atp->next_scheduler_state) {
         case CPU_SCHED_PREEMPTED:
+            bool preempt_by_quit;
             switch (atp->task_state()) {
             case PROCESS_EXECUTING:
                 action = true;
-                bool preempt_by_quit = !global_prefs.leave_apps_in_memory;
+                preempt_by_quit = !global_prefs.leave_apps_in_memory;
                 if (check_swap && swap_left < 0) {
                     if (log_flags.mem_usage_debug) {
                         msg_printf(atp->result->project, MSG_INFO,
@@ -968,17 +883,21 @@ bool CLIENT_STATE::enforce_schedule() {
                 }
                 atp->preempt(preempt_by_quit);
                 break;
+            case PROCESS_SUSPENDED:
+                // Handle the case where user changes prefs from "leave in
+                // memory" to "remove from memory".
+                // Need to quit suspended tasks:
+                if ((atp->checkpoint_cpu_time) && (!global_prefs.leave_apps_in_memory)) {
+                    atp->preempt(true);
+                }
+                break;
             }
             atp->scheduler_state = CPU_SCHED_PREEMPTED;
             break;
         case CPU_SCHED_SCHEDULED:
             switch (atp->task_state()) {
             case PROCESS_UNINITIALIZED:
-                if (!coprocs.sufficient_coprocs(
-                    atp->app_version->coprocs, log_flags.cpu_sched_debug
-                )){
-                    continue;
-                }
+                // fall through
             case PROCESS_SUSPENDED:
                 action = true;
                 retval = atp->resume_or_start(
@@ -988,7 +907,6 @@ bool CLIENT_STATE::enforce_schedule() {
                     // Assume no additional shared memory segs
                     // will be available in the next 10 seconds
                     // (run only tasks which are already attached to shared memory).
-                    //
                     if (gstate.retry_shmem_time < gstate.now) {
                         request_schedule_cpus("no more shared memory");
                     }
@@ -996,9 +914,7 @@ bool CLIENT_STATE::enforce_schedule() {
                     continue;
                 }
                 if (retval) {
-                    report_result_error(
-                        *(atp->result), "Couldn't start or resume: %d", retval
-                    );
+                    report_result_error(*(atp->result), "Couldn't start or resume: %d", retval);
                     request_schedule_cpus("start failed");
                     continue;
                 }
@@ -1072,20 +988,14 @@ void PROJECT::set_rrsim_proc_rate(double rrs) {
 
 struct RR_SIM_STATUS {
     vector<RESULT*> active;
-    COPROCS coprocs;
 
-    inline bool can_run(RESULT* rp) {
-        return coprocs.sufficient_coprocs(rp->avp->coprocs, log_flags.rr_simulation);
-    }
     inline void activate(RESULT* rp) {
-        coprocs.reserve_coprocs(rp->avp->coprocs, log_flags.rr_simulation);
         active.push_back(rp);
     }
     // remove *rpbest from active set,
     // and adjust CPU time left for other results
     //
     inline void remove_active(RESULT* rpbest) {
-        coprocs.free_coprocs(rpbest->avp->coprocs, log_flags.rr_simulation);
         vector<RESULT*>::iterator it = active.begin();
         while (it != active.end()) {
             RESULT* rp = *it;
@@ -1101,7 +1011,6 @@ struct RR_SIM_STATUS {
         return (int) active.size();
     }
     ~RR_SIM_STATUS() {
-        coprocs.delete_coprocs();
     }
 };
 
@@ -1113,7 +1022,6 @@ struct RR_SIM_STATUS {
 /// We don't model time-slicing.
 /// Instead we use a continuous model where, at a given point,
 /// each project has a set of running jobs that uses all CPUs
-/// (and obeys coprocessor limits).
 /// These jobs are assumed to run at a rate proportionate to their avg_ncpus,
 /// and each project gets CPU proportionate to its RRS.
 ///
@@ -1137,7 +1045,6 @@ void CLIENT_STATE::rr_simulation() {
     RR_SIM_STATUS sim_status;
     unsigned int i;
 
-    sim_status.coprocs.clone(coprocs);
     double ar = available_ram();
 
     if (log_flags.rr_simulation) {
@@ -1160,9 +1067,9 @@ void CLIENT_STATE::rr_simulation() {
         if (!rp->nearly_runnable()) continue;
         if (rp->some_download_stalled()) continue;
         if (rp->project->non_cpu_intensive) continue;
-        rp->rrsim_cpu_left = rp->estimated_cpu_time_remaining(false);
+        rp->rrsim_cpu_left = rp->estimated_cpu_time_remaining();
         p = rp->project;
-        if (p->rr_sim_status.can_run(rp, gstate.ncpus) && sim_status.can_run(rp)) {
+        if (p->rr_sim_status.can_run(rp, gstate.ncpus)) {
             sim_status.activate(rp);
             p->rr_sim_status.activate(rp);
         } else {
@@ -1248,7 +1155,7 @@ void CLIENT_STATE::rr_simulation() {
         int last_proj_active_size = pbest->rr_sim_status.cpus_used();
 
         sim_status.remove_active(rpbest);
- 
+
         pbest->rr_sim_status.remove_active(rpbest);
 
         // If project has more results, add one or more to active set.
@@ -1256,7 +1163,7 @@ void CLIENT_STATE::rr_simulation() {
         while (1) {
             rp = pbest->rr_sim_status.get_pending();
             if (!rp) break;
-            if (pbest->rr_sim_status.can_run(rp, gstate.ncpus) && sim_status.can_run(rp)) {
+            if (pbest->rr_sim_status.can_run(rp, gstate.ncpus)) {
                 sim_status.activate(rp);
                 pbest->rr_sim_status.activate(rp);
             } else {
@@ -1308,7 +1215,7 @@ void CLIENT_STATE::rr_simulation() {
             if (end_time < buf_end) {
                 d_time = buf_end - end_time;
                 // if this is the last result for this project, account for the tail
-                if (pbest->rr_sim_status.none_active()) { 
+                if (pbest->rr_sim_status.none_active()) {
                     pbest->rr_sim_status.cpu_shortfall += d_time * proj_cpu_share;
                     if (log_flags.rr_simulation) {
                          msg_printf(pbest, MSG_INFO, "[rr_sim] proj out of work; shortfall %f d %f pcs %f",
@@ -1322,7 +1229,6 @@ void CLIENT_STATE::rr_simulation() {
                     "[rr_sim] total: idle cpus %d, last active %d, active %d, shortfall %f",
                     nidle_cpus, last_active_size, sim_status.nactive(),
                     cpu_shortfall
-                    
                 );
                 msg_printf(0, MSG_INFO,
                     "[rr_sim] proj %s: last active %d, active %d, shortfall %f",
@@ -1367,8 +1273,8 @@ void CLIENT_STATE::request_enforce_schedule(const char* where) {
 }
 
 /// Trigger CPU scheduling.
-/// Called when a result is completed, 
-/// when new results become runnable, 
+/// Called when a result is completed,
+/// when new results become runnable,
 /// or when the user performs a UI interaction
 /// (e.g. suspending or resuming a project or result).
 ///
@@ -1499,7 +1405,7 @@ static const char* result_state_name(int val) {
     case RESULT_COMPUTE_ERROR: return "COMPUTE_ERROR";
     case RESULT_FILES_UPLOADING: return "FILES_UPLOADING";
     case RESULT_FILES_UPLOADED: return "FILES_UPLOADED";
-    case RESULT_ABORTED: return "FILES_ABORTED";
+    case RESULT_ABORTED: return "ABORTED";
     }
     return "Unknown";
 }
@@ -1518,21 +1424,23 @@ void RESULT::set_state(int val, const char* where) {
 // and when general prefs have been parsed
 //
 void CLIENT_STATE::set_ncpus() {
-    int ncpus_old = ncpus;
+    int inUse = ncpus;
+    int availableCPUs = 1;
 
-    if (config.ncpus>0) {
-        ncpus = config.ncpus;
-    } else if (host_info.p_ncpus>0) {
-        ncpus = (int)((host_info.p_ncpus * global_prefs.max_ncpus_pct)/100);
-        if (ncpus == 0) ncpus = 1;
-    } else {
-        ncpus = 1;
+    if (config.ncpus > 0) {
+        // Pretend we have a different CPU count:
+        availableCPUs = config.ncpus;
+    } else if (host_info.p_ncpus > 0) {
+        availableCPUs = host_info.p_ncpus;
     }
 
-    if (initialized && ncpus != ncpus_old) {
+    // Restricts CPUs according to preferences:
+    ncpus = gstate.global_prefs.GetMaxCPUs(availableCPUs);
+
+    if (initialized && (ncpus != inUse)) {
         msg_printf(0, MSG_INFO,
             "Number of usable CPUs has changed from %d to %d.  Running benchmarks.",
-            ncpus_old, ncpus
+            inUse, ncpus
         );
         run_cpu_benchmarks = true;
         request_schedule_cpus("Number of usable CPUs has changed");
@@ -1582,18 +1490,8 @@ int ACTIVE_TASK::preempt(bool quit_task) {
 /// update the correction factor used to predict
 /// completion time for this project's results.
 void PROJECT::update_duration_correction_factor(RESULT* rp) {
-#ifdef SIM
-    if (dcf_dont_use) {
-        duration_correction_factor = 1.0;
-        return;
-    }
-    if (dcf_stats) {
-        ((SIM_PROJECT*)this)->update_dcf_stats(rp);
-        return;
-    }
-#endif
     double raw_ratio = rp->final_cpu_time/rp->estimated_cpu_time_uncorrected();
-    double adj_ratio = rp->final_cpu_time/rp->estimated_cpu_time(false);
+    double adj_ratio = rp->final_cpu_time/rp->estimated_cpu_time();
     double old_dcf = duration_correction_factor;
 
     // it's OK to overestimate completion time,
@@ -1625,5 +1523,3 @@ void PROJECT::update_duration_correction_factor(RESULT* rp) {
         );
     }
 }
-
-const char *BOINC_RCSID_e830ee1 = "$Id: cpu_sched.C 15290 2008-05-23 22:20:45Z davea $";

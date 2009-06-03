@@ -532,9 +532,9 @@ VOID CScreensaver::EnumMonitors(VOID) {
 
 
 
-// arguments:	name: name of key, keyval: where to store value of key
-// returns:		int indicating error
-// function:	reads string value in specified key
+// arguments:   name: name of key, keyval: where to store value of key
+// returns:     int indicating error
+// function:    reads string value in specified key
 //
 int CScreensaver::UtilSetRegKey(LPCTSTR name, DWORD value) {
     LONG error;
@@ -563,9 +563,9 @@ int CScreensaver::UtilSetRegKey(LPCTSTR name, DWORD value) {
 
 
 
-// arguments:	name: name of key, keyval: where to store value of key
-// returns:		int indicating error
-// function:	reads string value in specified key
+// arguments:   name: name of key, keyval: where to store value of key
+// returns:     int indicating error
+// function:    reads string value in specified key
 //
 int CScreensaver::UtilGetRegKey(LPCTSTR name, DWORD &keyval) {
     LONG  error;
@@ -597,10 +597,10 @@ int CScreensaver::UtilGetRegKey(LPCTSTR name, DWORD &keyval) {
 
 
 
-// arguments:	name: name of key, str: value of string to store
-//				if str is empty, attepts to delete the key
-// returns:		int indicating error
-// function:	sets string value in specified key in windows startup dir
+// arguments:   name: name of key, str: value of string to store
+//              if str is empty, attepts to delete the key
+// returns:     int indicating error
+// function:    sets string value in specified key in windows startup dir
 //
 int CScreensaver::UtilGetRegStartupStr(LPCTSTR name, LPTSTR str) {
     LONG error;
@@ -645,13 +645,13 @@ int CScreensaver::UtilGetRegStartupStr(LPCTSTR name, LPTSTR str) {
 // Determine if Synecdoche is configured to automatically start at logon/startup.
 //
 BOOL CScreensaver::IsConfigStartupBOINC() {
-    BOOL				bRetVal;
-    BOOL				bCheckFileExists;
-    TCHAR				szBuffer[MAX_PATH];
-    TCHAR				szShortcutBuffer[MAX_PATH];
-    HANDLE				hFileHandle;
-    HMODULE				hShell32;
-    MYSHGETFOLDERPATH	pfnMySHGetFolderPath = NULL;
+    BOOL                bRetVal;
+    BOOL                bCheckFileExists;
+    TCHAR               szBuffer[MAX_PATH];
+    TCHAR               szShortcutBuffer[MAX_PATH];
+    HANDLE              hFileHandle;
+    HMODULE             hShell32;
+    MYSHGETFOLDERPATH   pfnMySHGetFolderPath = NULL;
 
 
     // Lets set the default value to FALSE
@@ -1326,7 +1326,7 @@ LRESULT CScreensaver::SaverProc(
             {
                 BOOL    bErrorMode;
                 HRESULT hrError;
-                TCHAR	szError[400];
+                TCHAR   szError[400];
                 GetError(bErrorMode, hrError, szError, sizeof(szError)/sizeof(TCHAR));
 
                 // Show error message, if there is one

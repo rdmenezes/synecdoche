@@ -21,26 +21,26 @@
 #include <vector>
 
 struct PROCINFO {
-	int id;
-	int parentid;
+    int id;
+    int parentid;
     double swap_size;
     double working_set_size;
-	double working_set_size_smoothed;
-	unsigned long page_fault_count;
+    double working_set_size_smoothed;
+    unsigned long page_fault_count;
     double user_time;
     double kernel_time;
-	bool is_boinc_app;
+    bool is_boinc_app;
 
-	double page_fault_rate;		// derived by higher-level code
+    double page_fault_rate;     // derived by higher-level code
 };
 
 extern int procinfo_setup(std::vector<PROCINFO>&);
-	// call this first to get data structure
+    // call this first to get data structure
 extern void procinfo_app(PROCINFO&, std::vector<PROCINFO>&);
-	// call this to get mem usage for a given app
-	// (marks process as BOINC)
+    // call this to get mem usage for a given app
+    // (marks process as BOINC)
 extern void procinfo_other(PROCINFO&, std::vector<PROCINFO>&);
-	// After getting mem usage for all BOINC apps,
-	// call this to get mem usage for everything else
+    // After getting mem usage for all BOINC apps,
+    // call this to get mem usage for everything else
 
 #endif

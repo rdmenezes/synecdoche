@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,16 +16,20 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _COMMON_DEFS_
-#define _COMMON_DEFS_
+#ifndef COMMON_DEFS_H
+#define COMMON_DEFS_H
 
 #include "miofile.h"
 
 /// \file
-/// \#defines or enums that are shared by more than one BOINC component
+/// \#defines or constants or enums that are shared by more than one BOINC component
 /// (e.g. client, server, Manager, etc.)
 
-#define GUI_RPC_PORT                                31416
+const double KILO = 1024.0;
+const double MEGA = 1024.0 * KILO;
+const double GIGA = 1024.0 * MEGA;
+
+const int GUI_RPC_PORT = 31416;
 
 /// \name Run mode
 /// @{
@@ -175,32 +180,29 @@ enum SUSPEND_REASON {
 /// \name Network status
 /// values of "network status"
 /// @{
-#define NETWORK_STATUS_ONLINE			0
-#define NETWORK_STATUS_WANT_CONNECTION	1
-#define NETWORK_STATUS_WANT_DISCONNECT	2
-#define NETWORK_STATUS_LOOKUP_PENDING	3
+#define NETWORK_STATUS_ONLINE           0
+#define NETWORK_STATUS_WANT_CONNECTION  1
+#define NETWORK_STATUS_WANT_DISCONNECT  2
+#define NETWORK_STATUS_LOOKUP_PENDING   3
 /// @}
 
-/// \name RPC reasons
 /// Reasons for making a scheduler RPC.
-/// @{
-#define RPC_REASON_USER_REQ         1
-#define RPC_REASON_RESULTS_DUE      2
-#define RPC_REASON_NEED_WORK        3
-#define RPC_REASON_TRICKLE_UP       4
-#define RPC_REASON_ACCT_MGR_REQ     5
-#define RPC_REASON_INIT             6
-#define RPC_REASON_PROJECT_REQ      7
-/// @}
+enum rpc_reason {
+    NO_RPC_REASON = 0,
+    RPC_REASON_USER_REQ,
+    RPC_REASON_RESULTS_DUE,
+    RPC_REASON_NEED_WORK,
+    RPC_REASON_TRICKLE_UP,
+    RPC_REASON_ACCT_MGR_REQ,
+    RPC_REASON_INIT,
+    RPC_REASON_PROJECT_REQ
+};
 
 struct VERSION_INFO {
     int major;
     int minor;
     int release;
     bool prerelease;
-    int parse(MIOFILE&); 
-    void write(MIOFILE&) const;
-    bool greater_than(VERSION_INFO&) const;
 };
 
 #ifdef _WIN32
@@ -216,4 +218,4 @@ struct VERSION_INFO {
 #define GRAPHICS_APP_FILENAME "graphics_app"
 #define ASSIGNED_WU_STR "asgn"
 
-#endif
+#endif // COMMON_DEFS_H

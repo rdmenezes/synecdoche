@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -57,13 +58,9 @@ void get_pathname(const FILE_INFO* fip, char* path, int len) {
     // an associated PROJECT.
     //
     if (p) {
-		if (fip->is_auto_update_file) {
-			boinc_version_dir(*p, gstate.auto_update.version, buf);
-		} else {
-            get_project_dir(p, buf, sizeof(buf));
-		}
-	    snprintf(path, len, "%s/%s", buf, fip->name);
-	} else {
+        get_project_dir(p, buf, sizeof(buf));
+        snprintf(path, len, "%s/%s", buf, fip->name);
+    } else {
         strlcpy(path, fip->name, len);
     }
 }
@@ -187,96 +184,130 @@ int make_slot_dir(int slot) {
     return retval;
 }
 
-/// delete unused stuff in the slots/ directory
+/// Delete unused stuff in the slots/ directory.
 void delete_old_slot_dirs() {
-    char filename[1024], path[1024];
-    DIRREF dirp;
-    int retval;
-
-    dirp = dir_open(SLOTS_DIR);
-    if (!dirp) return;
+    DirScanner dscan(SLOTS_DIR);
     while (1) {
-        strcpy(filename, "");
-        retval = dir_scan(filename, dirp, sizeof(filename));
-        if (retval) break;
-        snprintf(path, sizeof(path), "%s/%s", SLOTS_DIR, filename);
-        if (is_dir(path)) {
-#ifndef _WIN32
-            char init_data_path[1024];
-            SHMEM_SEG_NAME shmem_seg_name;
+        std::string filename;
+        if (!dscan.scan(filename)) {
+            break;
+        }
+        std::string path(SLOTS_DIR);
+        path.append("/").append(filename);
 
-            // If Synecdoche crashes or exits suddenly (e.g., due to 
-            // being called with --exit_after_finish) it may leave 
+        if (is_dir(path.c_str())) {
+#ifndef _WIN32
+            // If Synecdoche crashes or exits suddenly (e.g., due to
+            // being called with --exit_after_finish) it may leave
             // orphan shared memory segments in the system.
             // Clean these up here. (We must do this before deleting the
             // INIT_DATA_FILE, if any, from each slot directory.)
             //
-            snprintf(init_data_path, sizeof(init_data_path), "%s/%s", path, INIT_DATA_FILE);
-            shmem_seg_name = ftok(init_data_path, 1);
+            std::string init_data_path(path);
+            path.append("/").append(INIT_DATA_FILE);
+            SHMEM_SEG_NAME shmem_seg_name = ftok(init_data_path.c_str(), 1);
             if (shmem_seg_name != -1) {
                 destroy_shmem(shmem_seg_name);
             }
 #endif
-            if (!gstate.active_tasks.is_slot_dir_in_use(path)) {
-                client_clean_out_dir(path);
-                remove_project_owned_dir(path);
+            if (!gstate.active_tasks.is_slot_dir_in_use(path.c_str())) {
+                client_clean_out_dir(path.c_str());
+                remove_project_owned_dir(path.c_str());
             }
         } else {
-            delete_project_owned_file(path, false);
+            delete_project_owned_file(path.c_str(), false);
         }
     }
-    dir_close(dirp);
 }
 
-void get_account_filename(const char* master_url, char* path) {
+/// Get the name of the account file for a given master URL.
+///
+/// \param[in] master_url The master URL for a project for which the account
+///                       file name should be generated.
+/// \return The name of the account file for the project specified by \a master_url.
+std::string get_account_filename(const char* master_url) {
     char buf[1024];
     escape_project_url(master_url, buf);
-    sprintf(path, "account_%s.xml", buf);
+    std::ostringstream result;
+    result << "account_" << buf << ".xml";
+    return result.str();
 }
 
-static bool bad_account_filename(const char* filename) {
-    msg_printf(NULL, MSG_INTERNAL_ERROR, "Invalid account filename: %s", filename);
+/// Print an error message for an invalid account file name.
+///
+/// \param[in] filename The invalid file name.
+/// \return Always returns false.
+static bool bad_account_filename(const std::string& filename) {
+    msg_printf(NULL, MSG_INTERNAL_ERROR, "Invalid account filename: %s", filename.c_str());
     return false;
 }
 
+/// Check if the given filename if the name of an account file.
 /// Account filenames are of the form
 /// "account_URL.xml",
 /// where URL is master URL with slashes replaced by underscores.
-bool is_account_file(const char* filename) {
-    const char* p, *q;
-    p = strstr(filename, "account_");
-    if (p != filename) return false;
+///
+/// \param[in] filename The name of the file that should be checked.
+/// \return True if the file name given by \a filename has the correct
+///         syntax for an account file name, false otherwise.
+bool is_account_file(const std::string& filename) {
+    if (!starts_with(filename, "account_")) {
+        // Just return without an error message here because this would
+        // generate an error message for each file in the data directory
+        // but error messages should only be shown for maleformed
+        // account files.
+        return false;
+    }
 
-    q = filename + strlen("account_");
-    p = strstr(q, ".xml");
-    if (!p) return bad_account_filename(filename);
-    if (p == q) return bad_account_filename(filename);
+    if (!ends_with(filename, ".xml")) {
+        return bad_account_filename(filename);
+    }
 
-    q = p + strlen(".xml");
-    if (strlen(q)) return bad_account_filename(filename);
+    // Now check if there is an url between "account_" and ".xml":
+    if (filename.length() == (strlen("account_") + strlen(".xml"))) {
+        return bad_account_filename(filename);
+    }
+
+    // All checks passed.
     return true;
 }
 
+/// Print an error message for an invalid statistics file name.
+///
+/// \param[in] filename The invalid file name.
+/// \return Always returns false.
+static bool bad_statistics_filename(const std::string& filename) {
+    msg_printf(NULL, MSG_INTERNAL_ERROR, "Invalid statistics filename: %s", filename.c_str());
+    return false;
+}
+
+/// Check if the given filename if the name of a statistics file.
 /// statistics filenames are of the form
 /// "statistics_URL.xml",
 /// where URL is master URL with slashes replaced by underscores.
-bool is_statistics_file(const char* filename) {
-    const char* p, *q;
-    p = strstr(filename, "statistics_");
-    if (p != filename) return false;
-    q = filename + strlen("statistics_");
+///
+/// \param[in] filename The name of the file that should be checked.
+/// \return True if the file name given by \a filename has the correct
+///         syntax for a statistics file name, false otherwise.
+bool is_statistics_file(const std::string& filename) {
+    if (!starts_with(filename, "statistics_")) {
+        // Just return without an error message here because this would
+        // generate an error message for each file in the data directory
+        // but error messages should only be shown for maleformed
+        // statistics files.
+        return false;
+    }
 
-    p = strstr(q, ".");
-    if (!p) return bad_account_filename(filename);
-    if (p == q) return bad_account_filename(filename);
+    if (!ends_with(filename, ".xml")) {
+        return bad_statistics_filename(filename);
+    }
 
-    q = p+1;
-    p = strstr(q, ".xml");
-    if (!p) return bad_account_filename(filename);
-    if (p == q) return bad_account_filename(filename);
+    // Now check if there is an url between "account_" and ".xml":
+    if (filename.length() == (strlen("statistics_") + strlen(".xml"))) {
+        return bad_statistics_filename(filename);
+    }
 
-    q = p + strlen(".xml");
-    if (strlen(q)) return bad_account_filename(filename);
+    // All checks passed.
     return true;
 }
 
@@ -294,16 +325,3 @@ bool is_image_file(const char* filename) {
     if (ends_with(fn, std::string(".png"))) return true;
     return false;
 }
-
-void boinc_version_dir(const PROJECT& p, const VERSION_INFO& vi, char* buf) {
-	char projdir[1024];
-	get_project_dir(&p, projdir, sizeof(projdir));
-    sprintf(buf, "%s/boinc_version_%d_%d_%d", projdir, vi.major, vi.minor, vi.release);
-}
-
-bool is_version_dir(const char* buf, VERSION_INFO& vi) {
-    int n = sscanf(buf, "boinc_version_%d_%d_%d", &vi.major, &vi.minor, &vi.release);
-    return (n==3);
-}
-
-const char *BOINC_RCSID_7d362a6a52 = "$Id: file_names.C 14582 2008-01-16 22:10:34Z romw $";

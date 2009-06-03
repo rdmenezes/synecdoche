@@ -58,8 +58,8 @@ typedef HANDLE (WINAPI *tOT)(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD d
 /// Look in the registry for the specified value user the BOINC diagnostics
 /// hive.
 BOOL diagnostics_get_registry_value(LPCTSTR lpName, LPDWORD lpdwType, LPDWORD lpdwSize, LPBYTE lpData) {
-	LONG  lRetVal;
-	HKEY  hKey;
+    LONG  lRetVal;
+    HKEY  hKey;
 
     // Detect platform information
     OSVERSIONINFO osvi; 
@@ -67,30 +67,30 @@ BOOL diagnostics_get_registry_value(LPCTSTR lpName, LPDWORD lpdwType, LPDWORD lp
     GetVersionEx(&osvi);
 
     if (VER_PLATFORM_WIN32_WINDOWS == osvi.dwPlatformId) {
-		lRetVal = RegOpenKeyEx(
+        lRetVal = RegOpenKeyEx(
             HKEY_LOCAL_MACHINE, 
             _T("SOFTWARE\\Synecdoche\\Synecdoche Diagnostics"),
-			(DWORD)NULL, 
+            (DWORD)NULL, 
             KEY_READ,
             &hKey
         );
-		if (lRetVal != ERROR_SUCCESS) return FALSE;
-	} else {
-		lRetVal = RegOpenKeyEx(
+        if (lRetVal != ERROR_SUCCESS) return FALSE;
+    } else {
+        lRetVal = RegOpenKeyEx(
             HKEY_CURRENT_USER,
             _T("SOFTWARE\\Synecdoche\\Synecdoche Diagnostics"),
-			(DWORD)NULL,
+            (DWORD)NULL,
             KEY_READ,
             &hKey
         );
-		if (lRetVal != ERROR_SUCCESS) return FALSE;
-	}
+        if (lRetVal != ERROR_SUCCESS) return FALSE;
+    }
 
-	lRetVal = RegQueryValueEx(hKey, lpName, NULL, lpdwType, lpData, lpdwSize);
+    lRetVal = RegQueryValueEx(hKey, lpName, NULL, lpdwType, lpData, lpdwSize);
 
-	RegCloseKey(hKey);
+    RegCloseKey(hKey);
 
-	return (lRetVal == ERROR_SUCCESS);
+    return (lRetVal == ERROR_SUCCESS);
 }
 
 
@@ -111,7 +111,7 @@ static BOINC_PROCESSENTRY diagnostics_process;
 //   SEH exception is thrown.
 //
 
-/// This structure is used to keep track of stuff nessassary
+/// This structure is used to keep track of stuff necessary
 /// to dump backtraces for all threads during an abort or
 /// crash.  This is platform specific in nature since it
 /// depends on the OS datatypes.
@@ -372,7 +372,7 @@ int diagnostics_update_thread_list_NT() {
     // Wait for the ThreadListSync mutex before writing updates
     WaitForSingleObject(hThreadListSync, INFINITE);
 
-    // Lets start walking the structures to find the good stuff.
+    // Start walking the structures to find the good stuff.
     pProcesses = (PSYSTEM_PROCESSES_NT4)pBuffer;
     do {
         // Okay, found the current procceses entry now we just need to
@@ -578,7 +578,7 @@ int diagnostics_update_thread_list() {
 }
 
 
-/// Set the current threads name to make it easy to know what the
+/// Set the current thread's name to make it easy to know what the
 /// thread is supposed to be doing.
 int diagnostics_set_thread_exception_record(PEXCEPTION_POINTERS pExPtrs) {
     HANDLE hThread;
@@ -616,7 +616,7 @@ int diagnostics_set_thread_exception_record(PEXCEPTION_POINTERS pExPtrs) {
 }
 
 
-/// Set the current threads name to make it easy to know what the
+/// Set the current thread's name to make it easy to know what the
 /// thread is supposed to be doing.
 int diagnostics_set_thread_exempt_suspend() {
     HANDLE hThread;
@@ -655,7 +655,7 @@ int diagnostics_set_thread_exempt_suspend() {
 
 
 /// Set the current thread's crash message.
-int diagnostics_set_thread_crash_message(char* message) {
+int diagnostics_set_thread_crash_message(const char* message) {
     HANDLE hThread;
     PBOINC_THREADLISTENTRY pThreadEntry = NULL;
 
@@ -710,7 +710,7 @@ int diagnostics_set_thread_crash_message(char* message) {
 /// Translate the thread state into a human readable form.
 /// 
 /// See: http://support.microsoft.com/?kbid=837372
-char* diagnostics_format_thread_state(int thread_state) {
+const char* diagnostics_format_thread_state(int thread_state) {
     switch(thread_state) {
         case ThreadStateInitialized: return "Initialized";
         case ThreadStateReady: return "Ready";
@@ -727,7 +727,7 @@ char* diagnostics_format_thread_state(int thread_state) {
 /// Translate the thread wait reason into a human readable form.
 /// 
 /// See: http://support.microsoft.com/?kbid=837372
-char* diagnostics_format_thread_wait_reason(int thread_wait_reason) {
+const char* diagnostics_format_thread_wait_reason(int thread_wait_reason) {
     switch(thread_wait_reason) {
         case ThreadWaitReasonExecutive: return "Executive";
         case ThreadWaitReasonFreePage: return "FreePage";
@@ -757,7 +757,7 @@ char* diagnostics_format_thread_wait_reason(int thread_wait_reason) {
 /// Translate the process priority class into a human readable form.
 /// 
 /// See: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/scheduling_priorities.asp
-char* diagnostics_format_process_priority(int process_priority) {
+const char* diagnostics_format_process_priority(int process_priority) {
     switch(process_priority) {
         case IDLE_PRIORITY_CLASS: return "Idle";
         case BELOW_NORMAL_PRIORITY_CLASS: return "Below Normal";
@@ -773,7 +773,7 @@ char* diagnostics_format_process_priority(int process_priority) {
 /// Translate the thread priority class into a human readable form.
 /// 
 /// See: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/scheduling_priorities.asp
-char* diagnostics_format_thread_priority(int thread_priority) {
+const char* diagnostics_format_thread_priority(int thread_priority) {
     switch(thread_priority) {
         case THREAD_PRIORITY_IDLE: return "Idle";
         case THREAD_PRIORITY_LOWEST: return "Lowest";
@@ -852,7 +852,7 @@ int diagnostics_init_message_monitor() {
     }
     diagnostics_monitor_messages.clear();
 
-    // Check the registry to see if we are aloud to capture debugger messages.
+    // Check the registry to see if we are allowed to capture debugger messages.
     //   Apparently many audio and visual payback programs dump serious
     //   amounts of data to the debugger viewport even on a release build.
     //   When this feature is enabled it slows down the replay of DVDs and CDs
@@ -959,7 +959,7 @@ int diagnostics_init_message_monitor() {
 }
 
 
-/// Shutdown the message monitoring thread and cleanup any of the in memory
+/// Shutdown the message monitoring thread and cleanup any of the in-memory
 /// structures.
 int diagnostics_finish_message_monitor() {
     unsigned int i;
@@ -968,8 +968,8 @@ int diagnostics_finish_message_monitor() {
     //   message monitoring thread.
     SetEvent(hMessageQuitEvent);
 
-    // Wait until it is message monitoring thread is shutdown before
-    //   cleaning up the structure since we'll need to aquire the
+    // Wait until the message monitoring thread is shutdown before
+    //   cleaning up the structure since we'll need to acquire the
     //   MessageMonitorSync mutex.
     WaitForSingleObject(hMessageQuitFinishedEvent, INFINITE);
     WaitForSingleObject(hMessageMonitorSync, INFINITE);
@@ -1030,7 +1030,7 @@ int diagnostics_message_monitor_dump() {
 
 
 /// This thread monitors the shared memory buffer used to pass debug messages
-/// around.  due to an anomaly in the Windows debug environment it is
+/// around. Due to an anomaly in the Windows debug environment it is
 /// suggested that a sleep(0) be introduced before any 
 /// SetEvent/ResetEvent/PulseEvent function is called.
 /// 
@@ -1055,7 +1055,7 @@ UINT WINAPI diagnostics_message_monitor(LPVOID /* lpParameter */) {
     hEvents[0] = hMessageQuitEvent;
     hEvents[1] = hMessageReadyEvent;
 
-    // Cache the current process id
+    // Cache the current process ID
     dwCurrentProcessId = GetCurrentProcessId();
 
     // Signal that the buffer is ready for action.
@@ -1191,9 +1191,8 @@ UINT WINAPI diagnostics_message_monitor(LPVOID /* lpParameter */) {
 //   threads.
 //
 
-/// This structure is used to keep track of stuff nessassary
-/// to dump information about the top most window during
-/// a crash event.
+/// This structure is used to keep track of stuff necessary to dump
+/// information about the top most window during a crash event.
 typedef struct _BOINC_WINDOWCAPTURE {
     HWND         hwnd;
     char         window_name[256];
@@ -1241,7 +1240,7 @@ int diagnostics_init_unhandled_exception_monitor() {
 
     // The following event is thrown by a thread that has experienced an
     //   unhandled exception after storing its exception record but before
-    //   it attempts to aquire the halt mutex.
+    //   it attempts to acquire the halt mutex.
     hExceptionDetectedEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     if (!hExceptionDetectedEvent) {
         fprintf(
@@ -1309,7 +1308,7 @@ int diagnostics_finish_unhandled_exception_monitor() {
     SetEvent(hExceptionQuitEvent);
 
     // Wait until it is message monitoring thread is shutdown before
-    //   cleaning up the structure since we'll need to aquire the
+    //   cleaning up the structure since we'll need to acquire the
     //   MessageMonitorSync mutex.
     WaitForSingleObject(hExceptionQuitFinishedEvent, INFINITE);
 
@@ -1358,14 +1357,14 @@ int diagnostics_capture_foreground_window(PBOINC_WINDOWCAPTURE window_info) {
 
 
     // Initialize structure variables.
-	strcpy(window_info->window_name, "");
-	strcpy(window_info->window_class, "");
+    strcpy(window_info->window_name, "");
+    strcpy(window_info->window_class, "");
     window_info->hwnd = 0;
     window_info->window_process_id = 0;
     window_info->window_thread_id = 0;
 
 
-    // Check the registry to see if we are aloud to capture the foreground
+    // Check the registry to see if we are allowed to capture the foreground
     //   window data. Many people were concerned about privacy issues.
     //
     // We'll turn it off by default, but keep it around just in case we need
@@ -1390,23 +1389,23 @@ int diagnostics_capture_foreground_window(PBOINC_WINDOWCAPTURE window_info) {
             &window_info->window_process_id
         );
 
-	    // Only query the window text from windows in a different process space.
-	    //   All threads that might have windows are suspended in this process
-	    //   space and attempting to get the window text will deadlock the exception
-	    //   handler.
-	    if (window_info->window_process_id != GetCurrentProcessId()) {
-		    GetWindowText(
-			    window_info->hwnd, 
-			    window_info->window_name,
-			    sizeof(window_info->window_name)
-		    );
+        // Only query the window text from windows in a different process space.
+        //   All threads that might have windows are suspended in this process
+        //   space and attempting to get the window text will deadlock the exception
+        //   handler.
+        if (window_info->window_process_id != GetCurrentProcessId()) {
+            GetWindowText(
+                window_info->hwnd, 
+                window_info->window_name,
+                sizeof(window_info->window_name)
+            );
 
-		    GetClassName(
-			    window_info->hwnd,
-			    window_info->window_class,
-			    sizeof(window_info->window_class)
-		    );
-	    }
+            GetClassName(
+                window_info->hwnd,
+                window_info->window_class,
+                sizeof(window_info->window_class)
+            );
+        }
     }
 
     return 0;
@@ -1530,7 +1529,7 @@ int diagnostics_dump_thread_information(PBOINC_THREADLISTENTRY pThreadEntry) {
 
 
 /// Provide a generic way to format exceptions
-int diagnostics_dump_generic_exception(char* exception_desc, DWORD exception_code, PVOID exception_address) {
+int diagnostics_dump_generic_exception(const char* exception_desc, DWORD exception_code, PVOID exception_address) {
     fprintf(
         stderr, 
         "Reason: %s (0x%x) at address 0x%p\n\n",
@@ -1670,7 +1669,7 @@ int diagnostics_dump_exception_record(PEXCEPTION_POINTERS pExPtrs) {
 
 
 /// Priority is given to the worker threads exception code, and then the
-/// graphics thread.  If neither of those two threw the exception grab
+/// graphics thread.  If neither of those two threw the exception, grab
 /// the exception code of the thread that did.
 UINT diagnostics_determine_exit_code() {
     UINT   uiReturn = 0;
@@ -1757,7 +1756,7 @@ UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID /* lpParameter */) {
                 // Suspend the other threads.
                 for (i=0; i<diagnostics_threads.size(); i++) {
                     pThreadEntry = diagnostics_threads[i];
-			        // Suspend the thread before getting the threads context, otherwise
+                    // Suspend the thread before getting the threads context, otherwise
                     //   it'll be junk.
                     if (!pThreadEntry->crash_suspend_exempt && pThreadEntry->thread_handle) {
                         SuspendThread(pThreadEntry->thread_handle);
@@ -1772,14 +1771,14 @@ UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID /* lpParameter */) {
                 //   in the install directory if it is defined, otherwise look
                 //   in the data directory.
                 if (0 != strlen(diagnostics_get_boinc_install_dir())) {
- 	                bDebuggerInitialized = !DebuggerInitialize(
+                    bDebuggerInitialized = !DebuggerInitialize(
                         diagnostics_get_boinc_install_dir(),
                         diagnostics_get_symstore(),
                         diagnostics_is_proxy_enabled(),
                         diagnostics_get_proxy()
                     );
                 } else {
- 	                bDebuggerInitialized = !DebuggerInitialize(
+                    bDebuggerInitialized = !DebuggerInitialize(
                         diagnostics_get_boinc_dir(),
                         diagnostics_get_symstore(),
                         diagnostics_is_proxy_enabled(),
@@ -1819,7 +1818,7 @@ UINT WINAPI diagnostics_unhandled_exception_monitor(LPVOID /* lpParameter */) {
                                     // Get the thread context
                                     memset(&c, 0, sizeof(CONTEXT));
                                     c.ContextFlags = CONTEXT_FULL;
-				                    GetThreadContext(pThreadEntry->thread_handle, &c);
+                                    GetThreadContext(pThreadEntry->thread_handle, &c);
 
                                     StackwalkThread(
                                         pThreadEntry->thread_handle,
@@ -2053,24 +2052,21 @@ LONG CALLBACK boinc_catch_signal(PEXCEPTION_POINTERS pExPtrs) {
 /// then throw a breakpoint exception to dump all the rest of the useful
 /// information.
 void boinc_catch_signal_invalid_parameter(
-    const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line,	uintptr_t /* pReserved */
+    const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line, uintptr_t /* pReserved */
 ) {
-	fprintf(
-		stderr,
+    fprintf(
+        stderr,
         "ERROR: Invalid parameter detected in function %s. File: %s Line: %d\n",
-		function,
-		file,
-		line
-	);
-	fprintf(
-		stderr,
-		"ERROR: Expression: %s\n",
-		expression
-	);
+        function,
+        file,
+        line
+    );
+    fprintf(
+        stderr,
+        "ERROR: Expression: %s\n",
+        expression
+    );
 
-	// Cause a Debug Breakpoint.
-	DebugBreak();
+    // Cause a Debug Breakpoint.
+    DebugBreak();
 }
-
-
-const char *BOINC_RCSID_5967ad204d = "$Id: diagnostics_win.C 15378 2008-06-09 19:28:35Z romw $";

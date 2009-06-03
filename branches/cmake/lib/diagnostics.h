@@ -81,12 +81,12 @@ extern int diagnostics_is_initialized();
 extern int diagnostics_is_flag_set( int flags );
 
 // Properties
-extern char* diagnostics_get_boinc_dir();
-extern char* diagnostics_get_boinc_install_dir();
-extern char* diagnostics_get_symstore();
-extern int diagnostics_set_symstore(char* symstore);
+extern const char* diagnostics_get_boinc_dir();
+extern const char* diagnostics_get_boinc_install_dir();
+extern const char* diagnostics_get_symstore();
+extern int diagnostics_set_symstore(const char* symstore);
 extern int diagnostics_is_proxy_enabled();
-extern char* diagnostics_get_proxy();
+extern const char* diagnostics_get_proxy();
 
 extern int diagnostics_is_aborted_via_gui();
 extern int diagnostics_set_aborted_via_gui();
@@ -200,15 +200,15 @@ extern void set_signal_exit_code(int);
 //   if it hasn't already been redirected.
 
 #ifndef BOINCASSERT
-#define BOINCASSERT			assert
+#define BOINCASSERT         assert
 #endif
 
 #ifndef BOINCTRACE
-#define BOINCTRACE			
+#define BOINCTRACE
 #endif
 
 #ifndef BOINCINFO
-#define BOINCINFO			boinc_info
+#define BOINCINFO           boinc_info
 #endif
 
 #endif

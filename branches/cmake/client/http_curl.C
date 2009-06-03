@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -1116,16 +1117,17 @@ void HTTP_OP::set_speed_limit(bool is_upload, double bytes_sec) {
 #endif
 }
 
+/// Delete all temporary files.
 void HTTP_OP_SET::cleanup_temp_files() {
-    char filename[256];
-
-    DIRREF d = dir_open(".");
-    while (1) {
-        int retval = dir_scan(filename, d, sizeof(filename));
-        if (retval) break;
-        if (strstr(filename, "blc") != filename) continue;
-        if (!is_file(filename)) continue;
-        boinc_delete_file(filename);
+    DirScanner dscan(".");
+    while (true) {
+        std::string filename;
+        if (!dscan.scan(filename)) {
+            break;
+        }
+        if ((filename.find("blc") != 0) || (!is_file(filename.c_str()))) {
+            continue;
+        }
+        boinc_delete_file(filename.c_str());
     }
-    dir_close(d);
 }

@@ -50,10 +50,10 @@ static int lookup_group(const char* name, gid_t& gid) {
 
 void kill_via_switcher(int pid) {
     char cmd[1024];
-    
+
     if (!g_use_sandbox) return;
 
-    // if project application is running as user boinc_project and 
+    // if project application is running as user boinc_project and
     // core client is running as user boinc_master, we cannot send
     // a signal directly, so use switcher.
     sprintf(cmd, "/bin/kill kill -s KILL %d", pid);
@@ -83,10 +83,10 @@ int set_to_project_group(const char* path) {
 }
 
 /// Run an utility program.
-/// POSIX requires that shells run from an application will use the 
-/// real UID and GID if different from the effective UID and GID.  
-/// Mac OS 10.4 did not enforce this, but OS 10.5 does.  Since 
-/// system() invokes a shell, we can't use it to run the switcher 
+/// POSIX requires that shells run from an application will use the
+/// real UID and GID if different from the effective UID and GID.
+/// Mac OS 10.4 did not enforce this, but OS 10.5 does.  Since
+/// system() invokes a shell, we can't use it to run the switcher
 /// or setprojectgrp utilities, so we must do a fork() and execv().
 ///
 /// \param[in] util_filename Name of the utility that should get started.
@@ -112,7 +112,7 @@ int switcher_exec(const char* util_filename, const char* cmdline) {
         return ERR_EXEC;
     }
     // Wait for command to complete, like system() does.
-    waitpid(pid, 0, 0); 
+    waitpid(pid, 0, 0);
     return BOINC_SUCCESS;
 }
 
@@ -151,11 +151,11 @@ static int delete_project_owned_file_aux(const char* path) {
 #endif
 }
 
-// Delete the file located at path.
-// If "retry" is set, do retries for 5 sec in case some
-// other program (e.g. virus checker) has the file locked.
-// Don't do this if deleting directories - it can lock up the Manager.
-//
+/// Delete the file located at path.
+/// If "retry" is set, do retries for 5 sec in case some
+/// other program (e.g. virus checker) has the file locked.
+/// Don't do this if deleting directories - it can lock up the Manager.
+///
 int delete_project_owned_file(const char* path, bool retry) {
     int retval = 0;
 
@@ -178,13 +178,14 @@ int delete_project_owned_file(const char* path, bool retry) {
     return 0;
 }
 
-// recursively delete everything in the specified directory
-// (but not the directory itself).
-// If an error occurs, delete as much as possible.
-//
+/// Recursively delete everything in the specified directory.
+/// (but not the directory itself).
+/// If an error occurs, delete as much as possible.
+///
+/// \param[in] dirpath Path to the directory that should be cleared.
+/// \return Zero on success, nonzero otherwise.
 int client_clean_out_dir(const char* dirpath) {
-    char filename[256], path[256];
-    int retval, final_retval = 0;
+    int final_retval = 0;
     DIRREF dirp;
 
     dirp = dir_open(dirpath);
@@ -198,19 +199,29 @@ int client_clean_out_dir(const char* dirpath) {
         return 0;    // if dir doesn't exist, it's empty
     }
 
-    while (1) {
-        strcpy(filename, "");
-        retval = dir_scan(filename, dirp, sizeof(filename));
-        if (retval) break;
-        sprintf(path, "%s/%s", dirpath,  filename);
-        if (is_dir(path)) {
-            retval = client_clean_out_dir(path);
-            if (retval) final_retval = retval;
-            retval = remove_project_owned_dir(path);
-            if (retval) final_retval = retval;
+    while (true) {
+        std::string filename;
+        if (dir_scan(filename, dirp)) {
+            break;
+        }
+        std::string path(dirpath);
+        path.append("/").append(filename);
+
+        int retval;
+        if (is_dir(path.c_str())) {
+            retval = client_clean_out_dir(path.c_str());
+            if (retval) {
+                final_retval = retval;
+            }
+            retval = remove_project_owned_dir(path.c_str());
+            if (retval) {
+                final_retval = retval;
+            }
         } else {
-            retval = delete_project_owned_file(path, false);
-            if (retval) final_retval = retval;
+            retval = delete_project_owned_file(path.c_str(), false);
+            if (retval) {
+                final_retval = retval;
+            }
         }
     }
     dir_close(dirp);

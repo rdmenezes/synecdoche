@@ -128,13 +128,13 @@ static void handle_get_project_status(MIOFILE& fout) {
 
 static void handle_get_disk_usage(MIOFILE& fout) {
     unsigned int i;
-    double size, d_boinc, d_allowed;
+    double size, boinc_non_project, d_allowed, boinc_total;
 
     fout.printf("<disk_usage_summary>\n");
     get_filesystem_info(gstate.host_info.d_total, gstate.host_info.d_free);
-    dir_size(".", d_boinc, false);
+    dir_size(".", boinc_non_project, false);
     dir_size("locale", size, false);
-    d_boinc += size;
+    boinc_non_project += size;
 #ifdef __APPLE__
     if (gstate.launched_by_manager) {
         // If launched by Manager, get Manager's size on disk
@@ -147,17 +147,10 @@ static void handle_get_disk_usage(MIOFILE& fout) {
         if (! err) err = GetProcessBundleLocation(&managerPSN, &ourFSRef);
         if (! err) err = FSRefMakePath (&ourFSRef, (UInt8*)path, sizeof(path));
         if (! err) dir_size(path, manager_size, true);
-        if (! err) d_boinc += manager_size;
+        if (! err) boinc_non_project += manager_size;
     }
 #endif
-    d_allowed = gstate.allowed_disk_usage();
-    fout.printf(
-        "<d_total>%f</d_total>\n"
-        "<d_free>%f</d_free>\n"
-        "<d_boinc>%f</d_boinc>\n"
-        "<d_allowed>%f</d_allowed>\n",
-        gstate.host_info.d_total, gstate.host_info.d_free, d_boinc, d_allowed
-    );
+    boinc_total = boinc_non_project;
     for (i=0; i<gstate.projects.size(); i++) {
         PROJECT* p = gstate.projects[i];
         gstate.project_disk_usage(p, size);
@@ -168,7 +161,16 @@ static void handle_get_disk_usage(MIOFILE& fout) {
             "</project>\n",
             p->master_url, size
         );
+        boinc_total += size;
     }
+    d_allowed = gstate.allowed_disk_usage(boinc_total);
+    fout.printf(
+        "<d_total>%f</d_total>\n"
+        "<d_free>%f</d_free>\n"
+        "<d_boinc>%f</d_boinc>\n"
+        "<d_allowed>%f</d_allowed>\n",
+        gstate.host_info.d_total, gstate.host_info.d_free, boinc_non_project, d_allowed
+    );
     fout.printf("</disk_usage_summary>\n");
 }
 
@@ -410,13 +412,13 @@ static void handle_file_transfer_op(const char* buf, MIOFILE& fout, const char* 
         fout.printf("<error>Missing filename</error>\n");
         return;
     }
-    
+
     FILE_INFO* f = gstate.lookup_file_info(p, filename.c_str());
     if (!f) {
         fout.printf("<error>No such file</error>\n");
         return;
     }
-    
+
     PERS_FILE_XFER* pfx = f->pers_file_xfer;
     if (!pfx) {
         fout.printf("<error>No such transfer waiting</error>\n");
@@ -530,7 +532,7 @@ static void handle_get_statistics(const char*, MIOFILE& fout) {
     fout.printf("</statistics>\n");
 }
 
-static void handle_get_cc_status(GUI_RPC_CONN* gr, MIOFILE& fout) {
+static void handle_get_cc_status(MIOFILE& fout) {
     fout.printf(
         "<cc_status>\n"
         "   <network_status>%d</network_status>\n"
@@ -544,7 +546,8 @@ static void handle_get_cc_status(GUI_RPC_CONN* gr, MIOFILE& fout) {
         "   <task_mode_delay>%f</task_mode_delay>\n"
         "   <network_mode_delay>%f</network_mode_delay>\n"
         "   <disallow_attach>%d</disallow_attach>\n"
-        "   <simple_gui_only>%ds</simple_gui_only>\n",
+        "   <simple_gui_only>%ds</simple_gui_only>\n"
+        "</cc_status>\n",
         net_status.network_status(),
         gstate.acct_mgr_info.password_error?1:0,
         gstate.suspend_reason,
@@ -557,15 +560,6 @@ static void handle_get_cc_status(GUI_RPC_CONN* gr, MIOFILE& fout) {
         gstate.network_mode.delay(),
         config.disallow_attach?1:0,
         config.simple_gui_only?1:0
-    );
-    if (gr->au_mgr_state == AU_MGR_QUIT_REQ) {
-        fout.printf(
-            "   <manager_must_quit>1</manager_must_quit>\n"
-        );
-        gr->au_mgr_state = AU_MGR_QUIT_SENT;
-    }
-    fout.printf(
-        "</cc_status>\n"
     );
 }
 
@@ -1064,7 +1058,7 @@ int GUI_RPC_CONN::handle_rpc() {
         handle_get_newer_version(mf);
 #endif
     } else if (match_tag(request_msg, "<get_cc_status")) {
-        handle_get_cc_status(this, mf);
+        handle_get_cc_status(mf);
 
     // Operations that require authentication start here
 

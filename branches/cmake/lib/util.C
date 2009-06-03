@@ -276,9 +276,9 @@ double linux_cpu_time(int pid) {
 
 void boinc_crash() {
 #ifdef _WIN32
-	DebugBreak();
+    DebugBreak();
 #else
-	*(int*)0 = 0;
+    *(int*)0 = 0;
 #endif
 }
 
@@ -428,6 +428,9 @@ int get_exit_status(HANDLE pid_handle) {
             if (status == STILL_ACTIVE) {
                 boinc_sleep(1);
             }
+            else {
+                break;
+            }
         }
     }
     return (int) status;
@@ -527,5 +530,3 @@ int wait_client_mutex(const char* dir, double timeout) {
     }
     return ERR_ALREADY_RUNNING;
 }
-
-const char *BOINC_RCSID_ab65c90e1e = "$Id: util.C 15038 2008-04-10 16:42:09Z romw $";

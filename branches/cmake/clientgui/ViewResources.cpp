@@ -252,7 +252,7 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
         if (avail > 0) {
             if (avail > free) avail = free;
             FormatDiskSpace(avail, diskspace);
-	        label.Printf(_("free, available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
+            label.Printf(_("free, available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
             part.SetLabel(label + diskspace);
             part.SetValue(avail);
             part.SetColour(wxColour(128, 128, 128));
@@ -263,13 +263,14 @@ void CViewResources::OnListRender( wxTimerEvent& WXUNUSED(event) ) {
 
         // free disk space
         double not_avail = free - avail;
-        FormatDiskSpace(not_avail, diskspace);
-        label.Printf(_("free, not available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
-        part.SetLabel(label + diskspace);
-        part.SetValue(not_avail);
-        part.SetColour(wxColour(238,238,238));
-        m_pieCtrlTotal->m_Series.Add(part);
-
+        if (not_avail > 0.0) {
+            FormatDiskSpace(not_avail, diskspace);
+            label.Printf(_("free, not available to %s - "), pSkinAdvanced->GetApplicationName().c_str());
+            part.SetLabel(label + diskspace);
+            part.SetValue(not_avail);
+            part.SetColour(wxColour(238,238,238));
+            m_pieCtrlTotal->m_Series.Add(part);
+        }
 
         // used by others
         double used_by_others = total-boinc_total-free;

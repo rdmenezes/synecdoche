@@ -276,9 +276,9 @@ void CBOINCBaseFrame::OnClose(wxCloseEvent& event) {
 void CBOINCBaseFrame::OnCloseWindow(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnCloseWindow - Function Begin"));
 
-	Close();
+    Close();
 
-	wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnCloseWindow - Function End"));
+    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::OnCloseWindow - Function End"));
 }
 
 

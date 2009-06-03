@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,8 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _FILE_NAMES_
-#define _FILE_NAMES_
+#ifndef FILE_NAMES_H
+#define FILE_NAMES_H
 
 #include "client_types.h"
 #include "common_defs.h"
@@ -33,10 +34,19 @@ extern void get_slot_dir(int slot, char* path, int len);
 extern int make_project_dir(const PROJECT&);
 extern int remove_project_dir(const PROJECT&);
 extern int make_slot_dir(int);
+
+/// Delete unused stuff in the slots/ directory.
 extern void delete_old_slot_dirs();
-extern void get_account_filename(const char* master_url, char* path);
-extern bool is_account_file(const char*);
-extern bool is_statistics_file(const char*);
+
+/// Get the name of the account file for a given master URL.
+extern std::string get_account_filename(const char* master_url);
+
+/// Check if the given filename if the name of an account file.
+extern bool is_account_file(const std::string& filename);
+
+/// Check if the given filename if the name of a statistics file.
+extern bool is_statistics_file(const std::string& filename);
+
 extern void get_statistics_filename(const char* master_url, char* path);
 extern bool is_image_file(const char*);
 
@@ -44,8 +54,6 @@ extern void get_sched_request_filename(const PROJECT&, char*, int len);
 extern void get_sched_reply_filename(const PROJECT&, char*, int len);
 extern void get_master_filename(const PROJECT&, char*, int len);
 extern void job_log_filename(const PROJECT&, char*, int);
-extern void boinc_version_dir(const PROJECT&, const VERSION_INFO&, char*);
-extern bool is_version_dir(const char*, VERSION_INFO&);
 extern void send_log_after(const char* filename, double t, MIOFILE& mf);
 
 #define PROJECTS_DIR                "projects"
@@ -64,7 +72,7 @@ extern void send_log_after(const char* filename, double t, MIOFILE& mf);
 #define STDERR_FILE_NAME            "stderr.txt"
 #define STDOUT_FILE_NAME            "stdout.txt"
 #define CPU_BENCHMARKS_FILE_NAME    "cpu_benchmarks"
-#define APP_INFO_FILE_NAME			"app_info.xml"
+#define APP_INFO_FILE_NAME          "app_info.xml"
 #define REMOTEHOST_FILE_NAME        "remote_hosts.cfg"
 #define ACCT_MGR_REQUEST_FILENAME   "acct_mgr_request.xml"
 #define ACCT_MGR_REPLY_FILENAME     "acct_mgr_reply.xml"
@@ -78,7 +86,6 @@ extern void send_log_after(const char* filename, double t, MIOFILE& mf);
 #define LOOKUP_WEBSITE_FILENAME     "lookup_website.html"
 #define GET_CURRENT_VERSION_FILENAME    "get_current_version.xml"
 #define ALL_PROJECTS_LIST_FILENAME "all_projects_list.xml"
-#define ALL_PROJECTS_LIST_FILENAME_TEMP "all_projects_list_temp.xml"
 #define SWITCHER_FILE_NAME          "switcher"
 #define SETPROJECTGRP_FILE_NAME     "setprojectgrp"
 #define TIME_STATS_LOG              "time_stats_log"
@@ -86,4 +93,4 @@ extern void send_log_after(const char* filename, double t, MIOFILE& mf);
 #define CA_BUNDLE_FILENAME          "ca-bundle.crt"
 #define CLIENT_AUTH_FILENAME        "client_auth.xml"
 
-#endif
+#endif // FILE_NAMES_H

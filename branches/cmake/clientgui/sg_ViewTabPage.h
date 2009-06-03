@@ -31,17 +31,17 @@
 class MyCanvas : public wxWindow
 {
 public:
-	MyCanvas(wxWindow *parent, const wxPoint& pos, const wxSize& size, std::vector<wxBitmap> images);
+    MyCanvas(wxWindow *parent, const wxPoint& pos, const wxSize& size, std::vector<wxBitmap> images);
     void OnPaint(wxPaintEvent& event);
-	void AdvanceSlide();
-	void ReloadSlideShow(std::vector<wxBitmap> images);
+    void AdvanceSlide();
+    void ReloadSlideShow(std::vector<wxBitmap> images);
 
 private:
-	std::vector<ImageLoader*> vSlideShow;
-	int currentImageIndex;
-	std::vector<wxBitmap> ssImages;
-	bool reloadSlideShow;
-	void LoadSlideShow();
+    std::vector<ImageLoader*> vSlideShow;
+    int currentImageIndex;
+    std::vector<wxBitmap> ssImages;
+    bool reloadSlideShow;
+    void LoadSlideShow();
     DECLARE_EVENT_TABLE()
 };
 
@@ -54,104 +54,106 @@ class CViewTabPage : public wxPanel {
     DECLARE_DYNAMIC_CLASS( CViewTabPage )
 
 public:
-	
-	bool isAlive;
-	// btns ////////////
-	////////////////////
-	// animation
-	wxBitmap* btmpBgAnim;
-	CImageButton * btnAminBg;
+    
+    bool isAlive;
+    // btns ////////////
+    ////////////////////
+    // animation
+    wxBitmap* btmpBgAnim;
+    CImageButton * btnAminBg;
     //line
-	CTransparentStaticLine *lnProjName;
-	//strings
-	wxString projName;
-	wxString projectFrName;
-	wxString wrkUnitName;
-	wxString gaugePercent;
-	wxString elapsedTimeValue;
-	wxString timeRemainingValue;
-	//wxGauge *gaugeWUMain;
-	CProgressBar *gaugeWUMain;
-	wxStaticText *lblWrkUnitName;
-	wxStaticText *lblProjectFrName;
-	wxString percStr;
-	wxFloat64 percNum;
-	// bg
-	RESULT* resultWU;
+    CTransparentStaticLine *lnProjName;
+    //strings
+    wxString projName;
+    wxString projectFrName;
+    wxString wrkUnitName;
+    wxString gaugePercent;
+    wxString elapsedTimeValue;
+    wxString timeRemainingValue;
+    //wxGauge *gaugeWUMain;
+    CProgressBar *gaugeWUMain;
+    wxStaticText *lblWrkUnitName;
+    wxStaticText *lblProjectFrName;
+    wxString percStr;
+    wxFloat64 percNum;
+    // bg
+    RESULT* resultWU;
 
     CViewTabPage();
     CViewTabPage(
-		WorkunitNotebook* parent, RESULT* result, std::string name,std::string url
+        WorkunitNotebook* parent, RESULT* result, std::string name,std::string url
     );
     ~CViewTabPage();
 
     void CreatePage();
-	void UpdateInterface();
-	void ReskinInterface();
-	void OnWorkShowGraphics();
- 	void OnPaint(wxPaintEvent& event); 
-	void OnLeftUp(wxMouseEvent& event);
-	void DrawText();
-	void OnImageButton();
+    void UpdateInterface();
+    void ReskinInterface();
+    void OnWorkShowGraphics();
+    void OnPaint(wxPaintEvent& event); 
+    void OnLeftUp(wxMouseEvent& event);
+    void DrawText();
+    void OnImageButton();
     
-	// Setters
-	void SetTabName(const std::string nme) { m_name = nme; }
+    // Setters
+    void SetTabName(const std::string nme) { m_name = nme; }
     // Getters
-	std::string GetTabName() { return  m_name; }
-		
-	// Animation
+    std::string GetTabName() { return  m_name; }
+        
+    // Animation
     MyCanvas* GetCanvas() const { return m_canvas; }
-	
-	DECLARE_EVENT_TABLE()
+    
+    DECLARE_EVENT_TABLE()
 
 protected:
 
     //tab identifier
-	std::string m_name;
-	std::string m_prjUrl;
-	bool m_hasGraphic;
+    std::string m_name;
+    std::string m_prjUrl;
+    bool m_hasGraphic;
 
-	wxInt32 FormatCPUTime( RESULT* rslt, wxString& strBuffer ) const;
+    wxInt32 FormatCPUTime( RESULT* rslt, wxString& strBuffer ) const;
     wxInt32 FormatTimeToCompletion( RESULT* rslt, wxString& strBuffer ) const;
-	void SGUITimeFormat( float fBuffer, wxString& strBuffer) const;
+    void SGUITimeFormat( float fBuffer, wxString& strBuffer) const;
 
-	void OnEraseBackground(wxEraseEvent& event);
+    void OnEraseBackground(wxEraseEvent& event);
 
 private:
 
-	void CreateSlideShowWindow();
-	void LoadSlideShow(std::vector<wxBitmap> *vSlideShow);
-	bool Downloading();
-	int ComputeState();
-	void WriteText(wxDC* dc);
-	void FormatText(const wxString& title, const wxString& text, wxDC* dc, wxPoint pos, int col_width = 0, wxFont font = wxFont(SMALL_FONT,74,90,90,0,wxT("Arial")));
-	std::vector<wxBitmap> GetSlideShow();
-	wxWindow* wSlideShow;
-	MyCanvas* m_canvas;
-	double project_files_downloaded_time;
+    void CreateSlideShowWindow();
+
+    /// Load the slideshow.
+    void LoadSlideShow(std::vector<wxBitmap>* vSlideShow);
+
+    bool Downloading();
+    int ComputeState();
+    void WriteText(wxDC* dc);
+    void FormatText(const wxString& title, const wxString& text, wxDC* dc, wxPoint pos, int col_width = 0, wxFont font = wxFont(SMALL_FONT,74,90,90,0,wxT("Arial")));
+    std::vector<wxBitmap> GetSlideShow();
+    wxWindow* wSlideShow;
+    MyCanvas* m_canvas;
+    double project_files_downloaded_time;
 
 };
 
 class WorkunitNotebook : public wxFlatNotebook {
 
 public:
-	WorkunitNotebook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxT("FlatNotebook"));
-	~WorkunitNotebook();
-	void ReskinAppGUI();
-	void Update();
-	void OnChangeSlide(wxTimerEvent& WXUNUSED(event));
-	void OnTabChanged(wxFlatNotebookEvent& WXUNUSED(event));
+    WorkunitNotebook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxT("FlatNotebook"));
+    ~WorkunitNotebook();
+    void ReskinAppGUI();
+    void Update();
+    void OnChangeSlide(wxTimerEvent& WXUNUSED(event));
+    void OnTabChanged(wxFlatNotebookEvent& WXUNUSED(event));
 
 
 protected:
 
 private:
-	wxFlatNotebookImageList m_ImageList;
-	wxTimer* changeSlideTimer;
-	std::vector<CViewTabPage*> m_windows; // vector of all window tabs created for notebook
-	void AddTab(RESULT* result);
-	DECLARE_EVENT_TABLE()
+    wxFlatNotebookImageList m_ImageList;
+    wxTimer* changeSlideTimer;
+    std::vector<CViewTabPage*> m_windows; // vector of all window tabs created for notebook
+    void AddTab(RESULT* result);
+    DECLARE_EVENT_TABLE()
 
 };
 #endif
-

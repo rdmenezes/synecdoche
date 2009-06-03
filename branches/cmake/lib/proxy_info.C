@@ -56,10 +56,10 @@ int PROXY_INFO::parse(MIOFILE& in) {
 
 int PROXY_INFO::write(MIOFILE& out) const {
     char s5un[2048], s5up[2048], hun[2048], hup[2048];
-    xml_escape(socks5_user_name, s5un);
-    xml_escape(socks5_user_passwd, s5up);
-    xml_escape(http_user_name, hun);
-    xml_escape(http_user_passwd, hup);
+    xml_escape(socks5_user_name, s5un, sizeof(s5un));
+    xml_escape(socks5_user_passwd, s5up, sizeof(s5up));
+    xml_escape(http_user_name, hun, sizeof(hun));
+    xml_escape(http_user_passwd, hup, sizeof(hup));
     out.printf(
         "<proxy_info>\n"
         "%s"
@@ -105,5 +105,3 @@ void PROXY_INFO::clear() {
     strcpy(http_user_passwd, "");
     socks_version = 0;
 }
-
-const char *BOINC_RCSID_af13db88e5 = "$Id: proxy_info.C 14811 2008-02-27 23:26:38Z davea $";

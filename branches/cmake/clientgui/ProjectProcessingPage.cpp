@@ -283,7 +283,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
     wxTimeSpan tsExecutionTime;
     bool bPostNewEvent = true;
     int iReturnValue = 0;
-	bool creating_account = false;
+    bool creating_account = false;
  
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -324,7 +324,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
 
                 if (acc_info_page->CreateNewAccount()) {
                     pDoc->rpc.create_account(*ai);
-					creating_account = true;
+                    creating_account = true;
 
                     // Wait until we are done processing the request.
                     dtStartExecutionTime = wxDateTime::Now();
@@ -381,17 +381,17 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     SetProjectCommunitcationsSucceeded(false);
 
                     if ((ao->error_num == ERR_DB_NOT_UNIQUE)
-						|| (ao->error_num == ERR_NONUNIQUE_EMAIL)
-						|| (ao->error_num == ERR_BAD_PASSWD && creating_account)
-						|| CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTALREADYEXISTS)
-					) {
+                        || (ao->error_num == ERR_NONUNIQUE_EMAIL)
+                        || (ao->error_num == ERR_BAD_PASSWD && creating_account)
+                        || CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTALREADYEXISTS)
+                    ) {
                         SetProjectAccountAlreadyExists(true);
                     } else {
                         SetProjectAccountAlreadyExists(false);
                     }
 
                     if ((ERR_NOT_FOUND == ao->error_num) ||
-						(ao->error_num == ERR_DB_NOT_FOUND) ||
+                        (ao->error_num == ERR_DB_NOT_FOUND) ||
                         (ERR_BAD_EMAIL_ADDR == ao->error_num) ||
                         (ERR_BAD_PASSWD == ao->error_num) ||
                         CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTNOTFOUND)) {
@@ -409,7 +409,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                         strBuffer += 
                             _("An internal server error has occurred.\n");
                     } else {
-						if (ao->error_msg.size()) {
+                        if (ao->error_msg.size()) {
                             strBuffer += wxString(ao->error_msg.c_str(), wxConvUTF8) + wxString(wxT("\n"));
                         }
                     }
@@ -491,9 +491,9 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
             bPostNewEvent = false;
             break;
     }
- 
+
     Update();
- 
+
     if (bPostNewEvent && !CHECK_CLOSINGINPROGRESS()) {
         CProjectProcessingPageEvent TransitionEvent(wxEVT_PROJECTPROCESSING_STATECHANGE, this);
         AddPendingEvent(TransitionEvent);

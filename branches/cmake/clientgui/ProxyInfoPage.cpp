@@ -26,23 +26,23 @@
 #include "BOINCBaseWizard.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CErrProxyInfoPage, wxWizardPage)
-  
+
 BEGIN_EVENT_TABLE(CErrProxyInfoPage, wxWizardPage)
     EVT_WIZARD_PAGE_CHANGED(-1, CErrProxyInfoPage::OnPageChanged)
     EVT_WIZARD_CANCEL(-1, CErrProxyInfoPage::OnCancel)
 END_EVENT_TABLE()
- 
+
 /*!
  * CErrProxyInfoPage constructors
  */
- 
+
 CErrProxyInfoPage::CErrProxyInfoPage() {
 }
  
 CErrProxyInfoPage::CErrProxyInfoPage(CBOINCBaseWizard* parent) {
     Create(parent);
 }
- 
+
 /*!
  * CErrProxyInfoPage creator
  */
@@ -51,7 +51,7 @@ bool CErrProxyInfoPage::Create(CBOINCBaseWizard* parent) {
     m_pTitleStaticCtrl = NULL;
     m_pDescriptionStaticCtrl = NULL;
     m_pDirectionsStaticCtrl = NULL;
-  
+
     wxBitmap wizardBitmap(wxNullBitmap);
     wxWizardPage::Create(parent, wizardBitmap);
 
@@ -59,11 +59,11 @@ bool CErrProxyInfoPage::Create(CBOINCBaseWizard* parent) {
     GetSizer()->Fit(this);
     return TRUE;
 }
-  
+
 /*!
  * Control creation for CErrProxyInfoPage
  */
- 
+
 void CErrProxyInfoPage::CreateControls() {    
     CErrProxyInfoPage* itemWizardPage126 = this;
 
@@ -87,7 +87,7 @@ void CErrProxyInfoPage::CreateControls() {
     m_pDirectionsStaticCtrl->Create(itemWizardPage126, wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
     itemBoxSizer127->Add(m_pDirectionsStaticCtrl, 0, wxALIGN_LEFT|wxALL, 5);
 }
-  
+
 /*!
  * Gets the previous page.
  */
@@ -95,11 +95,11 @@ void CErrProxyInfoPage::CreateControls() {
 wxWizardPage* CErrProxyInfoPage::GetPrev() const {
     return PAGE_TRANSITION_BACK;
 }
-  
+
 /*!
  * Gets the next page.
  */
- 
+
 wxWizardPage* CErrProxyInfoPage::GetNext() const {
     if (CHECK_CLOSINGINPROGRESS()) {
         // Cancel Event Detected
@@ -108,11 +108,11 @@ wxWizardPage* CErrProxyInfoPage::GetNext() const {
         return PAGE_TRANSITION_NEXT(ID_ERRPROXYPAGE);
     }
 }
-  
+
 /*!
  * Should we show tooltips?
  */
- 
+
 bool CErrProxyInfoPage::ShowToolTips() {
     return TRUE;
 }
@@ -120,19 +120,19 @@ bool CErrProxyInfoPage::ShowToolTips() {
 /*!
  * Get bitmap resources
  */
- 
+
 wxBitmap CErrProxyInfoPage::GetBitmapResource(const wxString& WXUNUSED(name)) {
     return wxNullBitmap;
 }
-  
+
 /*!
  * Get icon resources
  */
- 
+
 wxIcon CErrProxyInfoPage::GetIconResource(const wxString& WXUNUSED(name)) {
     return wxNullIcon;
 }
-  
+
 /*!
  * wxEVT_WIZARD_PAGE_CHANGED event handler for ID_ERRPROXYINFOPAGE
  */
@@ -146,7 +146,7 @@ void CErrProxyInfoPage::OnPageChanged(wxWizardEvent& event) {
 
     m_pTitleStaticCtrl->SetLabel(_("Network communication failure"));
     m_pDescriptionStaticCtrl->SetLabel(
-    	_("An Internet connection failed. The most likely reasons are:\n"
+        _("An Internet connection failed. The most likely reasons are:\n"
           "\n"
           "1) Connectivity problem.  Check your network\n"
           "or modem connection and click Back to try again.\n"
@@ -165,7 +165,7 @@ void CErrProxyInfoPage::OnPageChanged(wxWizardEvent& event) {
 /*!
  * wxEVT_WIZARD_CANCEL event handler for ID_ERRPROXYINFOPAGE
  */
- 
+
 void CErrProxyInfoPage::OnCancel(wxWizardEvent& event) {
     PROCESS_CANCELEVENT(event);
 }

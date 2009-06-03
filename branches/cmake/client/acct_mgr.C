@@ -41,9 +41,9 @@ ACCT_MGR_OP::ACCT_MGR_OP() {
     global_prefs_xml = 0;
 }
 
-// do an account manager RPC;
-// if URL is null, detach from current account manager
-//
+/// do an account manager RPC;
+/// if URL is null, detach from current account manager
+///
 int ACCT_MGR_OP::do_rpc(
     const std::string& _url, const std::string& name,
     const std::string& password_hash, bool _via_gui
@@ -162,13 +162,13 @@ int ACCT_MGR_OP::do_rpc(
             fclose(fprefs);
         }
     }
-	if (strlen(gstate.acct_mgr_info.opaque)) {
-		fprintf(f,
-			"   <opaque>\n%s\n"
-			"   </opaque>\n",
-			gstate.acct_mgr_info.opaque
-		);
-	}
+    if (strlen(gstate.acct_mgr_info.opaque)) {
+        fprintf(f,
+            "   <opaque>\n%s\n"
+            "   </opaque>\n",
+            gstate.acct_mgr_info.opaque
+        );
+    }
     fprintf(f, "</acct_mgr_request>\n");
     fclose(f);
     std::string buf = url + std::string("rpc.php");
@@ -186,8 +186,8 @@ int ACCT_MGR_OP::do_rpc(
 
 int AM_ACCOUNT::parse(XML_PARSER& xp) {
     char tag[256];
-	bool is_tag, btemp;
-	int retval;
+    bool is_tag, btemp;
+    int retval;
     double dtemp;
 
     detach = false;
@@ -200,15 +200,15 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
     resource_share.init();
 
     while (!xp.get(tag, sizeof(tag), is_tag)) {
-		if (!is_tag) {
-			if (log_flags.unparsed_xml) {
-				msg_printf(0, MSG_INFO,
+        if (!is_tag) {
+            if (log_flags.unparsed_xml) {
+                msg_printf(0, MSG_INFO,
                     "[unparsed_xml] AM_ACCOUNT::parse: unexpected text %s",
                     tag
                 );
-			}
-			continue;
-		}
+            }
+            continue;
+        }
         if (!strcmp(tag, "/account")) {
             if (url.length()) return 0;
             return ERR_XML_PARSE;
@@ -217,7 +217,7 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
         if (!strcmp(tag, "url_signature")) {
             retval = xp.element_contents("</url_signature>", url_signature, sizeof(url_signature));
             if (retval) return retval;
-			strcat(url_signature, "\n");
+            strcat(url_signature, "\n");
             continue;
         }
         if (xp.parse_string(tag, "authenticator", authenticator)) continue;
@@ -253,30 +253,30 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
 
 int ACCT_MGR_OP::parse(FILE* f) {
     char tag[1024];
-	bool is_tag;
+    bool is_tag;
     std::string message;
     int retval;
-	MIOFILE mf;
-	mf.init_file(f);
-	XML_PARSER xp(&mf);
+    MIOFILE mf;
+    mf.init_file(f);
+    XML_PARSER xp(&mf);
 
     accounts.clear();
     error_str = "";
     error_num = 0;
     repeat_sec = 0;
     strcpy(host_venue, "");
-	strcpy(ami.opaque, "");
-	if (!xp.parse_start("acct_mgr_reply")) return ERR_XML_PARSE;
+    strcpy(ami.opaque, "");
+    if (!xp.parse_start("acct_mgr_reply")) return ERR_XML_PARSE;
     while (!xp.get(tag, sizeof(tag), is_tag)) {
-		if (!is_tag) {
-			if (log_flags.unparsed_xml) {
-				msg_printf(0, MSG_INFO,
+        if (!is_tag) {
+            if (log_flags.unparsed_xml) {
+                msg_printf(0, MSG_INFO,
                     "[unparsed_xml] ACCT_MGR_OP::parse: unexpected text %s",
                     tag
                 );
-			}
-			continue;
-		}
+            }
+            continue;
+        }
         if (!strcmp(tag, "/acct_mgr_reply")) return 0;
         if (xp.parse_str(tag, "name", ami.acct_mgr_name, 256)) continue;
         if (xp.parse_int(tag, "error_num", error_num)) continue;
@@ -286,11 +286,11 @@ int ACCT_MGR_OP::parse(FILE* f) {
             msg_printf(NULL, MSG_INFO, "Account manager: %s", message.c_str());
             continue;
         }
-		if (!strcmp(tag, "opaque")) {
-			retval = xp.element_contents("</opaque>", ami.opaque, sizeof(ami.opaque));
-			if (retval) return retval;
-			continue;
-		}
+        if (!strcmp(tag, "opaque")) {
+            retval = xp.element_contents("</opaque>", ami.opaque, sizeof(ami.opaque));
+            if (retval) return retval;
+            continue;
+        }
         if (!strcmp(tag, "signing_key")) {
             retval = xp.element_contents("</signing_key>", ami.signing_key, sizeof(ami.signing_key));
             if (retval) return retval;
@@ -406,7 +406,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
         strcpy(gstate.acct_mgr_info.signing_key, ami.signing_key);
         strcpy(gstate.acct_mgr_info.login_name, ami.login_name);
         strcpy(gstate.acct_mgr_info.password_hash, ami.password_hash);
-		strcpy(gstate.acct_mgr_info.opaque, ami.opaque);
+        strcpy(gstate.acct_mgr_info.opaque, ami.opaque);
 
         // process projects
         //
@@ -526,7 +526,7 @@ int ACCT_MGR_INFO::write_info() {
     if (strlen(acct_mgr_url)) {
         p = fopen(ACCT_MGR_URL_FILENAME, "w");
         if (p) {
-            fprintf(p, 
+            fprintf(p,
                 "<acct_mgr>\n"
                 "    <name>%s</name>\n"
                 "    <url>%s</url>\n",
@@ -535,12 +535,12 @@ int ACCT_MGR_INFO::write_info() {
             );
             if (send_gui_rpc_info) fprintf(p,"    <send_gui_rpc_info/>\n");
             if (strlen(signing_key)) {
-                fprintf(p, 
+                fprintf(p,
                     "    <signing_key>\n%s\n</signing_key>\n",
                     signing_key
                 );
             }
-            fprintf(p, 
+            fprintf(p,
                 "</acct_mgr>\n"
             );
             fclose(p);
@@ -551,20 +551,20 @@ int ACCT_MGR_INFO::write_info() {
         p = fopen(ACCT_MGR_LOGIN_FILENAME, "w");
         if (p) {
             fprintf(
-                p, 
+                p,
                 "<acct_mgr_login>\n"
                 "    <login>%s</login>\n"
                 "    <password_hash>%s</password_hash>\n"
                 "    <previous_host_cpid>%s</previous_host_cpid>\n"
                 "    <next_rpc_time>%f</next_rpc_time>\n"
-				"    <opaque>\n%s\n"
-				"    </opaque>\n"
+                "    <opaque>\n%s\n"
+                "    </opaque>\n"
                 "</acct_mgr_login>\n",
                 login_name,
                 password_hash,
                 previous_host_cpid,
                 next_rpc_time,
-				opaque
+                opaque
             );
             fclose(p);
         }
@@ -579,7 +579,7 @@ void ACCT_MGR_INFO::clear() {
     strcpy(password_hash, "");
     strcpy(signing_key, "");
     strcpy(previous_host_cpid, "");
-	strcpy(opaque, "");
+    strcpy(opaque, "");
     next_rpc_time = 0;
     send_gui_rpc_info = false;
     password_error = false;
@@ -590,8 +590,8 @@ ACCT_MGR_INFO::ACCT_MGR_INFO() {
 }
 
 int ACCT_MGR_INFO::parse_login_file(FILE* p) {
-	char tag[1024];
-	bool is_tag;
+    char tag[1024];
+    bool is_tag;
     MIOFILE mf;
     int retval;
 
@@ -627,8 +627,8 @@ int ACCT_MGR_INFO::parse_login_file(FILE* p) {
 }
 
 int ACCT_MGR_INFO::init() {
-	char tag[1024];
-	bool is_tag;
+    char tag[1024];
+    bool is_tag;
     MIOFILE mf;
     FILE*   p;
     int retval;
@@ -637,15 +637,15 @@ int ACCT_MGR_INFO::init() {
     p = fopen(ACCT_MGR_URL_FILENAME, "r");
     if (!p) return 0;
     mf.init_file(p);
-	XML_PARSER xp(&mf);
-	if (!xp.parse_start("acct_mgr_login")) {
-		//
-	}
-	while (!xp.get(tag, sizeof(tag), is_tag)) {
-		if (!is_tag) {
-			printf("unexpected text: %s\n", tag);
-			continue;
-		} 
+    XML_PARSER xp(&mf);
+    if (!xp.parse_start("acct_mgr_login")) {
+        //
+    }
+    while (!xp.get(tag, sizeof(tag), is_tag)) {
+        if (!is_tag) {
+            printf("unexpected text: %s\n", tag);
+            continue;
+        }
         if (!strcmp(tag, "/acct_mgr")) break;
         else if (xp.parse_str(tag, "name", acct_mgr_name, 256)) continue;
         else if (xp.parse_str(tag, "url", acct_mgr_url, 256)) continue;
@@ -685,5 +685,3 @@ bool ACCT_MGR_INFO::poll() {
     }
     return false;
 }
-
-const char *BOINC_RCSID_8fd9e873bf="$Id: acct_mgr.C 14966 2008-03-27 18:25:29Z davea $";

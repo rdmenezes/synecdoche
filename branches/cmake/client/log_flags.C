@@ -81,7 +81,7 @@ void LOG_FLAGS::defaults() {
     mem_usage_debug = false;
     network_status_debug = false;
     checkpoint_debug = false;
-} 
+}
 
 /// Parse log flag preferences
 int LOG_FLAGS::parse(XML_PARSER& xp) {
@@ -308,5 +308,3 @@ int read_config_file() {
     fclose(f);
     return 0;
 }
-
-const char *BOINC_RCSID_5f23de6652 = "$Id: log_flags.C 15188 2008-05-12 22:46:07Z davea $";

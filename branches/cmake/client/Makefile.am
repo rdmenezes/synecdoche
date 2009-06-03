@@ -22,7 +22,6 @@ synecd_SOURCES = \
     app_control.C \
     app_graphics.C \
     app_start.C \
-    auto_update.C \
     check_state.C \
     client_msgs.C \
     client_state.C \

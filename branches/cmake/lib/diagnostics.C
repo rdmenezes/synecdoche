@@ -82,8 +82,10 @@ static int         max_stdout_file_size = 0;
 
 #if defined(_WIN32) && defined(_DEBUG)
 
-// Trap ASSERTs and TRACEs from the CRT and spew them to stderr.
-//
+/// Trap ASSERTs and TRACEs from the CRT and spew them to stderr.
+///
+/// szMsg can't be const char* because it has to match ReportHook callback
+/// signature.
 int __cdecl boinc_message_reporting(int reportType, char *szMsg, int *retVal){
     (*retVal) = 0;
 
@@ -422,28 +424,28 @@ int diagnostics_is_flag_set(int _flags) {
 
 // return the location of the BOINC directory.
 //
-char* diagnostics_get_boinc_dir() {
+const char* diagnostics_get_boinc_dir() {
     return boinc_dir;
 }
 
 
 // return the location of the BOINC install directory.
 //
-char* diagnostics_get_boinc_install_dir() {
+const char* diagnostics_get_boinc_install_dir() {
     return boinc_install_dir;
 }
 
 
 // return the location of the symbol store.
 //
-char* diagnostics_get_symstore() {
+const char* diagnostics_get_symstore() {
     return symstore;
 }
 
 
 // store the location of the symbol store.
 //
-int diagnostics_set_symstore(char* project_symstore) {
+int diagnostics_set_symstore(const char* project_symstore) {
     if (!strlen(symstore)) {
         int buffer_used = snprintf(symstore, sizeof(symstore), "%s", project_symstore);
         if ((sizeof(symstore) == buffer_used) || (-1 == buffer_used)) { 
@@ -463,7 +465,7 @@ int diagnostics_is_proxy_enabled() {
 
 // proxy server address and port
 //
-char* diagnostics_get_proxy() {
+const char* diagnostics_get_proxy() {
     return boinc_proxy;
 }
 

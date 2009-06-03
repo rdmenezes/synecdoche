@@ -782,16 +782,16 @@ int suspend_or_resume_threads(DWORD pid, bool resume) {
 
 void chdir_to_data_dir() {
     /*
-	LONG    lReturnValue;
-	HKEY    hkSetupHive;
+    LONG    lReturnValue;
+    HKEY    hkSetupHive;
     LPTSTR  lpszRegistryValue = NULL;
-	DWORD   dwSize = 0;
+    DWORD   dwSize = 0;
 
     // change the current directory to the boinc data directory if it exists
-	lReturnValue = RegOpenKeyEx(
+    lReturnValue = RegOpenKeyEx(
         HKEY_LOCAL_MACHINE, 
         _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"),  
-		0, 
+        0, 
         KEY_READ,
         &hkSetupHive
     );
@@ -824,7 +824,7 @@ void chdir_to_data_dir() {
         }
     }
 
-	if (hkSetupHive) RegCloseKey(hkSetupHive);
+    if (hkSetupHive) RegCloseKey(hkSetupHive);
     if (lpszRegistryValue) free(lpszRegistryValue);
     */
 }

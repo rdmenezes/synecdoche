@@ -39,7 +39,6 @@
 #include "scheduler_op.h"
 #include "time_stats.h"
 #include "http_curl.h"
-#include "coproc.h"
 
 // project: suspended, deferred, or no new work (can't ask for more work)
 // overall: not work_fetch_ok (from CPU policy)
@@ -77,7 +76,6 @@ public:
     TIME_STATS time_stats;
     PROXY_INFO proxy_info;
     GUI_HTTP gui_http;
-    COPROCS coprocs;
 
     VERSION_INFO core_client_version;
     VERSION_INFO boinc_compat_version;
@@ -93,16 +91,10 @@ public:
     bool user_active;       ///< there has been recent mouse/kbd input
     bool allow_remote_gui_rpc;
     int cmdline_gui_rpc_port;
-    bool show_projects;
     bool requested_exit;
-    char detach_project_url[256]; ///< stores URL for -detach_project option
-    char reset_project_url[256]; ///< stores URL for -reset_project option
-    char update_prefs_url[256]; ///< stores URL for -update_prefs option
     /// venue from project that gave us general prefs
     /// or from account manager
     char main_host_venue[256];
-    char attach_project_url[256];
-    char attach_project_auth[256];
     bool exit_before_upload; ///< exit when about to upload a file
 #ifndef _WIN32
     gid_t boinc_project_gid;
@@ -143,8 +135,7 @@ public:
     /// So GUIs shouldn't offer graphics.
     bool disable_graphics;
     bool detach_console;
-    bool launched_by_manager; // this affects auto-update
-    bool run_by_updater;
+    bool launched_by_manager;
     double now;
     double client_start_time;
     double last_wakeup_time;
@@ -187,14 +178,6 @@ public:
     std::string newer_version;
 #endif
 
-    GET_PROJECT_LIST_OP get_project_list_op;
-    void all_projects_list_check();
-    double all_projects_list_check_time;
-/// @}
-
-/// @name auto_update.C
-public:
-    AUTO_UPDATE auto_update;
 /// @}
 
 /// @name client_state.C
@@ -209,25 +192,28 @@ public:
         // in which case it should be called again immediately.
     void do_io_or_sleep(double dt);
     bool time_to_exit() const;
-    PROJECT* lookup_project(const char*);
-    APP* lookup_app(const PROJECT*, const char*);
-    FILE_INFO* lookup_file_info(const PROJECT*, const char* name);
-    RESULT* lookup_result(const PROJECT*, const char*);
-    WORKUNIT* lookup_workunit(const PROJECT*, const char*);
-    APP_VERSION* lookup_app_version(
-        APP*, char* platform, int ver, char* plan_class
-    );
-    int detach_project(PROJECT*);
-    int report_result_error(RESULT&, const char *format, ...);
-    int reset_project(PROJECT*, bool detaching);
+    PROJECT* lookup_project(const char* master_url);
+    APP* lookup_app(const PROJECT* p, const char* name);
+    FILE_INFO* lookup_file_info(const PROJECT* p, const char* name);
+    RESULT* lookup_result(const PROJECT* p, const char* name);
+    WORKUNIT* lookup_workunit(const PROJECT* p, const char* name);
+    APP_VERSION* lookup_app_version(const APP* app, const char* platform, int ver, const char* plan_class);
+
+    /// "Detach" a project.
+    int detach_project(PROJECT* project);
+
+    /// Call this when a result has a nonrecoverable error.
+    int report_result_error(RESULT& res, const char *format, ...);
+
+    int reset_project(PROJECT* project, bool detaching);
     bool no_gui_rpc;
 private:
-    int link_app(PROJECT*, APP*);
-    int link_file_info(PROJECT*, FILE_INFO*);
-    int link_file_ref(PROJECT*, FILE_REF*);
-    int link_app_version(PROJECT*, APP_VERSION*);
-    int link_workunit(PROJECT*, WORKUNIT*);
-    int link_result(PROJECT*, RESULT*);
+    int link_app(PROJECT* p, APP* app);
+    int link_file_info(PROJECT* p, FILE_INFO* fip);
+    int link_file_ref(PROJECT* p, FILE_REF* file_refp);
+    int link_app_version(PROJECT* p, APP_VERSION* avp);
+    int link_workunit(PROJECT* p, WORKUNIT* wup);
+    int link_result(PROJECT* p, RESULT* rp);
     void print_summary() const;
     bool garbage_collect();
     bool garbage_collect_always();
@@ -289,10 +275,8 @@ public:
 
 /// @name cs_account.C
 public:
-    int add_project(
-        const char* master_url, const char* authenticator,
-        const char* project_name, bool attached_via_acct_mgr
-    );
+    /// Add a project.
+    int add_project(const char* master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr);
 private:
     int parse_account_files();
     int parse_account_files_venue();
@@ -351,7 +335,6 @@ public:
 public:
     void parse_cmdline(int argc, char** argv);
     void parse_env_vars();
-    void do_cmdline_actions();
 /// @}
 
 /// @name cs_files.C
@@ -377,14 +360,13 @@ private:
 public:
     int project_disk_usage(PROJECT*, double&);
     int total_disk_usage(double&); ///< returns the total disk usage of Synecdoche on this host
-    double allowed_disk_usage();
-    int allowed_project_disk_usage(double&);
+    double allowed_disk_usage(double boinc_total);
     int suspend_tasks(int reason);
     int resume_tasks(int reason=0);
     int suspend_network(int reason);
     int resume_network();
     void read_global_prefs();
-    int save_global_prefs(char* prefs, char* url, char* sched);
+    int save_global_prefs(const char* global_prefs_xml, const char* master_url, const char* scheduler_url);
     double available_ram();
     double max_available_ram();
 private:
@@ -398,7 +380,10 @@ private:
 /// @name cs_scheduler.C
 public:
     int make_scheduler_request(PROJECT*);
-    int handle_scheduler_reply(PROJECT*, char* scheduler_url, int& nresults);
+
+    /// Handle the reply from a scheduler.
+    int handle_scheduler_reply(PROJECT* project, const char* scheduler_url, int& nresults);
+
     SCHEDULER_OP* scheduler_op;
 private:
     bool contacted_sched_server;
@@ -425,10 +410,15 @@ public:
 
 /// @name cs_trickle.C
 private:
-    int read_trickle_files(PROJECT*, FILE*);
-    int remove_trickle_files(PROJECT*);
+    /// Scan project dir for trickle files and convert them to XML.
+    int read_trickle_files(const PROJECT* project, FILE* f);
+
+    /// Remove trickle files when ack has been received.
+    int remove_trickle_files(const PROJECT* project);
+
 public:
-    int handle_trickle_down(PROJECT*, FILE*);
+    /// Parse a trickle-down message in a scheduler reply.
+    int handle_trickle_down(const PROJECT* project, FILE* in);
 /// @}
 
 /// @name check_state.C

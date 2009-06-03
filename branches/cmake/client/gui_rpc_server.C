@@ -60,8 +60,6 @@
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
     sock(s),
     auth_needed(false),
-    au_ss_state(AU_SS_INIT),
-    au_mgr_state(AU_MGR_INIT),
 
     get_project_config_op(&gui_http),
     lookup_account_op(&gui_http),
@@ -160,7 +158,7 @@ int GUI_RPC_CONN_SET::get_allowed_hosts() {
                 "[guirpc_debug] found allowed hosts list"
             );
         }
- 
+
         // read in each line, if it is not a comment
         // then resolve the address and add to our allowed list
         //
@@ -338,7 +336,7 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
         // For unknown reasons, the FD_ISSET() above succeeds
         // after a SIGTERM, SIGHUP, SIGINT or SIGQUIT is received,
         // even if there is no data available on the socket.
-        // This causes the accept() call to block, preventing the main 
+        // This causes the accept() call to block, preventing the main
         // loop from processing the exit request.
         // This is a workaround for that problem.
         //
@@ -360,7 +358,7 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
 
         int peer_ip = (int) ntohl(addr.sin_addr.s_addr);
         bool allowed;
-         
+
         // accept the connection if:
         // 1) allow_remote_gui_rpc is set or
         // 2) client host is included in "remote_hosts" file or
@@ -451,29 +449,3 @@ void GUI_RPC_CONN_SET::close() {
         lsock = -1;
     }
 }
-
-/// this is called when we're ready to auto-update;
-/// set flags to send quit messages to screensaver and local manager
-void GUI_RPC_CONN_SET::send_quits() {
-    for (unsigned int i=0; i<gui_rpcs.size(); i++) {
-        GUI_RPC_CONN* gr = gui_rpcs[i];
-        if (gr->au_ss_state == AU_SS_GOT) {
-            gr->au_ss_state = AU_SS_QUIT_REQ;
-        }
-        if (gr->au_mgr_state == AU_MGR_GOT && gr->is_local) {
-            gr->au_mgr_state = AU_MGR_QUIT_REQ;
-        }
-    }
-}
-
-/// check whether the quit messages have actually been sent
-bool GUI_RPC_CONN_SET::quits_sent() const {
-    for (unsigned int i=0; i<gui_rpcs.size(); i++) {
-        const GUI_RPC_CONN* gr = gui_rpcs[i];
-        if (gr->au_ss_state == AU_SS_QUIT_REQ) return false;
-        if (gr->au_mgr_state == AU_MGR_QUIT_REQ) return false;
-    }
-    return true;
-}
-
-const char *BOINC_RCSID_88dd75dd85 = "$Id: gui_rpc_server.C 15282 2008-05-23 19:24:20Z davea $";

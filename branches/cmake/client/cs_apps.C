@@ -39,11 +39,7 @@
 #include "shmem.h"
 #include "log_flags.h"
 #include "client_msgs.h"
-#ifdef SIM
-#include "sim.h"
-#else
 #include "client_state.h"
-#endif
 
 using std::vector;
 
@@ -98,7 +94,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
     RESULT* rp = at.result;
     bool had_error = false;
 
-#ifndef SIM
     FILE_INFO* fip;
     unsigned int i;
     char path[256];
@@ -114,16 +109,16 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
         break;
     default:
         for (i=0; i<rp->output_files.size(); i++) {
-			FILE_REF& fref = rp->output_files[i];
+            FILE_REF& fref = rp->output_files[i];
             fip = fref.file_info;
             if (fip->uploaded) continue;
             get_pathname(fip, path, sizeof(path));
             retval = file_size(path, size);
             if (retval) {
-				if (fref.optional) {
-					fip->upload_when_present = false;
-					continue;
-				}
+                if (fref.optional) {
+                    fip->upload_when_present = false;
+                    continue;
+                }
 
                 // an output file is unexpectedly absent.
                 //
@@ -173,7 +168,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
             }
         }
     }
-#endif
 
     if (rp->exit_status != 0) {
         had_error = true;
@@ -189,14 +183,8 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
             rp->set_state(RESULT_COMPUTE_ERROR, "CS::app_finished");
         }
     } else {
-#ifdef SIM
-        rp->set_state(RESULT_FILES_UPLOADED, "CS::app_finished");
-        rp->ready_to_report = true;
-        rp->completed_time = now;
-#else
         rp->set_state(RESULT_FILES_UPLOADING, "CS::app_finished");
         rp->append_log_record();
-#endif
         rp->project->update_duration_correction_factor(rp);
     }
 
@@ -207,8 +195,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
 
     return 0;
 }
-
-#ifndef SIM
 
 /// Returns true iff all the input files for a result are present
 /// (both WU and app version).
@@ -292,7 +278,7 @@ int CLIENT_STATE::latest_version(APP* app, char* platform) {
     return best;
 }
 
-// Find the ACTIVE_TASK in the current set with the matching PID.
+/// Find the ACTIVE_TASK in the current set with the matching PID.
 ACTIVE_TASK* ACTIVE_TASK_SET::lookup_pid(int pid) {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -304,7 +290,7 @@ ACTIVE_TASK* ACTIVE_TASK_SET::lookup_pid(int pid) {
     return NULL;
 }
 
-// Find the ACTIVE_TASK in the current set with the matching result.
+/// Find the ACTIVE_TASK in the current set with the matching result.
 ACTIVE_TASK* ACTIVE_TASK_SET::lookup_result(const RESULT* result) {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -317,6 +303,3 @@ ACTIVE_TASK* ACTIVE_TASK_SET::lookup_result(const RESULT* result) {
     }
     return NULL;
 }
-#endif
-
-const char *BOINC_RCSID_7bf63ad771 = "$Id: cs_apps.C 14114 2007-11-07 19:32:32Z davea $";

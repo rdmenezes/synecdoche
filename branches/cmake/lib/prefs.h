@@ -49,6 +49,7 @@ struct GLOBAL_PREFS_MASK {
     bool dont_verify_images;
     bool work_buf_min_days;
     bool work_buf_additional_days;
+    bool max_cpus;
     bool max_ncpus_pct;
     bool cpu_scheduling_period_minutes;
     bool disk_interval;
@@ -56,8 +57,8 @@ struct GLOBAL_PREFS_MASK {
     bool disk_max_used_pct;
     bool disk_min_free_gb;
     bool vm_max_used_frac;
-	bool ram_max_used_busy_frac;
-	bool ram_max_used_idle_frac;
+    bool ram_max_used_busy_frac;
+    bool ram_max_used_idle_frac;
     bool max_bytes_sec_up;
     bool max_bytes_sec_down;
     bool cpu_usage_limit;
@@ -143,6 +144,7 @@ struct GLOBAL_PREFS {
     TIME_PREFS net_times;
     double work_buf_min_days;
     double work_buf_additional_days;
+    int max_cpus;
     double max_ncpus_pct;
     double cpu_scheduling_period_minutes;
     double disk_interval;
@@ -150,8 +152,8 @@ struct GLOBAL_PREFS {
     double disk_max_used_pct;
     double disk_min_free_gb;
     double vm_max_used_frac;
-	double ram_max_used_busy_frac;
-	double ram_max_used_idle_frac;
+    double ram_max_used_busy_frac;
+    double ram_max_used_idle_frac;
     double max_bytes_sec_up;
     double max_bytes_sec_down;
     double cpu_usage_limit;
@@ -161,6 +163,7 @@ struct GLOBAL_PREFS {
 
     GLOBAL_PREFS();
     void defaults();
+    void init();
     void clear_bools();
     int parse(XML_PARSER&, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
     int parse_day(XML_PARSER&);
@@ -171,6 +174,8 @@ struct GLOBAL_PREFS {
     inline double cpu_scheduling_period() {
         return cpu_scheduling_period_minutes*60;
     }
+    /// Gets the maximum number of CPUs that may be used.
+    int GetMaxCPUs(int availableCPUs) const;
 };
 
 #endif

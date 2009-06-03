@@ -62,10 +62,10 @@ RPC_CLIENT::~RPC_CLIENT() {
 //
 void RPC_CLIENT::close() {
     //fprintf(stderr, "RPC_CLIENT::close called\n");
-	if (sock>=0) {
-		boinc_close_socket(sock);
-		sock = -1;
-	}
+    if (sock>=0) {
+        boinc_close_socket(sock);
+        sock = -1;
+    }
 }
 
 int RPC_CLIENT::init(const char* host, int port) {
@@ -108,7 +108,7 @@ int RPC_CLIENT::init_asynch(
     const char* host, double _timeout, bool _retry, int port
 ) {
     int retval;
-	memset(&addr, 0, sizeof(addr));
+    memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     retry = _retry;
@@ -197,16 +197,22 @@ int RPC_CLIENT::init_poll() {
 }
 
 int RPC_CLIENT::authorize(const char* passwd) {
-    bool found=false;
+    bool found = false;
     int retval, n;
     char buf[256], nonce[256], nonce_hash[256];
     RPC rpc(this);
+    XML_PARSER xp(&rpc.fin);
+    bool is_tag;
 
     retval = rpc.do_rpc("<auth1/>\n");
     if (retval) return retval;
-    while (rpc.fin.fgets(buf, 256)) {
-        if (parse_str(buf, "<nonce>", nonce, sizeof(nonce))) {
+    while (!xp.get(buf, sizeof(buf), is_tag)) {
+        if (!is_tag) {
+            continue;
+        }
+        if (xp.parse_str(buf, "nonce", nonce, sizeof(nonce))) {
             found = true;
+            break;
         }
     }
     if (!found) {
@@ -220,23 +226,28 @@ int RPC_CLIENT::authorize(const char* passwd) {
     sprintf(buf, "<auth2>\n<nonce_hash>%s</nonce_hash>\n</auth2>\n", nonce_hash);
     retval = rpc.do_rpc(buf);
     if (retval) return retval;
-    while (rpc.fin.fgets(buf, 256)) {
-        if (match_tag(buf, "<authorized/>")) {
-            return 0;
+    while (!xp.get(buf, sizeof(buf), is_tag)) {
+        if (!is_tag) {
+            continue;
+        }
+        bool authorized;
+        if (xp.parse_bool(buf, "authorized", authorized)) {
+            if (authorized) {
+                return 0;
+            }
         }
     }
     return ERR_AUTHENTICATOR;
 }
 
+/// Send a rpc-request to the rpc-server.
+///
+/// \param[in] p The rpc-request.
+/// \return Zero on success, ERR_WRITE on error.
 int RPC_CLIENT::send_request(const char* p) {
-    char buf[4096];
-    sprintf(buf,
-        "<boinc_gui_rpc_request>\n"
-        "%s"
-        "</boinc_gui_rpc_request>\n\003",
-        p
-    );
-    int n = send(sock, buf, strlen(buf), 0);
+    std::string buf("<boinc_gui_rpc_request>\n");
+    buf.append(p).append("</boinc_gui_rpc_request>\n\003");
+    int n = send(sock, buf.c_str(), static_cast<int>(buf.size()), 0);
     if (n < 0) {
         printf("send: %d\n", n);
         perror("send");
@@ -245,19 +256,27 @@ int RPC_CLIENT::send_request(const char* p) {
     return 0;
 }
 
-// get reply from server.  Caller must free buf
-//
+/// Get reply from server. 
+/// Caller must free the buffer.
+///
+/// \param[in,out] mbuf Reference to a pointer which will point to the
+///                     string received from the rpc-server.
+/// \return Zero on success, ERR_READ on error.
 int RPC_CLIENT::get_reply(char*& mbuf) {
-    char buf[8193];
     MFILE mf;
     int n;
 
-    while (1) {
-        n = recv(sock, buf, 8192, 0);
-        if (n <= 0) return ERR_READ;
+    while (true) {
+        char buf[8193];
+        n = recv(sock, buf, sizeof(buf) - 1, 0);
+        if (n <= 0) {
+            return ERR_READ;
+        }
         buf[n]=0;
         mf.puts(buf);
-        if (strchr(buf, '\003')) break;
+        if (strchr(buf, '\003')) {
+            break;
+        }
     }
     mf.get_buf(mbuf, n);
     return 0;
@@ -302,5 +321,3 @@ int RPC::parse_reply() {
     }
     return ERR_NOT_FOUND;
 }
-
-const char *BOINC_RCSID_6802bead97 = "$Id: gui_rpc_client.C 14681 2008-02-06 00:10:31Z davea $";
