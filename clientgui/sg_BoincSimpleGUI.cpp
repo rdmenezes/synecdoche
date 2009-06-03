@@ -174,7 +174,7 @@ CSimpleFrame::CSimpleFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
 CSimpleFrame::~CSimpleFrame() {
     wxLogTrace(wxT("Function Start/End"), wxT("CSimpleFrame::CSimpleFrame - Destructor Function Begin"));
 
-	SaveState();
+    SaveState();
 
     if (m_pAccelTable)
         delete m_pAccelTable;
@@ -200,13 +200,13 @@ bool CSimpleFrame::RestoreState() {
     //
     pConfig->SetPath(strBaseConfigLocation);
 
-	// Read the last coordinates of the BSG
-	int x = pConfig->Read(wxT("X_Position"), ((wxPoint) wxDefaultPosition).x);
-	int y = pConfig->Read(wxT("Y_Position"), ((wxPoint) wxDefaultPosition).y);
-	
-	// Read the size of the BSG
-	int width, height;
-	GetSize(&width, &height);
+    // Read the last coordinates of the BSG
+    int x = pConfig->Read(wxT("X_Position"), ((wxPoint) wxDefaultPosition).x);
+    int y = pConfig->Read(wxT("Y_Position"), ((wxPoint) wxDefaultPosition).y);
+    
+    // Read the size of the BSG
+    int width, height;
+    GetSize(&width, &height);
 
 #ifdef __WXMAC__
 
@@ -228,30 +228,30 @@ bool CSimpleFrame::RestoreState() {
     
 #else
 
-	// If either co-ordinate is less then 0 then set it equal to 0 to ensure
-	// it displays on the screen.
-	if ( x < 0 ) x = 0;
-	if ( y < 0 ) y = 0;
+    // If either co-ordinate is less then 0 then set it equal to 0 to ensure
+    // it displays on the screen.
+    if ( x < 0 ) x = 0;
+    if ( y < 0 ) y = 0;
 
-	// Read the size of the screen
-	int maxX = wxSystemSettings::GetMetric( wxSYS_SCREEN_X );
-	int maxY = wxSystemSettings::GetMetric( wxSYS_SCREEN_Y );
+    // Read the size of the screen
+    int maxX = wxSystemSettings::GetMetric( wxSYS_SCREEN_X );
+    int maxY = wxSystemSettings::GetMetric( wxSYS_SCREEN_Y );
 
-	// Max sure that it doesn't go off to the right or bottom
-	if ( x + width > maxX ) x=maxX-width;
-	if ( y + height > maxY ) y=maxY-height;
+    // Max sure that it doesn't go off to the right or bottom
+    if ( x + width > maxX ) x=maxX-width;
+    if ( y + height > maxY ) y=maxY-height;
 #endif
 
-	Move(x,y);
+    Move(x,y);
 
-	return true;
+    return true;
 }
 
 
 bool CSimpleFrame::SaveState() {
-	CBOINCBaseFrame::SaveState();
+    CBOINCBaseFrame::SaveState();
     wxConfigBase*   pConfig = wxConfigBase::Get(FALSE);
-	wxString        strBaseConfigLocation = wxString(wxT("/"));
+    wxString        strBaseConfigLocation = wxString(wxT("/"));
 
     wxASSERT(pConfig);
 
@@ -266,11 +266,11 @@ bool CSimpleFrame::SaveState() {
     //
     pConfig->SetPath(strBaseConfigLocation);
 
-	int x,y;
-	GetPosition(&x, &y);
-	pConfig->Write(wxT("X_Position"), x);
-	pConfig->Write(wxT("Y_Position"), y);
-	return true;
+    int x,y;
+    GetPosition(&x, &y);
+    pConfig->Write(wxT("X_Position"), x);
+    pConfig->Write(wxT("Y_Position"), y);
+    return true;
 }
 
 
@@ -327,14 +327,14 @@ void CSimpleFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
     bool bCachedCredentials = false;
     ACCT_MGR_INFO ami;
     PROJECT_INIT_STATUS pis;
-	CC_STATUS     status;
+    CC_STATUS     status;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
     pDoc->GetCoreClientStatus(status);
 
-	// If we are connected to the localhost, run a really quick screensaver
+    // If we are connected to the localhost, run a really quick screensaver
     //   test to trigger a firewall popup.
     if (pDoc->IsLocalClient()) {
         wxGetApp().StartBOINCScreensaverTest();
@@ -368,11 +368,11 @@ void CSimpleFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
     if (pAMWizard)
         pAMWizard->Destroy();
-	if (pAPWizard){
+    if (pAPWizard){
             pAPWizard->Destroy();
             //update Project Component
             m_pBackgroundPanel->UpdateProjectView();
-	}
+    }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CSimpleFrame::OnConnect - Function End"));
 }
@@ -402,17 +402,17 @@ CSimplePanel::CSimplePanel(wxWindow* parent) :
     clientState = NULL;
     projComponent = NULL;
 
-	projectViewInitialized = false;
-	emptyViewInitialized = false;
-	notebookViewInitialized = false;
-	dlgOpen = false;
+    projectViewInitialized = false;
+    emptyViewInitialized = false;
+    notebookViewInitialized = false;
+    dlgOpen = false;
 
-	//set polling timer for interface
-	m_pFrameRenderTimer = new wxTimer(this, ID_SIMPLEFRAMERENDERTIMER);
+    //set polling timer for interface
+    m_pFrameRenderTimer = new wxTimer(this, ID_SIMPLEFRAMERENDERTIMER);
     wxASSERT(m_pFrameRenderTimer);
     m_pFrameRenderTimer->Start(1000);                // Send event every 1 second
 
-	InitEmptyView();
+    InitEmptyView();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CSimplePanel::CSimplePanel - Overloaded Constructor Function End"));
 }
@@ -423,7 +423,7 @@ CSimplePanel::~CSimplePanel()
     wxLogTrace(wxT("Function Start/End"), wxT("CSimplePanel::CSimplePanel - Destructor Function Begin"));
     wxASSERT(m_pFrameRenderTimer);
 
-	if (m_pFrameRenderTimer) {
+    if (m_pFrameRenderTimer) {
         m_pFrameRenderTimer->Stop();
         delete m_pFrameRenderTimer;
     }
@@ -445,13 +445,13 @@ void CSimplePanel::ReskinInterface() {
     SetBackgroundColour(*pSkinSimple->GetBackgroundImage()->GetBackgroundColor());
 
     if(notebookViewInitialized){
-		if (wrkUnitNB) wrkUnitNB->ReskinAppGUI();
-	} else {
-		if (clientState) clientState->ReskinInterface();
-	}
+        if (wrkUnitNB) wrkUnitNB->ReskinAppGUI();
+    } else {
+        if (clientState) clientState->ReskinInterface();
+    }
 
     //reskin component 
-	if (projComponent) projComponent->ReskinInterface();
+    if (projComponent) projComponent->ReskinInterface();
 
     Thaw();
     Refresh();
@@ -462,7 +462,7 @@ void CSimplePanel::ReskinInterface() {
 
 void CSimplePanel::OnProjectsAttachToProject() {
     wxLogTrace(wxT("Function Start/End"), wxT("CSimplePanel::OnProjectsAttachToProject - Function Begin"));
-	
+    
     CSimpleFrame* pFrame = wxDynamicCast(GetParent(), CSimpleFrame);
     wxASSERT(pFrame);
 
@@ -477,58 +477,58 @@ void CSimplePanel::OnFrameRender(wxTimerEvent& WXUNUSED(event)) {
 
     if (IsShown()) {
 
-	    if (!projectViewInitialized) {
-		    InitProjectView();
-		    return;
-	    } else if ( pDoc->IsConnected() ) {
-		    UpdateProjectView();
-	    }
+        if (!projectViewInitialized) {
+            InitProjectView();
+            return;
+        } else if ( pDoc->IsConnected() ) {
+            UpdateProjectView();
+        }
 
-	    // Now check to see if we show the empty state or results
-	    if ( pDoc->GetSimpleGUIWorkCount() > 0 ) {
-		    // State changes can cause the BSG to crash if a dialogue is open.
-		    // Defer state change until after the dialogue is closed
-		    if ( (emptyViewInitialized || !notebookViewInitialized) && dlgOpen ) {
-			    return;
-		    }
+        // Now check to see if we show the empty state or results
+        if ( pDoc->GetSimpleGUIWorkCount() > 0 ) {
+            // State changes can cause the BSG to crash if a dialogue is open.
+            // Defer state change until after the dialogue is closed
+            if ( (emptyViewInitialized || !notebookViewInitialized) && dlgOpen ) {
+                return;
+            }
 
-		    // If empty was displayed, remove
-		    if ( emptyViewInitialized ) {
-			    DestroyEmptyView();
-		    }
-		    // If we hadn't previously shown the notebook, create it.
-		    if ( !notebookViewInitialized ) {
-			    InitNotebook();
-		    }
-		    wrkUnitNB->Update();
-	    } else {
-		    // State changes can cause the BSG to crash if a dialogue is open.
-		    // Defer state change until after the dialogue is closed
-		    if ( (!emptyViewInitialized || notebookViewInitialized) && dlgOpen ) {
-			    return;
-		    }
+            // If empty was displayed, remove
+            if ( emptyViewInitialized ) {
+                DestroyEmptyView();
+            }
+            // If we hadn't previously shown the notebook, create it.
+            if ( !notebookViewInitialized ) {
+                InitNotebook();
+            }
+            wrkUnitNB->Update();
+        } else {
+            // State changes can cause the BSG to crash if a dialogue is open.
+            // Defer state change until after the dialogue is closed
+            if ( (!emptyViewInitialized || notebookViewInitialized) && dlgOpen ) {
+                return;
+            }
 
-		    if ( notebookViewInitialized ) {
-			    DestroyNotebook();
-		    }
-		    if ( !emptyViewInitialized ) {
-			    InitEmptyView();
-		    }
-		    UpdateEmptyView();
-	    }
+            if ( notebookViewInitialized ) {
+                DestroyNotebook();
+            }
+            if ( !emptyViewInitialized ) {
+                InitEmptyView();
+            }
+            UpdateEmptyView();
+        }
     }
 }
 
 
 void CSimplePanel::UpdateEmptyView() {
-	clientState->DisplayState();
+    clientState->DisplayState();
 }
 
 
 void CSimplePanel::DestroyEmptyView() {
-	delete clientState;
-	clientState = NULL;
-	emptyViewInitialized = false;
+    delete clientState;
+    clientState = NULL;
+    emptyViewInitialized = false;
 }
 
 
@@ -539,58 +539,58 @@ void CSimplePanel::InitEmptyView()
     wxASSERT(pSkinSimple);
     wxASSERT(wxDynamicCast(pSkinSimple, CSkinSimple));
 
-	//Set Background color
+    //Set Background color
     SetBackgroundColour(*pSkinSimple->GetBackgroundImage()->GetBackgroundColor());
 
-	// Flex Grid Sizer
-	mainSizer = new wxFlexGridSizer(3,2);
-	SetSizer(mainSizer);
+    // Flex Grid Sizer
+    mainSizer = new wxFlexGridSizer(3,2);
+    SetSizer(mainSizer);
 
-	clientState = new ClientStateIndicator(this,wxPoint(31,94));
-	clientState->DisplayState();
-	
-	emptyViewInitialized = true;
+    clientState = new ClientStateIndicator(this,wxPoint(31,94));
+    clientState->DisplayState();
+    
+    emptyViewInitialized = true;
 }
 
 
 void CSimplePanel::UpdateProjectView()
 {
-	//update Project Component
+    //update Project Component
     projComponent->UpdateInterface();
 }
 
 
 void CSimplePanel::DestroyNotebook() {
-	mainSizer->Detach(wrkUnitNB);
-	delete wrkUnitNB;
-	wrkUnitNB = NULL;
-	notebookViewInitialized = false;
+    mainSizer->Detach(wrkUnitNB);
+    delete wrkUnitNB;
+    wrkUnitNB = NULL;
+    notebookViewInitialized = false;
 }
 
 
 void CSimplePanel::InitProjectView()
 {
-	// Do not update screen at this point
-	/////////////// MY PROJECTS COMPONENT /////////////////////
+    // Do not update screen at this point
+    /////////////// MY PROJECTS COMPONENT /////////////////////
     projComponent = new CProjectsComponent(this,wxPoint(31,414));
-	///////////////////////////////////////////////////////////
-	projectViewInitialized = true;
+    ///////////////////////////////////////////////////////////
+    projectViewInitialized = true;
 }
 
 
 void CSimplePanel::InitNotebook()
 {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::InitNotebook - Function Start"));
-	// FlatNotebook
-	wrkUnitNB = new WorkunitNotebook(this, -1, wxDefaultPosition, wxSize(370,330), wxFNB_TABS_BORDER_SIMPLE | wxFNB_NO_X_BUTTON | wxFNB_NO_NAV_BUTTONS | wxFNB_FANCY_TABS | wxFNB_NODRAG );
+    // FlatNotebook
+    wrkUnitNB = new WorkunitNotebook(this, -1, wxDefaultPosition, wxSize(370,330), wxFNB_TABS_BORDER_SIMPLE | wxFNB_NO_X_BUTTON | wxFNB_NO_NAV_BUTTONS | wxFNB_FANCY_TABS | wxFNB_NODRAG );
     SetSizer(mainSizer);
-	mainSizer->Add(31, 68,0);
-	mainSizer->Add(343, 68,0);
-	mainSizer->Add(31, 68,0);
-	mainSizer->Add(0, 0,1);
-	mainSizer->Add(wrkUnitNB);
-	mainSizer->Layout();
-	notebookViewInitialized = true;
+    mainSizer->Add(31, 68,0);
+    mainSizer->Add(343, 68,0);
+    mainSizer->Add(31, 68,0);
+    mainSizer->Add(0, 0,1);
+    mainSizer->Add(wrkUnitNB);
+    mainSizer->Layout();
+    notebookViewInitialized = true;
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::InitNotebook - Function End"));
 }
 
@@ -604,5 +604,3 @@ void CSimplePanel::OnEraseBackground(wxEraseEvent& event){
     wxDC *dc = event.GetDC();
     dc->DrawBitmap(*pSkinSimple->GetBackgroundImage()->GetBitmap(), 0, 0);
 }
-
-

@@ -20,7 +20,6 @@
 #include "ProjectInfoPage.h"
 
 #include "stdwx.h"
-#include <algorithm>
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"

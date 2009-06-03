@@ -77,7 +77,7 @@ bool CPanelMessages::Create()
 {
 ////@begin CPanelMessages member initialisation
     m_iPreviousDocCount = 0;
-	m_bProcessingRefreshEvent = false;
+    m_bProcessingRefreshEvent = false;
 ////@end CPanelMessages member initialisation
 
     CreateControls();
@@ -85,7 +85,7 @@ bool CPanelMessages::Create()
     GetSizer()->Fit(this);
     GetSizer()->SetSizeHints(this);
 
-	// Create List Pane Items
+    // Create List Pane Items
     m_pList->InsertColumn(COLUMN_PROJECT, _("Project"), wxLIST_FORMAT_LEFT, 109);
     m_pList->InsertColumn(COLUMN_TIME, _("Time"), wxLIST_FORMAT_LEFT, 130);
     m_pList->InsertColumn(COLUMN_MESSAGE, _("Message"), wxLIST_FORMAT_LEFT, 378);
@@ -93,7 +93,7 @@ bool CPanelMessages::Create()
     m_pMessageInfoAttr = new wxListItemAttr(*wxBLACK, *wxWHITE, wxNullFont);
     m_pMessageErrorAttr = new wxListItemAttr(*wxRED, *wxWHITE, wxNullFont);
 
-	m_pRefreshMessagesTimer = new wxTimer(this, ID_REFRESHMESSAGESTIMER);
+    m_pRefreshMessagesTimer = new wxTimer(this, ID_REFRESHMESSAGESTIMER);
     wxASSERT(m_pRefreshMessagesTimer);
 
     m_pRefreshMessagesTimer->Start(1000);  
@@ -104,11 +104,11 @@ bool CPanelMessages::Create()
 
 CPanelMessages::~CPanelMessages()
 {
-	if (m_pRefreshMessagesTimer) {
+    if (m_pRefreshMessagesTimer) {
         m_pRefreshMessagesTimer->Stop();
         delete m_pRefreshMessagesTimer;
     }
-	if (m_pMessageInfoAttr) {
+    if (m_pMessageInfoAttr) {
         delete m_pMessageInfoAttr;
         m_pMessageInfoAttr = NULL;
     }
@@ -161,9 +161,9 @@ void CPanelMessages::CreateControls()
         ),
         wxBU_AUTODRAW
     );
-	if ( pSkinSimple->GetCopyAllButton()->GetBitmapClicked() != NULL ) {
-		itemButton1->SetBitmapSelected(*pSkinSimple->GetCopyAllButton()->GetBitmapClicked());
-	}
+    if ( pSkinSimple->GetCopyAllButton()->GetBitmapClicked() != NULL ) {
+        itemButton1->SetBitmapSelected(*pSkinSimple->GetCopyAllButton()->GetBitmapClicked());
+    }
     itemButton1->SetHelpText(
         _("Copy all the messages to the clipboard.")
     );
@@ -185,9 +185,9 @@ void CPanelMessages::CreateControls()
         ),
         wxBU_AUTODRAW
     );
-	if ( pSkinSimple->GetCopyButton()->GetBitmapClicked() != NULL ) {
-		itemButton2->SetBitmapSelected(*pSkinSimple->GetCopyButton()->GetBitmapClicked());
-	}
+    if ( pSkinSimple->GetCopyButton()->GetBitmapClicked() != NULL ) {
+        itemButton2->SetBitmapSelected(*pSkinSimple->GetCopyButton()->GetBitmapClicked());
+    }
     itemButton2->SetHelpText(
 #ifdef __WXMAC__
         _("Copy the selected messages to the clipboard. "
@@ -226,14 +226,14 @@ void CPanelMessages::CreateControls()
         ),
         wxBU_AUTODRAW
     );
-	if ( pSkinSimple->GetCloseButton()->GetBitmapClicked() != NULL ) {
-		itemBitmapButton44->SetBitmapSelected(*pSkinSimple->GetCloseButton()->GetBitmapClicked());
-	}
+    if ( pSkinSimple->GetCloseButton()->GetBitmapClicked() != NULL ) {
+        itemBitmapButton44->SetBitmapSelected(*pSkinSimple->GetCloseButton()->GetBitmapClicked());
+    }
     itemBoxSizer4->Add(itemBitmapButton44, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
 #ifndef __WXMSW__
 #ifdef __WXMAC__
-	wxBitmapButton* itemButton45 = new wxBitmapButton(
+    wxBitmapButton* itemButton45 = new wxBitmapButton(
         this,
         ID_SIMPLE_HELP,
         *pSkinSimple->GetHelpButton()->GetBitmap(),
@@ -244,11 +244,11 @@ void CPanelMessages::CreateControls()
         ),
         wxBU_AUTODRAW
     );
-	if ( pSkinSimple->GetHelpButton()->GetBitmapClicked() != NULL ) {
-		itemButton45->SetBitmapSelected(*pSkinSimple->GetHelpButton()->GetBitmapClicked());
-	}
+    if ( pSkinSimple->GetHelpButton()->GetBitmapClicked() != NULL ) {
+        itemButton45->SetBitmapSelected(*pSkinSimple->GetHelpButton()->GetBitmapClicked());
+    }
 #ifdef wxUSE_TOOLTIPS
-	itemButton45->SetToolTip(new wxToolTip(_("Get Help")));
+    itemButton45->SetToolTip(new wxToolTip(_("Get Help")));
 #endif
     itemBoxSizer4->Add(itemButton45, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 #else
@@ -570,7 +570,7 @@ wxListItemAttr* CPanelMessages::OnListGetItemAttr(long item) const {
     }
 
     return pAttribute;
-	
+    
 }
 
 
@@ -721,7 +721,7 @@ CDlgMessages::CDlgMessages( wxWindow* parent, wxWindowID id, const wxString& cap
 CDlgMessages::~CDlgMessages() {
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgMessages::CDlgMessages - Destructor Function Begin"));
 
-	SaveState();    // Save state if close box on window frame clicked
+    SaveState();    // Save state if close box on window frame clicked
 
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgMessages::CDlgMessages - Destructor Function End"));
 }
@@ -973,4 +973,3 @@ void CDlgMessages::RestoreWindowDimensions() {
 
 #endif  // ! __WXMAC__
 }
-

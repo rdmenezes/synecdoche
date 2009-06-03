@@ -102,9 +102,20 @@ EXTRA_DIST = *.h \
     ../lib/error_numbers.h \
     locale $(mac_headers)
 
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+        $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
+
+if PRECOMPILE_HEADERS
+BUILT_SOURCES = stdwx.h.gch
+endif
+
 synecmgr_CPPFLAGS = $(AM_CPPFLAGS) $(WX_CPPFLAGS) $(CLIENTGUIFLAGS)
 synecmgr_CXXFLAGS = $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
 synecmgr_LDADD = $(LIBBOINC) $(CLIENTGUILIBS)
+
+stdwx.h.gch: stdwx.h
+	-rm -f stdwx.h.gch
+	$(CXXCOMPILE) -o stdwx.h.gch -xc++-header stdwx.h
 
 all-local: synecmgr
 
@@ -112,5 +123,8 @@ win_config.h: $(top_srcdir)/config.h
 	grep '#define.*BOINC.*VERSION' $^ > $@
 
 version: win_config.h
+
+clean-local:
+	-rm -f stdwx.h.gch
 
 .PHONY: version

@@ -47,11 +47,7 @@
 #include "client_msgs.h"
 #include "scheduler_op.h"
 
-#ifdef SIM
-#include "sim.h"
-#else
 #include "client_state.h"
-#endif
 
 using std::max;
 using std::vector;
@@ -87,20 +83,20 @@ int CLIENT_STATE::proj_min_results(PROJECT* p, double subset_resource_share) {
 }
 
 void CLIENT_STATE::check_project_timeout() {
-	unsigned int i;
-	for (i=0; i<projects.size(); i++) {
-		PROJECT* p = projects[i];
-		if (p->possibly_backed_off && now > p->min_rpc_time) {
-			p->possibly_backed_off = false;
-			request_work_fetch("Project backoff ended");
-		}
-	}
+    unsigned int i;
+    for (i=0; i<projects.size(); i++) {
+        PROJECT* p = projects[i];
+        if (p->possibly_backed_off && now > p->min_rpc_time) {
+            p->possibly_backed_off = false;
+            request_work_fetch("Project backoff ended");
+        }
+    }
 }
 
 void PROJECT::set_min_rpc_time(double future_time, const char* reason) {
     if (future_time > min_rpc_time) {
         min_rpc_time = future_time;
-		possibly_backed_off = true;
+        possibly_backed_off = true;
         if (log_flags.sched_op_debug) {
             msg_printf(this, MSG_INFO,
                 "[sched_op_debug] Deferring communication for %s",
@@ -207,7 +203,7 @@ PROJECT* CLIENT_STATE::next_project_need_work() {
         }
 
         if (p_prospect) {
-            if (p->work_request_urgency == WORK_FETCH_OK && 
+            if (p->work_request_urgency == WORK_FETCH_OK &&
                 p_prospect->work_request_urgency > WORK_FETCH_OK
             ) {
                 continue;
@@ -281,7 +277,7 @@ double CLIENT_STATE::overall_cpu_frac() {
     double running_frac = time_stats.on_frac * time_stats.active_frac * time_stats.cpu_efficiency;
     if (running_frac < 0.01) running_frac = 0.01;
     if (running_frac > 1) running_frac = 1;
-	return running_frac;
+    return running_frac;
 }
 
 /// the expected number of CPU seconds completed by the client
@@ -301,7 +297,7 @@ double CLIENT_STATE::time_until_work_done(
 ) {
     int num_results_to_skip = k;
     double est = 0;
-    
+
     // total up the estimated time for this project's unstarted
     // and partially completed results,
     // omitting the last k
@@ -322,17 +318,17 @@ double CLIENT_STATE::time_until_work_done(
             // if it is a non_cpu intensive project,
             // it needs only one at a time.
             //
-            est = max(rp->estimated_cpu_time_remaining(true), work_buf_min());  
+            est = max(rp->estimated_cpu_time_remaining(), work_buf_min());
         } else {
-            est += rp->estimated_cpu_time_remaining(true);
+            est += rp->estimated_cpu_time_remaining();
         }
     }
-	if (log_flags.work_fetch_debug) {
-		msg_printf(NULL, MSG_INFO,
-			"[work_fetch_debug] time_until_work_done(): est %f ssr %f apr %f prs %f",
-			est, subset_resource_share, avg_proc_rate(), p->resource_share
-		);
-	}
+    if (log_flags.work_fetch_debug) {
+        msg_printf(NULL, MSG_INFO,
+            "[work_fetch_debug] time_until_work_done(): est %f ssr %f apr %f prs %f",
+            est, subset_resource_share, avg_proc_rate(), p->resource_share
+        );
+    }
     if (subset_resource_share) {
         double apr = avg_proc_rate()*p->resource_share/subset_resource_share;
         return est/apr;
@@ -375,37 +371,6 @@ bool CLIENT_STATE::compute_work_requests() {
     compute_nuploading_results();
     adjust_debts();
 
-#ifdef SIM
-    if (work_fetch_old) {
-        // "dumb" version for simulator only.
-        // for each project, compute extra work needed to bring it up to
-        // total_buf/relative resource share.
-        //
-        overall_work_fetch_urgency = WORK_FETCH_DONT_NEED;
-        double trs = total_resource_share();
-        double total_buf = ncpus*(work_buf_min() + work_buf_additional());
-        for (i=0; i<projects.size(); i++) {
-            PROJECT* p = projects[i];
-            double d = 0;
-            for (unsigned int j=0; j<results.size(); j++) {
-                RESULT* rp = results[j];
-                if (rp->project != p) continue;
-                d += rp->estimated_cpu_time_remaining(true);
-            }
-            double rrs = p->resource_share/trs;
-            double minq = total_buf*rrs;
-            if (d < minq) {
-                p->work_request = minq-d;
-                p->work_request_urgency = WORK_FETCH_NEED;
-                overall_work_fetch_urgency = WORK_FETCH_NEED;
-            } else {
-                p->work_request = 0;
-                p->work_request_urgency = WORK_FETCH_DONT_NEED;
-            }
-        }
-        return false;
-    }
-#endif
 
     rr_simulation();
 
@@ -423,20 +388,20 @@ bool CLIENT_STATE::compute_work_requests() {
             } else {
                 p->work_request = 1.0;
                 p->work_request_urgency = WORK_FETCH_NEED_IMMEDIATELY;
-				non_cpu_intensive_needs_work = true;
-				if (log_flags.work_fetch_debug) {
-					msg_printf(p, MSG_INFO,
-						"[work_fetch_debug] non-CPU-intensive project needs work"
-					);
-				}
-				return false;
+                non_cpu_intensive_needs_work = true;
+                if (log_flags.work_fetch_debug) {
+                    msg_printf(p, MSG_INFO,
+                        "[work_fetch_debug] non-CPU-intensive project needs work"
+                    );
+                }
+                return false;
             }
         } else {
             p->work_request_urgency = WORK_FETCH_DONT_NEED;
             p->work_request = 0;
-			if (p->rr_sim_status.deadlines_missed) {
-				possible_deadline_miss = true;
-			}
+            if (p->rr_sim_status.deadlines_missed) {
+                possible_deadline_miss = true;
+            }
             if (p->rr_sim_status.cpu_shortfall && p->long_term_debt > -global_prefs.cpu_scheduling_period()) {
                 project_shortfall = true;
             }
@@ -548,7 +513,7 @@ bool CLIENT_STATE::compute_work_requests() {
             } else {
                 if (log_flags.work_fetch_debug) {
                     msg_printf(p, MSG_INFO,
-                        "[work_fetch_debug] project DCF %f out of range: changing shortfall %f to 1.0", 
+                        "[work_fetch_debug] project DCF %f out of range: changing shortfall %f to 1.0",
                          p->duration_correction_factor, p->rr_sim_status.cpu_shortfall
                     );
                 }
@@ -610,11 +575,11 @@ bool CLIENT_STATE::compute_work_requests() {
         double x = 1.01*work_buf_total()*ncpus;
             // the 1.01 is for round-off error
         if (pbest->work_request > x) {
-        	msg_printf(NULL, MSG_INTERNAL_ERROR,
-        	    "Proposed work request %f bigger than max %f",
-        	    pbest->work_request, x
-        	);
-        	pbest->work_request = x;
+            msg_printf(NULL, MSG_INTERNAL_ERROR,
+                "Proposed work request %f bigger than max %f",
+                pbest->work_request, x
+            );
+            pbest->work_request = x;
         }
         if (!pbest->nearly_runnable()) {
             pbest->work_request_urgency = WORK_FETCH_NEED_IMMEDIATELY;
@@ -626,8 +591,8 @@ bool CLIENT_STATE::compute_work_requests() {
 
         if (log_flags.work_fetch_debug) {
             msg_printf(pbest, MSG_INFO,
-				"[work_fetch_debug] compute_work_requests(): work req %f, shortfall %f, urgency %s\n",
-				pbest->work_request, pbest->rr_sim_status.cpu_shortfall,
+                "[work_fetch_debug] compute_work_requests(): work req %f, shortfall %f, urgency %s\n",
+                pbest->work_request, pbest->rr_sim_status.cpu_shortfall,
                 urgency_name(pbest->work_request_urgency)
             );
         }
@@ -647,12 +612,12 @@ void CLIENT_STATE::scale_duration_correction_factors(double factor) {
         PROJECT* p = projects[i];
         p->duration_correction_factor *= factor;
     }
-	if (log_flags.cpu_sched_debug) {
-		msg_printf(NULL, MSG_INFO,
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(NULL, MSG_INFO,
             "[cpu_sched_debug] scaling duration correction factors by %f",
             factor
         );
-	}
+    }
 }
 
 /// Choose a new host CPID.
@@ -765,23 +730,17 @@ double RESULT::estimated_cpu_time_uncorrected() const {
 
 /// estimate how long a result will take on this host
 ///
-double RESULT::estimated_cpu_time(bool for_work_fetch) const {
-#ifdef SIM
-    SIM_PROJECT* spp = (SIM_PROJECT*)project;
-    if (dual_dcf && for_work_fetch && spp->completions_ratio_mean) {
-        return estimated_cpu_time_uncorrected()*spp->completions_ratio_mean;
-    }
-#endif
+double RESULT::estimated_cpu_time() const {
     return estimated_cpu_time_uncorrected()*project->duration_correction_factor;
 }
 
-double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) const {
+double RESULT::estimated_cpu_time_remaining() const {
     if (computing_done()) return 0;
-    ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(this);
+    const ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(this);
     if (atp) {
-        return atp->est_cpu_time_to_completion(for_work_fetch);
+        return atp->est_cpu_time_to_completion();
     }
-    return estimated_cpu_time(for_work_fetch);
+    return estimated_cpu_time();
 }
 
 /// Returns the estimated CPU time to completion (in seconds) of this task.
@@ -789,9 +748,9 @@ double RESULT::estimated_cpu_time_remaining(bool for_work_fetch) const {
 /// -# the workunit's flops count
 /// -# the current reported CPU time and fraction done
 ///
-double ACTIVE_TASK::est_cpu_time_to_completion(bool for_work_fetch) {
+double ACTIVE_TASK::est_cpu_time_to_completion() const {
     if (fraction_done >= 1) return 0;
-    double wu_est = result->estimated_cpu_time(for_work_fetch);
+    double wu_est = result->estimated_cpu_time();
     if (fraction_done <= 0) return wu_est;
     double frac_est = (current_cpu_time / fraction_done) - current_cpu_time;
     double fraction_left = 1-fraction_done;
@@ -800,12 +759,10 @@ double ACTIVE_TASK::est_cpu_time_to_completion(bool for_work_fetch) {
 }
 
 /// trigger work fetch
-/// 
+///
 void CLIENT_STATE::request_work_fetch(const char* where) {
     if (log_flags.work_fetch_debug) {
         msg_printf(0, MSG_INFO, "[work_fetch_debug] Request work fetch: %s", where);
     }
     must_check_work_fetch = true;
 }
-
-const char *BOINC_RCSID_d3a4a7711 = "$Id: work_fetch.C 15286 2008-05-23 20:58:06Z davea $";

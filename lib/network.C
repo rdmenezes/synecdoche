@@ -75,8 +75,8 @@ const char* socket_error_str() {
         return "host not found or server failure";
 #ifdef NETDB_INTERNAL
     case NETDB_INTERNAL:
-		sprintf(buf,"network internal error %d",errno);
-		return buf;
+        sprintf(buf,"network internal error %d",errno);
+        return buf;
 #endif
     }
     sprintf(buf, "error %d", h_errno);
@@ -187,4 +187,3 @@ int WinsockCleanup() {
 
 
 #endif
-const char *BOINC_RCSID_557bf0741f="$Id: network.C 14538 2008-01-11 23:52:49Z davea $";

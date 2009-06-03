@@ -23,7 +23,7 @@
 struct PROXY_INFO {
     bool use_http_proxy;
     bool use_socks_proxy;
-	bool use_http_auth;
+    bool use_http_auth;
     int socks_version;
     char socks_server_name[256];
     char http_server_name[256];
@@ -40,4 +40,3 @@ struct PROXY_INFO {
 };
 
 #endif
-

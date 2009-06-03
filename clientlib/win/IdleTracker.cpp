@@ -31,12 +31,12 @@ BOOL      g_bIsTerminalServicesEnabled = FALSE;
  * The following global data is SHARED among all instances of the DLL
  * (processes) within a terminal services session.
  **/ 
-#pragma data_seg(".IdleTrac")	// you must define as SHARED in .def
-HHOOK 	g_hHkKeyboard = NULL;	// handle to the keyboard hook
-HHOOK 	g_hHkMouse = NULL;	    // handle to the mouse hook
-LONG	g_mouseLocX = -1;	    // x-location of mouse position
-LONG	g_mouseLocY = -1;	    // y-location of mouse position
-DWORD	g_dwLastTick = 0;       // tick time of last input event
+#pragma data_seg(".IdleTrac")   // you must define as SHARED in .def
+HHOOK   g_hHkKeyboard = NULL;   // handle to the keyboard hook
+HHOOK   g_hHkMouse = NULL;      // handle to the mouse hook
+LONG    g_mouseLocX = -1;       // x-location of mouse position
+LONG    g_mouseLocY = -1;       // y-location of mouse position
+DWORD   g_dwLastTick = 0;       // tick time of last input event
 #pragma data_seg()
 #pragma comment(linker, "/section:.IdleTrac,rws")
 
@@ -46,7 +46,7 @@ DWORD	g_dwLastTick = 0;       // tick time of last input event
  **/
 struct SystemWideIdleData
 {
-	DWORD	dwLastTick;         // tick time of last input event
+    DWORD dwLastTick;         // tick time of last input event
 };
 
 struct SystemWideIdleData* g_pSystemWideIdleData = NULL;
@@ -68,11 +68,11 @@ GETLASTINPUTINFO g_fnGetLastInputInfo = NULL;
  **/
 LRESULT CALLBACK KeyboardTracker(int code, WPARAM wParam, LPARAM lParam)
 {
-	if (code==HC_ACTION)
+    if (code==HC_ACTION)
     {
-		g_dwLastTick = GetTickCount();
-	}
-	return ::CallNextHookEx(g_hHkKeyboard, code, wParam, lParam);
+        g_dwLastTick = GetTickCount();
+    }
+    return ::CallNextHookEx(g_hHkKeyboard, code, wParam, lParam);
 }
 
 /**
@@ -80,18 +80,18 @@ LRESULT CALLBACK KeyboardTracker(int code, WPARAM wParam, LPARAM lParam)
  **/
 LRESULT CALLBACK MouseTracker(int code, WPARAM wParam, LPARAM lParam)
 {
-	if (code==HC_ACTION) 
+    if (code==HC_ACTION) 
     {
-		MOUSEHOOKSTRUCT* pStruct = (MOUSEHOOKSTRUCT*)lParam;
-		//we will assume that any mouse msg with the same locations as spurious
-		if (pStruct->pt.x != g_mouseLocX || pStruct->pt.y != g_mouseLocY)
-		{
-			g_mouseLocX = pStruct->pt.x;
-			g_mouseLocY = pStruct->pt.y;
-			g_dwLastTick = GetTickCount();
-		}
-	}
-	return ::CallNextHookEx(g_hHkMouse, code, wParam, lParam);
+        MOUSEHOOKSTRUCT* pStruct = (MOUSEHOOKSTRUCT*)lParam;
+        //we will assume that any mouse msg with the same locations as spurious
+        if (pStruct->pt.x != g_mouseLocX || pStruct->pt.y != g_mouseLocY)
+        {
+            g_mouseLocX = pStruct->pt.x;
+            g_mouseLocY = pStruct->pt.y;
+            g_dwLastTick = GetTickCount();
+        }
+    }
+    return ::CallNextHookEx(g_hHkMouse, code, wParam, lParam);
 }
 
 /**
@@ -133,7 +133,7 @@ EXTERN_C __declspec(dllexport) DWORD BOINCGetIdleTickCount()
         dwLastTickCount = g_dwLastTick;
     }
 
-	return (dwCurrentTickCount - dwLastTickCount);
+    return (dwCurrentTickCount - dwLastTickCount);
 }
 
 /**
@@ -141,10 +141,10 @@ EXTERN_C __declspec(dllexport) DWORD BOINCGetIdleTickCount()
  **/
 BOOL IdleTrackerStartup()
 {
- 	BOOL                bExists = FALSE;
-	BOOL                bResult = FALSE;
- 	SECURITY_ATTRIBUTES	sec_attr;
- 	SECURITY_DESCRIPTOR sd;
+    BOOL                bExists = FALSE;
+    BOOL                bResult = FALSE;
+    SECURITY_ATTRIBUTES sec_attr;
+    SECURITY_DESCRIPTOR sd;
 
 
     g_bIsWindows2000Compatible = IsWindows2000Compatible();
@@ -161,19 +161,19 @@ BOOL IdleTrackerStartup()
                 g_hModule,
                 0
             );
-	    }
-	    if ( NULL == g_hHkMouse )
+        }
+        if ( NULL == g_hHkMouse )
         {
-		    g_hHkMouse = SetWindowsHookEx( 
+            g_hHkMouse = SetWindowsHookEx( 
                 WH_MOUSE, 
                 MouseTracker, 
                 g_hModule,
                 0
             );
-	    }
+        }
 
-	    _ASSERT( g_hHkKeyboard );
-	    _ASSERT( g_hHkMouse );
+        _ASSERT( g_hHkKeyboard );
+        _ASSERT( g_hHkMouse );
     }
     else
     {
@@ -182,41 +182,41 @@ BOOL IdleTrackerStartup()
             g_fnGetLastInputInfo = (GETLASTINPUTINFO)GetProcAddress(g_hUser32, "GetLastInputInfo");
 
 
- 	    /*
- 	    * Create a security descriptor that will allow
- 	    * everyone full access.
- 	    */
- 	    InitializeSecurityDescriptor( &sd, SECURITY_DESCRIPTOR_REVISION );
- 	    SetSecurityDescriptorDacl( &sd, TRUE, NULL, FALSE );
+        /*
+        * Create a security descriptor that will allow
+        * everyone full access.
+        */
+        InitializeSecurityDescriptor( &sd, SECURITY_DESCRIPTOR_REVISION );
+        SetSecurityDescriptorDacl( &sd, TRUE, NULL, FALSE );
 
- 	    sec_attr.nLength = sizeof(sec_attr);
- 	    sec_attr.bInheritHandle = TRUE;
- 	    sec_attr.lpSecurityDescriptor = &sd;
+        sec_attr.nLength = sizeof(sec_attr);
+        sec_attr.bInheritHandle = TRUE;
+        sec_attr.lpSecurityDescriptor = &sd;
 
- 	    /*
-	    * Create a filemap object that is global for everyone,
- 	    * including users logged in via terminal services.
- 	    */
-	    g_hMemoryMappedData = 
+        /*
+        * Create a filemap object that is global for everyone,
+        * including users logged in via terminal services.
+        */
+        g_hMemoryMappedData = 
             CreateFileMapping(
                 INVALID_HANDLE_VALUE,
-			    &sec_attr,
-			    PAGE_READWRITE,
-			    0,
-			    4096,
-			    "Global\\IdleMonitor"
+                &sec_attr,
+                PAGE_READWRITE,
+                0,
+                4096,
+                "Global\\IdleMonitor"
             );
 
- 	    if( NULL != g_hMemoryMappedData )
- 	    {
- 		    if( ERROR_ALREADY_EXISTS == GetLastError() )
- 			    bExists = TRUE;
+        if( NULL != g_hMemoryMappedData )
+        {
+            if( ERROR_ALREADY_EXISTS == GetLastError() )
+                bExists = TRUE;
 
             g_pSystemWideIdleData = (struct SystemWideIdleData*) 
                 MapViewOfFile(
                     g_hMemoryMappedData, 
                     FILE_MAP_ALL_ACCESS,
- 				    0,
+                    0,
                     0,
                     0
                 );
@@ -224,26 +224,26 @@ BOOL IdleTrackerStartup()
             _ASSERT( g_pSystemWideIdleData );
         }
 
- 	    if( !bExists && g_pSystemWideIdleData )
- 	    {
- 		    g_pSystemWideIdleData->dwLastTick = GetTickCount();
- 	    }
+        if( !bExists && g_pSystemWideIdleData )
+        {
+            g_pSystemWideIdleData->dwLastTick = GetTickCount();
+        }
     }
 
 
     if ( !g_bIsWindows2000Compatible )
     {
-	    if ( !g_hHkKeyboard || !g_hHkMouse )
-		    bResult = FALSE;
-	    else
-		    bResult = TRUE;
+        if ( !g_hHkKeyboard || !g_hHkMouse )
+            bResult = FALSE;
+        else
+            bResult = TRUE;
     }
     else
     {
         if ( !g_hUser32 || !g_fnGetLastInputInfo || !g_hMemoryMappedData || !g_pSystemWideIdleData )
-		    bResult = FALSE;
-	    else
-		    bResult = TRUE;
+            bResult = FALSE;
+        else
+            bResult = TRUE;
     }
 
     return bResult;
@@ -256,31 +256,29 @@ void IdleTrackerShutdown()
 {
     if ( !g_bIsWindows2000Compatible )
     {
-	    BOOL bResult;
-	    if ( g_hHkKeyboard )
-	    {
-		    bResult = UnhookWindowsHookEx( g_hHkKeyboard );
-		    _ASSERT( bResult );
-		    g_hHkKeyboard = NULL;
-	    }
-	    if ( g_hHkMouse )
-	    {
-		    bResult = UnhookWindowsHookEx(g_hHkMouse);
-		    _ASSERT( bResult );
-		    g_hHkMouse = NULL;
-	    }
+        BOOL bResult;
+        if ( g_hHkKeyboard )
+        {
+            bResult = UnhookWindowsHookEx( g_hHkKeyboard );
+            _ASSERT( bResult );
+            g_hHkKeyboard = NULL;
+        }
+        if ( g_hHkMouse )
+        {
+            bResult = UnhookWindowsHookEx(g_hHkMouse);
+            _ASSERT( bResult );
+            g_hHkMouse = NULL;
+        }
     }
     else
     {
         if( NULL != g_pSystemWideIdleData )
- 	    {
- 		    UnmapViewOfFile(g_pSystemWideIdleData);
- 		    CloseHandle(g_hMemoryMappedData);
- 	    }
+        {
+            UnmapViewOfFile(g_pSystemWideIdleData);
+            CloseHandle(g_hMemoryMappedData);
+        }
 
         if ( NULL != g_hUser32 )
             FreeLibrary(g_hUser32);
     }
 }
-
-const char *BOINC_RCSID_14d432d5b3 = "$Id: IdleTracker.cpp 14531 2008-01-11 17:14:11Z romw $";

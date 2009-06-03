@@ -271,44 +271,4 @@ void CLIENT_STATE::new_version_check() {
         }
 }
 #endif
-int GET_PROJECT_LIST_OP::do_rpc() {
-    int retval;
-    const std::string project_list_url("http://boinc.berkeley.edu/project_list.php");
 
-    retval = gui_http->do_rpc(
-        this, project_list_url, ALL_PROJECTS_LIST_FILENAME_TEMP
-    );
-    if (retval) {
-        error_num = retval;
-    } else {
-        error_num = ERR_IN_PROGRESS;
-    }
-    return retval;
-}
-
-#define ALL_PROJECTS_LIST_CHECK_PERIOD (14*86400)
-
-void GET_PROJECT_LIST_OP::handle_reply(int http_op_retval) {
-    if (http_op_retval) {
-        error_num = http_op_retval;
-        // if error, try again in a day
-        //
-        gstate.all_projects_list_check_time =
-            gstate.now - ALL_PROJECTS_LIST_CHECK_PERIOD + SECONDS_PER_DAY;
-    } else {
-        boinc_rename(ALL_PROJECTS_LIST_FILENAME_TEMP, ALL_PROJECTS_LIST_FILENAME);
-        gstate.all_projects_list_check_time = gstate.now;
-    }
-}
-
-void CLIENT_STATE::all_projects_list_check() {
-    if (config.dont_contact_ref_site) return;
-    if (all_projects_list_check_time) {
-        if (now - all_projects_list_check_time < ALL_PROJECTS_LIST_CHECK_PERIOD) {
-            return;
-        }
-    }
-    get_project_list_op.do_rpc();
-}
-
-const char *BOINC_RCSID_84df3fc17e="$Id: acct_setup.C 14811 2008-02-27 23:26:38Z davea $";

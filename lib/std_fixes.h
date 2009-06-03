@@ -31,7 +31,7 @@ namespace std {
 
 template <typename T>
 inline T min(const T &a, const T &b) {
-	return ((a<b)?a:b);
+    return ((a<b)?a:b);
 }
 }
 #endif /* HAVE_STD_MIN */
@@ -44,7 +44,7 @@ namespace std {
 
 template <typename T>
 inline T max(const T &a, const T &b) {
-	return ((a>b)?a:b);
+    return ((a>b)?a:b);
 }
 
 }
@@ -62,10 +62,10 @@ namespace std {
 
 template <typename i_iterator, typename o_iterator, typename OP>
 o_iterator transform(i_iterator first, i_iterator last, o_iterator res, OP op) {
-	for (;first != last; first++) {
-		*(res++)=op(*first);
-	}
-	return (res);
+    for (;first != last; first++) {
+        *(res++)=op(*first);
+    }
+    return (res);
 }
 
 }
@@ -116,4 +116,3 @@ inline int creat(const char *filename, mode_t mode) { return creat64(filename,mo
 #endif
 #endif /* __cplusplus */
 #endif /* STD_FIXES_H */
-

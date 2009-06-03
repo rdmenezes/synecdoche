@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 #ifdef HAVE_IEEEFP_H
 #include <ieeefp.h>
 extern "C" {
@@ -40,18 +41,18 @@ class XML_PARSER {
     MIOFILE* f;
     bool scan_nonws(int&);
     int scan_comment();
-    int scan_tag(char*, int);
+    int scan_tag(char* tag_buf, int tag_len, char* attr_buf = 0, int attr_len = 0);
     bool copy_until_tag(char*, int);
 public:
     XML_PARSER(MIOFILE*);
-    bool get(char*, int, bool&);
+    bool get(char* buf, int len, bool& is_tag, char* attr_buf = 0, int attr_len = 0);
     bool parse_start(const char*);
     bool parse_str(char*, const char*, char*, int);
     bool parse_string(char*, const char*, std::string&);
     bool parse_int(char*, const char*, int&);
     bool parse_double(char*, const char*, double&);
     bool parse_bool(char*, const char*, bool&);
-	int element_contents(const char*, char*, int);
+    int element_contents(const char*, char*, int);
     void skip_unexpected(const char*, bool verbose, const char*);
 };
 
@@ -76,7 +77,9 @@ inline bool match_tag(const std::string& s, const std::string& tag) {
 inline bool parse_int(const char* buf, const char* tag, int& x) {
     const char* p = strstr(buf, tag);
     if (!p) return false;
-    x = strtol(p+strlen(tag), 0, 0);        // this parses 0xabcd correctly
+    int y = strtol(p + strlen(tag), 0, 0);      // This respects hex and octal prefixes.
+    if (errno == ERANGE) return false;
+    x = y;
     return true;
 }
 
@@ -112,6 +115,7 @@ extern bool parse_bool(const char*, const char*, bool&);
 extern int copy_stream(FILE* in, FILE* out);
 extern int strcatdup(char*& p, char* buf);
 extern int dup_element_contents(FILE* in, const char* end_tag, char** pp);
+extern int dup_element(FILE* in, const char* end_tag, char** pp);
 extern int copy_element_contents(FILE* in, const char* end_tag, char* p, int len);
 extern int copy_element_contents(FILE* in, const char* end_tag, std::string&);
 extern void replace_element_contents(
@@ -120,8 +124,13 @@ extern void replace_element_contents(
 extern bool remove_element(char* buf, const char* start, const char* end);
 extern bool str_replace(char* str, const char* old, const char* neww);
 extern char* sgets(char* buf, int len, char* &in);
-extern void xml_escape(const char*, char*);
-extern void xml_unescape(const char*, char*);
+
+/// Escape XML.
+extern void xml_escape(const char* in, char* out, int len);
+
+/// Unescape XML.
+extern void xml_unescape(const char* in, char* out, int len);
+
 extern void extract_venue(const char*, const char*, char*);
 
 /// Skip unrecognized line.

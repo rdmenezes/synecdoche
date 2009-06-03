@@ -104,12 +104,12 @@ struct SHARED_MEM {
 struct MSG_QUEUE {
     std::vector<std::string> msgs;
     char name[256];
-	double last_block;	// last time we found message channel full
-	void init(char*);
+    double last_block;  // last time we found message channel full
+    void init(char*);
     void msg_queue_send(const char*, MSG_CHANNEL& channel);
     void msg_queue_poll(MSG_CHANNEL& channel);
-	int msg_queue_purge(const char*);
-	bool timeout(double);
+    int msg_queue_purge(const char*);
+    bool timeout(double);
 };
 
 #define DEFAULT_CHECKPOINT_PERIOD               300
@@ -234,13 +234,16 @@ extern int boinc_link(const char* phys_name, const char* logical_name);
 extern "C" {
 #endif
 
-extern int boinc_resolve_filename(const char*, char*, int len);
+/// Resolve virtual name (in slot dir) to physical path (in project dir).
+extern int boinc_resolve_filename(const char* virtual_name, char* physical_name, int len);
+
+/// Resolve virtual name (in slot dir) to physical path (in project dir).
+extern int boinc_resolve_filename_s(const char *virtual_name, std::string& physical_name);
 
 #ifdef __cplusplus
 } // extern "C" {
 #endif
 
-extern void url_to_project_dir(char* url, char* dir);
+extern void url_to_project_dir(const char* url, char* dir);
 
 #endif
-

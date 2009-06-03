@@ -578,13 +578,6 @@ int CMainDocument::GetCoreClientStatus(CC_STATUS& ccs, bool bForce) {
             iRetVal = rpc.get_cc_status(ccs);
             if (0 == iRetVal) {
                 status = ccs;
-                if (ccs.manager_must_quit) {
-                    if (IsLocalClient()) {
-                        CBOINCBaseFrame* pFrame = wxGetApp().GetFrame();
-                        wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
-                        pFrame->Close(true);
-                    }
-                }
             } else {
                 m_pNetworkConnection->SetStateDisconnected();
             }
@@ -751,13 +744,13 @@ PROJECT* CMainDocument::project(unsigned int i) {
 }
 
 PROJECT* CMainDocument::project(const wxString& projectname) {
-	for (unsigned int i=0; i< state.projects.size(); i++) {
-		PROJECT* tp = state.projects[i];
-		wxString t1(tp->project_name.c_str(), wxConvUTF8);
-		if(t1.IsSameAs(projectname)) return tp;
-		wxString t2(tp->master_url.c_str(), wxConvUTF8);
-		if(t2.IsSameAs(projectname)) return tp;
-	}
+    for (unsigned int i=0; i< state.projects.size(); i++) {
+        PROJECT* tp = state.projects[i];
+        wxString t1(tp->project_name.c_str(), wxConvUTF8);
+        if(t1.IsSameAs(projectname)) return tp;
+        wxString t2(tp->master_url.c_str(), wxConvUTF8);
+        if(t2.IsSameAs(projectname)) return tp;
+    }
     return NULL;
 }
 
@@ -1513,9 +1506,9 @@ int CMainDocument::CachedDiskUsageUpdate() {
     if (IsConnected()) {
         wxTimeSpan ts(wxDateTime::Now() - m_dtDiskUsageTimestamp);
 
-		// don't get disk usage more than once per minute
+        // don't get disk usage more than once per minute
                 // unless we just connected to a client
-		//
+        //
         if ((ts.GetSeconds() > 60) || disk_usage.projects.empty()) {
             m_dtDiskUsageTimestamp = wxDateTime::Now();
 
@@ -1667,13 +1660,10 @@ int CMainDocument::GetSimpleGUIWorkCount() {
     CachedSimpleGUIUpdate();
     CachedStateUpdate();
 
-	for(i=0; i<results.results.size(); i++) {
-		if (results.results[i]->active_task) {
-			iCount++;
-		}
-	}
+    for(i=0; i<results.results.size(); i++) {
+        if (results.results[i]->active_task) {
+            iCount++;
+        }
+    }
     return iCount;
 }
-
-
-const char *BOINC_RCSID_aa03a835ba = "$Id: MainDocument.cpp 15333 2008-05-29 21:51:53Z charlief $";

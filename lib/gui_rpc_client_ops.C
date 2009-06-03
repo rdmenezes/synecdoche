@@ -194,7 +194,13 @@ int PROJECT::parse(MIOFILE& in) {
         if (parse_double(buf, "<long_term_debt>", long_term_debt)) continue;
         if (parse_double(buf, "<duration_correction_factor>", duration_correction_factor)) continue;
         if (parse_bool(buf, "master_url_fetch_pending", master_url_fetch_pending)) continue;
-        if (parse_int(buf, "<sched_rpc_pending>", sched_rpc_pending)) continue;
+
+        int itmp;
+        if (parse_int(buf, "<sched_rpc_pending>", itmp)) {
+            sched_rpc_pending = static_cast<rpc_reason>(itmp);
+            continue;
+        }
+
         if (parse_int(buf, "<rr_sim_deadlines_missed>", rr_sim_deadlines_missed)) continue;
         if (parse_bool(buf, "non_cpu_intensive", non_cpu_intensive)) continue;
         if (parse_bool(buf, "suspended_via_gui", suspended_via_gui)) continue;
@@ -240,7 +246,7 @@ void PROJECT::clear() {
     long_term_debt = 0;
     duration_correction_factor = 0;
     master_url_fetch_pending = false;
-    sched_rpc_pending = 0;
+    sched_rpc_pending = NO_RPC_REASON;
     ended = false;
     non_cpu_intensive = false;
     suspended_via_gui = false;
@@ -951,7 +957,7 @@ int ACCOUNT_OUT::parse(MIOFILE& in) {
 
 void ACCOUNT_OUT::clear() {
     error_num = 0;
-	error_msg = "";
+    error_msg = "";
     authenticator.clear();
 }
 
@@ -969,15 +975,14 @@ int CC_STATUS::parse(MIOFILE& in) {
         if (match_tag(buf, "</cc_status>")) return 0; 
         if (parse_int(buf, "<network_status>", network_status)) continue;
         if (parse_bool(buf, "ams_password_error", ams_password_error)) continue;
-        if (parse_bool(buf, "manager_must_quit", manager_must_quit)) continue;
         if (parse_int(buf, "<task_suspend_reason>", task_suspend_reason)) continue;
         if (parse_int(buf, "<network_suspend_reason>", network_suspend_reason)) continue;
         if (parse_int(buf, "<task_mode>", task_mode)) continue;
         if (parse_int(buf, "<network_mode>", network_mode)) continue;
         if (parse_int(buf, "<task_mode_perm>", task_mode_perm)) continue;
         if (parse_int(buf, "<network_mode_perm>", network_mode_perm)) continue;
-		if (parse_double(buf, "<task_mode_delay>", task_mode_delay)) continue;
-		if (parse_double(buf, "<network_mode_delay>", network_mode_delay)) continue;
+        if (parse_double(buf, "<task_mode_delay>", task_mode_delay)) continue;
+        if (parse_double(buf, "<network_mode_delay>", network_mode_delay)) continue;
         if (parse_bool(buf, "disallow_attach", disallow_attach)) continue;
         if (parse_bool(buf, "simple_gui_only", simple_gui_only)) continue;
     }
@@ -987,15 +992,14 @@ int CC_STATUS::parse(MIOFILE& in) {
 void CC_STATUS::clear() {
     network_status = -1;
     ams_password_error = false;
-    manager_must_quit = false;
     task_suspend_reason = -1;
     network_suspend_reason = -1;
     task_mode = -1;
     network_mode = -1;
     task_mode_perm = -1;
     network_mode_perm = -1;
-	task_mode_delay = 0;
-	network_mode_delay = 0;
+    task_mode_delay = 0;
+    network_mode_delay = 0;
     disallow_attach = false;
     simple_gui_only = false;
 }
@@ -2232,6 +2236,3 @@ int RPC_CLIENT::set_debts(const std::vector<PROJECT>& projects) {
     retval = rpc.do_rpc(s.c_str());
     return retval;
 }
-
-
-const char *BOINC_RCSID_90e8b8d168="$Id: gui_rpc_client_ops.C 15190 2008-05-13 19:52:35Z davea $";

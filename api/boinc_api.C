@@ -625,11 +625,11 @@ static void handle_heartbeat_msg() {
 }
 
 static void handle_upload_file_status() {
-    char path[256], buf[256], log_name[256], *p;
+    char buf[256], log_name[256], *p;
     std::string filename;
     int status;
 
-    relative_to_absolute("", path);
+    std::string path = relative_to_absolute("");
     DirScanner dirscan(path);
     while (dirscan.scan(filename)) {
         strcpy(buf, filename.c_str());
@@ -839,7 +839,9 @@ static void timer_handler() {
     // handle messages from the core client
     //
     if (app_client_shm) {
-        handle_heartbeat_msg();
+        if (options.check_heartbeat) {
+            handle_heartbeat_msg();
+        }
         if (options.handle_trickle_downs) {
             handle_trickle_down_msg();
         }
@@ -1074,13 +1076,11 @@ int boinc_fraction_done(double x) {
 }
 
 int boinc_receive_trickle_down(char* buf, int len) {
-    std::string filename;
-    char path[256];
-
     if (!options.handle_trickle_downs) return false;
 
     if (have_trickle_down) {
-        relative_to_absolute("", path);
+        std::string path = relative_to_absolute("");
+        std::string filename;
         DirScanner dirscan(path);
         while (dirscan.scan(filename)) {
             fprintf(stderr, "scan: %s\n", filename.c_str());

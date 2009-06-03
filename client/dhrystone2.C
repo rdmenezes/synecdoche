@@ -122,7 +122,3 @@ bool Func_3(Enumeration Enum_Par_Val)
   else /* not executed */
     return (false);
 }
-
-
-
-const char *BOINC_RCSID_20575a27a0 = "$Id: dhrystone2.C 4979 2005-01-02 18:29:53Z ballen $";

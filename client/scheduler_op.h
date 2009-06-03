@@ -22,7 +22,6 @@
 #include <string>
 
 #include "client_types.h"
-#include "auto_update.h"
 #include "http_curl.h"
 
 #define SCHEDULER_OP_STATE_IDLE         0
@@ -38,7 +37,7 @@
 #define RETRY_CAP               10
     // cap on nrpc_failures
 #define MASTER_FETCH_RETRY_CAP 3
-    // after this many master-fetch failures, 
+    // after this many master-fetch failures,
     // move into a state in which we retry master fetch
     // at the frequency below
 #define MASTER_FETCH_INTERVAL (86400)    // 1 day
@@ -65,17 +64,23 @@ private:
 public:
     PROJECT* cur_proj;               ///< project we're currently contacting
     int state;
-    int reason;
+    rpc_reason reason;
     double url_random;              ///< used to randomize order
 
 public:
     SCHEDULER_OP(HTTP_OP_SET*);
     bool poll();
     int init_get_work();
-    int init_op_project(PROJECT*, int);
+
+    /// Try to initiate an RPC to the given project.
+    int init_op_project(PROJECT* p, rpc_reason r);
+
     int init_master_fetch(PROJECT*);
     bool check_master_fetch_start();
-    void backoff(PROJECT* p, const char *error_msg);
+
+    /// Back off contacting this project's schedulers.
+    void backoff(PROJECT* p, const std::string& reason_msg);
+
     /// if we're doing an op to this project, abort it
     void abort(PROJECT*);
 private:
@@ -118,11 +123,10 @@ struct SCHEDULER_REPLY {
     char* code_sign_key_signature;
     bool message_ack;
     bool project_is_down;
-    bool send_file_list;      
+    bool send_file_list;
     int send_time_stats_log;
     int send_job_log;
     int scheduler_version;
-    AUTO_UPDATE auto_update;
 
     SCHEDULER_REPLY();
     ~SCHEDULER_REPLY();

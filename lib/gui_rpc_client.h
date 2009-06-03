@@ -79,7 +79,7 @@ public:
     static bool compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second);
 };
 inline bool PROJECT_LIST_ENTRY::compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second) {
-	return first->name < second->name;
+    return first->name < second->name;
 }
 
 class PROJECT {
@@ -104,7 +104,7 @@ public:
     double duration_correction_factor;
 
     bool master_url_fetch_pending; // need to fetch and parse the master URL
-    int sched_rpc_pending;      // need to contact scheduling server
+    rpc_reason sched_rpc_pending;      // need to contact scheduling server
     int rr_sim_deadlines_missed;
     bool non_cpu_intensive;
     bool suspended_via_gui;
@@ -489,7 +489,7 @@ struct ACCOUNT_IN {
 
 struct ACCOUNT_OUT {
     int error_num;
-	std::string error_msg;
+    std::string error_msg;
     std::string authenticator;
 
     ACCOUNT_OUT();
@@ -504,15 +504,14 @@ class CC_STATUS {
 public:
     int network_status;         // values: NETWORK_STATUS_*
     bool ams_password_error;
-    bool manager_must_quit;
     int task_suspend_reason;    // bitmap, see common_defs.h
     int network_suspend_reason;
     int task_mode;              // always/auto/never; see common_defs.h
     int network_mode;
-    int task_mode_perm;			// same, but permanent version
+    int task_mode_perm;         // same, but permanent version
     int network_mode_perm;
-	double task_mode_delay;		// time until perm becomes actual
-	double network_mode_delay;
+    double task_mode_delay;     // time until perm becomes actual
+    double network_mode_delay;
     bool disallow_attach;
     bool simple_gui_only;
 
@@ -538,8 +537,12 @@ public:
     bool retry;
     sockaddr_in addr;
 
-    int send_request(const char*);
-    int get_reply(char*&);
+    /// Send a rpc-request to the rpc-server.
+    int send_request(const char* p);
+
+    /// Get reply from server.
+    int get_reply(char*& mbuf);
+
     RPC_CLIENT();
     ~RPC_CLIENT();
     int init(const char* host, int port=0);

@@ -155,7 +155,7 @@ int CLIENT_STATE::parse_state_file() {
                 );
                 delete app;
                 continue;
-		    }
+            }
             apps.push_back(app);
             continue;
         }
@@ -237,7 +237,7 @@ int CLIENT_STATE::parse_state_file() {
                 );
                 delete avp;
                 continue;
-            } 
+            }
             if (strlen(avp->platform) == 0) {
                 strcpy(avp->platform, get_primary_platform());
             } else {
@@ -427,9 +427,6 @@ int CLIENT_STATE::parse_state_file() {
         if (parse_str(buf, "<host_venue>", main_host_venue, sizeof(main_host_venue))) {
             continue;
         }
-        if (parse_double(buf, "<all_projects_list_check_time>", all_projects_list_check_time)) {
-            continue;
-        }
 #ifdef ENABLE_UPDATE_CHECK
         if (parse_double(buf, "<new_version_check_time>", new_version_check_time)) {
             continue;
@@ -438,19 +435,6 @@ int CLIENT_STATE::parse_state_file() {
             continue;
         }
 #endif
-        if (match_tag(buf, "<auto_update>")) {
-            if (!project) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "auto update outside project in state file"
-                );
-                skip_unrecognized(buf, mf);
-                continue;
-            }
-            if (!auto_update.parse(mf) && !auto_update.validate_and_link(project)) {
-                auto_update.present = true;
-            }
-            continue;
-        }
         if (log_flags.unparsed_xml) {
             msg_printf(0, MSG_INFO,
                 "[unparsed_xml] state_file: unrecognized: %s", buf
@@ -473,7 +457,7 @@ int CLIENT_STATE::write_state_file() const {
 
     for (attempt=1; attempt<=MAX_STATE_FILE_WRITE_ATTEMPTS; attempt++) {
         if (attempt > 1) boinc_sleep(1.0);
-            
+
         if (log_flags.state_debug) {
             msg_printf(0, MSG_INFO,
                 "[status_debug] CLIENT_STATE::write_state_file(): Writing state file"
@@ -534,7 +518,7 @@ int CLIENT_STATE::write_state_file() const {
                     if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
                 }
             }
-            
+
             retval = boinc_rename(STATE_FILE_NAME, STATE_FILE_PREV);
             if (retval) {
                 if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
@@ -544,8 +528,8 @@ int CLIENT_STATE::write_state_file() const {
                         windows_error_string(win_error_msg, sizeof(win_error_msg))
                     );
 #else
-                    msg_printf(0, MSG_USER_ERROR, 
-                        "rename current state file to previous state file returned error %d: %s", 
+                    msg_printf(0, MSG_USER_ERROR,
+                        "rename current state file to previous state file returned error %d: %s",
                         errno, strerror(errno)
                     );
 #endif
@@ -561,7 +545,7 @@ int CLIENT_STATE::write_state_file() const {
             );
         }
         if (!retval) break;     // Success!
-        
+
          if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.state_debug) {
 #ifdef _WIN32
             if (retval == ERROR_ACCESS_DENIED) {
@@ -575,9 +559,9 @@ int CLIENT_STATE::write_state_file() const {
                 );
             }
 #elif defined (__APPLE__)
-            msg_printf(0, MSG_USER_ERROR, 
+            msg_printf(0, MSG_USER_ERROR,
                 "Can't rename %s to %s; check file and directory permissions\n"
-                "rename returned error %d: %s", 
+                "rename returned error %d: %s",
                 STATE_FILE_NEXT, STATE_FILE_NAME, errno, strerror(errno)
             );
             if (log_flags.state_debug) {
@@ -635,9 +619,6 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
             if (results[i]->project == p) results[i]->write(f, false);
         }
         p->write_project_files(f);
-        if (auto_update.present && auto_update.project==p) {
-            auto_update.write(f);
-        }
     }
     active_tasks.write(f);
     f.printf(
@@ -661,12 +642,6 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         "<new_version_check_time>%f</new_version_check_time>\n",
         new_version_check_time
     );
-#endif
-    f.printf(
-        "<all_projects_list_check_time>%f</all_projects_list_check_time>\n",
-        all_projects_list_check_time
-    );
-#ifdef ENABLE_UPDATE_CHECK
     if (!newer_version.empty()) {
         f.printf("<newer_version>%s</newer_version>\n", newer_version.c_str());
     }
@@ -713,9 +688,15 @@ void CLIENT_STATE::check_anonymous() {
             "Found %s; using anonymous platform", APP_INFO_FILE_NAME
         );
 
+        // flag as anonymous even if can't parse file
         p->anonymous_platform = true;
-            // flag as anonymous even if can't parse file
+
         retval = parse_app_info(p, f);
+        if (retval) {
+            msg_printf(p, MSG_USER_ERROR,
+                "Parse error in %s; check XML syntax", APP_INFO_FILE_NAME
+            );
+        }
         fclose(f);
     }
 }
@@ -774,7 +755,9 @@ int CLIENT_STATE::parse_app_info(PROJECT* p, FILE* in) {
         }
         if (log_flags.unparsed_xml) {
             msg_printf(p, MSG_INFO,
-                "[unparsed_xml] Unparsed line in app_info.xml: %s", buf
+                "[unparsed_xml] Unparsed line in %s: %s",
+                APP_INFO_FILE_NAME,
+                buf
             );
         }
     }
@@ -841,7 +824,7 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) {
 
 int CLIENT_STATE::write_tasks_gui(MIOFILE& f) {
     unsigned int i;
-    
+
     for (i=0; i<results.size(); i++) {
         RESULT* rp = results[i];
         rp->write_gui(f);
@@ -865,5 +848,3 @@ int CLIENT_STATE::write_file_transfers_gui(MIOFILE& f) {
 
     return 0;
 }
-
-const char *BOINC_RCSID_375ec798cc = "$Id: cs_statefile.C 14994 2008-04-01 20:46:41Z davea $";

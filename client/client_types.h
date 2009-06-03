@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -32,9 +32,9 @@
 #include <vector>
 #include <string>
 
+#include "common_defs.h"
 #include "md5_file.h"
 #include "hostinfo.h"
-#include "coproc.h"
 #include "miofile.h"
 
 #define P_LOW 1
@@ -73,7 +73,6 @@ public:
     bool signature_required;    ///< true iff associated with app version
     bool is_user_file;
     bool is_project_file;
-    bool is_auto_update_file;
     bool gzip_when_done; ///< for output files: gzip file when done, and append .gz to its name
     class PERS_FILE_XFER* pers_file_xfer; ///< nonzero if in the process of being up/downloaded
     struct RESULT* result;         ///< for upload files (to authenticate)
@@ -108,7 +107,10 @@ public:
     const char* get_current_url(bool);
     bool is_correct_url_type(bool, const std::string&) const;
     bool had_failure(int& failnum) const;
-    void failure_message(std::string&) const;
+
+    /// Create a failure message for a failed file-xfer in XML format.
+    std::string failure_message() const;
+
     int merge_info(const FILE_INFO&);
     int verify_file(bool, bool);
     int gzip();     ///< gzip file and add .gz to name
@@ -132,6 +134,8 @@ struct FILE_REF {
     int parse(MIOFILE&);
     int write(MIOFILE&) const;
 };
+typedef std::vector<FILE_REF> FILE_REF_VEC;
+
 
 /// statistics at a specific day
 struct DAILY_STATS {
@@ -148,14 +152,14 @@ struct DAILY_STATS {
 bool operator < (const DAILY_STATS&, const DAILY_STATS&);
 
 struct RR_SIM_PROJECT_STATUS {
-    /// jobs currently running (in simulation)
-    std::vector<RESULT*>active;
-    /// jobs runnable but not running yet
-    std::vector<RESULT*>pending;
+    std::vector<RESULT*>active;     ///< jobs currently running (in simulation
+    std::vector<RESULT*>pending;    ///< jobs runnable but not running yet
     int deadlines_missed;
-    /// fraction of each CPU this project will get
+
+    /// Fraction of each CPU this project will get
     /// set in CLIENT_STATE::rr_misses_deadline();
     double proc_rate;
+
     double cpu_shortfall;
 
     inline void clear() {
@@ -205,33 +209,36 @@ public:
     /// They are a function only of the user and the project.
     /// @{
 
-    char master_url[256];       ///< url of site that contains scheduler tags
-                                ///< for this project
-    char authenticator[256];    ///< user's authenticator on this project
+    char master_url[256];    ///< URL of site that contains scheduler tags for this project.
+    char authenticator[256]; ///< User's authenticator on this project.
+
     /// Project preferences without the enclosing <project_preferences> tags.
     /// May include <venue> elements
     /// This field is used only briefly: between handling a
     /// scheduler RPC reply and writing the account file
     std::string project_prefs;
+
     /// Project-specific preferences without enclosing <project_specific> tags.
     /// Does not include <venue> elements.
     std::string project_specific_prefs;
-    /// GUI URLs, with enclosing <gui_urls> tags.
-    std::string gui_urls;
-    /// Project's resource share relative to other projects.
-    double resource_share;
-    // logically, this belongs in the client state file
+
+    std::string gui_urls;  ///< GUI URLs, with enclosing <gui_urls> tags.
+    double resource_share; ///< Project's resource share relative to other projects.
+
+    // Logically, this belongs in the client state file
     // rather than the account file.
     // But we need it in the latter in order to parse prefs.
     char host_venue[256];
+
     bool using_venue_specific_prefs;
-    ///@}
+    /// @}
 
     /// @name client_state
     /// The following items come from client_state.xml.
     /// They may depend on the host as well as user and project.
     /// \note if you add anything, add it to copy_state_fields() also!!!
     /// @{
+
     std::vector<std::string> scheduler_urls; ///< where to find scheduling servers
     char project_name[256];             ///< descriptive.  not unique
     char symstore[256];             ///< URL of symbol server (Windows)
@@ -253,9 +260,13 @@ public:
     /// @name Scheduler RPCs
     /// Stuff related to scheduler RPCs and master fetch
     /// @{
+
     int rpc_seqno;
-    int nrpc_failures;          ///< # of consecutive times we've failed to
-                                ///< contact all scheduling servers
+
+    /// # of consecutive times we've failed to
+    /// contact all scheduling servers.
+    int nrpc_failures;          
+                                
     int master_fetch_failures;
     double min_rpc_time;           ///< earliest time to contact any server
                                    ///< of this project (or zero)
@@ -263,70 +274,81 @@ public:
     bool waiting_until_min_rpc_time(); ///< returns true if min_rpc_time > now
     bool master_url_fetch_pending;  ///< need to fetch and parse the master URL
 
-    /// we need to do a scheduler RPC, for various possible reasons:
+    /// We need to do a scheduler RPC, for various possible reasons:
     /// user request, propagate host CPID, time-based, etc.
-    /// Reasons are enumerated in scheduler_op.h
-    int sched_rpc_pending;
-    /// if nonzero, specifies a time when another scheduler RPC
-    /// should be done (as requested by server)
+    /// Reasons are enumerated in scheduler_op.h.
+    rpc_reason sched_rpc_pending;
+
+    /// If nonzero, specifies a time when another scheduler RPC
+    /// should be done (as requested by server).
     double next_rpc_time;
-    /// we need to call request_work_fetch() when a project
+
+    /// We need to call request_work_fetch() when a project
     /// transitions from being backed off to not.
     /// This (slightly misnamed) keeps track of whether this
-    /// may still need to be done for given project
+    /// may still need to be done for given project.
     bool possibly_backed_off;
+
     bool trickle_up_pending;    ///< have trickle up to send
     double last_rpc_time;       ///< when last RPC finished
-
     /// @}
 
     /// @name Others
     /// @{
 
-    bool anonymous_platform;    /// app_versions.xml file found in project dir;
-                                /// use those apps rather than getting from server
+    /// app_versions.xml file found in project dir;
+    /// use those apps rather than getting from server
+    bool anonymous_platform;
+
     bool non_cpu_intensive;
     bool verify_files_on_app_start;
     bool use_symlinks;
     /// @}
 
     /// @name Server requests for data
-    /// items send in scheduler replies, requesting that
+    /// Items send in scheduler replies, requesting that
     /// various things be sent in the next request
     /// @{
 
-    /// send the list of permanent files associated with the project
-    /// in the next scheduler reply
+    /// Send the list of permanent files associated with the project
+    /// in the next scheduler reply.
     bool send_file_list;
-    /// if nonzero, send time stats log from that point on
-    int send_time_stats_log;
-    /// if nonzero, send this project's job log from that point on
-    int send_job_log;
+
+    int send_time_stats_log;  ///< If nonzero, send time stats log from that point on
+    int send_job_log; ///< if nonzero, send this project's job log from that point on
     /// @}
 
     bool suspended_via_gui;
+
     /// Return work, but don't request more.
     /// Used for a clean exit to a project,
     /// or if a user wants to pause doing work for the project.
-    bool dont_request_more_work; 
+    bool dont_request_more_work;
+
     bool attached_via_acct_mgr;
-    /// when no results for this project, detach it.
-    bool detach_when_done;
-    /// project has ended; advise user to detach.
-    bool ended;
+    bool detach_when_done;      ///< When no results for this project, detach it.
+    bool ended;                 ///< Project has ended; advise user to detach.
     char code_sign_key[MAX_KEY_LEN];
-    std::vector<FILE_REF> user_files;
-    /// files not specific to apps or work, like icons.
-    std::vector<FILE_REF> project_files;
+    FILE_REF_VEC user_files;
+    FILE_REF_VEC project_files; ///< Files not specific to apps or work, like icons.
+
     int parse_preferences_for_user_files();
+
+    /// Parse project files from a xml file.
     int parse_project_files(MIOFILE&, bool delete_existing_symlinks);
+
+    /// Write the XML representation of the project files into a file.
     void write_project_files(MIOFILE&) const;
+
+    /// Install pointers from FILE_REFs to FILE_INFOs for project files.
     void link_project_files(bool recreate_symlink_files);
-    int write_symlink_for_project_file(FILE_INFO*);
-    /// when last project file download finished
-    double project_files_downloaded_time;
-    /// called when a project file download finishes.
-    /// If it's the last one, set project_files_downloaded_time to now
+
+    /// Write symlinks for project files.
+    int write_symlink_for_project_file(const FILE_INFO* fip) const;
+
+    double project_files_downloaded_time; ///< When last project file download finished.
+
+    /// Update project_files_downloaded_time to the current time.
     void update_project_files_downloaded_time();
 
     /// Multiply by this when estimating the CPU time of a result
@@ -335,27 +357,35 @@ public:
     /// it goes down slowly but if a new estimate X is larger,
     /// the factor is set to X.
     double duration_correction_factor;
+
     void update_duration_correction_factor(RESULT*);
-    
+
     /// @name CPU scheduler and work fetch
     /// Fields used by CPU scheduler and work fetch.
     /// everything from here on applies only to CPU intensive projects.
     /// @{
 
-    /// not suspended and not deferred and not no more work
+    /// Not suspended and not deferred and not no more work.
     bool contactable() const;
-    /// has a runnable result
+
+    /// Has a runnable result
     bool runnable() const;
-    /// has a result in downloading state
+
+    /// Has a result in downloading state
     bool downloading() const;
-    /// runnable or contactable or downloading
+
+    /// Runnable or contactable or downloading.
     bool potentially_runnable() const;
-    /// runnable or downloading
+
+    /// Runnable or downloading.
     bool nearly_runnable() const;
-    /// the project has used too much CPU time recently
+
+    /// The project has used too much CPU time recently.
     bool overworked() const;
-    /// a download is backed off
-    bool some_download_stalled() /* XXX const */;
+
+    /// A download is backed off.
+    bool some_download_stalled() const;
+
     bool some_result_suspended() const;
     /// @}
 
@@ -372,23 +402,25 @@ public:
     /// Computed over runnable projects.
     /// Used for CPU scheduling.
     double short_term_debt;
+
     /// Computed over potentially runnable projects
     /// (defined for all projects, but doesn't change if
     /// not potentially runnable).
     /// Normalized so mean over all projects is zero.
     double long_term_debt;
 
-    /// expected debt by the end of the preemption period
+    /// Expected debt by the end of the preemption period.
     double anticipated_debt;
-    /// how much "wall CPU time" has been devoted to this
-    /// project in the current debt interval
-    double wall_cpu_time_this_debt_interval;
 
+    /// How much "wall CPU time" has been devoted to this
+    /// project in the current debt interval.
+    double wall_cpu_time_this_debt_interval;
     /// @}
 
-    /// the next result to run for this project
+    /// The next result to run for this project.
     struct RESULT *next_runnable_result;
-    /// number of results in UPLOADING state
+
+    /// Number of results in UPLOADING state.
     /// Don't start new results if these exceeds 2*ncpus.
     int nuploading_results;
 
@@ -401,13 +433,16 @@ public:
     ///
     /// see http://boinc.berkeley.edu/trac/wiki/CpuSched
     double work_request;
+
     int work_request_urgency;
 
-    /// # of results being returned in current scheduler op
+    /// # of results being returned in current scheduler op.
     int nresults_returned;
-    /// get scheduler URL with random offset r
+
+    /// Get scheduler URL with random offset \a r.
     const char* get_scheduler_url(int index, double r) const;
-    /// temporary used when scanning projects
+
+    /// Temporary used when scanning projects.
     bool checked;
 
     /// @name File transfer backoff.
@@ -438,15 +473,20 @@ public:
     void init();
     void copy_state_fields(const PROJECT&);
     const char *get_project_name() const;
+
+    /// Write account_*.xml file.
     int write_account_file() const;
+
     int parse_account(FILE*);
+
+    /// Scan and parse an account_*.xml file, looking for a <venue> element.
     int parse_account_file_venue();
+
     int parse_account_file();
     int parse_state(MIOFILE&);
     int write_state(MIOFILE&, bool gui_rpc=false) const;
 
-    /// statistic of the last x days
-    std::vector<DAILY_STATS> statistics;
+    std::vector<DAILY_STATS> statistics; ///< statistic of the last x days
     int parse_statistics(MIOFILE&);
     int parse_statistics(FILE*);
     int write_statistics(MIOFILE&, bool gui_rpc=false) const;
@@ -472,7 +512,6 @@ struct APP_VERSION {
     double max_ncpus;
     double flops;
     char cmdline[256];      ///< additional cmdline args
-    COPROCS coprocs;
 
     APP* app;
     PROJECT* project;
@@ -525,14 +564,14 @@ struct RESULT {
     char platform[256];
     APP_VERSION* avp;
     std::vector<FILE_REF> output_files;
+    /// we're ready to report this result to the server;
+    /// either computation is done and all the files have been uploaded
+    /// or there was an error
     bool ready_to_report;
-        // we're ready to report this result to the server;
-        // either computation is done and all the files have been uploaded
-        // or there was an error
+    /// time when ready_to_report was set
     double completed_time;
-        // time when ready_to_report was set
+    /// we're received the ack for this result from the server
     bool got_server_ack;
-        // we're received the ack for this result from the server
     double final_cpu_time;
     double fpops_per_cpu_sec;   // nonzero if reported by app
     double fpops_cumulative;    // nonzero if reported by app
@@ -574,37 +613,37 @@ struct RESULT {
     void clear_uploaded_flags();
     const FILE_REF* lookup_file(const FILE_INFO*) const;
     FILE_INFO* lookup_file_logical(const char*);
+    /// abort the result if it hasn't started computing yet
+    /// Called only for results with no active task
+    /// (otherwise you need to abort the active task)
     void abort_inactive(int);
-        // abort the result if it hasn't started computing yet
-        // Called only for results with no active task
-        // (otherwise you need to abort the active task)
     void append_log_record();
 
     // stuff related to CPU scheduling
 
-    double estimated_cpu_time(bool for_work_fetch) const;
+    double estimated_cpu_time() const;
     double estimated_cpu_time_uncorrected() const;
-    double estimated_cpu_time_remaining(bool for_work_fetch) const;
+    double estimated_cpu_time_remaining() const;
     bool computing_done() const;
+    /// downloaded, not finished, not suspended, project not suspended
     bool runnable() const;
-        // downloaded, not finished, not suspended, project not suspended
+    /// downloading or downloaded,
+    /// not finished, suspended, project not suspended
     bool nearly_runnable() const;
-        // downloading or downloaded,
-        // not finished, suspended, project not suspended
+    /// downloading, not downloaded, not suspended, project not suspended
     bool downloading() const;
-        // downloading, not downloaded, not suspended, project not suspended
-    bool some_download_stalled() /* XXX const */;
-        // some input or app file is downloading, and backed off
-        // i.e. it may be a long time before we can run this result
+    /// some input or app file is downloading, and backed off
+    /// i.e. it may be a long time before we can run this result
+    bool some_download_stalled() const;
 
     // temporaries used in CLIENT_STATE::rr_simulation():
     double rrsim_cpu_left;
     double rrsim_finish_delay;
+    /// used to keep cpu scheduler from scheduling a result twice
+    /// transient; used only within schedule_cpus()
     bool already_selected;
-        // used to keep cpu scheduler from scheduling a result twice
-        // transient; used only within schedule_cpus()
+    /// report deadline - prefs.work_buf_min - time slice
     double computation_deadline() const;
-        // report deadline - prefs.work_buf_min - time slice
     bool rr_sim_misses_deadline;
     bool last_rr_sim_missed_deadline;
 
@@ -623,7 +662,7 @@ public:
     void set(int mode, double duration);
     int get_perm() const;
     int get_current() const;
-	double delay() const;
+    double delay() const;
 };
 
 /// a platform supported by the client.

@@ -40,7 +40,7 @@ typedef struct _UNICODE_STRING {
 typedef struct _VM_COUNTERS {
 #ifdef _WIN64
 // the following was inferred by painful reverse engineering
-	SIZE_T		   PeakVirtualSize;	// not actually
+    SIZE_T         PeakVirtualSize; // not actually
     SIZE_T         PageFaultCount;
     SIZE_T         PeakWorkingSetSize;
     SIZE_T         WorkingSetSize;
@@ -50,7 +50,7 @@ typedef struct _VM_COUNTERS {
     SIZE_T         QuotaNonPagedPoolUsage;
     SIZE_T         PagefileUsage;
     SIZE_T         PeakPagefileUsage;
-    SIZE_T         VirtualSize;		// not actually
+    SIZE_T         VirtualSize;     // not actually
 #else
     SIZE_T         PeakVirtualSize;
     SIZE_T         VirtualSize;
@@ -107,11 +107,11 @@ typedef struct _SYSTEM_PROCESSES {
     UNICODE_STRING ProcessName;
     KPRIORITY      BasePriority;
 #ifdef _WIN64
-	ULONG pad1;
+    ULONG pad1;
     ULONG          ProcessId;
-	ULONG pad2;
+    ULONG pad2;
     ULONG          InheritedFromProcessId;
-	ULONG pad3, pad4, pad5;
+    ULONG pad3, pad4, pad5;
 #else
     ULONG          ProcessId;
     ULONG          InheritedFromProcessId;

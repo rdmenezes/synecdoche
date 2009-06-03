@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2008 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -87,12 +87,12 @@ static bool boinc_cleanup_completed = false;
     //   the WM_ENDSESSION message handler and allow Windows to finish
     //   cleaning up.
 
-// Display a message to the user.
-// Depending on the priority, the message may be more or less obtrusive
-//
+/// Display a message to the user.
+/// Depending on the priority, the message may be more or less obtrusive
+///
 void show_message(const PROJECT *p, const char* msg, int priority) {
     const char* x;
-    char message[1024];
+
     time_t now = time(0);
     std::string time_string = time_to_string((double)now);
 #if defined(WIN32) && defined(_CONSOLE)
@@ -102,14 +102,17 @@ void show_message(const PROJECT *p, const char* msg, int priority) {
     // Cycle the log files if we need to
     diagnostics_cycle_logs();
 
+    std::string message(msg);
     if (priority == MSG_INTERNAL_ERROR) {
-        strcpy(message, "[error] ");
-        strlcpy(message+8, msg, sizeof(message)-8);
-    } else {
-        strlcpy(message, msg, sizeof(message));
+        message.insert(0, "[error] ");
     }
-    while (strlen(message)&&message[strlen(message)-1] == '\n') {
-        message[strlen(message)-1] = 0;
+
+    // Trim trailing \n's:
+    std::string::size_type pos = message.find_last_not_of('\n');
+    if (pos == std::string::npos) {
+        message.clear();
+    } else if (pos < message.length() - 1) {
+        message.erase(pos + 1);
     }
 
     if (p) {
@@ -118,15 +121,16 @@ void show_message(const PROJECT *p, const char* msg, int priority) {
         x = "---";
     }
 
-    record_message(p, priority, (int)now, message);
+    record_message(p, priority, (int)now, message.c_str());
 
-    printf("%s [%s] %s\n", time_string.c_str(), x, message);
-    if (gstate.executing_as_daemon) {
+    printf("%s [%s] %s\n", time_string.c_str(), x, message.c_str());
+
 #if defined(WIN32) && defined(_CONSOLE)
-        stprintf(event_message, TEXT("%s [%s] %s\n"), time_string,  x, message);
+    if (gstate.executing_as_daemon) {
+        stprintf(event_message, TEXT("%s [%s] %s\n"), time_string,  x, message.c_str());
         ::OutputDebugString(event_message);
-#endif
     }
+#endif
 }
 
 #ifdef WIN32
@@ -150,7 +154,7 @@ void resume_client() {
     requested_resume = true;
 }
 
-// Trap logoff and shutdown events on Win9x so we can clean ourselves up.
+/// Trap logoff and shutdown events on Win9x so we can clean ourselves up.
 LRESULT CALLBACK Win9xMonitorSystemWndProc(
     HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 ) {
@@ -292,7 +296,6 @@ static void init_core_client(int argc, char** argv) {
     int flags =
         BOINC_DIAG_DUMPCALLSTACKENABLED |
         BOINC_DIAG_HEAPCHECKENABLED |
-        BOINC_DIAG_HEAPCHECKEVERYALLOC |
         BOINC_DIAG_TRACETOSTDOUT;
 
     if (gstate.redirect_io || gstate.executing_as_daemon || gstate.detach_console) {
@@ -354,7 +357,7 @@ int initialize() {
 #ifdef _WIN32
     g_hClientLibraryDll = LoadLibrary("synecdoche.dll");
     if(!g_hClientLibraryDll) {
-        stprintf(event_message, 
+        stprintf(event_message,
             TEXT("Synecdoche Daemon Error Message\n"
                  "Failed to initialize the Synecdoche Client Library.\n"
                  "Load failed: %s\n"), windows_error_string(event_message, sizeof(event_message))
@@ -370,7 +373,7 @@ int initialize() {
     if (!config.allow_multiple_clients) {
         retval = wait_client_mutex(".", 10);
         if (retval) {
-            fprintf(stderr, 
+            fprintf(stderr,
                 "Another instance of Synecdoche is running\n"
             );
 #ifdef _WIN32
@@ -413,7 +416,7 @@ int initialize() {
         fnClientLibraryStartup = (ClientLibraryStartup)GetProcAddress(g_hClientLibraryDll, _T("ClientLibraryStartup"));
         if(fnClientLibraryStartup) {
             if(!fnClientLibraryStartup()) {
-                stprintf(event_message, 
+                stprintf(event_message,
                     TEXT("Synecdoche Daemon Error Message\n"
                         "Failed to initialize the Synecdoche Idle Detection Interface.\n"
                         "Synecdoche will not be able to determine if the user is idle or not...\n"
@@ -433,7 +436,7 @@ int initialize() {
 
 int boinc_main_loop() {
     int retval;
-    
+
     retval = initialize();
     if (retval) return retval;
 
@@ -517,7 +520,7 @@ int finalize() {
             fnClientLibraryShutdown();
         }
         if(!FreeLibrary(g_hClientLibraryDll)) {
-            stprintf(event_message, 
+            stprintf(event_message,
                 TEXT("Synecdoche Daemon Error Message\n"
                     "Failed to cleanup the Synecdoche Idle Detection Interface\n"
                     "Unload failed: %s\n"
@@ -535,7 +538,7 @@ int finalize() {
 
 #ifdef USE_WINSOCK
     if (WinsockCleanup()) {
-        stprintf(event_message, 
+        stprintf(event_message,
             TEXT("Synecdoche Daemon Error Message\n"
                 "Failed to cleanup the Windows Sockets interface\n"
                 "Unload failed: %s\n"
@@ -568,8 +571,7 @@ int main(int argc, char** argv) {
     // TODO: clean up the following
     //
 #ifdef _WIN32
-    int i, len;
-    char *commandLine;
+    int i;
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
 
@@ -600,33 +602,26 @@ int main(int argc, char** argv) {
         if (strcmp(argv[i], "-detach") == 0 || strcmp(argv[i], "--detach") == 0) {
             argv[i] = "-detach_phase_two";
 
-            // start with space for two '"'s
-            len = 2;
-            for (i = 0; i < argc; i++) {
-                len += (int)strlen(argv[i]) + 1;
-            }
-            if ((commandLine = (char *) malloc(len)) == NULL) {
-                // Drop back ten and punt.  Can't do the detach thing, so we just carry on.
-                // At least the program will start.
-                break;
-            }
-            commandLine[0] = '"';
-            // OK, we can safely use strcpy and strcat, since we know that we allocated enough
-            strcpy(&commandLine[1], argv[0]);
-            strcat(commandLine, "\"");
+            std::string commandLine;
+
+            commandLine.append("\"").append(argv[0]).append("\"");
             for (i = 1; i < argc; i++) {
-                strcat(commandLine, " ");
-                strcat(commandLine, argv[i]);
+                commandLine.append(" ").append(argv[i]);
             }
 
             memset(&si, 0, sizeof(si));
             si.cb = sizeof(si);
 
+            // CreateProcess may modify lpCommandLine
+            char* lpCommandLine = new char[commandLine.length() + 1];
+            strcpy(lpCommandLine, commandLine.c_str());
+
             // If process creation succeeds, we exit, if it fails punt and continue
             // as usual.  We won't detach properly, but the program will run.
-            if (CreateProcess(NULL, commandLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            if (CreateProcess(NULL, lpCommandLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
                 exit(0);
             }
+            delete[] lpCommandLine;
             break;
         }
     }
@@ -634,7 +629,7 @@ int main(int argc, char** argv) {
 #else
     // non-Apple Unix
     int i;
-    
+
     for (i=1; i<argc; i++) {
         if (strcmp(argv[i], "-daemon") == 0 || strcmp(argv[i], "--daemon") == 0) {
             syslog(LOG_DAEMON|LOG_INFO,

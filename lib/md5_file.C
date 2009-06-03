@@ -108,5 +108,3 @@ int make_random_string(char* out) {
     md5_block((const unsigned char*)buf, 32, out);
     return 0;
 }
-
-const char *BOINC_RCSID_5a0dc438fe = "$Id: md5_file.C 14655 2008-01-31 18:34:51Z boincadm $";

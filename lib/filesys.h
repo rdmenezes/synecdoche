@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,8 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _FILESYS_
-#define _FILESYS_
+#ifndef FILESYS_H
+#define FILESYS_H
 
 /// On Windows, retry for this period of time, since some other program
 /// (virus scan, defrag, index) may have the file open.
@@ -30,50 +31,92 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <grp.h>
-#endif /* !WIN32 */
+#endif // !WIN32
 
 #ifdef __cplusplus
 #include <string>
 extern "C" {
-#endif
-  extern int boinc_delete_file(const char*);
+#endif // __cplusplus
+  /// Delete a file.
+  extern int boinc_delete_file(const char* path);
+
+  /// Create an empty file.
   extern int boinc_touch_file(const char *path);
+
+  /// Open a file for reading or writing.
   extern FILE* boinc_fopen(const char* path, const char* mode);
+
+  /// Copy a file.
   extern int boinc_copy(const char* orig, const char* newf);
+
+  /// Rename a file.
   extern int boinc_rename(const char* old, const char* newf);
-  extern int boinc_mkdir(const char*);
+
+  /// Create a directory for which the owner and the group have full access.
+  extern int boinc_mkdir(const char* path);
+
 #ifndef _WIN32
+  /// Change the group of a file or directory.
   extern int boinc_chown(const char*, gid_t);
 #endif
-  extern int boinc_rmdir(const char*);
+
+  /// Remove a directory.
+  extern int boinc_rmdir(const char* name);
+
   extern int remove_project_owned_file_or_dir(const char* path);
-  extern void boinc_getcwd(char*);
-  extern void relative_to_absolute(const char* relname, char* path);
-  extern int boinc_make_dirs(char*, char*);
+
+  /// Create directories with parent directories if necessary.
+  extern int boinc_make_dirs(const char* dirpath, const char* filepath);
+
+  /// A buffer that will store a file name in case of failed operations.
   extern char boinc_failed_file[256];
+
+  /// Check if the given path denotes a file.
   extern int is_file(const char* path);
+
+  /// Check if the given path denotes a directory.
   extern int is_dir(const char* path);
+
+  /// Check if the given path denotes a symbolic link.
   extern int is_symlink(const char* path);
-  extern int boinc_truncate(const char*, double);
-  extern int boinc_file_exists(const std::string& path);
+
+  /// Truncate the size of a file.
+  extern int boinc_truncate(const char* path, double size);
+
+  /// Check if a file exists.
+  extern bool boinc_file_exists(const std::string& path);
+
+  /// Check if a file exists.
   extern int boinc_file_or_symlink_exists(const std::string& path);
 
 #ifdef __cplusplus
 }
-#endif
+#endif // __cplusplus
 
 /* C++ specific prototypes/defines follow here */
 #ifdef __cplusplus
 
-extern int file_size(const char*, double&);
-extern int clean_out_dir(const char*);
-extern int dir_size(const char* dirpath, double&, bool recurse=true);
+/// Return the current working directory.
+extern std::string boinc_getcwd();
+
+/// Turn a relative path into an absolute on.
+extern std::string relative_to_absolute(const char* relname);
+
+/// Get the size of a file.
+extern int file_size(const char* path, double& size);
+
+/// Remove everything from specified directory.
+extern int clean_out_dir(const char* dirpath);
+
+/// Return total size of files in directory and optionally its subdirectories.
+extern int dir_size(const char* dirpath, double& size, bool recurse = true);
+
+/// Get total and free space on current filesystem (in bytes).
 extern int get_filesystem_info(double& total, double& free, const char* path=".");
 
 // TODO TODO TODO
 // remove this code - the DirScanner class does the same thing.
 // But need to rewrite a couple of places that use it
-//
 #if defined(_WIN32) && !defined(__CYGWIN32__)
 typedef struct _DIR_DESC {
     char path[256];
@@ -85,13 +128,21 @@ typedef DIR_DESC *DIRREF;
 typedef DIR *DIRREF;
 #endif
 
-extern DIRREF dir_open(const char*);
-extern int dir_scan(char*, DIRREF, int);
-int dir_scan(std::string&, DIRREF);
-extern void dir_close(DIRREF);
+/// Open a directory for scanning with dir_scan.
+extern DIRREF dir_open(const char* p);
+
+/// Scan through a directory and return the next file name in it.
+extern int dir_scan(char* p, DIRREF dirp, int p_len);
+
+/// Scan through a directory and return the next file name in it.
+extern int dir_scan(std::string& p, DIRREF dirp);
+
+/// Close a directory previously opened by dir_open.
+extern void dir_close(DIRREF dirp);
 
 
 class DirScanner {
+private:
 #if defined(_WIN32) && !defined(__CYGWIN32__)
     std::string dir;
     bool first;
@@ -99,33 +150,46 @@ class DirScanner {
 #else
     DIR* dirp;
 #endif
+
 public:
-    DirScanner(std::string const& path);
+    /// Create a DirScanner instance and try to open the specyfied directory.
+    DirScanner(const std::string& path);
+
+    /// Destroy the DirScanner instance and frees the contained handle, if necessary.
     ~DirScanner();
-    bool scan(std::string& name);    // return true if file returned
+
+    /// Scan through a directory and return the next file name in it.
+    bool scan(std::string& name);
 };
 
-struct FILE_LOCK {
+class FILE_LOCK {
+private:
 #if defined(_WIN32) && !defined(__CYGWIN32__)
     HANDLE handle;
 #else
     int fd;
 #endif
+
+public:
+    /// Create a FILE_LOCK instance.
     FILE_LOCK();
+
+    /// Destroy the FILE_LOCK instance.
     ~FILE_LOCK();
+
+    /// Lock a file.
     int lock(const char* filename);
+
+    /// Release and delete a previously locked file.
     int unlock(const char* filename);
 };
 
 #ifndef _WIN32
+/// Search PATH and find the directory that a program is in, if any.
+extern int get_file_dir(const char* filename, std::string& dir);
+#endif // _WIN32
 
-/// search PATH, find the directory that a program is in, if any
-extern int get_file_dir(char* filename, char* dir);
+#endif // __cplusplus
 
-#endif
-
-
-#endif /* c++ */
-
-#endif /* double-inclusion protection */
+#endif // FILESYS_H
 

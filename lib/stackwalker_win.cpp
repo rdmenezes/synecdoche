@@ -6,14 +6,14 @@
  *    Memory_and_Exception_Trace
  *
  * ///////////////////////////////////////////////////////////////////////////
- *	File:
- *		Stackwalker.cpp
+ *    File:
+ *        Stackwalker.cpp
  *
- *	Remarks:
+ *    Remarks:
  *    Dumps the stack of an thread if an exepction occurs
  *
- *	Author:
- *		Jochen Kalmbach, Germany
+ *    Author:
+ *        Jochen Kalmbach, Germany
  *    (c) 2002-2003 (Freeware)
  *    http://www.codeproject.com/tools/leakfinder.asp
  *
@@ -778,18 +778,18 @@ static void ShowStackRM(HANDLE hThread, CONTEXT& Context)
     // and good riddance.
     memset( &StackFrame, '\0', sizeof(STACKFRAME64) );
 #if defined(_WIN64) && defined(_M_X64)
-	StackFrame.AddrPC.Offset = Context.Rip;
+    StackFrame.AddrPC.Offset = Context.Rip;
     StackFrame.AddrPC.Mode = AddrModeFlat;
     StackFrame.AddrFrame.Offset = Context.Rbp;
     StackFrame.AddrFrame.Mode = AddrModeFlat;
 #else
-	StackFrame.AddrPC.Offset = Context.Eip;
+    StackFrame.AddrPC.Offset = Context.Eip;
     StackFrame.AddrPC.Mode = AddrModeFlat;
     StackFrame.AddrFrame.Offset = Context.Ebp;
     StackFrame.AddrFrame.Mode = AddrModeFlat;
 #endif
 
-	memset( pSymbol, '\0', sizeof(SymbolBuffer) );
+    memset( pSymbol, '\0', sizeof(SymbolBuffer) );
     pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
     pSymbol->MaxNameLen = MAX_SYM_NAME;
 
@@ -953,7 +953,7 @@ static void ShowStackRM(HANDLE hThread, CONTEXT& Context)
         }
     } // for ( frameNum )
 
-	switch(gle){
+    switch(gle){
     case ERROR_SUCCESS:
         break;
     case ERROR_INVALID_ADDRESS:
@@ -961,15 +961,13 @@ static void ShowStackRM(HANDLE hThread, CONTEXT& Context)
         break;
     case ERROR_NOACCESS:
         _ftprintf(stderr, _T("\nStackWalk(): ERROR_NOACCESS (%lu) - Possible stack corruption.\n"), gle );
-    	break;
+        break;
     default:
         _ftprintf(stderr, _T("\nStackWalk(): GetLastError = %lu\n"), gle );
         break;
-	}
+    }
 
     fflush(stderr);
 
     LeaveCriticalSection(&g_csFileOpenClose);
 }
-
-const char *BOINC_RCSID_e8b4633192 = "$Id: stackwalker_win.cpp 15411 2008-06-17 16:19:36Z boincadm $";
