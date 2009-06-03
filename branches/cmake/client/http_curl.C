@@ -33,6 +33,8 @@
 #endif
 #endif
 
+#include "version.h"
+
 #include "error_numbers.h"
 #include "filesys.h"
 #include "client_msgs.h"
@@ -112,9 +114,13 @@ void parse_url(const char* url, char* host, int &port, char* file) {
 }
 
 void get_user_agent_string() {
-    sprintf(g_user_agent_string, "Synecdoche/%s (%s)",
-        SYNEC_VERSION_STRING,
-        gstate.get_primary_platform()
+    char svnrev[256] = "";
+    if (SYNEC_SVN_VERSION) {
+        sprintf(svnrev, "r%s ", SYNEC_SVN_VERSION);
+    }
+    sprintf(g_user_agent_string, "Synecdoche/%s (%s%s)",
+        SYNEC_VERSION_STRING, svnrev,
+        gstate.get_primary_platform().c_str()
     );
 }
 
@@ -1020,19 +1026,15 @@ void HTTP_OP::handle_messages(CURLMsg *pcurlMsg) {
             );
         } else {
             strcpy(req1, "");
-            if (dSize > req1_len) {
-                dSize = req1_len;
+            if (dSize >= req1_len) {
+                dSize = req1_len - 1;
             }
             size_t nread = fread(req1, 1, dSize, fileOut);
-            if (nread != dSize) {
-                if (log_flags.http_debug) {
-                    msg_printf(NULL, MSG_INFO,
-                        "[http_debug] post output file read failed %lu",
-                        nread
-                    );
-                }
+            if ((log_flags.http_debug) && (nread != dSize)) {
+                msg_printf(NULL, MSG_INFO,
+                    "[http_debug] post output file read failed %lu", nread);
             }
-            req1[req1_len-1] = 0;   // make sure null-terminated
+            req1[nread] = 0;
         }
     }
 

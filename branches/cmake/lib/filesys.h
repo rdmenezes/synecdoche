@@ -152,7 +152,7 @@ private:
 #endif
 
 public:
-    /// Create a DirScanner instance and try to open the specyfied directory.
+    /// Create a DirScanner instance and try to open the specified directory.
     DirScanner(const std::string& path);
 
     /// Destroy the DirScanner instance and frees the contained handle, if necessary.

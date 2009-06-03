@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 David Barnard, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -149,7 +149,7 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
     wxCHECK_RET(CreateNotebook(), _T("Failed to create notebook."));
     wxCHECK_RET(CreateStatusbar(), _T("Failed to create status bar."));
 
-    // Restore view settings
+    // Restore view settings (without sizing frame)
     RestoreViewState();
 
     m_pRefreshStateTimer = new wxTimer(this, ID_REFRESHSTATETIMER);
@@ -172,9 +172,6 @@ CAdvancedFrame::CAdvancedFrame(wxString title, wxIcon* icon, wxIcon* icon32) :
 
     // We want to disconnect this later, so connect here instead of in the event table.
     Connect(wxEVT_IDLE, wxIdleEventHandler(CAdvancedFrame::OnIdleInit));
-
-    // Restore main application frame settings
-    RestoreState();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CAdvancedFrame - Function End"));
 }
@@ -241,7 +238,7 @@ bool CAdvancedFrame::CreateMenu() {
 
     // Account managers have a different menu arrangement
     pDoc->rpc.acct_mgr_info(ami);
-    is_acct_mgr_detected = ami.acct_mgr_url.size() ? true : false;
+    is_acct_mgr_detected = !ami.acct_mgr_url.empty();
 
     // File menu
     wxMenu *menuFile = new wxMenu;
@@ -750,35 +747,27 @@ bool CAdvancedFrame::SaveViewState() {
     wxString        strConfigLocation;
     wxString        strPreviousLocation;
     wxString        strBuffer;
-    int             iIndex = 0;
-    int             iItemCount = 0;
-
 
     wxASSERT(pConfig);
     wxASSERT(m_pNotebook);
 
-
     // An odd case happens every once and awhile where wxWidgets looses
-    //   the pointer to the config object, or it is cleaned up before
-    //   the window has finished it's cleanup duty.  If we detect a NULL
-    //   pointer, return false.
-    if (!pConfig) return false;
+    // the pointer to the config object, or it is cleaned up before
+    // the window has finished it's cleanup duty.  If we detect a NULL
+    // pointer, return false.
+    if (!pConfig) {
+        return false;
+    }
 
-    //
     // Save Frame State
-    //
     pConfig->SetPath(strBaseConfigLocation);
-
     pConfig->Write(wxT("CurrentPage"), m_pNotebook->GetSelection());
 
-    //
     // Save Page(s) State
-    //
- 
     // Convert to a zero based index
-    iItemCount = (int)m_pNotebook->GetPageCount() - 1;
+    size_t iItemCount = m_pNotebook->GetPageCount() - 1;
 
-    for (iIndex = 0; iIndex <= iItemCount; iIndex++) {   
+    for (size_t iIndex = 0; iIndex <= iItemCount; ++iIndex) {
         pwndNotebookPage = m_pNotebook->GetPage(iIndex);
         wxASSERT(wxDynamicCast(pwndNotebookPage, CBOINCBaseView));
 
@@ -846,27 +835,22 @@ bool CAdvancedFrame::RestoreViewState() {
     wxString        strPreviousLocation;
     wxString        strBuffer;
     wxString        strValue;
-    long            iIndex;
-    long            iPageCount;
     long            iCurrentPage;
-
 
     wxASSERT(pConfig);
     wxASSERT(m_pNotebook);
 
-
     CBOINCBaseFrame::RestoreState();
 
-
     // An odd case happens every once and awhile where wxWidgets looses
-    //   the pointer to the config object, or it is cleaned up before
-    //   the window has finished it's cleanup duty.  If we detect a NULL
-    //   pointer, return false.
-    if (!pConfig) return false;
+    // the pointer to the config object, or it is cleaned up before
+    // the window has finished it's cleanup duty.  If we detect a NULL
+    // pointer, return false.
+    if (!pConfig) {
+        return false;
+    }
 
-    //
     // Restore Frame State
-    //
     pConfig->SetPath(strBaseConfigLocation);
 
     if (wxGetApp().GetSkinManager()->GetAdvanced()->GetDefaultTab()) {
@@ -876,15 +860,11 @@ bool CAdvancedFrame::RestoreViewState() {
         m_pNotebook->SetSelection(iCurrentPage);
     }
 
-    //
     // Restore Page(s) State
-    //
-
     // Convert to a zero based index
-    iPageCount = (long)m_pNotebook->GetPageCount() - 1;
+    size_t iPageCount = m_pNotebook->GetPageCount() - 1;
 
-    for (iIndex = 0; iIndex <= iPageCount; iIndex++) {   
-
+    for (size_t iIndex = 0; iIndex <= iPageCount; ++iIndex) {
         pwndNotebookPage = m_pNotebook->GetPage(iIndex);
         wxASSERT(wxDynamicCast(pwndNotebookPage, CBOINCBaseView));
 
@@ -897,7 +877,6 @@ bool CAdvancedFrame::RestoreViewState() {
         pConfig->SetPath(strConfigLocation);
         pView->FireOnRestoreState(pConfig);
         pConfig->SetPath(strPreviousLocation);
-
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::RestoreViewState - Function End"));
@@ -1069,7 +1048,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             retVal = pDoc->Connect(
                 wxT("localhost"),
                 GUI_RPC_PORT,
-                wxEmptyString,
+                "",
                 true,
                 true
             );
@@ -1086,7 +1065,7 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
             retVal = pDoc->Connect(
                 sHost,
                 (int)lPort,
-                dlg.GetComputerPassword(),
+                (const char*)dlg.GetComputerPassword().mb_str(),
                 true,
                 false
             );
@@ -1653,15 +1632,17 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
 
     pDoc->rpc.get_project_init_status(pis);
     pDoc->rpc.acct_mgr_info(ami);
-    if (ami.acct_mgr_url.size() && !ami.have_credentials) {
+    if (!ami.acct_mgr_url.empty() && !ami.have_credentials) {
         if (!IsShown()) {
             Show();
         }
 
         pAMWizard = new CWizardAccountManager(this);
         if (pAMWizard->Run()) {
+#if defined(__WXMSW__) || defined(__WXMAC__)
             // If successful, hide the main window
             Hide();
+#endif
 
             // %s is the application name
             //    i.e. 'BOINC Manager', 'GridRepublic Manager'
@@ -1690,7 +1671,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
             // If failure, display the messages tab
             m_pNotebook->SetSelection(ID_LIST_MESSAGESVIEW - ID_LIST_BASE);
         }
-    } else if ((pis.url.size() || (0 >= pDoc->GetProjectCount())) && !status.disallow_attach) {
+    } else if ((!pis.url.empty() || (pDoc->GetProjectCount() == 0)) && !status.disallow_attach) {
         if (!IsShown()) {
             Show();
         }

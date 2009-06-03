@@ -22,7 +22,6 @@
 #include "BOINCBaseWizard.h"
 
 /// Forward declarations of all used pages:
-class CAccountKeyPage;
 class CAccountInfoPage;
 class CCompletionPage;
 class CCompletionErrorPage;
@@ -90,9 +89,6 @@ public:
     /// Return a pointer to the current account info page.
     CAccountInfoPage* GetAccountInfoPage() const;
 
-    /// Return a pointer to the current account key page.
-    CAccountKeyPage* GetAccountKeyPage() const;
-
     /// Return a pointer to the current completion error page.
     CCompletionErrorPage* GetCompletionErrorPage() const;
 
@@ -109,7 +105,6 @@ private:
     CWelcomePage* m_WelcomePage;
     CProjectInfoPage* m_ProjectInfoPage;
     CProjectPropertiesPage* m_ProjectPropertiesPage;
-    CAccountKeyPage* m_AccountKeyPage;
     CAccountInfoPage* m_AccountInfoPage;
     CProjectProcessingPage* m_ProjectProcessingPage;
     CCompletionPage* m_CompletionPage;
@@ -124,7 +119,6 @@ private:
     CErrProxyPage* m_ErrProxyPage;
     bool m_bCredentialsCached;
     bool m_bCredentialsDetected;
-    wxString strProjectName;
 };
 
 #endif // WIZ_ATTACHPROJECT_H

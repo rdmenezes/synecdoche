@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -148,7 +148,6 @@ wxIcon CDlgSelectComputer::GetIconResource(const wxString& WXUNUSED(name))
 /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_SELECTCOMPUTERNAME
 void CDlgSelectComputer::OnComputerNameUpdated(wxCommandEvent& WXUNUSED(event))
 {
-    wxString       strPassword = wxEmptyString;
     CMainDocument* pDoc        = wxGetApp().GetDocument();
 
     wxASSERT(pDoc);
@@ -156,7 +155,15 @@ void CDlgSelectComputer::OnComputerNameUpdated(wxCommandEvent& WXUNUSED(event))
 
     wxString name = m_ComputerNameCtrl->GetValue();
     if (pDoc->IsComputerNameLocal(name)) {
-        pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
-        m_ComputerPasswordCtrl->SetValue(strPassword);
+        std::string password;
+        try {
+            password = read_gui_rpc_password();
+        } catch (...) {
+            // Ignore any errors here and set an empty password.
+            // This will happen if the manager does not find the
+            // GUI-RPC-password file in its working directory.
+        }
+        wxString wxStrPassword = wxString(password.c_str(), wxConvUTF8);
+        m_ComputerPasswordCtrl->SetValue(wxStrPassword);
     }
 }

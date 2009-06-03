@@ -39,12 +39,10 @@ HANDLE create_shmem(
 HANDLE attach_shmem(LPCTSTR seg_name, void** pp);
 int detach_shmem(HANDLE hSharedMem, void* p);
 #else
-#ifndef __EMX__
 #define MMAPPED_FILE_NAME    "boinc_mmap_file"
 extern int create_shmem_mmap(const char *path, size_t size, void** pp);
 extern int attach_shmem_mmap(const char *path, void** pp);
 extern int detach_shmem_mmap(void* p, size_t size);
-#endif
 extern int create_shmem(key_t, int size, gid_t gid, void**);
 extern int attach_shmem(key_t, void**);
 extern int detach_shmem(void*);

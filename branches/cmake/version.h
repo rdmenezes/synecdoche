@@ -12,6 +12,8 @@
 /* Release part of Synecdoche version number */
 #define SYNEC_RELEASE 1
 
+extern const char* SYNEC_SVN_VERSION;
+
 /* String representation of Synecdoche version number */
 #define SYNEC_VERSION_STRING "0.1.1"
 
@@ -33,7 +35,7 @@
 #define SYNEC_PRERELEASE 1
 
 /* Name of package */
-#define PACKAGE "Synecdoche"
+#define PACKAGE "synecdoche"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT ""
@@ -45,7 +47,7 @@
 #define PACKAGE_STRING "Synecdoche 0.1.1"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "Synecdoche"
+#define PACKAGE_TARNAME "synecdoche"
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.1.1"

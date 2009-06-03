@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
 
 #if !defined(_WIN32) || defined (__CYGWIN__)
 #include <stdio.h>
-#include <string>
 #include <vector>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -33,10 +33,13 @@
 #include <locale.h>
 #endif
 
+#include <string>
+
 #include "miofile.h"
 #include "prefs.h"
-#include "hostinfo.h"
 #include "common_defs.h"
+
+class HOST_INFO;
 
 struct GUI_URL {
     std::string name;
@@ -268,7 +271,7 @@ public:
 class MESSAGE {
 public:
     std::string project;
-    int priority;
+    MSG_PRIORITY priority;
     int seqno;
     int timestamp;
     std::string body;
@@ -276,7 +279,7 @@ public:
     MESSAGE();
     ~MESSAGE();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
 };
@@ -402,13 +405,15 @@ public:
 };
 
 struct DISPLAY_INFO {
-    char window_station[256];   // windows
-    char desktop[256];          // windows
-    char display[256];          // X11
+    std::string window_station;   // windows
+    std::string desktop;          // windows
+    std::string display;          // X11
 
     DISPLAY_INFO();
-    void print_str(char*) const;
+    void clear();
 };
+
+std::ostream& operator <<(std::ostream& out, const DISPLAY_INFO& in);
 
 struct ACCT_MGR_INFO {
     std::string acct_mgr_name;
@@ -545,22 +550,19 @@ public:
 
     RPC_CLIENT();
     ~RPC_CLIENT();
-    int init(const char* host, int port=0);
-    int init_asynch(
-        const char* host, double timeout, bool retry, int port=GUI_RPC_PORT
-    );
-        // timeout == how long to wait until give up
-        //    If the caller (i.e. Synecdoche Manager) just launched the core client,
-        //    this should be large enough to allow the process to
-        //    run and open its listening socket (e.g. 60 sec)
-        //    If connecting to a remote client, it should be large enough
-        //    for the user to deal with a "personal firewall" popup
-        //    (e.g. 60 sec)
-        // retry: if true, keep retrying until succeed or timeout.
-        //    Use this if just launched the core client.
+
+    /// Initiate a connection to the core client.
+    int init(const char* host, int port = GUI_RPC_PORT);
+
+    /// Initiate a connection to the core client using non-blocking operations.
+    int init_asynch(const char* host, double timeout, bool retry, int port = GUI_RPC_PORT);
+
     int init_poll();
     void close();
+
+    /// Answer an authorization request sent by the server.
     int authorize(const char* passwd);
+
     int exchange_versions(VERSION_INFO&);
     int get_state(CC_STATE&);
     int get_results(RESULTS&);
@@ -655,5 +657,7 @@ struct SET_LOCALE {
         setlocale(LC_ALL, locale.c_str());
     }
 };
+
+std::string read_gui_rpc_password(const std::string& file_name = GUI_RPC_PASSWD_FILE);
 
 #endif // GUI_RPC_CLIENT_H

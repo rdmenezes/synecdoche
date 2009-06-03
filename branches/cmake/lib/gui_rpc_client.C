@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -26,9 +27,6 @@
 #include "../version.h"
 #else
 #include "config.h"
-#ifdef __EMX__
-#include <sys/time.h>
-#endif
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -36,6 +34,9 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <cstring>
+#include <stdexcept>
+#include <fstream>
+#include <sstream>
 #endif
 
 #include "diagnostics.h"
@@ -68,21 +69,20 @@ void RPC_CLIENT::close() {
     }
 }
 
+/// Initiate a connection to the core client.
+///
+/// \param[in] host The host name of the machine the core client is running on.
+/// \param[in] port The port the core client is listening on for incoming
+///                 connections.
+/// \return Zero on success, nonzero if any error occurred.
 int RPC_CLIENT::init(const char* host, int port) {
-    int retval;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
-    if (port) {
-        addr.sin_port = htons(port);
-    } else {
-        addr.sin_port = htons(GUI_RPC_PORT);
-    }
-    //printf("trying port %d\n", htons(addr.sin_port));
+    addr.sin_port = htons(port);
 
     if (host) {
         hostent* hep = gethostbyname(host);
         if (!hep) {
-            perror("gethostbyname");
             return ERR_GETHOSTBYNAME;
         }
         addr.sin_addr.s_addr = *(int*)hep->h_addr_list[0];
@@ -90,13 +90,12 @@ int RPC_CLIENT::init(const char* host, int port) {
         addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     }
     boinc_socket(sock);
-    retval = connect(sock, (const sockaddr*)(&addr), sizeof(addr));
+    int retval = connect(sock, (const sockaddr*)(&addr), sizeof(addr));
     if (retval) {
 #ifdef _WIN32
         BOINCTRACE("RPC_CLIENT::init connect 2: Winsock error '%d'\n", WSAGetLastError());
 #endif
         BOINCTRACE("RPC_CLIENT::init connect on %d returned %d\n", sock, retval);
-        perror("connect");
         close();
         return ERR_CONNECT;
     }
@@ -104,10 +103,23 @@ int RPC_CLIENT::init(const char* host, int port) {
     return 0;
 }
 
-int RPC_CLIENT::init_asynch(
-    const char* host, double _timeout, bool _retry, int port
-) {
-    int retval;
+/// Initiate a connection to the core client using non-blocking operations.
+///
+/// \param[in] host The host name of the machine the core client is running on.
+/// \param[in] _timeout How long to wait until give up
+///                     If the caller (i.e. Synecdoche Manager) just launched
+///                     the core client, this should be large enough to allow
+///                     the process to run and open its listening socket
+///                     (e.g. 60 sec).
+///                     If connecting to a remote client, it should be large
+///                     enough for the user to deal with a "personal firewall"
+///                     popup (e.g. 60 sec).
+/// \param[in] _retry If true, keep retrying until succeed or timeout.
+///                   Use this if just launched the core client.
+/// \param[in] port The port the core client is listening on for incoming
+///                 connections.
+/// \return Zero on success, nonzero if any error occurred.
+int RPC_CLIENT::init_asynch(const char* host, double _timeout, bool _retry, int port) {
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -117,7 +129,6 @@ int RPC_CLIENT::init_asynch(
     if (host) {
         hostent* hep = gethostbyname(host);
         if (!hep) {
-            perror("gethostbyname");
             return ERR_GETHOSTBYNAME;
         }
         addr.sin_addr.s_addr = *(int*)hep->h_addr_list[0];
@@ -125,9 +136,11 @@ int RPC_CLIENT::init_asynch(
         addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     }
 
-    retval = boinc_socket(sock);
+    int retval = boinc_socket(sock);
     BOINCTRACE("RPC_CLIENT::init boinc_socket returned %d\n", sock);
-    if (retval) return retval;
+    if (retval) {
+        return retval;
+    }
 
     retval = boinc_socket_asynch(sock, true);
     if (retval) {
@@ -136,7 +149,6 @@ int RPC_CLIENT::init_asynch(
     start_time = dtime();
     retval = connect(sock, (const sockaddr*)(&addr), sizeof(addr));
     if (retval) {
-        perror("connect");
         BOINCTRACE("RPC_CLIENT::init connect returned %d\n", retval);
     }
     BOINCTRACE("RPC_CLIENT::init attempting connect \n");
@@ -196,21 +208,32 @@ int RPC_CLIENT::init_poll() {
     return ERR_RETRY;
 }
 
+/// Answer an authorization request sent by the server.
+/// The answer is the response to the nonce sent as challenge by the server.
+/// It is the md5sum from the concatenation of the nonce and the
+/// GUI-RPC password.
+///
+/// \param[in] passwd The GUI-RPC password.
+/// \return Zero if the authorization was acknowledged by the server,
+///         nonzero if the server rejected the request or if any other error
+///         occurred.
 int RPC_CLIENT::authorize(const char* passwd) {
-    bool found = false;
-    int retval, n;
-    char buf[256], nonce[256], nonce_hash[256];
     RPC rpc(this);
-    XML_PARSER xp(&rpc.fin);
-    bool is_tag;
+    int retval = rpc.do_rpc("<auth1/>\n");
+    if (retval) {
+        return retval;
+    }
 
-    retval = rpc.do_rpc("<auth1/>\n");
-    if (retval) return retval;
-    while (!xp.get(buf, sizeof(buf), is_tag)) {
+    XML_PARSER xp(&rpc.fin);
+    char nonce[256];
+    bool found = false;
+    char chr_buf[256];
+    bool is_tag;
+    while (!xp.get(chr_buf, sizeof(chr_buf), is_tag)) {
         if (!is_tag) {
             continue;
         }
-        if (xp.parse_str(buf, "nonce", nonce, sizeof(nonce))) {
+        if (xp.parse_str(chr_buf, "nonce", nonce, sizeof(nonce))) {
             found = true;
             break;
         }
@@ -220,18 +243,22 @@ int RPC_CLIENT::authorize(const char* passwd) {
         return ERR_AUTHENTICATOR;
     }
 
-    n = snprintf(buf, sizeof(buf), "%s%s", nonce, passwd);
-    if (n >= (int)sizeof(buf)) return ERR_AUTHENTICATOR;
-    md5_block((const unsigned char*)buf, (int)strlen(buf), nonce_hash);
-    sprintf(buf, "<auth2>\n<nonce_hash>%s</nonce_hash>\n</auth2>\n", nonce_hash);
-    retval = rpc.do_rpc(buf);
-    if (retval) return retval;
-    while (!xp.get(buf, sizeof(buf), is_tag)) {
+    std::ostringstream input;
+    input << nonce << passwd;
+    std::string nonce_hash = md5_string(input.str());
+    std::ostringstream buf;
+    buf << "<auth2>\n<nonce_hash>" << nonce_hash << "</nonce_hash>\n</auth2>\n";
+    retval = rpc.do_rpc(buf.str().c_str());
+    if (retval) {
+        return retval;
+    }
+
+    while (!xp.get(chr_buf, sizeof(chr_buf), is_tag)) {
         if (!is_tag) {
             continue;
         }
         bool authorized;
-        if (xp.parse_bool(buf, "authorized", authorized)) {
+        if (xp.parse_bool(chr_buf, "authorized", authorized)) {
             if (authorized) {
                 return 0;
             }
@@ -249,8 +276,6 @@ int RPC_CLIENT::send_request(const char* p) {
     buf.append(p).append("</boinc_gui_rpc_request>\n\003");
     int n = send(sock, buf.c_str(), static_cast<int>(buf.size()), 0);
     if (n < 0) {
-        printf("send: %d\n", n);
-        perror("send");
         return ERR_WRITE;
     }
     return 0;
@@ -320,4 +345,20 @@ int RPC::parse_reply() {
         if (strstr(buf, "success")) return BOINC_SUCCESS;
     }
     return ERR_NOT_FOUND;
+}
+
+/// Read the GUI-RPC-password from a file.
+///
+/// \param[in] file_name The file name containing the password. Defaults to
+///                      GUI_RPC_PASSWD_FILE if omitted.
+/// \return The GUI-RPC-password read from the file specified by \a file_name.
+std::string read_gui_rpc_password(const std::string& file_name) {
+    std::ifstream in(file_name.c_str());
+    if (!in) {
+        throw std::runtime_error(std::string("Can't open GUI-RPC-password file \"")
+                                    + file_name + std::string("\"."));
+    }
+    std::string password;
+    std::getline(in, password);
+    return password;
 }

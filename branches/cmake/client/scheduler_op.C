@@ -20,11 +20,16 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+#else
+#include <sstream>
 #endif
+
+#include "scheduler_op.h"
 
 #include "str_util.h"
 #include "util.h"
 #include "parse.h"
+#include "miofile.h"
 #include "error_numbers.h"
 #include "filesys.h"
 
@@ -34,7 +39,6 @@
 #include "file_names.h"
 #include "log_flags.h"
 #include "main.h"
-#include "scheduler_op.h"
 
 SCHEDULER_OP::SCHEDULER_OP(HTTP_OP_SET* h) {
     cur_proj = NULL;
@@ -765,12 +769,8 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
             retval = project->parse_project_files(mf, true);
         } else if (match_tag(buf, "<!--")) {
             continue;
-        } else if (strlen(buf)>1){
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] SCHEDULER_REPLY::parse(): unrecognized %s\n", buf
-                );
-            }
+        } else {
+            handle_unparsed_xml_warning("SCHEDULER_REPLY::parse", buf);
         }
     }
     if (found_start_tag) {
@@ -780,9 +780,4 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
     }
 
     return ERR_XML_PARSE;
-}
-
-USER_MESSAGE::USER_MESSAGE(char* m, char* p) {
-    message = m;
-    priority = p;
 }

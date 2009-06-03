@@ -88,7 +88,7 @@ protected:
 private:
     wxTimer* checkForMessagesTimer;
     int m_maxNumOfIcons;
-    int m_leftIndex;
+    size_t m_leftIndex;
     bool receivedErrorMessage;
     bool alertMessageDisplayed;
     size_t lastMessageId;

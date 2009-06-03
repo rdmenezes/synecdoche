@@ -20,6 +20,7 @@
 
 #include "stdwx.h"
 #include "diagnostics.h"
+#include "util.h"
 #include "LogBOINC.h"
 #include "BOINCGUIApp.h"
 #include "MainDocument.h"
@@ -28,7 +29,6 @@
 
 #ifdef __WXMAC__
 #include "filesys.h"
-#include "util.h"
 
 enum {
     NewStyleDaemon = 1,
@@ -94,7 +94,7 @@ int CBOINCClientManager::IsBOINCConfiguredAsDaemon() {
 #if   defined(__WXMSW__)
     if (IsBOINCServiceInstalled()) bReturnValue = 1;
 #elif defined(__WXMAC__)
-    if ( boinc_file_exists("/Library/LaunchDaemons/edu.berkeley.boinc.plist")) {
+    if ( boinc_file_exists("/Library/LaunchDaemons/com.googlecode.synecdoche.plist")) {
         bReturnValue = NewStyleDaemon;                      // New-style daemon uses launchd
     }
     if (boinc_file_exists("/Library/StartupItems/boinc/boinc") ) {
@@ -153,7 +153,7 @@ bool CBOINCClientManager::StartupBOINCCore() {
     LPTSTR  szDataDirectory = NULL;
 
     if (IsBOINCConfiguredAsDaemon()) {
-        return (StartBOINCService());
+        return (!!StartBOINCService());
     }
 
     // Append synecd.exe to the end of the strExecute string
@@ -210,8 +210,8 @@ bool CBOINCClientManager::StartupBOINCCore() {
     OSErr err;
 
     if (IsBOINCConfiguredAsDaemon() == NewStyleDaemon) {
-        system ("launchctl load /Library/LaunchDaemons/edu.berkeley.boinc.plist");
-        system ("launchctl start edu.berkeley.boinc");
+        system ("launchctl load /Library/LaunchDaemons/com.googlecode.synecdoche.plist");
+        system ("launchctl start com.googleccode.synecdoche");
         bReturnValue = IsBOINCCoreRunning();
     } else {
         
@@ -227,10 +227,10 @@ bool CBOINCClientManager::StartupBOINCCore() {
 #if 0   // The Mac version of wxExecute(wxString& ...) crashes if there is a space in the path
             strExecute = wxT("\"");            
             strExecute += wxT(buf);
-            strExecute += wxT("/Contents/Resources/boinc\" --redirectio --launched_by_manager");
+            strExecute += wxT("/Contents/Resources/synecd\" --redirectio --launched_by_manager");
             m_lBOINCCoreProcessId = ::wxExecute(strExecute);
 #else   // Use wxExecute(wxChar **argv ...) instead of wxExecute(wxString& ...)
-            strcat(buf, "/Contents/Resources/boinc");
+            strcat(buf, "/Contents/Resources/synecd");
             argv[0] = buf;
             argv[1] = "--redirectio";
             argv[2] = "--launched_by_manager";
@@ -247,7 +247,7 @@ bool CBOINCClientManager::StartupBOINCCore() {
             // time (about 11% of one CPU on 2GHz Intel Dual-Core Mac).
 //                m_lBOINCCoreProcessId = ::wxExecute(argv);
             run_program(
-                "/Library/Application Support/BOINC Data",
+                "/Library/Application Support/Synecdoche Data",
                 buf, argv[3] ? 4 : 3, argv, 0.0, m_lBOINCCoreProcessId
             );
 #endif
@@ -260,9 +260,11 @@ bool CBOINCClientManager::StartupBOINCCore() {
 
     // Append boinc.exe to the end of the strExecute string and get ready to rock
     strExecute = ::wxGetCwd() + wxT("/boinc --redirectio --launched_by_manager");
+#ifdef SANDBOX
     if (!g_use_sandbox) {
         strExecute += wxT(" --insecure");
     }
+#endif // SANDBOX
 
     wxLogTrace(wxT("Function Status"), wxT("CMainDocument::StartupBOINCCore - szExecute '%s'\n"), strExecute.c_str());
     wxLogTrace(wxT("Function Status"), wxT("CMainDocument::StartupBOINCCore - szDataDirectory '%s'\n"), ::wxGetCwd().c_str());
@@ -274,6 +276,13 @@ bool CBOINCClientManager::StartupBOINCCore() {
     if (0 != m_lBOINCCoreProcessId) {
         m_bBOINCStartedByManager = true;
         bReturnValue = true;
+        // Allow time for daemon to start up so we don't keep relaunching it
+        for (int i = 0; i < 100; ++i) { // Wait up to 4 seconds in 40ms increments
+            if (IsBOINCCoreRunning()) {
+                break;
+            }
+            boinc_sleep(0.04);
+        }
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CMainDocument::StartupBOINCCore - Function End"));
@@ -290,7 +299,7 @@ void CBOINCClientManager::ShutdownBOINCCore() {
     wxInt32            iCount = 0;
     DWORD              dwExitCode = 0;
     bool               bClientQuit = false;
-    wxString           strPassword = wxEmptyString;
+    std::string        strPassword;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -299,8 +308,14 @@ void CBOINCClientManager::ShutdownBOINCCore() {
         if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
-                pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
-                rpc.authorize((const char*)strPassword.mb_str());
+                try {
+                    strPassword = read_gui_rpc_password();
+                } catch (...) {
+                    // Ignore any errors here and set an empty password.
+                    // This will happen if the manager does not find the
+                    // GUI-RPC-password file in its working directory.
+                }
+                rpc.authorize(strPassword.c_str());
                 if (GetExitCodeProcess(m_hBOINCCoreProcess, &dwExitCode)) {
                     if (STILL_ACTIVE == dwExitCode) {
                         rpc.quit();
@@ -394,7 +409,7 @@ bool CBOINCClientManager::ProcessExists(pid_t thePID)
 void CBOINCClientManager::ShutdownBOINCCore() {
     CMainDocument*     pDoc = wxGetApp().GetDocument();
     wxInt32            iCount = 0;
-    wxString           strPassword = wxEmptyString;
+    std::string        strPassword;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -403,8 +418,14 @@ void CBOINCClientManager::ShutdownBOINCCore() {
         if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
-                pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
-                rpc.authorize((const char*)strPassword.mb_str());
+                try {
+                    strPassword = read_gui_rpc_password();
+                } catch (...) {
+                    // Ignore any errors here and set an empty password.
+                    // This will happen if the manager does not find the
+                    // GUI-RPC-password file in its working directory.
+                }
+                rpc.authorize(strPassword.c_str());
                 if (ProcessExists(m_lBOINCCoreProcessId)) {
                     rpc.quit();
                     for (iCount = 0; iCount <= 10; iCount++) {
@@ -439,7 +460,7 @@ void CBOINCClientManager::ShutdownBOINCCore() {
     CMainDocument*     pDoc = wxGetApp().GetDocument();
     wxInt32            iCount = 0;
     bool               bClientQuit = false;
-    wxString           strPassword = wxEmptyString;
+    std::string        strPassword;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -448,8 +469,14 @@ void CBOINCClientManager::ShutdownBOINCCore() {
         if (!pDoc->IsLocalClient()) {
             RPC_CLIENT rpc;
             if (!rpc.init("localhost")) {
-                pDoc->m_pNetworkConnection->GetLocalPassword(strPassword);
-                rpc.authorize((const char*)strPassword.mb_str());
+                try {
+                    strPassword = read_gui_rpc_password();
+                } catch (...) {
+                    // Ignore any errors here and set an empty password.
+                    // This will happen if the manager does not find the
+                    // GUI-RPC-password file in its working directory.
+                }
+                rpc.authorize(strPassword.c_str());
                 if (wxProcess::Exists(m_lBOINCCoreProcessId)) {
                     rpc.quit();
                     for (iCount = 0; iCount <= 10; iCount++) {

@@ -35,6 +35,8 @@
 #include <cstring>
 #endif
 
+#include "gui_rpc_client.h"
+
 #include "diagnostics.h"
 #include "parse.h"
 #include "util.h"
@@ -43,7 +45,7 @@
 #include "miofile.h"
 #include "md5_file.h"
 #include "network.h"
-#include "gui_rpc_client.h"
+#include "hostinfo.h"
 
 using std::string;
 using std::vector;

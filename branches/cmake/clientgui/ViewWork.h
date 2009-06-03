@@ -16,19 +16,18 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _VIEWWORK_H_
-#define _VIEWWORK_H_
+#ifndef VIEWWORK_H
+#define VIEWWORK_H
 
 #include <wx/object.h>
 #include <wx/dialog.h>
 
 #include "TaskViewBase.h"
 
-
 class CWork : public wxObject
 {
 public:
-    CWork() {}
+    CWork();
 
     wxString m_strProjectName;
     wxString m_strApplicationName;
@@ -38,8 +37,11 @@ public:
     float m_fTimeToCompletion;
     time_t m_tReportDeadline;
     wxString m_strStatus;
+    wxString m_strCPUTime;
+ 	wxString m_strProgress;
+ 	wxString m_strTimeToCompletion;
+ 	wxString m_strReportDeadline;
 };
-
 
 class DlgYesToAll: public wxDialog {
 
@@ -52,7 +54,6 @@ public:
 
     void OnButton(wxCommandEvent& event);
 };
-
 
 class CViewWork : public CTaskViewBase
 {
@@ -93,26 +94,22 @@ protected:
     virtual void            DemandLoadView();
 
     void                    GetDocProjectName(wxInt32 item, wxString& strBuffer) const;
-    wxInt32                 FormatProjectName( wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocApplicationName(wxInt32 item, wxString& strBuffer) const;
-    wxInt32                 FormatApplicationName( wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocName(wxInt32 item, wxString& strBuffer) const;
-    wxInt32                 FormatName( wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocCPUTime(wxInt32 item, float& fBuffer) const;
-    wxInt32                 FormatCPUTime( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatCPUTime(float fBuffer, wxString& strBuffer) const;
     void                    GetDocProgress(wxInt32 item, float& fBuffer) const;
-    wxInt32                 FormatProgress( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatProgress(float fBuffer, wxString& strBuffer) const;
     void                    GetDocTimeToCompletion(wxInt32 item, float& fBuffer) const;
-    wxInt32                 FormatTimeToCompletion( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatTimeToCompletion(float fBuffer, wxString& strBuffer) const;
     void                    GetDocReportDeadline(wxInt32 item, time_t& time) const;
-    wxInt32                 FormatReportDeadline( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatReportDeadline(time_t deadline, wxString& strBuffer) const;
     void                    GetDocStatus(wxInt32 item, wxString& strBuffer) const;
-    wxInt32                 FormatStatus( wxInt32 item, wxString& strBuffer ) const;
+    wxInt32                 FormatStatus(wxInt32 item, wxString& strBuffer) const;
 
     virtual double          GetProgressValue(long item);
 
     DECLARE_EVENT_TABLE()
 };
 
-
-#endif
+#endif // VIEWWORK_H

@@ -292,7 +292,7 @@ int CBOINCDialUpManager::Connect() {
         wxLogTrace(wxT("Function Status"), wxT("CBOINCDialUpManager::Connect - Begin connection process"));
         m_dtLastDialupRequest = wxDateTime::Now();
 
-        if(pFrame->GetDialupConnectionName().size()) {
+        if (!pFrame->GetDialupConnectionName().empty()) {
             // We have a valid connection name that we can dial.
             // Update current working preferences (including any overrides) from client
             pDoc->rpc.get_global_prefs_working_struct(pDoc->state.global_prefs, mask);

@@ -116,8 +116,8 @@ bool CValidateEmailAddress::TransferFromWindow(void) {
 
 
 bool CValidateEmailAddress::wxIsAlphaNumeric(const wxString& val) {
-    int i;
-    for (i = 0; i < (int)val.Length(); i++) {
+    size_t i;
+    for (i = 0; i < val.Length(); i++) {
         if (!wxIsalnum(val[i]))
             return FALSE;
     }

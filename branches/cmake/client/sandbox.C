@@ -108,7 +108,7 @@ int switcher_exec(const char* util_filename, const char* cmdline) {
     if (pid == 0) {
         // This is the new (forked) process
         do_execv(util_path.str(), argv);
-        perror("execv failed in switcher_exec");
+        fprintf(stderr, "execv failed in switcher_exec(%s, %s): %s", util_path.str().c_str(), cmdline, strerror(errno));
         return ERR_EXEC;
     }
     // Wait for command to complete, like system() does.
@@ -156,6 +156,10 @@ static int delete_project_owned_file_aux(const char* path) {
 /// other program (e.g. virus checker) has the file locked.
 /// Don't do this if deleting directories - it can lock up the Manager.
 ///
+/// \param[in] path The path name of the file that should be deleted.
+/// \param[in] retry If true this function will try to delete the file
+///                  multiple times if the first attempt failed.
+/// \return Zero on success, ERR_UNLINK on error.
 int delete_project_owned_file(const char* path, bool retry) {
     int retval = 0;
 
@@ -166,7 +170,7 @@ int delete_project_owned_file(const char* path, bool retry) {
     if (retval && retry) {
         double start = dtime();
         do {
-            boinc_sleep(drand()*2);       // avoid lockstep
+            boinc_sleep(drand() * 2.0);       // avoid lockstep
             retval = delete_project_owned_file_aux(path);
             if (!retval) break;
         } while (dtime() < start + FILE_RETRY_INTERVAL);

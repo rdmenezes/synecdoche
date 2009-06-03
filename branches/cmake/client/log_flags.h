@@ -21,8 +21,8 @@
 
 // NOTE: all writes to stdout should have an if (log_flags.*) {} around them.
 
-#ifndef _LOGFLAGS_H_
-#define _LOGFLAGS_H_
+#ifndef LOGFLAGS_H
+#define LOGFLAGS_H
 
 #include <vector>
 #include <string>
@@ -78,6 +78,8 @@ struct LOG_FLAGS {
     LOG_FLAGS();
     void defaults();
     int parse(XML_PARSER&);
+
+    /// Print a message containing all log flags that are set to true.
     void show();
 };
 
@@ -111,6 +113,11 @@ struct CONFIG {
 
 extern LOG_FLAGS log_flags;
 extern CONFIG config;
-extern int read_config_file();
 
-#endif
+/// Read the config file.
+extern int read_config_file(bool init);
+
+/// Print a message about unparsed xml.
+extern void handle_unparsed_xml_warning(const std::string& in_func, const std::string& buf);
+
+#endif // LOGFLAGS_H

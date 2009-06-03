@@ -175,7 +175,7 @@ void ClientStateIndicator::DeletePreviousState()
             delete m_connIndV.at(indIndex);
         }
         //clear vector
-        if(m_connIndV.size() > 0){
+        if(!m_connIndV.empty()){
             m_connIndV.clear();
         }
         //delete ind bg
@@ -235,7 +235,7 @@ void ClientStateIndicator::OnEraseBackground(wxEraseEvent& event){
 bool ClientStateIndicator::DownloadingResults() {
     bool return_value = false;
     CMainDocument* pDoc     = wxGetApp().GetDocument();
-    if ( pDoc->results.results.size() > 0 ) {
+    if (!pDoc->results.results.empty()) {
         RESULT* result;
         for(unsigned int i=0; !return_value && i < pDoc->results.results.size(); i++ ) {
             result = pDoc->result(i);
@@ -262,7 +262,7 @@ bool ClientStateIndicator::Suspended() {
 bool ClientStateIndicator::ProjectUpdateScheduled() {
     CMainDocument* pDoc     = wxGetApp().GetDocument();
     PROJECT* project;
-    for(int i=0; i<pDoc->GetProjectCount(); i++) {
+    for (size_t i=0; i<pDoc->GetProjectCount(); i++) {
         project = pDoc->state.projects[i];
         if ( project->sched_rpc_pending || project->master_url_fetch_pending || project->scheduler_rpc_in_progress ) {
             return true;
@@ -276,7 +276,7 @@ void ClientStateIndicator::DisplayState() {
     if ( pDoc->IsReconnecting() ) {
         error_time = 0;
         SetActionState(_("Retrieving current status."));
-    } else if ( pDoc->IsConnected() && pDoc->state.projects.size() == 0) {
+    } else if ( pDoc->IsConnected() && pDoc->state.projects.empty()) {
         error_time = 0;
         SetPausedState(_("You don't have any projects.  Please Add a Project."));
     } else if ( DownloadingResults() ) {

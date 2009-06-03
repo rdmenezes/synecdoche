@@ -38,7 +38,6 @@ ENDIF(WIN32)
 ADD_EXECUTABLE(synecmgr WIN32
 # {{{ source list
 	AccountInfoPage.cpp
-	AccountKeyPage.cpp
 	AccountManagerInfoPage.cpp
 	AccountManagerProcessingPage.cpp
 	AccountManagerPropertiesPage.cpp
@@ -91,7 +90,6 @@ ADD_EXECUTABLE(synecmgr WIN32
 	stdwx.cpp
 	TaskViewBase.cpp
 	UnavailablePage.cpp
-	ValidateAccountKey.cpp
 	ValidateEmailAddress.cpp
 	ValidateURL.cpp
 	ViewMessages.cpp

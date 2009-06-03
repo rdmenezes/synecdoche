@@ -22,6 +22,8 @@
 #include "config.h"
 #endif
 
+#include "acct_mgr.h"
+
 #include <cstring>
 #include "parse.h"
 #include "error_numbers.h"
@@ -32,8 +34,12 @@
 #include "client_state.h"
 #include "gui_http.h"
 #include "crypt.h"
+#include "miofile.h"
 
-#include "acct_mgr.h"
+// This function is actually declared in gui_rpc_client.h, but we can't include
+// this file here because it re-defines some classes used by the gui-rpc-server.
+// TODO: Clean this mess up!
+std::string read_gui_rpc_password(const std::string& file_name = GUI_RPC_PASSWD_FILE);
 
 static const char *run_mode_name[] = {"", "always", "auto", "never"};
 
@@ -51,7 +57,6 @@ int ACCT_MGR_OP::do_rpc(
     int retval;
     unsigned int i;
     std::string url(_url);
-    FILE *pwdf;
 
     error_num = ERR_IN_PROGRESS;
     via_gui = _via_gui;
@@ -124,16 +129,8 @@ int ACCT_MGR_OP::do_rpc(
             fprintf(f,"   <gui_rpc_port>%d</gui_rpc_port>\n", GUI_RPC_PORT);
         }
         if (boinc_file_exists(GUI_RPC_PASSWD_FILE)) {
-            char password[256];
-            strcpy(password, "");
-            pwdf = fopen(GUI_RPC_PASSWD_FILE, "r");
-            if (pwdf) {
-                if (fgets(password, 256, pwdf)) {
-                    strip_whitespace(password);
-                }
-                fclose(pwdf);
-            }
-            fprintf(f,"   <gui_rpc_password>%s</gui_rpc_password>\n", password);
+            std::string password = read_gui_rpc_password();
+            fprintf(f,"   <gui_rpc_password>%s</gui_rpc_password>\n", password.c_str());
         }
     }
     for (i=0; i<gstate.projects.size(); i++) {
@@ -201,12 +198,7 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
 
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!is_tag) {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] AM_ACCOUNT::parse: unexpected text %s",
-                    tag
-                );
-            }
+            handle_unparsed_xml_warning("AM_ACCOUNT::parse", tag);
             continue;
         }
         if (!strcmp(tag, "/account")) {
@@ -241,11 +233,6 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
             }
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] AM_ACCOUNT: unrecognized %s", tag
-            );
-        }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "AM_ACCOUNT::parse");
     }
     return ERR_XML_PARSE;
@@ -269,12 +256,7 @@ int ACCT_MGR_OP::parse(FILE* f) {
     if (!xp.parse_start("acct_mgr_reply")) return ERR_XML_PARSE;
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!is_tag) {
-            if (log_flags.unparsed_xml) {
-                msg_printf(0, MSG_INFO,
-                    "[unparsed_xml] ACCT_MGR_OP::parse: unexpected text %s",
-                    tag
-                );
-            }
+            handle_unparsed_xml_warning("ACCT_MGR_OP::parse", tag);
             continue;
         }
         if (!strcmp(tag, "/acct_mgr_reply")) return 0;
@@ -325,11 +307,6 @@ int ACCT_MGR_OP::parse(FILE* f) {
             continue;
         }
         if (xp.parse_str(tag, "host_venue", host_venue, sizeof(host_venue))) continue;
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_OP::parse: unrecognized %s", tag
-            );
-        }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "ACCT_MGR_OP::parse");
     }
     return ERR_XML_PARSE;
@@ -614,14 +591,7 @@ int ACCT_MGR_INFO::parse_login_file(FILE* p) {
             retval = xp.element_contents("</opaque>", opaque, sizeof(opaque));
             continue;
         }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_INFO::parse_login: unrecognized %s", tag
-            );
-        }
-        xp.skip_unexpected(
-            tag, log_flags.unparsed_xml, "ACCT_MGR_INFO::parse_login_file"
-        );
+        xp.skip_unexpected(tag, log_flags.unparsed_xml, "ACCT_MGR_INFO::parse_login_file");
     }
     return 0;
 }
@@ -653,11 +623,6 @@ int ACCT_MGR_INFO::init() {
         else if (!strcmp(tag, "signing_key")) {
             retval = xp.element_contents("</signing_key>", signing_key, sizeof(signing_key));
             continue;
-        }
-        if (log_flags.unparsed_xml) {
-            msg_printf(NULL, MSG_INFO,
-                "[unparsed_xml] ACCT_MGR_INFO::init: unrecognized %s", tag
-            );
         }
         xp.skip_unexpected(tag, log_flags.unparsed_xml, "ACCT_MGR_INFO::init");
     }

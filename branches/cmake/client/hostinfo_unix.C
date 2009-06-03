@@ -16,11 +16,10 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 // There is a reason that having a file called "cpp.h" that includes config.h
-// and some of the C++ header files.  That reason is because there are #defines
-// that alter the behiour of the standard C and C++ headers.  In this case
-// we need to use the "small files" environment on some unix systems.  That
-// can't be done if we include "cpp.h"
-// #include "cpp.h" 
+// and some of the C++ header files is bad.  That reason is because there are
+// #defines that alter the behiour of the standard C and C++ headers.  In
+// this case we need to use the "small files" environment on some unix
+// systems.  That can't be done if we include "cpp.h"
 
 // copied directly from cpp.h
 #if defined(_WIN32) && !defined(__CYGWIN32__)
@@ -35,23 +34,21 @@
 #include "version.h"         // version numbers from autoconf
 #endif
 
-#if !defined(_WIN32) || defined(__CYGWIN32__)
 #include "config.h"
 
+#if !defined(_WIN32) || defined(__CYGWIN32__)
 // Access to binary files in /proc filesystem doesn't work in the 64bit
 // files environment on some systems.  None of the functions here need 
 // 64bit file functions, so we'll undefine _FILE_OFFSET_BITS and _LARGE_FILES.
 #undef _FILE_OFFSET_BITS
 #undef _LARGE_FILES
+#undef _LARGEFILE_SOURCE
+#undef _LARGEFILE64_SOURCE
 #include <iostream>
 #include <vector>
 #include <string>
 #include <cstring>
 #endif
-
-
-#include "config.h"
-
 
 #include <cstdio>
 #include <cstdlib>
@@ -94,12 +91,6 @@
 #endif
 #if HAVE_NETINET_IN_H
 #include <netinet/in.h>
-#endif
-
-#ifdef __EMX__
-#define INCL_DOSMISC
-#include <os2.h>
-#include "win/opt_x86.h"
 #endif
 
 #include "client_types.h"
@@ -693,10 +684,6 @@ int HOST_INFO::get_host_info() {
     size_t len;
 
     get_cpu_info_maxosx(*this);
-#elif defined(__EMX__)
-    CPU_INFO_t    cpuInfo;
-    strlcpy( p_vendor, cpuInfo.vendor.company, sizeof(p_vendor));
-    strlcpy( p_model, cpuInfo.name.fromID, sizeof(p_model));
 #elif defined(HAVE_SYS_SYSCTL_H)
     int mib[2];
     size_t len;
@@ -749,7 +736,7 @@ int HOST_INFO::get_host_info() {
 ///////////// p_ncpus /////////////////
 
 // sysconf not working on OS2
-#if defined(_SC_NPROCESSORS_ONLN) && !defined(__EMX__) && !defined(__APPLE__)
+#if defined(_SC_NPROCESSORS_ONLN) && !defined(__APPLE__)
     p_ncpus = sysconf(_SC_NPROCESSORS_ONLN);
 #elif defined(HAVE_SYS_SYSCTL_H) && defined(CTL_HW) && defined(HW_NCPU)
     // Get number of CPUs
@@ -766,18 +753,20 @@ int HOST_INFO::get_host_info() {
 #endif
 
 ///////////// m_nbytes, m_swap /////////////////
-
-#ifdef __EMX__
-    {
-        ULONG ulMem;
-        CPU_INFO_t    cpuInfo;
-        DosQuerySysInfo( QSV_TOTPHYSMEM, QSV_TOTPHYSMEM, &ulMem, sizeof(ulMem));
-        m_nbytes = ulMem;
-        // YD this is not the swap free space, but should be enough
-        DosQuerySysInfo( QSV_TOTAVAILMEM, QSV_TOTAVAILMEM, &ulMem, sizeof(ulMem));
-        m_swap = ulMem;
+	
+#ifdef __APPLE__
+    // On Mac OS X, sysctl with selectors CTL_HW, HW_PHYSMEM returns only a 
+    // 4-byte value, even if passed an 8-byte buffer, and limits the returned 
+    // value to 2GB when the actual RAM size is > 2GB.  The Gestalt selector 
+    // gestaltPhysicalRAMSizeInMegabytes is available starting with OS 10.3.0.
+    SInt32 mem_size;
+    if (Gestalt(gestaltPhysicalRAMSizeInMegabytes, &mem_size)) {
+        msg_printf(NULL, MSG_INTERNAL_ERROR,
+				   "Couldn't determine physical RAM size"
+				   );
     }
-#elif LINUX_LIKE_SYSTEM
+    m_nbytes = (1024. * 1024.) * (double)mem_size;
+#elif defined(LINUX_LIKE_SYSTEM)
     parse_meminfo_linux(*this);
 #elif defined(_SC_USEABLE_MEMORY)
     // UnixWare
@@ -790,18 +779,6 @@ int HOST_INFO::get_host_info() {
             sysconf(_SC_PAGESIZE), sysconf(_SC_PHYS_PAGES)
         );
     }
-#elif defined(__APPLE__)
-    // On Mac OS X, sysctl with selectors CTL_HW, HW_PHYSMEM returns only a 
-    // 4-byte value, even if passed an 8-byte buffer, and limits the returned 
-    // value to 2GB when the actual RAM size is > 2GB.  The Gestalt selector 
-    // gestaltPhysicalRAMSizeInMegabytes is available starting with OS 10.3.0.
-    SInt32 mem_size;
-    if (Gestalt(gestaltPhysicalRAMSizeInMegabytes, &mem_size)) {
-        msg_printf(NULL, MSG_INTERNAL_ERROR,
-            "Couldn't determine physical RAM size"
-        );
-    }
-    m_nbytes = (1024. * 1024.) * (double)mem_size;
 #elif defined(_HPUX_SOURCE)
     struct pst_static pst; 
     pstat_getstatic(&pst, sizeof(pst), (size_t)1, 0);
@@ -909,11 +886,7 @@ int HOST_INFO::get_host_info() {
     struct utsname u;
     uname(&u);
     safe_strcpy(os_name, u.sysname);
-#ifdef __EMX__ // OS2: version is in u.version
-    safe_strcpy(os_version, u.version);
-#else
     safe_strcpy(os_version, u.release);
-#endif
 #ifdef _HPUX_SOURCE
     safe_strcpy(p_model, u.machine);
     safe_strcpy(p_vendor, "Hewlett-Packard");

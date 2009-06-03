@@ -120,7 +120,7 @@ inline bool starts_with(const std::string& s, const std::string& prefix) {
 /// \param[in,out] w Reference to the string of which each character should
 ///                  be replaced by its lowercase equivalent.
 inline void downcase_string(std::string& w) {
-    std::transform(w.begin(), w.end(), w.begin(), tolower);
+    std::transform(w.begin(), w.end(), w.begin(), static_cast<int(*)(int)>(tolower));
 }
 
 /// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).

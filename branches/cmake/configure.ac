@@ -333,10 +333,6 @@ AH_TOP([
 /* double-inclusion protection for config.h */
 #ifndef BOINC_CONFIG_H
 #define BOINC_CONFIG_H
-
-/* Version defines are now in version.h */
-#include "version.h"  
-
 ])
 AH_BOTTOM([
 

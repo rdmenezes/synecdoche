@@ -57,6 +57,11 @@
 #include <vector>
 #include <set>
 
+// This function is actually declared in gui_rpc_client.h, but we can't include
+// this file here because it re-defines some classes used by the gui-rpc-server.
+// TODO: Clean this mess up!
+std::string read_gui_rpc_password(const std::string& file_name = GUI_RPC_PASSWD_FILE);
+
 GUI_RPC_CONN::GUI_RPC_CONN(int s):
     sock(s),
     auth_needed(false),
@@ -99,13 +104,8 @@ int GUI_RPC_CONN_SET::get_password() {
 
     strcpy(password, "");
     if (boinc_file_exists(GUI_RPC_PASSWD_FILE)) {
-        f = fopen(GUI_RPC_PASSWD_FILE, "r");
-        if (f) {
-            if (fgets(password, 256, f)) {
-                strip_whitespace(password);
-            }
-            fclose(f);
-        }
+        std::string buf = read_gui_rpc_password();
+        strlcpy(password, buf.c_str(), sizeof(password));
     } else {
         // if no password file, make a random password
         //
@@ -240,20 +240,21 @@ int GUI_RPC_CONN_SET::init(bool last_time) {
 
     retval = bind(lsock, (const sockaddr*)(&addr), (boinc_socklen_t)sizeof(addr));
     if (retval) {
-#ifndef _WIN32
-        retval = errno;     // Display the real error code
-#endif
+#ifdef _WIN32
+        retval = WSAGetLastError(); // Display the real error code
+#else
+        retval = errno;             // Display the real error code
+#endif // _WIN32
         if (last_time) {
             msg_printf(NULL, MSG_INTERNAL_ERROR,
-                "GUI RPC bind failed: %d", retval
-            );
+                "GUI RPC bind to port %d failed: %d", ntohs(addr.sin_port), retval);
         }
         boinc_close_socket(lsock);
         lsock = -1;
         return ERR_BIND;
     }
     if (log_flags.guirpc_debug) {
-        msg_printf(NULL, MSG_INFO, "[guirpc_debug] Listening on port %d", htons(addr.sin_port));
+        msg_printf(NULL, MSG_INFO, "[guirpc_debug] Listening on port %d", ntohs(addr.sin_port));
     }
 
     retval = listen(lsock, 999);
@@ -332,18 +333,6 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
 
     if (FD_ISSET(lsock, &fg.read_fds)) {
         struct sockaddr_in addr;
-
-        // For unknown reasons, the FD_ISSET() above succeeds
-        // after a SIGTERM, SIGHUP, SIGINT or SIGQUIT is received,
-        // even if there is no data available on the socket.
-        // This causes the accept() call to block, preventing the main
-        // loop from processing the exit request.
-        // This is a workaround for that problem.
-        //
-        if (gstate.requested_exit) {
-            return;
-        }
-
         boinc_socklen_t addr_len = sizeof(addr);
         sock = accept(lsock, (struct sockaddr*)&addr, (boinc_socklen_t*)&addr_len);
         if (sock == -1) {
@@ -351,7 +340,6 @@ void GUI_RPC_CONN_SET::got_select(const FDSET_GROUP& fg) {
         }
 
         // apps shouldn't inherit the socket!
-        //
 #ifndef _WIN32
         fcntl(sock, F_SETFD, FD_CLOEXEC);
 #endif

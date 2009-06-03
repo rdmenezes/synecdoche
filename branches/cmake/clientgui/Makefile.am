@@ -27,7 +27,6 @@ bin_PROGRAMS = synecmgr
 
 synecmgr_SOURCES = \
     AccountInfoPage.cpp \
-    AccountKeyPage.cpp \
     AccountManagerInfoPage.cpp \
     AccountManagerProcessingPage.cpp \
     AccountManagerPropertiesPage.cpp \
@@ -82,7 +81,6 @@ synecmgr_SOURCES = \
     stdwx.cpp \
     TaskViewBase.cpp \
     UnavailablePage.cpp \
-    ValidateAccountKey.cpp \
     ValidateEmailAddress.cpp \
     ValidateURL.cpp \
     ViewMessages.cpp \
@@ -94,6 +92,7 @@ synecmgr_SOURCES = \
     WelcomePage.cpp \
     WizardAccountManager.cpp \
     WizardAttachProject.cpp \
+    ../svnversion.cpp \
     $(mac_sources)
 
 EXTRA_DIST = *.h \
@@ -109,8 +108,8 @@ if PRECOMPILE_HEADERS
 BUILT_SOURCES = stdwx.h.gch
 endif
 
-synecmgr_CPPFLAGS = $(AM_CPPFLAGS) $(WX_CPPFLAGS) $(CLIENTGUIFLAGS)
-synecmgr_CXXFLAGS = $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
+synecmgr_CPPFLAGS = -O3 $(AM_CPPFLAGS) $(WX_CPPFLAGS) $(CLIENTGUIFLAGS)
+synecmgr_CXXFLAGS = -O3 $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
 synecmgr_LDADD = $(LIBBOINC) $(CLIENTGUILIBS)
 
 stdwx.h.gch: stdwx.h

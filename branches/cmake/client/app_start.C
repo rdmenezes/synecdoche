@@ -44,9 +44,7 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef __EMX__
-#include <process.h>
-#endif
+#include "version.h"
 
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
 #include <mach-o/loader.h>
@@ -55,9 +53,11 @@
 #include <libkern/OSByteOrder.h>
 #endif
 
-#if(!defined (_WIN32) && !defined (__EMX__))
+#ifndef _WIN32
 #include <fcntl.h>
 #endif
+
+#include "app.h"
 
 #include "filesys.h"
 #include "error_numbers.h"
@@ -73,9 +73,6 @@
 #ifdef _WIN32
 #include "proc_control.h"
 #endif
-
-#include "app.h"
-
 
 #ifdef _WIN32
 // Dynamically link to these functions at runtime;
@@ -112,27 +109,26 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 #ifdef _WIN32
     int i;
     char seg_name[256];
-    HANDLE h = 0;
 
     bool try_global = (sandbox_account_service_token != NULL);
     for (i=0; i<1024; i++) {
         sprintf(seg_name, "%sboinc_%d", SHM_PREFIX, i);
-        h = create_shmem(
-            seg_name, sizeof(SHARED_MEM), (void**)&app_client_shm.shm,
-            try_global
-        );
-        if (h) break;
+        shm_handle = create_shmem(seg_name, sizeof(SHARED_MEM), (void**)&app_client_shm.shm,
+                                  try_global);
+        if (shm_handle) {
+            break;
+        }
     }
-    if (!h) return ERR_SHMGET;
+    if (!shm_handle) {
+        return ERR_SHMGET;
+    }
     sprintf(shmem_seg_name, "boinc_%d", i);
 #else
-#ifndef __EMX__
     // shmem_seg_name is not used with mmap() shared memory 
     if (app_version->api_major_version() >= 6) {
         shmem_seg_name = -1;
         return 0;
     }
-#endif
     std::string init_data_path = std::string(slot_dir) + std::string("/")
                                                        + std::string(INIT_DATA_FILE);
 
@@ -166,11 +162,12 @@ int ACTIVE_TASK::write_app_init_file() {
     safe_strcpy(aid.app_name, wup->app->name);
     safe_strcpy(aid.symstore, wup->project->symstore);
     safe_strcpy(aid.acct_mgr_url, gstate.acct_mgr_info.acct_mgr_url);
-    safe_strcpy(aid.user_name, wup->project->user_name);
-    safe_strcpy(aid.team_name, wup->project->team_name);
     if (wup->project->project_specific_prefs.length()) {
         aid.project_preferences = strdup(wup->project->project_specific_prefs.c_str());
     }
+    aid.hostid = wup->project->hostid;
+    safe_strcpy(aid.user_name, wup->project->user_name);
+    safe_strcpy(aid.team_name, wup->project->team_name);
     get_project_dir(wup->project, project_dir, sizeof(project_dir));
     std::string project_path = relative_to_absolute(project_dir);
     strlcpy(aid.project_dir, project_path.c_str(), sizeof(aid.project_dir));
@@ -325,10 +322,8 @@ int ACTIVE_TASK::copy_output_files() {
         get_pathname(fip, projfile, sizeof(projfile));
         int retval = boinc_rename(slotfile.c_str(), projfile);
         if (retval) {
-            msg_printf(wup->project, MSG_INTERNAL_ERROR,
-                "Can't rename output file %s to %s: %s",
-                fip->name, projfile, boincerror(retval)
-            );
+            msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't rename output file %s to %s: %s",
+                    fip->name.c_str(), projfile, boincerror(retval));
         }
     }
     return 0;
@@ -368,12 +363,12 @@ int ACTIVE_TASK::start(bool first_time) {
     std::list<std::string> argv;
 #endif
     if (first_time && log_flags.task) {
-        msg_printf(result->project, MSG_INFO,
+        msg_printf(wup->project, MSG_INFO,
             "Starting %s", result->name
         );
     }
     if (log_flags.cpu_sched) {
-        msg_printf(result->project, MSG_INFO,
+        msg_printf(wup->project, MSG_INFO,
             "[cpu_sched] Starting %s%s", result->name, first_time?" (initial)":"(resume)"
         );
     }
@@ -438,7 +433,7 @@ int ACTIVE_TASK::start(bool first_time) {
                 retval = ERR_NO_SIGNATURE;
                 goto error;
             }
-            safe_strcpy(exec_name, fip->name);
+            safe_strcpy(exec_name, fip->name.c_str());
             safe_strcpy(exec_path, file_path);
         }
         // anonymous platform may use different files than
@@ -508,6 +503,7 @@ int ACTIVE_TASK::start(bool first_time) {
     app_client_shm.reset_msgs();
 
     if (config.run_apps_manually) {
+        // fill in core client's PID so we won't think app has exited 
         pid = GetCurrentProcessId();
         pid_handle = GetCurrentProcess();
         set_task_state(PROCESS_EXECUTING, "start");
@@ -538,7 +534,7 @@ int ACTIVE_TASK::start(bool first_time) {
             if (!pCEB(&environment_block, sandbox_account_service_token, FALSE)) {
                 if (log_flags.task) {
                     windows_error_string(error_msg, sizeof(error_msg));
-                    msg_printf(result->project, MSG_INFO,
+                    msg_printf(wup->project, MSG_INFO,
                         "Process environment block creation failed: %s", error_msg
                     );
                 }
@@ -569,7 +565,7 @@ int ACTIVE_TASK::start(bool first_time) {
             if (!pDEB(environment_block)) {
                 if (log_flags.task) {
                     windows_error_string(error_msg, sizeof(error_msg2));
-                    msg_printf(result->project, MSG_INFO,
+                    msg_printf(wup->project, MSG_INFO,
                         "Process environment block cleanup failed: %s",
                         error_msg2
                     );
@@ -614,73 +610,7 @@ int ACTIVE_TASK::start(bool first_time) {
     }
     pid = process_info.dwProcessId;
     pid_handle = process_info.hProcess;
-#elif defined(__EMX__)
-
-    char current_dir[_MAX_PATH];
-
-    // Set up core/app shared memory seg if needed
-    //
-    if (!app_client_shm.shm) {
-        retval = create_shmem(
-            shmem_seg_name, sizeof(SHARED_MEM), (void**)&app_client_shm.shm
-        );
-        if (retval) {
-            return retval;
-        }
-    }
-    app_client_shm.reset_msgs();
-
-    // save current dir
-    getcwd( current_dir, sizeof(current_dir));
-
-    // chdir() into the slot directory
-    //
-    retval = chdir(slot_dir);
-    if (retval) {
-        err_stream << "Can't change directory: " << slot_dir
-                   << " The error message was: " << boincerror(retval);
-        goto error;
-    }
-
-    // hook up stderr to a specially-named file
-    //
-    //freopen(STDERR_FILE, "a", stderr);
-
-    char cmdline[8192];
-    strcpy(cmdline, wup->command_line.c_str());
-    if (strlen(result->cmdline)) {
-        strcat(cmdline, " ");
-        strcat(cmdline, result->cmdline);
-    }
-    std::list<std::string> argv = parse_command_line(cmdline);
-    argv.push_front(exec_name);
-    if (log_flags.task_debug) {
-        debug_print_argv(argv);
-    }
-    std::string path = std::string("../../") + std::string(exec_path);
-    pid = do_execv(path, argv);
-    if (pid == -1) {
-        err_stream << "Process creation failed: "
-                   << " The error message was: " << boincerror(retval);
-        chdir(current_dir);
-        retval = ERR_EXEC;
-        goto error;
-    }
-
-    // restore current dir
-    chdir(current_dir);
-
-    if (log_flags.task_debug) {
-        msg_printf(0, MSG_INFO,
-            "[task_debug] ACTIVE_TASK::start(): forked process: pid %d\n", pid
-        );
-    }
-
-    // set idle process priority
-    if (setpriority(PRIO_PROCESS, pid, PROCESS_IDLE_PRIORITY)) {
-        perror("setpriority");
-    }
-
+    CloseHandle(process_info.hThread);  // thread handle is not used
 #else
     // Unix/Linux/Mac case
 
@@ -837,7 +767,7 @@ int ACTIVE_TASK::start(bool first_time) {
     }
 
     if (log_flags.task_debug) {
-        msg_printf(0, MSG_INFO,
+        msg_printf(wup->project, MSG_INFO,
             "[task_debug] ACTIVE_TASK::start(): forked process: pid %d\n", pid
         );
     }

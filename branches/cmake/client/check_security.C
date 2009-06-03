@@ -31,6 +31,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "file_names.h"
+#include "common_defs.h"
 
 static int CheckNestedDirectories(char * basepath, int depth, int use_sandbox);
 
@@ -127,7 +128,7 @@ int use_sandbox, int isManager
 #if (defined(__WXMAC__) || defined(_MAC_INSTALLER)) // If called from Mac BOINC Manager or installer
         // Get the full path to BOINC Client inside this application's bundle
         strlcpy(full_path, dir_path, sizeof(full_path));
-        strlcat(full_path, "/Contents/Resources/boinc", sizeof(full_path));
+        strlcat(full_path, "/Contents/Resources/synecd", sizeof(full_path));
 #else
     if (isManager) {                                // If called from BOINC Manager but not on Mac
         getcwd(full_path, sizeof(full_path));       // Assume Client is in current directory
@@ -229,7 +230,7 @@ int use_sandbox, int isManager
         // Require absolute owner and group boinc_master:boinc_master
         // Get the full path to BOINC Client inside this application's bundle
         strlcpy(full_path, dir_path, sizeof(full_path));
-        strlcat(full_path, "/Contents/Resources/boinc", sizeof(full_path));
+        strlcat(full_path, "/Contents/Resources/synecd", sizeof(full_path));
 
         retval = stat(full_path, &sbuf);
         if (retval)
@@ -251,7 +252,7 @@ int use_sandbox, int isManager
 
         if (use_sandbox) {
             // Does gfx_switcher exist in screensaver bundle?
-            strcpy(full_path, "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher");
+            strcpy(full_path, "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher");
             retval = stat(full_path, &sbuf);
             if (! retval) {
 #ifdef _DEBUG
@@ -269,7 +270,8 @@ int use_sandbox, int isManager
 
                 if (sbuf.st_gid != boinc_master_gid)
                     return -1102;
-
+				
+				// only continue if the setuid bit is on and the setgid bit is off
                 if ((sbuf.st_mode & (S_ISUID | S_ISGID)) != S_ISUID)
                     return -1103;
 #endif

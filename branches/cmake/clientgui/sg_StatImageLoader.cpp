@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -70,8 +70,8 @@ void StatImageLoader::PopUpMenu(wxMouseEvent& WXUNUSED(event))
 #endif
 
 void StatImageLoader::RebuildMenu() {
-    for(int i=(int) statPopUpMenu->GetMenuItemCount()-1; i>=0;i--){
-        wxMenuItem* item = statPopUpMenu->FindItemByPosition(i);
+    for (size_t i = statPopUpMenu->GetMenuItemCount(); i > 0; --i){
+        wxMenuItem* item = statPopUpMenu->FindItemByPosition(i - 1);
         statPopUpMenu->Delete(item);
     }
     AddMenuItems();
@@ -122,14 +122,15 @@ void StatImageLoader::AddMenuItems()
     }
     
     //  Add the 'remove project' option
-    statPopUpMenu->AppendSeparator();
-    wxMenuItemList menuList = statPopUpMenu->GetMenuItems();
+    if (!project->attached_via_acct_mgr) {
+        statPopUpMenu->AppendSeparator();
+        wxMenuItemList menuList = statPopUpMenu->GetMenuItems();
 
-    urlItem = new wxMenuItem(statPopUpMenu, WEBSITE_URL_MENU_ID_REMOVE_PROJECT, _("Remove Project"));
+        urlItem = new wxMenuItem(statPopUpMenu, WEBSITE_URL_MENU_ID_REMOVE_PROJECT, _("Remove Project"));
 
-    Connect( WEBSITE_URL_MENU_ID_REMOVE_PROJECT,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(StatImageLoader::OnMenuLinkClicked) );
-    statPopUpMenu->Append(urlItem);
-
+        Connect( WEBSITE_URL_MENU_ID_REMOVE_PROJECT,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(StatImageLoader::OnMenuLinkClicked) );
+        statPopUpMenu->Append(urlItem);
+    }
 }
 
 
@@ -175,9 +176,9 @@ void StatImageLoader::OnProjectDetach() {
     if (!pDoc->IsUserAuthorized())
         return;
 
-    int indexOfProj = -1;
-    int prjCount = pDoc->GetProjectCount();
-    for(int m = 0; m < prjCount; m++){
+    size_t indexOfProj = 0;
+    size_t prjCount = pDoc->GetProjectCount();
+    for(size_t m = 0; m < prjCount; m++){
         const PROJECT* project = pDoc->project(m);
         project->get_name(strProjectName);
         if(project->master_url == m_prjUrl){
@@ -185,17 +186,9 @@ void StatImageLoader::OnProjectDetach() {
             break;
         }
     }
-    strMessage.Printf(
-        _("Are you sure you want to detach from project '%s'?"), 
-        strProjectName.c_str()
-    );
+    strMessage.Printf(_("Are you sure you want to detach from project '%s'?"), strProjectName.c_str());
 
-    iAnswer = ::wxMessageBox(
-        strMessage,
-        _("Detach from Project"),
-        wxYES_NO | wxICON_QUESTION,
-        this
-    );
+    iAnswer = ::wxMessageBox(strMessage, _("Detach from Project"), wxYES_NO | wxICON_QUESTION, this);
 
     if (wxYES == iAnswer) {
         pDoc->ProjectDetach(indexOfProj);

@@ -15,8 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PROGRESSBAR_H_
-#define _PROGRESSBAR_H_
+#ifndef PROGRESSBAR_H
+#define PROGRESSBAR_H
+
+#include <vector>
+
+#include <wx/panel.h>
 
 class ImageLoader;
 
@@ -25,7 +29,7 @@ class CProgressBar : public wxPanel
 public:
     int indicatorWidth;
     int indicatorHeight;
-    int numOfIndic;
+    size_t numOfIndic;
     int rightPosition;
     int topPosition;
     std::vector<ImageLoader*> m_progInd;
@@ -37,11 +41,11 @@ public:
 private:
 
     double m_progress;
-    int m_numOfProgressInd;
+    size_t m_numOfProgressInd;
 
     void OnEraseBackground(wxEraseEvent& event);
 
     DECLARE_EVENT_TABLE()
 };
 
-#endif 
+#endif // PROGRESSBAR_H

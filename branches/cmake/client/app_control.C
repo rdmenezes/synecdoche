@@ -53,6 +53,8 @@
 
 #endif
 
+#include "app.h"
+
 #include <vector>
 #include <sstream>
 
@@ -67,9 +69,6 @@
 #include "file_names.h"
 #include "procinfo.h"
 #include "sandbox.h"
-
-#include "app.h"
-
 
 #ifdef _WIN32
 bool ACTIVE_TASK::kill_all_children() {
@@ -141,11 +140,11 @@ int ACTIVE_TASK::kill_task(bool restart) {
     kill(pid, SIGKILL);
 #endif
 
+    cleanup_task();
     if (restart) {
         set_task_state(PROCESS_UNINITIALIZED, "kill_task");
         gstate.request_enforce_schedule("Task restart");
     } else {
-        cleanup_task();
         set_task_state(PROCESS_ABORTED, "kill_task");
     }
     return 0;
@@ -260,7 +259,6 @@ void ACTIVE_TASK::handle_exited_app(int stat)
         set_task_state(PROCESS_ABORTED, "handle_exited_app");
     } else {
 #ifdef _WIN32
-        close_process_handles();
         result->exit_status = exit_code;
         switch(exit_code) {
         case STATUS_SUCCESS:
@@ -373,6 +371,10 @@ void ACTIVE_TASK::handle_exited_app(int stat)
     }
 
     cleanup_task();         // Always release shared memory
+    if (gstate.exit_after_finish) {
+        exit(0);
+    }
+
     if (!will_restart) {
         copy_output_files();
         read_stderr_file();
@@ -450,7 +452,7 @@ void ACTIVE_TASK_SET::process_control_poll() {
         //
         if (atp->process_control_queue.timeout(180)) {
             if (log_flags.task_debug) {
-                msg_printf(NULL, MSG_INFO,
+                msg_printf(atp->result->project, MSG_INFO,
                     "Restarting %s - message timeout", atp->result->name
                 );
             }
@@ -485,7 +487,7 @@ bool ACTIVE_TASK_SET::check_app_exited() {
         } else {
             if (log_flags.task_debug) {
                 char errmsg[1024];
-                msg_printf(0, MSG_INFO,
+                msg_printf(atp->result->project, MSG_INFO,
                     "[task_debug] task %s GetExitCodeProcess() failed - %s GLE %d (0x%x)",
                     atp->result->name,
                     windows_format_error_string(
@@ -511,7 +513,7 @@ bool ACTIVE_TASK_SET::check_app_exited() {
             // is probably a benchmark process; don't show error
             //
             if (!gstate.are_cpu_benchmarks_running() && log_flags.task_debug) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR, "Process %d not found\n", pid);
+                msg_printf(atp->wup->project, MSG_INTERNAL_ERROR, "Process %d not found\n", pid);
             }
             return false;
         }
@@ -530,7 +532,7 @@ bool ACTIVE_TASK::check_max_disk_exceeded() {
 
     retval = current_disk_usage(disk_usage);
     if (retval) {
-        msg_printf(0, MSG_INTERNAL_ERROR,
+        msg_printf(this->wup->project, MSG_INTERNAL_ERROR,
             "Can't get task disk usage: %s", boincerror(retval)
         );
     } else {
@@ -919,7 +921,7 @@ bool ACTIVE_TASK::get_app_status_msg() {
         return false;
     }
     if (log_flags.app_msg_receive) {
-        msg_printf(NULL, MSG_INFO,
+        msg_printf(this->wup->project, MSG_INFO,
             "[app_msg_receive] got msg from slot %d: %s", slot, msg_buf
         );
     }

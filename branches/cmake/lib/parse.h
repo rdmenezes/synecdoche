@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -24,7 +25,11 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif // HAVE_STRING_H
+
 #include <math.h>
 #include <errno.h>
 #ifdef HAVE_IEEEFP_H
@@ -35,7 +40,9 @@ int finite(double);
 #endif
 #endif
 
-#include "miofile.h"
+#include <string>
+
+class MIOFILE;
 
 class XML_PARSER {
     MIOFILE* f;

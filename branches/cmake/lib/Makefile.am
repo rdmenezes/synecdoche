@@ -5,14 +5,13 @@ include $(top_srcdir)/Makefile.incl
 
 bin_PROGRAMS = crypt_prog syneccmd
 
-EXTRA_PROGRAMS = md5_test shmem_test msg_test
-
 all-local: syneccmd$(EXEEXT)
 
 syneccmd_SOURCES = \
     boinc_cmd.C \
     gui_rpc_client.h
 
+syneccmd_CPPFLAGS = -O3 $(AM_CPPFLAGS)
 syneccmd_LDADD = $(lib_LIBRARIES) $(PTHREAD_LIBS)
 
 lib_LIBRARIES = libboinc.a 
@@ -86,10 +85,8 @@ pkginclude_HEADERS = \
     str_util.h \
     util.h
 
-md5_test_SOURCES = md5_test.C md5.c md5_file.C
-shmem_test_SOURCES = shmem_test.C shmem.C
-msg_test_SOURCES = msg_test.C msg_queue.C
 crypt_prog_SOURCES = crypt_prog.C crypt.C md5.c md5_file.C
 crypt_prog_DEPENDENCIES =
+crypt_prog_CPPFLAGS = -O3 $(AM_CPPFLAGS)
 crypt_prog_LDADD = $(RSA_LIBS) $(PTHREAD_LIBS)
 
