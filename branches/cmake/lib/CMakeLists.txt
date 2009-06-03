@@ -42,7 +42,6 @@ ENDIF(WIN32)
 ADD_LIBRARY(boinc STATIC
 	app_ipc.C
 	base64.C
-	coproc.C
 	crypt.C
 	diagnostics.C
 	filesys.C
