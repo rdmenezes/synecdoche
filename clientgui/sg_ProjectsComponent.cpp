@@ -16,12 +16,6 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "str_util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
 #include "Events.h"
 #include "hyperlink.h"
 #include "BOINCGUIApp.h"
@@ -389,8 +383,7 @@ void CProjectsComponent::UpdateDisplayedProjects() {
 void CProjectsComponent::OnHelp(wxCommandEvent& /*event*/) {
     wxLogTrace(wxT("Function Start/End"), wxT("CProjectsComponent::OnHelp - Function Begin"));
 
-    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationWebsite();
-    url.append(wxT("/manager_links.php?target=simple"));
+    wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
 
     HyperLink::ExecuteLink(url);
 

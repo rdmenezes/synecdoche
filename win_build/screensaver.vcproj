@@ -841,31 +841,11 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath="..\clientscr\res\boinc.bmp"
-				>
-			</File>
-			<File
 				RelativePath="..\clientscr\boinc_ss.rc"
 				>
 			</File>
 			<File
-				RelativePath="..\client\win\res\gridrepublic.bmp"
-				>
-			</File>
-			<File
-				RelativePath="..\client\win\res\gridrepublic.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\clientscr\res\icon.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\client\win\res\Scricon3.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\client\win\res\seed.bmp"
+				RelativePath="..\graphics\screensaver.bmp"
 				>
 			</File>
 		</Filter>

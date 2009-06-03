@@ -19,6 +19,8 @@
 #define BOINCGUIAPP_H
 
 #include <wx/app.h>
+#include <wx/string.h>
+#include <wx/config.h> // can't forward declare wxConfig because of #defines
 
 #ifdef __WXMAC__
 #include "mac/MacSysMenu.h"     // Must be included before MainDocument.h
@@ -27,14 +29,17 @@
 #define BOINC_ADVANCEDGUI                   1
 #define BOINC_SIMPLEGUI                     2
 
-
 class wxLogBOINC;
 class wxCmdLineParser;
-class wxConfig;
+class wxLocale;
 class CBOINCBaseFrame;
 class CMainDocument;
 class CTaskBarIcon;
 class CSkinManager;
+
+#ifdef __WXMAC__
+class CMacSystemMenu;
+#endif
 
 class CBOINCGUIApp : public wxApp {
     DECLARE_DYNAMIC_CLASS(CBOINCGUIApp)

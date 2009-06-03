@@ -1,0 +1,113 @@
+/* XPM */
+// This file is part of Synecdoche.
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2008 David Barnard
+//
+// Synecdoche is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Synecdoche is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef SYNECDOCHE16X16X8_XPM
+#define SYNECDOCHE16X16X8_XPM
+static const char * synecdoche16x16x8_xpm[] = {
+"16 16 74 1",
+" 	c None",
+".	c #AB7D1C",
+"+	c #A28720",
+"@	c #C0802A",
+"#	c #55B72B",
+"$	c #46BF2B",
+"%	c #41C22B",
+"&	c #41C22C",
+"*	c #47BA47",
+"=	c #42C22D",
+"-	c #5DB044",
+";	c #43C22D",
+">	c #43C22E",
+",	c #45C42B",
+"'	c #8F9F29",
+")	c #68AD4C",
+"!	c #4AC232",
+"~	c #A59926",
+"{	c #D08910",
+"]	c #A89A28",
+"^	c #CF8923",
+"/	c #37D240",
+"(	c #14EB22",
+"_	c #B19A2C",
+":	c #2ADE36",
+"<	c #22E52F",
+"[	c #BB9C24",
+"}	c #D0912A",
+"|	c #D99215",
+"1	c #24EB31",
+"2	c #D09434",
+"3	c #24EC32",
+"4	c #25EC32",
+"5	c #25EC33",
+"6	c #26EC33",
+"7	c #32E53A",
+"8	c #27ED33",
+"9	c #27ED34",
+"0	c #28ED35",
+"a	c #29ED36",
+"b	c #33EA3F",
+"c	c #DC9C2A",
+"d	c #DD9D2D",
+"e	c #D2A61F",
+"f	c #DF9E31",
+"g	c #EBA618",
+"h	c #EFAC18",
+"i	c #EEAD21",
+"j	c #ECB328",
+"k	c #ECB32A",
+"l	c #EDB426",
+"m	c #ECB42C",
+"n	c #ECB52E",
+"o	c #ECB632",
+"p	c #ECB634",
+"q	c #ECB63B",
+"r	c #F4B825",
+"s	c #F7BA21",
+"t	c #F9BB1D",
+"u	c #F8BB25",
+"v	c #FFC10A",
+"w	c #FFC10B",
+"x	c #FFC20D",
+"y	c #FFC20E",
+"z	c #FFC310",
+"A	c #FEC318",
+"B	c #FFC413",
+"C	c #FDC321",
+"D	c #FFC417",
+"E	c #FEC41B",
+"F	c #FFC51A",
+"G	c #FFC61D",
+"H	c #FDC72E",
+"I	c #FFC92B",
+"                ",
+"    @=          ",
+"  |.)           ",
+" |+*            ",
+" ^=             ",
+"|]=       ==    ",
+"d~1=      =/=   ",
+"ce,<=======(:=  ",
+"fI_7630aa5489b= ",
+" iC['#$%&==;>>!-",
+" 2tyEurljkmnopq{",
+"  }gAxvxzBDFGH{ ",
+"    |{{{{{{ws{  ",
+"          {h{   ",
+"          {{    ",
+"                "};
+#endif

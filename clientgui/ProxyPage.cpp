@@ -17,18 +17,14 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/statbox.h>
-#include <wx/valtext.h>
+#include "ProxyPage.h"
+
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "ProxyPage.h"
 
 
 /*!

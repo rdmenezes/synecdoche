@@ -17,14 +17,13 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
+#include "ProxyInfoPage.h"
+
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "ProxyInfoPage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CErrProxyInfoPage, wxWizardPage)
   

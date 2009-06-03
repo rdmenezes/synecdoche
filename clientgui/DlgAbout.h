@@ -19,6 +19,8 @@
 #ifndef _DLGABOUT_H_
 #define _DLGABOUT_H_
 
+#include <wx/dialog.h>
+
 class CSkinAdvanced;
 
 class CDlgAbout: public wxDialog {

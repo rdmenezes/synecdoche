@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -20,6 +21,8 @@
 /// connected to I/O files in various ways.
 ///
 /// Shouldn't depend on CLIENT_STATE.
+
+#include <sstream>
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -71,9 +74,6 @@
 #include "procinfo.h"
 #include "sandbox.h"
 #include "app.h"
-
-using std::max;
-using std::min;
 
 /// If we send app <abort> request, wait this long before killing it.
 /// This gives it time to download symbol files (which can be several MB)
@@ -814,9 +814,9 @@ void ACTIVE_TASK_SET::network_available() {
 }
 
 void ACTIVE_TASK::upload_notify_app(const FILE_INFO* fip, const FILE_REF* frp) {
-    char path[256];
-    sprintf(path, "%s/%s%s", slot_dir, UPLOAD_FILE_STATUS_PREFIX, frp->open_name);
-    FILE* f = boinc_fopen(path, "w");
+    std::ostringstream path;
+    path << slot_dir << '/' << UPLOAD_FILE_STATUS_PREFIX << frp->open_name;
+    FILE* f = boinc_fopen(path.str().c_str(), "w");
     if (!f) return;
     fprintf(f, "<status>%d</status>\n", fip->status);
     fclose(f);

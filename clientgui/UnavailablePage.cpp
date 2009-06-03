@@ -17,14 +17,13 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <wx/wizard.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
+#include "UnavailablePage.h"
+
+#include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "BOINCWizards.h"
 #include "BOINCBaseWizard.h"
-#include "UnavailablePage.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CErrUnavailablePage, wxWizardPage)
  

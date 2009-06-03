@@ -20,6 +20,8 @@
 #include "mac/MacGUI.pch"
 #endif
 
+#include "AdvancedFrame.h"
+
 #include "stdwx.h"
 #include "version.h"
 #include "diagnostics.h"
@@ -35,7 +37,6 @@
 #include "BOINCBaseView.h"
 #include "BOINCTaskBar.h"
 #include "BOINCDialupManager.h"
-#include "AdvancedFrame.h"
 #include "ViewProjects.h"
 #include "ViewWork.h"
 #include "ViewTransfers.h"
@@ -51,6 +52,7 @@
 #include "WizardAttachProject.h"
 #include "WizardAccountManager.h"
 #include "DlgAdvPreferences.h"
+#include "hyperlink.h"
 
 
 enum STATUSBARFIELDS {
@@ -100,10 +102,9 @@ BEGIN_EVENT_TABLE (CAdvancedFrame, CBOINCBaseFrame)
     EVT_MENU(ID_COMMANDSRETRYCOMMUNICATIONS, CAdvancedFrame::OnCommandsRetryCommunications)
     EVT_MENU(ID_OPTIONSOPTIONS, CAdvancedFrame::OnOptionsOptions)
     EVT_MENU(ID_ADVPREFSDLG, CAdvancedFrame::OnDlgPreferences)
-    EVT_HELP(wxID_ANY, CAdvancedFrame::OnHelp)
-    EVT_MENU(ID_HELPBOINC, CAdvancedFrame::OnHelpBOINC)
-    EVT_MENU(ID_HELPBOINCMANAGER, CAdvancedFrame::OnHelpBOINC)
-    EVT_MENU(ID_HELPBOINCWEBSITE, CAdvancedFrame::OnHelpBOINC)
+    EVT_HELP(wxID_ANY, CBOINCBaseFrame::OnContextHelp)
+    EVT_MENU(ID_HELPBOINC, CBOINCBaseFrame::OnHelp)
+    EVT_MENU(ID_HELPBOINCWEBSITE, CBOINCBaseFrame::OnHelp)
     EVT_MENU(wxID_ABOUT, CAdvancedFrame::OnHelpAbout)
     EVT_SHOW(CAdvancedFrame::OnShow)
     EVT_FRAME_REFRESH(CAdvancedFrame::OnRefreshView)
@@ -247,7 +248,7 @@ bool CAdvancedFrame::CreateMenu() {
 
     strMenuDescription.Printf(
         _("Close %s window."), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuFile->Append(
         ID_FILECLOSEWINDOW,
@@ -255,11 +256,11 @@ bool CAdvancedFrame::CreateMenu() {
         strMenuDescription
     );
 
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
         _("Exit %s."), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuFile->Append(
         wxID_EXIT,
@@ -366,9 +367,11 @@ bool CAdvancedFrame::CreateMenu() {
         _("Network activity based on &preferences"),
         _("Allow network activity according to your preferences")
     );
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
         _("Stop %s network activity"), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuActivity->AppendRadioItem(
         ID_FILENETWORKSUSPEND,
@@ -390,7 +393,7 @@ bool CAdvancedFrame::CreateMenu() {
     );
 
     // %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
         _("Connect to another computer running %s"), 
         pSkinAdvanced->GetApplicationShortName().c_str()
@@ -407,7 +410,7 @@ bool CAdvancedFrame::CreateMenu() {
     );
     strMenuDescription.Printf(
         _("Runs %s CPU benchmarks"), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuAdvanced->Append(
         ID_FILERUNBENCHMARKS, 
@@ -451,68 +454,50 @@ bool CAdvancedFrame::CreateMenu() {
     wxMenu *menuHelp = new wxMenu;
 
     // %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuName.Printf(
-        _("%s &help"), 
+        _("%s &help"),
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
     // %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
-        _("Show information about %s"), 
+        _("Get help and support for %s."), 
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuHelp->Append(
         ID_HELPBOINC,
-        strMenuName, 
+        strMenuName,
         strMenuDescription
     );
 
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strMenuName.Printf(
-        _("&%s help"), 
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strMenuDescription.Printf(
-        _("Show information about %s"), 
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
-    menuHelp->Append(
-        ID_HELPBOINCMANAGER,
-        strMenuName, 
-        strMenuDescription
-    );
-
-    /*// %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuName.Printf(
         _("%s &website"), 
         pSkinAdvanced->GetApplicationShortName().c_str()
     );
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+    // %s is the project name
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuDescription.Printf(
-        _("Show information about Synecdoche and %s"),
-        pSkinAdvanced->GetApplicationName().c_str()
+        _("Show %s website."),
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuHelp->Append(
         ID_HELPBOINCWEBSITE,
-        strMenuName, 
+        strMenuName,
         strMenuDescription
-    );*/
+    );
 
 #ifndef __WXMAC__
     menuHelp->AppendSeparator();
 #endif
 
     // %s is the project name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+    //    i.e. 'Synecdoche', 'GridRepublic'
     strMenuName.Printf(
         _("&About %s..."), 
-        pSkinAdvanced->GetApplicationName().c_str()
+        pSkinAdvanced->GetApplicationShortName().c_str()
     );
     menuHelp->Append(
         wxID_ABOUT,
@@ -1557,34 +1542,6 @@ void CAdvancedFrame::OnOptionsOptions(wxCommandEvent& WXUNUSED(event)) {
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnOptionsOptions - Function End"));
-}
-
-
-void CAdvancedFrame::OnHelp(wxHelpEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINCManager - Function Begin"));
-
-    if (IsShown()) {
-        wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
-
-        url << wxT("?target=advanced&version=") << wxT(BOINC_VERSION_STRING) << wxT("&controlid=") << event.GetId();
-        ExecuteBrowserLink(url);
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINCManager - Function End"));
-}
-
-
-void CAdvancedFrame::OnHelpBOINC(wxCommandEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINC - Function Begin"));
-
-    if (IsShown()) {
-        wxString url = wxGetApp().GetSkinManager()->GetAdvanced()->GetOrganizationHelpUrl();
-
-        url << wxT("?target=advanced&version=") << wxT(BOINC_VERSION_STRING) << wxT("&controlid=") << event.GetId();
-        ExecuteBrowserLink(url);
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpBOINC - Function End"));
 }
 
 

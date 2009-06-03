@@ -15,20 +15,15 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_ClientStateIndicator.h"
+
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "error_numbers.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "MainDocument.h"
 #include "BOINCBaseFrame.h"
 #include "sg_BoincSimpleGUI.h"
 #include "sg_ImageLoader.h"
-#include "sg_ClientStateIndicator.h" 
 #include "time.h"
 
 #define ID_ANIMATIONRENDERTIMER  12000

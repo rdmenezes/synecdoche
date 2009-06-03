@@ -19,10 +19,12 @@
 #ifndef _VIEWRESOURCES_H_
 #define _VIEWRESOURCES_H_
 
+#include <wx/dynarray.h>
 
 #include "BOINCBaseView.h"
 #include "common/wxPieCtrl.h"
-#include <wx/dynarray.h>
+
+class PROJECT;
 
 WX_DECLARE_OBJARRAY(wxColour, wxArrayColour);
 
