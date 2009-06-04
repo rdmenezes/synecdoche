@@ -232,7 +232,7 @@ void ACTIVE_TASK::handle_premature_exit(bool& will_restart) {
     }
 }
 
-/// deal with a process that has exited, for whatever reason:
+/// Deal with a process that has exited, for whatever reason:
 /// - completion
 /// - crash
 /// - preemption via quit
@@ -704,7 +704,7 @@ void ACTIVE_TASK_SET::request_reread_app_info() {
 }
 
 
-/// send quit signal to all tasks in the project
+/// Rend quit signal to all tasks in the project
 /// (or all tasks, if proj==0).
 /// If they don't exit in 5 seconds,
 /// send them a kill signal and wait up to 5 more seconds to exit.
@@ -801,7 +801,7 @@ void ACTIVE_TASK_SET::suspend_all(bool cpu_throttle) {
     }
 }
 
-/// resume all currently scheduled tasks
+/// Resume all currently scheduled tasks.
 void ACTIVE_TASK_SET::unsuspend_all() {
     unsigned int i;
     ACTIVE_TASK* atp;
@@ -820,7 +820,7 @@ void ACTIVE_TASK_SET::unsuspend_all() {
     }
 }
 
-/// Check to see if any tasks are running
+/// Check to see if any tasks are running.
 /// called if benchmarking and waiting for suspends to happen
 bool ACTIVE_TASK_SET::is_task_executing() {
     unsigned int i;

@@ -42,41 +42,41 @@
 #include "util.h"
 
 
-void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& m) {
+void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& msg) {
     if (!app_client_shm.shm) {
         return;
     }
 
-    if (m.mode == MODE_FULLSCREEN) {
+    if (msg.mode == MODE_FULLSCREEN) {
         // Remember mode before screensaver
         graphics_mode_before_ss = graphics_mode_acked;
     } else if (graphics_mode_acked != MODE_FULLSCREEN) {
         graphics_mode_before_ss = MODE_HIDE_GRAPHICS;
     }
 
-    if ((m.mode == MODE_HIDE_GRAPHICS) && (graphics_mode_acked == MODE_FULLSCREEN)) {
+    if ((msg.mode == MODE_HIDE_GRAPHICS) && (graphics_mode_acked == MODE_FULLSCREEN)) {
         // Restore mode from before screensaver
-        m.mode = graphics_mode_before_ss;
+        msg.mode = graphics_mode_before_ss;
     }
 
-    graphics_msg = m;       // save graphics_station, desktop, display
+    graphics_msg = msg;       // save graphics_station, desktop, display
 
     std::ostringstream buf;
-    buf << xml_graphics_modes[m.mode];
+    buf << xml_graphics_modes[msg.mode];
 
-    if (!m.window_station.empty()) {
-        buf << "<window_station>" << m.window_station << "</window_station>";
+    if (!msg.window_station.empty()) {
+        buf << "<window_station>" << msg.window_station << "</window_station>";
     }
-    if (!m.desktop.empty()) {
-        buf << "<desktop>" << m.desktop << "</desktop>";
+    if (!msg.desktop.empty()) {
+        buf << "<desktop>" << msg.desktop << "</desktop>";
     }
-    if (!m.display.empty()) {
-        buf << "<display>" << m.display << "</display>";
+    if (!msg.display.empty()) {
+        buf << "<display>" << msg.display << "</display>";
     }
 
     if (log_flags.scrsave_debug) {
         msg_printf(wup->project, MSG_INFO, "[scrsave_debug] ACTIVE_TASK::request_graphics_mode(): requesting graphics mode %s for %s",
-            xml_graphics_modes[m.mode], result->name);
+            xml_graphics_modes[msg.mode], result->name);
     }
     graphics_request_queue.msg_queue_send(buf.str().c_str(), app_client_shm.shm->graphics_request);
 }

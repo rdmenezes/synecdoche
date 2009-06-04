@@ -46,7 +46,7 @@ struct ACCOUNT_IN {
     std::string user_name;
     std::string passwd_hash;
 
-    void parse(const char*);
+    void parse(const char* buf);
 };
 
 struct GET_PROJECT_CONFIG_OP: public GUI_HTTP_OP {
@@ -71,7 +71,7 @@ struct LOOKUP_ACCOUNT_OP: public GUI_HTTP_OP {
         gui_http = p;
     }
     virtual ~LOOKUP_ACCOUNT_OP(){}
-    int do_rpc(const ACCOUNT_IN&);
+    int do_rpc(const ACCOUNT_IN& ai);
     virtual void handle_reply(int http_op_retval);
 };
 
@@ -84,7 +84,7 @@ struct CREATE_ACCOUNT_OP: public GUI_HTTP_OP {
         gui_http = p;
     }
     virtual ~CREATE_ACCOUNT_OP(){}
-    int do_rpc(const ACCOUNT_IN&);
+    int do_rpc(const ACCOUNT_IN& ai);
     virtual void handle_reply(int http_op_retval);
 };
 #ifdef ENABLE_UPDATE_CHECK

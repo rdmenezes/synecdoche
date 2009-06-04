@@ -566,13 +566,13 @@ ACCT_MGR_INFO::ACCT_MGR_INFO() {
     clear();
 }
 
-int ACCT_MGR_INFO::parse_login_file(FILE* p) {
+int ACCT_MGR_INFO::parse_login_file(FILE* f) {
     char tag[1024];
     bool is_tag;
     MIOFILE mf;
     int retval;
 
-    mf.init_file(p);
+    mf.init_file(f);
     XML_PARSER xp(&mf);
     if (!xp.parse_start("acct_mgr_login")) {
         //
