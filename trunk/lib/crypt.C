@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "crypt.h"
+
 #ifdef _WIN32
 #include "boinc_win.h"
 #endif
@@ -29,8 +31,6 @@
 
 #include "md5_file.h"
 #include "error_numbers.h"
-
-#include "crypt.h"
 
 // NOTE: the fast CGI I/O library doesn't have fscanf(),
 // so some of the following have been modified to use
@@ -343,8 +343,6 @@ int read_key_file(const char* keyfile, R_RSA_PRIVATE_KEY& key) {
     return 0;
 }
 
-#ifdef USE_OPENSSL
-
 static void bn_to_bin(BIGNUM* bn, unsigned char* bin, int n) {
     memset(bin, 0, n);
     int m = BN_num_bytes(bn);
@@ -385,5 +383,3 @@ void public_to_openssl(R_RSA_PUBLIC_KEY& pub, RSA* rp) {
     rp->n = BN_bin2bn(pub.modulus, sizeof(pub.modulus), 0);
     rp->e = BN_bin2bn(pub.exponent, sizeof(pub.exponent), 0);
 }
-
-#endif
