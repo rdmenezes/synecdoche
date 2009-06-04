@@ -19,7 +19,6 @@
 #define H_CRYPT
 
 #include <stdio.h>
-#include <string.h>
 
 #include <openssl/rsa.h>
 

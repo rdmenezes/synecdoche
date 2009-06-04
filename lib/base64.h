@@ -18,11 +18,7 @@
 #ifndef h_BASE64
 #define h_BASE64
 
-#ifndef _WIN32
-#include <cstdio>
-#include <cstdlib>
 #include <string>
-#endif
 
 class InvalidBase64Exception
 {
