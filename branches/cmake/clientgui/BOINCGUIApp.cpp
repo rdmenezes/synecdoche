@@ -353,7 +353,7 @@ bool CBOINCGUIApp::OnInit() {
 #endif
 
     // Initialize the task bar icon
-#if defined(__WXMSW__) || defined(__WXMAC__)
+#ifdef SYNEC_USE_TASKBARICON
     m_pTaskBarIcon = new CTaskBarIcon(
         m_pSkinManager->GetAdvanced()->GetApplicationName(), 
         m_pSkinManager->GetAdvanced()->GetApplicationIcon(),
@@ -447,7 +447,9 @@ int CBOINCGUIApp::OnExit() {
 void CBOINCGUIApp::OnInitCmdLine(wxCmdLineParser &parser) {
     wxApp::OnInitCmdLine(parser);
     static const wxCmdLineEntryDesc cmdLineDesc[] = {
+#ifdef SYNEC_USE_TASKBARICON
         { wxCMD_LINE_SWITCH, wxT("s"), wxT("systray"), _("start Synecdoche so only the system tray icon is visible")},
+#endif
         { wxCMD_LINE_OPTION, wxT("a"), wxT("args"), _("start the daemon with these optional arguments")},
         { wxCMD_LINE_SWITCH, wxT("i"), wxT("insecure"), _("disable Synecdoche security users and permissions")},
         { wxCMD_LINE_SWITCH, wxT("c"), wxT("checkskins"), _("enable skin manager error messages (for debugging skins)")},
@@ -461,9 +463,11 @@ bool CBOINCGUIApp::OnCmdLineParsed(wxCmdLineParser &parser) {
     // Give default processing (-?, --help and --verbose) the chance to do something.
     wxApp::OnCmdLineParsed(parser);
     parser.Found(wxT("args"), &m_strBOINCArguments);
+#ifdef SYNEC_USE_TASKBARICON
     if (parser.Found(wxT("systray"))) {
         m_bGUIVisible = false;
     }
+#endif
     if (parser.Found(wxT("insecure"))) {
         g_use_sandbox = false;
     }

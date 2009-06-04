@@ -46,7 +46,7 @@ struct GUI_URL {
     std::string description;
     std::string url;
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
 };
 
@@ -59,7 +59,7 @@ struct DAILY_STATS {
     double host_expavg_credit;
     double day;
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
 };
 
 
@@ -76,7 +76,7 @@ public:
     PROJECT_LIST_ENTRY();
     ~PROJECT_LIST_ENTRY();
 
-    int parse(XML_PARSER&);
+    int parse(XML_PARSER& xp);
     void clear();
 
     static bool compare_name(const PROJECT_LIST_ENTRY* first, const PROJECT_LIST_ENTRY* second);
@@ -98,16 +98,16 @@ public:
     double host_total_credit;      // as reported by server
     double host_expavg_credit;     // as reported by server
     double disk_usage;
-    int nrpc_failures;          // # of consecutive times we've failed to
-                                // contact all scheduling servers
+    int nrpc_failures;          ///< # of consecutive times we've failed to
+                                ///< contact all scheduling servers
     int master_fetch_failures;
-    double min_rpc_time;           // earliest time to contact any server
+    double min_rpc_time;           ///< earliest time to contact any server
     double short_term_debt;
     double long_term_debt;
     double duration_correction_factor;
 
-    bool master_url_fetch_pending; // need to fetch and parse the master URL
-    rpc_reason sched_rpc_pending;      // need to contact scheduling server
+    bool master_url_fetch_pending; ///< need to fetch and parse the master URL
+    rpc_reason sched_rpc_pending;      ///< need to contact scheduling server
     int rr_sim_deadlines_missed;
     bool non_cpu_intensive;
     bool suspended_via_gui;
@@ -116,12 +116,12 @@ public:
     bool attached_via_acct_mgr;
     bool detach_when_done;
     bool ended;
+    /// When the last project file download was finished
+    /// (i.e. the time when ALL project files were finished downloading)
     double project_files_downloaded_time;
-        // when the last project file download was finished
-        // (i.e. the time when ALL project files were finished downloading)
+    /// when the last successful scheduler RPC finished
     double last_rpc_time;
-        // when the last successful scheduler RPC finished
-    std::vector<DAILY_STATS> statistics; // credit data over the last x days
+    std::vector<DAILY_STATS> statistics; ///< credit data over the last x days
 
     // NOTE: if you add any data items above,
     // update parse(), copy() and clear() to include them!!
@@ -129,13 +129,13 @@ public:
     PROJECT();
     ~PROJECT();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
-    void get_name(std::string&) const;
-    void copy(const PROJECT&);        // copy to this object
+    void get_name(std::string& s) const;
+    void copy(const PROJECT& p);        ///< copy to this object
 
-    // temp - keep track of whether or not this record needs to be deleted
+    /// temp - keep track of whether or not this record needs to be deleted
     bool flag_for_delete;
 };
 
@@ -148,7 +148,7 @@ public:
     APP();
     ~APP();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
 };
@@ -164,7 +164,7 @@ public:
     APP_VERSION();
     ~APP_VERSION();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
 };
@@ -185,7 +185,7 @@ public:
     WORKUNIT();
     ~WORKUNIT();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
 };
@@ -232,7 +232,7 @@ public:
     RESULT();
     ~RESULT();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
 };
@@ -263,7 +263,7 @@ public:
     FILE_TRANSFER();
     ~FILE_TRANSFER();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
 };
@@ -302,7 +302,7 @@ public:
     GR_PROXY_INFO();
     ~GR_PROXY_INFO();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void print() const;
     void clear();
 };
@@ -322,15 +322,15 @@ public:
     CC_STATE();
     ~CC_STATE();
 
-    PROJECT* lookup_project(const std::string&);
-    APP* lookup_app(const std::string&, const std::string&);
-    APP* lookup_app(const PROJECT*, const std::string&);
-    APP_VERSION* lookup_app_version(const std::string&, const std::string&, int);
-    APP_VERSION* lookup_app_version(const PROJECT*, const std::string&, int);
-    WORKUNIT* lookup_wu(const std::string&, const std::string&);
-    WORKUNIT* lookup_wu(const PROJECT*, const std::string&);
-    RESULT* lookup_result(const std::string&, const std::string&);
-    RESULT* lookup_result(const PROJECT*, const std::string&);
+    PROJECT* lookup_project(const std::string& url);
+    APP* lookup_app(const std::string& project_url, const std::string& name);
+    APP* lookup_app(const PROJECT* project, const std::string& name);
+    APP_VERSION* lookup_app_version(const std::string& project_url, const std::string& name, int version_num);
+    APP_VERSION* lookup_app_version(const PROJECT* project, const std::string& name, int version_num);
+    WORKUNIT* lookup_wu(const std::string& project_url, const std::string& name);
+    WORKUNIT* lookup_wu(const PROJECT* project, const std::string& name);
+    RESULT* lookup_result(const std::string& project_url, const std::string& name);
+    RESULT* lookup_result(const PROJECT* project, const std::string& name);
 
     void print() const;
     void clear();
@@ -423,7 +423,7 @@ struct ACCT_MGR_INFO {
     ACCT_MGR_INFO();
     ~ACCT_MGR_INFO(){}
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void clear();
 };
 
@@ -434,7 +434,7 @@ struct PROJECT_ATTACH_REPLY {
     PROJECT_ATTACH_REPLY();
     ~PROJECT_ATTACH_REPLY(){}
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void clear();
 };
 
@@ -445,7 +445,7 @@ struct ACCT_MGR_RPC_REPLY {
     ACCT_MGR_RPC_REPLY();
     ~ACCT_MGR_RPC_REPLY(){}
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void clear();
 };
 
@@ -457,13 +457,15 @@ struct PROJECT_INIT_STATUS {
     PROJECT_INIT_STATUS();
     ~PROJECT_INIT_STATUS(){}
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void clear();
 };
 
 struct PROJECT_CONFIG {
     int error_num;
     std::string name;
+    std::string master_url;
+    int local_revision; ///< SVN revision of the server software
     int min_passwd_length;
     bool account_manager;
     bool uses_username;
@@ -474,15 +476,15 @@ struct PROJECT_CONFIG {
     PROJECT_CONFIG();
     ~PROJECT_CONFIG();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void clear();
     void print() const;
 };
 
 struct ACCOUNT_IN {
     std::string url;
+    /// account identifier (email address or user name)
     std::string email_addr;
-        // this is the account identifier (email address or user name)
     std::string user_name;
     std::string passwd;
 
@@ -500,7 +502,7 @@ struct ACCOUNT_OUT {
     ACCOUNT_OUT();
     ~ACCOUNT_OUT();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void clear();
     void print() const;
 };
@@ -523,7 +525,7 @@ public:
     CC_STATUS();
     ~CC_STATUS();
 
-    int parse(MIOFILE&);
+    int parse(MIOFILE& in);
     void clear();
     void print() const;
 };
@@ -563,38 +565,38 @@ public:
     /// Answer an authorization request sent by the server.
     int authorize(const char* passwd);
 
-    int exchange_versions(VERSION_INFO&);
-    int get_state(CC_STATE&);
-    int get_results(RESULTS&);
-    int get_file_transfers(FILE_TRANSFERS&);
-    int get_simple_gui_info(SIMPLE_GUI_INFO&);
-    int get_simple_gui_info(CC_STATE&, RESULTS&);
-    int get_project_status(CC_STATE&);
-    int get_project_status(PROJECTS&);
-    int get_all_projects_list(ALL_PROJECTS_LIST&);
-    int get_disk_usage(DISK_USAGE&);
+    int exchange_versions(VERSION_INFO& server);
+    int get_state(CC_STATE& state);
+    int get_results(RESULTS& t);
+    int get_file_transfers(FILE_TRANSFERS& t);
+    int get_simple_gui_info(SIMPLE_GUI_INFO& sgi);
+    int get_simple_gui_info(CC_STATE& state, RESULTS& results);
+    int get_project_status(CC_STATE& state);
+    int get_project_status(PROJECTS& p);
+    int get_all_projects_list(ALL_PROJECTS_LIST& pl);
+    int get_disk_usage(DISK_USAGE& du);
     int show_graphics(
         const char* project, const char* result_name, int graphics_mode,
-        DISPLAY_INFO&
+        DISPLAY_INFO& display
     );
-    int project_op(PROJECT&, const char* op);
+    int project_op(PROJECT& project, const char* op);
     int set_run_mode(int mode, double duration);
         // if duration is zero, change is permanent.
         // otherwise, after duration expires,
         // restore last permanent mode
     int set_network_mode(int mode, double duration);
-    int get_screensaver_tasks(int& suspend_reason, RESULTS&);
+    int get_screensaver_tasks(int& suspend_reason, RESULTS& t);
     int run_benchmarks();
-    int set_proxy_settings(GR_PROXY_INFO&);
-    int get_proxy_settings(GR_PROXY_INFO&);
-    int get_messages(int seqno, MESSAGES&);
-    int file_transfer_op(const FILE_TRANSFER&, const char*);
-    int result_op(RESULT&, const char*);
-    int get_host_info(HOST_INFO&);
+    int set_proxy_settings(const GR_PROXY_INFO& pi);
+    int get_proxy_settings(GR_PROXY_INFO& pi);
+    int get_messages(int seqno, MESSAGES& msgs);
+    int file_transfer_op(const FILE_TRANSFER& ft, const char* op);
+    int result_op(RESULT& result, const char* op);
+    int get_host_info(HOST_INFO& host);
     int quit();
-    int acct_mgr_info(ACCT_MGR_INFO&);
+    int acct_mgr_info(ACCT_MGR_INFO& ami);
     const char* mode_name(int mode);
-    int get_statistics(PROJECTS&);
+    int get_statistics(PROJECTS& p);
     int network_available();
     int get_project_init_status(PROJECT_INIT_STATUS& pis);
 
@@ -604,28 +606,28 @@ public:
     // TODO: do project update
     //
     int get_project_config(const std::string& url);
-    int get_project_config_poll(PROJECT_CONFIG&);
-    int lookup_account(ACCOUNT_IN&);
-    int lookup_account_poll(ACCOUNT_OUT&);
-    int create_account(ACCOUNT_IN&);
-    int create_account_poll(ACCOUNT_OUT&);
+    int get_project_config_poll(PROJECT_CONFIG& pc);
+    int lookup_account(ACCOUNT_IN& ai);
+    int lookup_account_poll(ACCOUNT_OUT& ao);
+    int create_account(ACCOUNT_IN& ai);
+    int create_account_poll(ACCOUNT_OUT& ao);
     int project_attach(
         const char* url, const char* auth, const char* project_name
     );
     int project_attach_from_file();
-    int project_attach_poll(PROJECT_ATTACH_REPLY&);
+    int project_attach_poll(PROJECT_ATTACH_REPLY& reply);
     int acct_mgr_rpc(
         const char* url, const char* name, const char* passwd,
         bool use_config_file=false
     );
-    int acct_mgr_rpc_poll(ACCT_MGR_RPC_REPLY&);
+    int acct_mgr_rpc_poll(ACCT_MGR_RPC_REPLY& reply);
 
 #ifdef ENABLE_UPDATE_CHECK
     int get_newer_version(std::string&);
 #endif
     int read_global_prefs_override();
     int read_cc_config();
-    int get_cc_status(CC_STATUS&);
+    int get_cc_status(CC_STATUS& status);
     int get_global_prefs_file(std::string&);
     int get_global_prefs_working(std::string&);
     int get_global_prefs_working_struct(GLOBAL_PREFS&, GLOBAL_PREFS_MASK&);
@@ -641,9 +643,9 @@ struct RPC {
     MIOFILE fin;
     RPC_CLIENT* rpc_client;
 
-    RPC(RPC_CLIENT*);
+    RPC(RPC_CLIENT* rc);
     ~RPC();
-    int do_rpc(const char*);
+    int do_rpc(const char* req);
     int parse_reply();
 };
 

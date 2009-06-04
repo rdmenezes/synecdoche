@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -218,7 +218,15 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
             break;
         case ATTACHACCTMGR_ATTACHACCTMGR_EXECUTE:
             // Attempt to attach to the accout manager.
-            url = (const char*)pWAM->GetAccountManagerInfoPage()->GetProjectURL().mb_str();
+            
+            // Newer versions of the server-side software contain the correct
+            //   master url in the get_project_config response.  If it is available
+            //   use it instead of what the user typed in.
+            if (!pWAM->GetProjectConfig()->master_url.empty()) {
+                url = pWAM->GetProjectConfig()->master_url;
+            } else {
+                url = (const char*)pWAM->GetAccountManagerInfoPage()->GetProjectURL().mb_str();
+            }
             username = (const char*)pWAM->GetAccountInfoPage()->GetAccountEmailAddress().mb_str();
             password = (const char*)pWAM->GetAccountInfoPage()->GetAccountPassword().mb_str();
             pDoc->rpc.acct_mgr_rpc(

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -630,11 +630,12 @@ int HTTP_OP::set_proxy(PROXY_INFO *new_pi) {
     return 0;
 }
 
+/// Take the stream param as a FILE* and write to disk.
+///
+/// \todo maybe assert stRead == size*nmemb
+/// \todo add exception handling on phop members
+///
 size_t libcurl_write(void *ptr, size_t size, size_t nmemb, HTTP_OP* phop) {
-    // take the stream param as a FILE* and write to disk
-    // TODO: maybe assert stRead == size*nmemb,
-    // add exception handling on phop members
-    //
     size_t stWrite = fwrite(ptr, size, nmemb, phop->fileOut);
     if (log_flags.http_xfer_debug) {
         msg_printf(NULL, MSG_INFO,
@@ -798,7 +799,7 @@ void HTTP_OP::setupProxyCurl() {
     // CMC Note: the string szCurlProxyUserPwd must remain in memory
     // outside of this method (libcurl relies on it later when it makes
     // the proxy connection), so it has been placed as a member data for HTTP_OP
-    memset(szCurlProxyUserPwd,0x00,128);
+    strncpy(szCurlProxyUserPwd, "", sizeof(szCurlProxyUserPwd));
 
     if (pi.use_http_proxy) {
         // setup a basic http proxy
@@ -807,7 +808,7 @@ void HTTP_OP::setupProxyCurl() {
         curlErr = curl_easy_setopt(curlEasy, CURLOPT_PROXY, (char*) pi.http_server_name);
 
         if (pi.use_http_auth) {
-            if        (config.force_auth == "basic") {
+            if (config.force_auth == "basic") {
                 curlErr = curl_easy_setopt(curlEasy, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
             } else if (config.force_auth == "digest") {
                 curlErr = curl_easy_setopt(curlEasy, CURLOPT_PROXYAUTH, CURLAUTH_DIGEST);

@@ -73,13 +73,14 @@ int FILE_XFER::init_download(FILE_INFO& file_info) {
     return HTTP_OP::init_get(url, pathname, false, (int)starting_size);
 }
 
-/// for uploads, we need to build a header with xml_signature etc.
+/// For uploads, we need to build a header with xml_signature etc.
 /// (see wiki/FileUpload)
 /// Do this in memory.
+///
+/// \todo Give priority to unfinished uploads if there are multiple choices.
 int FILE_XFER::init_upload(FILE_INFO& file_info) {
     // If upload_offset < 0, we need to query the upload handler
     // for the offset information
-    // TODO: give priority to unfinished upload if there are multiple choices
     //
     fip = &file_info;
     get_pathname(fip, pathname, sizeof(pathname));

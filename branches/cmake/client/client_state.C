@@ -274,7 +274,9 @@ int CLIENT_STATE::init() {
     // scan user prefs; create file records
     parse_preferences_for_user_files();
 
-    print_summary();
+    if (log_flags.state_debug) {
+        print_summary();
+    }
 
     // Check if version or platform has changed.
     // Either of these is evidence that we're running a different
@@ -336,6 +338,7 @@ int CLIENT_STATE::init() {
     // do CPU scheduler and work fetch
     request_schedule_cpus("Startup");
     request_work_fetch("Startup");
+    zero_debts_if_requested();
     debt_interval_start = now;
 
     // set up the project and slot directories
@@ -393,12 +396,12 @@ static void double_to_timeval(double x, timeval& t) {
 }
 
 
-/// Spend x seconds either doing I/O (if possible) or sleeping.
-void CLIENT_STATE::do_io_or_sleep(double x) {
+/// Spend \a sec seconds either doing I/O (if possible) or sleeping.
+void CLIENT_STATE::do_io_or_sleep(double sec) {
     int n;
     struct timeval tv;
     now = dtime();
-    double end_time = now + x;
+    double end_time = now + sec;
     int loops = 0;
     FDSET_GROUP all_fds;
 
@@ -406,7 +409,7 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
         all_fds.zero();
         http_ops->get_fdset(all_fds);
         gui_rpcs.get_fdset(all_fds);
-        double_to_timeval(x, tv);
+        double_to_timeval(sec, tv);
         n = select(all_fds.max_fd + 1, &all_fds.read_fds,
                    &all_fds.write_fds, &all_fds.exc_fds, &tv);
 
@@ -433,7 +436,7 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
         // (called from net_xfers->got_select())
         // called pretty often, even if no descriptors are enabled.
         // So do the "if (n==0) break" AFTER the http_ops->got_select().
-        http_ops->got_select(all_fds, x);
+        http_ops->got_select(all_fds, sec);
 
         if (n == 0) {
             break;
@@ -452,7 +455,7 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
 
         now = dtime();
         if (now > end_time) break;
-        x = end_time - now;
+        sec = end_time - now;
     }
 }
 
@@ -468,6 +471,9 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
 /// possibly triggering state transitions.
 /// Returns true if something happened
 /// (in which case should call this again immediately)
+/// This function never blocks.
+///
+/// \return True if something happened, false otherwise.
 bool CLIENT_STATE::poll_slow_events() {
     int actions = 0, retval;
     static int last_suspend_reason=0;
@@ -663,26 +669,26 @@ PROJECT* CLIENT_STATE::lookup_project(const char* master_url) {
     return 0;
 }
 
-APP* CLIENT_STATE::lookup_app(const PROJECT* p, const char* name) {
+APP* CLIENT_STATE::lookup_app(const PROJECT* project, const char* name) {
     for (unsigned int i=0; i<apps.size(); i++) {
         APP* app = apps[i];
-        if (app->project == p && !strcmp(name, app->name)) return app;
+        if (app->project == project && !strcmp(name, app->name)) return app;
     }
     return 0;
 }
 
-RESULT* CLIENT_STATE::lookup_result(const PROJECT* p, const char* name) {
+RESULT* CLIENT_STATE::lookup_result(const PROJECT* project, const char* name) {
     for (unsigned int i=0; i<results.size(); i++) {
         RESULT* rp = results[i];
-        if (rp->project == p && !strcmp(name, rp->name)) return rp;
+        if (rp->project == project && !strcmp(name, rp->name)) return rp;
     }
     return 0;
 }
 
-WORKUNIT* CLIENT_STATE::lookup_workunit(const PROJECT* p, const char* name) {
+WORKUNIT* CLIENT_STATE::lookup_workunit(const PROJECT* project, const char* name) {
     for (unsigned int i=0; i<workunits.size(); i++) {
         WORKUNIT* wup = workunits[i];
-        if (wup->project == p && !strcmp(name, wup->name)) return wup;
+        if (wup->project == project && !strcmp(name, wup->name)) return wup;
     }
     return 0;
 }
@@ -763,9 +769,7 @@ int CLIENT_STATE::link_app_version(PROJECT* p, APP_VERSION* avp) {
         }
 
         if (!strcmp(file_ref.open_name, GRAPHICS_APP_FILENAME)) {
-            char relpath[512];
-            get_pathname(fip, relpath, sizeof(relpath));
-            std::string path = relative_to_absolute(relpath);
+            std::string path = relative_to_absolute(get_pathname(fip));
             strlcpy(avp->graphics_exec_path, path.c_str(), sizeof(avp->graphics_exec_path));
         }
 
@@ -846,50 +850,71 @@ int CLIENT_STATE::link_result(PROJECT* p, RESULT* rp) {
 void CLIENT_STATE::print_summary() const {
     unsigned int i;
     double t;
-    if (!log_flags.state_debug) return;
 
-    msg_printf(0, MSG_INFO, "[state_debug] CLIENT_STATE::print_summary(): Client state summary:\n");
-    msg_printf(0, MSG_INFO, "%lu projects:\n", projects.size());
+    msg_printf(0, MSG_INFO, "[state_debug] Client state summary:\n");
+    msg_printf(0, MSG_INFO, "%lu projects:", projects.size());
     for (i=0; i<projects.size(); i++) {
         t = projects[i]->min_rpc_time;
         if (t) {
-            msg_printf(0, MSG_INFO, "    %s min RPC %f.0 seconds from now\n", projects[i]->master_url, t-now);
+            msg_printf(0, MSG_INFO, "    %s min RPC %f.0 seconds from now", projects[i]->master_url, t-now);
         } else {
-            msg_printf(0, MSG_INFO, "    %s\n", projects[i]->master_url);
+            msg_printf(0, MSG_INFO, "    %s", projects[i]->master_url);
         }
     }
-    msg_printf(0, MSG_INFO, "%lu file_infos:\n", file_infos.size());
+    msg_printf(0, MSG_INFO, "%lu file_infos:", file_infos.size());
     for (i=0; i<file_infos.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s status:%d %s\n", file_infos[i]->name.c_str(), file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
+        msg_printf(0, MSG_INFO, "    %s status:%d %s", file_infos[i]->name.c_str(), file_infos[i]->status, file_infos[i]->pers_file_xfer?"active":"inactive");
     }
-    msg_printf(0, MSG_INFO, "%lu app_versions\n", app_versions.size());
+    msg_printf(0, MSG_INFO, "%lu app_versions", app_versions.size());
     for (i=0; i<app_versions.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s %d\n", app_versions[i]->app_name, app_versions[i]->version_num);
+        msg_printf(0, MSG_INFO, "    %s %d", app_versions[i]->app_name, app_versions[i]->version_num);
     }
-    msg_printf(0, MSG_INFO, "%lu workunits\n", workunits.size());
+    msg_printf(0, MSG_INFO, "%lu workunits", workunits.size());
     for (i=0; i<workunits.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s\n", workunits[i]->name);
+        msg_printf(0, MSG_INFO, "    %s", workunits[i]->name);
     }
-    msg_printf(0, MSG_INFO, "%lu results\n", results.size());
+    msg_printf(0, MSG_INFO, "%lu results", results.size());
     for (i=0; i<results.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s state:%d\n", results[i]->name, results[i]->state());
+        msg_printf(0, MSG_INFO, "    %s state:%d", results[i]->name, results[i]->state());
     }
-    msg_printf(0, MSG_INFO, "%lu persistent file xfers\n", pers_file_xfers->pers_file_xfers.size());
+    msg_printf(0, MSG_INFO, "%lu persistent file xfers", pers_file_xfers->pers_file_xfers.size());
     for (i=0; i<pers_file_xfers->pers_file_xfers.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s http op state: %d\n", pers_file_xfers->pers_file_xfers[i]->fip->name.c_str(), (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
+        msg_printf(0, MSG_INFO, "    %s http op state: %d", pers_file_xfers->pers_file_xfers[i]->fip->name.c_str(), (pers_file_xfers->pers_file_xfers[i]->fxp?pers_file_xfers->pers_file_xfers[i]->fxp->http_op_state:-1));
     }
-    msg_printf(0, MSG_INFO, "%lu active tasks\n", active_tasks.active_tasks.size());
+    msg_printf(0, MSG_INFO, "%lu active tasks", active_tasks.active_tasks.size());
     for (i=0; i<active_tasks.active_tasks.size(); i++) {
-        msg_printf(0, MSG_INFO, "    %s\n", active_tasks.active_tasks[i]->result->name);
+        msg_printf(0, MSG_INFO, "    %s", active_tasks.active_tasks[i]->result->name);
     }
 }
 
-int CLIENT_STATE::nresults_for_project(const PROJECT* p) const {
+int CLIENT_STATE::nresults_for_project(const PROJECT* project) const {
     int n=0;
     for (unsigned int i=0; i<results.size(); i++) {
-        if (results[i]->project == p) n++;
+        if (results[i]->project == project) n++;
     }
     return n;
+}
+
+/// Abort all jobs that are not started yet but already missed their deadline.
+///
+/// \return True if at least one result was aborted.
+bool CLIENT_STATE::abort_unstarted_late_jobs() {
+    bool action = false;
+    for (RESULT_PVEC::iterator p = results.begin(); p != results.end(); ++p) {
+        if (((*p)->not_started()) && ((*p)->report_deadline <= now)) {
+            // This task is not running yet but already has missed its deadline. Abort it:
+            (*p)->abort_inactive(ERR_UNSTARTED_LATE);
+            
+            if (log_flags.task) {
+                msg_printf((*p)->get_project(), MSG_INFO,
+                    "Result %s was aborted because it was not started yet and already missed its deadline.",
+                    (*p)->get_name().c_str());
+            }
+            
+            action = true;
+        }
+    }
+    return action;
 }
 
 bool CLIENT_STATE::garbage_collect() {
@@ -897,15 +922,21 @@ bool CLIENT_STATE::garbage_collect() {
     if (gstate.now - last_time < 1.0) return false;
     last_time = gstate.now;
 
-    bool action = garbage_collect_always();
-    if (action) return true;
+    // Shortcut evaluation prevents the second line from executing when the first line
+    // already returned true. This is the desired behaviour and much less verbose than checking
+    // the return value of each function with an extra if statement.
+    bool action =  abort_unstarted_late_jobs()
+                || garbage_collect_always();
 
+    if (action) {
+        return true;
+    }
+    
     // Detach projects that are marked for detach when done
     // and are in fact done (have no results).
     // This is done here (not in garbage_collect_always())
     // because detach_project() calls garbage_collect_always(),
     // and we need to avoid infinite recursion
-    //
     for (unsigned i=0; i<projects.size(); i++) {
         PROJECT* p = projects[i];
         if (p->detach_when_done && !nresults_for_project(p)) {
@@ -1116,52 +1147,63 @@ bool CLIENT_STATE::garbage_collect_always() {
         }
     }
 
-    if (action) {
+    if ((action) && (log_flags.state_debug)) {
         print_summary();
     }
     return action;
 }
 
+/// Perform state transitions for results.
 /// For results that are waiting for file transfer,
 /// check if the transfer is done,
 /// and if so switch to new state and take other actions.
 /// Also set some fields for newly-aborted results.
+///
+/// \return True if there were some changes.
 bool CLIENT_STATE::update_results() {
-    RESULT* rp;
-    std::vector<RESULT*>::iterator result_iter;
     bool action = false;
     static double last_time=0;
-    int retval;
 
-    if (gstate.now - last_time < 1.0) return false;
+    if (gstate.now - last_time < 1.0) {
+        return false;
+    }
     last_time = gstate.now;
 
-    result_iter = results.begin();
+    RESULT_PVEC::iterator result_iter = results.begin();
     while (result_iter != results.end()) {
-        rp = *result_iter;
+        RESULT* rp = *result_iter;
 
         switch (rp->state()) {
         case RESULT_NEW:
             rp->set_state(RESULT_FILES_DOWNLOADING, "CS::update_results");
             action = true;
             break;
-        case RESULT_FILES_DOWNLOADING:
-            retval = input_files_available(rp, false);
+        case RESULT_FILES_DOWNLOADING: {
+            FILE_INFO_PSET missing_files;
+            int retval = input_files_available(rp, false, &missing_files);
             if (!retval) {
                 rp->set_state(RESULT_FILES_DOWNLOADED, "CS::update_results");
                 if (rp->avp->app_files.empty()) {
                     // if this is a file-transfer app, start the upload phase
-                    //
                     rp->set_state(RESULT_FILES_UPLOADING, "CS::update_results");
                     rp->clear_uploaded_flags();
                 } else {
                     // else try to start the computation
-                    //
                     request_schedule_cpus("files downloaded");
                 }
                 action = true;
+            } else {
+                // Some files are still missing. Make sure there is a download
+                // running for all of them:
+                for (FILE_INFO_PSET::iterator fip = missing_files.begin(); fip != missing_files.end(); ++fip) {
+                    if ((*fip)->status == FILE_NOT_PRESENT_NOT_NEEDED) {
+                        // The file is required now, therefore trigger a download.
+                        (*fip)->status = FILE_NOT_PRESENT;
+                    }
+                }
             }
             break;
+        }
         case RESULT_FILES_UPLOADING:
             if (rp->is_upload_done()) {
                 rp->ready_to_report = true;
@@ -1230,6 +1272,9 @@ bool CLIENT_STATE::time_to_exit() const {
 /// \param[in,out] res Reference to the failed result.
 /// \param[in] format Format string to format the error message.
 /// \return Always returns Zero.
+///
+/// \todo This whole message-formatting with variable arguments like printf is
+/// just insane and should be removed as soon as possible.
 int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     // Only do this once per result.
     if (res.ready_to_report) {
@@ -1242,8 +1287,6 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     char err_msg[4096];
     // The above store 1-line messages and short XML snippets.
     // Shouldn't exceed a few hundred bytes.
-    // Note: This whole message-formatting with variable arguments like
-    // printf is just insane and should be removed as soon as possible.
 
     va_list va;
     va_start(va, format);
@@ -1452,30 +1495,29 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     }
 
     // Delete statistics file:
-    std::string sf_path = get_statistics_filename(project->master_url);
-    int retval = boinc_delete_file(sf_path.c_str());
+    std::string path = get_statistics_filename(project->master_url);
+    int retval = boinc_delete_file(path);
     if (retval) {
         msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete statistics file: %s", boincerror(retval));
     }
 
     // Delete account file:
-    std::string af_path = get_account_filename(project->master_url);
-    retval = boinc_delete_file(af_path.c_str());
+    path = get_account_filename(project->master_url);
+    retval = boinc_delete_file(path);
     if (retval) {
         msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete account file: %s", boincerror(retval));
     }
 
     // Delete scheduler request file:
-    char path[256];
-    get_sched_request_filename(*project, path, sizeof(path));
+    path = get_sched_request_filename(*project);
     boinc_delete_file(path);
 
     // Delete scheduler reply file:
-    get_sched_reply_filename(*project, path, sizeof(path));
+    path = get_sched_reply_filename(*project);
     boinc_delete_file(path);
 
     // Delete master file:
-    get_master_filename(*project, path, sizeof(path));
+    path = get_master_filename(*project);
     boinc_delete_file(path);
 
     // Remove project directory and its contents:

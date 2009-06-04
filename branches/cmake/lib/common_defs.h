@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -121,15 +121,15 @@ enum MSG_PRIORITY {
 /// bitmap defs for task_suspend_reason, network_suspend_reason
 /// Note: doesn't need to be a bitmap, but keep for compatibility
 enum SUSPEND_REASON {
-    SUSPEND_REASON_BATTERIES = 1,
-    SUSPEND_REASON_USER_ACTIVE = 2,
-    SUSPEND_REASON_USER_REQ = 4,
-    SUSPEND_REASON_TIME_OF_DAY = 8,
-    SUSPEND_REASON_BENCHMARKS = 16,
-    SUSPEND_REASON_DISK_SIZE = 32,
-    SUSPEND_REASON_CPU_USAGE_LIMIT = 64,
-    SUSPEND_REASON_NO_RECENT_INPUT = 128,
-    SUSPEND_REASON_INITIAL_DELAY = 256
+    SUSPEND_REASON_BATTERIES        = 0x01,
+    SUSPEND_REASON_USER_ACTIVE      = 0x02,
+    SUSPEND_REASON_USER_REQ         = 0x04,
+    SUSPEND_REASON_TIME_OF_DAY      = 0x08,
+    SUSPEND_REASON_BENCHMARKS       = 0x10,
+    SUSPEND_REASON_DISK_SIZE        = 0x20,
+    SUSPEND_REASON_CPU_USAGE_LIMIT  = 0x40,
+    SUSPEND_REASON_NO_RECENT_INPUT  = 0x80,
+    SUSPEND_REASON_INITIAL_DELAY    = 0x100
 };
 
 /// \name Result states
@@ -144,40 +144,42 @@ enum SUSPEND_REASON {
 #define RESULT_FILES_DOWNLOADING 1
 /// Files are downloaded, result can be (or is being) computed
 #define RESULT_FILES_DOWNLOADED  2
-/// computation failed; no file upload
+/// Computation failed; no file upload
 #define RESULT_COMPUTE_ERROR     3
 /// Output files for result are being uploaded
 #define RESULT_FILES_UPLOADING   4
 /// Files are uploaded, notify scheduling server at some point
 #define RESULT_FILES_UPLOADED    5
-/// result was aborted
-#define RESULT_ABORTED          6
+/// Result was aborted
+#define RESULT_ABORTED           6
 /// @}
 
-/// \name Task state
 /// Values of ACTIVE_TASK::task_state.
+enum TASK_STATE {
+    /// Process doesn't exist yet
+    PROCESS_UNINITIALIZED = 0,
 
-/// @{
-/// process doesn't exist yet
-#define PROCESS_UNINITIALIZED   0
-/// process is running, as far as we know
-#define PROCESS_EXECUTING       1
-/// we've sent it a "suspend" message
-#define PROCESS_SUSPENDED       9
-/// process exceeded limits; send "abort" message, waiting to exit
-#define PROCESS_ABORT_PENDING   5
-/// we've sent it a "quit" message, waiting to exit
-#define PROCESS_QUIT_PENDING    8
+    /// Process is running, as far as we know
+    PROCESS_EXECUTING,
 
-// states in which the process has exited
-#define PROCESS_EXITED          2
-#define PROCESS_WAS_SIGNALED    3
-#define PROCESS_EXIT_UNKNOWN    4
-/// aborted process has exited
-#define PROCESS_ABORTED         6
-#define PROCESS_COULDNT_START   7
-/// @}
+    /// We've sent it a "suspend" message
+    PROCESS_SUSPENDED,
 
+    /// Process exceeded limits; send "abort" message, waiting to exit
+    PROCESS_ABORT_PENDING,
+
+    /// We've sent it a "quit" message, waiting to exit
+    PROCESS_QUIT_PENDING,
+
+    /// states in which the process has exited
+    PROCESS_EXITED,
+    PROCESS_WAS_SIGNALED,
+    PROCESS_EXIT_UNKNOWN,
+
+    /// aborted process has exited
+    PROCESS_ABORTED,
+    PROCESS_COULDNT_START
+};
 
 /// \name Network status
 /// values of "network status"

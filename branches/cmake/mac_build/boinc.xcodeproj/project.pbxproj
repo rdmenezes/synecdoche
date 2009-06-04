@@ -44,7 +44,7 @@
 		DD01B6790C16723C0023A806 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
 		DD01B7120C16723D0023A806 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD1929D80918A2F100C31BCF /* Security.framework */; };
 		DD0A06F50869A2D2007CD86E /* prefs.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BE407C5B1670043025C /* prefs.C */; };
-		DD0C5A8B0816711400CEC5D7 /* boinc.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DD0C5A8A0816711400CEC5D7 /* boinc.jpg */; };
+		DD0C5A8B0816711400CEC5D7 /* screensaver.bmp in Resources */ = {isa = PBXBuildFile; fileRef = DD0C5A8A0816711400CEC5D7 /* screensaver.bmp */; };
 		DD1277C2081F3E73007B5DE1 /* LoginItemAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = DD1277BE081F3E73007B5DE1 /* LoginItemAPI.c */; };
 		DD1277C4081F3E73007B5DE1 /* PostInstall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD1277C0081F3E73007B5DE1 /* PostInstall.cpp */; };
 		DD1277E6081F44C1007B5DE1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
@@ -74,7 +74,6 @@
 		DD3E14E10A774397007E0084 /* AccountManagerInfoPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C41C08F3343F00C1DF66 /* AccountManagerInfoPage.cpp */; };
 		DD3E14E20A774397007E0084 /* AccountManagerProcessingPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C41E08F3343F00C1DF66 /* AccountManagerProcessingPage.cpp */; };
 		DD3E14E30A774397007E0084 /* AccountManagerPropertiesPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C42008F3343F00C1DF66 /* AccountManagerPropertiesPage.cpp */; };
-		DD3E14E40A774397007E0084 /* AlreadyAttachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C42208F3343F00C1DF66 /* AlreadyAttachedPage.cpp */; };
 		DD3E14E50A774397007E0084 /* AlreadyExistsPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C42408F3343F00C1DF66 /* AlreadyExistsPage.cpp */; };
 		DD3E14E60A774397007E0084 /* BOINCBaseView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C3FE07C5D1020098A04D /* BOINCBaseView.cpp */; };
 		DD3E14E70A774397007E0084 /* BOINCBaseWizard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C43408F3347D00C1DF66 /* BOINCBaseWizard.cpp */; };
@@ -208,27 +207,6 @@
 		DDA12A6D0A36974600FBDD12 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD1929D80918A2F100C31BCF /* Security.framework */; };
 		DDA12AA20A369B5500FBDD12 /* SetupSecurity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7748B40A356D6C0025D05E /* SetupSecurity.cpp */; };
 		DDA12AAE0A369C5800FBDD12 /* SecurityUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDA12AAD0A369C5800FBDD12 /* SecurityUtility.cpp */; };
-		DDA6BD120BD4551F008F7921 /* mac_backtrace.C in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD040BD4551F008F7921 /* mac_backtrace.C */; };
-		DDA6BD130BD4551F008F7921 /* QBacktrace.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD060BD4551F008F7921 /* QBacktrace.c */; };
-		DDA6BD140BD4551F008F7921 /* QCrashReport.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD080BD4551F008F7921 /* QCrashReport.c */; };
-		DDA6BD150BD4551F008F7921 /* QMachOImage.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0A0BD4551F008F7921 /* QMachOImage.c */; };
-		DDA6BD160BD4551F008F7921 /* QMachOImageList.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0C0BD4551F008F7921 /* QMachOImageList.c */; };
-		DDA6BD170BD4551F008F7921 /* QSymbols.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0E0BD4551F008F7921 /* QSymbols.c */; };
-		DDA6BD180BD4551F008F7921 /* QTaskMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD100BD4551F008F7921 /* QTaskMemory.c */; };
-		DDA6BD190BD4551F008F7921 /* mac_backtrace.C in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD040BD4551F008F7921 /* mac_backtrace.C */; };
-		DDA6BD1A0BD4551F008F7921 /* QBacktrace.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD060BD4551F008F7921 /* QBacktrace.c */; };
-		DDA6BD1B0BD4551F008F7921 /* QCrashReport.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD080BD4551F008F7921 /* QCrashReport.c */; };
-		DDA6BD1C0BD4551F008F7921 /* QMachOImage.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0A0BD4551F008F7921 /* QMachOImage.c */; };
-		DDA6BD1D0BD4551F008F7921 /* QMachOImageList.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0C0BD4551F008F7921 /* QMachOImageList.c */; };
-		DDA6BD1E0BD4551F008F7921 /* QSymbols.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0E0BD4551F008F7921 /* QSymbols.c */; };
-		DDA6BD1F0BD4551F008F7921 /* QTaskMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD100BD4551F008F7921 /* QTaskMemory.c */; };
-		DDA6BD210BD4551F008F7921 /* mac_backtrace.C in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD040BD4551F008F7921 /* mac_backtrace.C */; };
-		DDA6BD230BD4551F008F7921 /* QBacktrace.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD060BD4551F008F7921 /* QBacktrace.c */; };
-		DDA6BD250BD4551F008F7921 /* QCrashReport.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD080BD4551F008F7921 /* QCrashReport.c */; };
-		DDA6BD270BD4551F008F7921 /* QMachOImage.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0A0BD4551F008F7921 /* QMachOImage.c */; };
-		DDA6BD290BD4551F008F7921 /* QMachOImageList.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0C0BD4551F008F7921 /* QMachOImageList.c */; };
-		DDA6BD2B0BD4551F008F7921 /* QSymbols.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD0E0BD4551F008F7921 /* QSymbols.c */; };
-		DDA6BD2D0BD4551F008F7921 /* QTaskMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = DDA6BD100BD4551F008F7921 /* QTaskMemory.c */; };
 		DDAEC9FF07FA5A5C00A7BC36 /* SetVersion.C in Sources */ = {isa = PBXBuildFile; fileRef = DDAEC9E707FA58A000A7BC36 /* SetVersion.C */; };
 		DDB693500ABFE9C600689FD8 /* procinfo_mac.C in Sources */ = {isa = PBXBuildFile; fileRef = DDB6934F0ABFE9C600689FD8 /* procinfo_mac.C */; };
 		DDB6E3EF0D5B27AA00ED12B8 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
@@ -333,6 +311,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0ECE374A0FCBA46B009029DE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20286C28FDCF999611CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD407A4907D2FB1200163EF5;
+			remoteInfo = libboinc;
+		};
 		DD127876081F44E5007B5DE1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 20286C28FDCF999611CA2CEA /* Project object */;
@@ -523,12 +508,13 @@
 		0E44E6BD0F5889D40009950D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		0E68DB650F671AEB0046FA3A /* rr_sim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rr_sim.cpp; sourceTree = "<group>"; };
 		0E68DB660F671AEB0046FA3A /* rr_sim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rr_sim.h; sourceTree = "<group>"; };
+		0EF4306D0FB4D70100AD3E32 /* attributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = attributes.h; sourceTree = "<group>"; };
 		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		AA8B6B1B046C364400A80164 /* app_ipc.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = app_ipc.C; path = ../lib/app_ipc.C; sourceTree = SOURCE_ROOT; };
 		AA8B6B1C046C364400A80164 /* app_ipc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = app_ipc.h; path = ../lib/app_ipc.h; sourceTree = SOURCE_ROOT; };
 		AAA31C97042157A800A80164 /* shmem.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = shmem.C; path = ../lib/shmem.C; sourceTree = SOURCE_ROOT; };
 		AAA31C98042157A800A80164 /* shmem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = shmem.h; path = ../lib/shmem.h; sourceTree = SOURCE_ROOT; };
-		DD0C5A8A0816711400CEC5D7 /* boinc.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = boinc.jpg; path = ../clientscr/res/boinc.jpg; sourceTree = SOURCE_ROOT; };
+		DD0C5A8A0816711400CEC5D7 /* screensaver.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = screensaver.bmp; path = ../graphics/screensaver.bmp; sourceTree = SOURCE_ROOT; };
 		DD1277B3081F3D67007B5DE1 /* PostInstall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PostInstall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD1277B5081F3D67007B5DE1 /* PostInstall-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PostInstall-Info.plist"; sourceTree = "<group>"; };
 		DD1277BE081F3E73007B5DE1 /* LoginItemAPI.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = LoginItemAPI.c; path = ../mac_installer/LoginItemAPI.c; sourceTree = SOURCE_ROOT; };
@@ -645,8 +631,6 @@
 		DD58C41F08F3343F00C1DF66 /* AccountManagerProcessingPage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AccountManagerProcessingPage.h; path = ../clientgui/AccountManagerProcessingPage.h; sourceTree = SOURCE_ROOT; };
 		DD58C42008F3343F00C1DF66 /* AccountManagerPropertiesPage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AccountManagerPropertiesPage.cpp; path = ../clientgui/AccountManagerPropertiesPage.cpp; sourceTree = SOURCE_ROOT; };
 		DD58C42108F3343F00C1DF66 /* AccountManagerPropertiesPage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AccountManagerPropertiesPage.h; path = ../clientgui/AccountManagerPropertiesPage.h; sourceTree = SOURCE_ROOT; };
-		DD58C42208F3343F00C1DF66 /* AlreadyAttachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AlreadyAttachedPage.cpp; path = ../clientgui/AlreadyAttachedPage.cpp; sourceTree = SOURCE_ROOT; };
-		DD58C42308F3343F00C1DF66 /* AlreadyAttachedPage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AlreadyAttachedPage.h; path = ../clientgui/AlreadyAttachedPage.h; sourceTree = SOURCE_ROOT; };
 		DD58C42408F3343F00C1DF66 /* AlreadyExistsPage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AlreadyExistsPage.cpp; path = ../clientgui/AlreadyExistsPage.cpp; sourceTree = SOURCE_ROOT; };
 		DD58C42508F3343F00C1DF66 /* AlreadyExistsPage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AlreadyExistsPage.h; path = ../clientgui/AlreadyExistsPage.h; sourceTree = SOURCE_ROOT; };
 		DD58C43408F3347D00C1DF66 /* BOINCBaseWizard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BOINCBaseWizard.cpp; path = ../clientgui/BOINCBaseWizard.cpp; sourceTree = SOURCE_ROOT; };
@@ -760,21 +744,6 @@
 		DDA12AAD0A369C5800FBDD12 /* SecurityUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SecurityUtility.cpp; path = ../clientgui/mac/SecurityUtility.cpp; sourceTree = SOURCE_ROOT; };
 		DDA290360CB5D80E00512BD8 /* Mac_Saver_Module.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Mac_Saver_Module.h; path = ../clientscr/Mac_Saver_Module.h; sourceTree = SOURCE_ROOT; };
 		DDA546600D16964E008CC69A /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		DDA6BD030BD4551F008F7921 /* dyld_gdb.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dyld_gdb.h; path = ../lib/mac/dyld_gdb.h; sourceTree = SOURCE_ROOT; };
-		DDA6BD040BD4551F008F7921 /* mac_backtrace.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = mac_backtrace.C; path = ../lib/mac/mac_backtrace.C; sourceTree = SOURCE_ROOT; };
-		DDA6BD050BD4551F008F7921 /* mac_backtrace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mac_backtrace.h; path = ../lib/mac/mac_backtrace.h; sourceTree = SOURCE_ROOT; };
-		DDA6BD060BD4551F008F7921 /* QBacktrace.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = QBacktrace.c; path = ../lib/mac/QBacktrace.c; sourceTree = SOURCE_ROOT; };
-		DDA6BD070BD4551F008F7921 /* QBacktrace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QBacktrace.h; path = ../lib/mac/QBacktrace.h; sourceTree = SOURCE_ROOT; };
-		DDA6BD080BD4551F008F7921 /* QCrashReport.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = QCrashReport.c; path = ../lib/mac/QCrashReport.c; sourceTree = SOURCE_ROOT; };
-		DDA6BD090BD4551F008F7921 /* QCrashReport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QCrashReport.h; path = ../lib/mac/QCrashReport.h; sourceTree = SOURCE_ROOT; };
-		DDA6BD0A0BD4551F008F7921 /* QMachOImage.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = QMachOImage.c; path = ../lib/mac/QMachOImage.c; sourceTree = SOURCE_ROOT; };
-		DDA6BD0B0BD4551F008F7921 /* QMachOImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QMachOImage.h; path = ../lib/mac/QMachOImage.h; sourceTree = SOURCE_ROOT; };
-		DDA6BD0C0BD4551F008F7921 /* QMachOImageList.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = QMachOImageList.c; path = ../lib/mac/QMachOImageList.c; sourceTree = SOURCE_ROOT; };
-		DDA6BD0D0BD4551F008F7921 /* QMachOImageList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QMachOImageList.h; path = ../lib/mac/QMachOImageList.h; sourceTree = SOURCE_ROOT; };
-		DDA6BD0E0BD4551F008F7921 /* QSymbols.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = QSymbols.c; path = ../lib/mac/QSymbols.c; sourceTree = SOURCE_ROOT; };
-		DDA6BD0F0BD4551F008F7921 /* QSymbols.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QSymbols.h; path = ../lib/mac/QSymbols.h; sourceTree = SOURCE_ROOT; };
-		DDA6BD100BD4551F008F7921 /* QTaskMemory.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = QTaskMemory.c; path = ../lib/mac/QTaskMemory.c; sourceTree = SOURCE_ROOT; };
-		DDA6BD110BD4551F008F7921 /* QTaskMemory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QTaskMemory.h; path = ../lib/mac/QTaskMemory.h; sourceTree = SOURCE_ROOT; };
 		DDA90F260B64673D008F2E87 /* libwx_mac_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libwx_mac_static.a; path = "../../wxMac-2.8.7/src/build/Deployment/libwx_mac_static.a"; sourceTree = SOURCE_ROOT; };
 		DDA9D3BB09189A8C0060E7A7 /* Mac_GUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mac_GUI.cpp; path = ../clientgui/mac/Mac_GUI.cpp; sourceTree = SOURCE_ROOT; };
 		DDAEC9E107FA583B00A7BC36 /* SetVersion */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SetVersion; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1074,7 +1043,7 @@
 		20286C2CFDCF999611CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DD0C5A8A0816711400CEC5D7 /* boinc.jpg */,
+				DD0C5A8A0816711400CEC5D7 /* screensaver.bmp */,
 				DDF3028907CCCE2C00701169 /* synecdoche.icns */,
 				DD531BC50C193D3800742E50 /* MacInstaller.icns */,
 				DD531BC70C193D5200742E50 /* MacUninstaller.icns */,
@@ -1142,8 +1111,6 @@
 				DD58C42108F3343F00C1DF66 /* AccountManagerPropertiesPage.h */,
 				DD9C94A00A5A3A4100AB0D10 /* AdvancedFrame.cpp */,
 				DD9C94A10A5A3A4100AB0D10 /* AdvancedFrame.h */,
-				DD58C42208F3343F00C1DF66 /* AlreadyAttachedPage.cpp */,
-				DD58C42308F3343F00C1DF66 /* AlreadyAttachedPage.h */,
 				DD58C42408F3343F00C1DF66 /* AlreadyExistsPage.cpp */,
 				DD58C42508F3343F00C1DF66 /* AlreadyExistsPage.h */,
 				DD9C94A20A5A3A4100AB0D10 /* BOINCBaseFrame.cpp */,
@@ -1271,29 +1238,6 @@
 			path = ../clientgui;
 			sourceTree = SOURCE_ROOT;
 		};
-		DDA6BCED0BD4546D008F7921 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				DDA6BD030BD4551F008F7921 /* dyld_gdb.h */,
-				DDA6BD040BD4551F008F7921 /* mac_backtrace.C */,
-				DDA6BD050BD4551F008F7921 /* mac_backtrace.h */,
-				DDA6BD060BD4551F008F7921 /* QBacktrace.c */,
-				DDA6BD070BD4551F008F7921 /* QBacktrace.h */,
-				DDA6BD080BD4551F008F7921 /* QCrashReport.c */,
-				DDA6BD090BD4551F008F7921 /* QCrashReport.h */,
-				DDA6BD0A0BD4551F008F7921 /* QMachOImage.c */,
-				DDA6BD0B0BD4551F008F7921 /* QMachOImage.h */,
-				DDA6BD0C0BD4551F008F7921 /* QMachOImageList.c */,
-				DDA6BD0D0BD4551F008F7921 /* QMachOImageList.h */,
-				DDA6BD0E0BD4551F008F7921 /* QSymbols.c */,
-				DDA6BD0F0BD4551F008F7921 /* QSymbols.h */,
-				DDA6BD100BD4551F008F7921 /* QTaskMemory.c */,
-				DDA6BD110BD4551F008F7921 /* QTaskMemory.h */,
-			);
-			name = mac;
-			path = ../mac_build;
-			sourceTree = "<group>";
-		};
 		DDB873950C85072500E0DE1F /* clientscr */ = {
 			isa = PBXGroup;
 			children = (
@@ -1331,6 +1275,7 @@
 		F515955F029EB02001F5651B /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				0EF4306D0FB4D70100AD3E32 /* attributes.h */,
 				AA8B6B1B046C364400A80164 /* app_ipc.C */,
 				AA8B6B1C046C364400A80164 /* app_ipc.h */,
 				DD344B6307C5ACEB0043025C /* base64.C */,
@@ -1351,7 +1296,6 @@
 				DD81C60307C5D8630098A04D /* gui_rpc_client.h */,
 				DD344BB607C5AEEE0043025C /* hostinfo.C */,
 				DD344BB707C5AEEE0043025C /* hostinfo.h */,
-				DDA6BCED0BD4546D008F7921 /* mac */,
 				F5159562029EB02001F5651B /* md5.c */,
 				F5159563029EB02001F5651B /* md5.h */,
 				F5159564029EB02001F5651B /* md5_file.C */,
@@ -1776,6 +1720,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				0ECE374B0FCBA46B009029DE /* PBXTargetDependency */,
 			);
 			name = BOINC_Client;
 			productName = BOINC_Client;
@@ -1921,7 +1866,7 @@
 			files = (
 				DDFA60E20CB3391C0037B88C /* gfx_switcher in Resources */,
 				DD616A3008150050006981C1 /* InfoPlist.strings in Resources */,
-				DD0C5A8B0816711400CEC5D7 /* boinc.jpg in Resources */,
+				DD0C5A8B0816711400CEC5D7 /* screensaver.bmp in Resources */,
 				DD48091F081A66F100A174AA /* BOINCSaver.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2154,7 +2099,6 @@
 				DD3E14E10A774397007E0084 /* AccountManagerInfoPage.cpp in Sources */,
 				DD3E14E20A774397007E0084 /* AccountManagerProcessingPage.cpp in Sources */,
 				DD3E14E30A774397007E0084 /* AccountManagerPropertiesPage.cpp in Sources */,
-				DD3E14E40A774397007E0084 /* AlreadyAttachedPage.cpp in Sources */,
 				DD3E14E50A774397007E0084 /* AlreadyExistsPage.cpp in Sources */,
 				DD3E14E60A774397007E0084 /* BOINCBaseView.cpp in Sources */,
 				DD3E14E70A774397007E0084 /* BOINCBaseWizard.cpp in Sources */,
@@ -2233,13 +2177,6 @@
 				DD7BF7E60B8E7B6C00A009F7 /* str_util.C in Sources */,
 				DD205A1A0BAF596E0008D473 /* ProjectListCtrl.cpp in Sources */,
 				DD4E704C0BCDAC360010A522 /* browser.C in Sources */,
-				DDA6BD210BD4551F008F7921 /* mac_backtrace.C in Sources */,
-				DDA6BD230BD4551F008F7921 /* QBacktrace.c in Sources */,
-				DDA6BD250BD4551F008F7921 /* QCrashReport.c in Sources */,
-				DDA6BD270BD4551F008F7921 /* QMachOImage.c in Sources */,
-				DDA6BD290BD4551F008F7921 /* QMachOImageList.c in Sources */,
-				DDA6BD2B0BD4551F008F7921 /* QSymbols.c in Sources */,
-				DDA6BD2D0BD4551F008F7921 /* QTaskMemory.c in Sources */,
 				DD6ABCD10BD4C5CA009AA7A1 /* browser_safari.mm in Sources */,
 				DDD52DCA0C03CAE6009B5FC0 /* ViewProjects.cpp in Sources */,
 				DDD52DCC0C03CAE6009B5FC0 /* ViewTransfers.cpp in Sources */,
@@ -2275,13 +2212,6 @@
 				DD407A6B07D2FBC700163EF5 /* shmem.C in Sources */,
 				DD407A6D07D2FBD100163EF5 /* util.C in Sources */,
 				DD4329910BA63DEC007CDF2A /* str_util.C in Sources */,
-				DDA6BD190BD4551F008F7921 /* mac_backtrace.C in Sources */,
-				DDA6BD1A0BD4551F008F7921 /* QBacktrace.c in Sources */,
-				DDA6BD1B0BD4551F008F7921 /* QCrashReport.c in Sources */,
-				DDA6BD1C0BD4551F008F7921 /* QMachOImage.c in Sources */,
-				DDA6BD1D0BD4551F008F7921 /* QMachOImageList.c in Sources */,
-				DDA6BD1E0BD4551F008F7921 /* QSymbols.c in Sources */,
-				DDA6BD1F0BD4551F008F7921 /* QTaskMemory.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2454,13 +2384,6 @@
 				DDB693500ABFE9C600689FD8 /* procinfo_mac.C in Sources */,
 				DD7BF7E40B8E7B5000A009F7 /* str_util.C in Sources */,
 				DD7BF7E80B8E7BBE00A009F7 /* work_fetch.C in Sources */,
-				DDA6BD120BD4551F008F7921 /* mac_backtrace.C in Sources */,
-				DDA6BD130BD4551F008F7921 /* QBacktrace.c in Sources */,
-				DDA6BD140BD4551F008F7921 /* QCrashReport.c in Sources */,
-				DDA6BD150BD4551F008F7921 /* QMachOImage.c in Sources */,
-				DDA6BD160BD4551F008F7921 /* QMachOImageList.c in Sources */,
-				DDA6BD170BD4551F008F7921 /* QSymbols.c in Sources */,
-				DDA6BD180BD4551F008F7921 /* QTaskMemory.c in Sources */,
 				DDBE74390C03B1C600453BB8 /* cs_platforms.C in Sources */,
 				DD80C83F0CBAEB4F00F1121D /* sandbox.C in Sources */,
 				0E44E6AE0F5886880009950D /* svnversion.cpp in Sources */,
@@ -2499,6 +2422,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0ECE374B0FCBA46B009029DE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD407A4907D2FB1200163EF5 /* libboinc */;
+			targetProxy = 0ECE374A0FCBA46B009029DE /* PBXContainerItemProxy */;
+		};
 		DD127877081F44E5007B5DE1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DD1277B2081F3D67007B5DE1 /* PostInstall */;
@@ -2634,7 +2562,6 @@
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -3904,7 +3831,6 @@
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -3953,7 +3879,6 @@
 				GCC_FAST_MATH = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -4046,7 +3971,6 @@
 				GCC_FAST_MATH = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -4600,7 +4524,6 @@
 				GCC_FAST_MATH = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -5018,7 +4941,6 @@
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -5073,7 +4995,6 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -5291,7 +5212,6 @@
 				GCC_FAST_MATH = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;

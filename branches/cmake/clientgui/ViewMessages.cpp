@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -130,24 +130,26 @@ void CViewMessages::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    m_pListPane->InsertColumn(COLUMN_PROJECT, _("Project"), wxLIST_FORMAT_LEFT, 115);
-    m_pListPane->InsertColumn(COLUMN_TIME, _("Time"), wxLIST_FORMAT_LEFT, 145);
-    m_pListPane->InsertColumn(COLUMN_MESSAGE, _("Message"), wxLIST_FORMAT_LEFT, 550);
+    AddColumn(COLUMN_PROJECT, wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 115);
+    AddColumn(COLUMN_TIME,    wxTRANSLATE("Time"), wxLIST_FORMAT_LEFT, 145);
+    AddColumn(COLUMN_MESSAGE, wxTRANSLATE("Message"), wxLIST_FORMAT_LEFT, 550);
 
     m_pMessageInfoAttr = new wxListItemAttr(*wxBLACK, *wxWHITE, wxNullFont);
     m_pMessageErrorAttr = new wxListItemAttr(*wxRED, *wxWHITE, wxNullFont);
+
+    RestoreState();
 
     UpdateSelection();
 }
 
 
-wxString& CViewMessages::GetViewName() {
-    static wxString strViewName(_("Messages"));
+const wxString& CViewMessages::GetViewName() {
+    static wxString strViewName(wxT("Messages"));
     return strViewName;
 }
 
 
-wxString& CViewMessages::GetViewDisplayName() {
+const wxString& CViewMessages::GetViewDisplayName() {
     static wxString strViewName(_("Messages"));
     return strViewName;
 }

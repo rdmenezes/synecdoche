@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -150,7 +150,6 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 int ACTIVE_TASK::write_app_init_file() {
     APP_INIT_DATA aid;
     FILE *f;
-    char project_dir[256];
     int retval;
 
     memset(&aid, 0, sizeof(aid));
@@ -168,11 +167,13 @@ int ACTIVE_TASK::write_app_init_file() {
     aid.hostid = wup->project->hostid;
     safe_strcpy(aid.user_name, wup->project->user_name);
     safe_strcpy(aid.team_name, wup->project->team_name);
-    get_project_dir(wup->project, project_dir, sizeof(project_dir));
-    std::string project_path = relative_to_absolute(project_dir);
+
+    std::string project_path = relative_to_absolute(get_project_dir(wup->project));
     strlcpy(aid.project_dir, project_path.c_str(), sizeof(aid.project_dir));
+
     std::string buf = relative_to_absolute("");
     strlcpy(aid.boinc_dir, buf.c_str(), sizeof(aid.boinc_dir));
+
     strcpy(aid.authenticator, wup->project->authenticator);
     aid.slot = slot;
     strcpy(aid.wu_name, wup->name);
@@ -191,7 +192,7 @@ int ACTIVE_TASK::write_app_init_file() {
     aid.rsc_memory_bound = wup->rsc_memory_bound;
     aid.rsc_disk_bound = wup->rsc_disk_bound;
     aid.computation_deadline = result->computation_deadline();
-    aid.checkpoint_period = gstate.global_prefs.disk_interval;
+    aid.checkpoint_period = gstate.ncpus * gstate.global_prefs.disk_interval;
     aid.fraction_done_start = 0;
     aid.fraction_done_end = 1;
 #ifdef _WIN32
@@ -224,7 +225,7 @@ int ACTIVE_TASK::write_app_init_file() {
     return retval;
 }
 
-static int make_soft_link(PROJECT* project, const char* link_path, const char* rel_file_path) {
+static int make_soft_link(const PROJECT* project, const char* link_path, const char* rel_file_path) {
     FILE *fp = boinc_fopen(link_path, "w");
     if (!fp) {
         msg_printf(project, MSG_INTERNAL_ERROR,
@@ -242,8 +243,8 @@ static int make_soft_link(PROJECT* project, const char* link_path, const char* r
 /// -# copy the file to slot dir, if reference is by copy
 /// -# else make a soft link
 static int setup_file(
-    PROJECT* project, FILE_INFO* fip, FILE_REF& fref,
-    char* file_path, char* slot_dir, bool input
+    const PROJECT* project, const FILE_INFO* fip, const FILE_REF& fref,
+    const char* file_path, const char* slot_dir, bool input
 ) {
     int retval;
 
@@ -316,7 +317,7 @@ int ACTIVE_TASK::copy_output_files() {
     for (i=0; i<result->output_files.size(); i++) {
         FILE_REF& fref = result->output_files[i];
         if (!fref.copy_file) continue;
-        FILE_INFO* fip = fref.file_info;
+        const FILE_INFO* fip = fref.file_info;
         std::string slotfile = std::string(slot_dir) + std::string("/")
                                                      + std::string(fref.open_name);
         get_pathname(fip, projfile, sizeof(projfile));
@@ -342,14 +343,11 @@ int ACTIVE_TASK::copy_output_files() {
 /// - else
 ///   - ACTIVE_TASK::task_state is PROCESS_EXECUTING
 ///
-/// \param[in] first_time Set this to true if the app
-///                       will be started for the first time.
 /// \return 0 on success, nonzero otherwise.
-int ACTIVE_TASK::start(bool first_time) {
+int ACTIVE_TASK::start() {
     char exec_name[256], file_path[256], exec_path[256];
     unsigned int i;
     FILE_REF fref;
-    FILE_INFO* fip;
     int retval;
     // F*** goto, need to define some variables here instead of where they are used!
     std::ostringstream err_stream;
@@ -362,32 +360,46 @@ int ACTIVE_TASK::start(bool first_time) {
     std::ostringstream cmdline;
     std::list<std::string> argv;
 #endif
-    if (first_time && log_flags.task) {
+    if ((!full_init_done) && (log_flags.task)) {
         msg_printf(wup->project, MSG_INFO,
             "Starting %s", result->name
         );
     }
     if (log_flags.cpu_sched) {
         msg_printf(wup->project, MSG_INFO,
-            "[cpu_sched] Starting %s%s", result->name, first_time?" (initial)":"(resume)"
+            "[cpu_sched] Starting %s%s", result->name, (full_init_done) ? " (resume)" : " (initial)"
         );
     }
 
-    if (wup->project->verify_files_on_app_start) {
-        fip=0;
-        retval = gstate.input_files_available(result, true, &fip);
-        if (retval) {
+    // Always check if all required files are present. If not, trigger
+    // re-downloads and don't start the science application.
+    FILE_INFO_PSET missing_file_infos;
+    retval = gstate.input_files_available(result, true, &missing_file_infos);
+    if (retval) {
+        for (FILE_INFO_PSET::iterator it = missing_file_infos.begin(); it != missing_file_infos.end(); ++it) {
+            FILE_INFO* fip = *it;
             if (fip) {
                 err_stream << "Input file " << fip->name
                            << " missing or invalid: " << retval;
             } else {
                 err_stream << "Input file missing or invalid";
+                // We can't trigger a new download if we don't have
+                // any file information. Just fail here as before.
+                goto error;
             }
-            goto error;
+            fip->status = FILE_NOT_PRESENT;
         }
     }
+    if (!missing_file_infos.empty()) {
+        // Some files are missing and are set for re-transfer.
+        // Update status and return without error.
+        result->set_state(RESULT_FILES_DOWNLOADING, "start");
+        set_task_state(PROCESS_UNINITIALIZED, "start");
+        next_scheduler_state = PROCESS_UNINITIALIZED;
+        return 0;
+    }
 
-    if (first_time) {
+    if (!full_init_done) {
         checkpoint_cpu_time = 0;
         checkpoint_wall_time = gstate.now;
     }
@@ -420,7 +432,7 @@ int ACTIVE_TASK::start(bool first_time) {
     strcpy(exec_name, "");
     for (i=0; i<app_version->app_files.size(); i++) {
         fref = app_version->app_files[i];
-        fip = fref.file_info;
+        FILE_INFO* fip = fref.file_info;
         get_pathname(fip, file_path, sizeof(file_path));
         if (fref.main_program) {
             if (is_image_file(fip->name)) {
@@ -438,8 +450,7 @@ int ACTIVE_TASK::start(bool first_time) {
         }
         // anonymous platform may use different files than
         // when the result was started, so link files even if not first time
-        //
-        if (first_time || wup->project->anonymous_platform) {
+        if ((!full_init_done) || (wup->project->anonymous_platform)) {
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, true);
             if (retval) {
                 err_stream << "Can't link input file";
@@ -454,11 +465,10 @@ int ACTIVE_TASK::start(bool first_time) {
     }
 
     // set up input, output files
-    //
-    if (first_time) {
+    if (!full_init_done) {
         for (i=0; i<wup->input_files.size(); i++) {
             fref = wup->input_files[i];
-            fip = fref.file_info;
+            const FILE_INFO* fip = fref.file_info;
             get_pathname(fref.file_info, file_path, sizeof(file_path));
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, true);
             if (retval) {
@@ -469,7 +479,7 @@ int ACTIVE_TASK::start(bool first_time) {
         for (i=0; i<result->output_files.size(); i++) {
             fref = result->output_files[i];
             if (fref.copy_file) continue;
-            fip = fref.file_info;
+            const FILE_INFO* fip = fref.file_info;
             get_pathname(fref.file_info, file_path, sizeof(file_path));
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, false);
             if (retval) {
@@ -477,6 +487,7 @@ int ACTIVE_TASK::start(bool first_time) {
                 goto error;
             }
         }
+        full_init_done = true;
     }
 
     link_user_files();
@@ -696,8 +707,7 @@ int ACTIVE_TASK::start(bool first_time) {
         // We use relative paths in case higher-level dirs
         // are not readable to the account under which app runs
         //
-        char pdir[256];
-        get_project_dir(wup->project, pdir, sizeof(pdir));
+        std::string pdir = get_project_dir(wup->project);
 
         std::ostringstream libpath;
         const char* env_lib_path = getenv("LD_LIBRARY_PATH");
@@ -801,11 +811,17 @@ int ACTIVE_TASK::resume_or_start(bool first_time) {
     switch (task_state()) {
     case PROCESS_UNINITIALIZED:
         if (first_time) {
-            retval = start(true);
+            retval = start();
             str = "Starting";
         } else {
-            retval = start(false);
+            retval = start();
             str = "Restarting";
+        }
+        if (task_state() == PROCESS_UNINITIALIZED) {
+            // Starting failed because of missing files. Don't treat this
+            // as an error because this would terminate the result. Just
+            // return here to suppress the start-message.
+            return 0;
         }
         if ((retval == ERR_SHMGET) || (retval == ERR_SHMAT)) {
             return retval;

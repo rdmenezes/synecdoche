@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Nicolas Alvarez
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -15,16 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#define MAX_CPU_BENCHMARKS_SECONDS  300
-#define CPU_BENCHMARKS_RUNNING      0
-#define CPU_BENCHMARKS_COMPLETE     1
-#define CPU_BENCHMARKS_NOT_RUNNING  2
-#define CPU_BENCHMARKS_ERROR        3
+#ifndef ATTRIBUTES_H
+#define ATTRIBUTES_H
 
-#define BM_TYPE_FP       0
-#define BM_TYPE_INT      1
+#ifndef __GNUC__
+#define __attribute__(x)
+#endif
 
-int dhrystone(double& vax_mips, double& loops, double& cpu_time, double min_cpu_time);
-int whetstone(double& flops, double& cpu_time, double min_cpu_time);
-void benchmark_wait_to_start(int which);
-bool benchmark_time_to_stop(int which);
+#endif //include guard

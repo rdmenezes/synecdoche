@@ -21,6 +21,7 @@
 #include "MainDocument.h"
 
 #include "error_numbers.h"
+#include "str_util.h"
 #include "util.h"
 #ifdef _WIN32
 #include "proc_control.h"
@@ -494,7 +495,7 @@ int CMainDocument::Reconnect() {
 }
 
 
-// Gets the last connected computer name, or the new name if reconnecting.
+/// Gets the last connected computer name, or the new name if reconnecting.
 int CMainDocument::GetConnectedComputerName(wxString& strMachine) {
     if (IsReconnecting()) {
         m_pNetworkConnection->GetConnectingComputerName(strMachine);
@@ -516,7 +517,7 @@ bool CMainDocument::IsComputerNameLocal(const wxString strMachine) {
 }
 
 
-// Checks whether the connected (or connecting) computer is local.
+/// Checks whether the connected (or connecting) computer is local.
 bool CMainDocument::IsLocalClient() {
     wxString strComputer;
     GetConnectedComputerName(strComputer);
@@ -708,17 +709,15 @@ int CMainDocument::CachedProjectStatusUpdate() {
 
 
 PROJECT* CMainDocument::project(size_t i) {
-    PROJECT* pProject = NULL;
-
     try {
         if (!state.projects.empty())
-            pProject = state.projects.at(i);
+            return state.projects.at(i);
     }
     catch (std::out_of_range e) {
-        pProject = NULL;
+        return NULL;
     }
 
-    return pProject;
+    return NULL;
 }
 
 PROJECT* CMainDocument::project(const wxString& projectname) {
@@ -732,6 +731,19 @@ PROJECT* CMainDocument::project(const wxString& projectname) {
     return NULL;
 }
 
+/// Return a std::map containing all projects this client is attached to.
+/// The master URL is used as key in this map.
+///
+/// \return A map containing all projects this client is attached to.
+projects_map CMainDocument::GetProjectsMap() const {
+    projects_map ret_val;
+    for (std::vector<PROJECT*>::const_iterator p = state.projects.begin(); p != state.projects.end(); ++p) {
+        std::string key = (*p)->master_url;
+        canonicalize_master_url(key);
+        ret_val.insert(std::make_pair(key, *p));
+    }
+    return ret_val;
+}
 
 size_t CMainDocument::GetProjectCount() {
     CachedProjectStatusUpdate();
@@ -741,10 +753,8 @@ size_t CMainDocument::GetProjectCount() {
 }
 
 int CMainDocument::ProjectDetach(size_t iIndex) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "detach");
@@ -754,10 +764,8 @@ int CMainDocument::ProjectDetach(size_t iIndex) {
 
 
 int CMainDocument::ProjectDetach(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "detach");
@@ -766,11 +774,9 @@ int CMainDocument::ProjectDetach(const wxString& projectname) {
 }
 
 
-int CMainDocument::ProjectUpdate(int iIndex) {
-    PROJECT* pProject = NULL;
+int CMainDocument::ProjectUpdate(size_t iIndex) {
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "update");
@@ -779,10 +785,8 @@ int CMainDocument::ProjectUpdate(int iIndex) {
 }
 
 int CMainDocument::ProjectUpdate(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "update");
@@ -791,11 +795,9 @@ int CMainDocument::ProjectUpdate(const wxString& projectname) {
 }
 
 
-int CMainDocument::ProjectReset(int iIndex) {
-    PROJECT* pProject = NULL;
+int CMainDocument::ProjectReset(size_t iIndex) {
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "reset");
@@ -804,10 +806,8 @@ int CMainDocument::ProjectReset(int iIndex) {
 }
 
 int CMainDocument::ProjectReset(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "reset");
@@ -816,11 +816,9 @@ int CMainDocument::ProjectReset(const wxString& projectname) {
 }
 
 
-int CMainDocument::ProjectSuspend(int iIndex) {
-    PROJECT* pProject = NULL;
+int CMainDocument::ProjectSuspend(size_t iIndex) {
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "suspend");
@@ -829,10 +827,8 @@ int CMainDocument::ProjectSuspend(int iIndex) {
 }
 
 int CMainDocument::ProjectSuspend(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "suspend");
@@ -840,11 +836,9 @@ int CMainDocument::ProjectSuspend(const wxString& projectname) {
     return iRetVal;
 }
 
-int CMainDocument::ProjectResume(int iIndex) {
-    PROJECT* pProject = NULL;
+int CMainDocument::ProjectResume(size_t iIndex) {
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "resume");
@@ -853,10 +847,8 @@ int CMainDocument::ProjectResume(int iIndex) {
 }
 
 int CMainDocument::ProjectResume(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "resume");
@@ -864,11 +856,9 @@ int CMainDocument::ProjectResume(const wxString& projectname) {
     return iRetVal;
 }
 
-int CMainDocument::ProjectNoMoreWork(int iIndex) {
-    PROJECT* pProject = NULL;
+int CMainDocument::ProjectNoMoreWork(size_t iIndex) {
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "nomorework");
@@ -877,10 +867,8 @@ int CMainDocument::ProjectNoMoreWork(int iIndex) {
 }
 
 int CMainDocument::ProjectNoMoreWork(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "nomorework");
@@ -888,11 +876,9 @@ int CMainDocument::ProjectNoMoreWork(const wxString& projectname) {
     return iRetVal;
 }
 
-int CMainDocument::ProjectAllowMoreWork(int iIndex) {
-    PROJECT* pProject = NULL;
+int CMainDocument::ProjectAllowMoreWork(size_t iIndex) {
     int iRetVal = -1;
-
-    pProject = project(iIndex);
+    PROJECT* pProject = project(iIndex);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "allowmorework");
@@ -901,10 +887,8 @@ int CMainDocument::ProjectAllowMoreWork(int iIndex) {
 }
 
 int CMainDocument::ProjectAllowMoreWork(const wxString& projectname) {
-    PROJECT* pProject = NULL;
     int iRetVal = -1;
-
-    pProject = project(projectname);
+    PROJECT* pProject = project(projectname);
 
     if (pProject)
         iRetVal = rpc.project_op((*pProject), "allowmorework");
@@ -984,7 +968,7 @@ size_t CMainDocument::GetWorkCount() {
 }
 
 
-int CMainDocument::WorkSuspend(std::string& strProjectURL, std::string& strName) {
+int CMainDocument::WorkSuspend(const std::string& strProjectURL, const std::string& strName) {
     int iRetVal = 0;
 
     RESULT* pStateResult = state.lookup_result(strProjectURL, strName);
@@ -998,7 +982,7 @@ int CMainDocument::WorkSuspend(std::string& strProjectURL, std::string& strName)
 }
 
 
-int CMainDocument::WorkResume(std::string& strProjectURL, std::string& strName) {
+int CMainDocument::WorkResume(const std::string& strProjectURL, const std::string& strName) {
     int iRetVal = 0;
 
     RESULT* pStateResult = state.lookup_result(strProjectURL, strName);
@@ -1012,9 +996,9 @@ int CMainDocument::WorkResume(std::string& strProjectURL, std::string& strName) 
 }
 
 
-// If the graphics application for the current task is already 
-// running, return a pointer to its RUNNING_GFX_APP struct.
-RUNNING_GFX_APP* CMainDocument::GetRunningGraphicsApp(RESULT* result, int slot)
+/// If the graphics application for the current task is already 
+/// running, return a pointer to its RUNNING_GFX_APP struct.
+RUNNING_GFX_APP* CMainDocument::GetRunningGraphicsApp(const RESULT* result, int slot)
 {
     bool exited = false;
     std::vector<RUNNING_GFX_APP>::iterator gfx_app_iter;
@@ -1057,7 +1041,7 @@ RUNNING_GFX_APP* CMainDocument::GetRunningGraphicsApp(RESULT* result, int slot)
 }
 
 
-// Kill any running graphics apps whose worker tasks aren't running
+/// Kill any running graphics apps whose worker tasks aren't running
 void CMainDocument::KillInactiveGraphicsApps()
 {
 /*
@@ -1148,7 +1132,7 @@ void CMainDocument::KillGraphicsApp(int pid) {
 }
 #endif
 
-int CMainDocument::WorkShowGraphics(RESULT* result)
+int CMainDocument::WorkShowGraphics(const RESULT* result)
 {
     int iRetVal = 0;
     
@@ -1258,7 +1242,7 @@ int CMainDocument::WorkShowGraphics(RESULT* result)
 }
 
 
-int CMainDocument::WorkAbort(std::string& strProjectURL, std::string& strName) {
+int CMainDocument::WorkAbort(const std::string& strProjectURL, const std::string& strName) {
     int iRetVal = 0;
 
     RESULT* pStateResult = state.lookup_result(strProjectURL, strName);
@@ -1356,7 +1340,7 @@ int CMainDocument::CachedFileTransfersUpdate() {
 }
 
 
-FILE_TRANSFER* CMainDocument::file_transfer(unsigned int i) {
+FILE_TRANSFER* CMainDocument::file_transfer(size_t i) {
     FILE_TRANSFER* pFT = NULL;
 
     try {
@@ -1409,7 +1393,7 @@ size_t CMainDocument::GetTransferCount() {
 }
 
 
-int CMainDocument::TransferRetryNow(int iIndex) {
+int CMainDocument::TransferRetryNow(size_t iIndex) {
     FILE_TRANSFER* pFT = NULL;
     int iRetVal = 0;
 
@@ -1434,7 +1418,7 @@ int CMainDocument::TransferRetryNow(const wxString& fileName, const wxString& pr
 }
 
 
-int CMainDocument::TransferAbort(int iIndex) {
+int CMainDocument::TransferAbort(size_t iIndex) {
     FILE_TRANSFER* pFT = NULL;
     int iRetVal = 0;
 

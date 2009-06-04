@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _DLGADVPREFERENCES_H_
-#define _DLGADVPREFERENCES_H_
+#ifndef DLGADVPREFERENCES_H
+#define DLGADVPREFERENCES_H
 
 
 #include "DlgAdvPreferencesBase.h"
@@ -47,8 +47,13 @@ class CDlgAdvPreferences : public CDlgAdvPreferencesBase {
     void ShowErrorMessage(wxString& msg,wxTextCtrl* errorCtrl);
     bool EnsureTabPageVisible(wxTextCtrl* txtCtrl);
     bool ConfirmClear();
-    wxString DoubleToTimeString(double dt);
-    double TimeStringToDouble(wxString timeStr);
+    
+    /// Convert a time_t into a timestring HH:MM.
+    wxString TimeTToTimeString(time_t point_in_time);
+    
+    /// Convert a Timestring HH:MM into a time_t.
+    time_t TimeStringToTimeT(wxString timeStr);
+    
 public:
     CDlgAdvPreferences(wxWindow* parent=NULL);//to act as standard constructor set a default value
     virtual ~CDlgAdvPreferences();
@@ -66,4 +71,4 @@ private:
     wxArrayInt m_arrTabPageIds;
 };
 
-#endif // _DLGADVPREFERENCES_H_
+#endif // DLGADVPREFERENCES_H

@@ -6,11 +6,10 @@ PTHREAD_LIBS = @PTHREAD_LIBS@
 
 RSA_LIBS = -lcrypto
 
-AM_CPPFLAGS =					\
-        -I$(top_srcdir)/lib			\
-        -I$(top_srcdir)/api			\
-        -I$(top_srcdir)/client			\
-        -I$(top_srcdir)/lib/mac
+AM_CPPFLAGS =                  \
+        -I$(top_srcdir)/lib    \
+        -I$(top_srcdir)/api    \
+        -I$(top_srcdir)/client
 
 # dependencies to make sure libs gets compiled before
 # programs linking to them:

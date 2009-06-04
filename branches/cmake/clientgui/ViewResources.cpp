@@ -83,17 +83,17 @@ void CViewResources::DemandLoadView() {
 
     Layout();
 
+    RestoreState();
+
     UpdateSelection();
 }
 
-
-wxString& CViewResources::GetViewName() {
-    static wxString strViewName(_("Disk"));
+const wxString& CViewResources::GetViewName() {
+    static wxString strViewName(wxT("Disk"));
     return strViewName;
 }
 
-
-wxString& CViewResources::GetViewDisplayName() {
+const wxString& CViewResources::GetViewDisplayName() {
     static wxString strViewName(_("Disk"));
     return strViewName;
 }
@@ -116,7 +116,7 @@ const int CViewResources::GetViewRefreshRate() {
 #endif
 
 
-wxInt32 CViewResources::FormatProjectName(PROJECT* project, wxString& strBuffer) const {
+wxInt32 CViewResources::FormatProjectName(const PROJECT* project, wxString& strBuffer) const {
     CMainDocument* doc = wxGetApp().GetDocument();
     std::string project_name;
 

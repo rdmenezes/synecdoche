@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -90,6 +90,7 @@ ACTIVE_TASK::ACTIVE_TASK() {
     app_version = NULL;
     pid = 0;
     slot = 0;
+    full_init_done = false;
     _task_state = PROCESS_UNINITIALIZED;
     scheduler_state = CPU_SCHED_UNINITIALIZED;
     signal = 0;
@@ -116,9 +117,15 @@ ACTIVE_TASK::ACTIVE_TASK() {
     shm_handle = 0;
 #endif
     premature_exit_count = 0;
+
+    stats_mem = 0;
+    stats_page = 0;
+    stats_pagefault_rate = 0;
+    stats_disk = 0;
+    stats_checkpoint = 0;
 }
 
-static const char* task_state_name(int val) {
+static const char* task_state_name(TASK_STATE val) {
     switch (val) {
     case PROCESS_UNINITIALIZED: return "UNINITIALIZED";
     case PROCESS_EXECUTING: return "EXECUTING";
@@ -134,7 +141,7 @@ static const char* task_state_name(int val) {
     return "Unknown";
 }
 
-void ACTIVE_TASK::set_task_state(int val, const char* where) {
+void ACTIVE_TASK::set_task_state(TASK_STATE val, const char* where) {
     _task_state = val;
     if (log_flags.task_debug) {
         msg_printf(result->project, MSG_INFO,
@@ -250,13 +257,18 @@ void ACTIVE_TASK_SET::get_memory_usage() {
             pi.page_fault_rate = pf/diff;
             if (log_flags.mem_usage_debug) {
                 msg_printf(atp->result->project, MSG_INFO,
-                    "[mem_usage_debug] %s: RAM %.2fMB, page %.2fMB, %.2f page faults/sec, user CPU %.3f, kernel CPU %.3f",
+                    "[mem_usage_debug] %s: RAM %.2fMB, smoothed %.2fMB, page %.2fMB, %.2f page faults/sec, user CPU %.3f, kernel CPU %.3f",
                     atp->result->name,
-                    pi.working_set_size/MEGA, pi.swap_size/MEGA,
+                    pi.working_set_size/MEGA,
+                    pi.working_set_size_smoothed/MEGA,
+                    pi.swap_size/MEGA,
                     pi.page_fault_rate,
                     pi.user_time, pi.kernel_time
                 );
             }
+            atp->stats_mem = std::max(atp->stats_mem, pi.working_set_size);
+            atp->stats_page = std::max(atp->stats_page, pi.swap_size);
+            atp->stats_pagefault_rate = std::max(atp->stats_pagefault_rate, pi.page_fault_rate);
         }
     }
 
@@ -317,13 +329,12 @@ bool ACTIVE_TASK_SET::poll() {
 ///
 /// \return Zero on success, ERR_RENAME on error.
 int ACTIVE_TASK::move_trickle_file() {
-    char project_dir[256];
-    get_project_dir(result->project, project_dir, sizeof(project_dir));
+    std::string project_dir = get_project_dir(result->project);
 
     std::string old_path(slot_dir);
     old_path.append("/trickle_up.xml");
-    std::ostringstream new_path(project_dir);
-    new_path << "/trickle_up_" << result->name << '_' << time(0) << ".xml";
+    std::ostringstream new_path;
+    new_path << project_dir << "/trickle_up_" << result->name << '_' << time(0) << ".xml";
 
     int retval = boinc_rename(old_path.c_str(), new_path.str().c_str());
 
@@ -338,17 +349,16 @@ int ACTIVE_TASK::move_trickle_file() {
 /// size of output files and files in slot dir
 int ACTIVE_TASK::current_disk_usage(double& size) const {
     double x;
-    unsigned int i;
     int retval;
-    const FILE_INFO* fip;
-    char path[1024];
+    std::string path;
 
     retval = dir_size(slot_dir, size);
     if (retval) return retval;
-    for (i=0; i<result->output_files.size(); i++) {
-        fip = result->output_files[i].file_info;
-        get_pathname(fip, path, sizeof(path));
-        retval = file_size(path, x);
+    for (size_t i=0; i<result->output_files.size(); i++) {
+        const FILE_INFO* fip = result->output_files[i].file_info;
+
+        path = get_pathname(fip);
+        retval = file_size(path.c_str(), x);
         if (!retval) size += x;
     }
     return 0;
@@ -417,25 +427,37 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         "    <active_task_state>%d</active_task_state>\n"
         "    <app_version_num>%d</app_version_num>\n"
         "    <slot>%d</slot>\n"
+        "    %s\n"
         "    <checkpoint_cpu_time>%f</checkpoint_cpu_time>\n"
         "    <fraction_done>%f</fraction_done>\n"
         "    <current_cpu_time>%f</current_cpu_time>\n"
         "    <swap_size>%f</swap_size>\n"
         "    <working_set_size>%f</working_set_size>\n"
         "    <working_set_size_smoothed>%f</working_set_size_smoothed>\n"
-        "    <page_fault_rate>%f</page_fault_rate>\n",
+        "    <page_fault_rate>%f</page_fault_rate>\n"
+        "    <stats_mem>%f</stats_mem>\n"
+        "    <stats_page>%f</stats_page>\n"
+        "    <stats_pagefault_rate>%f</stats_pagefault_rate>\n"
+        "    <stats_disk>%f</stats_disk>\n"
+        "    <stats_checkpoint>%d</stats_checkpoint>\n",
         result->project->master_url,
         result->name,
         task_state(),
         app_version->version_num,
         slot,
+        (full_init_done) ? "<full_init_done/>" : "",
         checkpoint_cpu_time,
         fraction_done,
         current_cpu_time,
         procinfo.swap_size,
         procinfo.working_set_size,
         procinfo.working_set_size_smoothed,
-        procinfo.page_fault_rate
+        procinfo.page_fault_rate,
+        stats_mem,
+        stats_page,
+        stats_pagefault_rate,
+        stats_disk,
+        stats_checkpoint
     );
     fout.printf("</active_task>\n");
     return 0;
@@ -563,6 +585,7 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
         else if (parse_str(buf, "<result_name>", result_name, sizeof(result_name))) continue;
         else if (parse_str(buf, "<project_master_url>", project_master_url, sizeof(project_master_url))) continue;
         else if (parse_int(buf, "<slot>", slot)) continue;
+        else if (parse_bool(buf, "full_init_done", full_init_done)) continue;
         else if (parse_int(buf, "<active_task_state>", dummy)) continue;
         else if (parse_double(buf, "<checkpoint_cpu_time>", checkpoint_cpu_time)) continue;
         else if (parse_double(buf, "<fraction_done>", fraction_done)) continue;
@@ -572,6 +595,12 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
         else if (parse_double(buf, "<working_set_size>", procinfo.working_set_size)) continue;
         else if (parse_double(buf, "<working_set_size_smoothed>", procinfo.working_set_size_smoothed)) continue;
         else if (parse_double(buf, "<page_fault_rate>", procinfo.page_fault_rate)) continue;
+
+        else if (parse_double(buf, "<stats_mem>", stats_mem)) continue;
+        else if (parse_double(buf, "<stats_page>", stats_mem)) continue;
+        else if (parse_double(buf, "<stats_pagefault_rate>", stats_mem)) continue;
+        else if (parse_double(buf, "<stats_disk>", stats_disk)) continue;
+        else if (parse_int(buf, "<stats_checkpoint>", stats_checkpoint)) continue;
         else {
             handle_unparsed_xml_warning("ACTIVE_TASK::parse", buf);
         }
@@ -716,33 +745,35 @@ void ACTIVE_TASK_SET::report_overdue() const {
     }
 }
 
-/// scan the slot directory, looking for files with names
+/// Scan the slot directory, looking for files with names
 /// of the form boinc_ufr_X.
 /// Then mark file X as being present (and uploadable)
 int ACTIVE_TASK::handle_upload_files() {
     std::string filename;
-    char buf[256], path[1024];
     int retval;
 
     DirScanner dirscan(slot_dir);
     while (dirscan.scan(filename)) {
-        strcpy(buf, filename.c_str());
-        if (strstr(buf, UPLOAD_FILE_REQ_PREFIX) == buf) {
-            char* p = buf+strlen(UPLOAD_FILE_REQ_PREFIX);
-            FILE_INFO* fip = result->lookup_file_logical(p);
+        if (starts_with(filename, UPLOAD_FILE_REQ_PREFIX)) {
+            std::string& link_filename = filename;
+            // strip the prefix
+            std::string real_filename = filename.substr(strlen(UPLOAD_FILE_REQ_PREFIX));
+
+            FILE_INFO* fip = result->lookup_file_logical(real_filename.c_str());
             if (fip) {
-                get_pathname(fip, path, sizeof(path));
-                retval = md5_file(path, fip->md5_cksum, fip->nbytes);
+                std::string path = get_pathname(fip);
+                retval = md5_file(path.c_str(), fip->md5_cksum, fip->nbytes);
                 if (retval) {
                     fip->status = retval;
                 } else {
                     fip->status = FILE_PRESENT;
                 }
             } else {
-                msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't find uploadable file %s", p);
+                msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't find uploadable file %s", real_filename.c_str());
             }
-            sprintf(path, "%s/%s", slot_dir, buf);
-            delete_project_owned_file(path, true);  // delete the link file
+            std::string path(slot_dir);
+            path.append("/").append(link_filename);
+            delete_project_owned_file(path.c_str(), true);  // delete the link file
         }
     }
     return 0;
@@ -780,6 +811,14 @@ void ACTIVE_TASK::upload_notify_app(const FILE_INFO* fip, const FILE_REF* frp) {
     fprintf(f, "<status>%d</status>\n", fip->status);
     fclose(f);
     send_upload_file_status = true;
+}
+
+/// Check if everything was initialized before, including things like
+/// soft links in the slot directory.
+///
+/// \return true if everything is initialized.
+bool ACTIVE_TASK::is_full_init_done() const {
+    return full_init_done;
 }
 
 /// a file upload has finished.

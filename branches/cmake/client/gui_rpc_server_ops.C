@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -897,21 +897,21 @@ static void read_all_projects_list_file(MIOFILE& fout) {
 
 static int set_debt(XML_PARSER& xp) {
     bool is_tag;
-    char tag[256], url[256];
+    char tag[256];
+    std::string url;
     double short_term_debt = 0.0, long_term_debt = 0.0;
     bool got_std=false, got_ltd=false;
-    strcpy(url, "");
     while (!xp.get(tag, sizeof(tag), is_tag)) {
         if (!strcmp(tag, "/project")) {
-            if (!strlen(url)) return ERR_XML_PARSE;
+            if (url.empty()) return ERR_XML_PARSE;
             canonicalize_master_url(url);
-            PROJECT* p = gstate.lookup_project(url);
+            PROJECT* p = gstate.lookup_project(url.c_str());
             if (!p) return ERR_NOT_FOUND;
             if (got_std) p->short_term_debt = short_term_debt;
             if (got_ltd) p->long_term_debt = long_term_debt;
             return 0;
         }
-        if (xp.parse_str(tag, "master_url", url, sizeof(url))) continue;
+        if (xp.parse_string(tag, "master_url", url)) continue;
         if (xp.parse_double(tag, "short_term_debt", short_term_debt)) {
             got_std = true;
             continue;
@@ -1126,6 +1126,9 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<read_cc_config/>")) {
         mf.printf("<success/>\n");
         read_config_file(false);
+        msg_printf(0, MSG_INFO, "Re-read config file");
+        log_flags.show();
+        gstate.zero_debts_if_requested();
         gstate.set_ncpus();
         gstate.request_schedule_cpus("Core client configuration");
         gstate.request_work_fetch("Core client configuration");

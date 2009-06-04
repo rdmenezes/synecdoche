@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -27,7 +27,6 @@ class CCompletionPage;
 class CCompletionErrorPage;
 class CErrNotDetectedPage;
 class CErrUnavailablePage;
-class CErrAlreadyAttachedPage;
 class CErrNoInternetConnectionPage;
 class CErrNotFoundPage;
 class CErrAlreadyExistsPage;
@@ -111,7 +110,6 @@ private:
     CCompletionErrorPage* m_CompletionErrorPage;
     CErrNotDetectedPage* m_ErrNotDetectedPage;
     CErrUnavailablePage* m_ErrUnavailablePage;
-    CErrAlreadyAttachedPage* m_ErrAlreadyAttachedPage;
     CErrNoInternetConnectionPage* m_ErrNoInternetConnectionPage;
     CErrNotFoundPage* m_ErrNotFoundPage;
     CErrAlreadyExistsPage* m_ErrAlreadyExistsPage;

@@ -49,8 +49,8 @@ public:
 
     ~CViewProjects();
 
-    virtual wxString&       GetViewName();
-    virtual wxString&       GetViewDisplayName();
+    virtual const wxString& GetViewName();
+    virtual const wxString& GetViewDisplayName();
     virtual const char**    GetViewIcon();
 
     void                    OnProjectUpdate( wxCommandEvent& event );
@@ -79,20 +79,20 @@ protected:
 
     virtual void            DemandLoadView();
 
-    void                    GetDocProjectName(wxInt32 item, wxString& strBuffer) const;
-    wxInt32                 FormatProjectName( wxInt32 item, wxString& strBuffer ) const;
-    void                    GetDocAccountName(wxInt32 item, wxString& strBuffer) const;
-    wxInt32                 FormatAccountName( wxInt32 item, wxString& strBuffer ) const;
-    void                    GetDocTeamName(wxInt32 item, wxString& strBuffer) const;
-    wxInt32                 FormatTeamName( wxInt32 item, wxString& strBuffer ) const;
-    void                    GetDocTotalCredit(wxInt32 item, float& fBuffer) const;
+    void                    GetDocProjectName(size_t item, wxString& strBuffer) const;
+    wxInt32                 FormatProjectName(wxInt32 item, wxString& strBuffer ) const;
+    void                    GetDocAccountName(size_t item, wxString& strBuffer) const;
+    wxInt32                 FormatAccountName(wxInt32 item, wxString& strBuffer ) const;
+    void                    GetDocTeamName(size_t item, wxString& strBuffer) const;
+    wxInt32                 FormatTeamName(wxInt32 item, wxString& strBuffer ) const;
+    void                    GetDocTotalCredit(size_t item, float& fBuffer) const;
     wxInt32                 FormatTotalCredit(float fBuffer, wxString& strBuffer) const;
-    void                    GetDocAVGCredit(wxInt32 item, float& fBuffer) const;
+    void                    GetDocAVGCredit(size_t item, float& fBuffer) const;
     wxInt32                 FormatAVGCredit(float fBuffer, wxString& strBuffer) const;
-    void                    GetDocResourceShare(wxInt32 item, float& fBuffer) const;
-    void                    GetDocResourcePercent(wxInt32 item, float& fBuffer) const;
+    void                    GetDocResourceShare(size_t item, float& fBuffer) const;
+    void                    GetDocResourcePercent(size_t item, float& fBuffer) const;
     wxInt32                 FormatResourceShare(float fBuffer, float fBufferPercent, wxString& strBuffer) const;
-    void                    GetDocStatus(wxInt32 item, wxString& strBuffer) const;
+    void                    GetDocStatus(size_t item, wxString& strBuffer) const;
     wxInt32                 FormatStatus(wxInt32 item, wxString& strBuffer) const;
 
     virtual double          GetProgressValue(long item);

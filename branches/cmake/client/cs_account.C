@@ -275,8 +275,8 @@ int DAILY_STATS::parse(FILE* in) {
     return ERR_XML_PARSE;
 }
 
-bool operator <  (const DAILY_STATS& x1, const DAILY_STATS& x2) {
-    return (x1.day < x2.day);
+bool operator <  (const DAILY_STATS& lhs, const DAILY_STATS& rhs) {
+    return (lhs.day < rhs.day);
 }
 
 /// parse an statistics_*.xml file
@@ -443,10 +443,8 @@ int CLIENT_STATE::add_project(const char* master_url, const char* _auth, const c
     // remove any old files
     // (unless PROJECT/app_info.xml is found, so that
     // people using anonymous platform don't have to get apps again)
-    char dir[256];
-    get_project_dir(project, dir, sizeof(dir));
-    std::string path(dir);
-    path.append("/").append(APP_INFO_FILE_NAME);
+    std::string path = get_project_dir(project);
+    path.append("/" APP_INFO_FILE_NAME);
     if (boinc_file_exists(path.c_str())) {
         project->anonymous_platform = true;
         f = fopen(path.c_str(), "r");

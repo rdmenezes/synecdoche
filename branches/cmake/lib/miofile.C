@@ -40,22 +40,22 @@ MIOFILE::MIOFILE() {
 MIOFILE::~MIOFILE() {
 }
 
-void MIOFILE::init_mfile(MFILE* _mf) {
-    mf = _mf;
+void MIOFILE::init_mfile(MFILE* mfile) {
+    mf = mfile;
 }
 
-void MIOFILE::init_file(FILE* _f) {
-    f = _f;
+void MIOFILE::init_file(FILE* file) {
+    f = file;
 }
 
-void MIOFILE::init_buf_read(const char* _buf) {
-    buf = _buf;
+void MIOFILE::init_buf_read(const char* buf) {
+    this->buf = buf;
 }
 
-void MIOFILE::init_buf_write(char* _buf, int _len) {
-    wbuf = _buf;
-    len = _len;
-    wbuf[0] = 0;
+void MIOFILE::init_buf_write(char* buf, int len) {
+    this->wbuf = buf;
+    this->len = len;
+    this->wbuf[0] = 0;
 }
 
 int MIOFILE::printf(const char* format, ...) {

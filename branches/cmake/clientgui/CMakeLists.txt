@@ -42,7 +42,6 @@ ADD_EXECUTABLE(synecmgr WIN32
 	AccountManagerProcessingPage.cpp
 	AccountManagerPropertiesPage.cpp
 	AdvancedFrame.cpp
-	AlreadyAttachedPage.cpp
 	AlreadyExistsPage.cpp
 	BOINCBaseFrame.cpp
 	BOINCBaseView.cpp

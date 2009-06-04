@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -303,8 +303,15 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
             ai->clear();
             ao->clear();
 
-            ai->url = (const char*)pWAP->GetProjectInfoPage()->GetProjectURL().mb_str();
-
+            // Newer versions of the server-side software contain the correct
+            //   master url in the get_project_config response.  If it is available
+            //   use it instead of what the user typed in.
+            if (!pWAP->GetProjectConfig()->master_url.empty()) {
+                ai->url = pWAP->GetProjectConfig()->master_url;
+            } else {
+                ai->url = (const char*)pWAP->GetProjectInfoPage()->GetProjectURL().mb_str();
+            }
+            
             if (!pWAP->GetProjectAuthenticator().IsEmpty() || 
                     pWAP->GetCredentialsCached() || pWAP->GetCretentialsDetected()) {
                 if (!pWAP->GetCredentialsCached() || pWAP->GetCretentialsDetected()) {

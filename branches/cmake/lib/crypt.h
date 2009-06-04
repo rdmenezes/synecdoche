@@ -18,28 +18,9 @@
 #ifndef H_CRYPT
 #define H_CRYPT
 
-// We're set up to use either RSAEuro or the OpenSSL crypto library.
-// We use our own data structures (R_RSA_PUBLIC_KEY and R_RSA_PRIVATE_KEY)
-// to store keys in either case.
-
-// Only define these here if they haven't been defined elsewhere
-#if !(defined(USE_OPENSSL) || defined(USE_RSAEURO))
-#define USE_OPENSSL 1
-//#define USE_RSAEURO 1
-#endif
-
 #include <stdio.h>
 #include <string.h>
 
-#ifdef USE_RSAEURO
-#include "rsaeuro.h"
-extern "C" {
-#include "rsa.h"
-}
-
-#endif
-
-#ifdef USE_OPENSSL
 #include <openssl/rsa.h>
 
 #define MAX_RSA_MODULUS_BITS 1024
@@ -66,13 +47,11 @@ typedef struct {
 // functions to convert between OpenSSL's keys (using BIGNUMs)
 // and our binary format
 
-extern void openssl_to_keys(
+void openssl_to_keys(
     RSA* rp, int nbits, R_RSA_PRIVATE_KEY& priv, R_RSA_PUBLIC_KEY& pub
 );
-extern void private_to_openssl(R_RSA_PRIVATE_KEY& priv, RSA* rp);
-extern void public_to_openssl(R_RSA_PUBLIC_KEY& pub, RSA* rp);
-
-#endif
+void private_to_openssl(R_RSA_PRIVATE_KEY& priv, RSA* rp);
+void public_to_openssl(R_RSA_PUBLIC_KEY& pub, RSA* rp);
 
 struct KEY {
     unsigned short int bits;
@@ -92,38 +71,38 @@ struct DATA_BLOCK {
 /// size of text-encoded signature
 #define SIGNATURE_SIZE_TEXT (SIGNATURE_SIZE_BINARY*2+20)
 
-extern int print_hex_data(FILE* f, DATA_BLOCK&);
-extern int sprint_hex_data(char* p, DATA_BLOCK&);
-extern int scan_hex_data(FILE* f, DATA_BLOCK&);
-extern int print_key_hex(FILE*, KEY* key, int len);
-extern int scan_key_hex(FILE*, KEY* key, int len);
-extern int sscan_key_hex(const char*, KEY* key, int len);
-extern int encrypt_private(
+int print_hex_data(FILE* f, DATA_BLOCK& block);
+int sprint_hex_data(char* p, DATA_BLOCK& block);
+int scan_hex_data(FILE* f, DATA_BLOCK& block);
+int print_key_hex(FILE* f, KEY* key, int len);
+int scan_key_hex(FILE* f, KEY* key, int len);
+int sscan_key_hex(const char* buf, KEY* key, int len);
+int encrypt_private(
     R_RSA_PRIVATE_KEY& key, DATA_BLOCK& in, DATA_BLOCK& out
 );
-extern int decrypt_public(
+int decrypt_public(
     R_RSA_PUBLIC_KEY& key, DATA_BLOCK& in, DATA_BLOCK& out
 );
-extern int sign_file(
-    const char* path, R_RSA_PRIVATE_KEY&, DATA_BLOCK& signature
+int sign_file(
+    const char* path, R_RSA_PRIVATE_KEY& key, DATA_BLOCK& signature
 );
-extern int sign_block(
-    DATA_BLOCK& data, R_RSA_PRIVATE_KEY&, DATA_BLOCK& signature
+int sign_block(
+    DATA_BLOCK& data, R_RSA_PRIVATE_KEY& key, DATA_BLOCK& signature
 );
-extern int verify_file(
-    const char* path, R_RSA_PUBLIC_KEY&, DATA_BLOCK& signature, bool&
+int verify_file(
+    const char* path, R_RSA_PUBLIC_KEY& key, DATA_BLOCK& signature, bool& answer
 );
-extern int verify_file2(
-    const char* path, const char* signature, const char* key, bool&
+int verify_file2(
+    const char* path, const char* signature, const char* key, bool& answer
 );
-extern int verify_string(
-    const char* text, const char* signature, R_RSA_PUBLIC_KEY&, bool&
+int verify_string(
+    const char* text, const char* signature, R_RSA_PUBLIC_KEY&, bool& answer
 );
-extern int verify_string2(
-    const char* text, const char* signature, const char* key, bool&
+int verify_string2(
+    const char* text, const char* signature, const char* key, bool& answer
 );
-extern int read_key_file(const char* keyfile, R_RSA_PRIVATE_KEY& key);
-extern int generate_signature(
+int read_key_file(const char* keyfile, R_RSA_PRIVATE_KEY& key);
+int generate_signature(
     char* text_to_sign, char* signature_hex, R_RSA_PRIVATE_KEY& key
 );
 

@@ -26,6 +26,10 @@
 #include "mac/MacSysMenu.h"     // Must be included before MainDocument.h
 #endif
 
+#if defined(__WXMSW__) || defined(__WXMAC__)
+#define SYNEC_USE_TASKBARICON
+#endif
+
 #define BOINC_ADVANCEDGUI                   1
 #define BOINC_SIMPLEGUI                     2
 
@@ -110,7 +114,7 @@ public:
     wxString            GetArguments()              { return m_strBOINCArguments; }
     wxString            GetRootDirectory()          { return m_strBOINCMGRRootDirectory; }
     wxString            GetDataDirectory()          { return m_strBOINCMGRDataDirectory; }
-#if defined(__WXMSW__) || defined(__WXMAC__)
+#ifdef SYNEC_USE_TASKBARICON
     CTaskBarIcon*       GetTaskBarIcon()            { return m_pTaskBarIcon; }
 #endif
 #ifdef __WXMAC__

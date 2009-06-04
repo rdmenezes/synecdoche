@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -71,7 +71,7 @@ Commands:\n\
  --get_project_status               show status of all attached projects\n\
  --get_disk_usage                   show disk usage\n\
  --get_proxy_settings\n\
- --get_messages seqno               show messages > seqno\n\
+ --get_messages [seqno]             show messages > seqno\n\
  --get_host_info\n\
  --version, -V                      show core client version\n\
  --result url result_name op        job operation\n\
@@ -129,6 +129,19 @@ char* next_arg(int argc, char** argv, int& i) {
     return argv[i++];
 }
 
+const char* prio_name(int prio) {
+    switch (prio) {
+    case 1: 
+        return "low";
+    case 2:
+        return "medium";
+    case 3:
+        return "high";
+    default:
+        return "unknown";
+    }
+}
+
 int main_impl(int argc, char** argv) {
     RPC_CLIENT rpc;
     int retval, port=GUI_RPC_PORT;
@@ -155,8 +168,6 @@ int main_impl(int argc, char** argv) {
     if (!strcmp(argv[i], "--version")) version();
     if (!strcmp(argv[i], "-V"))     version();
 
-    std::string passwd = read_gui_rpc_password();
-
     if (!strcmp(argv[i], "--host")) {
         if (++i == argc) usage();
         strlcpy(hostname_buf, argv[i], sizeof(hostname_buf));
@@ -168,10 +179,17 @@ int main_impl(int argc, char** argv) {
         }
         i++;
     }
+
+    std::string passwd;
     if ((i<argc)&& !strcmp(argv[i], "--passwd")) {
         if (++i == argc) usage();
         passwd = argv[i];
         i++;
+    }
+
+    if (passwd.empty()) {
+        // No password given via command line, try to read the GUI-RPC-password-file:
+        passwd = read_gui_rpc_password();
     }
 
     // change the following to debug GUI RPC's asynchronous connection mechanism
@@ -295,11 +313,10 @@ int main_impl(int argc, char** argv) {
             fprintf(stderr, "Unknown op %s\n", op);
         }
     } else if (!strcmp(cmd, "--project_attach")) {
-        char url[256];
-        strcpy(url, next_arg(argc, argv, i));
+        std::string url(next_arg(argc, argv, i));
         canonicalize_master_url(url);
         char* auth = next_arg(argc, argv, i);
-        retval = rpc.project_attach(url, auth, "");
+        retval = rpc.project_attach(url.c_str(), auth, "");
     } else if (!strcmp(cmd, "--file_transfer")) {
         FILE_TRANSFER ft;
 
@@ -362,19 +379,29 @@ int main_impl(int argc, char** argv) {
         pi.socks_version = atoi(next_arg(argc, argv, i));
         pi.socks5_user_name = next_arg(argc, argv, i);
         pi.socks5_user_passwd = next_arg(argc, argv, i);
+        pi.use_http_proxy = !pi.http_server_name.empty();
+        pi.use_http_authentication = !pi.http_user_name.empty();
+        pi.use_socks_proxy = !pi.socks_server_name.empty();
         retval = rpc.set_proxy_settings(pi);
     } else if (!strcmp(cmd, "--get_messages")) {
-        int seqno = atoi(next_arg(argc, argv, i));
+        int seqno = 0;
+        if (i != argc) {
+            seqno = atoi(next_arg(argc, argv, i));
+        }
         retval = rpc.get_messages(seqno, messages);
         if (!retval) {
-            unsigned int j;
-            for (j=0; j<messages.messages.size(); j++) {
-                MESSAGE& md = *messages.messages[j];
-                printf("%s %d %d %s\n",
-                    md.project.c_str(), md.priority,
-                    md.timestamp, md.body.c_str()
-                );
+            for (std::vector<MESSAGE*>::const_iterator m = messages.messages.begin();
+                            m != messages.messages.end(); ++m) {
+                MESSAGE& md = **m;
+                strip_whitespace(md.body);
+                std::cout << md.seqno << ":" << time_to_string(md.timestamp)
+                          << " (" << prio_name(md.priority) << ") ";
+                if (!md.project.empty()) {
+                    std::cout << "[" << md.project << "] ";
+                }
+                std::cout << md.body << "\n";
             }
+            std::cout << std::flush;
         }
     } else if (!strcmp(cmd, "--get_host_info")) {
         HOST_INFO hi;

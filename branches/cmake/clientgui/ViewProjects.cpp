@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ END_EVENT_TABLE ()
 
 static CViewProjects* myCViewProjects;
 
-static int CompareViewProjectsItems(int iRowIndex1, int iRowIndex2) {
+static bool CompareViewProjectsItems(size_t iRowIndex1, size_t iRowIndex2) {
     CProject*  project1 = myCViewProjects->m_ProjectCache.at(iRowIndex1);
     CProject*  project2 = myCViewProjects->m_ProjectCache.at(iRowIndex2);
     int        result = 0;
@@ -118,12 +118,8 @@ static int CompareViewProjectsItems(int iRowIndex1, int iRowIndex2) {
             break;
     }
 
-    // Tie-breaker
-    if (result == 0) {
-        return (iRowIndex2 - iRowIndex1);
-    }
-
-    return (myCViewProjects->m_bReverseSort ? result * (-1) : result);
+    // Always return false for equality (result == 0).
+    return ((myCViewProjects->m_bReverseSort) ? (result > 0) : (result < 0));
 }
 
 CViewProjects::CViewProjects() {
@@ -193,29 +189,31 @@ void CViewProjects::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    m_pListPane->InsertColumn(COLUMN_PROJECT, _("Project"), wxLIST_FORMAT_LEFT, 150);
-    m_pListPane->InsertColumn(COLUMN_ACCOUNTNAME, _("Account"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_TEAMNAME, _("Team"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_TOTALCREDIT, _("Work done"), wxLIST_FORMAT_RIGHT, 80);
-    m_pListPane->InsertColumn(COLUMN_AVGCREDIT, _("Avg. work done"), wxLIST_FORMAT_RIGHT, 80);
-    m_pListPane->InsertColumn(COLUMN_RESOURCESHARE, _("Resource share"), wxLIST_FORMAT_CENTRE, 85);
-    m_pListPane->InsertColumn(COLUMN_STATUS, _("Status"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_PROJECT,       wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_ACCOUNTNAME,   wxTRANSLATE("Account"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TEAMNAME,      wxTRANSLATE("Team"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TOTALCREDIT,   wxTRANSLATE("Work done"), wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_AVGCREDIT,     wxTRANSLATE("Avg. work done"), wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_RESOURCESHARE, wxTRANSLATE("Resource share"), wxLIST_FORMAT_CENTRE, 85);
+    AddColumn(COLUMN_STATUS,        wxTRANSLATE("Status"), wxLIST_FORMAT_LEFT, 150);
 
     m_iProgressColumn = COLUMN_RESOURCESHARE;
 
     // Needed by static sort routine;
     myCViewProjects = this;
     m_funcSortCompare = CompareViewProjectsItems;
-   
+
+    RestoreState();
+
     UpdateSelection();
 }
 
-wxString& CViewProjects::GetViewName() {
-    static wxString strViewName(_("Projects"));
+const wxString& CViewProjects::GetViewName() {
+    static wxString strViewName(wxT("Projects"));
     return strViewName;
 }
 
-wxString& CViewProjects::GetViewDisplayName() {
+const wxString& CViewProjects::GetViewDisplayName() {
     static wxString strViewName(_("Projects"));
     return strViewName;
 }
@@ -502,7 +500,6 @@ void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
     pFrame->UpdateStatusText(wxT(""));
 
     m_bForceUpdateSelection = true;
-    UpdateSelection();
     pFrame->FireRefreshView();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectDetach - Function End"));
@@ -741,7 +738,7 @@ bool CViewProjects::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnIndex
     return false;
 }
 
-void CViewProjects::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
+void CViewProjects::GetDocProjectName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -764,7 +761,7 @@ wxInt32 CViewProjects::FormatProjectName(wxInt32 item, wxString& strBuffer) cons
     return 0;
 }
 
-void CViewProjects::GetDocAccountName(wxInt32 item, wxString& strBuffer) const {
+void CViewProjects::GetDocAccountName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -785,7 +782,7 @@ wxInt32 CViewProjects::FormatAccountName(wxInt32 item, wxString& strBuffer) cons
     return 0;
 }
 
-void CViewProjects::GetDocTeamName(wxInt32 item, wxString& strBuffer) const {
+void CViewProjects::GetDocTeamName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -806,7 +803,7 @@ wxInt32 CViewProjects::FormatTeamName(wxInt32 item, wxString& strBuffer) const {
     return 0;
 }
 
-void CViewProjects::GetDocTotalCredit(wxInt32 item, float& fBuffer) const {
+void CViewProjects::GetDocTotalCredit(size_t item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -825,7 +822,7 @@ wxInt32 CViewProjects::FormatTotalCredit(float fBuffer, wxString& strBuffer) con
     return 0;
 }
 
-void CViewProjects::GetDocAVGCredit(wxInt32 item, float& fBuffer) const {
+void CViewProjects::GetDocAVGCredit(size_t item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -844,7 +841,7 @@ wxInt32 CViewProjects::FormatAVGCredit(float fBuffer, wxString& strBuffer) const
     return 0;
 }
 
-void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
+void CViewProjects::GetDocResourceShare(size_t item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -858,7 +855,7 @@ void CViewProjects::GetDocResourceShare(wxInt32 item, float& fBuffer) const {
     }
 }
 
-void CViewProjects::GetDocResourcePercent(wxInt32 item, float& fBuffer) const {
+void CViewProjects::GetDocResourcePercent(size_t item, float& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {
@@ -877,7 +874,7 @@ wxInt32 CViewProjects::FormatResourceShare(float fBuffer, float fBufferPercent, 
     return 0;
 }
 
-void CViewProjects::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
+void CViewProjects::GetDocStatus(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
     if (pDoc) {

@@ -55,7 +55,7 @@ CBOINCBaseView::~CBOINCBaseView() {
 /// If it has not been defined by the view "Undefined" is returned.
 ///
 /// \return A reference to a variable containing the view name.
-wxString& CBOINCBaseView::GetViewName() {
+const wxString& CBOINCBaseView::GetViewName() {
     static wxString strViewName(wxT("Undefined"));
     return strViewName;
 }
@@ -65,7 +65,7 @@ wxString& CBOINCBaseView::GetViewName() {
 ///
 /// \return A reference to a variable containing the user friendly name of
 ///         the view.
-wxString& CBOINCBaseView::GetViewDisplayName() {
+const wxString& CBOINCBaseView::GetViewDisplayName() {
     static wxString strViewName(wxT("Undefined"));
     return strViewName;
 }
@@ -78,9 +78,9 @@ const char** CBOINCBaseView::GetViewIcon() {
 }
 
 /// The rate at which the view is refreshed.
-/// If it has not been defined by the view 1 second is retrned.
+/// If it has not been defined by the view, 1 second is returned.
 ///
-/// \return Always returns one.
+/// \return This base implementation always returns one.
 const int CBOINCBaseView::GetViewRefreshRate() {
     return 1;
 }
@@ -255,30 +255,6 @@ wxListItemAttr* CBOINCBaseView::OnListGetItemAttr(long WXUNUSED(item)) const {
     return NULL;
 }
 
-void CBOINCBaseView::OnGridSelectCell( wxGridEvent& event ) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnGridSelectCell - Function Begin"));
-
-    if (!m_bIgnoreUIEvents) {
-        m_bForceUpdateSelection = true;
-        UpdateSelection();
-        event.Skip();
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnGridSelectCell - Function End"));
-}
-
-void CBOINCBaseView::OnGridSelectRange( wxGridRangeSelectEvent& event ) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnGridSelectRange - Function Begin"));
-
-    if (!m_bIgnoreUIEvents) {
-        m_bForceUpdateSelection = true;
-        UpdateSelection();
-        event.Skip();
-    }
-
-    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseView::OnGridSelectRange - Function End"));
-}
-
 int CBOINCBaseView::GetDocCount() {
     return 0;
 }
@@ -380,8 +356,10 @@ void CBOINCBaseView::InitSort() {
 void CBOINCBaseView::sortData() {
     if (m_iSortColumn < 0) return;
     
-    std::vector<int> oldSortedIndexes(m_iSortedIndexes);
-    std::vector<int> selections;
+    typedef std::vector<size_t> size_t_vec;
+
+    size_t_vec oldSortedIndexes(m_iSortedIndexes);
+    size_t_vec selections;
     size_t n = m_iSortedIndexes.size();
     
     // Remember which cache elements are selected and deselect them
@@ -396,12 +374,18 @@ void CBOINCBaseView::sortData() {
     
     std::stable_sort(m_iSortedIndexes.begin(), m_iSortedIndexes.end(), m_funcSortCompare);
     
+    size_t_vec reverse_lookup;
+    reverse_lookup.resize(m_iSortedIndexes.size());
+    for (size_t i = 0; i < m_iSortedIndexes.size(); ++i) {
+        reverse_lookup[m_iSortedIndexes[i]] = i;
+    }
+
     // Reselect previously selected cache elements in the sorted list 
     size_t m = selections.size();
     for (size_t i = 0; i < m; ++i) {
         if (selections[i] >= 0) {
-            int j = m_iSortedIndexes.at(selections[i]);
-            m_pListPane->SetItemState(j, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+            size_t j = reverse_lookup[selections[i]];
+            m_pListPane->SetItemState(static_cast<long>(j), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
         }
     }
     m_bIgnoreUIEvents = false;
@@ -409,7 +393,7 @@ void CBOINCBaseView::sortData() {
     // Refresh rows which have moved
     for (size_t i = 0; i < n; ++i) {
         if (m_iSortedIndexes[i] != oldSortedIndexes[i]) {
-            m_pListPane->RefreshItem(i);
+            m_pListPane->RefreshItem(static_cast<long>(i));
          }
     }
 }
@@ -708,4 +692,40 @@ wxString CBOINCBaseView::HtmlEntityDecode(const wxString& strRaw) {
 #endif
     }
     return strDecodedHtml;
+}
+
+/// Add a new column to the tab.
+///
+/// \param[in] column The index of the new column.
+/// \param[in] heading The title of the column. This parameter is used as key
+///                    to identify the column when storing settings. Therefore
+///                    this parameter must not be translated. This function
+///                    handles translation of the title itself before passing
+///                    it to wxWidgets.
+/// \param[in] align Column alignment.
+/// \param[in] width The width of the column.
+void CBOINCBaseView::AddColumn(long column, const wxChar* heading,
+                               wxListColumnFormat align, int width) {
+    m_pListPane->InsertColumn(column, wxGetTranslation(heading), align, width);
+    m_column_keys[column] = heading;
+}
+
+/// Get a map containing the keys for all columns.
+///
+/// \return A map containing the keys used to identify the columns when storing
+///         column related settings. This map is filled when AddColumn is
+///         called.
+const ColumnListMap& CBOINCBaseView::GetColumnKeys() const {
+    return m_column_keys;
+}
+
+/// Read and apply stored settings like column widths.
+void CBOINCBaseView::RestoreState() {
+    wxConfigBase* pConfig = wxConfigBase::Get(FALSE);
+    wxString strPreviousLocation = pConfig->GetPath();
+    wxString strConfigLocation = strPreviousLocation + GetViewName();
+
+    pConfig->SetPath(strConfigLocation);
+    OnRestoreState(pConfig);
+    pConfig->SetPath(strPreviousLocation);
 }

@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -98,7 +98,6 @@ void PROJECT::init() {
     trickle_up_pending = false;
     anonymous_platform = false;
     non_cpu_intensive = false;
-    verify_files_on_app_start = false;
     short_term_debt = 0;
     long_term_debt = 0;
     send_file_list = false;
@@ -191,7 +190,6 @@ int PROJECT::parse_state(MIOFILE& in) {
         if (parse_int(buf, "<send_time_stats_log>", send_time_stats_log)) continue;
         if (parse_int(buf, "<send_job_log>", send_job_log)) continue;
         if (parse_bool(buf, "non_cpu_intensive", non_cpu_intensive)) continue;
-        if (parse_bool(buf, "verify_files_on_app_start", verify_files_on_app_start)) continue;
         if (parse_bool(buf, "suspended_via_gui", suspended_via_gui)) continue;
         if (parse_bool(buf, "dont_request_more_work", dont_request_more_work)) continue;
         if (parse_bool(buf, "detach_when_done", detach_when_done)) continue;
@@ -248,7 +246,7 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
         "    <sched_rpc_pending>%d</sched_rpc_pending>\n"
         "    <send_time_stats_log>%d</send_time_stats_log>\n"
         "    <send_job_log>%d</send_job_log>\n"
-        "%s%s%s%s%s%s%s%s%s%s%s%s",
+        "%s%s%s%s%s%s%s%s%s%s%s",
         master_url,
         project_name,
         symstore,
@@ -281,7 +279,6 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
         trickle_up_pending?"    <trickle_up_pending/>\n":"",
         send_file_list?"    <send_file_list/>\n":"",
         non_cpu_intensive?"    <non_cpu_intensive/>\n":"",
-        verify_files_on_app_start?"    <verify_files_on_app_start/>\n":"",
         suspended_via_gui?"    <suspended_via_gui/>\n":"",
         dont_request_more_work?"    <dont_request_more_work/>\n":"",
         detach_when_done?"    <detach_when_done/>\n":"",
@@ -358,7 +355,6 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
     send_time_stats_log = p.send_time_stats_log;
     send_job_log = p.send_job_log;
     non_cpu_intensive = p.non_cpu_intensive;
-    verify_files_on_app_start = p.verify_files_on_app_start;
     suspended_via_gui = p.suspended_via_gui;
     dont_request_more_work = p.dont_request_more_work;
     detach_when_done = p.detach_when_done;
@@ -473,8 +469,7 @@ int PROJECT::parse_project_files(MIOFILE& in, bool delete_existing_symlinks) {
         // This is done when parsing scheduler reply,
         // to ensure that we get rid of sym links for
         // project files no longer in use
-        char project_dir[256];
-        get_project_dir(this, project_dir, sizeof(project_dir));
+        std::string project_dir = get_project_dir(this);
         for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
             std::string path(project_dir);
             path.append("/").append((*it).open_name);
@@ -531,16 +526,16 @@ void PROJECT::link_project_files(bool recreate_symlink_files) {
 
 /// Write the XML representation of the project files into a file.
 ///
-/// \param[in] f Reference to a MIOFILE instance representing the target file.
-void PROJECT::write_project_files(MIOFILE& f) const {
+/// \param[in] out Reference to a MIOFILE instance representing the target file.
+void PROJECT::write_project_files(MIOFILE& out) const {
     if (project_files.empty()) {
         return;
     }
-    f.printf("<project_files>\n");
+    out.printf("<project_files>\n");
     for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
-        (*it).write(f);
+        (*it).write(out);
     }
-    f.printf("</project_files>\n");
+    out.printf("</project_files>\n");
 }
 
 /// Write symlinks for project files.
@@ -551,8 +546,7 @@ void PROJECT::write_project_files(MIOFILE& f) const {
 ///                links should be created.
 /// \return Always returns zero.
 int PROJECT::write_symlink_for_project_file(const FILE_INFO* fip) const {
-    char project_dir[256];
-    get_project_dir(this, project_dir, sizeof(project_dir));
+    std::string project_dir = get_project_dir(this);
 
     for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
         if ((*it).file_info == fip) {
@@ -560,7 +554,7 @@ int PROJECT::write_symlink_for_project_file(const FILE_INFO* fip) const {
             path.append("/").append((*it).open_name);
             FILE* f = boinc_fopen(path.c_str(), "w");
             if (f) {
-                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir, fip->name.c_str());
+                fprintf(f, "<soft_link>%s/%s</soft_link>\n", project_dir.c_str(), fip->name.c_str());
                 fclose(f);
             }
         }
@@ -572,6 +566,19 @@ int PROJECT::write_symlink_for_project_file(const FILE_INFO* fip) const {
 /// This is called when a project file download finishes.
 void PROJECT::update_project_files_downloaded_time() {
     project_files_downloaded_time = gstate.now;
+}
+
+/// Get all workunits for this project.
+///
+/// \return A vector containing all workunits of this project.
+WORKUNIT_PVEC PROJECT::get_workunits() const {
+    WORKUNIT_PVEC result;
+    for (WORKUNIT_PVEC::const_iterator it = gstate.workunits.begin(); it != gstate.workunits.end(); ++it) {
+        if ((*it)->project == this) {
+            result.push_back(*it);
+        }
+    }
+    return result;
 }
 
 int APP::parse(MIOFILE& in) {
@@ -880,16 +887,20 @@ int FILE_INFO::delete_file() {
 /// Call this to get the initial url,
 /// The is_upload arg says which kind you want.
 /// NULL return means there is no URL of the requested type.
+///
+/// \todo If there are multiple URLs, this function tries them in order. There
+/// is commented out code that picks them randomly. There should be a way for a
+/// project to choose what mode to use.
 const char* FILE_INFO::get_init_url(bool is_upload) {
     if (urls.empty()) {
         return NULL;
     }
 
-	/// if a project supplies multiple URLs, try them in order
-	/// (e.g. in Einstein@home they're ordered by proximity to client).
-	/// The commented-out code tries them starting from random place.
-	/// This is appropriate if replication is for load-balancing.
-	/// TODO: add a flag saying which mode to use.
+    /// if a project supplies multiple URLs, try them in order
+    /// (e.g. in Einstein@home they're ordered by proximity to client).
+    /// The commented-out code tries them starting from random place.
+    /// This is appropriate if replication is for load-balancing.
+    /// TODO: add a flag saying which mode to use.
 #if 1
     current_url = 0;
 #else
@@ -983,7 +994,9 @@ int FILE_INFO::merge_info(const FILE_INFO& new_info) {
 /// Returns true if the file had an unrecoverable error
 /// (couldn't download, RSA/MD5 check failed, etc).
 bool FILE_INFO::had_failure(int& failnum) const {
-    if (status != FILE_NOT_PRESENT && status != FILE_PRESENT) {
+    if (status != FILE_NOT_PRESENT 
+                && status != FILE_PRESENT 
+                && status != FILE_NOT_PRESENT_NOT_NEEDED) {
         failnum = status;
         return true;
     }
@@ -1008,6 +1021,7 @@ std::string FILE_INFO::failure_message() const {
 /// Compress the file using zlib (gzip compression).
 ///
 /// \return Zero on success, ERR_FOPEN or ERR_WRITE on error.
+/// \todo Replace this with a gzip streambuf? (btw, there is one in boost::iostream)
 int FILE_INFO::gzip() {
     const size_t BUFSIZE = 16384;
     char buf[BUFSIZE];
@@ -1644,7 +1658,6 @@ bool PROJECT::some_download_stalled() const {
 
 /// Return true if some file needed by this result (input or application)
 /// is downloading and backed off.
-///
 bool RESULT::some_download_stalled() const {
     unsigned int i;
     const FILE_INFO* fip;
@@ -1667,6 +1680,20 @@ bool RESULT::some_download_stalled() const {
     return false;
 }
 
+/// Get the project this result belongs to.
+///
+/// \return Pointer to the project the current result belongs to.
+PROJECT* RESULT::get_project() const {
+    return project;
+}
+
+/// Get the name of this result.
+///
+/// \return The name of this result.
+std::string RESULT::get_name() const {
+    return name;
+}
+
 const FILE_REF* RESULT::lookup_file(const FILE_INFO* fip) const {
     for (unsigned int i=0; i<output_files.size(); i++) {
         const FILE_REF& fr = output_files[i];
@@ -1685,14 +1712,21 @@ FILE_INFO* RESULT::lookup_file_logical(const char* lname) {
     return 0;
 }
 
-void RESULT::append_log_record() {
-    char filename[256];
-    job_log_filename(*project, filename, sizeof(filename));
-    FILE* f = fopen(filename, "ab");
+void RESULT::append_log_record(ACTIVE_TASK& at) {
+    std::string filename = job_log_filename(*project);
+    FILE* f = fopen(filename.c_str(), "ab");
     if (!f) return;
-    fprintf(f, "%f ue %f ct %f fe %f nm %s\n",
-        gstate.now, estimated_cpu_time_uncorrected(), final_cpu_time,
-        wup->rsc_fpops_est, name
+    fprintf(f, "%f ue %f ct %f fe %f sm %f sp %f sf %f sd %f sc %d nm %s\n",
+        gstate.now,
+        estimated_cpu_time_uncorrected(),
+        final_cpu_time,
+        wup->rsc_fpops_est,
+        at.stats_mem,
+        at.stats_page,
+        at.stats_pagefault_rate,
+        at.stats_disk,
+        at.stats_checkpoint,
+        name
     );
     fclose(f);
 }

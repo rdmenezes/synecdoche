@@ -18,7 +18,7 @@
 #ifndef __MEM_USAGE__
 #define __MEM_USAGE__
 
-extern int mem_usage(double& vm_usage, double& resident_set);
+int mem_usage(double& vm_usage, double& resident_set);
 
 #endif
 

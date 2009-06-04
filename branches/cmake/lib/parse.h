@@ -46,21 +46,25 @@ class MIOFILE;
 
 class XML_PARSER {
     MIOFILE* f;
-    bool scan_nonws(int&);
+    bool scan_nonws(int& first_char);
     int scan_comment();
-    int scan_tag(char* tag_buf, int tag_len, char* attr_buf = 0, int attr_len = 0);
-    bool copy_until_tag(char*, int);
+    int scan_tag(char* tag_buf, size_t tag_len, char* attr_buf = 0, size_t attr_len = 0);
+    bool copy_until_tag(char* buf, int len);
 public:
     XML_PARSER(MIOFILE*);
-    bool get(char* buf, int len, bool& is_tag, char* attr_buf = 0, int attr_len = 0);
-    bool parse_start(const char*);
-    bool parse_str(char*, const char*, char*, int);
-    bool parse_string(char*, const char*, std::string&);
-    bool parse_int(char*, const char*, int&);
-    bool parse_double(char*, const char*, double&);
-    bool parse_bool(char*, const char*, bool&);
-    int element_contents(const char*, char*, int);
-    void skip_unexpected(const char*, bool verbose, const char*);
+    bool get(char* buf, size_t len, bool& is_tag, char* attr_buf = 0, size_t attr_len = 0);
+    bool parse_start(const char* start_tag);
+
+    bool parse_str   (char* parsed_tag, const char* start_tag, char* buf, size_t len);
+    bool parse_string(char* parsed_tag, const char* start_tag, std::string& str);
+    bool parse_int   (char* parsed_tag, const char* start_tag, int& result);
+    bool parse_double(char* parsed_tag, const char* start_tag, double& result);
+    bool parse_bool  (char* parsed_tag, const char* start_tag, bool& result);
+
+    int element_contents(const char* end_tag, char* buf, size_t buflen);
+    void skip_unexpected(const char* start_tag, bool verbose, const char* where);
+
+    MIOFILE& get_miofile() const;
 };
 
 /// \name DEPRECATED XML PARSER
@@ -81,66 +85,65 @@ inline bool match_tag(const std::string& s, const std::string& tag) {
 /// parse an integer of the form <tag>1234</tag>.
 /// return true if it's there.
 /// Note: this doesn't check for the end tag.
-inline bool parse_int(const char* buf, const char* tag, int& x) {
+inline bool parse_int(const char* buf, const char* tag, int& result) {
     const char* p = strstr(buf, tag);
     if (!p) return false;
-    int y = strtol(p + strlen(tag), 0, 0);      // This respects hex and octal prefixes.
+    int temp_result = strtol(p + strlen(tag), 0, 0);      // This respects hex and octal prefixes.
     if (errno == ERANGE) return false;
-    x = y;
+    result = temp_result;
     return true;
 }
 
 /// parse double of the form <tag>1234</tag>.
 /// return true if it's there.
 /// Note: this doesn't check for the end tag.
-inline bool parse_double(const char* buf, const char* tag, double& x) {
-    double y;
+inline bool parse_double(const char* buf, const char* tag, double& result) {
+    double temp_result;
     const char* p = strstr(buf, tag);
     if (!p) return false;
-    y = atof(p+strlen(tag));
+    temp_result = atof(p+strlen(tag));
 #if defined (HPUX_SOURCE)
-    if (_Isfinite(y)) {
+    if (_Isfinite(temp_result)) {
 #else
-    if (finite(y)) {
+    if (finite(temp_result)) {
 #endif
-        x = y;
+        result = temp_result;
         return true;
     }
     return false;
 }
 
-extern bool parse(char* , char* );
-extern bool parse_str(const char*, const char*, char*, int);
-extern bool parse_str(const char* buf, const char* tag, std::string& dest);
-extern void parse_attr(const char* buf, const char* attrname, char* out, int len);
-extern bool parse_bool(const char*, const char*, bool&);
+bool parse_str(const char* buf, const char* tag, char* dest, size_t destlen);
+bool parse_str(const char* buf, const char* tag, std::string& dest);
+void parse_attr(const char* buf, const char* attrname, char* out, size_t len);
+bool parse_bool(const char* buf, const char* tag, bool& result);
 
 // END DEPRECATED XML PARSER
 
 /// @}
 
-extern int copy_stream(FILE* in, FILE* out);
-extern int strcatdup(char*& p, char* buf);
-extern int dup_element_contents(FILE* in, const char* end_tag, char** pp);
-extern int dup_element(FILE* in, const char* end_tag, char** pp);
-extern int copy_element_contents(FILE* in, const char* end_tag, char* p, int len);
-extern int copy_element_contents(FILE* in, const char* end_tag, std::string&);
-extern void replace_element_contents(
+int copy_stream(FILE* in, FILE* out);
+int strcatdup(char*& p, char* buf);
+int dup_element_contents(FILE* in, const char* end_tag, char** pp);
+int dup_element(FILE* in, const char* end_tag, char** pp);
+int copy_element_contents(FILE* in, const char* end_tag, char* p, size_t len);
+int copy_element_contents(FILE* in, const char* end_tag, std::string&);
+void replace_element_contents(
     char* buf, const char* start, const char* end, const char* replacement
 );
-extern bool remove_element(char* buf, const char* start, const char* end);
-extern bool str_replace(char* str, const char* old, const char* neww);
-extern char* sgets(char* buf, int len, char* &in);
+bool remove_element(char* buf, const char* start, const char* end);
+bool str_replace(char* str, const char* old, const char* neww);
+char* sgets(char* buf, size_t len, char* &in);
 
 /// Escape XML.
-extern void xml_escape(const char* in, char* out, int len);
+void xml_escape(const char* in, char* out, int len);
 
 /// Unescape XML.
-extern void xml_unescape(const char* in, char* out, int len);
+void xml_unescape(const char* in, char* out, int len);
 
-extern void extract_venue(const char*, const char*, char*);
+void extract_venue(const char* in, const char* venue_name, char* out);
 
 /// Skip unrecognized line.
-extern int skip_unrecognized(char* buf, MIOFILE& fin);
+int skip_unrecognized(char* buf, MIOFILE& fin);
 
 #endif

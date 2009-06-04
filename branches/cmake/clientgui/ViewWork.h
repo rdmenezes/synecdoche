@@ -65,8 +65,8 @@ public:
 
     ~CViewWork();
 
-    virtual wxString&       GetViewName();
-    virtual wxString&       GetViewDisplayName();
+    virtual const wxString& GetViewName();
+    virtual const wxString& GetViewDisplayName();
     virtual const char**    GetViewIcon();
 
     void                    OnWorkSuspend( wxCommandEvent& event );
@@ -93,18 +93,18 @@ protected:
 
     virtual void            DemandLoadView();
 
-    void                    GetDocProjectName(wxInt32 item, wxString& strBuffer) const;
-    void                    GetDocApplicationName(wxInt32 item, wxString& strBuffer) const;
-    void                    GetDocName(wxInt32 item, wxString& strBuffer) const;
-    void                    GetDocCPUTime(wxInt32 item, float& fBuffer) const;
+    void                    GetDocProjectName(size_t item, wxString& strBuffer) const;
+    void                    GetDocApplicationName(size_t item, wxString& strBuffer) const;
+    void                    GetDocName(size_t item, wxString& strBuffer) const;
+    void                    GetDocCPUTime(size_t item, float& fBuffer) const;
     wxInt32                 FormatCPUTime(float fBuffer, wxString& strBuffer) const;
-    void                    GetDocProgress(wxInt32 item, float& fBuffer) const;
+    void                    GetDocProgress(size_t item, float& fBuffer) const;
     wxInt32                 FormatProgress(float fBuffer, wxString& strBuffer) const;
-    void                    GetDocTimeToCompletion(wxInt32 item, float& fBuffer) const;
+    void                    GetDocTimeToCompletion(size_t item, float& fBuffer) const;
     wxInt32                 FormatTimeToCompletion(float fBuffer, wxString& strBuffer) const;
-    void                    GetDocReportDeadline(wxInt32 item, time_t& time) const;
+    void                    GetDocReportDeadline(size_t item, time_t& time) const;
     wxInt32                 FormatReportDeadline(time_t deadline, wxString& strBuffer) const;
-    void                    GetDocStatus(wxInt32 item, wxString& strBuffer) const;
+    void                    GetDocStatus(size_t item, wxString& strBuffer) const;
     wxInt32                 FormatStatus(wxInt32 item, wxString& strBuffer) const;
 
     virtual double          GetProgressValue(long item);

@@ -23,6 +23,7 @@
 /// (virus scan, defrag, index) may have the file open.
 #define FILE_RETRY_INTERVAL 5
 
+#include "attributes.h"
 
 #if defined(_WIN32) && !defined(__CYGWIN32__)
 #define WIN32_LEAN_AND_MEAN
@@ -38,56 +39,56 @@
 extern "C" {
 #endif // __cplusplus
   /// Delete a file.
-  extern int boinc_delete_file(const char* path);
+  int boinc_delete_file(const std::string& path);
 
   /// Create an empty file.
-  extern int boinc_touch_file(const char *path);
+  int boinc_touch_file(const char *path);
 
   /// Open a file for reading or writing.
-  extern FILE* boinc_fopen(const char* path, const char* mode);
+  FILE* boinc_fopen(const char* path, const char* mode);
 
   /// Copy a file.
-  extern int boinc_copy(const char* orig, const char* newf);
+  int boinc_copy(const char* orig, const char* newf);
 
   /// Rename a file.
-  extern int boinc_rename(const char* old, const char* newf);
+  int boinc_rename(const char* old, const char* newf);
 
   /// Create a directory for which the owner and the group have full access.
-  extern int boinc_mkdir(const char* path);
+  int boinc_mkdir(const char* path);
 
 #ifndef _WIN32
   /// Change the group of a file or directory.
-  extern int boinc_chown(const char*, gid_t);
+  int boinc_chown(const char* path, gid_t gid);
 #endif
 
   /// Remove a directory.
-  extern int boinc_rmdir(const char* name);
+  int boinc_rmdir(const char* name);
 
-  extern int remove_project_owned_file_or_dir(const char* path);
+  int remove_project_owned_file_or_dir(const char* path);
 
   /// Create directories with parent directories if necessary.
-  extern int boinc_make_dirs(const char* dirpath, const char* filepath);
+  int boinc_make_dirs(const char* dirpath, const char* filepath);
 
   /// A buffer that will store a file name in case of failed operations.
   extern char boinc_failed_file[256];
 
   /// Check if the given path denotes a file.
-  extern int is_file(const char* path);
+  int is_file(const char* path);
 
   /// Check if the given path denotes a directory.
-  extern int is_dir(const char* path);
+  int is_dir(const char* path);
 
   /// Check if the given path denotes a symbolic link.
-  extern int is_symlink(const char* path);
+  int is_symlink(const char* path);
 
   /// Truncate the size of a file.
-  extern int boinc_truncate(const char* path, double size);
+  int boinc_truncate(const char* path, double size);
 
   /// Check if a file exists.
-  extern bool boinc_file_exists(const std::string& path);
+  bool boinc_file_exists(const std::string& path);
 
   /// Check if a file exists.
-  extern int boinc_file_or_symlink_exists(const std::string& path);
+  int boinc_file_or_symlink_exists(const std::string& path);
 
 #ifdef __cplusplus
 }
@@ -97,22 +98,23 @@ extern "C" {
 #ifdef __cplusplus
 
 /// Return the current working directory.
-extern std::string boinc_getcwd();
+std::string boinc_getcwd();
 
-/// Turn a relative path into an absolute on.
-extern std::string relative_to_absolute(const char* relname);
+/// Turn a relative path into an absolute one.
+std::string relative_to_absolute(const std::string& relname);
+//std::string relative_to_absolute(const char* relname);
 
 /// Get the size of a file.
-extern int file_size(const char* path, double& size);
+int file_size(const char* path, double& size);
 
 /// Remove everything from specified directory.
-extern int clean_out_dir(const char* dirpath);
+int clean_out_dir(const char* dirpath);
 
 /// Return total size of files in directory and optionally its subdirectories.
-extern int dir_size(const char* dirpath, double& size, bool recurse = true);
+int dir_size(const char* dirpath, double& size, bool recurse = true);
 
 /// Get total and free space on current filesystem (in bytes).
-extern int get_filesystem_info(double& total, double& free, const char* path=".");
+int get_filesystem_info(double& total, double& free, const char* path=".");
 
 // TODO TODO TODO
 // remove this code - the DirScanner class does the same thing.
@@ -122,23 +124,23 @@ typedef struct _DIR_DESC {
     char path[256];
     bool first;
     void* handle;
-} DIR_DESC;
-typedef DIR_DESC *DIRREF;
+} DIR_DESC __attribute__ ((deprecated));
+typedef DIR_DESC *DIRREF  __attribute__ ((deprecated));
 #else
-typedef DIR *DIRREF;
+typedef DIR *DIRREF  __attribute__ ((deprecated));
 #endif
 
 /// Open a directory for scanning with dir_scan.
-extern DIRREF dir_open(const char* p);
+DIRREF dir_open(const char* p) __attribute__ ((deprecated));
 
 /// Scan through a directory and return the next file name in it.
-extern int dir_scan(char* p, DIRREF dirp, int p_len);
+int dir_scan(char* p, DIRREF dirp, int p_len) __attribute__ ((deprecated));
 
 /// Scan through a directory and return the next file name in it.
-extern int dir_scan(std::string& p, DIRREF dirp);
+int dir_scan(std::string& p, DIRREF dirp) __attribute__ ((deprecated));
 
 /// Close a directory previously opened by dir_open.
-extern void dir_close(DIRREF dirp);
+void dir_close(DIRREF dirp) __attribute__ ((deprecated));
 
 
 class DirScanner {
@@ -186,7 +188,7 @@ public:
 
 #ifndef _WIN32
 /// Search PATH and find the directory that a program is in, if any.
-extern int get_file_dir(const char* filename, std::string& dir);
+int get_file_dir(const char* filename, std::string& dir);
 #endif // _WIN32
 
 #endif // __cplusplus

@@ -16,9 +16,9 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef _WIN32
-extern int boinc_main_loop();
-extern void quit_client();
-extern void suspend_client();
-extern void resume_client();
-extern int check_unique_instance();
+int boinc_main_loop();
+void quit_client();
+void suspend_client();
+void resume_client();
+int check_unique_instance();
 #endif

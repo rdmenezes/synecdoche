@@ -1,5 +1,0 @@
-/* Localized versions of Info.plist keys */
-
-CFBundleName = "Synecdoche";
-CFBundleShortVersionString = "Synecdoche version 0.1.1pre";
-CFBundleGetInfoString = "Synecdoche version 0.1.1pre, Copyright 2009 Synecdoche.";

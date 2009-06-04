@@ -74,7 +74,8 @@ public:
 
     void OnHelpAbout( wxCommandEvent& event );
 
-    void OnShow( wxShowEvent& event );
+    void OnSize(wxSizeEvent& event);
+    void OnMove(wxMoveEvent& event);
 
     void OnRefreshState( wxTimerEvent& event );
     void OnFrameRender( wxTimerEvent& event );
@@ -105,8 +106,11 @@ private:
     wxString        m_strBaseTitle;
     wxString        m_cachedStatusText;
 
-    // Next page to load in the background
+    /// Next page to load in the background.
     size_t          m_pageToLoad;
+
+    /// Store window size and location (but not maximised size).
+    wxRect          m_windowRect;
 
     bool            CreateMenu();
     bool            DeleteMenu();
@@ -128,9 +132,9 @@ private:
     void            SaveWindowDimensions();
     void            RestoreWindowDimensions();
 
-    void            UpdateActivityModeControls( CC_STATUS& status );
-    void            UpdateNetworkModeControls( CC_STATUS& status );
-    void            UpdateRefreshTimerInterval( wxInt32 iCurrentNotebookPage );
+    void            UpdateActivityModeControls(const CC_STATUS& status);
+    void            UpdateNetworkModeControls(const CC_STATUS& status);
+    void            UpdateRefreshTimerInterval(wxInt32 iCurrentNotebookPage);
 
     void            StartTimers();
     void            StopTimers();

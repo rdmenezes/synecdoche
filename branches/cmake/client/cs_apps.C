@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -174,7 +175,7 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
         }
     } else {
         rp->set_state(RESULT_FILES_UPLOADING, "CS::app_finished");
-        rp->append_log_record();
+        rp->append_log_record(at);
         rp->project->update_duration_correction_factor(rp);
     }
 
@@ -186,59 +187,79 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
     return 0;
 }
 
-/// Returns true iff all the input files for a result are present
+/// Check if all the input files for a result are present
 /// (both WU and app version).
 /// Called from CLIENT_STATE::update_results (with verify=false)
 /// to transition result from DOWNLOADING to DOWNLOADED.
-/// Called from ACTIVE_TASK::start() (with verify=true)
-/// when project has verify_files_on_app_start set.
+/// Called from ACTIVE_TASK::start() (with verify=true) to check
+/// if all required files are in place before starting the science
+/// application.
 ///
-/// If fipp is nonzero, return a pointer to offending FILE_INFO on error.
-int CLIENT_STATE::input_files_available(
-    RESULT* rp, bool verify, FILE_INFO** fipp
-) {
+/// If fip_vec is non-null, store all missing files in this vector.
+/// Otherwise, stop as soon as the first missing file was discovered.
+///
+/// \param[in] rp Result for which the files should be checked.
+/// \param[in] verify If true, strict validation (i.e. signature checking)
+///                   is performed
+/// \param[out] fip_set Optional pointer to a set that will receive
+///                     a FILE_INFO pointer for each missing file.
+int CLIENT_STATE::input_files_available(const RESULT* rp, bool verify, FILE_INFO_PSET* fip_set) {
     WORKUNIT* wup = rp->wup;
     FILE_INFO* fip;
-    unsigned int i;
-    APP_VERSION* avp;
     FILE_REF fr;
     PROJECT* project = rp->project;
-    int retval;
+    int result = 0;
 
-    avp = rp->avp;
-    for (i=0; i<avp->app_files.size(); i++) {
+    APP_VERSION* avp = rp->avp;
+    for (size_t i = 0; i < avp->app_files.size(); ++i) {
         fr = avp->app_files[i];
         fip = fr.file_info;
         if (fip->status != FILE_PRESENT) {
-            if (fipp) *fipp = fip;
-            return ERR_FILE_MISSING;
-        }
-
-        // don't verify app files if using anonymous platform
-        //
-        if (!project->anonymous_platform) {
-            retval = fip->verify_file(verify, true);
+            if (fip_set) {
+                fip_set->insert(fip);
+                result = ERR_FILE_MISSING;
+            } else {
+                return ERR_FILE_MISSING;
+            }
+        } else if (!project->anonymous_platform) {
+            // Only verify files marked as present.
+            // Don't verify app files if using anonymous platform.
+            int retval = fip->verify_file(verify, true);
             if (retval) {
-                if (fipp) *fipp = fip;
-                return retval;
+                if (fip_set) {
+                    fip_set->insert(fip);
+                    result = retval;
+                } else {
+                    return retval;
+                }
             }
         }
     }
 
-    for (i=0; i<wup->input_files.size(); i++) {
+    for (size_t i = 0; i < wup->input_files.size(); ++i) {
         fip = wup->input_files[i].file_info;
         if (fip->generated_locally) continue;
         if (fip->status != FILE_PRESENT) {
-            if (fipp) *fipp = fip;
-            return ERR_FILE_MISSING;
-        }
-        retval = fip->verify_file(verify, true);
-        if (retval) {
-            if (fipp) *fipp = fip;
-            return retval;
+            if (fip_set) {
+                fip_set->insert(fip);
+                result = ERR_FILE_MISSING;
+            } else {
+                return ERR_FILE_MISSING;
+            }
+        } else {
+            // Only verify files marked as present.
+            int retval = fip->verify_file(verify, true);
+            if (retval) {
+                if (fip_set) {
+                    fip_set->insert(fip);
+                    result = retval;
+                } else {
+                    return retval;
+                }
+            }
         }
     }
-    return 0;
+    return result;
 }
 
 inline double force_fraction(double f) {
@@ -254,7 +275,7 @@ double CLIENT_STATE::get_fraction_done(RESULT* result) {
 
 /// Find latest version of app for given platform
 /// or -1 if can't find one.
-int CLIENT_STATE::latest_version(APP* app, char* platform) {
+int CLIENT_STATE::latest_version(APP* app, const char* platform) {
     unsigned int i;
     int best = -1;
 

@@ -33,61 +33,61 @@
 #include <pthread.h>
 #endif
 
-extern double dtime();
-extern double dday();
-extern void boinc_sleep(double);
-extern void push_unique(std::string, std::vector<std::string>&);
+double dtime();
+double dday();
+void boinc_sleep(double seconds);
+void push_unique(std::string s, std::vector<std::string>& v);
 
 // NOTE: use #include <functional>   to get max,min
 
 #define SECONDS_PER_DAY 86400
 
-static inline double drand() {
+inline double drand() {
     return (double)rand()/(double)RAND_MAX;
 }
 
 #ifdef _WIN32
 #include <windows.h>
 
-extern int boinc_thread_cpu_time(HANDLE thread_handle, double& cpu);
-extern int boinc_process_cpu_time(double& cpu);
+int boinc_thread_cpu_time(HANDLE thread_handle, double& cpu);
+int boinc_process_cpu_time(double& cpu);
 #else
 // setpriority(2) arg to run in background
 // (don't use 20 because
 //
 static const int PROCESS_IDLE_PRIORITY = 19;
-extern double linux_cpu_time(int pid);
+double linux_cpu_time(int pid);
 #endif
 
-extern void update_average(double, double, double, double&, double&);
+void update_average(double work_start_time, double work, double half_life, double& avg, double& avg_time);
 
-extern int boinc_calling_thread_cpu_time(double&);
+int boinc_calling_thread_cpu_time(double& cpu);
 
-extern void boinc_crash();
-extern int read_file_malloc(const char* path, char*&, int max_len=0, bool tail=false);
-extern int read_file_string(const char* path, std::string&, int max_len=0, bool tail=false);
+void boinc_crash();
+int read_file_malloc(const char* path, char*&, int max_len=0, bool tail=false);
+int read_file_string(const char* path, std::string&, int max_len=0, bool tail=false);
 
 #ifdef _WIN32
 
-extern int run_program(
-    const char* path, const char* cdir, int argc, char *const argv[], double, HANDLE&
+int run_program(
+    const char* path, const char* cdir, int argc, char *const argv[], double, HANDLE& id
 );
 
-extern void kill_program(HANDLE);
-extern int get_exit_status(HANDLE);
-extern bool process_exists(HANDLE);
+void kill_program(HANDLE proc);
+int get_exit_status(HANDLE proc);
+bool process_exists(HANDLE proc);
 
 #else
-extern int run_program(
+int run_program(
     const char* path, const char* cdir, int argc, char *const argv[], double, int&
 );
-extern void kill_program(int);
-extern int get_exit_status(int);
-extern bool process_exists(int);
+void kill_program(int pid);
+int get_exit_status(int pid);
+bool process_exists(int pid);
 
 /// Prepare arguments for execv and call that function.
-extern int do_execv(const std::string& path, const std::list<std::string>& argv);
+int do_execv(const std::string& path, const std::list<std::string>& argv);
 #endif
 
-extern int wait_client_mutex(const char* dir, double timeout);
+int wait_client_mutex(const char* dir, double timeout);
 #endif

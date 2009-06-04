@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -37,7 +37,6 @@
 #include "CompletionErrorPage.h"
 #include "NotDetectedPage.h"
 #include "UnavailablePage.h"
-#include "AlreadyAttachedPage.h"
 #include "NoInternetConnectionPage.h"
 #include "NotFoundPage.h"
 #include "AlreadyExistsPage.h"
@@ -80,7 +79,6 @@ bool CWizardAttachProject::Create(wxWindow* parent, wxWindowID id, const wxPoint
     m_CompletionErrorPage = NULL;
     m_ErrNotDetectedPage = NULL;
     m_ErrUnavailablePage = NULL;
-    m_ErrAlreadyAttachedPage = NULL;
     m_ErrNoInternetConnectionPage = NULL;
     m_ErrNotFoundPage = NULL;
     m_ErrAlreadyExistsPage = NULL;
@@ -159,10 +157,6 @@ void CWizardAttachProject::CreateControls() {
     m_ErrUnavailablePage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrUnavailablePage);
 
-    m_ErrAlreadyAttachedPage = new CErrAlreadyAttachedPage;
-    m_ErrAlreadyAttachedPage->Create(itemWizard1);
-    GetPageAreaSizer()->Add(m_ErrAlreadyAttachedPage);
-
     m_ErrNoInternetConnectionPage = new CErrNoInternetConnectionPage;
     m_ErrNoInternetConnectionPage->Create(itemWizard1);
     GetPageAreaSizer()->Add(m_ErrNoInternetConnectionPage);
@@ -193,7 +187,6 @@ void CWizardAttachProject::CreateControls() {
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_CompletionErrorPage = id: '%d', location: '%p'"), m_CompletionErrorPage->GetId(), m_CompletionErrorPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ErrNotDetectedPage = id: '%d', location: '%p'"), m_ErrNotDetectedPage->GetId(), m_ErrNotDetectedPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ErrUnavailablePage = id: '%d', location: '%p'"), m_ErrUnavailablePage->GetId(), m_ErrUnavailablePage);
-    wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ErrAlreadyAttachedPage = id: '%d', location: '%p'"), m_ErrAlreadyAttachedPage->GetId(), m_ErrAlreadyAttachedPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ErrNoInternetConnectionPage = id: '%d', location: '%p'"), m_ErrNoInternetConnectionPage->GetId(), m_ErrNoInternetConnectionPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ErrNotFoundPage = id: '%d', location: '%p'"), m_ErrNotFoundPage->GetId(), m_ErrNotFoundPage);
     wxLogTrace(wxT("Function Status"), wxT("CWizardAttachProject::CreateControls -     m_ErrAlreadyExistsPage = id: '%d', location: '%p'"), m_ErrAlreadyExistsPage->GetId(), m_ErrAlreadyExistsPage);
@@ -309,7 +302,6 @@ bool CWizardAttachProject::HasNextPage(wxWizardPage* page) {
     bNoNextPageDetected |= (page == m_CompletionErrorPage);
     bNoNextPageDetected |= (page == m_ErrNotDetectedPage);
     bNoNextPageDetected |= (page == m_ErrUnavailablePage);
-    bNoNextPageDetected |= (page == m_ErrAlreadyAttachedPage);
     bNoNextPageDetected |= (page == m_ErrNoInternetConnectionPage);
     bNoNextPageDetected |= (page == m_ErrAlreadyExistsPage);
  
@@ -383,9 +375,6 @@ wxWizardPage* CWizardAttachProject::_PushPageTransition(wxWizardPage* pCurrentPa
                 break;
             case ID_ERRUNAVAILABLEPAGE:
                 pPage = m_ErrUnavailablePage;
-                break;
-            case ID_ERRALREADYATTACHEDPAGE:
-                pPage = m_ErrAlreadyAttachedPage;
                 break;
             case ID_ERRNOINTERNETCONNECTIONPAGE:
                 pPage = m_ErrNoInternetConnectionPage;

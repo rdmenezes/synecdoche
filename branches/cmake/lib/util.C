@@ -77,13 +77,13 @@ double dtime() {
 #endif
 }
 
-/// return time today 0:00 in seconds since 1970 as a double
+/// Return time today 0:00 in seconds since 1970 as a double.
 double dday() {
     double now=dtime();
     return (now-fmod(now, SECONDS_PER_DAY));
 }
 
-/// sleep for a specified number of seconds
+/// Sleep for a specified number of seconds.
 void boinc_sleep(double seconds) {
 #ifdef _WIN32
     ::Sleep((int)(1000*seconds));
@@ -282,7 +282,10 @@ void boinc_crash() {
 #endif
 }
 
-/// read file (at most max_len chars, if nonzero) into malloc'd buf
+/// Read file (at most \a max_len chars, if nonzero) into malloc'd buf.
+/// \todo Use std::filebuf instead of FILE.
+/// \todo Read into new'd buf? Would need to change callers to use delete
+/// instead of free.
 int read_file_malloc(const char* path, char*& buf, int max_len, bool tail) {
     FILE* f;
     int retval, isize;
@@ -308,7 +311,8 @@ int read_file_malloc(const char* path, char*& buf, int max_len, bool tail) {
     return 0;
 }
 
-/// read file (at most max_len chars, if nonzero) into string
+/// Read file (at most \a max_len chars, if nonzero) into string
+/// \todo Use std::filebuf directly, and don't delegate to read_file_malloc.
 int read_file_string(const char* path, std::string& result, int max_len, bool tail) {
     result.erase();
     int retval;
@@ -324,9 +328,9 @@ int read_file_string(const char* path, std::string& result, int max_len, bool ta
 #ifdef _WIN32
 
 /// chdir into the given directory, and run a program there.
-/// If nsecs is nonzero, make sure it's still running after that many seconds.
+/// If \a nsecs is nonzero, make sure it's still running after that many seconds.
 ///
-/// argv is set up Unix-style, i.e. argv[0] is the program name
+/// \a argv is set up Unix-style, i.e. argv[0] is the program name
 int run_program(
     const char* dir, const char* file, int argc, char *const argv[], double nsecs, HANDLE& id
 ) {
@@ -411,8 +415,8 @@ int run_program(
 #endif
 
 #ifdef _WIN32
-void kill_program(HANDLE pid) {
-    TerminateProcess(pid, 0);
+void kill_program(HANDLE proc) {
+    TerminateProcess(proc, 0);
 }
 #else
 void kill_program(int pid) {
@@ -421,10 +425,10 @@ void kill_program(int pid) {
 #endif
 
 #ifdef _WIN32
-int get_exit_status(HANDLE pid_handle) {
+int get_exit_status(HANDLE proc) {
     unsigned long status=1;
     while (1) {
-        if (GetExitCodeProcess(pid_handle, &status)) {
+        if (GetExitCodeProcess(proc, &status)) {
             if (status == STILL_ACTIVE) {
                 boinc_sleep(1);
             }
@@ -435,9 +439,9 @@ int get_exit_status(HANDLE pid_handle) {
     }
     return (int) status;
 }
-bool process_exists(HANDLE h) {
+bool process_exists(HANDLE proc) {
     unsigned long status=1;
-    if (GetExitCodeProcess(h, &status)) {
+    if (GetExitCodeProcess(proc, &status)) {
         if (status == STILL_ACTIVE) return true;
     }
     return false;
@@ -465,17 +469,17 @@ bool process_exists(int pid) {
 /// \return Only returns -1, if it returns.
 int do_execv(const std::string& path, const std::list<std::string>& argv)
 {
-    char** argv_p = new char*[argv.size() + 1];
+    const char** argv_p = new const char*[argv.size() + 1];
     int i = 0;
     for (std::list<std::string>::const_iterator it = argv.begin();
                 it != argv.end(); ++it) {
-        // Ugly but necessary as you cannot create an array of char* const
-        // without immediate initialization of all members in C++98:
-        argv_p[i++] = const_cast<char*>((*it).c_str());
+        argv_p[i++] = (*it).c_str();
     }
     argv_p[i] = 0;
 
-    int ret_val = execv(path.c_str(), argv_p);
+    // Cast is ugly but necessary as execv takes a char* const* instead of
+    // const char* const*
+    int ret_val = execv(path.c_str(), const_cast<char* const*>(argv_p));
 
     delete[] argv_p;
     return ret_val;

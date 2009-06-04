@@ -1,6 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -53,12 +54,10 @@ using std::max;
 using std::vector;
 using std::string;
 
-/// quantities like avg CPU time decay by a factor of e every week
-///
+/// Quantities like avg CPU time decay by a factor of e every week
 #define EXP_DECAY_RATE  (1./(SECONDS_PER_DAY*7))
 
-/// try to report results this much before their deadline
-///
+/// Try to report results this much before their deadline.
 #define REPORT_DEADLINE_CUSHION ((double)SECONDS_PER_DAY)
 
 static const char* urgency_name(int urgency) {
@@ -71,8 +70,8 @@ static const char* urgency_name(int urgency) {
     return "Unknown";
 }
 
-/// how many CPUs should this project occupy on average,
-/// based on its resource share relative to a given set
+/// How many CPUs should this project occupy on average,
+/// based on its resource share relative to a given set.
 ///
 int CLIENT_STATE::proj_min_results(PROJECT* p, double subset_resource_share) {
     if (p->non_cpu_intensive) {
@@ -117,7 +116,7 @@ bool PROJECT::waiting_until_min_rpc_time() {
     return (min_rpc_time > gstate.now);
 }
 
-/// find a project that needs to have its master file fetched
+/// Find a project that needs to have its master file fetched.
 ///
 PROJECT* CLIENT_STATE::next_project_master_pending() {
     unsigned int i;
@@ -173,13 +172,12 @@ PROJECT* CLIENT_STATE::next_project_trickle_up_pending() {
     return 0;
 }
 
-/// Return the best project to fetch work from, NULL if none
+/// Return the best project to fetch work from, NULL if none.
 ///
 /// Pick the one with largest (long term debt - amount of current work)
 ///
-/// PRECONDITIONS:
-///   - work_request_urgency and work_request set for all projects
-///   - CLIENT_STATE::overall_work_fetch_urgency is set
+/// \pre work_request_urgency and work_request is set for all projects.
+/// \pre CLIENT_STATE::overall_work_fetch_urgency is set
 /// (by previous call to compute_work_requests())
 ///
 PROJECT* CLIENT_STATE::next_project_need_work() {
@@ -234,7 +232,7 @@ PROJECT* CLIENT_STATE::next_project_need_work() {
     return p_prospect;
 }
 
-/// find a project with finished results that should be reported.
+/// Find a project with finished results that should be reported.
 /// This means:
 ///    - we're not backing off contacting the project
 ///    - the result is ready_to_report (compute done; files uploaded)
@@ -274,7 +272,7 @@ PROJECT* CLIENT_STATE::find_project_with_overdue_results() {
     return 0;
 }
 
-/// the fraction of time a given CPU is working for BOINC
+/// The fraction of time a given CPU is working for BOINC.
 ///
 double CLIENT_STATE::overall_cpu_frac() {
     double running_frac = time_stats.on_frac * time_stats.active_frac * time_stats.cpu_efficiency;
@@ -283,7 +281,7 @@ double CLIENT_STATE::overall_cpu_frac() {
     return running_frac;
 }
 
-/// the expected number of CPU seconds completed by the client
+/// The expected number of CPU seconds completed by the client
 /// in a second of wall-clock time.
 /// May be > 1 on a multiprocessor.
 ///
@@ -291,10 +289,9 @@ double CLIENT_STATE::avg_proc_rate() {
     return ncpus*overall_cpu_frac();
 }
 
-/// estimate wall-clock time until the number of uncompleted results
-/// for project p will reach k,
-/// given the total resource share of a set of competing projects
-///
+/// Estimate wall-clock time until the number of uncompleted results
+/// for project \a p will reach \a k,
+/// given the total resource share of a set of competing projects.
 double CLIENT_STATE::time_until_work_done(
     PROJECT *p, int k, double subset_resource_share
 ) {
@@ -607,8 +604,9 @@ bool CLIENT_STATE::compute_work_requests() {
     return false;
 }
 
-/// called when benchmarks change
+/// Multiplies the duration correction factor of all projects by \a factor.
 ///
+/// Called when benchmarks change.
 void CLIENT_STATE::scale_duration_correction_factors(double factor) {
     if (factor <= 0) return;
     for (unsigned int i=0; i<projects.size(); i++) {
@@ -624,8 +622,8 @@ void CLIENT_STATE::scale_duration_correction_factors(double factor) {
 }
 
 /// Choose a new host CPID.
-/// If using account manager, do scheduler RPCs
-/// to all acct-mgr-attached projects to propagate the CPID
+/// If using an account manager, do scheduler RPCs
+/// to all acct-mgr-attached projects to propagate the CPID.
 ///
 void CLIENT_STATE::generate_new_host_cpid() {
     host_info.generate_host_cpid();
@@ -718,7 +716,7 @@ bool RESULT::nearly_runnable() const {
 }
 
 /// Return true if the result is waiting for its files to download,
-/// and nothing prevents this from happening soon
+/// and nothing prevents this from happening soon.
 ///
 bool RESULT::downloading() const {
     if (suspended_via_gui) return false;
@@ -731,8 +729,7 @@ double RESULT::estimated_cpu_time_uncorrected() const {
     return wup->rsc_fpops_est/gstate.host_info.p_fpops;
 }
 
-/// estimate how long a result will take on this host
-///
+/// Estimate how long a result will take on this host.
 double RESULT::estimated_cpu_time() const {
     return estimated_cpu_time_uncorrected()*project->duration_correction_factor;
 }
@@ -747,7 +744,7 @@ double RESULT::estimated_cpu_time_remaining() const {
 }
 
 /// Returns the estimated CPU time to completion (in seconds) of this task.
-/// Compute this as a weighted average of estimates based on
+/// This is computed as a weighted average of estimates based on
 /// -# the workunit's flops count
 /// -# the current reported CPU time and fraction done
 ///
@@ -761,11 +758,22 @@ double ACTIVE_TASK::est_cpu_time_to_completion() const {
     return x;
 }
 
-/// trigger work fetch
-///
+/// Trigger work fetch.
 void CLIENT_STATE::request_work_fetch(const char* where) {
     if (log_flags.work_fetch_debug) {
         msg_printf(0, MSG_INFO, "[work_fetch_debug] Request work fetch: %s", where);
     }
     must_check_work_fetch = true;
+}
+
+/// Reset all debts to zero if "zero_debts" is set in the config file.
+void CLIENT_STATE::zero_debts_if_requested() {
+    if (!config.zero_debts) {
+        return;
+    }
+
+    for (std::vector<PROJECT*>::iterator p = projects.begin(); p != projects.end(); ++p) {
+        (*p)->short_term_debt = 0.0;
+        (*p)->long_term_debt = 0.0;
+    }
 }
