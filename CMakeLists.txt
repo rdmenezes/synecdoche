@@ -1,6 +1,6 @@
 # This file is part of Synecdoche.
 # http://synecdoche.googlecode.com/
-# Copyright (C) 2008 Nicolas Alvarez
+# Copyright (C) 2009 Nicolas Alvarez
 #
 # Synecdoche is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
@@ -118,6 +118,21 @@ FOREACH(type "socklen_t" "size_t" "int")
 ENDFOREACH(type)
 
 AC_STRUCT_TIMEZONE()
+
+IF(WIN32)
+    ADD_CUSTOM_TARGET(update_svnversion ALL
+        ${CMAKE_SOURCE_DIR}/version.bat ${CMAKE_BINARY_DIR}/svnversion.cpp
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        VERBATIM
+    )
+ELSE(WIN32)
+    ADD_CUSTOM_TARGET(update_svnversion ALL
+        ${CMAKE_SOURCE_DIR}/version.sh ${CMAKE_BINARY_DIR}/svnversion.cpp
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        VERBATIM
+    )
+ENDIF(WIN32)
+
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib ${CMAKE_SOURCE_DIR}/client)

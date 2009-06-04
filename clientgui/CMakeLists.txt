@@ -1,6 +1,6 @@
 # This file is part of Synecdoche.
 # http://synecdoche.googlecode.com/
-# Copyright (C) 2008 Nicolas Alvarez
+# Copyright (C) 2009 Nicolas Alvarez
 #
 # Synecdoche is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
@@ -106,6 +106,7 @@ ADD_EXECUTABLE(synecmgr WIN32
 	common/wxFlatNotebook.cpp
 
 	${PLATFORM_GUI_SOURCES}
+	${CMAKE_BINARY_DIR}/svnversion.cpp
 # }}}
 )
 TARGET_LINK_LIBRARIES(synecmgr boinc)
