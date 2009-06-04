@@ -338,7 +338,7 @@ int PERS_FILE_XFER::parse(MIOFILE& fin) {
 }
 
 /// Write XML information about a persistent file transfer
-int PERS_FILE_XFER::write(MIOFILE& fout) {
+int PERS_FILE_XFER::write(MIOFILE& fout) const {
     fout.printf(
         "    <persistent_file_xfer>\n"
         "        <num_retries>%d</num_retries>\n"

@@ -754,7 +754,7 @@ int CLIENT_STATE::parse_app_info(PROJECT* p, FILE* in) {
     return ERR_XML_PARSE;
 }
 
-int CLIENT_STATE::write_state_gui(MIOFILE& f) {
+int CLIENT_STATE::write_state_gui(MIOFILE& f) const {
     unsigned int i, j;
     int retval;
 
@@ -768,7 +768,7 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) {
     if (retval) return retval;
 
     for (j=0; j<projects.size(); j++) {
-        PROJECT* p = projects[j];
+        const PROJECT* p = projects[j];
         retval = p->write_state(f, true);
         if (retval) return retval;
         for (i=0; i<apps.size(); i++) {
@@ -812,22 +812,22 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) {
     return 0;
 }
 
-int CLIENT_STATE::write_tasks_gui(MIOFILE& f) {
+int CLIENT_STATE::write_tasks_gui(MIOFILE& f) const {
     unsigned int i;
 
     for (i=0; i<results.size(); i++) {
-        RESULT* rp = results[i];
+        const RESULT* rp = results[i];
         rp->write_gui(f);
     }
     return 0;
 }
 
-int CLIENT_STATE::write_file_transfers_gui(MIOFILE& f) {
+int CLIENT_STATE::write_file_transfers_gui(MIOFILE& f) const {
     unsigned int i;
 
     f.printf("<file_transfers>\n");
     for (i=0; i<file_infos.size(); i++) {
-        FILE_INFO* fip = file_infos[i];
+        const FILE_INFO* fip = file_infos[i];
         if (fip->pers_file_xfer
            || (fip->upload_when_present && fip->status == FILE_PRESENT && !fip->uploaded)
         ) {

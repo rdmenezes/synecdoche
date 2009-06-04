@@ -1576,7 +1576,7 @@ int RESULT::write(MIOFILE& out, bool to_server) const {
     return 0;
 }
 
-int RESULT::write_gui(MIOFILE& out) {
+int RESULT::write_gui(MIOFILE& out) const {
     out.printf(
         "<result>\n"
         "    <name>%s</name>\n"

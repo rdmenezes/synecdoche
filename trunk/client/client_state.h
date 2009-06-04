@@ -403,9 +403,9 @@ public:
     int write_state_file_if_needed();
     void check_anonymous();
     int parse_app_info(PROJECT* p, FILE* in);
-    int write_state_gui(MIOFILE& f);
-    int write_file_transfers_gui(MIOFILE& f);
-    int write_tasks_gui(MIOFILE& f);
+    int write_state_gui(MIOFILE& f) const;
+    int write_file_transfers_gui(MIOFILE& f) const;
+    int write_tasks_gui(MIOFILE& f) const;
 /// @}
 
 /// @name cs_trickle.C
