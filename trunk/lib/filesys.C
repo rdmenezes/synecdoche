@@ -61,10 +61,10 @@
 typedef BOOL (CALLBACK* FreeFn)(LPCTSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER);
 #endif // _WIN32
 
+#include "filesys.h"
 #include "util.h"
 #include "str_util.h"
 #include "error_numbers.h"
-#include "filesys.h"
 
 char boinc_failed_file[256];
 

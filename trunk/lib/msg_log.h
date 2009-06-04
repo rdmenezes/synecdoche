@@ -21,12 +21,7 @@
 #include <cstdio>
 #include <cstdarg>
 
-// the __attribute((format...)) tags are GCC extensions that let the compiler
-// do like-checking on printf-like arguments
-//
-#if !defined(__GNUC__) && !defined(__attribute__)
-#define __attribute__(x) /*nothing*/
-#endif
+#include "attributes.h"
 
 class MSG_LOG {
 public:

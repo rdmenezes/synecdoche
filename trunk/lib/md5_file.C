@@ -26,8 +26,8 @@
 #include <cstdio>
 #endif
 
-#include "md5.h"
 #include "md5_file.h"
+#include "md5.h"
 #include "error_numbers.h"
 
 int md5_file(const char* path, char* output, double& nbytes) {

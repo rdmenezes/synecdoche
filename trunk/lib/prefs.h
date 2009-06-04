@@ -18,8 +18,6 @@
 #ifndef _PREFS_
 #define _PREFS_
 
-#include <cstdio>
-
 class MIOFILE;
 class XML_PARSER;
 

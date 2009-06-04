@@ -18,9 +18,9 @@
 #ifndef _MIOFILE_
 #define _MIOFILE_
 
-#ifndef _WIN32
+#include <cstdio>
+
 #include <string>
-#endif
 
 #include "mfile.h"
 

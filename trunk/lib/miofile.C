@@ -26,8 +26,8 @@
 #include <cstdarg>
 #endif
 
-#include "error_numbers.h"
 #include "miofile.h"
+#include "error_numbers.h"
 
 using std::string;
 

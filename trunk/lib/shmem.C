@@ -16,7 +16,7 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 /// \file
-/// interfaces for accessing shared memory segments
+/// Interfaces for accessing shared memory segments
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -332,15 +332,14 @@ int create_shmem(key_t key, int size, gid_t gid, void** pp) {
     return attach_shmem(key, pp);
 }
 
-// Mark the shared memory segment so it will be released after 
-// the last attached process detaches or exits.
-// On Mac OS X and some other systems, not doing this causes 
-// shared memory leaks if BOINC crashes or exits suddenly.
-// On Mac OS X and some other systems, this command also 
-// prevents any more processes from attaching (by clearing 
-// the key in the shared memory structure), so BOINC does it 
-// only after we are completey done with the segment.
-//
+/// Mark the shared memory segment so it will be released after 
+/// the last attached process detaches or exits.
+/// On Mac OS X and some other systems, not doing this causes 
+/// shared memory leaks if BOINC crashes or exits suddenly.
+/// On Mac OS X and some other systems, this command also 
+/// prevents any more processes from attaching (by clearing 
+/// the key in the shared memory structure), so BOINC does it 
+/// only after we are completey done with the segment.
 int destroy_shmem(key_t key){
     struct shmid_ds buf;
     int id, retval;
