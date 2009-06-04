@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -39,13 +39,11 @@ class XML_PARSER;
 
 struct LOG_FLAGS {
     // on by default, user-readable
-    //
     bool task;              ///< task start and finish
     bool file_xfer;         ///< file transfer start and finish
     bool sched_ops;         ///< interactions with schedulers
 
     // off by default; intended for developers and testers
-    //
     bool cpu_sched;         ///< preemption and resumption
     bool cpu_sched_debug;   ///< explain scheduler decisions
     bool rr_simulation;     ///< results of rr simulator
@@ -58,7 +56,7 @@ struct LOG_FLAGS {
     bool state_debug;       ///< print textual summary of CLIENT_STATE initially
                             ///< and after each scheduler RPC and garbage collect
                             ///< also show actions of garbage collector
-                            ///< also show when state file is read or written
+    bool statefile_debug;   ///< show when and why state file is written
     bool file_xfer_debug;   ///< show completion of FILE_XFER
     bool sched_op_debug;
     bool http_debug;
@@ -104,6 +102,7 @@ struct CONFIG {
     bool run_apps_manually;
     std::string force_auth;
     bool allow_multiple_clients;
+    bool zero_debts;        ///< If true reset all debts to zero.
 
     CONFIG();
     void defaults();
@@ -115,9 +114,9 @@ extern LOG_FLAGS log_flags;
 extern CONFIG config;
 
 /// Read the config file.
-extern int read_config_file(bool init);
+int read_config_file(bool init);
 
 /// Print a message about unparsed xml.
-extern void handle_unparsed_xml_warning(const std::string& in_func, const std::string& buf);
+void handle_unparsed_xml_warning(const std::string& in_func, const std::string& buf);
 
 #endif // LOGFLAGS_H

@@ -40,18 +40,17 @@ HANDLE attach_shmem(LPCTSTR seg_name, void** pp);
 int detach_shmem(HANDLE hSharedMem, void* p);
 #else
 #define MMAPPED_FILE_NAME    "boinc_mmap_file"
-extern int create_shmem_mmap(const char *path, size_t size, void** pp);
-extern int attach_shmem_mmap(const char *path, void** pp);
-extern int detach_shmem_mmap(void* p, size_t size);
-extern int create_shmem(key_t, int size, gid_t gid, void**);
-extern int attach_shmem(key_t, void**);
-extern int detach_shmem(void*);
-extern int shmem_info(key_t key);
-// Destroy a shared-memory segment.
-// If there are attachments to it,
-// print a message in a loop until the attachments are gone
-//
-extern int destroy_shmem(key_t);
+int create_shmem_mmap(const char *path, size_t size, void** pp);
+int attach_shmem_mmap(const char *path, void** pp);
+int detach_shmem_mmap(void* p, size_t size);
+int create_shmem(key_t key, int size, gid_t gid, void** pp);
+int attach_shmem(key_t key, void** pp);
+int detach_shmem(void* pp);
+int shmem_info(key_t key);
+/// Destroy a shared-memory segment.
+/// If there are attachments to it,
+/// print a message in a loop until the attachments are gone
+int destroy_shmem(key_t key);
 #endif      // !defined(_WIN32)
 
 #endif      // BOINC_SHMEM_H

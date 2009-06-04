@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -22,6 +23,7 @@
 #ifndef _WIN32
 #include "config.h"
 #include <cstring>
+#include <sstream>
 #include <string>
 #endif
 
@@ -322,7 +324,7 @@ void MSG_CHANNEL::send_msg_overwrite(const char* msg) {
     buf[0] = 1;
 }
 
-int APP_CLIENT_SHM::decode_graphics_msg(char* msg, GRAPHICS_MSG& m) {
+int APP_CLIENT_SHM::decode_graphics_msg(const char* msg, GRAPHICS_MSG& m) {
     int i;
 
     parse_str(msg, "<window_station>", m.window_station);
@@ -345,7 +347,7 @@ void APP_CLIENT_SHM::reset_msgs() {
 /// Resolve virtual name (in slot dir) to physical path (in project dir).
 /// This function is a C-version of boinc_resolve_filename_s and only exists
 /// for compatibility reasons. See boinc_resolve_filename_s for more
-///information.
+/// information.
 ///
 /// \param[in] virtual_name String describing the virtual file name which
 ///                         should get resolved.
@@ -414,4 +416,14 @@ void url_to_project_dir(const char* url, char* dir) {
     char buf[256];
     escape_project_url(url, buf);
     sprintf(dir, "%s/%s", PROJECT_DIR, buf);
+}
+
+/// Get the directory for a project denoted by its master-url.
+///
+/// \param[in] url The master-url of the project.
+/// \return The directory used for the project denoted by the given master-url.
+std::string url_to_project_dir(const std::string& url) {
+    std::ostringstream result;
+    result << PROJECT_DIR << '/' << escape_project_url(url);
+    return result.str();
 }

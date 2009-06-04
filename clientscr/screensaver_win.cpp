@@ -1442,8 +1442,9 @@ VOID CScreensaver::InterruptSaver() {
 
 
 
-// Update the box that shows the error message
-//
+/// Update the box that shows the error message
+///
+/// \todo The pixel size of the error block shouldn't be hardcoded.
 VOID CScreensaver::UpdateErrorBox() {
     INTERNALMONITORINFO* pMonitorInfo;
     HWND hwnd;

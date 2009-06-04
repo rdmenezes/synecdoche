@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -30,35 +30,32 @@
 #endif
 
 #include "log_flags.h"
-#include "error_numbers.h"
-#include "common_defs.h"
-#include "file_names.h"
+
 #include "client_msgs.h"
-#include "parse.h"
-#include "miofile.h"
-#include "str_util.h"
+#include "client_state.h"
+#include "common_defs.h"
+#include "error_numbers.h"
+#include "file_names.h"
 #include "filesys.h"
+#include "miofile.h"
+#include "parse.h"
+#include "str_util.h"
 
 LOG_FLAGS log_flags;
 CONFIG config;
 
 LOG_FLAGS::LOG_FLAGS() {
-
-    memset(this, 0, sizeof(LOG_FLAGS));
-
     defaults();
 }
 
 void LOG_FLAGS::defaults() {
     // on by default
     // (others are off by default)
-    //
     task = true;
     file_xfer = true;
     sched_ops = true;
 
     // off by default; intended for developers and testers
-    //
     cpu_sched = false;
     cpu_sched_debug = false;
     rr_simulation = false;
@@ -67,6 +64,7 @@ void LOG_FLAGS::defaults() {
     work_fetch_debug = false;
     unparsed_xml = false;
     state_debug = false;
+    statefile_debug = false;
     file_xfer_debug = false;
     sched_op_debug = false;
     http_debug = false;
@@ -108,6 +106,7 @@ int LOG_FLAGS::parse(XML_PARSER& xp) {
         if (xp.parse_bool(tag, "work_fetch_debug", work_fetch_debug)) continue;
         if (xp.parse_bool(tag, "unparsed_xml", unparsed_xml)) continue;
         if (xp.parse_bool(tag, "state_debug", state_debug)) continue;
+        if (xp.parse_bool(tag, "statefile_debug", statefile_debug)) continue;
         if (xp.parse_bool(tag, "file_xfer_debug", file_xfer_debug)) continue;
         if (xp.parse_bool(tag, "sched_op_debug", sched_op_debug)) continue;
         if (xp.parse_bool(tag, "http_debug", http_debug)) continue;
@@ -160,6 +159,7 @@ void LOG_FLAGS::show() {
     show_flag(buf, work_fetch_debug, "work_fetch_debug");
     show_flag(buf, unparsed_xml, "unparsed_xml");
     show_flag(buf, state_debug, "state_debug");
+    show_flag(buf, statefile_debug, "statefile_debug");
     show_flag(buf, file_xfer_debug, "file_xfer_debug");
     show_flag(buf, sched_op_debug, "sched_op_debug");
     show_flag(buf, http_debug, "http_debug");
@@ -204,6 +204,7 @@ void CONFIG::defaults() {
     start_delay = 0;
     run_apps_manually = false;
     force_auth = "default";
+    zero_debts = false;
 }
 
 int CONFIG::parse_options(XML_PARSER& xp) {
@@ -252,6 +253,13 @@ int CONFIG::parse_options(XML_PARSER& xp) {
         if (xp.parse_string(tag, "force_auth", force_auth)) {
             downcase_string(force_auth);
             continue;
+        }
+        if (xp.parse_bool(tag, "zero_debts", zero_debts)) continue;
+        if (!strncmp(tag, "proxy_info", sizeof(tag))) {
+            int retval = gstate.proxy_info.parse(xp.get_miofile());
+            if (retval) {
+                return retval;
+            }
         }
         msg_printf(NULL, MSG_USER_ERROR, "Unrecognized tag in %s: <%s>\n",
             CONFIG_FILE, tag

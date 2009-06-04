@@ -1,7 +1,7 @@
 @echo off
 
 rem Get the svn revision number
-svnversion > %1.tmp
+svnversion -n .. > %1.tmp
 set /p _revision=< %1.tmp
 if x%_revision%==xexported set _revision=0
 if x%_revision%==x set _revision=0

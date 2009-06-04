@@ -1809,16 +1809,18 @@ void CViewStatistics::DemandLoadView() {
     // Create Task Pane Items
     m_pTaskPane->UpdateControls();
 
+    RestoreState();
+
     UpdateSelection();
 }
 
 
-wxString& CViewStatistics::GetViewName() {
-    static wxString strViewName(_("Statistics"));
+const wxString& CViewStatistics::GetViewName() {
+    static wxString strViewName(wxT("Statistics"));
     return strViewName;
 }
 
-wxString& CViewStatistics::GetViewDisplayName() {
+const wxString& CViewStatistics::GetViewDisplayName() {
     static wxString strViewName(_("Statistics"));
     return strViewName;
 }

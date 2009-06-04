@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ END_EVENT_TABLE ()
 
 static CViewTransfers* MyCViewTransfers;
 
-static int CompareViewTransferItems(int iRowIndex1, int iRowIndex2) {
+static bool CompareViewTransferItems(size_t iRowIndex1, size_t iRowIndex2) {
     CTransfer*      transfer1 = MyCViewTransfers->m_TransferCache.at(iRowIndex1);
     CTransfer*      transfer2 = MyCViewTransfers->m_TransferCache.at(iRowIndex2);
     int             result = 0;
@@ -107,12 +107,8 @@ static int CompareViewTransferItems(int iRowIndex1, int iRowIndex2) {
             break;
     }
 
-    // Tie-breaker
-    if (result == 0) {
-        return (iRowIndex2 - iRowIndex1);
-    }
-
-    return (MyCViewTransfers->m_bReverseSort ? result * (-1) : result);
+    // Always return false for equality (result == 0).
+    return ((MyCViewTransfers->m_bReverseSort) ? (result > 0) : (result < 0));
 }
 
 CViewTransfers::CViewTransfers() {
@@ -155,13 +151,13 @@ void CViewTransfers::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    m_pListPane->InsertColumn(COLUMN_PROJECT, _("Project"), wxLIST_FORMAT_LEFT, 125);
-    m_pListPane->InsertColumn(COLUMN_FILE, _("File"), wxLIST_FORMAT_LEFT, 205);
-    m_pListPane->InsertColumn(COLUMN_PROGRESS, _("Progress"), wxLIST_FORMAT_CENTRE, 60);
-    m_pListPane->InsertColumn(COLUMN_SIZE, _("Size"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_TIME, _("Elapsed Time"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_SPEED, _("Speed"), wxLIST_FORMAT_LEFT, 80);
-    m_pListPane->InsertColumn(COLUMN_STATUS, _("Status"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_PROJECT,  wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 125);
+    AddColumn(COLUMN_FILE,     wxTRANSLATE("File"), wxLIST_FORMAT_LEFT, 205);
+    AddColumn(COLUMN_PROGRESS, wxTRANSLATE("Progress"), wxLIST_FORMAT_CENTRE, 60);
+    AddColumn(COLUMN_SIZE,     wxTRANSLATE("Size"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TIME,     wxTRANSLATE("Elapsed Time"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_SPEED,    wxTRANSLATE("Speed"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_STATUS,   wxTRANSLATE("Status"), wxLIST_FORMAT_LEFT, 150);
 
     m_iProgressColumn = COLUMN_PROGRESS;
 
@@ -169,15 +165,17 @@ void CViewTransfers::DemandLoadView() {
     MyCViewTransfers = this;
     m_funcSortCompare = CompareViewTransferItems;
 
+    RestoreState();
+
     UpdateSelection();
 }
 
-wxString& CViewTransfers::GetViewName() {
-    static wxString strViewName(_("Transfers"));
+const wxString& CViewTransfers::GetViewName() {
+    static wxString strViewName(wxT("Transfers"));
     return strViewName;
 }
 
-wxString& CViewTransfers::GetViewDisplayName() {
+const wxString& CViewTransfers::GetViewDisplayName() {
     static wxString strViewName(_("Transfers"));
     return strViewName;
 }
@@ -426,7 +424,7 @@ bool CViewTransfers::SynchronizeCacheItem(wxInt32 iRowIndex, wxInt32 iColumnInde
     return false;
 }
 
-void CViewTransfers::GetDocProjectName(wxInt32 item, wxString& strBuffer) const {
+void CViewTransfers::GetDocProjectName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
@@ -440,7 +438,7 @@ void CViewTransfers::GetDocProjectName(wxInt32 item, wxString& strBuffer) const 
     }
 }
 
-void CViewTransfers::GetDocFileName(wxInt32 item, wxString& strBuffer) const {
+void CViewTransfers::GetDocFileName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
@@ -454,7 +452,7 @@ void CViewTransfers::GetDocFileName(wxInt32 item, wxString& strBuffer) const {
     }
 }
 
-void CViewTransfers::GetDocProgress(wxInt32 item, float& fBuffer) const {
+void CViewTransfers::GetDocProgress(size_t item, float& fBuffer) const {
     float          fBytesSent = 0;
     float          fFileSize = 0;
     CMainDocument* pDoc = wxGetApp().GetDocument();
@@ -485,7 +483,7 @@ wxInt32 CViewTransfers::FormatProgress(float fBuffer, wxString& strBuffer) const
     return 0;
 }
 
-void CViewTransfers::GetDocBytesXferred(wxInt32 item, double& fBuffer) const {
+void CViewTransfers::GetDocBytesXferred(size_t item, double& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
@@ -499,7 +497,7 @@ void CViewTransfers::GetDocBytesXferred(wxInt32 item, double& fBuffer) const {
     }
 }
 
-void CViewTransfers::GetDocTotalBytes(wxInt32 item, double& fBuffer) const {
+void CViewTransfers::GetDocTotalBytes(size_t item, double& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
@@ -547,7 +545,7 @@ wxInt32 CViewTransfers::FormatSize(double fBytesSent, double fFileSize, wxString
     return 0;
 }
 
-void CViewTransfers::GetDocTime(wxInt32 item, double& fBuffer) const {
+void CViewTransfers::GetDocTime(size_t item, double& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
@@ -578,7 +576,7 @@ wxInt32 CViewTransfers::FormatTime(float fBuffer, wxString& strBuffer) const {
     return 0;
 }
 
-void CViewTransfers::GetDocSpeed(wxInt32 item, double& fBuffer) const {
+void CViewTransfers::GetDocSpeed(size_t item, double& fBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
@@ -598,7 +596,7 @@ wxInt32 CViewTransfers::FormatSpeed(float fBuffer, wxString& strBuffer) const {
     return 0;
 }
 
-void CViewTransfers::GetDocStatus(wxInt32 item, wxString& strBuffer) const {
+void CViewTransfers::GetDocStatus(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
@@ -638,7 +636,7 @@ double CViewTransfers::GetProgressValue(long item) {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     FILE_TRANSFER* transfer = 0;
     if (pDoc) {
-        transfer = pDoc->file_transfer(item);
+        transfer = pDoc->file_transfer(m_iSortedIndexes[item]);
     }
 
     if (transfer) {

@@ -31,10 +31,9 @@ class XML_PARSER;
 //      or via a GUI.
 //      For the prefs that it specifies, it overrides the network prefs.
 
-// A struct with one bool per pref.
-// This is passed in GUI RPCs (get/set_global_prefs_override_struct)
-// to indicate which prefs are (or should be) specified in the override file
-//
+/// A struct with one bool per pref.
+/// This is passed in GUI RPCs (get/set_global_prefs_override_struct)
+/// to indicate which prefs are (or should be) specified in the override file.
 struct GLOBAL_PREFS_MASK {
     bool run_on_batteries;
     bool run_if_user_active;
@@ -71,10 +70,7 @@ struct GLOBAL_PREFS_MASK {
     void set_all();
 };
 
-
-// 0..24
-// run always if start==end or start==0, end=24
-// don't run at all if start=24, end=0
+/// This class represents a time span on a single day, e.g. from 0:00 to 24:00.
 class TIME_SPAN {
 public:
     enum TimeMode {
@@ -82,47 +78,84 @@ public:
         Never,
         Between
     };
-    TIME_SPAN()
-        : start_hour(0), end_hour(0) {}
-    TIME_SPAN(double start, double end)
-        : start_hour(start), end_hour(end) {}
+    
+    /// Construct a TIME_SPAN instance.
+    TIME_SPAN();
+    
+    /// Construct a TIME_SPAN instance.
+    TIME_SPAN(time_t start, time_t end);
+    
+    TIME_SPAN& operator=(const TIME_SPAN& r);
+    bool operator==(const TIME_SPAN& r);
 
-    bool        suspended(double hour) const;
-    TimeMode    mode() const;
+    /// Check if the client should be suspended for a given point in time.
+    bool suspended(const time_t point_in_time) const;
+    
+    /// Get the run mode determined by this TIME_SPAN instance.
+    TimeMode mode() const;
+    
+    /// Reset this instance to its default values.
+    void clear();
+    
+    time_t get_start() const;
+    time_t get_end() const;
+    
+    void set_start(const time_t start);
+    void set_end(const time_t end);
 
-    double      start_hour;
-    double      end_hour;
+private:
+    void check_range(const time_t point_in_time) const;
+
+private:
+    time_t m_start; ///< Start of the time span in seconds after midnight.
+    time_t m_end; ///< End of the time span in seconds after midnight.
     
 };
 
-
+/// This class maintains time spans for a whole week with one time span for each day.
 class WEEK_PREFS {
 public:
     WEEK_PREFS();
     WEEK_PREFS(const WEEK_PREFS& original);
     ~WEEK_PREFS();
 
-    TIME_SPAN* get(int day) const;
-    void set(int day, double start, double end);
-    void set(int day, TIME_SPAN* time);
+    /// Get the set time span for a given day.
+    const TIME_SPAN* get(int day) const;
+    
+    /// Set a time span in which the client is allowed to run.
+    void set(int day, time_t start, time_t end);
+    
+    /// Set a time span in which the client is allowed to run.
+    void set(int day, const TIME_SPAN& time);
+    
+    /// Remove the timespan for a given day.
     void unset(int day);
+    
+    /// Reset this instance to its default values.
     void clear();
+    
     WEEK_PREFS& operator=(const WEEK_PREFS& rhs);
 
-protected:
+private:
+    /// Create a deep copy.
     void copy(const WEEK_PREFS& original);
+    
     TIME_SPAN* days[7];
 
 };
 
-
+/// This maintains time spans for scheduling the computing and networking activity.
+/// It handles one general time span which applies to every day and additional time spans, one
+/// for each day of a week.
 class TIME_PREFS : public TIME_SPAN {
 public:
-    TIME_PREFS() : TIME_SPAN() {}
-    TIME_PREFS(double start, double end)
-        : TIME_SPAN(start, end) {}
+    TIME_PREFS();
+    TIME_PREFS(time_t start, time_t end);
     
+    /// Reset this instance to its default values.
     void        clear();
+    
+    /// Check if the client should be currently suspended based on this TIME_PREFS instance.
     bool        suspended() const;
     
     WEEK_PREFS  week;
@@ -131,9 +164,9 @@ public:
 
 struct GLOBAL_PREFS {
     double mod_time;
+    /// If false, suspend while on batteries.
+    /// Poorly named...
     bool run_on_batteries;
-        // poorly named; what it really means is:
-        // if false, suspend while on batteries
     bool run_if_user_active;
     double idle_time_to_run;
     double suspend_if_no_recent_input;
@@ -166,12 +199,12 @@ struct GLOBAL_PREFS {
     void defaults();
     void init();
     void clear_bools();
-    int parse(XML_PARSER&, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
-    int parse_day(XML_PARSER&);
-    int parse_override(XML_PARSER&, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
+    int parse(XML_PARSER& xp, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
+    int parse_day(XML_PARSER& xp);
+    int parse_override(XML_PARSER& xp, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
     int parse_file(const char* filename, const char* venue, bool& found_venue);
-    int write(MIOFILE&);
-    int write_subset(MIOFILE&, GLOBAL_PREFS_MASK&);
+    int write(MIOFILE& f);
+    int write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask);
     inline double cpu_scheduling_period() {
         return cpu_scheduling_period_minutes*60;
     }

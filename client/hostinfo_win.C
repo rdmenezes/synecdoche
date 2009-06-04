@@ -183,7 +183,7 @@ int get_os_information(char* os_name, int os_name_size, char* os_version, int os
     //   Getting the System Version example and modified to dump the output
     //   into os_name.
     char szVersion[128];
-    std::string szSKU;
+    std::string sku;
     char szServicePack[128];
     OSVERSIONINFOEX osvi;
     SYSTEM_INFO si;
@@ -263,40 +263,40 @@ int get_os_information(char* os_name, int os_name_size, char* os_version, int os
             if ((osvi.dwMajorVersion == 6) && (osvi.dwMinorVersion == 0)) {
                 switch(dwType) {
                     case PRODUCT_ULTIMATE:
-                        szSKU = "Ultimate ";
+                        sku = "Ultimate ";
                         break;
                     case PRODUCT_HOME_PREMIUM:
-                        szSKU = "Home Premium ";
+                        sku = "Home Premium ";
                         break;
                     case PRODUCT_HOME_BASIC:
-                        szSKU = "Home Basic ";
+                        sku = "Home Basic ";
                         break;
                     case PRODUCT_ENTERPRISE:
-                        szSKU = "Enterprise ";
+                        sku = "Enterprise ";
                         break;
                     case PRODUCT_BUSINESS:
-                        szSKU = "Business ";
+                        sku = "Business ";
                         break;
                     case PRODUCT_STARTER:
-                        szSKU = "Starter ";
+                        sku = "Starter ";
                         break;
                 }
             } else if ((osvi.dwMajorVersion == 5) && (osvi.dwMinorVersion == 2)) {
                 if (osvi.wSuiteMask & VER_SUITE_PERSONAL) {
-                    szSKU = "Home ";
+                    sku = "Home ";
                 } else {
-                    szSKU = "Professional ";
+                    sku = "Professional ";
                 }
             } else if ((osvi.dwMajorVersion == 5) && (osvi.dwMinorVersion == 1)) {
                 if (osvi.wSuiteMask & VER_SUITE_PERSONAL) {
-                    szSKU = "Home ";
+                    sku = "Home ";
                 } else {
-                    szSKU = "Professional ";
+                    sku = "Professional ";
                 }
             } else if ((osvi.dwMajorVersion == 5) && (osvi.dwMinorVersion == 0)) {
-                szSKU = "Professional ";
+                sku = "Professional ";
             } else if ((osvi.dwMajorVersion == 4) && (osvi.dwMinorVersion == 0)) {
-                szSKU = "Workstation ";
+                sku = "Workstation ";
             }
         }
 
@@ -305,93 +305,93 @@ int get_os_information(char* os_name, int os_name_size, char* os_version, int os
             if ((osvi.dwMajorVersion == 6) && (osvi.dwMinorVersion == 0)) {
                 switch(dwType) {
                     case PRODUCT_CLUSTER_SERVER:
-                        szSKU = "Cluster Server ";
+                        sku = "Cluster Server ";
                         break;
                     case PRODUCT_DATACENTER_SERVER:
-                        szSKU = "Datacenter ";
+                        sku = "Datacenter ";
                         break;
                     case PRODUCT_DATACENTER_SERVER_CORE:
-                        szSKU = "Datacenter (core installation) ";
+                        sku = "Datacenter (core installation) ";
                         break;
                     case PRODUCT_ENTERPRISE_SERVER:
-                        szSKU = "Enterprise ";
+                        sku = "Enterprise ";
                         break;
                     case PRODUCT_ENTERPRISE_SERVER_CORE:
-                        szSKU = "Enterprise (core installation) ";
+                        sku = "Enterprise (core installation) ";
                         break;
                     case PRODUCT_ENTERPRISE_SERVER_IA64:
-                        szSKU = "Enterprise ";
+                        sku = "Enterprise ";
                         break;
                     case PRODUCT_SMALLBUSINESS_SERVER:
-                        szSKU = "Small Business Server";
+                        sku = "Small Business Server";
                         break;
                     case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-                        szSKU = "Small Business Server Premium ";
+                        sku = "Small Business Server Premium ";
                         break;
                     case PRODUCT_STANDARD_SERVER:
-                        szSKU = "Standard ";
+                        sku = "Standard ";
                         break;
                     case PRODUCT_STANDARD_SERVER_CORE:
-                        szSKU = "Standard (core installation) ";
+                        sku = "Standard (core installation) ";
                         break;
                     case PRODUCT_WEB_SERVER:
-                        szSKU = "Web Server ";
+                        sku = "Web Server ";
                         break;
                 }
             } else if((osvi.dwMajorVersion == 5) && (osvi.dwMinorVersion == 2)) {
                 if (osvi.wSuiteMask & VER_SUITE_DATACENTER) {
-                    szSKU = "Datacenter Server ";
+                    sku = "Datacenter Server ";
                 } else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE) {
-                    szSKU = "Enterprise Server ";
+                    sku = "Enterprise Server ";
                 } else if (osvi.wSuiteMask == VER_SUITE_BLADE) {
-                    szSKU = "Web Server ";
+                    sku = "Web Server ";
                 } else {
-                    szSKU = "Standard Server ";
+                    sku = "Standard Server ";
                 }
             } else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0) {
                 if (osvi.wSuiteMask & VER_SUITE_DATACENTER) {
-                    szSKU, "Datacenter Server ";
+                    sku, "Datacenter Server ";
                 } else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE) {
-                    szSKU, "Advanced Server ";
+                    sku, "Advanced Server ";
                 } else {
-                    szSKU, "Standard Server ";
+                    sku, "Standard Server ";
                 }
             } else { // Windows NT 4.0
                 if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE) {
-                    szSKU = "Enterprise Server ";
+                    sku = "Enterprise Server ";
                 } else {
-                    szSKU = "Server ";
+                    sku = "Server ";
                 }
             }
         }
 
         switch (si.wProcessorArchitecture) {
             case PROCESSOR_ARCHITECTURE_INTEL:
-                szSKU += "x86";
+                sku += "x86";
                 break;
             case PROCESSOR_ARCHITECTURE_MIPS:
-                szSKU += "MIPS";
+                sku += "MIPS";
                 break;
             case PROCESSOR_ARCHITECTURE_ALPHA:
-                szSKU += "Alpha";
+                sku += "Alpha";
                 break;
             case PROCESSOR_ARCHITECTURE_PPC:
-                szSKU += "PowerPC";
+                sku += "PowerPC";
                 break;
             case PROCESSOR_ARCHITECTURE_IA64:
-                szSKU += "Itanium";
+                sku += "Itanium";
                 break;
             case PROCESSOR_ARCHITECTURE_ALPHA64:
-                szSKU += "Alpha 64-bit";
+                sku += "Alpha 64-bit";
                 break;
             case PROCESSOR_ARCHITECTURE_AMD64:
-                szSKU += "x64";
+                sku += "x64";
                 break;
             case PROCESSOR_ARCHITECTURE_UNKNOWN:
-                szSKU += "Unknown";
+                sku += "Unknown";
                 break;
         }
-        szSKU += " Edition";
+        sku += " Edition";
     } else { // Test for specific product on Windows NT 4.0 SP5 and earlier
         HKEY hKey;
         char szProductType[80];
@@ -412,11 +412,11 @@ int get_os_information(char* os_name, int os_name_size, char* os_version, int os
         RegCloseKey( hKey );
 
         if (lstrcmpi("WINNT", szProductType) == 0) {
-            szSKU = "Workstation Edition";
+            sku = "Workstation Edition";
         } if (lstrcmpi("LANMANNT", szProductType) == 0) {
-            szSKU = "Server Edition";
+            sku = "Server Edition";
         } if (lstrcmpi("SERVERNT", szProductType) == 0) {
-            szSKU = "Advanced Server Edition";
+            sku = "Advanced Server Edition";
         }
 
     }
@@ -451,7 +451,7 @@ int get_os_information(char* os_name, int os_name_size, char* os_version, int os
         }
     }
 
-    snprintf(os_version, os_version_size, "%s%s%s", szSKU.c_str(), szServicePack, szVersion);
+    snprintf(os_version, os_version_size, "%s%s%s", sku.c_str(), szServicePack, szVersion);
 
     return 0;
 }
@@ -572,7 +572,7 @@ int get_processor_info(
 /// \param[out] processor_count Reference to an int variable that will receive
 ///                             the number of processors that are present in the
 ///                             system.
-/// \return Allways returns zero.
+/// \return Always returns zero.
 int get_processor_count(int& processor_count) {
     SYSTEM_INFO SystemInfo;
     memset( &SystemInfo, NULL, sizeof( SystemInfo ) );

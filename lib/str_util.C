@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -284,7 +284,7 @@ enum cmd_line_parser_state {
 
 /// Take a string containing some space separated words.
 /// Return an array of pointers to the null-terminated words.
-/// TODO: use strtok here
+/// \todo use strtok here
 ///
 /// \param[in] p A string with space separated words.
 /// \return A list of strings with all space separated words taken from \a p.
@@ -343,20 +343,20 @@ std::list<std::string> parse_command_line(const char* p) {
     return result;
 }
 
-/// Remove leading and trailing whitespace from a string
+/// Remove leading and trailing whitespace from a string.
 ///
-/// \param[in,out] str Pointer to the C-string that should get trimmed
+/// \param[in,out] str Pointer to the null-terminated C string that should get trimmed.
 void strip_whitespace(char* str) {
     std::string buf(str);
     strip_whitespace(buf);
 
-    // This should be save as strip_whitespaces only shortens the string.
+    // This should be safe as strip_whitespace only shortens the string.
     strcpy(str, buf.c_str());
 }
 
-/// Remove leading and trailing whitespace from a string
+/// Remove leading and trailing whitespace from a string.
 ///
-/// \param[in,out] str Reference to the string that should get trimmed
+/// \param[in,out] str Reference to the string that should get trimmed.
 void strip_whitespace(std::string& str) {
     std::string::size_type pos = str.find_first_not_of(" \f\t\v\r\n");
     str.erase(0, pos);
@@ -365,7 +365,7 @@ void strip_whitespace(std::string& str) {
 }
 
 /// Convert a number in hexadecimal representation into an integer.
-/// This is a helper function for unescape_url.
+/// This is a helper function for unescape_url(std::string&).
 ///
 /// \param[in] what Array of char containing exactly two hexadecimal digits.
 /// \return The character of which the ASCII code matches the value described
@@ -444,6 +444,31 @@ void escape_url_readable(const char *in, char* out) {
     out[y] = 0;
 }
 
+/// Escape a URL for the project directory, cutting off the "http://",
+/// converting everything other than letters, numbers, ., - and _ to "_".
+///
+/// \param[in] in The URL to escape.
+/// \return The escaped version of \a in.
+std::string escape_url_readable(const std::string& in) {
+    std::string::const_iterator it = in.begin();
+
+    // Skip http:// and similar things:
+    std::string::size_type pos = in.find("://");
+    if (pos != std::string::npos) {
+        it += pos + 3;
+    }
+
+    std::string result;
+    result.reserve(in.end() - it);
+    for (; it != in.end(); ++it) {
+        if ((isalnum(*it)) || ((*it) == '.') || ((*it) == '-') || ((*it) == '_')) {
+            result += *it;
+        } else {
+            result += '_';
+        }
+    }
+    return result;
+}
 
 /// Canonicalize a master URL.
 ///   - Convert the first part of a URL (before the "://") to http://,
@@ -490,16 +515,16 @@ void canonicalize_master_url(char* url) {
 
 // is the string a valid master URL, in canonical form?
 //
-bool valid_master_url(const char* buf) {
+bool valid_master_url(const char* url) {
     const char *p, *q;
     size_t n;
     bool bSSL = false;
 
-    p = strstr(buf, "http://");
-    if (p != buf) {
+    p = strstr(url, "http://");
+    if (p != url) {
         // allow https
-        p = strstr(buf, "https://");
-        if (p == buf) {
+        p = strstr(url, "https://");
+        if (p == url) {
             bSSL = true;
         } else {
             return false; // no http or https, it's bad!
@@ -513,8 +538,8 @@ bool valid_master_url(const char* buf) {
     p = strstr(q, "/");
     if (!p) return false;
     if (p == q) return false;
-    n = strlen(buf);
-    if (buf[n-1] != '/') return false;
+    n = strlen(url);
+    if (url[n-1] != '/') return false;
     return true;
 }
 
@@ -559,8 +584,7 @@ std::string precision_time_to_string(double t) {
     }
 }
 
-/// Convert a time difference given as floating point value
-/// into a descriptive string.
+/// Convert a time difference into a descriptive string.
 ///
 /// \param[in] diff The time difference in seconds.
 /// \return A descriptive string representing the given time difference.
@@ -607,6 +631,17 @@ void escape_project_url(const char *in, char* out) {
     if (last == '_') {
         last = '\0';
     }
+}
+
+/// Escape a URL for the project directory
+std::string escape_project_url(const std::string& in) {
+    std::string result = escape_url_readable(in);
+
+    // Remove trailing '_':
+    if (ends_with(result, "_")) {
+        result.erase(result.end() - 1);
+    }
+    return result;
 }
 
 /// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
@@ -774,6 +809,7 @@ const char* boincerror(int which_error) {
         case ERR_SYMLINK: return "symlink() failed";
         case ERR_DB_CONN_LOST: return "DB connection lost during enumeration";
         case ERR_CRYPTO: return "encryption error";
+        case ERR_UNSTARTED_LATE: return "job is unstarted and past deadline";
         case 404: return "HTTP file not found";
         case 407: return "HTTP proxy authentication failure";
         case 416: return "HTTP range request error";

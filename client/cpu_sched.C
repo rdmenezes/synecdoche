@@ -1,6 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -534,7 +535,6 @@ void CLIENT_STATE::schedule_cpus() {
     }
 
     request_enforce_schedule("schedule_cpus");
-    set_client_state_dirty("schedule_cpus");
 }
 
 /// Make a list of running tasks, ordered by their preemptability.
@@ -868,9 +868,17 @@ bool CLIENT_STATE::enforce_schedule() {
                 // fall through
             case PROCESS_SUSPENDED:
                 action = true;
-                retval = atp->resume_or_start(
-                    atp->scheduler_state == CPU_SCHED_UNINITIALIZED
-                );
+                retval = atp->resume_or_start(!atp->is_full_init_done());
+                if ((!retval) && (atp->task_state() == PROCESS_UNINITIALIZED)) {
+                    // Starting the application failed because of missing files.
+                    // This should not be treated as error, but we can't act as
+                    // if the application was already started and everything is
+                    // already initialized. Therefore don't update the task
+                    // status here. Just trigger the scheduler and jump to the
+                    // next task.
+                    request_schedule_cpus("start failed (missing files");
+                    continue;
+                }
                 if ((retval == ERR_SHMGET) || (retval == ERR_SHMAT)) {
                     // Assume no additional shared memory segs
                     // will be available in the next 10 seconds
@@ -942,9 +950,9 @@ void CLIENT_STATE::request_schedule_cpus(const char* where) {
 }
 
 /// Find the active task for a given result.
-ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* rep) {
+ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* result) {
     for (unsigned int i = 0; i < active_tasks.active_tasks.size(); i ++) {
-        if (active_tasks.active_tasks[i]->result == rep) {
+        if (active_tasks.active_tasks[i]->result == result) {
             return active_tasks.active_tasks[i];
         }
     }
@@ -953,6 +961,13 @@ ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* rep) {
 
 bool RESULT::computing_done() const {
     return (state() >= RESULT_COMPUTE_ERROR || ready_to_report);
+}
+
+/// Check if the result was started yet.
+///
+/// \return True if the client didn't start this result yet.
+bool RESULT::not_started() const {
+    return ((!computing_done()) && (!gstate.lookup_active_task_by_result(this)));
 }
 
 /// Find total resource shares of all projects.
@@ -1145,9 +1160,9 @@ int ACTIVE_TASK::preempt(bool quit_task) {
 /// The given result has just completed successfully;
 /// update the correction factor used to predict
 /// completion time for this project's results.
-void PROJECT::update_duration_correction_factor(RESULT* rp) {
-    double raw_ratio = rp->final_cpu_time/rp->estimated_cpu_time_uncorrected();
-    double adj_ratio = rp->final_cpu_time/rp->estimated_cpu_time();
+void PROJECT::update_duration_correction_factor(const RESULT* result) {
+    double raw_ratio = result->final_cpu_time/result->estimated_cpu_time_uncorrected();
+    double adj_ratio = result->final_cpu_time/result->estimated_cpu_time();
     double old_dcf = duration_correction_factor;
 
     // it's OK to overestimate completion time,

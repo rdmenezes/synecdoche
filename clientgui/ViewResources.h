@@ -39,8 +39,8 @@ public:
 
     ~CViewResources();
 
-    virtual wxString&       GetViewName();
-    virtual wxString&       GetViewDisplayName();
+    virtual const wxString& GetViewName();
+    virtual const wxString& GetViewDisplayName();
     virtual const char**    GetViewIcon();
 #ifdef __WXMAC__
     virtual const int       GetViewRefreshRate();
@@ -55,7 +55,7 @@ protected:
 
     virtual void            UpdateSelection();
 
-    wxInt32                 FormatProjectName(PROJECT*, wxString& strBuffer ) const;
+    wxInt32                 FormatProjectName(const PROJECT*, wxString& strBuffer ) const;
     wxInt32                 FormatDiskSpace(double bytes, wxString& strBuffer) const;
 
     virtual bool            OnSaveState( wxConfigBase* pConfig );

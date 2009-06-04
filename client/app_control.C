@@ -536,6 +536,9 @@ bool ACTIVE_TASK::check_max_disk_exceeded() {
             "Can't get task disk usage: %s", boincerror(retval)
         );
     } else {
+        // Track the maximum disk usage:
+        stats_disk = std::max(stats_disk, disk_usage);
+
         if (disk_usage > max_disk_usage) {
             msg_printf(
                 result->project, MSG_INFO,
@@ -669,7 +672,7 @@ int ACTIVE_TASK::request_reread_prefs() {
 }
 
 /// Tell a running app to reread the app_info file
-/// (e.g. because proxy settings have changed)
+/// (e.g.\ because proxy settings have changed)
 int ACTIVE_TASK::request_reread_app_info() {
     int retval = write_app_init_file();
     if (retval) return retval;
@@ -783,7 +786,7 @@ void ACTIVE_TASK_SET::suspend_all(bool cpu_throttle) {
         leave_in_mem = gstate.global_prefs.leave_apps_in_memory;
     }
 
-    for (active_tasks_v::iterator it = active_tasks.begin(); it != active_tasks.end(); ++it) {
+    for (ACTIVE_TASK_PVEC::iterator it = active_tasks.begin(); it != active_tasks.end(); ++it) {
         ACTIVE_TASK& at = **it;
         if (at.task_state() != PROCESS_EXECUTING) {
             continue;
@@ -807,7 +810,7 @@ void ACTIVE_TASK_SET::unsuspend_all() {
         atp = active_tasks[i];
         if (atp->scheduler_state != CPU_SCHED_SCHEDULED) continue;
         if (atp->task_state() == PROCESS_UNINITIALIZED) {
-            if (atp->start(false)) {
+            if (atp->start()) {
                 msg_printf(atp->wup->project, MSG_INTERNAL_ERROR,
                     "Couldn't restart task %s", atp->result->name
                 );
@@ -1007,6 +1010,7 @@ bool ACTIVE_TASK_SET::get_msgs() {
                         atp->result->name
                     );
                 }
+                atp->stats_checkpoint++;
             }
         }
         atp->get_trickle_up_msg();

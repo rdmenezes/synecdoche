@@ -17,16 +17,16 @@
 
 #pragma once
 
-extern BOOL IsWindows2000Compatible();
-extern BOOL IsTerminalServicesEnabled();
-extern BOOL ValidateProductSuite(LPSTR SuiteName);
-extern BOOL TerminateProcessById(DWORD dwProcessId);
-extern BOOL AddAceToWindowStation(HWINSTA hwinsta, PSID psid);
-extern BOOL AddAceToDesktop(HDESK hdesk, PSID psid);
-extern BOOL GetAccountSid(
+BOOL IsWindows2000Compatible();
+BOOL IsTerminalServicesEnabled();
+BOOL ValidateProductSuite(LPSTR SuiteName);
+BOOL TerminateProcessById(DWORD dwProcessId);
+BOOL AddAceToWindowStation(HWINSTA hwinsta, PSID psid);
+BOOL AddAceToDesktop(HDESK hdesk, PSID psid);
+BOOL GetAccountSid(
     LPCTSTR SystemName,         ///< where to lookup account
     LPCTSTR AccountName,        ///< account of interest
     PSID *Sid                   ///< resultant buffer containing SID
 );
-extern int suspend_or_resume_threads(DWORD pid, bool resume);
-extern void chdir_to_data_dir();
+int suspend_or_resume_threads(DWORD pid, bool resume);
+void chdir_to_data_dir();

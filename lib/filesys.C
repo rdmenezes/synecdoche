@@ -334,23 +334,23 @@ static int boinc_delete_file_aux(const char* path) {
 ///
 /// \param[in] path The path of the file that should be deleted.
 /// \return Zero on success, ERR_UNLINK on error.
-int boinc_delete_file(const char* path) {
+int boinc_delete_file(const std::string& path) {
     int retval = 0;
 
     if (!boinc_file_exists(path)) {
         return 0;
     }
-    retval = boinc_delete_file_aux(path);
+    retval = boinc_delete_file_aux(path.c_str());
     if (retval) {
         double start = dtime();
         do {
             boinc_sleep(drand()*2);       // avoid lockstep
-            retval = boinc_delete_file_aux(path);
+            retval = boinc_delete_file_aux(path.c_str());
             if (!retval) break;
         } while (dtime() < start + FILE_RETRY_INTERVAL);
     }
     if (retval) {
-        safe_strcpy(boinc_failed_file, path);
+        safe_strcpy(boinc_failed_file, path.c_str());
         return ERR_UNLINK;
     }
     return 0;
@@ -429,12 +429,12 @@ int clean_out_dir(const char* dirpath) {
 /// Unix: follow symbolic links
 ///
 /// \param[in] dirpath Path to the directory which size should be calculated.
-/// \param[out] size Referenze to a variable that will receive the size of the
+/// \param[out] size Reference to a variable that will receive the size of the
 ///                  directory specified by \a dirpath.
 /// \param[in] recurse If true the size of all sub-directories will be
 ///                    considered, too.
 int dir_size(const char* dirpath, double& size, bool recurse) {
-#ifdef WIN32
+#ifdef _WIN32
     std::string path2(dirpath);
     path2.append("/*");
     size = 0.0;
@@ -623,7 +623,10 @@ static int boinc_rename_aux(const char* old, const char* newf) {
     }
     return GetLastError();
 #else
-    return rename(old, newf);
+    if (rename(old, newf) < 0) {
+        return ERR_RENAME;
+    }
+    return 0;
 #endif // _WIN32
 }
 
@@ -666,7 +669,10 @@ int boinc_mkdir(const char* path) {
     mode_t old_mask = umask(0);
     int retval = mkdir(path, 0771);
     umask(old_mask);
-    return retval;
+    if (retval < 0) {
+        return ERR_MKDIR;
+    }
+    return 0;
 #endif // _WIN32
 }
 
@@ -748,7 +754,7 @@ FILE_LOCK::~FILE_LOCK() {
 }
 
 /// Lock a file.
-/// TODO: Check if this function is safe. What happens if it is called twice?
+/// \todo Check if this function is safe. What happens if it is called twice?
 ///
 /// \param[in] filename The path to the file that should be locked.
 /// \return Zero on success, -1 on error.
@@ -839,7 +845,7 @@ std::string boinc_getcwd() {
 /// \return The absolute path based on the current working directory and
 ///         the path given in \a relname. If the current working directory
 ///         could not be determined this function returns an empty string.
-std::string relative_to_absolute(const char* relname) {
+std::string relative_to_absolute(const std::string& relname) {
     std::string result = boinc_getcwd();
     if (!result.empty()) {
         result.append("/").append(relname);

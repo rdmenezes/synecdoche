@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -89,36 +89,29 @@ CBOINCListCtrl::~CBOINCListCtrl()
     }
 }
 
-
 bool CBOINCListCtrl::OnSaveState(wxConfigBase* pConfig) {
-    wxString    strBaseConfigLocation = wxEmptyString;
-    wxListItem  liColumnInfo;
-    wxInt32     iIndex = 0;
-    wxInt32     iColumnCount = 0;
-
-
     wxASSERT(pConfig);
-
 
     // Retrieve the base location to store configuration information
     // Should be in the following form: "/Projects/"
-    strBaseConfigLocation = pConfig->GetPath() + wxT("/");
+    wxString strBaseConfigLocation = pConfig->GetPath() + wxT("/");
 
-    // Convert to a zero based index
-    iColumnCount = GetColumnCount() - 1;
+    wxInt32 iColumnCount = GetColumnCount();
 
     // Which fields are we interested in?
-    liColumnInfo.SetMask(
-        wxLIST_MASK_TEXT |
-        wxLIST_MASK_WIDTH |
-        wxLIST_MASK_FORMAT
-    );
+    wxListItem  liColumnInfo;
+    liColumnInfo.SetMask(wxLIST_MASK_TEXT | wxLIST_MASK_WIDTH | wxLIST_MASK_FORMAT);
+
+    const ColumnListMap& keys = m_pParentView->GetColumnKeys();
 
     // Cycle through the columns recording anything interesting
-    for (iIndex = 0; iIndex <= iColumnCount; iIndex++) {
+    for (wxInt32 iIndex = 0; iIndex < iColumnCount; ++iIndex) {
         GetColumn(iIndex, liColumnInfo);
 
-        pConfig->SetPath(strBaseConfigLocation + liColumnInfo.GetText());
+        // We can't use the column label as key because it might be translated
+        // which renders all settings invalid. Instead we use an extra
+        // vector that does the mapping between the column index and 
+        pConfig->SetPath(strBaseConfigLocation + (*keys.find(iIndex)).second);
 
         pConfig->Write(wxT("Width"), liColumnInfo.GetWidth());
         
@@ -135,35 +128,31 @@ bool CBOINCListCtrl::OnSaveState(wxConfigBase* pConfig) {
     return true;
 }
 
-
 bool CBOINCListCtrl::OnRestoreState(wxConfigBase* pConfig) {
-    wxString    strBaseConfigLocation = wxEmptyString;
-    wxListItem  liColumnInfo;
-    wxInt32     iIndex = 0;
-    wxInt32     iColumnCount = 0;
     wxInt32     iTempValue = 0;
-
 
     wxASSERT(pConfig);
 
-
     // Retrieve the base location to store configuration information
     // Should be in the following form: "/Projects/"
-    strBaseConfigLocation = pConfig->GetPath() + wxT("/");
+    wxString strBaseConfigLocation = pConfig->GetPath() + wxT("/");
 
-    // Convert to a zero based index
-    iColumnCount = GetColumnCount() - 1;
+    wxInt32 iColumnCount = GetColumnCount();
 
     // Which fields are we interested in?
-    liColumnInfo.SetMask(
-        wxLIST_MASK_TEXT | wxLIST_MASK_WIDTH | wxLIST_MASK_FORMAT
-    );
+    wxListItem  liColumnInfo;
+    liColumnInfo.SetMask(wxLIST_MASK_TEXT | wxLIST_MASK_WIDTH | wxLIST_MASK_FORMAT);
+
+    const ColumnListMap& keys = m_pParentView->GetColumnKeys();
 
     // Cycle through the columns recording anything interesting
-    for (iIndex = 0; iIndex <= iColumnCount; iIndex++) {
+    for (wxInt32 iIndex = 0; iIndex < iColumnCount; ++iIndex) {
         GetColumn(iIndex, liColumnInfo);
 
-        pConfig->SetPath(strBaseConfigLocation + liColumnInfo.GetText());
+        // We can't use the column label as key because it might be translated
+        // which renders all settings invalid. Instead we use an extra
+        // vector that does the mapping between the column index and 
+        pConfig->SetPath(strBaseConfigLocation + (*keys.find(iIndex)).second);
 
         pConfig->Read(wxT("Width"), &iTempValue, -1);
         if (-1 != iTempValue) {

@@ -5,18 +5,20 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIconFile</key>
-	<string>synecdoche.icns</string>
+	<string>Synecdoche</string>
 	<key>CFBundleIdentifier</key>
-	<string>${BUNDLE_IDENTIFIER}.manager</string>
+	<string>${BUNDLE_IDENTIFIER}.screensaver</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Synecdoche</string>
 	<key>CFBundlePackageType</key>
-	<string>APPL</string>
+	<string>BNDL</string>
 	<key>CFBundleSignature</key>
-	<string>SYNE</string>
+	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.1.1 r683M</string>
+	<string>0.1.1 r802M</string>
+	<key>NSPrincipalClass</key>
+	<string>BOINC_Saver_ModuleView</string>
 </dict>
 </plist>

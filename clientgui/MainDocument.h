@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _MAINDOCUMENT_H_
-#define _MAINDOCUMENT_H_
+#ifndef MAINDOCUMENT_H
+#define MAINDOCUMENT_H
 
+#include <map>
 #include <string>
 #include <vector>
 #include "common_defs.h"
@@ -36,6 +37,7 @@ typedef struct {
 #endif
 } RUNNING_GFX_APP;
 
+typedef std::map<std::string, PROJECT*> projects_map;
 
 extern bool g_use_sandbox;
 
@@ -165,24 +167,28 @@ private:
 public:
     PROJECT*                    project(size_t i);
     PROJECT*                    project(const wxString& projectname);
+    
+    /// Return a std::map containing all projects this client is attached to.
+    projects_map                GetProjectsMap() const;
+    
     float                       m_fProjectTotalResourceShare;
 
     size_t                      GetProjectCount();
 
-    int                         ProjectNoMoreWork(int iIndex);
+    int                         ProjectNoMoreWork(size_t iIndex);
     int                         ProjectNoMoreWork(const wxString& projectname);
-    int                         ProjectAllowMoreWork(int iIndex);
+    int                         ProjectAllowMoreWork(size_t iIndex);
     int                         ProjectAllowMoreWork(const wxString& projectname);
     int                         ProjectAttach(const wxString& strURL, const wxString& strAccountKey);
     int                         ProjectDetach(size_t iIndex);
     int                         ProjectDetach(const wxString& projectname);
-    int                         ProjectUpdate(int iIndex);
+    int                         ProjectUpdate(size_t iIndex);
     int                         ProjectUpdate(const wxString& projectname);
-    int                         ProjectReset(int iIndex);
+    int                         ProjectReset(size_t iIndex);
     int                         ProjectReset(const wxString& projectname);
-    int                         ProjectSuspend(int iIndex);
+    int                         ProjectSuspend(size_t iIndex);
     int                         ProjectSuspend(const wxString& projectname);
-    int                         ProjectResume(int iIndex);
+    int                         ProjectResume(size_t iIndex);
     int                         ProjectResume(const wxString& projectname);
 
 
@@ -194,7 +200,7 @@ private:
     wxDateTime                  m_dtResultsTimestamp;
     wxDateTime                  m_dtKillInactiveGfxTimestamp;
     std::vector<RUNNING_GFX_APP> m_running_gfx_apps;
-    RUNNING_GFX_APP*            GetRunningGraphicsApp(RESULT* result, int slot);
+    RUNNING_GFX_APP*            GetRunningGraphicsApp(const RESULT* result, int slot);
     void                        KillAllRunningGraphicsApps();
     void                        KillInactiveGraphicsApps();
 #ifdef _WIN32
@@ -211,17 +217,17 @@ public:
     size_t                      GetWorkCount();
 
     int                         WorkSuspend(
-                                    std::string& strProjectURL,
-                                    std::string& strName
+                                    const std::string& strProjectURL,
+                                    const std::string& strName
                                 );
     int                         WorkResume(
-                                    std::string& strProjectURL,
-                                    std::string& strName
+                                    const std::string& strProjectURL,
+                                    const std::string& strName
                                 );
-    int                         WorkShowGraphics(RESULT* result);
+    int                         WorkShowGraphics(const RESULT* result);
     int                         WorkAbort(
-                                    std::string& strProjectURL,
-                                    std::string& strName
+                                    const std::string& strProjectURL,
+                                    const std::string& strName
                                 );
     CC_STATE*                   GetState() { return &state; };
 
@@ -253,14 +259,14 @@ private:
 
 public:
     FILE_TRANSFERS              ft;
-    FILE_TRANSFER*              file_transfer(unsigned int);
+    FILE_TRANSFER*              file_transfer(size_t i);
     FILE_TRANSFER*              file_transfer(const wxString& fileName, const wxString& project_url);
 
     size_t                      GetTransferCount();
 
-    int                         TransferRetryNow(int iIndex);
+    int                         TransferRetryNow(size_t iIndex);
     int                         TransferRetryNow(const wxString& fileName, const wxString& project_url);
-    int                         TransferAbort(int iIndex);
+    int                         TransferAbort(size_t iIndex);
     int                         TransferAbort(const wxString& fileName, const wxString& project_url);
 
 
@@ -312,8 +318,8 @@ public:
 
 };
 
-#endif
-
 #ifdef SANDBOX
 #define BOINC_MASTER_GROUP_NAME "boinc_master"
 #endif
+
+#endif // MAINDOCUMENT_H

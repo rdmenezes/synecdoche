@@ -79,7 +79,7 @@ bool RR_SIM_PROJECT_STATUS::none_active() const {
     return active.empty();
 }
 
-bool RR_SIM_PROJECT_STATUS::can_run(const RESULT* r, int ncpus) const {
+bool RR_SIM_PROJECT_STATUS::can_run(const RESULT* /* r */, int ncpus) const {
     return (int)active.size() < ncpus;
 }
 

@@ -74,11 +74,11 @@ bool parse_bool(const char* buf, const char* tag, bool& result) {
 /// "string" may not include '<'.
 /// Strips white space from ends.
 /// Use "<tag", not "<tag>", if there might be attributes.
-bool parse_str(const char* buf, const char* tag, char* dest, int destlen) {
+bool parse_str(const char* buf, const char* tag, char* dest, size_t destlen) {
     std::string str;
     const char* p;
     char tempbuf[1024];
-    int len;
+    size_t len;
 
     p = strstr(buf, tag);
     if (!p) return false;
@@ -86,7 +86,7 @@ bool parse_str(const char* buf, const char* tag, char* dest, int destlen) {
     p++;
     const char* q = strchr(p, '<');
     if (!q) return false;
-    len = (int)(q-p);
+    len = (q-p);
     if (len >= destlen) len = destlen-1;
     memcpy(tempbuf, p, len);
     tempbuf[len] = 0;
@@ -104,7 +104,7 @@ bool parse_str(const char* buf, const char* tag, std::string& dest) {
 
 /// parse a string of the form 'xxx name="value" xxx'.
 /// returns value in dest
-void parse_attr(const char* buf, const char* name, char* dest, int len) {
+void parse_attr(const char* buf, const char* name, char* dest, size_t len) {
     const char* p;
     const char *q;
 
@@ -115,7 +115,8 @@ void parse_attr(const char* buf, const char* name, char* dest, int len) {
     if (!p) return;
     q = strchr(p+1, '"');
     if (!q) return;
-    if (len > q-p) len = (int)(q-p);
+    size_t diff = static_cast<size_t>(q-p);
+    if (len > diff) len = (diff);
     strlcpy(dest, p+1, len);
 }
 
@@ -182,16 +183,16 @@ int dup_element(FILE* in, const char* tag_name, char** pp) {
 }
 
 /// copy from a file to static buffer
-int copy_element_contents(FILE* in, const char* end_tag, char* p, int len) {
+int copy_element_contents(FILE* in, const char* end_tag, char* p, size_t len) {
     char buf[256];
-    int n;
+    size_t n;
 
     strcpy(p, "");
     while (fgets(buf, 256, in)) {
         if (strstr(buf, end_tag)) {
             return 0;
         }
-        n = (int)strlen(buf);
+        n = strlen(buf);
         if (n >= len-1) return ERR_XML_PARSE;
         strcat(p, buf);
         len -= n;
@@ -295,7 +296,7 @@ void extract_venue(const char* in, const char* venue_name, char* out) {
 
 /// copy a line from the given string.
 /// kinda like fgets() when you're reading from a string
-char* sgets(char* buf, int len, char*& in) {
+char* sgets(char* buf, size_t len, char*& in) {
     char* p;
 
     p = strstr(in, "\n");
@@ -472,7 +473,7 @@ int XML_PARSER::scan_comment() {
 /// 0 if got a tag
 /// 1 if got a comment (ignore)
 /// 2 if reached EOF
-int XML_PARSER::scan_tag(char* tag_buf, int tag_len, char* attr_buf, int attr_len) {
+int XML_PARSER::scan_tag(char* tag_buf, size_t tag_len, char* attr_buf, size_t attr_len) {
     char* buf_start = tag_buf;
     bool found_space = false;
     for (int i=0; ; i++) {
@@ -534,7 +535,7 @@ bool XML_PARSER::copy_until_tag(char* buf, int len) {
 /// Strip whitespace at start and end.
 ///
 /// \return True if reached EOF, false otherwise.
-bool XML_PARSER::get(char* buf, int len, bool& is_tag, char* attr_buf, int attr_len) {
+bool XML_PARSER::get(char* buf, size_t len, bool& is_tag, char* attr_buf, size_t attr_len) {
     while (true) {
         int c;
         bool eof = scan_nonws(c);
@@ -560,7 +561,7 @@ bool XML_PARSER::get(char* buf, int len, bool& is_tag, char* attr_buf, int attr_
 /// and by the matching close tag, return the string in "buf",
 /// and return true.
 bool XML_PARSER::parse_str(
-    char* parsed_tag, const char* start_tag, char* buf, int len
+    char* parsed_tag, const char* start_tag, char* buf, size_t len
 ) {
     bool is_tag, eof;
     char end_tag[256], tag[256], tmp[64000];
@@ -616,7 +617,7 @@ bool XML_PARSER::parse_string(
 }
 
 /// Same, for integers
-bool XML_PARSER::parse_int(char* parsed_tag, const char* start_tag, int& i) {
+bool XML_PARSER::parse_int(char* parsed_tag, const char* start_tag, int& result) {
     char buf[256], *end;
     bool is_tag, eof;
     char end_tag[256], tag[256];
@@ -630,7 +631,7 @@ bool XML_PARSER::parse_int(char* parsed_tag, const char* start_tag, int& i) {
     if (eof) return false;
     if (is_tag) {
         if (!strcmp(buf, end_tag)) {
-            i = 0;      // treat <foo></foo> as <foo>0</foo>
+            result = 0;      // treat <foo></foo> as <foo>0</foo>
             return true;
         } else {
             return false;
@@ -645,12 +646,12 @@ bool XML_PARSER::parse_int(char* parsed_tag, const char* start_tag, int& i) {
     if (eof) return false;
     if (!is_tag) return false;
     if (strcmp(tag, end_tag)) return false;
-    i = val;
+    result = val;
     return true;
 }
 
 /// Same, for doubles
-bool XML_PARSER::parse_double(char* parsed_tag, const char* start_tag, double& x) {
+bool XML_PARSER::parse_double(char* parsed_tag, const char* start_tag, double& result) {
     char buf[256], *end;
     bool is_tag, eof;
     char end_tag[256], tag[256];
@@ -664,7 +665,7 @@ bool XML_PARSER::parse_double(char* parsed_tag, const char* start_tag, double& x
     if (eof) return false;
     if (is_tag) {
         if (!strcmp(buf, end_tag)) {
-            x = 0;      // treat <foo></foo> as <foo>0</foo>
+            result = 0;      // treat <foo></foo> as <foo>0</foo>
             return true;
         } else {
             return false;
@@ -677,12 +678,12 @@ bool XML_PARSER::parse_double(char* parsed_tag, const char* start_tag, double& x
     if (eof) return false;
     if (!is_tag) return false;
     if (strcmp(tag, end_tag)) return false;
-    x = val;
+    result = val;
     return true;
 }
 
 /// Same, for bools
-bool XML_PARSER::parse_bool(char* parsed_tag, const char* start_tag, bool& b) {
+bool XML_PARSER::parse_bool(char* parsed_tag, const char* start_tag, bool& result) {
     char buf[256], *end;
     bool is_tag, eof;
     char end_tag[256], tag[256];
@@ -692,7 +693,7 @@ bool XML_PARSER::parse_bool(char* parsed_tag, const char* start_tag, bool& b) {
     strcpy(tag, start_tag);
     strcat(tag, "/");
     if (!strcmp(parsed_tag, tag)) {
-        b = true;
+        result = true;
         return true;
     }
 
@@ -712,7 +713,7 @@ bool XML_PARSER::parse_bool(char* parsed_tag, const char* start_tag, bool& b) {
     if (eof) return false;
     if (!is_tag) return false;
     if (strcmp(tag, end_tag)) return false;
-    b = val;
+    result = val;
     return true;
 }
 
@@ -740,8 +741,8 @@ bool XML_PARSER::parse_start(const char* start_tag) {
 /// copy everything up to (but not including) the given end tag.
 /// The copied text may include XML tags.
 /// strips whitespace.
-int XML_PARSER::element_contents(const char* end_tag, char* buf, int buflen) {
-    int n=0;
+int XML_PARSER::element_contents(const char* end_tag, char* buf, size_t buflen) {
+    size_t n=0;
     int retval=0;
     while (1) {
         if (n == buflen-1) {
@@ -788,6 +789,10 @@ void XML_PARSER::skip_unexpected(
         if (!strcmp(tag, end_tag)) return;
         skip_unexpected(tag, verbose, where);
     }
+}
+
+MIOFILE& XML_PARSER::get_miofile() const {
+    return *f;
 }
 
 // sample use is shown below

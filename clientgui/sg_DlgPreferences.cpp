@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -43,7 +43,7 @@
 
 // Useful arrays used as templates for arrays created at runtime.
 //
-int iTimeOfDayArraySize = 24;
+int iTimeOfDayArraySize = 25;
 wxString astrTimeOfDayStrings[] = {
     wxT("0:00"),
     wxT("1:00"),
@@ -723,15 +723,15 @@ bool CPanelPreferences::ReadPreferenceSettings() {
     aWorkBetweenBegin.Insert(_("Anytime"), 0);
 
     m_WorkBetweenBeginCtrl->Append(aWorkBetweenBegin);
-    if (display_global_preferences.cpu_times.start_hour == display_global_preferences.cpu_times.end_hour) {
+    if (display_global_preferences.cpu_times.get_start() == display_global_preferences.cpu_times.get_end()) {
         m_strWorkBetweenBegin = _("Anytime");
     } else {
-        m_strWorkBetweenBegin = astrTimeOfDayStrings[(int)display_global_preferences.cpu_times.start_hour];
+        m_strWorkBetweenBegin = astrTimeOfDayStrings[(int)display_global_preferences.cpu_times.get_start() / 3600];
     }
 
     //   End:
     m_WorkBetweenEndCtrl->Append(wxArrayString(iTimeOfDayArraySize, astrTimeOfDayStrings));
-    m_strWorkBetweenEnd = astrTimeOfDayStrings[(int)display_global_preferences.cpu_times.end_hour];
+    m_strWorkBetweenEnd = astrTimeOfDayStrings[(int)display_global_preferences.cpu_times.get_end() / 3600];
 
     // Connect to internet only between:
     //   Start:
@@ -739,15 +739,15 @@ bool CPanelPreferences::ReadPreferenceSettings() {
     aConnectBetweenBegin.Insert(_("Anytime"), 0);
 
     m_ConnectBetweenBeginCtrl->Append(aConnectBetweenBegin);
-    if (display_global_preferences.net_times.start_hour == display_global_preferences.net_times.end_hour) {
+    if (display_global_preferences.net_times.get_start() == display_global_preferences.net_times.get_end()) {
         m_strConnectBetweenBegin = _("Anytime");
     } else {
-        m_strConnectBetweenBegin = astrTimeOfDayStrings[(int)display_global_preferences.net_times.start_hour];
+        m_strConnectBetweenBegin = astrTimeOfDayStrings[(int)display_global_preferences.net_times.get_start() / 3600];
     }
 
     //   End:
     m_ConnectBetweenEndCtrl->Append(wxArrayString(iTimeOfDayArraySize, astrTimeOfDayStrings));
-    m_strConnectBetweenEnd = astrTimeOfDayStrings[(int)display_global_preferences.net_times.end_hour];
+    m_strConnectBetweenEnd = astrTimeOfDayStrings[(int)display_global_preferences.net_times.get_end() / 3600];
 
     // Use no more than %s of disk space
     wxArrayString aDiskUsage = wxArrayString(iDiskUsageArraySize, astrDiskUsageStrings);
@@ -899,22 +899,28 @@ bool CPanelPreferences::ReadSkinSettings() {
 bool CPanelPreferences::SavePreferenceSettings() {
     // Do work only between:
     if (_("Anytime") == m_strWorkBetweenBegin) {
-        global_preferences_working.cpu_times.start_hour = 0;
-        global_preferences_working.cpu_times.end_hour = 0;
+        global_preferences_working.cpu_times.set_start(0);
+        global_preferences_working.cpu_times.set_end(0);
     } else {
-        m_strWorkBetweenBegin.ToDouble(&global_preferences_working.cpu_times.start_hour);
-        m_strWorkBetweenEnd.ToDouble(&global_preferences_working.cpu_times.end_hour);
+        unsigned long tmp = 0ul;
+        m_strWorkBetweenBegin.ToULong(&tmp);
+        global_preferences_working.cpu_times.set_start(tmp * 3600);
+        m_strWorkBetweenEnd.ToULong(&tmp);
+        global_preferences_working.cpu_times.set_end(tmp * 3600);
     }
     global_preferences_override_mask.start_hour = true;        
     global_preferences_override_mask.end_hour = true;
 
     // Connect to internet only between:
     if (_("Anytime") == m_strConnectBetweenBegin) {
-        global_preferences_working.net_times.start_hour = 0;
-        global_preferences_working.net_times.end_hour = 0;
+        global_preferences_working.net_times.set_start(0);
+        global_preferences_working.net_times.set_end(0);
     } else {
-        m_strConnectBetweenBegin.ToDouble(&global_preferences_working.net_times.start_hour);
-        m_strConnectBetweenEnd.ToDouble(&global_preferences_working.net_times.end_hour);
+        unsigned long tmp = 0ul;
+        m_strConnectBetweenBegin.ToULong(&tmp);
+        global_preferences_working.net_times.set_start(tmp * 3600);
+        m_strConnectBetweenEnd.ToULong(&tmp);
+        global_preferences_working.net_times.set_end(tmp * 3600);
     }
     global_preferences_override_mask.net_start_hour = true;        
     global_preferences_override_mask.net_end_hour = true;        

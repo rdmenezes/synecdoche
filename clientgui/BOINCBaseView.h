@@ -19,11 +19,13 @@
 #ifndef BOINCBASEVIEW_H
 #define BOINCBASEVIEW_H
 
+#include <map>
 #include <vector>
+
 #include <wx/panel.h>
+#include <wx/listbase.h> //for wxListColumnFormat
 
 #define DEFAULT_TASK_FLAGS             wxTAB_TRAVERSAL | wxADJUST_MINSIZE
-#define DEFAULT_LIST_SINGLE_SEL_FLAGS  wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL
 #define DEFAULT_LIST_MULTI_SEL_FLAGS   wxLC_REPORT | wxLC_VIRTUAL
 
 class wxNotebook;
@@ -37,26 +39,25 @@ class wxGridRangeSelectEvent;
 class CBOINCListCtrl;
 
 
-typedef int     (*ListSortCompareFunc)(int, int);
+typedef bool (*ListSortCompareFunc)(size_t, size_t);
 
+typedef std::map<long, const wxChar*> ColumnListMap;
 
 class CBOINCBaseView : public wxPanel {
-    DECLARE_DYNAMIC_CLASS( CBOINCBaseView )
+    DECLARE_DYNAMIC_CLASS(CBOINCBaseView)
 
 public:
 
     CBOINCBaseView();
-    CBOINCBaseView(
-        wxNotebook* pNotebook
-    );
+    CBOINCBaseView(wxNotebook* pNotebook);
 
     ~CBOINCBaseView();
 
     /// Return the name of the view.
-    virtual wxString&       GetViewName();
+    virtual const wxString& GetViewName();
 
     /// Return the user friendly name of the view.
-    virtual wxString&       GetViewDisplayName();
+    virtual const wxString& GetViewDisplayName();
 
     /// Return the user friendly icon of the view.
     virtual const char**    GetViewIcon();
@@ -81,13 +82,16 @@ public:
 
     void                    InitSort();
 
+    /// Get a map containing the keys for all columns.
+    const ColumnListMap&    GetColumnKeys() const;
+
     int                     m_iSortColumn;
     bool                    m_bReverseSort;
 
 protected:
 
-    virtual bool            OnSaveState( wxConfigBase* pConfig );
-    virtual bool            OnRestoreState( wxConfigBase* pConfig );
+    virtual bool            OnSaveState(wxConfigBase* pConfig);
+    virtual bool            OnRestoreState(wxConfigBase* pConfig);
 
     virtual void            OnListRender( wxTimerEvent& event );
     virtual void            OnListSelected( wxListEvent& event );
@@ -98,12 +102,16 @@ protected:
 
     void                    OnColClick(wxListEvent& event);
     
-    virtual void            OnGridSelectCell( wxGridEvent& event );
-    virtual void            OnGridSelectRange( wxGridRangeSelectEvent& event );
-
     virtual int             GetDocCount();
     virtual wxString        OnDocGetItemImage( long item ) const;
     virtual wxString        OnDocGetItemAttr( long item ) const;
+
+    /// Add a new column to the tab.
+    void                    AddColumn(long column, const wxChar* heading,
+                                      wxListColumnFormat align, int width);
+
+    /// Read and apply stored settings like column widths.
+    void                    RestoreState();
 
     virtual int             AddCacheElement();
     virtual int             EmptyCache();
@@ -146,11 +154,14 @@ protected:
     int                     m_iProgressColumn;
 
     ListSortCompareFunc     m_funcSortCompare;
-    std::vector<int>        m_iSortedIndexes;
+    std::vector<size_t>     m_iSortedIndexes;
 
     CBOINCListCtrl*         m_pListPane;
 
     bool                    m_bViewLoaded;
+
+private:
+    ColumnListMap m_column_keys;
 };
 
 

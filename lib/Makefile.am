@@ -17,27 +17,6 @@ syneccmd_LDADD = $(lib_LIBRARIES) $(PTHREAD_LIBS)
 lib_LIBRARIES = libboinc.a 
 EXTRA_DIST = *.h *.C
 
-if OS_DARWIN
-mac_sources = \
-	mac/dyld_gdb.h \
-	mac/mac_backtrace.C \
-	mac/mac_backtrace.h \
-	mac/QBacktrace.c \
-	mac/QBacktrace.h \
-	mac/QCrashReport.c \
-	mac/QCrashReport.h \
-	mac/QMachOImage.c \
-	mac/QMachOImage.h \
-	mac/QMachOImageList.c \
-	mac/QMachOImageList.h \
-	mac/QSymbols.c \
-	mac/QSymbols.h \
-	mac/QTaskMemory.c \
-	mac/QTaskMemory.h
-else
-mac_sources = 
-endif
-
 libboinc_a_SOURCES = \
     app_ipc.C \
     base64.C \
@@ -62,8 +41,7 @@ libboinc_a_SOURCES = \
     shmem.C \
     str_util.C \
     util.C \
-    unix_util.C \
-	$(mac_sources)
+    unix_util.C
 
 pkginclude_HEADERS = \
     app_ipc.h \

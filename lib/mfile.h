@@ -38,18 +38,18 @@ public:
     MFILE();
     ~MFILE();
     int open(const char* path, const char* mode);
-    int _putchar(char);
-    int puts(const char*);
-    int vprintf(const char* format, va_list);
+    int _putchar(char c);
+    int puts(const char* str);
+    int vprintf(const char* format, va_list ap);
     int printf(const char* format, ...);
-    size_t write(const void *, size_t size, size_t nitems);
+    size_t write(const void* data, size_t size, size_t nitems);
     int close();
     int flush();
     long tell() const;
     /// Get the MFILE's internal buffer and its length.
     /// The caller assumes ownership of the buffer and must free() it.
     /// The MFILE's buffer is set to empty.
-    void get_buf(char*&, int&);
+    void get_buf(char*& buffer, int& length);
 };
 
 #endif
