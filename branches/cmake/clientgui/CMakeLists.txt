@@ -17,6 +17,8 @@
 
 FIND_PACKAGE(wxWidgets COMPONENTS base core adv net)
 
+IF(wxWidgets_FOUND)
+
 INCLUDE_DIRECTORIES(${wxWidgets_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
 ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
@@ -115,3 +117,6 @@ IF(WIN32)
 	TARGET_LINK_LIBRARIES(synecmgr clientlib)
 	TARGET_LINK_LIBRARIES(synecmgr wininet.lib)
 ENDIF(WIN32)
+
+ENDIF(wxWidgets_FOUND)
+# vim: set fdm=marker:
