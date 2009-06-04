@@ -695,7 +695,7 @@ int GLOBAL_PREFS::parse_file(
 ///
 /// \param[in] f Reference to a file object that will receive the xml-data.
 /// \return Always returns zero.
-int GLOBAL_PREFS::write(MIOFILE& f) {
+int GLOBAL_PREFS::write(MIOFILE& f) const {
     f.printf(
         "<global_preferences>\n"
         "   <source_project>%s</source_project>\n"
