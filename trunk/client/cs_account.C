@@ -40,6 +40,7 @@
 #include "log_flags.h"
 #include "error_numbers.h"
 #include "file_names.h"
+#include "miofile.h"
 
 /// Write account_*.xml file.
 /// NOTE: this is called only when
@@ -349,30 +350,13 @@ int PROJECT::write_statistics_file() const {
     if (!f) {
         return ERR_FOPEN;
     }
-    fprintf(f,
-        "<project_statistics>\n"
-        "    <master_url>%s</master_url>\n",
-        master_url
-    );
-
-    for (std::vector<DAILY_STATS>::const_iterator i = statistics.begin(); i != statistics.end(); ++i) {
-        fprintf(f,
-            "    <daily_statistics>\n"
-            "        <day>%f</day>\n"
-            "        <user_total_credit>%f</user_total_credit>\n"
-            "        <user_expavg_credit>%f</user_expavg_credit>\n"
-            "        <host_total_credit>%f</host_total_credit>\n"
-            "        <host_expavg_credit>%f</host_expavg_credit>\n"
-            "    </daily_statistics>\n",
-            i->day,
-            i->user_total_credit,
-            i->user_expavg_credit,
-            i->host_total_credit,
-            i->host_expavg_credit
-        );
+    
+    {
+        MIOFILE mf;
+        mf.init_file(f);
+        this->write_statistics(mf);
     }
 
-    fprintf(f, "</project_statistics>\n");
     fclose(f);
 
     std::string path = get_statistics_filename(master_url);
