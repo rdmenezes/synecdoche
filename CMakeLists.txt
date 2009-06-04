@@ -57,8 +57,9 @@ ENDFOREACH(type)
 AC_STRUCT_TIMEZONE()
 
 IF(WIN32)
+    STRING(REPLACE "/" "\\" VERSION_CPP_PATH ${CMAKE_BINARY_DIR}/svnversion.cpp)
     ADD_CUSTOM_TARGET(update_svnversion ALL
-        ${CMAKE_SOURCE_DIR}/version.bat ${CMAKE_BINARY_DIR}/svnversion.cpp
+        ${CMAKE_SOURCE_DIR}/version.bat ${VERSION_CPP_PATH}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         VERBATIM
     )
