@@ -18,28 +18,9 @@
 #ifndef H_CRYPT
 #define H_CRYPT
 
-// We're set up to use either RSAEuro or the OpenSSL crypto library.
-// We use our own data structures (R_RSA_PUBLIC_KEY and R_RSA_PRIVATE_KEY)
-// to store keys in either case.
-
-// Only define these here if they haven't been defined elsewhere
-#if !(defined(USE_OPENSSL) || defined(USE_RSAEURO))
-#define USE_OPENSSL 1
-//#define USE_RSAEURO 1
-#endif
-
 #include <stdio.h>
 #include <string.h>
 
-#ifdef USE_RSAEURO
-#include "rsaeuro.h"
-extern "C" {
-#include "rsa.h"
-}
-
-#endif
-
-#ifdef USE_OPENSSL
 #include <openssl/rsa.h>
 
 #define MAX_RSA_MODULUS_BITS 1024
@@ -71,8 +52,6 @@ void openssl_to_keys(
 );
 void private_to_openssl(R_RSA_PRIVATE_KEY& priv, RSA* rp);
 void public_to_openssl(R_RSA_PUBLIC_KEY& pub, RSA* rp);
-
-#endif
 
 struct KEY {
     unsigned short int bits;
