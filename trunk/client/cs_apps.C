@@ -267,8 +267,8 @@ inline double force_fraction(double f) {
     return f;
 }
 
-double CLIENT_STATE::get_fraction_done(RESULT* result) {
-    ACTIVE_TASK* atp = active_tasks.lookup_result(result);
+double CLIENT_STATE::get_fraction_done(const RESULT* result) {
+    const ACTIVE_TASK* atp = active_tasks.lookup_result(result);
     return atp ? force_fraction(atp->fraction_done) : 0.0;
 }
 
@@ -279,12 +279,12 @@ double CLIENT_STATE::get_fraction_done(RESULT* result) {
 /// \param[in] platform A string containing the name of the requested platform.
 /// \return The latest version of the requested application or -1 if no version
 ///         was found for the requested platform.
-int CLIENT_STATE::latest_version(APP* app, const std::string& platform) {
+int CLIENT_STATE::latest_version(const APP* app, const std::string& platform) {
     unsigned int i;
     int best = -1;
 
     for (i=0; i<app_versions.size(); i++) {
-        APP_VERSION* avp = app_versions[i];
+        const APP_VERSION* avp = app_versions[i];
         if (avp->app != app) continue;
         if (platform != std::string(avp->platform)) continue;
         if (avp->version_num < best) continue;
