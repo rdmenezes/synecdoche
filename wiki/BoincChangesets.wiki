@@ -80,7 +80,6 @@
 ||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
 ||18186||MGR: Support for newer versions of wxWidgets _Note: This was applied to BOINC trunk in an earlier revision_||
 ||18250||client: include plan class in other_result list in sched request (for resource-specific jobs-in-progress limit)||
-||18259||client: if scheduler request didn't request work, don't report 0 tasks||
 
 
 
