@@ -183,15 +183,16 @@ typedef LPCSTR PCTSTR, LPCTSTR, PCUTSTR, LPCUTSTR;
 //
 #ifdef __cplusplus
 #include <algorithm>
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
 #include <deque>
+#include <fstream>
+#include <iostream>
+#include <limits>
 #include <list>
 #include <map>
 #include <set>
+#include <sstream>
+#include <string>
+#include <vector>
 #endif
 
 
@@ -224,10 +225,6 @@ typedef LPCSTR PCTSTR, LPCTSTR, PCUTSTR, LPCUTSTR;
 #define strtime                 _strtime
 #define getcwd                  _getcwd
 
-#endif
-
-#ifndef __GNUC__
-#define __attribute__(x)
 #endif
 
 #ifdef __MINGW32__
