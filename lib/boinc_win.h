@@ -227,10 +227,6 @@ typedef LPCSTR PCTSTR, LPCTSTR, PCUTSTR, LPCUTSTR;
 
 #endif
 
-#ifndef __GNUC__
-#define __attribute__(x)
-#endif
-
 #ifdef __MINGW32__
 #ifdef __cplusplus
 extern "C" {

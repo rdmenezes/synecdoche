@@ -28,6 +28,8 @@
 #include "prefs.h"
 #include "common_defs.h"
 
+#include "attributes.h"
+
 /// \file
 /// Communication between the core client and the BOINC app library.
 /// This code is linked into both core client and app lib.
