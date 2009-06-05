@@ -32,13 +32,14 @@
 #include <csignal>
 #endif
 
+#include <cstring>
+
 #include "client_state.h"
 #include "md5_file.h"
 #include "util.h"
 #include "error_numbers.h"
 #include "file_names.h"
 #include "filesys.h"
-#include "shmem.h"
 #include "log_flags.h"
 #include "client_msgs.h"
 
