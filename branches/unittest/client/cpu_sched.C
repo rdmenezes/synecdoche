@@ -1,0 +1,1196 @@
+// This file is part of Synecdoche.
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
+//
+// Synecdoche is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Synecdoche is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
+
+/// \file
+/// CPU scheduling logic.
+///
+/// Terminology:
+///
+/// Episode
+/// The execution of a task is divided into "episodes".
+/// An episode starts then the application is executed,
+/// and ends when it exits or dies
+/// (e.g., because it's preempted and not left in memory,
+/// or the user quits Synecdoche, or the host is turned off).
+/// A task may checkpoint now and then.
+/// Each episode begins with the state of the last checkpoint.
+///
+/// Debt interval
+/// The interval between consecutive executions of adjust_debts()
+///
+/// Run interval
+/// If an app is running (not suspended), the interval
+/// during which it's been running.
+
+#ifdef _WIN32
+#include "boinc_win.h"
+#endif
+
+#include <string>
+#include <cstring>
+
+#include "str_util.h"
+#include "util.h"
+#include "error_numbers.h"
+
+#include "client_msgs.h"
+#include "log_flags.h"
+
+#include "client_state.h"
+
+using std::vector;
+
+/// maximum short-term debt
+#define MAX_STD   (86400)
+
+/// try to finish jobs this much in advance of their deadline
+#define DEADLINE_CUSHION    0
+
+
+static bool more_preemptable(ACTIVE_TASK* t0, ACTIVE_TASK* t1) {
+    // returning true means t1 is more preemptable than t0,
+    // the "largest" result is at the front of a heap,
+    // and we want the best replacement at the front,
+    //
+    if (t0->result->project->deadlines_missed && !t1->result->project->deadlines_missed) return false;
+    if (!t0->result->project->deadlines_missed && t1->result->project->deadlines_missed) return true;
+    if (t0->result->project->deadlines_missed && t1->result->project->deadlines_missed) {
+        if (t0->result->report_deadline > t1->result->report_deadline) return true;
+        return false;
+    } else {
+        double t0_episode_time = gstate.now - t0->run_interval_start_wall_time;
+        double t1_episode_time = gstate.now - t1->run_interval_start_wall_time;
+        if (t0_episode_time < t1_episode_time) return false;
+        if (t0_episode_time > t1_episode_time) return true;
+        if (t0->result->report_deadline > t1->result->report_deadline) return true;
+        return false;
+    }
+}
+
+/// Choose a "best" runnable result for each project
+///
+/// Values are returned in \c project->next_runnable_result
+/// (skip projects for which this is already non-NULL)
+///
+/// Don't choose results with <tt>already_selected == true</tt>;
+/// mark chosen results as \c already_selected.
+///
+/// The preference order:
+/// -# results with active tasks that are running
+/// -# results with active tasks that are preempted (but have a process)
+/// -# results with active tasks that have no process
+/// -# results with no active task
+///
+/// \todo this is called in a loop over NCPUs, which is silly. 
+/// Should call it once, and have it make an ordered list per project.
+void CLIENT_STATE::assign_results_to_projects() {
+    unsigned int i;
+    RESULT* rp;
+    PROJECT* project;
+
+    // scan results with an ACTIVE_TASK
+    //
+    for (i=0; i<active_tasks.active_tasks.size(); i++) {
+        ACTIVE_TASK *atp = active_tasks.active_tasks[i];
+        if (!atp->runnable()) continue;
+        rp = atp->result;
+        if (rp->already_selected) continue;
+        if (!rp->runnable()) continue;
+        project = rp->project;
+        if (!project->next_runnable_result) {
+            project->next_runnable_result = rp;
+            continue;
+        }
+
+        // see if this task is "better" than the one currently
+        // selected for this project
+        //
+        ACTIVE_TASK *next_atp = lookup_active_task_by_result(
+            project->next_runnable_result
+        );
+
+        if ((next_atp->task_state() == PROCESS_UNINITIALIZED && atp->process_exists())
+            || (next_atp->scheduler_state == CPU_SCHED_PREEMPTED
+            && atp->scheduler_state == CPU_SCHED_SCHEDULED)
+        ) {
+            project->next_runnable_result = atp->result;
+        }
+    }
+
+    // Now consider results that don't have an active task
+    //
+    for (i=0; i<results.size(); i++) {
+        rp = results[i];
+        if (rp->already_selected) continue;
+        if (lookup_active_task_by_result(rp)) continue;
+        if (!rp->runnable()) continue;
+
+        project = rp->project;
+        if (project->next_runnable_result) continue;
+        project->next_runnable_result = rp;
+    }
+
+    // mark selected results, so CPU scheduler won't try to consider
+    // a result more than once
+    //
+    for (i=0; i<projects.size(); i++) {
+        project = projects[i];
+        if (project->next_runnable_result) {
+            project->next_runnable_result->already_selected = true;
+        }
+    }
+}
+
+/// Among projects with a "next runnable result",
+/// find the project P with the greatest anticipated debt,
+/// and return its next runnable result.
+RESULT* CLIENT_STATE::largest_debt_project_best_result() {
+    PROJECT *best_project = NULL;
+    double best_debt = -MAX_STD;
+    bool first = true;
+    unsigned int i;
+
+    for (i=0; i<projects.size(); i++) {
+        PROJECT* p = projects[i];
+        if (!p->next_runnable_result) continue;
+        if (p->non_cpu_intensive) continue;
+        if (first || p->anticipated_debt > best_debt) {
+            first = false;
+            best_project = p;
+            best_debt = p->anticipated_debt;
+        }
+    }
+    if (!best_project) return NULL;
+
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(best_project, MSG_INFO,
+            "[cpu_sched_debug] highest debt: %f %s",
+            best_project->anticipated_debt,
+            best_project->next_runnable_result->name
+        );
+    }
+    RESULT* rp = best_project->next_runnable_result;
+    best_project->next_runnable_result = 0;
+    return rp;
+}
+
+/// Return earliest-deadline result from a project with <tt>deadlines_missed > 0</tt>
+RESULT* CLIENT_STATE::earliest_deadline_result() {
+    RESULT *best_result = NULL;
+    ACTIVE_TASK* best_atp = NULL;
+    unsigned int i;
+
+    for (i=0; i<results.size(); i++) {
+        RESULT* rp = results[i];
+        if (!rp->runnable()) continue;
+        if (rp->project->non_cpu_intensive) continue;
+        if (rp->already_selected) continue;
+        if (!rp->project->deadlines_missed && rp->project->duration_correction_factor < 90.0) continue;
+            // treat projects with DCF>90 as if they had deadline misses
+
+        bool new_best = false;
+        if (best_result) {
+            if (rp->report_deadline < best_result->report_deadline) {
+                new_best = true;
+            }
+        } else {
+            new_best = true;
+        }
+        if (new_best) {
+            best_result = rp;
+            best_atp = lookup_active_task_by_result(rp);
+            continue;
+        }
+        if (rp->report_deadline > best_result->report_deadline) {
+            continue;
+        }
+
+        // If there's a tie, pick the job with the least remaining CPU time
+        // (but don't pick an unstarted job over one that's started)
+        //
+        ACTIVE_TASK* atp = lookup_active_task_by_result(rp);
+        if (best_atp && !atp) continue;
+        if (rp->estimated_cpu_time_remaining()
+            < best_result->estimated_cpu_time_remaining()
+            || (!best_atp && atp)
+        ) {
+            best_result = rp;
+            best_atp = atp;
+        }
+    }
+    if (!best_result) return NULL;
+
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(best_result->project, MSG_INFO,
+            "[cpu_sched_debug] earliest deadline: %f %s",
+            best_result->report_deadline, best_result->name
+        );
+    }
+
+    return best_result;
+}
+
+void CLIENT_STATE::reset_debt_accounting() {
+    unsigned int i;
+    for (i=0; i<projects.size(); i++) {
+        PROJECT* p = projects[i];
+        p->wall_cpu_time_this_debt_interval = 0.0;
+    }
+    for (i = 0; i < active_tasks.active_tasks.size(); ++i) {
+        ACTIVE_TASK* atp = active_tasks.active_tasks[i];
+        atp->debt_interval_start_cpu_time = atp->current_cpu_time;
+    }
+    total_wall_cpu_time_this_debt_interval = 0.0;
+    total_cpu_time_this_debt_interval = 0.0;
+    debt_interval_start = now;
+}
+
+/// Adjust project debts (short, long-term).
+void CLIENT_STATE::adjust_debts() {
+    unsigned int i;
+    double total_long_term_debt = 0;
+    double total_short_term_debt = 0;
+    double prrs, rrs;
+    int nprojects=0, nrprojects=0;
+    PROJECT *p;
+    double share_frac;
+    double wall_cpu_time = now - debt_interval_start;
+
+    if (wall_cpu_time < 1) {
+        return;
+    }
+
+    // if the elapsed time is more than the scheduling period,
+    // it must be because the host was suspended for a long time.
+    // Currently we don't have a way to estimate how long this was for,
+    // so ignore the last period and reset counters.
+    //
+    if (wall_cpu_time > global_prefs.cpu_scheduling_period()*2) {
+        if (log_flags.debt_debug) {
+            msg_printf(NULL, MSG_INFO,
+                "[debt_debug] adjust_debt: elapsed time (%d) longer than sched period (%d).  Ignoring this period.",
+                int(wall_cpu_time), int(global_prefs.cpu_scheduling_period())
+            );
+        }
+        reset_debt_accounting();
+        return;
+    }
+
+    // Total up total and per-project "wall CPU" since last CPU reschedule.
+    // "Wall CPU" is the wall time during which a task was
+    // runnable (at the OS level).
+    //
+    // We use wall CPU for debt calculation
+    // (instead of reported actual CPU) for two reasons:
+    // 1) the process might have paged a lot, so the actual CPU
+    //    may be a lot less than wall CPU
+    // 2) BOINC relies on apps to report their CPU time.
+    //    Sometimes there are bugs and apps report zero CPU.
+    //    It's safer not to trust them.
+    //
+    for (i=0; i<active_tasks.active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks.active_tasks[i];
+        if (atp->scheduler_state != CPU_SCHED_SCHEDULED) continue;
+        if (atp->wup->project->non_cpu_intensive) continue;
+
+        atp->result->project->wall_cpu_time_this_debt_interval += wall_cpu_time;
+        total_wall_cpu_time_this_debt_interval += wall_cpu_time;
+        total_cpu_time_this_debt_interval += atp->current_cpu_time - atp->debt_interval_start_cpu_time;
+    }
+
+    time_stats.update_cpu_efficiency(
+        total_wall_cpu_time_this_debt_interval, total_cpu_time_this_debt_interval
+    );
+
+    rrs = runnable_resource_share();
+    prrs = potentially_runnable_resource_share();
+
+    for (i=0; i<projects.size(); i++) {
+        p = projects[i];
+
+        // potentially_runnable() can be false right after a result completes,
+        // but we still need to update its LTD.
+        // In this case its wall_cpu_time_this_debt_interval will be nonzero.
+        //
+        if (!(p->potentially_runnable()) && p->wall_cpu_time_this_debt_interval) {
+            prrs += p->resource_share;
+        }
+    }
+
+    for (i=0; i<projects.size(); i++) {
+        p = projects[i];
+        if (p->non_cpu_intensive) continue;
+        nprojects++;
+
+        // adjust long-term debts
+        //
+        if (p->potentially_runnable() || p->wall_cpu_time_this_debt_interval) {
+            share_frac = p->resource_share/prrs;
+            p->long_term_debt += share_frac*total_wall_cpu_time_this_debt_interval
+                - p->wall_cpu_time_this_debt_interval;
+        }
+        total_long_term_debt += p->long_term_debt;
+
+        // adjust short term debts
+        //
+        if (p->runnable()) {
+            nrprojects++;
+            share_frac = p->resource_share/rrs;
+            p->short_term_debt += share_frac*total_wall_cpu_time_this_debt_interval
+                - p->wall_cpu_time_this_debt_interval;
+            total_short_term_debt += p->short_term_debt;
+        } else {
+            p->short_term_debt = 0;
+            p->anticipated_debt = 0;
+        }
+    }
+
+    if (nprojects==0) return;
+
+    // long-term debt:
+    //  normalize so mean is zero,
+    // short-term debt:
+    //  normalize so mean is zero, and limit abs value at MAX_STD
+    //
+    double avg_long_term_debt = total_long_term_debt / nprojects;
+    double avg_short_term_debt = 0;
+    if (nrprojects) {
+        avg_short_term_debt = total_short_term_debt / nrprojects;
+    }
+    for (i=0; i<projects.size(); i++) {
+        p = projects[i];
+        if (p->non_cpu_intensive) continue;
+        if (p->runnable()) {
+            p->short_term_debt -= avg_short_term_debt;
+            if (p->short_term_debt > MAX_STD) {
+                p->short_term_debt = MAX_STD;
+            }
+            if (p->short_term_debt < -MAX_STD) {
+                p->short_term_debt = -MAX_STD;
+            }
+        }
+
+        p->long_term_debt -= avg_long_term_debt;
+        if (log_flags.debt_debug) {
+            msg_printf(0, MSG_INFO,
+                "[debt_debug] adjust_debts(): project %s: STD %f, LTD %f",
+                p->project_name, p->short_term_debt, p->long_term_debt
+            );
+        }
+    }
+
+    reset_debt_accounting();
+}
+
+
+/// Decide whether to run the CPU scheduler.
+/// This is called periodically.
+/// Scheduled tasks are placed in order of urgency for scheduling
+/// in the \ref ordered_scheduled_results vector.
+bool CLIENT_STATE::possibly_schedule_cpus() {
+    double elapsed_time;
+    static double last_reschedule=0;
+
+    if (projects.empty()) return false;
+    if (results.empty()) return false;
+
+    // Reschedule every cpu_sched_period seconds,
+    // or if must_schedule_cpus is set
+    // (meaning a new result is available, or a CPU has been freed).
+    //
+    elapsed_time = now - last_reschedule;
+    if (elapsed_time >= global_prefs.cpu_scheduling_period()) {
+        request_schedule_cpus("Scheduling period elapsed.");
+    }
+
+    if (!must_schedule_cpus) return false;
+    last_reschedule = now;
+    must_schedule_cpus = false;
+    schedule_cpus();
+    return true;
+}
+
+static bool schedule_if_possible(
+    RESULT* rp, double& ncpus_used, double& ram_left, double rrs, double expected_payoff
+) {
+    ACTIVE_TASK* atp;
+
+    atp = gstate.lookup_active_task_by_result(rp);
+    if (atp) {
+        // see if it fits in available RAM
+        //
+        if (atp->procinfo.working_set_size_smoothed > ram_left) {
+            if (log_flags.cpu_sched_debug) {
+                msg_printf(rp->project, MSG_INFO,
+                    "[cpu_sched_debug]  %s misses deadline but too large: %.2fMB",
+                    rp->name, atp->procinfo.working_set_size_smoothed/MEGA
+                );
+            }
+            atp->too_large = true;
+            return false;
+        }
+        atp->too_large = false;
+
+        if (gstate.retry_shmem_time > gstate.now) {
+            if (atp->app_client_shm.shm == NULL) {
+                atp->needs_shmem = true;
+                return false;
+            }
+            atp->needs_shmem = false;
+        }
+        ram_left -= atp->procinfo.working_set_size_smoothed;
+    }
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(rp->project, MSG_INFO,
+            "[cpu_sched_debug] scheduling %s",
+            rp->name
+        );
+    }
+    ncpus_used += rp->avp->avg_ncpus;
+    rp->project->anticipated_debt -= (rp->project->resource_share / rrs) * expected_payoff;
+    return true;
+}
+
+/// Decide which results to run.
+/// output: sets ordered_scheduled_result.
+void CLIENT_STATE::schedule_cpus() {
+    RESULT* rp;
+    PROJECT* p;
+    double expected_payoff;
+    unsigned int i;
+    double rrs = runnable_resource_share();
+    double ncpus_used = 0;
+
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(0, MSG_INFO, "[cpu_sched_debug] schedule_cpus(): start");
+    }
+
+    // do round-robin simulation to find what results miss deadline
+    //
+    rr_simulation();
+    if (log_flags.cpu_sched_debug) {
+        print_deadline_misses();
+    }
+
+    adjust_debts();
+
+    // set temporary variables
+    //
+    for (i=0; i<results.size(); i++) {
+        rp = results[i];
+        rp->already_selected = false;
+        rp->edf_scheduled = false;
+    }
+    for (i=0; i<projects.size(); i++) {
+        p = projects[i];
+        p->next_runnable_result = NULL;
+        p->anticipated_debt = p->short_term_debt;
+        p->deadlines_missed = p->rr_sim_status.get_deadlines_missed();
+    }
+    for (i=0; i<active_tasks.active_tasks.size(); i++) {
+        active_tasks.active_tasks[i]->too_large = false;
+    }
+
+    expected_payoff = global_prefs.cpu_scheduling_period();
+    ordered_scheduled_results.clear();
+    double ram_left = available_ram();
+
+    // First choose results from projects with P.deadlines_missed>0
+    //
+    while (ncpus_used < ncpus) {
+        rp = earliest_deadline_result();
+        if (!rp) break;
+        rp->already_selected = true;
+
+        if (!schedule_if_possible(rp, ncpus_used, ram_left, rrs, expected_payoff)) continue;
+
+        rp->project->deadlines_missed--;
+        rp->edf_scheduled = true;
+        ordered_scheduled_results.push_back(rp);
+    }
+
+    // Next, choose results from projects with large debt
+    //
+    while (ncpus_used < ncpus) {
+        assign_results_to_projects();
+        rp = largest_debt_project_best_result();
+        if (!rp) break;
+        if (!schedule_if_possible(rp, ncpus_used, ram_left, rrs, expected_payoff)) continue;
+        ordered_scheduled_results.push_back(rp);
+    }
+
+    request_enforce_schedule("schedule_cpus");
+}
+
+/// Make a list of running tasks, ordered by their preemptability.
+///
+void CLIENT_STATE::make_running_task_heap(
+    vector<ACTIVE_TASK*> &running_tasks, double& ncpus_used
+) {
+    unsigned int i;
+    ACTIVE_TASK* atp;
+
+    ncpus_used = 0;
+    for (i=0; i<active_tasks.active_tasks.size(); i++) {
+        atp = active_tasks.active_tasks[i];
+        if (atp->result->project->non_cpu_intensive) continue;
+        if (!atp->result->runnable()) continue;
+        if (atp->scheduler_state != CPU_SCHED_SCHEDULED) continue;
+        running_tasks.push_back(atp);
+        ncpus_used += atp->app_version->avg_ncpus;
+    }
+
+    std::make_heap(
+        running_tasks.begin(),
+        running_tasks.end(),
+        more_preemptable
+    );
+}
+
+/// Enforce the CPU schedule.
+/// - Inputs:
+///   - \c ordered_scheduled_results \n
+///      List of tasks that should (ideally) run, set by schedule_cpus().
+///      Most important tasks (e.g. early deadline) are first
+/// - Method:
+///   - Make a list "running_tasks" of currently running tasks
+///     Most preemptable tasks are first in list.
+/// - Details:
+///   - Initially, each task's scheduler_state is \c PREEMPTED or \c SCHEDULED
+///     depending on whether or not it is running.
+///   - This function sets each task's next_scheduler_state,
+///     and at the end it starts/resumes and preempts tasks
+///     based on scheduler_state and next_scheduler_state.
+///
+/// \return True if something changed, false otherwise.
+bool CLIENT_STATE::enforce_schedule() {
+    unsigned int i;
+    ACTIVE_TASK* atp;
+    vector<ACTIVE_TASK*> running_tasks;
+    static double last_time = 0;
+    int retval;
+    double ncpus_used;
+
+    // Do this when requested, and once a minute as a safety net
+    if (now - last_time > 60) {
+        must_enforce_cpu_schedule = true;
+    }
+    if (!must_enforce_cpu_schedule) return false;
+    must_enforce_cpu_schedule = false;
+    last_time = now;
+    bool action = false;
+
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(0, MSG_INFO, "[cpu_sched_debug] enforce_schedule(): start");
+        for (i=0; i<ordered_scheduled_results.size(); i++) {
+            RESULT* rp = ordered_scheduled_results[i];
+            msg_printf(rp->project, MSG_INFO,
+                "[cpu_sched_debug] want to run: %s",
+                rp->name
+            );
+        }
+    }
+
+    // set temporary variables
+    for (i=0; i<projects.size(); i++){
+        projects[i]->deadlines_missed = projects[i]->rr_sim_status.get_deadlines_missed();
+    }
+
+    for (i=0; i< active_tasks.active_tasks.size(); i++) {
+        atp = active_tasks.active_tasks[i];
+        if (atp->result->runnable()) {
+            atp->next_scheduler_state = atp->scheduler_state;
+        } else {
+            atp->next_scheduler_state = CPU_SCHED_PREEMPTED;
+        }
+    }
+
+    // make heap of currently running tasks, ordered by preemptibility
+    make_running_task_heap(running_tasks, ncpus_used);
+
+    // if there are more running tasks than ncpus,
+    // then mark the extras for preemption
+    while (ncpus_used > ncpus) {
+        atp = running_tasks[0];
+        atp->next_scheduler_state = CPU_SCHED_PREEMPTED;
+        ncpus_used -= atp->app_version->avg_ncpus;
+        std::pop_heap(
+            running_tasks.begin(),
+            running_tasks.end(),
+            more_preemptable
+        );
+        running_tasks.pop_back();
+    }
+
+    double ram_left = available_ram();
+
+    if (log_flags.mem_usage_debug) {
+        msg_printf(0, MSG_INFO,
+            "[mem_usage_debug] enforce: available RAM %.2fMB",
+            ram_left/MEGA
+        );
+    }
+
+    // Loop through the scheduled results
+    for (i=0; i<ordered_scheduled_results.size(); i++) {
+        RESULT* rp = ordered_scheduled_results[i];
+        if (log_flags.cpu_sched_debug) {
+            msg_printf(rp->project, MSG_INFO,
+                "[cpu_sched_debug] processing %s", rp->name
+            );
+        }
+
+        // See if it's already running.
+        atp = NULL;
+        for (vector<ACTIVE_TASK*>::iterator it = running_tasks.begin(); it != running_tasks.end(); it++) {
+            ACTIVE_TASK *atp1 = *it;
+            if (atp1 && atp1->result == rp) {
+                // The task is already running; remove it from the heap
+                atp = atp1;
+                it = running_tasks.erase(it);
+                std::make_heap(
+                    running_tasks.begin(),
+                    running_tasks.end(),
+                    more_preemptable
+                );
+                break;
+            }
+        }
+
+        // if it's already running, see if it fits in mem;
+        // If not, flag for preemption
+        if (atp) {
+            if (log_flags.cpu_sched_debug) {
+                msg_printf(rp->project, MSG_INFO,
+                    "[cpu_sched_debug] %s is already running", rp->name
+                );
+            }
+
+            if (atp->procinfo.working_set_size_smoothed > ram_left) {
+                atp->next_scheduler_state = CPU_SCHED_PREEMPTED;
+                atp->too_large = true;
+                ncpus_used -= atp->app_version->avg_ncpus;
+                if (log_flags.mem_usage_debug) {
+                    msg_printf(rp->project, MSG_INFO,
+                        "[mem_usage_debug] enforce: result %s can't continue, too big %.2fMB > %.2fMB",
+                        rp->name,  atp->procinfo.working_set_size_smoothed/MEGA, ram_left/MEGA
+                    );
+                }
+            } else {
+                ram_left -= atp->procinfo.working_set_size_smoothed;
+                atp->too_large = false;
+            }
+            continue;
+        }
+
+        // Here if the result is not already running.
+        // If it already has an active task and won't fit in mem, skip it
+        atp = lookup_active_task_by_result(rp);
+        if (atp) {
+            if (atp->procinfo.working_set_size_smoothed > ram_left) {
+                atp->too_large = true;
+                if (log_flags.mem_usage_debug) {
+                    msg_printf(rp->project, MSG_INFO,
+                        "[mem_usage_debug] enforce: result %s can't start, too big %.2fMB > %.2fMB",
+                        rp->name, atp->procinfo.working_set_size_smoothed/MEGA, ram_left/MEGA
+                    );
+                }
+                continue;
+            } else {
+                atp->too_large = false;
+            }
+        }
+
+        // Preempt something if needed (and possible).
+        bool run_task = false;
+        bool need_to_preempt = (ncpus_used >= ncpus) && !running_tasks.empty();
+            // the 2nd half of the above is redundant
+        if (need_to_preempt) {
+            // examine the most preemptable task.
+            // Preempt it if either
+            // 1) it's completed its time slice and has checkpointed recently
+            // 2) the scheduled result is in deadline trouble
+            atp = running_tasks[0];
+            double time_running = now - atp->run_interval_start_wall_time;
+            bool running_beyond_sched_period = time_running >= global_prefs.cpu_scheduling_period();
+            double time_since_checkpoint = now - atp->checkpoint_wall_time;
+            bool checkpointed_recently = time_since_checkpoint < 10;
+            if (rp->project->deadlines_missed
+                || (running_beyond_sched_period && checkpointed_recently)
+            ) {
+                if (rp->project->deadlines_missed) {
+                    rp->project->deadlines_missed--;
+                }
+                atp->next_scheduler_state = CPU_SCHED_PREEMPTED;
+                ncpus_used -= atp->app_version->avg_ncpus;
+                std::pop_heap(
+                    running_tasks.begin(),
+                    running_tasks.end(),
+                    more_preemptable
+                );
+                running_tasks.pop_back();
+                run_task = true;
+                if (log_flags.cpu_sched_debug) {
+                    msg_printf(rp->project, MSG_INFO,
+                        "[cpu_sched_debug] preempting %s",
+                        atp->result->name
+                    );
+                }
+            } else {
+                if (log_flags.cpu_sched_debug) {
+                    msg_printf(rp->project, MSG_INFO,
+                        "[cpu_sched_debug] didn't preempt %s: tr %f tsc %f",
+                        atp->result->name, time_running, time_since_checkpoint
+                    );
+                }
+            }
+        } else {
+            run_task = true;
+        }
+        if (run_task) {
+            atp = get_task(rp);
+            atp->next_scheduler_state = CPU_SCHED_SCHEDULED;
+            ncpus_used += atp->app_version->avg_ncpus;
+            ram_left -= atp->procinfo.working_set_size_smoothed;
+        }
+    }
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(0, MSG_INFO,
+            "[cpu_sched_debug] finished preempt loop, ncpus_used %f",
+            ncpus_used
+        );
+    }
+
+    // make sure we don't exceed RAM limits
+    for (i=0; i<running_tasks.size(); i++) {
+        atp = running_tasks[i];
+        if (atp->procinfo.working_set_size_smoothed > ram_left) {
+            atp->next_scheduler_state = CPU_SCHED_PREEMPTED;
+            atp->too_large = true;
+            if (log_flags.mem_usage_debug) {
+                msg_printf(atp->result->project, MSG_INFO,
+                    "[mem_usage_debug] enforce: result %s can't keep, too big %.2fMB > %.2fMB",
+                    atp->result->name, atp->procinfo.working_set_size_smoothed/MEGA, ram_left/MEGA
+                );
+            }
+        } else {
+            atp->too_large = false;
+            ram_left -= atp->procinfo.working_set_size_smoothed;
+        }
+    }
+
+    if (log_flags.cpu_sched_debug && ncpus_used < ncpus) {
+        msg_printf(0, MSG_INFO, "[cpu_sched_debug] using %f out of %d CPUs",
+            ncpus_used, ncpus
+        );
+        if (ncpus_used < ncpus) {
+            request_work_fetch("CPUs idle");
+        }
+    }
+
+    // schedule new non CPU intensive tasks
+    for (i=0; i<results.size(); i++) {
+        RESULT* rp = results[i];
+        if (rp->project->non_cpu_intensive && rp->runnable()) {
+            atp = get_task(rp);
+            atp->next_scheduler_state = CPU_SCHED_SCHEDULED;
+        }
+    }
+
+    double swap_left = (global_prefs.vm_max_used_frac)*host_info.m_swap;
+    bool check_swap = (host_info.m_swap != 0);
+    // in case couldn't measure swap on this host
+
+    // preempt and start tasks as needed
+    for (i=0; i<active_tasks.active_tasks.size(); i++) {
+        atp = active_tasks.active_tasks[i];
+        if (log_flags.cpu_sched_debug) {
+            msg_printf(atp->result->project, MSG_INFO,
+                "[cpu_sched_debug] %s sched state %d next %d task state %d",
+                atp->result->name, atp->scheduler_state,
+                atp->next_scheduler_state, atp->task_state()
+            );
+        }
+        switch (atp->next_scheduler_state) {
+        case CPU_SCHED_PREEMPTED:
+            bool preempt_by_quit;
+            switch (atp->task_state()) {
+            case PROCESS_EXECUTING:
+                action = true;
+                preempt_by_quit = !global_prefs.leave_apps_in_memory;
+                if (check_swap && swap_left < 0) {
+                    if (log_flags.mem_usage_debug) {
+                        msg_printf(atp->result->project, MSG_INFO,
+                            "[mem_usage_debug] out of swap space, will preempt by quit"
+                        );
+                    }
+                    preempt_by_quit = true;
+                }
+                if (atp->too_large) {
+                    if (log_flags.mem_usage_debug) {
+                        msg_printf(atp->result->project, MSG_INFO,
+                            "[mem_usage_debug] job using too much memory, will preempt by quit"
+                        );
+                    }
+                    preempt_by_quit = true;
+                }
+                atp->preempt(preempt_by_quit);
+                break;
+            case PROCESS_SUSPENDED:
+                // Handle the case where user changes prefs from "leave in
+                // memory" to "remove from memory".
+                // Need to quit suspended tasks:
+                if ((atp->checkpoint_cpu_time) && (!global_prefs.leave_apps_in_memory)) {
+                    atp->preempt(true);
+                }
+                break;
+            }
+            atp->scheduler_state = CPU_SCHED_PREEMPTED;
+            break;
+        case CPU_SCHED_SCHEDULED:
+            switch (atp->task_state()) {
+            case PROCESS_UNINITIALIZED:
+                // fall through
+            case PROCESS_SUSPENDED:
+                action = true;
+                retval = atp->resume_or_start(!atp->is_full_init_done());
+                if ((!retval) && (atp->task_state() == PROCESS_UNINITIALIZED)) {
+                    // Starting the application failed because of missing files.
+                    // This should not be treated as error, but we can't act as
+                    // if the application was already started and everything is
+                    // already initialized. Therefore don't update the task
+                    // status here. Just trigger the scheduler and jump to the
+                    // next task.
+                    request_schedule_cpus("start failed (missing files");
+                    continue;
+                }
+                if ((retval == ERR_SHMGET) || (retval == ERR_SHMAT)) {
+                    // Assume no additional shared memory segs
+                    // will be available in the next 10 seconds
+                    // (run only tasks which are already attached to shared memory).
+                    if (gstate.retry_shmem_time < gstate.now) {
+                        request_schedule_cpus("no more shared memory");
+                    }
+                    gstate.retry_shmem_time = gstate.now + 10.0;
+                    continue;
+                }
+                if (retval) {
+                    report_result_error(*(atp->result), "Couldn't start or resume: %d", retval);
+                    request_schedule_cpus("start failed");
+                    continue;
+                }
+                atp->run_interval_start_wall_time = now;
+                app_started = now;
+            }
+            atp->scheduler_state = CPU_SCHED_SCHEDULED;
+            swap_left -= atp->procinfo.swap_size;
+            break;
+        }
+    }
+    if (action) {
+        set_client_state_dirty("enforce_cpu_schedule");
+    }
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(0, MSG_INFO, "[cpu_sched_debug] enforce_schedule: end");
+    }
+    return action;
+}
+
+/// Return true if we don't have enough runnable tasks to keep all CPUs busy
+///
+bool CLIENT_STATE::no_work_for_a_cpu() {
+    unsigned int i;
+    int count = 0;
+
+    for (i=0; i< results.size(); i++){
+        RESULT* rp = results[i];
+        if (!rp->nearly_runnable()) continue;
+        if (rp->project->non_cpu_intensive) continue;
+        count++;
+    }
+    return ncpus > count;
+}
+
+/// Trigger CPU schedule enforcement.
+/// Called when a new schedule is computed,
+/// and when an app checkpoints.
+void CLIENT_STATE::request_enforce_schedule(const char* where) {
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(0, MSG_INFO, "[cpu_sched_debug] Request enforce CPU schedule: %s", where);
+    }
+    must_enforce_cpu_schedule = true;
+}
+
+/// Trigger CPU scheduling.
+/// Called when a result is completed,
+/// when new results become runnable,
+/// or when the user performs a UI interaction
+/// (e.g. suspending or resuming a project or result).
+///
+void CLIENT_STATE::request_schedule_cpus(const char* where) {
+    if (log_flags.cpu_sched_debug) {
+        msg_printf(0, MSG_INFO, "[cpu_sched_debug] Request CPU reschedule: %s", where);
+    }
+    must_schedule_cpus = true;
+}
+
+/// Find the active task for a given result.
+ACTIVE_TASK* CLIENT_STATE::lookup_active_task_by_result(const RESULT* result) {
+    for (unsigned int i = 0; i < active_tasks.active_tasks.size(); i ++) {
+        if (active_tasks.active_tasks[i]->result == result) {
+            return active_tasks.active_tasks[i];
+        }
+    }
+    return NULL;
+}
+
+bool RESULT::computing_done() const {
+    return (state() >= RESULT_COMPUTE_ERROR || ready_to_report);
+}
+
+/// Check if the result was started yet.
+///
+/// \return True if the client didn't start this result yet.
+bool RESULT::not_started() const {
+    return ((!computing_done()) && (!gstate.lookup_active_task_by_result(this)));
+}
+
+/// Find total resource shares of all projects.
+double CLIENT_STATE::total_resource_share() {
+    double x = 0;
+    for (unsigned int i=0; i<projects.size(); i++) {
+        if (!projects[i]->non_cpu_intensive ) {
+            x += projects[i]->resource_share;
+        }
+    }
+    return x;
+}
+
+/// Find total resource shares of all runnable projects (can use CPU right now).
+double CLIENT_STATE::runnable_resource_share() {
+    double x = 0;
+    for (unsigned int i=0; i<projects.size(); i++) {
+        PROJECT* p = projects[i];
+        if (p->non_cpu_intensive) continue;
+        if (p->runnable()) {
+            x += p->resource_share;
+        }
+    }
+    return x;
+}
+
+/// Find total resource shares of all potentially runnable projects (could ask for work right now).
+double CLIENT_STATE::potentially_runnable_resource_share() {
+    double x = 0;
+    for (unsigned int i=0; i<projects.size(); i++) {
+        PROJECT* p = projects[i];
+        if (p->non_cpu_intensive) continue;
+        if (p->potentially_runnable()) {
+            x += p->resource_share;
+        }
+    }
+    return x;
+}
+
+double CLIENT_STATE::fetchable_resource_share() {
+    double x = 0;
+    for (unsigned int i=0; i<projects.size(); i++) {
+        PROJECT* p = projects[i];
+        if (p->non_cpu_intensive) continue;
+        if (p->long_term_debt < -global_prefs.cpu_scheduling_period()) continue;
+        if (p->contactable()) {
+            x += p->resource_share;
+        }
+    }
+    return x;
+}
+
+/// Find total resource shares of all nearly runnable projects (could be downloading work right now)
+double CLIENT_STATE::nearly_runnable_resource_share() {
+    double x = 0;
+    for (unsigned int i=0; i<projects.size(); i++) {
+        PROJECT* p = projects[i];
+        if (p->non_cpu_intensive) continue;
+        if (p->nearly_runnable()) {
+            x += p->resource_share;
+        }
+    }
+    return x;
+}
+
+bool ACTIVE_TASK::process_exists() {
+    switch (task_state()) {
+    case PROCESS_EXECUTING:
+    case PROCESS_SUSPENDED:
+    case PROCESS_ABORT_PENDING:
+    case PROCESS_QUIT_PENDING:
+        return true;
+    }
+    return false;
+}
+
+/// If there's not an active task for the result, make one.
+ACTIVE_TASK* CLIENT_STATE::get_task(RESULT* rp) {
+    ACTIVE_TASK *atp = lookup_active_task_by_result(rp);
+    if (!atp) {
+        atp = new ACTIVE_TASK;
+        atp->slot = active_tasks.get_free_slot();
+        atp->init(rp);
+        active_tasks.active_tasks.push_back(atp);
+    }
+    return atp;
+}
+
+// Results must be complete early enough to report before the report deadline.
+// Not all hosts are connected all of the time.
+double RESULT::computation_deadline() const {
+    return report_deadline - (
+        gstate.work_buf_min()
+            // Seconds that the host will not be connected to the Internet
+        + gstate.global_prefs.cpu_scheduling_period()
+            // Seconds that the CPU may be busy with some other result
+        + DEADLINE_CUSHION
+    );
+}
+
+static const char* result_state_name(int val) {
+    switch (val) {
+    case RESULT_NEW: return "NEW";
+    case RESULT_FILES_DOWNLOADING: return "FILES_DOWNLOADING";
+    case RESULT_FILES_DOWNLOADED: return "FILES_DOWNLOADED";
+    case RESULT_COMPUTE_ERROR: return "COMPUTE_ERROR";
+    case RESULT_FILES_UPLOADING: return "FILES_UPLOADING";
+    case RESULT_FILES_UPLOADED: return "FILES_UPLOADED";
+    case RESULT_ABORTED: return "ABORTED";
+    }
+    return "Unknown";
+}
+
+void RESULT::set_state(int val, const char* where) {
+    _state = val;
+    if (log_flags.task_debug) {
+        msg_printf(project, MSG_INFO,
+            "[task_debug] result state=%s for %s from %s",
+            result_state_name(val), name, where
+        );
+    }
+}
+
+// called at startup (after get_host_info())
+// and when general prefs have been parsed
+//
+void CLIENT_STATE::set_ncpus() {
+    int inUse = ncpus;
+    int availableCPUs = 1;
+
+    if (config.ncpus > 0) {
+        // Pretend we have a different CPU count:
+        availableCPUs = config.ncpus;
+    } else if (host_info.p_ncpus > 0) {
+        availableCPUs = host_info.p_ncpus;
+    }
+
+    // Restricts CPUs according to preferences:
+    ncpus = gstate.global_prefs.GetMaxCPUs(availableCPUs);
+
+    if (initialized && (ncpus != inUse)) {
+        msg_printf(0, MSG_INFO,
+            "Number of usable CPUs has changed from %d to %d.  Running benchmarks.",
+            inUse, ncpus
+        );
+        run_cpu_benchmarks = true;
+        request_schedule_cpus("Number of usable CPUs has changed");
+        request_work_fetch("Number of usable CPUs has changed");
+    }
+}
+
+/// Preempt this task.
+/// Called from the CLIENT_STATE::schedule_cpus().
+/// If quit_task is true, do this by quitting.
+///
+/// \param[in] quit_task If true and app has checkpointed
+///                      it will be removed from memory
+/// \return Always returns 0.
+int ACTIVE_TASK::preempt(bool quit_task) {
+    // If the app hasn't checkpoint yet, suspend instead of quit
+    // (accommodate apps that never checkpoint)
+    if (quit_task && (checkpoint_cpu_time>0)) {
+        if (log_flags.cpu_sched) {
+            msg_printf(result->project, MSG_INFO,
+                "[cpu_sched] Preempting %s (removed from memory)",
+                result->name
+            );
+        }
+        set_task_state(PROCESS_QUIT_PENDING, "preempt");
+        request_exit();
+    } else {
+        if (log_flags.cpu_sched) {
+            if (quit_task) {
+                msg_printf(result->project, MSG_INFO,
+                    "[cpu_sched] Preempting %s (left in memory because no checkpoint yet)",
+                    result->name
+                );
+            } else {
+                msg_printf(result->project, MSG_INFO,
+                    "[cpu_sched] Preempting %s (left in memory)",
+                    result->name
+                );
+            }
+        }
+        suspend();
+    }
+    return 0;
+}
+
+/// The given result has just completed successfully;
+/// update the correction factor used to predict
+/// completion time for this project's results.
+void PROJECT::update_duration_correction_factor(const RESULT* result) {
+    double raw_ratio = result->final_cpu_time/result->estimated_cpu_time_uncorrected();
+    double adj_ratio = result->final_cpu_time/result->estimated_cpu_time();
+    double old_dcf = duration_correction_factor;
+
+    // it's OK to overestimate completion time,
+    // but bad to underestimate it.
+    // So make it easy for the factor to increase,
+    // but decrease it with caution
+    //
+    if (adj_ratio > 1.1) {
+        duration_correction_factor = raw_ratio;
+    } else {
+        // in particular, don't give much weight to results
+        // that completed a lot earlier than expected
+        //
+        if (adj_ratio < 0.1) {
+            duration_correction_factor = duration_correction_factor*0.99 + 0.01*raw_ratio;
+        } else {
+            duration_correction_factor = duration_correction_factor*0.9 + 0.1*raw_ratio;
+        }
+    }
+    // limit to [.01 .. 100]
+    //
+    if (duration_correction_factor > 100) duration_correction_factor = 100;
+    if (duration_correction_factor < 0.01) duration_correction_factor = 0.01;
+
+    if (log_flags.cpu_sched_debug || log_flags.work_fetch_debug) {
+        msg_printf(this, MSG_INFO,
+            "[csd|wfd] DCF: %f->%f, raw_ratio %f, adj_ratio %f",
+            old_dcf, duration_correction_factor, raw_ratio, adj_ratio
+        );
+    }
+}
