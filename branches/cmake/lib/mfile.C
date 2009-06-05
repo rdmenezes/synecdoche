@@ -34,10 +34,9 @@
 #include <unistd.h>
 #endif
 
+#include "mfile.h"
 #include "filesys.h"
 #include "error_numbers.h"
-#include "mfile.h"
-
 
 MFILE::MFILE() {
     buf = 0;

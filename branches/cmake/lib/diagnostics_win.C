@@ -19,6 +19,8 @@
 /// Stuff related to catching SEH exceptions, monitoring threads, and trapping
 /// debugger messages; used by both core client and by apps.
 
+#include "diagnostics_win.h"
+
 #if !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
 #endif
@@ -29,7 +31,6 @@
 
 #include "version.h"
 #include "diagnostics.h"
-#include "diagnostics_win.h"
 #include "error_numbers.h"
 #include "str_util.h"
 #include "util.h"

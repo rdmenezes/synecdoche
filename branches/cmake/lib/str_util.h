@@ -38,8 +38,6 @@
 #include "attributes.h"
 #include "common_defs.h"
 
-#include "attributes.h"
-
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
 size_t strlcpy(char* dst, const char* src, size_t size);

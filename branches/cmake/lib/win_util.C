@@ -21,8 +21,8 @@
 #else
 #include "boinc_win.h"
 #endif
-#include "win_util.h"
 
+#include "win_util.h"
 
 /**
  * Find out if we are on a Windows 2000 compatible system

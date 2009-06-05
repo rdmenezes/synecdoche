@@ -20,11 +20,8 @@
 #define UTIL_H
 
 #include <cstdlib>
-#include <ctime>
 #include <cmath>
-#include <cctype>
-#include <cstring>
-#include <algorithm>
+
 #include <string>
 #include <vector>
 #include <list>

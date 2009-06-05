@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "base64.h"
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -23,8 +24,6 @@
 #ifndef _WIN32
 #include "config.h"
 #endif
-
-#include "base64.h"
 
 using std::string;
 

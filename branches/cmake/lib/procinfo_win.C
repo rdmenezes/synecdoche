@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "procinfo.h"
 #include "boinc_win.h"
 #include "error_numbers.h"
 #include "diagnostics_win.h"
-#include "procinfo.h"
 
 using std::vector;
 

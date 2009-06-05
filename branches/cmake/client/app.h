@@ -26,8 +26,8 @@
 #include "app_ipc.h"
 #include "procinfo.h"
 
-//forward declarations
-//(we don't need to include the full declarations from client_types.h)
+// forward declarations
+// (we don't need to include the full declarations from client_types.h)
 class CLIENT_STATE;
 class PROJECT;
 class WORKUNIT;
@@ -108,7 +108,7 @@ public:
     double current_cpu_time;
 
     /// Disk used by output files and temp files of this task.
-    int current_disk_usage(double&) const;
+    int current_disk_usage(double& size) const;
 
     /// Directory where process runs (relative).
     char slot_dir[256];
@@ -158,10 +158,10 @@ public:
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
     // PowerPC apps emulated on i386 Macs crash if running graphics
     int powerpc_emulated_on_i386;
-    int is_native_i386_app(const char*) const;
+    int is_native_i386_app(const char* exec_path) const;
 #endif
     GRAPHICS_MSG graphics_msg;
-    void request_graphics_mode(GRAPHICS_MSG&);
+    void request_graphics_mode(GRAPHICS_MSG& msg);
     int request_reread_prefs();
     int request_reread_app_info();
     void check_graphics_mode_ack();
@@ -177,7 +177,7 @@ public:
 
     ACTIVE_TASK();
     ~ACTIVE_TASK();
-    int init(RESULT*);
+    int init(RESULT* rp);
     void cleanup_task();
 
     /// Start a process.
@@ -200,7 +200,7 @@ public:
     int unsuspend();
 
     /// Abort a task.
-    int abort_task(int exit_status, const char*);
+    int abort_task(int exit_status, const char* msg);
 
     /// Return true if this task has exited.
     bool has_task_exited();
@@ -209,16 +209,16 @@ public:
     int preempt(bool quit_task);
 
     /// Resume the task if it was previously running; otherwise start it.
-    int resume_or_start(bool);
+    int resume_or_start(bool first_time);
     void send_network_available();
 #ifdef _WIN32
-    void handle_exited_app(unsigned long);
+    void handle_exited_app(unsigned long exit_code);
 #else
     void handle_exited_app(int stat);
 #endif
 
     /// Handle a task that exited prematurely (i.e. the job isn't done).
-    void handle_premature_exit(bool&);
+    void handle_premature_exit(bool& will_restart);
 
     bool check_max_disk_exceeded();
 
@@ -239,20 +239,20 @@ public:
     bool is_full_init_done() const;
 
     int handle_upload_files();
-    void upload_notify_app(const FILE_INFO*, const FILE_REF*);
+    void upload_notify_app(const FILE_INFO* fip, const FILE_REF* frp);
     int copy_output_files();
 
-    int write(MIOFILE&) const;
-    int write_gui(MIOFILE&) const;
-    int parse(MIOFILE&);
+    int write(MIOFILE& fout) const;
+    int write_gui(MIOFILE& fout) const;
+    int parse(MIOFILE& fin);
 };
 typedef std::vector<ACTIVE_TASK*> ACTIVE_TASK_PVEC;
 
 class ACTIVE_TASK_SET {
 public:
     ACTIVE_TASK_PVEC active_tasks;
-    ACTIVE_TASK* lookup_pid(int);
-    ACTIVE_TASK* lookup_result(const RESULT*);
+    ACTIVE_TASK* lookup_pid(int pid);
+    ACTIVE_TASK* lookup_result(const RESULT* result);
     void init();
     bool poll();
 
@@ -265,21 +265,21 @@ public:
     int wait_for_exit(double, PROJECT* p=0);
     int exit_tasks(PROJECT* p=0);
     void kill_tasks(PROJECT* p=0);
-    int abort_project(PROJECT*);
+    int abort_project(PROJECT* project);
     bool get_msgs();
 
     /// See if any processes have exited.
     bool check_app_exited();
     bool check_rsc_limits_exceeded();
     bool check_quit_timeout_exceeded();
-    bool is_slot_in_use(int) const;
-    bool is_slot_dir_in_use(const char*) const;
+    bool is_slot_in_use(int slot) const;
+    bool is_slot_dir_in_use(const char* dir) const;
     int get_free_slot() const;
     void send_heartbeats();
     void send_trickle_downs();
     void report_overdue() const;
     void handle_upload_files();
-    void upload_notify_app(const FILE_INFO*);
+    void upload_notify_app(const FILE_INFO* fip);
 
     /// Does any task want network?
     bool want_network() const;
@@ -287,17 +287,17 @@ public:
     /// Notify tasks that network is available.
     void network_available();
     void free_mem();
-    bool slot_taken(int) const;
+    bool slot_taken(int slot) const;
     void get_memory_usage();
 
     // graphics-related functions
     void graphics_poll();
     void process_control_poll();
-    void request_reread_prefs(PROJECT*);
+    void request_reread_prefs(PROJECT* project);
     void request_reread_app_info();
 
-    int write(MIOFILE&) const;
-    int parse(MIOFILE&);
+    int write(MIOFILE& fout) const;
+    int parse(MIOFILE& fin);
 };
 
 #endif // TASK_H_INCLUDED

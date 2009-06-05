@@ -37,13 +37,15 @@
 #endif
 #endif
 
+#include "str_util.h"
+
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include <list>
+
 #include "error_numbers.h"
 #include "filesys.h"
-#include "str_util.h"
 
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().

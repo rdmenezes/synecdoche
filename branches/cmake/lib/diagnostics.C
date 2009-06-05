@@ -16,8 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-// Stuff related to stderr/stdout direction and exception handling;
-// used by both core client and by apps
+/// \file Stuff related to stderr/stdout direction and exception handling;
+/// used by both core client and by apps
+
+#include "diagnostics.h"
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -36,7 +38,6 @@
 #include <execinfo.h>
 #endif
 
-#include "diagnostics.h"
 #include "app_ipc.h"
 #include "error_numbers.h"
 #include "filesys.h"
