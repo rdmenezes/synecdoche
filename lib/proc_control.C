@@ -27,6 +27,8 @@
 #include <string>
 #include "win_util.h"
 
+#include "proc_control.h"
+
 #include "filesys.h"
 #include "error_numbers.h"
 #include "common_defs.h"

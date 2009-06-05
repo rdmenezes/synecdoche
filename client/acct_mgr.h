@@ -46,7 +46,7 @@ struct ACCT_MGR_INFO {
     bool password_error;
 
     ACCT_MGR_INFO();
-    int parse_login_file(FILE*);
+    int parse_login_file(FILE* f);
     int write_info();
     int init();
     void clear();
@@ -79,7 +79,7 @@ struct AM_ACCOUNT {
     OPTIONAL_BOOL detach_when_done;
     OPTIONAL_DOUBLE resource_share;
 
-    int parse(XML_PARSER&);
+    int parse(XML_PARSER& xp);
     AM_ACCOUNT() {}
     ~AM_ACCOUNT() {}
 };
@@ -100,7 +100,7 @@ struct ACCT_MGR_OP: public GUI_HTTP_OP {
         const std::string& url, const std::string& name,
         const std::string& password, bool via_gui
     );
-    int parse(FILE*);
+    int parse(FILE* f);
     virtual void handle_reply(int http_op_retval);
 
     ACCT_MGR_OP();

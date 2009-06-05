@@ -32,8 +32,8 @@
 #include <errno.h>
 #endif
 
-#include "error_numbers.h"
 #include "network.h"
+#include "error_numbers.h"
 
 /// Return a string describing the current network error value.
 /// On Windows this function get's the error value by calling WSAGetLastError().

@@ -18,8 +18,6 @@
 #ifndef BOINC_NETWORK_H
 #define BOINC_NETWORK_H
 
-#include <string.h>
-
 #ifndef _WIN32
 # include <unistd.h>
 # include "config.h"

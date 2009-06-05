@@ -17,6 +17,9 @@
 // or write to the Free Software Foundation, Inc.,
 // 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+#ifndef PROC_CONTROL_H
+#define PROC_CONTROL_H
+
 extern HANDLE sandbox_account_interactive_token;
 extern HANDLE sandbox_account_service_token;
 
@@ -26,3 +29,5 @@ void get_sandbox_account_service_token();
 int run_app_windows(
     const char* path, const char* cdir, int argc, char *const argv[], HANDLE&
 );
+
+#endif

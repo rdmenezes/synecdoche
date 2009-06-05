@@ -26,9 +26,9 @@
 #include <string>
 #endif
 
+#include "msg_log.h"
 #include "str_util.h"
 #include "util.h"
-#include "msg_log.h"
 
 using std::string;
 
@@ -96,8 +96,7 @@ void MSG_LOG::vprintf(int kind, const char* format, va_list va) {
     vfprintf(output, format, va);
 }
 
-// break a multi-line string into lines (so that we show prefix on each line)
-//
+/// Break a multi-line string into lines (so that we show prefix on each line).
 void MSG_LOG::vprintf_multiline(
     int kind, const char* str, const char* prefix_format, va_list va
 ) {

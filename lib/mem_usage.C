@@ -40,8 +40,8 @@
 #include <procfs.h> // definitions for solaris /proc structs
 #endif
 
-#include "error_numbers.h"
 #include "mem_usage.h"
+#include "error_numbers.h"
 
 int mem_usage(double& vm_usage, double& resident_set) {
 
