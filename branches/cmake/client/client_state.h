@@ -302,7 +302,7 @@ public:
     double runnable_resource_share();
     int quit_activities();
     void set_ncpus();
-    double get_fraction_done(RESULT* result);
+    double get_fraction_done(const RESULT* result);
 
     /// Check if all the input files for a result are present.
     int input_files_available(const RESULT* rp, bool verify, FILE_INFO_PSET* fip_set = 0);
@@ -311,7 +311,9 @@ public:
 private:
     int nslots;
 
-    int latest_version(APP* app, const char* platform);
+    /// Find latest version of app for given platform
+    int latest_version(const APP* app, const std::string& platform);
+    
     int app_finished(ACTIVE_TASK& at);
     bool start_apps();
     bool handle_finished_apps();

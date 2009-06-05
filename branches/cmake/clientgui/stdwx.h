@@ -222,10 +222,6 @@
 
 #endif
 
-#ifndef __GNUC__
-#define __attribute__(x)
-#endif
-
 // On the Win32 platform include file and line number information for each
 //   memory allocation/deallocation
 #if (defined(__WIN32__) && defined(__VISUALC__) && !defined(__AFX_H__))
