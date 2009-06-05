@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -33,6 +33,8 @@
 #include <math.h>
 #include <time.h>
 #include <strings.h>
+
+#include <limits>
 #include <map>
 #include <set>
 #endif
@@ -397,7 +399,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
         return retval;
     }
 
-    if (log_flags.sched_ops) {
+    if ((log_flags.sched_ops) && (project->work_request > std::numeric_limits<double>::epsilon())) {
         msg_printf(project, MSG_INFO, "Scheduler request completed: got %lu new tasks", sr.results.size());
     }
     if (log_flags.sched_op_debug) {
