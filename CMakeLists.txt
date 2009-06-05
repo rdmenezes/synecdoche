@@ -16,7 +16,10 @@
 # License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.4)
-INCLUDE(cmake/AutoconfCompat.cmake)
+
+LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+INCLUDE(AutoconfCompat)
 
 FOREACH(inc "csignal" "signal.h" "malloc.h" "unistd.h" "netdb.h" "arpa/inet.h" "netinet/in.h")
 	AC_CHECK_INCLUDE_FILE(${inc})
