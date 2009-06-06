@@ -78,8 +78,6 @@
 ||18042||client, Mac: don't do res_init(). It causes a crash. / client (Unix): if client crashes while benchmark processes are going, make sure they detect this and exit. _NOTE: 17711 needs to be applied before this one._||
 ||18054||Mac client: fix parent died test in benchmark_time_to_stop()||
 ||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
-||18186||MGR: Support for newer versions of wxWidgets _Note: This was applied to BOINC trunk in an earlier revision_||
-||18250||client: include plan class in other_result list in sched request (for resource-specific jobs-in-progress limit)||
 
 
 
