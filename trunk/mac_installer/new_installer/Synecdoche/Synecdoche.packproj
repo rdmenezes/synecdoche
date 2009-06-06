@@ -1828,7 +1828,7 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 				<key>Display Information</key>
 				<dict>
 					<key>CFBundleGetInfoString</key>
-					<string>Version 0.1.1 r846M, Copyright © 2009 Synecdoche contributors</string>
+					<string>Version 0.1.1 r851M, Copyright © 2009 Synecdoche contributors</string>
 					<key>CFBundleIconFile</key>
 					<string>../../../graphics/icons/synecdoche.icns</string>
 					<key>CFBundleIconFile Path Type</key>
