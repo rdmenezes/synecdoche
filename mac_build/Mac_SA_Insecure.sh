@@ -1,23 +1,21 @@
 #! /bin/sh
 
-# Berkeley Open Infrastructure for Network Computing
+# This file is part of BOINC.
 # http://boinc.berkeley.edu
-# Copyright (C) 2006 University of California
+# Copyright (C) 2008 University of California
 #
-# This is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation;
-# either version 2.1 of the License, or (at your option) any later version.
+# BOINC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
+# BOINC is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Lesser General Public License for more details.
 #
-# To view the GNU Lesser General Public License visit
-# http://www.gnu.org/copyleft/lesser.html
-# or write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# You should have received a copy of the GNU Lesser General Public License
+# along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
 # Mac_SA_Insecure.sh user group
 #
@@ -93,9 +91,9 @@ then
     exit
 fi
 
-if [ ! -f "synecd" ]
+if [ ! -f "boinc" ]
 then
-    echo "Can't find Synecdoche daemon in directory $(pwd); exiting"
+    echo "Can't find boinc Client in directory $(pwd); exiting"
     exit
 fi
 
@@ -109,20 +107,20 @@ chown root:${group} switcher/AppStats
 chmod 4550 switcher/AppStats
 fi
 
-if [ -x /Applications/Synecdoche.app/Contents/MacOS/Synecdoche ] ; then 
-    chown ${user}:${group} /Applications/Synecdoche.app/Contents/MacOS/Synecdoche
-    chmod -R u+r-w+s,g+r-ws,o+r-ws /Applications/Synecdoche.app/Contents/MacOS/Synecdoche
+if [ -x /Applications/BOINCManager.app/Contents/MacOS/BOINCManager ] ; then 
+    chown ${user}:${group} /Applications/BOINCManager.app/Contents/MacOS/BOINCManager
+    chmod -R u+r-w+s,g+r-ws,o+r-ws /Applications/BOINCManager.app/Contents/MacOS/BOINCManager
 fi
 
-if [ -x /Applications/Synecdoche.app/Contents/Resources/synecd ] ; then 
-    chown ${user}:${group} /Applications/Synecdoche.app/Contents/Resources/synecd
-    chmod -R u+r-ws,g+r-ws,o+r-ws /Applications/Synecdoche.app/Contents/Resources/synecd
+if [ -x /Applications/BOINCManager.app/Contents/Resources/boinc ] ; then 
+    chown ${user}:${group} /Applications/BOINCManager.app/Contents/Resources/boinc
+    chmod -R u+r-ws,g+r-ws,o+r-ws /Applications/BOINCManager.app/Contents/Resources/boinc
 fi
 
 # Version 6 screensaver has its own embedded switcher application, but older versions don't.
-if [ -x "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher" ] ; then 
-    chown ${user}:${group} "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher"
-    chmod -R u+r-ws,g+r-ws,o+r-ws "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher"
+if [ -x "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher" ] ; then 
+    chown ${user}:${group} "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher"
+    chmod -R u+r-ws,g+r-ws,o+r-ws "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher"
 fi
 
 remove_boinc_users
