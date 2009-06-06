@@ -268,7 +268,6 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     }
 
     // send names of results in progress for this project
-    //
     fprintf(f, "<other_results>\n");
     for (i=0; i<results.size(); i++) {
         rp = results[i];
@@ -276,8 +275,10 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
             fprintf(f,
                 "    <other_result>\n"
                 "        <name>%s</name>\n"
+                "        <plan_class>%s</plan_class>\n"
                 "    </other_result>\n",
-                rp->name
+                rp->name,
+                rp->plan_class
             );
         }
     }
