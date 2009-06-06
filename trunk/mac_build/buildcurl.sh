@@ -1,33 +1,31 @@
 #!/bin/sh
 
-# Berkeley Open Infrastructure for Network Computing
+# This file is part of BOINC.
 # http://boinc.berkeley.edu
-# Copyright (C) 2005 University of California
+# Copyright (C) 2008 University of California
 #
-# This is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation;
-# either version 2.1 of the License, or (at your option) any later version.
+# BOINC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
+# BOINC is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Lesser General Public License for more details.
 #
-# To view the GNU Lesser General Public License visit
-# http://www.gnu.org/copyleft/lesser.html
-# or write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# You should have received a copy of the GNU Lesser General Public License
+# along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
-# Script to build Macintosh Universal Binary library of curl-7.18.0 for
+# Script to build Macintosh Universal Binary library of curl-7.19.4 for
 # use in building BOINC.
 #
 # by Charlie Fenton 7/21/06
-# Updated 5/14/08
+# Updated 3/3/09
 #
-## In Terminal, CD to the curl-7.18.0 directory.
-##     cd [path]/curl-7.18.0/
+## In Terminal, CD to the curl-7.19.4 directory.
+##     cd [path]/curl-7.19.4/
 ## then run this script:
 ##     source [path]/buildcurl.sh [ -clean ] [ -gcc33 ]
 ##
@@ -58,7 +56,7 @@ fi
 fi
 
 if [ $AlreadyBuilt -ne 0 ]; then
-    echo "curl-7.18.0 already built"
+    echo "curl-7.19.4 already built"
     return 0
 fi
 
@@ -83,10 +81,10 @@ fi
 export PATH=/usr/local/bin:$PATH
 
 CURL_DIR=`pwd`
-# curl configure and make expect a path to _installed_ c-ares-1.5.1
+# curl configure and make expect a path to _installed_ c-ares-1.6.0
 # so temporarily install c-ares at a path that does not contain spaces.
-cd ../c-ares-1.5.1
-sudo make install 
+cd ../c-ares-1.6.0
+make install 
 cd "${CURL_DIR}"
 
 export SDKROOT="/Developer/SDKs/MacOSX10.3.9.sdk"
@@ -96,6 +94,12 @@ rm -f lib/.libs/libcurl.a
 rm -f lib/.libs/libcurl_ppc.a
 rm -f lib/.libs/libcurl_i386.a
 rm -f lib/.libs/libcurl_x86_64.a
+
+# cURL configure creates a different curlbuild.h file for each architecture
+rm -f include/curl/curlbuild.h
+rm -f include/curl/curlbuild_ppc.h
+rm -f include/curl/curlbuild_i386.h
+rm -f include/curl/curlbuild_x86_64.h
 
 if [ $usegcc33 -ne 0 ]; then
 
@@ -121,6 +125,7 @@ make clean
 
 make
 if [  $? -ne 0 ]; then return 1; fi
+mv -f include/curl/curlbuild.h include/curl/curlbuild_ppc.h
 mv -f lib/.libs/libcurl.a lib/libcurl_ppc.a
 
 make clean
@@ -157,6 +162,7 @@ fi
 
 # Build for x86_64 architecture if OS 10.5 SDK is present
 
+mv -f include/curl/curlbuild.h include/curl/curlbuild_i386.h
 mv -f lib/.libs/libcurl.a lib/libcurl_i386.a
 
 make clean
@@ -182,6 +188,8 @@ export CPPFLAGS=""
 export CFLAGS=""
 export SDKROOT=""
 
+mv -f include/curl/curlbuild.h include/curl/curlbuild_x86_64.h
+
 mv -f lib/.libs/libcurl.a lib/.libs/libcurl_x86_64.a
 mv -f lib/libcurl_ppc.a lib/.libs/
 mv -f lib/libcurl_i386.a lib/.libs/
@@ -189,6 +197,39 @@ lipo -create lib/.libs/libcurl_i386.a lib/.libs/libcurl_x86_64.a lib/.libs/libcu
 if [  $? -ne 0 ]; then return 1; fi
 
 # Delete temporarily installed c-ares.
-sudo rm -Rf /tmp/installed-c-ares/
+rm -Rf /tmp/installed-c-ares/
+
+rm -f include/curl/curlbuild.h
+
+# Create a custom curlbuild.h file which directs BOINC builds 
+# to the correct curlbuild_xxx.h file for each architecture.
+cat >> include/curl/curlbuild.h << ENDOFFILE
+/***************************************************************************
+*
+* This file was created for BOINC by the buildcurl.sh script
+*
+* You should not need to modify it manually
+*
+ ***************************************************************************/
+
+#ifndef __BOINC_CURLBUILD_H
+#define __BOINC_CURLBUILD_H
+
+#ifndef __APPLE__
+#error - this file is for Macintosh only
+#endif
+
+#ifdef __x86_64__
+#include "curl/curlbuild_x86_64.h"
+#elif defined(__ppc__)
+#include "curl/curlbuild_ppc.h"
+#elif defined(__i386__)
+#include "curl/curlbuild_i386.h"
+#else
+#error - unknown architecture
+#endif
+
+#endif /* __BOINC_CURLBUILD_H */
+ENDOFFILE
 
 return 0

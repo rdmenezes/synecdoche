@@ -1,27 +1,25 @@
 #!/bin/csh
 
-## Berkeley Open Infrastructure for Network Computing
-## http://boinc.berkeley.edu
-## Copyright (C) 2005 University of California
-##
-## This is free software; you can redistribute it and/or
-## modify it under the terms of the GNU Lesser General Public
-## License as published by the Free Software Foundation;
-## either version 2.1 of the License, or (at your option) any later version.
-##
-## This software is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-## See the GNU Lesser General Public License for more details.
-##
-## To view the GNU Lesser General Public License visit
-## http://www.gnu.org/copyleft/lesser.html
-## or write to the Free Software Foundation, Inc.,
-## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# This file is part of BOINC.
+# http://boinc.berkeley.edu
+# Copyright (C) 2008 University of California
+#
+# BOINC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# BOINC is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
 ##
 # Release Script for Macintosh GridRepublic Desktop by Charlie Fenton
-## updated 5/1/08 by Charlie Fenton
+## updated 5/20/09 by Charlie Fenton
 ##
 
 ## NOTE: This script is deprecated.
@@ -138,6 +136,11 @@ cp -fpR "$BUILDPATH/setprojectgrp" "${PR_PATH}/Library/Application Support/BOINC
 cp -fp "${BRANDING_FILE}" "${PR_PATH}/Library/Application Support/BOINC Data/Branding"
 cp -fp curl/ca-bundle.crt  "${PR_PATH}/Library/Application Support/BOINC Data/"
 
+cp -fp doc/logo/boinc_logo_black.jpg "${PR_PATH}/Library/Application Support/BOINC Data/"
+cp -fp api/txf/Helvetica.txf "${PR_PATH}/Library/Application Support/BOINC Data/"
+cp -fp clientscr/ss_config.xml "${PR_PATH}/Library/Application Support/BOINC Data/"
+cp -fpR "$BUILDPATH/boincscr" "${PR_PATH}/Library/Application Support/BOINC Data/"
+
 cp -fpR "$BUILDPATH/BOINCManager.app" "${PR_PATH}/Applications/"
 
 cp -fpR "$BUILDPATH/BOINCSaver.saver" "${PR_PATH}/Library/Screen Savers/"
@@ -145,15 +148,15 @@ cp -fpR "$BUILDPATH/BOINCSaver.saver" "${PR_PATH}/Library/Screen Savers/"
 ## Copy the localization files into the installer tree
 
 ## Old way copies CVS and *.po files which are not needed
-## cp -fpR locale/client/ "${PR_PATH}/Library/Application Support/BOINC Data/locale"
+## cp -fpR locale/ "${PR_PATH}/Library/Application Support/BOINC Data/locale"
 ## sudo rm -dfR "${PR_PATH}/Library/Application Support/BOINC Data/locale/CVS"
 
 ## New way copies only *.mo files (adapted from boinc/sea/make-tar.sh)
 ##### We've decided not to customize BOINC Data directory name for branding
 #### find locale/client -name '*.mo' | cut -d '/' -f 3 | awk -v PRPATH=${PR_PATH} -v BRANDNAME=${BRAND_NAME} '{print "\"" PRPATH "/Library/Application Support/" BRANDNAME " Data/locale/"$0"\""}' | xargs mkdir -p 
-#### find locale/client -name '*.mo' | cut -d '/' -f 3,4 | awk -v PRPATH=${PR_PATH} -v BRANDNAME=${BRAND_NAME} '{print "cp \"locale/client/"$0"\" \"" PRPATH "/Library/Application Support/" BRANDNAME " Data/locale/"$0"\""}' | bash
-find locale/client -name '*.mo' | cut -d '/' -f 3 | awk -v PRPATH=${PR_PATH} '{print "\"" PRPATH "/Library/Application Support/BOINC Data/locale/"$0"\""}' | xargs mkdir -p 
-find locale/client -name '*.mo' | cut -d '/' -f 3,4 | awk -v PRPATH=${PR_PATH} '{print "cp \"locale/client/"$0"\" \"" PRPATH "/Library/Application Support/BOINC Data/locale/"$0"\""}' | bash
+#### find locale/client -name '*.mo' | cut -d '/' -f 3,4 | awk -v PRPATH=${PR_PATH} -v BRANDNAME=${BRAND_NAME} '{print "cp \"locale/"$0"\" \"" PRPATH "/Library/Application Support/" BRANDNAME " Data/locale/"$0"\""}' | bash
+find locale/client -name '*.mo' | cut -d '/' -f 2 | awk -v PRPATH=${PR_PATH} '{print "\"" PRPATH "/Library/Application Support/BOINC Data/locale/"$0"\""}' | xargs mkdir -p 
+find locale/client -name '*.mo' | cut -d '/' -f 2,3 | awk -v PRPATH=${PR_PATH} '{print "cp \"locale/"$0"\" \"" PRPATH "/Library/Application Support/BOINC Data/locale/"$0"\""}' | bash
 
 ## Modify for Grid Republic
 # Rename the Manager's bundle and its executable inside the bundle
@@ -211,9 +214,15 @@ mkdir -p "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras"
 cp -fp "${IR_PATH}/ReadMe.rtf" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/ReadMe.rtf"
 sudo chown -R 501:admin "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/ReadMe.rtf"
 sudo chmod -R 644 "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/ReadMe.rtf"
+
 cp -fp "COPYING" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras"
 sudo chown -R 501:admin "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYING"
 sudo chmod -R 644 "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYING"
+
+cp -fp "COPYING.LESSER" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras"
+sudo chown -R 501:admin "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYING.LESSER"
+sudo chmod -R 644 "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYING.LESSER"
+
 cp -fp "COPYRIGHT" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/"
 sudo chown -R 501:admin "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYRIGHT"
 sudo chmod -R 644 "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYRIGHT"

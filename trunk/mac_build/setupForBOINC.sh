@@ -1,31 +1,28 @@
 #!/bin/sh
 
-# Berkeley Open Infrastructure for Network Computing
+# This file is part of BOINC.
 # http://boinc.berkeley.edu
-# Copyright (C) 2005 University of California
+# Copyright (C) 2008 University of California
 #
-# This is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation;
-# either version 2.1 of the License, or (at your option) any later version.
+# BOINC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
+# BOINC is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Lesser General Public License for more details.
 #
-# To view the GNU Lesser General Public License visit
-# http://www.gnu.org/copyleft/lesser.html
-# or write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# You should have received a copy of the GNU Lesser General Public License
+# along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # Master script to build Universal Binary libraries needed by BOINC:
-# curl-7.18.0 with c-ares-1.5.1, jpeg-6b and wxMac-2.8.7
+# curl-7.19.4 with c-ares-1.6.0, jpeg-6b and wxMac-2.8.10
 #
 # by Charlie Fenton 7/21/06
-# Bug fix for wxMac-2.6.3 7/26/07
-# Updated for curl-7.18.0, c-ares-1.5.1 and wxMac-2.8.7 2/27/08
+# Updated 4/17/08 for curl-7.19.4, c-ares-1.6.0 and wxMac-2.8.10 and Unicode
 #
 # Download these three packages and place them in a common parent 
 # directory with the BOINC source tree.
@@ -51,24 +48,24 @@ SCRIPT_DIR=`pwd`
 
 echo ""
 echo "----------------------------------"
-echo "------- BUILD C-ARES-1.5.1 -------"
+echo "------- BUILD C-ARES-1.6.0 -------"
 echo "----------------------------------"
 echo ""
 
-cd ../../c-ares-1.5.1/
+cd ../../c-ares-1.6.0/
 if [  $? -ne 0 ]; then return 1; fi
 source "${SCRIPT_DIR}/buildc-ares.sh" ${doclean}
 if [  $? -ne 0 ]; then return 1; fi
 
 echo ""
 echo "----------------------------------"
-echo "------- BUILD CURL-7.18.0 --------"
+echo "------- BUILD CURL-7.19.4 --------"
 echo "----------------------------------"
 echo ""
 
 cd "${SCRIPT_DIR}"
 
-cd ../../curl-7.18.0/
+cd ../../curl-7.19.4/
 if [  $? -ne 0 ]; then return 1; fi
 source "${SCRIPT_DIR}/buildcurl.sh" ${doclean}
 if [  $? -ne 0 ]; then return 1; fi
@@ -88,13 +85,13 @@ if [  $? -ne 0 ]; then return 1; fi
 
 echo ""
 echo "----------------------------------"
-echo "------- BUILD wxMac-2.8.7 --------"
+echo "------- BUILD wxMac-2.8.10 --------"
 echo "----------------------------------"
 echo ""
 
 cd "${SCRIPT_DIR}"
 
-cd ../../wxMac-2.8.7/
+cd ../../wxMac-2.8.10/
 if [  $? -ne 0 ]; then return 1; fi
 source "${SCRIPT_DIR}/buildWxMac.sh" ${doclean}
 if [  $? -ne 0 ]; then return 1; fi
