@@ -3292,6 +3292,11 @@
 		DD62C37E0A801FB400B3D68A /* Deploy_noSandbox */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					x86_64,
+					i386,
+					ppc,
+				);
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				PRODUCT_NAME = boinc;
@@ -3311,6 +3316,11 @@
 		DD62C3820A801FB400B3D68A /* Deploy_noSandbox */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					x86_64,
+					i386,
+					ppc,
+				);
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION_ppc = 3.3;
@@ -3423,6 +3433,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
+					x86_64,
 					i386,
 					ppc,
 				);
@@ -3893,14 +3904,13 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.3;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				OTHER_CFLAGS = (
-					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
 					"-D_THREAD_SAFE",
 					"-DNDEBUG",
 					"-include",
 					../clientgui/mac/config.h,
 				);
-				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -D_THREAD_SAFE -DNDEBUG -include ../clientgui/mac/config.h";
-				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -D_THREAD_SAFE -DNDEBUG -include ../clientgui/mac/config.h";
+				OTHER_CFLAGS_i386 = "-D_THREAD_SAFE -DNDEBUG -include ../clientgui/mac/config.h";
+				OTHER_CFLAGS_ppc = "-D_THREAD_SAFE -DNDEBUG -include ../clientgui/mac/config.h";
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
