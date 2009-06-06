@@ -121,7 +121,7 @@ BEGIN
             VALUE "FileDescription", "Synecdoche Manager"
             VALUE "FileVersion", SYNEC_VERSION_STRING "\0"
             VALUE "InternalName", "synecmgr"
-            VALUE "LegalCopyright", "© 2008 Synecdoche contributors"
+            VALUE "LegalCopyright", "© 2009 Synecdoche contributors"
             VALUE "OriginalFilename", "synecmgr.exe"
             VALUE "ProductName", "Synecdoche"
             VALUE "ProductVersion", SYNEC_VERSION_STRING "\0"
