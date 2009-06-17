@@ -63,7 +63,7 @@ synecd_DEPENDENCIES =
 synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
 
 synecddir = $(bindir)
-synecd_DATA = ../curl/ca-bundle.crt
+dist_synecd_DATA = ../curl/ca-bundle.crt
 
 switcher_SOURCES = switcher.C
 
@@ -73,5 +73,4 @@ all-local: synecd
 
 EXTRA_DIST = *.h \
     win \
-    scripts \
-    $(synecd_DATA)
+    scripts
