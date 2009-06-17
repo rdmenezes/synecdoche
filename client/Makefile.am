@@ -96,3 +96,5 @@ all-local: synecd
 EXTRA_DIST = \
     win \
     scripts
+
+SUBDIRS = scripts
