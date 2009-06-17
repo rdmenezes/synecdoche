@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS = foreign
 ## make sure rebuilding uses the right aclocal-switches
 ACLOCAL_AMFLAGS = -I m4
 
-API_SUBDIRS = api lib
+API_SUBDIRS = lib
 
 CLIENT_SUBDIRS = client # client/scripts
 

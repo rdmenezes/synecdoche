@@ -620,7 +620,6 @@ dnl ======================================================================
 
 AC_CONFIG_FILES([
                  version.h
-                 api/Makefile
                  clientgui/Makefile
                  clientgui/res/Makefile
                  client/Makefile
