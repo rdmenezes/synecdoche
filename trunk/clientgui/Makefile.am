@@ -122,7 +122,6 @@ win_config.h: $(top_srcdir)/config.h
 
 version: win_config.h
 
-clean-local:
-	-rm -f stdwx.h.gch
+CLEANFILES=stdwx.h.gch
 
 .PHONY: version
