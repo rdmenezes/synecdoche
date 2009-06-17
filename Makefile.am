@@ -26,16 +26,6 @@ EXTRA_DIST =   \
     INSTALL    \
     version.sh
 
-# Add a stage target for staging a distribution
-
-clean-generic:
-	rm -rf stage
-
-stage: all
-	if [ ! -d stage ] ; then mkdir stage ; fi
-	rm -rf stage/*
-	$(MAKE) DESTDIR=$(PWD)/stage install
-
 dist-hook:
 	rm -rf `find $(distdir) -name .backup -prune -o -name '*~' -o -name .svn`
 #	cd $(distdir) && ./_autosetup
