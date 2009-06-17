@@ -9,8 +9,6 @@ LIBS += @CLIENTLIBS@
 if OS_DARWIN
    LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa -framework Security
    mac_sources = mac/SystemMenu.m \
-                 mac/mac_saver_module.cpp \
-                 mac/Mac_Saver_ModuleView.m \
                  mac/MacSysMenu.cpp \
                  mac/Mac_GUI.cpp\
                  mac/browser_safari.mm
@@ -94,11 +92,12 @@ synecmgr_SOURCES = \
     ../svnversion.cpp \
     $(mac_sources)
 
-EXTRA_DIST = *.h \
+EXTRA_DIST = \
+    *.h common/*.h \
     res \
     msw \
     ../lib/error_numbers.h \
-    locale $(mac_headers)
+    $(mac_headers)
 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
         $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)

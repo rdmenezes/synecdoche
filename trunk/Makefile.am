@@ -19,15 +19,12 @@ endif
 SUBDIRS = m4 $(API_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS)
 
 # Putting a directory name recursively copies the entire contents - the
-# dist-hook below gets rid of CVS directories.
+# dist-hook below gets rid of SVN directories.
 
-EXTRA_DIST =                                    \
-	win_build                                   \
-    INSTALL										
-
-pkginclude_HEADERS = \
-    config.h \
-    version.h
+EXTRA_DIST =   \
+    win_build  \
+    INSTALL    \
+    version.sh
 
 # Add a stage target for staging a distribution
 
@@ -40,7 +37,7 @@ stage: all
 	$(MAKE) DESTDIR=$(PWD)/stage install
 
 dist-hook:
-	rm -rf `find $(distdir) -name .backup -prune -o -name '*~' -o -name CVS`
+	rm -rf `find $(distdir) -name .backup -prune -o -name '*~' -o -name .svn`
 #	cd $(distdir) && ./_autosetup
 
 svnversion.cpp: version.sh
