@@ -60,8 +60,6 @@ synecd_SOURCES = \
     ../svnversion.cpp
 
 synecd_DEPENDENCIES =
-synecd_CPPFLAGS = -O3 -fomit-frame-pointer -fforce-addr -ffast-math $(AM_CPPFLAGS)
-synecd_LDFLAGS = -static-libgcc
 synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
 
 synecddir = $(bindir)
@@ -74,6 +72,6 @@ all-local: synecd
 ## these source files need to be specified because no rule uses them.
 
 EXTRA_DIST = *.h \
-    mac \
-    translation \
-    win
+    win \
+    scripts \
+    $(synecd_DATA)
