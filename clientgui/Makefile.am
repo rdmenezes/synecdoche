@@ -94,8 +94,6 @@ synecmgr_SOURCES = \
 nodist_synecmgr_SOURCES = ../svnversion.cpp
 
 EXTRA_DIST = \
-    *.h common/*.h \
-    res \
     msw \
     ../lib/error_numbers.h \
     $(mac_headers)
