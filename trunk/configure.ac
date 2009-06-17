@@ -623,8 +623,6 @@ AC_CONFIG_FILES([
                  clientgui/Makefile
                  clientgui/res/Makefile
                  client/Makefile
-                 client/scripts/Makefile
-                 client/scripts/boinc-client
                  lib/Makefile
                  locale/client/Makefile
                  Makefile

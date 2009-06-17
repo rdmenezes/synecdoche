@@ -97,4 +97,3 @@ EXTRA_DIST = \
     win \
     scripts
 
-SUBDIRS = scripts
