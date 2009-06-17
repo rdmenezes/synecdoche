@@ -112,8 +112,8 @@ synecmgr_CXXFLAGS = -O3 $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
 synecmgr_LDADD = $(LIBBOINC) $(CLIENTGUILIBS)
 
 stdwx.h.gch: stdwx.h
-	-rm -f stdwx.h.gch
-	$(CXXCOMPILE) -o stdwx.h.gch -xc++-header stdwx.h
+	-rm -f $@
+	$(CXXCOMPILE) -o $@ -xc++-header $(srcdir)/stdwx.h
 
 all-local: synecmgr
 
