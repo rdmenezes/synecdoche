@@ -33,7 +33,8 @@ dist-hook:
 svnversion.cpp: version.sh
 	$(srcdir)/version.sh svnversion.cpp
 
-BUILT_SOURCES=svnversion.cpp
+BUILT_SOURCES = svnversion.cpp
+CLEANFILES = svnversion.cpp
 
 .PHONY: svnversion.cpp
 
