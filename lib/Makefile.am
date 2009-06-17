@@ -15,7 +15,6 @@ syneccmd_CPPFLAGS = -O3 $(AM_CPPFLAGS)
 syneccmd_LDADD = $(lib_LIBRARIES) $(PTHREAD_LIBS)
 
 lib_LIBRARIES = libboinc.a 
-EXTRA_DIST = *.h *.C
 
 libboinc_a_SOURCES = \
     app_ipc.C \
@@ -41,26 +40,33 @@ libboinc_a_SOURCES = \
     shmem.C \
     str_util.C \
     util.C \
-    unix_util.C
-
-pkginclude_HEADERS = \
+    unix_util.C \
     app_ipc.h \
+    attributes.h \
+    base64.h \
     boinc_win.h \
-	common_defs.h \
+    common_defs.h \
     crypt.h \
     diagnostics.h \
     error_numbers.h \
     filesys.h \
     gui_rpc_client.h \
     hostinfo.h \
+    md5.h \
+    md5_file.h \
+    mem_usage.h \
     mfile.h \
     miofile.h \
     msg_log.h \
+    network.h \
     parse.h \
     prefs.h \
+    procinfo.h \
     proxy_info.h \
+    shmem.h \
     std_fixes.h \
     str_util.h \
+    unix_util.h \
     util.h
 
 crypt_prog_SOURCES = crypt_prog.C crypt.C md5.c md5_file.C
