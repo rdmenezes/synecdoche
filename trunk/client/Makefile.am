@@ -56,8 +56,9 @@ synecd_SOURCES = \
     scheduler_op.C \
     time_stats.C \
     whetstone.C \
-    work_fetch.C \
-    ../svnversion.cpp
+    work_fetch.C
+
+nodist_synecd_SOURCES = ../svnversion.cpp
 
 synecd_DEPENDENCIES =
 synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)

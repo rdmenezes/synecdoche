@@ -89,8 +89,9 @@ synecmgr_SOURCES = \
     WelcomePage.cpp \
     WizardAccountManager.cpp \
     WizardAttachProject.cpp \
-    ../svnversion.cpp \
     $(mac_sources)
+
+nodist_synecmgr_SOURCES = ../svnversion.cpp
 
 EXTRA_DIST = \
     *.h common/*.h \
