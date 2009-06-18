@@ -360,7 +360,7 @@ private:
 
 /// @name cs_prefs.C
 public:
-    int project_disk_usage(PROJECT* p, double& size);
+    int project_disk_usage(const PROJECT* p, double& size);
     int total_disk_usage(double& size); ///< returns the total disk usage of Synecdoche on this host
     double allowed_disk_usage(double boinc_total);
     int suspend_tasks(int reason);

@@ -63,16 +63,16 @@ double CLIENT_STATE::allowed_disk_usage(double boinc_total) {
     return size;
 }
 
-int CLIENT_STATE::project_disk_usage(PROJECT* p, double& size) {
+int CLIENT_STATE::project_disk_usage(const PROJECT* p, double& size) {
     char buf[256];
-    unsigned int i;
-    double s;
 
     get_project_dir(p, buf, sizeof(buf));
     dir_size(buf, size);
 
-    for (i=0; i<active_tasks.active_tasks.size(); i++) {
-        ACTIVE_TASK* atp = active_tasks.active_tasks[i];
+    for (size_t i=0; i<active_tasks.active_tasks.size(); i++) {
+        const ACTIVE_TASK* atp = active_tasks.active_tasks[i];
+        double s;
+
         if (atp->wup->project != p) continue;
         get_slot_dir(atp->slot, buf, sizeof(buf));
         dir_size(buf, s);
