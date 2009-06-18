@@ -44,7 +44,7 @@ synecmgr_SOURCES = \
     CompletionPage.cpp \
     common/wxPieCtrl.cpp \
     common/wxFlatNotebook.cpp \
-    DlgAbout.cpp 		\
+    DlgAbout.cpp \
     DlgAdvPreferences.cpp \
     DlgAdvPreferencesBase.cpp \
     DlgGenericMessage.cpp \
@@ -89,14 +89,12 @@ synecmgr_SOURCES = \
     WelcomePage.cpp \
     WizardAccountManager.cpp \
     WizardAttachProject.cpp \
-    $(mac_sources)
+    $(mac_sources) $(mac_headers)
 
 nodist_synecmgr_SOURCES = ../svnversion.cpp
 
 EXTRA_DIST = \
-    msw \
-    ../lib/error_numbers.h \
-    $(mac_headers)
+    msw
 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
         $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(CLIENTGUIFLAGS)
