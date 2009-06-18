@@ -42,8 +42,6 @@ synecmgr_SOURCES = \
     browser.C \
     CompletionErrorPage.cpp \
     CompletionPage.cpp \
-    common/wxPieCtrl.cpp \
-    common/wxFlatNotebook.cpp \
     DlgAbout.cpp \
     DlgAdvPreferences.cpp \
     DlgAdvPreferencesBase.cpp \
@@ -89,6 +87,8 @@ synecmgr_SOURCES = \
     WelcomePage.cpp \
     WizardAccountManager.cpp \
     WizardAttachProject.cpp \
+    common/wxFlatNotebook.cpp \
+    common/wxPieCtrl.cpp \
     $(mac_sources) $(mac_headers)
 
 nodist_synecmgr_SOURCES = ../svnversion.cpp
