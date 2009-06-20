@@ -24,13 +24,15 @@ with `--dir` or by changing the current directory first.
 
 == Mac ==
 
-The daemon itself doesn't do anything to locate the data directory; current
-directory is data directory. However, one usually doesn't start the daemon by
-itself, not even automatically at startup ^[confirm]^. The normal way is
-starting the manager, or letting the system start the screensaver. Both the
-manager and the screensaver `chdir` to the data directory before running the
-daemon. The path to this directory is _hardcoded in the manager/screensaver
-code_.
+The daemon itself doesn't do anything to locate the data directory;
+current directory is data directory.
+However, one usually doesn't start the daemon by itself,
+not even automatically at startup.
+The normal way is starting the manager,
+or letting the system start the screensaver.
+Both the manager and the screensaver
+`chdir` to the data directory before running the daemon.
+The path to this directory is _hardcoded in the manager/screensaver code_.
 
 = Planned changes =
 
