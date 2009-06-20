@@ -124,7 +124,7 @@ int ACTIVE_TASK::get_shmem_seg_name() {
     }
     sprintf(shmem_seg_name, "boinc_%d", i);
 #else
-    // shmem_seg_name is not used with mmap() shared memory 
+    // shmem_seg_name is not used with mmap() shared memory
     if (app_version->api_major_version() >= 6) {
         shmem_seg_name = -1;
         return 0;
@@ -514,7 +514,7 @@ int ACTIVE_TASK::start() {
     app_client_shm.reset_msgs();
 
     if (config.run_apps_manually) {
-        // fill in core client's PID so we won't think app has exited 
+        // fill in core client's PID so we won't think app has exited
         pid = GetCurrentProcessId();
         pid_handle = GetCurrentProcess();
         set_task_state(PROCESS_EXECUTING, "start");

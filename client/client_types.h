@@ -616,10 +616,10 @@ public:
     double estimated_cpu_time_uncorrected() const;
     double estimated_cpu_time_remaining() const;
     bool computing_done() const;
-    
+
     /// Check if the result was started yet.
     bool not_started() const;
-    
+
     /// Downloaded, not finished, not suspended, project not suspended.
     bool runnable() const;
     /// Downloading or downloaded,
@@ -630,10 +630,10 @@ public:
     /// Some input or app file is downloading, and backed off.
     /// That is, it may be a long time before we can run this result.
     bool some_download_stalled() const;
-    
+
     /// Get the project this result belongs to.
     PROJECT* get_project() const;
-    
+
     /// Get the name of this result.
     std::string get_name() const;
 

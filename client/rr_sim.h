@@ -41,7 +41,7 @@ private:
 
 public:
     RR_SIM_PROJECT_STATUS();
-    
+
     void clear();
     int get_deadlines_missed() const;
     void inc_deadlines_missed(int increment = 1);

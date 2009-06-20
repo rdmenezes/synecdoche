@@ -664,7 +664,7 @@ int FILE_INFO::set_permissions() {
     get_pathname(this, pathname, sizeof(pathname));
 
     if (g_use_sandbox) {
-        // give exec permissions for user, group and others but give 
+        // give exec permissions for user, group and others but give
         // read permissions only for user and group to protect account keys
         retval = set_to_project_group(pathname);
         if (retval) return retval;
@@ -994,8 +994,8 @@ int FILE_INFO::merge_info(const FILE_INFO& new_info) {
 /// Returns true if the file had an unrecoverable error
 /// (couldn't download, RSA/MD5 check failed, etc).
 bool FILE_INFO::had_failure(int& failnum) const {
-    if (status != FILE_NOT_PRESENT 
-                && status != FILE_PRESENT 
+    if (status != FILE_NOT_PRESENT
+                && status != FILE_PRESENT
                 && status != FILE_NOT_PRESENT_NOT_NEEDED) {
         failnum = status;
         return true;

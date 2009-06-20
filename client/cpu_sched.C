@@ -96,7 +96,7 @@ static bool more_preemptable(ACTIVE_TASK* t0, ACTIVE_TASK* t1) {
 /// -# results with active tasks that have no process
 /// -# results with no active task
 ///
-/// \todo this is called in a loop over NCPUs, which is silly. 
+/// \todo this is called in a loop over NCPUs, which is silly.
 /// Should call it once, and have it make an ordered list per project.
 void CLIENT_STATE::assign_results_to_projects() {
     unsigned int i;
