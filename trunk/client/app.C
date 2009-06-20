@@ -651,7 +651,7 @@ int ACTIVE_TASK_SET::parse(MIOFILE& fin) {
     return ERR_XML_PARSE;
 }
 
-void MSG_QUEUE::init(char* n) {
+void MSG_QUEUE::init(const char* n) {
     strcpy(name, n);
     last_block = 0;
     msgs.clear();

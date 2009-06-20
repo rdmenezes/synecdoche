@@ -110,7 +110,7 @@ struct MSG_QUEUE {
     std::vector<std::string> msgs;
     char name[256];
     double last_block;  ///< last time we found message channel full
-    void init(char*);
+    void init(const char*);
     void msg_queue_send(const char*, MSG_CHANNEL& channel);
     void msg_queue_poll(MSG_CHANNEL& channel);
     int msg_queue_purge(const char*);

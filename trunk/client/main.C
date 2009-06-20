@@ -195,7 +195,7 @@ static void signal_handler(int signum) {
 }
 #endif
 
-static void init_core_client(int argc, char** argv) {
+static void init_core_client(int argc, const char** argv) {
     setbuf(stdout, 0);
     setbuf(stderr, 0);
 
@@ -480,7 +480,7 @@ int finalize() {
 /// Entry point.
 ///
 /// \todo Clean up the Windows-specific initialization code.
-int main(int argc, char** argv) {
+int main(int argc, const char** argv) {
     int retval = 0;
 
 #ifdef _WIN32
