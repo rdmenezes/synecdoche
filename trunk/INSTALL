@@ -18,8 +18,8 @@ Requirements
 To build Synecdoche on a Unix platform, you need a relatively modern C++
 compiler, and the following libraries:
 
- * libcurl 7.17.1 or later. HTTPS support may be required for some projects.
- * OpenSSL
+ * libcurl 7.17.1 or later (HTTPS support may be required for some projects)
+ * OpenSSL 0.9.8 or later
  * wxWidgets 2.6 or later, for the graphical manager (optional)
 
 If you got Synecdoche from SVN (as opposed to a release tarball), or if for
