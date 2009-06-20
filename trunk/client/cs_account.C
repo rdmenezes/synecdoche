@@ -350,7 +350,7 @@ int PROJECT::write_statistics_file() const {
     if (!f) {
         return ERR_FOPEN;
     }
-    
+
     {
         MIOFILE mf;
         mf.init_file(f);

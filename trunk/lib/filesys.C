@@ -36,25 +36,26 @@
 #include <sstream>
 
 #ifdef HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
+# include <sys/resource.h>
 #endif // HAVE_SYS_RESOURCE_H
 
 #ifdef HAVE_SYS_MOUNT_H
-#ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#endif // HAVE_SYS_PARAM_H
-#include <sys/mount.h>
+# ifdef HAVE_SYS_PARAM_H
+#  include <sys/param.h>
+# endif // HAVE_SYS_PARAM_H
+# include <sys/mount.h>
 #endif // HAVE_SYS_MOUNT_H
 
 #ifdef HAVE_SYS_STATVFS_H
-#include <sys/statvfs.h>
-#define STATFS statvfs
+# include <sys/statvfs.h>
+# define STATFS statvfs
 #elif defined(HAVE_SYS_STATFS_H)
-#include <sys/statfs.h>
-#define STATFS statfs
+# include <sys/statfs.h>
+# define STATFS statfs
 #else
-#define STATFS statfs
+# define STATFS statfs
 #endif // HAVE_SYS_STATVFS_H
+
 #endif // !_WIN32
 
 #ifdef _WIN32
@@ -810,13 +811,13 @@ int FILE_LOCK::unlock(const char* filename) {
 ///         will be empty if an error occured.
 std::string boinc_getcwd() {
     // The following code dynamically allocates a buffer and calls getcwd
-    // on it. If the buffer is to small this function allocates a new buffer
+    // on it. If the buffer is too small, this function allocates a new buffer
     // which is bigger than the previous one and tries again until either
     // getcwd succeeds or there is a different error.
     // Although Windows and Linux support calling getcwd with 0 as parameter,
     // which makes getcwd allocate a buffer of the correct size using malloc,
     // this can't be used here as this behaviour is an extension to POSIX
-    // and may not be supported on all platforms synecdoche is supposed to
+    // and may not be supported on all platforms Synecdoche is supposed to
     // run on. Therefore this rather complicated solution seems to be the
     // best one.
     char* path = 0;
@@ -829,7 +830,7 @@ std::string boinc_getcwd() {
         res = getcwd(path, size);
     } while ((!res) && (errno == ERANGE));
 
-    // Now check if the call to getcwd was successful finally:
+    // Now check if the call to getcwd was finally successful:
     std::string result;
     if (res) {
         result = path;

@@ -904,13 +904,13 @@ bool CLIENT_STATE::abort_unstarted_late_jobs() {
         if (((*p)->not_started()) && ((*p)->report_deadline <= now)) {
             // This task is not running yet but already has missed its deadline. Abort it:
             (*p)->abort_inactive(ERR_UNSTARTED_LATE);
-            
+
             if (log_flags.task) {
                 msg_printf((*p)->get_project(), MSG_INFO,
                     "Result %s was aborted because it was not started yet and already missed its deadline.",
                     (*p)->get_name().c_str());
             }
-            
+
             action = true;
         }
     }
@@ -931,7 +931,7 @@ bool CLIENT_STATE::garbage_collect() {
     if (action) {
         return true;
     }
-    
+
     // Detach projects that are marked for detach when done
     // and are in fact done (have no results).
     // This is done here (not in garbage_collect_always())
@@ -1040,7 +1040,7 @@ bool CLIENT_STATE::garbage_collect_always() {
             if (atp) {
                 int task_state = atp->task_state();
                 if ((task_state == PROCESS_EXECUTING) || (task_state == PROCESS_SUSPENDED)) {
-                    atp->abort_task(EXIT_ABORTED_BY_CLIENT, "Got ack for job that's till active"); 
+                    atp->abort_task(EXIT_ABORTED_BY_CLIENT, "Got ack for job that's till active");
                 }
             }
             report_result_error(*rp, "%s", error_str.c_str());

@@ -24,7 +24,7 @@
 /// - it's part of the client's state file, client_state.xml
 /// - it's passed in the reply to the get_host_info GUI RPC
 /// - it's included in scheduler RPC requests
-/// 
+///
 /// Other host-specific info is kept in
 /// - TIME_STATS (on/connected/active fractions)
 /// - NET_STATS (average network bandwidths)

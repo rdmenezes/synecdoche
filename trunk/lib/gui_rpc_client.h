@@ -419,7 +419,7 @@ struct ACCT_MGR_INFO {
     std::string acct_mgr_name;
     std::string acct_mgr_url;
     bool have_credentials;
-    
+
     ACCT_MGR_INFO();
     ~ACCT_MGR_INFO(){}
 

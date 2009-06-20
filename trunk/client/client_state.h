@@ -225,7 +225,7 @@ private:
 
     int nresults_for_project(const PROJECT* project) const;
     void check_clock_reset();
-    
+
     /// Abort all jobs that are not started yet but already missed their deadline.
     bool abort_unstarted_late_jobs();
 /// @}
@@ -313,7 +313,7 @@ private:
 
     /// Find latest version of app for given platform
     int latest_version(const APP* app, const std::string& platform);
-    
+
     int app_finished(ACTIVE_TASK& at);
     bool start_apps();
     bool handle_finished_apps();
