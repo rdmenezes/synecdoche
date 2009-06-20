@@ -1,0 +1,33 @@
+#summary Plans for data directory changes
+
+= Current functionality =
+
+== Windows ==
+
+On Windows, when the core client started up, it looked up a key in the registry
+to know where the data directory was, and used `chdir` to change to it.
+
+Why is this in the past tense? Because Didactylos commented it out in r299.
+
+So the *real* current status is: the Windows client considers the current
+directory as its data directory.
+
+== Linux ==
+
+On Linux, there has never been any special handling of the data directory.
+Whatever is the current directory is used. There is a `--dir` switch (on all
+platforms) to set the data directory, which simply makes the client `chdir`
+there before doing anything.
+
+Most distro packages change the data directory in their `init.d` scripts, either
+with `--dir` or by changing the current directory first.
+
+== Mac ==
+
+The daemon itself doesn't do anything to locate the data directory; current
+directory is data directory. However, one usually doesn't start the daemon by
+itself, not even automatically at startup ^[confirm]^. The normal way is
+starting the manager, or letting the system start the screensaver. Both the
+manager and the screensaver `chdir` to the data directory before running the
+daemon. The path to this directory is _hardcoded in the manager/screensaver
+code_.
