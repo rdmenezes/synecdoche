@@ -11,7 +11,7 @@ API_SUBDIRS = lib
 CLIENT_SUBDIRS = client # client/scripts
 
 if BUILD_CLIENTGUI
-   CLIENTGUI_SUBDIRS = clientgui clientgui/res locale/client 
+   CLIENTGUI_SUBDIRS = clientgui clientgui/res #locale/client 
 endif
 
 # ORDER MATTERS below.  One must build dependencies FIRST, then things
