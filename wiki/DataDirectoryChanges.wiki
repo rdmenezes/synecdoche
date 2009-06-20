@@ -64,3 +64,5 @@ We can also add an extra level of indirection: hardcode the path to a
 configuration file (in `$PREFIX/etc`) that contains the path to the data
 directory.
 
+However, the `--dir` switch will still exist, to let the client run under a
+different directory than it was originally configured to use.
