@@ -12,9 +12,9 @@ syneccmd_SOURCES = \
     gui_rpc_client.h
 
 syneccmd_CPPFLAGS = -O3 $(AM_CPPFLAGS)
-syneccmd_LDADD = $(lib_LIBRARIES) $(PTHREAD_LIBS)
+syneccmd_LDADD = libboinc.a $(PTHREAD_LIBS)
 
-lib_LIBRARIES = libboinc.a 
+noinst_LIBRARIES = libboinc.a 
 
 libboinc_a_SOURCES = \
     app_ipc.C \
