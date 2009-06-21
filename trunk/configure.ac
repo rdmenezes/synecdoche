@@ -624,7 +624,6 @@ AC_CONFIG_FILES([
                  clientgui/res/Makefile
                  client/Makefile
                  lib/Makefile
-                 locale/client/Makefile
                  Makefile
                  m4/Makefile
                  ])
