@@ -31,7 +31,7 @@ dist-hook:
 #	cd $(distdir) && ./_autosetup
 
 svnversion.cpp: version.sh
-	$(srcdir)/version.sh svnversion.cpp
+	$(srcdir)/version.sh svnversion.cpp $(top_srcdir)
 
 BUILT_SOURCES = svnversion.cpp
 CLEANFILES = svnversion.cpp
