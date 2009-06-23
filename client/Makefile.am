@@ -81,9 +81,9 @@ synecd_SOURCES = \
     whetstone.C \
     work_fetch.C
 
-nodist_synecd_SOURCES = ../svnversion.cpp
+nodist_synecd_SOURCES = ../svnversion.cpp dirs.cpp
 
-synecd_DEPENDENCIES =
+synecd_CPPFLAGS = $(AM_CPPFLAGS) -DHARDCODED_DIRS
 synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
 
 synecddir = $(bindir)
@@ -91,7 +91,10 @@ dist_synecd_DATA = ../curl/ca-bundle.crt
 
 switcher_SOURCES = switcher.C
 
-all-local: synecd
+dirs.cpp: dirs.cpp.in Makefile
+	sed -e 's,[@]sysconfdir[@],$(sysconfdir),g' \
+		-e 's,[@]localstatedir[@],$(localstatedir),g' \
+		< $(srcdir)/dirs.cpp.in > dirs.cpp
 
 EXTRA_DIST = \
     win \
