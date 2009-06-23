@@ -202,6 +202,12 @@ static void init_core_client(int argc, const char** argv) {
 
     gstate.parse_cmdline(argc, argv);
 
+    if (!gstate.data_directory.empty()) {
+        if (chdir(gstate.data_directory.c_str()) < 0) {
+            perror("chdir");
+            exit(1);
+        }
+    }
 #ifdef _WIN32
     if (!config.allow_multiple_clients) {
         chdir_to_data_dir();
