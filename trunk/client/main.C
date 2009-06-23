@@ -54,6 +54,8 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 #include "SetupSecurity.h"
 #endif
 
+#include "main.h"
+
 #include "diagnostics.h"
 #include "error_numbers.h"
 #include "str_util.h"
@@ -70,7 +72,6 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 #include "http_curl.h"
 #include "sandbox.h"
 
-#include "main.h"
 
 int finalize();
 

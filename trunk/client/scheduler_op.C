@@ -39,7 +39,6 @@
 #include "client_msgs.h"
 #include "file_names.h"
 #include "log_flags.h"
-#include "main.h"
 
 SCHEDULER_OP::SCHEDULER_OP(HTTP_OP_SET* h) {
     cur_proj = NULL;
