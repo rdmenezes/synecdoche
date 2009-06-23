@@ -162,10 +162,7 @@ void CLIENT_STATE::parse_cmdline(int argc, const char* const* argv) {
             if (i == argc-1) {
                 show_options = true;
             } else {
-                if (chdir(argv[++i])) {
-                    perror("chdir");
-                    exit(1);
-                }
+                data_directory = argv[++i];
             }
         } else if (ARG("no_gui_rpc")) {
             no_gui_rpc = true;

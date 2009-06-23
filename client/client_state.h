@@ -93,6 +93,7 @@ public:
     bool user_active;       ///< there has been recent mouse/kbd input
     bool allow_remote_gui_rpc;
     int cmdline_gui_rpc_port;
+    std::string data_directory; ///< Path to the data directory, from the command line.
     bool requested_exit;
     /// venue from project that gave us general prefs
     /// or from account manager
