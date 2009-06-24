@@ -72,6 +72,9 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 #include "http_curl.h"
 #include "sandbox.h"
 
+#ifdef HARDCODED_DIRS
+#include "dirs.h"
+#endif
 
 int finalize();
 
@@ -199,6 +202,11 @@ static void signal_handler(int signum) {
 static void init_core_client(int argc, const char** argv) {
     setbuf(stdout, 0);
     setbuf(stderr, 0);
+
+#ifdef HARDCODED_DIRS
+    gstate.data_directory = DIRECTORIES::localstate;
+    gstate.data_directory.append("/synecdoche");
+#endif
 
     gstate.parse_cmdline(argc, argv);
 
