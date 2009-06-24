@@ -137,12 +137,12 @@ std::string job_log_filename(const PROJECT& project) {
     return result.str();
 }
 
-/// Returns the location of a numbered slot directory
+/// Returns the location of a numbered slot directory.
 void get_slot_dir(int slot, char* path, int len) {
     snprintf(path, len, "%s/%d", SLOTS_DIR, slot);
 }
 
-/// Create the directory for the project p
+/// Create the directory for the project \a p.
 int make_project_dir(const PROJECT& p) {
     char buf[1024];
     int retval;
@@ -190,7 +190,7 @@ int remove_project_dir(const PROJECT& p) {
     return remove_project_owned_dir(buf);
 }
 
-/// Create the slot directory for the specified slot #
+/// Create the slot directory for the specified slot number.
 int make_slot_dir(int slot) {
     char buf[1024];
 
@@ -228,7 +228,7 @@ int make_slot_dir(int slot) {
     return retval;
 }
 
-/// Delete unused stuff in the slots/ directory.
+/// Delete unused subdirectories in the slots/ directory.
 void delete_old_slot_dirs() {
     DirScanner dscan(SLOTS_DIR);
     while (1) {
@@ -295,8 +295,8 @@ static bool bad_account_filename(const std::string& filename) {
 bool is_account_file(const std::string& filename) {
     if (!starts_with(filename, "account_")) {
         // Just return without an error message here because this would
-        // generate an error message for each file in the data directory
-        // but error messages should only be shown for maleformed
+        // generate an error message for each file in the data directory;
+        // but error messages should only be shown for malformed
         // account files.
         return false;
     }
@@ -335,7 +335,7 @@ bool is_statistics_file(const std::string& filename) {
     if (!starts_with(filename, "statistics_")) {
         // Just return without an error message here because this would
         // generate an error message for each file in the data directory
-        // but error messages should only be shown for maleformed
+        // but error messages should only be shown for malformed
         // statistics files.
         return false;
     }
@@ -372,8 +372,8 @@ std::string get_statistics_filename(const std::string& master_url) {
 /// \return True if the given file name denotes an image file.
 bool is_image_file(std::string filename) {
     downcase_string(filename);
-    if (ends_with(filename, std::string(".jpg"))) return true;
-    if (ends_with(filename, std::string(".jpeg"))) return true;
-    if (ends_with(filename, std::string(".png"))) return true;
+    if (ends_with(filename, ".jpg")) return true;
+    if (ends_with(filename, ".jpeg")) return true;
+    if (ends_with(filename, ".png")) return true;
     return false;
 }
