@@ -144,7 +144,6 @@ void get_slot_dir(int slot, char* path, int len) {
 
 /// Create the directory for the project \a p.
 int make_project_dir(const PROJECT& p) {
-    char buf[1024];
     int retval;
 
     boinc_mkdir(PROJECTS_DIR);
@@ -160,34 +159,33 @@ int make_project_dir(const PROJECT& p) {
         umask(old_mask);
     }
 #endif
-    get_project_dir(&p, buf, sizeof(buf));
-    retval = boinc_mkdir(buf);
+    const char* project_dir = get_project_dir(&p).c_str();
+    retval = boinc_mkdir(project_dir);
 #ifndef _WIN32
     if (g_use_sandbox) {
         old_mask = umask(2);     // Project directories must be world-readable
-        chmod(buf,
+        chmod(project_dir,
             S_IRUSR|S_IWUSR|S_IXUSR
             |S_IRGRP|S_IWGRP|S_IXGRP
             |S_IROTH|S_IXOTH
         );
         umask(old_mask);
-        set_to_project_group(buf);
+        set_to_project_group(project_dir);
     }
 #endif
     return retval;
 }
 
 int remove_project_dir(const PROJECT& p) {
-    char buf[1024];
     int retval;
 
-    get_project_dir(&p, buf, sizeof(buf));
-    retval = client_clean_out_dir(buf);
+    const char* project_dir = get_project_dir(&p).c_str();
+    retval = client_clean_out_dir(project_dir);
     if (retval) {
         msg_printf(&p, MSG_INTERNAL_ERROR, "Can't delete file %s", boinc_failed_file);
         return retval;
     }
-    return remove_project_owned_dir(buf);
+    return remove_project_owned_dir(project_dir);
 }
 
 /// Create the slot directory for the specified slot number.
