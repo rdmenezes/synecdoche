@@ -45,6 +45,7 @@ synecd_SOURCES = \
     cs_scheduler.C \
     cs_statefile.C \
     cs_trickle.C \
+    dirs.h \
     dhrystone.C \
     dhrystone.h \
     dhrystone2.C \
@@ -96,7 +97,8 @@ dirs.cpp: dirs.cpp.in Makefile
 		-e 's,[@]localstatedir[@],$(localstatedir),g' \
 		< $(srcdir)/dirs.cpp.in > dirs.cpp
 
-EXTRA_DIST = \
+EXTRA_DIST = dirs.cpp.in \
     win \
     scripts
 
+CLEANFILES = dirs.cpp
