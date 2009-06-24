@@ -159,18 +159,18 @@ int make_project_dir(const PROJECT& p) {
         umask(old_mask);
     }
 #endif
-    const char* project_dir = get_project_dir(&p).c_str();
-    retval = boinc_mkdir(project_dir);
+    std::string project_dir = get_project_dir(&p);
+    retval = boinc_mkdir(project_dir.c_str());
 #ifndef _WIN32
     if (g_use_sandbox) {
         old_mask = umask(2);     // Project directories must be world-readable
-        chmod(project_dir,
+        chmod(project_dir.c_str(),
             S_IRUSR|S_IWUSR|S_IXUSR
             |S_IRGRP|S_IWGRP|S_IXGRP
             |S_IROTH|S_IXOTH
         );
         umask(old_mask);
-        set_to_project_group(project_dir);
+        set_to_project_group(project_dir.c_str());
     }
 #endif
     return retval;
@@ -179,13 +179,13 @@ int make_project_dir(const PROJECT& p) {
 int remove_project_dir(const PROJECT& p) {
     int retval;
 
-    const char* project_dir = get_project_dir(&p).c_str();
-    retval = client_clean_out_dir(project_dir);
+    std::string project_dir = get_project_dir(&p);
+    retval = client_clean_out_dir(project_dir.c_str());
     if (retval) {
         msg_printf(&p, MSG_INTERNAL_ERROR, "Can't delete file %s", boinc_failed_file);
         return retval;
     }
-    return remove_project_owned_dir(project_dir);
+    return remove_project_owned_dir(project_dir.c_str());
 }
 
 /// Create the slot directory for the specified slot number.
