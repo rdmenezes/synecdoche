@@ -509,7 +509,7 @@
 								<key>IFPkgFlagAllowBackRev</key>
 								<false/>
 								<key>IFPkgFlagAuthorizationAction</key>
-								<integer>0</integer>
+								<integer>1</integer>
 								<key>IFPkgFlagFollowLinks</key>
 								<false/>
 								<key>IFPkgFlagIsRequired</key>
@@ -558,6 +558,8 @@
 								<integer>0</integer>
 								<key>Path</key>
 								<string></string>
+								<key>Path Type</key>
+								<integer>1</integer>
 							</dict>
 							<key>License</key>
 							<dict>
@@ -567,6 +569,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>ReadMe</key>
@@ -577,6 +581,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>Welcome</key>
@@ -587,6 +593,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 						</dict>
@@ -1037,7 +1045,7 @@
 								<key>IFPkgFlagAllowBackRev</key>
 								<false/>
 								<key>IFPkgFlagAuthorizationAction</key>
-								<integer>0</integer>
+								<integer>1</integer>
 								<key>IFPkgFlagFollowLinks</key>
 								<false/>
 								<key>IFPkgFlagIsRequired</key>
@@ -1584,7 +1592,7 @@ Currently only contains a list of projects.</string>
 								<key>IFPkgFlagAllowBackRev</key>
 								<false/>
 								<key>IFPkgFlagAuthorizationAction</key>
-								<integer>0</integer>
+								<integer>1</integer>
 								<key>IFPkgFlagFollowLinks</key>
 								<false/>
 								<key>IFPkgFlagIsRequired</key>
@@ -1779,25 +1787,25 @@ Currently only contains a list of projects.</string>
 							<key>International</key>
 							<dict>
 								<key>MessageKey</key>
-								<string>Synecdoche supports Mac OS X 10.3.9 or newer only.</string>
+								<string>Synecdoche supports Mac OS X 10.4 or newer only.</string>
 								<key>TitleKey</key>
 								<string>OS X Version Not Supported</string>
 							</dict>
 						</dict>
 						<key>LabelKey</key>
-						<string>10.3.9 Check</string>
+						<string>10.4 Check</string>
 						<key>Level</key>
 						<integer>0</integer>
 						<key>SpecArgument</key>
-						<string>kern.osrelease</string>
+						<string>sys1</string>
 						<key>SpecTag</key>
-						<integer>6</integer>
+						<integer>2</integer>
 						<key>SpecType</key>
-						<string>sysctl</string>
+						<string>gestalt</string>
 						<key>Status</key>
 						<true/>
 						<key>TestObject</key>
-						<string>7.9.0</string>
+						<string>4</string>
 						<key>TestOperator</key>
 						<string>&gt;=</string>
 					</dict>
@@ -1828,7 +1836,7 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 				<key>Display Information</key>
 				<dict>
 					<key>CFBundleGetInfoString</key>
-					<string>Version 0.1.1 r863M, Copyright © 2009 Synecdoche contributors</string>
+					<string>0.1.1, Copyright © 2009 Synecdoche contributors</string>
 					<key>CFBundleIconFile</key>
 					<string>../../../graphics/icons/synecdoche_installer.icns</string>
 					<key>CFBundleIconFile Path Type</key>
@@ -1850,7 +1858,7 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 			</dict>
 		</dict>
 		<key>IFPkgFlagComponentDirectory</key>
-		<string>..</string>
+		<string>Contents/Resources</string>
 		<key>IFPkgFlagPackageSelection</key>
 		<integer>0</integer>
 		<key>Name</key>
