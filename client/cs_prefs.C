@@ -74,8 +74,8 @@ int CLIENT_STATE::project_disk_usage(const PROJECT* p, double& size) {
         double s;
 
         if (atp->wup->project != p) continue;
-        get_slot_dir(atp->slot, buf, sizeof(buf));
-        dir_size(buf, s);
+        std::string slot_dir = get_slot_dir(atp->slot);
+        dir_size(slot_dir.c_str(), s);
         size += s;
     }
 

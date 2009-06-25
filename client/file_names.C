@@ -138,8 +138,20 @@ std::string job_log_filename(const PROJECT& project) {
 }
 
 /// Returns the location of a numbered slot directory.
+///
+/// \deprecated Use get_slot_dir(int) instead.
 void get_slot_dir(int slot, char* path, int len) {
     snprintf(path, len, "%s/%d", SLOTS_DIR, slot);
+}
+
+/// Returns the location of a numbered slot directory.
+///
+/// \param[in] slot The number of the slot.
+/// \return The (relative) path to the requested slot directory.
+std::string get_slot_dir(int slot) {
+    std::ostringstream path;
+    path << SLOTS_DIR << '/' << slot;
+    return path.str();
 }
 
 /// Create the directory for the project \a p.
@@ -190,8 +202,6 @@ int remove_project_dir(const PROJECT& p) {
 
 /// Create the slot directory for the specified slot number.
 int make_slot_dir(int slot) {
-    char buf[1024];
-
     if (slot<0) {
         msg_printf(NULL, MSG_INTERNAL_ERROR, "Bad slot number %d", slot);
         return ERR_NEG;
@@ -209,18 +219,18 @@ int make_slot_dir(int slot) {
         umask(old_mask);
     }
 #endif
-    get_slot_dir(slot, buf, sizeof(buf));
-    int retval = boinc_mkdir(buf);
+    std::string slot_dir = get_slot_dir(slot);
+    int retval = boinc_mkdir(slot_dir.c_str());
 #ifndef _WIN32
     if (g_use_sandbox) {
         old_mask = umask(2);     // Slot directories must be world-readable
-        chmod(buf,
+        chmod(slot_dir.c_str(),
             S_IRUSR|S_IWUSR|S_IXUSR
             |S_IRGRP|S_IWGRP|S_IXGRP
             |S_IROTH|S_IXOTH
         );
         umask(old_mask);
-        set_to_project_group(buf);
+        set_to_project_group(slot_dir.c_str());
     }
 #endif
     return retval;
@@ -252,7 +262,7 @@ void delete_old_slot_dirs() {
                 destroy_shmem(shmem_seg_name);
             }
 #endif
-            if (!gstate.active_tasks.is_slot_dir_in_use(path.c_str())) {
+            if (!gstate.active_tasks.is_slot_dir_in_use(path)) {
                 client_clean_out_dir(path.c_str());
                 remove_project_owned_dir(path.c_str());
             }
