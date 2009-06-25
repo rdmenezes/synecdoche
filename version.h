@@ -32,7 +32,7 @@ extern const char* SYNEC_SVN_VERSION;
 
 
 /* Package is a pre-release (Alpha/Beta) package */
-#define SYNEC_PRERELEASE 1
+#define SYNEC_PRERELEASE 0
 
 #if (defined(_WIN32) || defined(__APPLE__))
 /* Name of package */
