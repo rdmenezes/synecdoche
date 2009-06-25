@@ -909,7 +909,7 @@ int CSkinAdvanced::Parse(MIOFILE& in) {
 
 wxString CSkinAdvanced::GetApplicationName() {
     wxString strApplicationName = m_strApplicationName;
-#ifdef SYNEC_PRERELEASE
+#if SYNEC_PRERELEASE
         strApplicationName += wxT(" (Pre-release)");
 #endif
     return strApplicationName;
