@@ -273,7 +273,7 @@ public:
     bool check_rsc_limits_exceeded();
     bool check_quit_timeout_exceeded();
     bool is_slot_in_use(int slot) const;
-    bool is_slot_dir_in_use(const char* dir) const;
+    bool is_slot_dir_in_use(const std::string& dir) const;
     int get_free_slot() const;
     void send_heartbeats();
     void send_trickle_downs();

@@ -374,12 +374,11 @@ bool ACTIVE_TASK_SET::is_slot_in_use(int slot) const {
     return false;
 }
 
-bool ACTIVE_TASK_SET::is_slot_dir_in_use(const char* dir) const {
-    char path[1024];
-    unsigned int i;
-    for (i=0; i<active_tasks.size(); i++) {
-        get_slot_dir(active_tasks[i]->slot, path, sizeof(path));
-        if (!strcmp(path, dir)) return true;
+bool ACTIVE_TASK_SET::is_slot_dir_in_use(const std::string& dir) const {
+    for (size_t i = 0; i < active_tasks.size(); ++i) {
+        if (get_slot_dir(active_tasks[i]->slot) == dir) {
+            return true;
+        }
     }
     return false;
 }
@@ -388,17 +387,15 @@ bool ACTIVE_TASK_SET::is_slot_dir_in_use(const char* dir) const {
 /// and make a slot dir if needed
 int ACTIVE_TASK_SET::get_free_slot() const {
     int j, retval;
-    char path[1024];
 
     for (j=0; ; j++) {
         if (is_slot_in_use(j)) continue;
 
         // make sure we can make an empty directory for this slot
-        //
-        get_slot_dir(j, path, sizeof(path));
-        if (boinc_file_exists(path)) {
-            if (is_dir(path)) {
-                retval = client_clean_out_dir(path);
+        std::string slot_dir = get_slot_dir(j);
+        if (boinc_file_exists(slot_dir.c_str())) {
+            if (is_dir(slot_dir.c_str())) {
+                retval = client_clean_out_dir(slot_dir.c_str());
                 if (!retval) return j;
             }
         } else {
