@@ -1,0 +1,58 @@
+/* Platform independent version definitions... */
+
+#ifndef SYNECDOCHE_VERSION_H
+#define SYNECDOCHE_VERSION_H
+
+/* Major part of Synecdoche version number */
+#define SYNEC_MAJOR_VERSION @SYNEC_MAJOR_VERSION@
+
+/* Minor part of Synecdoche version number */
+#define SYNEC_MINOR_VERSION @SYNEC_MINOR_VERSION@
+
+/* Release part of Synecdoche version number */
+#define SYNEC_RELEASE @SYNEC_RELEASE@
+
+extern const char* SYNEC_SVN_VERSION;
+
+/* String representation of Synecdoche version number */
+#define SYNEC_VERSION_STRING "@SYNEC_VERSION_STRING@"
+
+
+/* Major part of BOINC version number */
+#define BOINC_MAJOR_VERSION @BOINC_MAJOR_VERSION@
+
+/* Minor part of BOINC version number */
+#define BOINC_MINOR_VERSION @BOINC_MINOR_VERSION@
+
+/* Release part of BOINC version number */
+#define BOINC_RELEASE @BOINC_RELEASE@
+
+/* String representation of BOINC version number */
+#define BOINC_VERSION_STRING "@BOINC_VERSION_STRING@"
+
+
+/* Package is a pre-release (Alpha/Beta) package */
+#define SYNEC_PRERELEASE @SYNEC_PRERELEASE@
+
+#if (defined(_WIN32) || defined(__APPLE__))
+/* Name of package */
+#define PACKAGE "@PACKAGE@"
+
+/* Define to the address where bug reports for this package should be sent. */
+#define PACKAGE_BUGREPORT "@PACKAGE_BUGREPORT@"
+
+/* Define to the full name of this package. */
+#define PACKAGE_NAME "@PACKAGE_NAME@"
+
+/* Define to the full name and version of this package. */
+#define PACKAGE_STRING "@PACKAGE_STRING@"
+
+/* Define to the one symbol short name of this package. */
+#define PACKAGE_TARNAME "@PACKAGE_TARNAME@"
+
+/* Define to the version of this package. */
+#define PACKAGE_VERSION "@PACKAGE_VERSION@"
+
+#endif /* #if (defined(_WIN32) || defined(__APPLE__)) */
+
+#endif /* #ifndef SYNECDOCHE_VERSION_H */
