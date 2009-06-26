@@ -24,7 +24,11 @@ We have no plans to implement CUDA support in the near future.
 === Windows ===
 
 === Mac OS X ===
- * No uninstaller, and dragging the application to the Trash does not fully remove Synecdoche.
- * Unicode support seems sketchy at best.
+There is currently no uninstaller.
+Dragging the application to the Trash does not fully remove Synecdoche,
+the project data and the screensaver will remain in the system.
+This will be addressed in a future version.
+
+Unicode support seems sketchy at best.
 
 === Linux ===
