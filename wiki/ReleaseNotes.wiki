@@ -29,13 +29,12 @@ Due to the lack of a real installer,
 it will not auto-start on boot.
 
 === Mac OS X ===
-Synecdoche requires Mac OS X 10.4 or later. It
-will run on a PowerPC machine or an Intel machine,
-and will attempt to make use of 64-bit on supported
-Intel processors. It comes packaged as a standard
-Installer package. Run the package, and it will
-install Synecdoche in the Applications folder for
-you. Currently, the install location cannot be changed.
+Synecdoche requires Mac OS X 10.4 or later.
+It will run on a PowerPC machine or an Intel machine,
+and will attempt to make use of 64-bit on supported Intel processors.
+It comes packaged as a standard Installer package.
+Run the package, and it will install Synecdoche in the Applications folder for you.
+Currently, the install location cannot be changed.
 By default, it also installs the Synecdoche screensaver
 and a project list to be used by the GUI.
 
