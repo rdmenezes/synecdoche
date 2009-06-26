@@ -57,6 +57,16 @@ Dragging the application to the Trash is not enough;
 the project data and the screensaver will remain in the system.
 This will be addressed in a future version.
 
+=== Linux ===
+Making a portable Linux binary is hard,
+so we only provide source code for Linux.
+A Debian package may be available for the next version.
+Other distros will be supported if someone volunteers to make a package.
+
+The code should compile on any Unix-like system.
+There are basic compilation instructions in the INSTALL file of the source distribution.
+More detailed instructions may be available as a separate wiki page soon.
+
 == Limitations ==
 
 Synecdoche cannot be running at the same time as BOINC.
