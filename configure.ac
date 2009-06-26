@@ -106,8 +106,8 @@ AC_SUBST([TOP_BUILD_DIR], [`pwd`])
 AC_SUBST([TOP_SOURCE_DIR], [`(cd \`dirname "$0"\` && pwd)`])
 
 dnl Checks for programs.
-AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
