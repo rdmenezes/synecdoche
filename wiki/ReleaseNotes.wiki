@@ -39,6 +39,12 @@ but sometimes projects rely on more implementation details than they should.
 A [ProjectCompatibilityMatrix project compatibility list] is kept to document incompatibilities.
 Currently the only project known to have problems is POEM@Home.
 
+The manager is only available in English,
+translations are currently disabled.
+We plan to bring translations back,
+but it needs some work,
+especially in the build system
+and in how we will work with volunteer translations.
 
 === Windows ===
 
