@@ -1,0 +1,26 @@
+#summary Release notes for Synecdoche version 0.1.1
+
+= Introduction =
+
+The release notes for Synecdoche document differences from comparable BOINC versions and things you will want to watch out for when running Synecdoche.
+
+
+= Notes for 0.1.1 =
+
+== Differences from BOINC 6.2.x ==
+ * Some UI updates
+
+== Limitations ==
+
+=== All Platforms ===
+ * No CUDA support yet
+ * Cannot be running at the same time as BOINC
+ * Some projects may not work correctly due to improved checks. A [ProjectCompatibilityMatrix project compatibility list] is kept to document incompatibilities.
+
+=== Windows ===
+
+=== Mac OS X ===
+ * No uninstaller, and dragging the application to the Trash does not fully remove Synecdoche
+ * Unicode support seems sketchy at best
+
+=== Linux ===
