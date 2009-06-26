@@ -15,7 +15,7 @@ and things you will want to watch out for when running Synecdoche.
 === All Platforms ===
  * No CUDA support yet.
  * Cannot be running at the same time as BOINC.
- * Some projects may not work correctly due to improved checks. A [ProjectCompatibilityMatrix project compatibility list] is kept to document incompatibilities.
+ * Some projects may not work correctly due to improved checks. A [ProjectCompatibilityMatrix project compatibility list] is kept to document incompatibilities. Currently the only project known to have problems is POEM@Home.
 
 === Windows ===
 
