@@ -28,6 +28,10 @@ and run "synecmgr.exe".
 Due to the lack of a real installer,
 it will not auto-start on boot.
 
+Windows 95/98/ME are *not* supported.
+Internally, they are like a different operating system
+compared to NT/2000/XP/Vista.
+
 === Mac OS X ===
 Synecdoche requires Mac OS X 10.4 or later.
 It will run on a PowerPC machine or an Intel machine,
