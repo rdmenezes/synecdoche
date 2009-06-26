@@ -43,6 +43,16 @@ To start, open Synecdoche.app in the Applications folder.
 To make it run on boot, add Synecdoche.app to your
 Login Items in System Preferences.
 
+Note that if you run as a non-admin user,
+even if you enter the admin password while installing,
+you may not be able to run Synecdoche later.
+This issue is being investigated.
+
+There is currently no uninstaller.
+Dragging the application to the Trash is not enough;
+the project data and the screensaver will remain in the system.
+This will be addressed in a future version.
+
 == Limitations ==
 
 Synecdoche cannot be running at the same time as BOINC.
@@ -60,17 +70,3 @@ We plan to bring translations back,
 but it needs some work,
 especially in the build system
 and in how we will work with volunteer translations.
-
-=== Windows ===
-
-=== Mac OS X ===
-There is currently no uninstaller.
-Dragging the application to the Trash does not fully remove Synecdoche,
-the project data and the screensaver will remain in the system.
-This will be addressed in a future version.
-
-Unicode support seems sketchy at best.
-
-Sandboxing is currently disabled.
-
-=== Linux ===
