@@ -111,7 +111,6 @@ AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
-SAH_LINKS
 AM_PROG_CC_C_O
 
 dnl Check for docbook2x-man, which we use to create the manpages in
