@@ -568,11 +568,6 @@ bool CLIENT_STATE::poll_slow_events() {
 
     network_suspend_reason = check_suspend_network();
 
-    // if a recent GUI RPC needs network access, allow it
-    //
-    if (gui_rpcs.recent_rpc_needs_network(300)) {
-        network_suspend_reason = 0;
-    }
     if (network_suspend_reason) {
         if (!network_suspended) {
             suspend_network(network_suspend_reason);

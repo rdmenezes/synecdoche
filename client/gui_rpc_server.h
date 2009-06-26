@@ -77,8 +77,6 @@ class GUI_RPC_CONN_SET {
     bool remote_hosts_file_exists;
 public:
     int lsock;
-    /// Time of the last RPC that needs network access to handle
-    double time_of_last_rpc_needing_network;
 
     GUI_RPC_CONN_SET();
     char password[256];
@@ -86,7 +84,6 @@ public:
     void got_select(FDSET_GROUP&);
     int init(bool last_time);
     void close();
-    bool recent_rpc_needs_network(double interval) const;
     void send_quits();
     bool quits_sent() const;
     bool poll();
