@@ -329,10 +329,6 @@ static void handle_set_network_mode(const char* buf, MIOFILE& fout) {
         fout.printf("<error>Missing mode</error>\n");
         return;
     }
-    // user is turning network on/off explicitly,
-    // so disable the "5 minute grace period" mechanism
-    //
-    gstate.gui_rpcs.time_of_last_rpc_needing_network = 0;
 
     gstate.network_mode.set(mode, duration);
     fout.printf("<success/>\n");
@@ -1127,17 +1123,7 @@ int GUI_RPC_CONN::handle_rpc() {
         read_all_projects_list_file(mf);
     } else if (match_tag(request_msg, "<set_debts")) {
         handle_set_debts(request_msg, mf);
-    } else {
-
-        // RPCs after this point require authentication,
-        // and enable network communication for 5 minutes, overriding other factors.
-        // Things like attaching projects, etc.
-        //
-
-        double saved_time = gstate.gui_rpcs.time_of_last_rpc_needing_network;
-        gstate.gui_rpcs.time_of_last_rpc_needing_network = gstate.now;
-
-        if (match_tag(request_msg, "<retry_file_transfer")) {
+    } else if (match_tag(request_msg, "<retry_file_transfer")) {
             handle_file_transfer_op(request_msg, mf, "retry");
         } else if (match_tag(request_msg, "<project_reset")) {
             handle_project_op(request_msg, mf, "reset");
@@ -1169,9 +1155,7 @@ int GUI_RPC_CONN::handle_rpc() {
 
         } else {
             mf.printf("<error>unrecognized op</error>\n");
-            gstate.gui_rpcs.time_of_last_rpc_needing_network = saved_time;
         }
-    }
 
     mf.printf("</boinc_gui_rpc_reply>\n\003");
 
