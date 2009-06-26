@@ -17,9 +17,15 @@ We have no plans to implement CUDA support in the near future.
 
 == Limitations ==
 
-=== All Platforms ===
- * Cannot be running at the same time as BOINC.
- * Some projects may not work correctly due to improved checks. A [ProjectCompatibilityMatrix project compatibility list] is kept to document incompatibilities. Currently the only project known to have problems is POEM@Home.
+Synecdoche cannot be running at the same time as BOINC.
+This is not a bug; it would be the same as running two instances of BOINC at the same time.
+
+Some projects may not work correctly.
+We try to remain compatible with BOINC,
+but sometimes projects rely on more implementation details than they should.
+A [ProjectCompatibilityMatrix project compatibility list] is kept to document incompatibilities.
+Currently the only project known to have problems is POEM@Home.
+
 
 === Windows ===
 
