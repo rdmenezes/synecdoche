@@ -28,6 +28,19 @@ and run "synecmgr.exe".
 Due to the lack of a real installer,
 it will not auto-start on boot.
 
+=== Mac OS X ===
+Synecdoche requires Mac OS X 10.4 or later.
+It comes packaged as a standard Installer package.
+Run the package, and it will install Synecdoche in
+the Applications folder for you. By default, it also
+installs the Synecdoche screensaver and a project
+list to be used by the GUI.
+
+To start, open Synecdoche.app in the Applications folder.
+
+To make it run on boot, add Synecdoche.app to your
+Login Items in System Preferences.
+
 == Limitations ==
 
 Synecdoche cannot be running at the same time as BOINC.
@@ -55,5 +68,7 @@ the project data and the screensaver will remain in the system.
 This will be addressed in a future version.
 
 Unicode support seems sketchy at best.
+
+Sandboxing is currently disabled.
 
 === Linux ===
