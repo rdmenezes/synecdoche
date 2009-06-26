@@ -1124,38 +1124,38 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<set_debts")) {
         handle_set_debts(request_msg, mf);
     } else if (match_tag(request_msg, "<retry_file_transfer")) {
-            handle_file_transfer_op(request_msg, mf, "retry");
-        } else if (match_tag(request_msg, "<project_reset")) {
-            handle_project_op(request_msg, mf, "reset");
-        } else if (match_tag(request_msg, "<project_update")) {
-            handle_project_op(request_msg, mf, "update");
-        } else if (match_tag(request_msg, "<get_project_config>")) {
-            handle_get_project_config(request_msg, mf);
-        } else if (match_tag(request_msg, "<get_project_config_poll")) {
-            handle_get_project_config_poll(request_msg, mf);
-        } else if (match_tag(request_msg, "<lookup_account>")) {
-            handle_lookup_account(request_msg, mf);
-        } else if (match_tag(request_msg, "<lookup_account_poll")) {
-            handle_lookup_account_poll(request_msg, mf);
-        } else if (match_tag(request_msg, "<create_account>")) {
-            handle_create_account(request_msg, mf);
-        } else if (match_tag(request_msg, "<create_account_poll")) {
-            handle_create_account_poll(request_msg, mf);
-        } else if (match_tag(request_msg, "<project_attach>")) {
-            handle_project_attach(request_msg, mf);
-        } else if (match_tag(request_msg, "<project_attach_poll")) {
-            handle_project_attach_poll(request_msg, mf);
-        } else if (match_tag(request_msg, "<acct_mgr_rpc>")) {
-            handle_acct_mgr_rpc(request_msg, mf);
-        } else if (match_tag(request_msg, "<acct_mgr_rpc_poll")) {
-            handle_acct_mgr_rpc_poll(request_msg, mf);
+        handle_file_transfer_op(request_msg, mf, "retry");
+    } else if (match_tag(request_msg, "<project_reset")) {
+        handle_project_op(request_msg, mf, "reset");
+    } else if (match_tag(request_msg, "<project_update")) {
+        handle_project_op(request_msg, mf, "update");
+    } else if (match_tag(request_msg, "<get_project_config>")) {
+        handle_get_project_config(request_msg, mf);
+    } else if (match_tag(request_msg, "<get_project_config_poll")) {
+        handle_get_project_config_poll(request_msg, mf);
+    } else if (match_tag(request_msg, "<lookup_account>")) {
+        handle_lookup_account(request_msg, mf);
+    } else if (match_tag(request_msg, "<lookup_account_poll")) {
+        handle_lookup_account_poll(request_msg, mf);
+    } else if (match_tag(request_msg, "<create_account>")) {
+        handle_create_account(request_msg, mf);
+    } else if (match_tag(request_msg, "<create_account_poll")) {
+        handle_create_account_poll(request_msg, mf);
+    } else if (match_tag(request_msg, "<project_attach>")) {
+        handle_project_attach(request_msg, mf);
+    } else if (match_tag(request_msg, "<project_attach_poll")) {
+        handle_project_attach_poll(request_msg, mf);
+    } else if (match_tag(request_msg, "<acct_mgr_rpc>")) {
+        handle_acct_mgr_rpc(request_msg, mf);
+    } else if (match_tag(request_msg, "<acct_mgr_rpc_poll")) {
+        handle_acct_mgr_rpc_poll(request_msg, mf);
 
-        // DON'T JUST ADD NEW RPCS HERE - THINK ABOUT THEIR
-        // AUTHENTICATION AND NETWORK REQUIREMENTS FIRST
+    // DON'T JUST ADD NEW RPCS HERE - THINK ABOUT THEIR
+    // AUTHENTICATION AND NETWORK REQUIREMENTS FIRST
 
-        } else {
-            mf.printf("<error>unrecognized op</error>\n");
-        }
+    } else {
+        mf.printf("<error>unrecognized op</error>\n");
+    }
 
     mf.printf("</boinc_gui_rpc_reply>\n\003");
 
