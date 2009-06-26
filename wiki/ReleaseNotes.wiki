@@ -7,13 +7,17 @@ and things you will want to watch out for when running Synecdoche.
 
 = Notes for 0.1.1 =
 
-== Differences from BOINC 6.2.x ==
+Synecdoche is based on BOINC 6.2.
+This means there is no support for running CUDA applications,
+since it was added in BOINC 6.4.
+We have no plans to implement CUDA support in the near future.
+
+== Differences from BOINC ==
  * Some UI updates
 
 == Limitations ==
 
 === All Platforms ===
- * No CUDA support yet.
  * Cannot be running at the same time as BOINC.
  * Some projects may not work correctly due to improved checks. A [ProjectCompatibilityMatrix project compatibility list] is kept to document incompatibilities. Currently the only project known to have problems is POEM@Home.
 
