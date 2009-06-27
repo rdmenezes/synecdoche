@@ -47,8 +47,8 @@ ACCT_MGR_OP::ACCT_MGR_OP() {
     global_prefs_xml = 0;
 }
 
-/// do an account manager RPC;
-/// if URL is null, detach from current account manager
+/// Do an account manager RPC.
+/// If URL is null, detach from current account manager.
 ///
 int ACCT_MGR_OP::do_rpc(
     const std::string& _url, const std::string& name,
