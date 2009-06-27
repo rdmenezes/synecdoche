@@ -26,7 +26,7 @@
 
 class XML_PARSER;
 
-/// represents info stored in acct_mgr_url.xml and acct_mgr_login.xml
+/// Represents info stored in acct_mgr_url.xml and acct_mgr_login.xml
 ///
 struct ACCT_MGR_INFO {
     // the following used to be std::string but there
@@ -88,7 +88,7 @@ struct ACCT_MGR_OP: public GUI_HTTP_OP {
     bool via_gui;
     int error_num;
     /// a temporary copy while doing RPC.
-    /// CLIENT_STATE::acct_mgr_info is authoratative
+    /// CLIENT_STATE::acct_mgr_info is authoritative
     ACCT_MGR_INFO ami;
     std::string error_str;
     std::vector<AM_ACCOUNT> accounts;
