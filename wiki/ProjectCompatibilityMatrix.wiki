@@ -23,7 +23,7 @@ The idea behind this page is to provide information for the case when changes at
 || QMC@Home                    || *OK*         ||
 || Rectilinear Crossing Number || *OK*         ||
 || Rosetta@home                || *OK*         ||
-|| Seti@home                   || _not tested_ ||
+|| SETI@home                   || *OK*         ||
 || SHA-1 Collision Search Graz || *OK*         ||
 || SIMAP                       || *OK*         ||
 || Spinhenge@home              || *OK*         ||
