@@ -165,41 +165,26 @@ ERROR: could not find (recent enough) development-libs for libcurl.
 ================================================================================
     ])
 else
-    ## add libcurl et al. to the list of statically linked libs
-    STATIC_LIB_LIST="${STATIC_LIB_LIST} curl idn crypto ssl krb5 k5crypto gssapi_krb5 com_err resolv"
     CPPFLAGS="${CPPFLAGS} ${LIBCURL_CPPFLAGS}"
-    CURL_LIB_PATHS=`echo $LIBCURL | sed 's/[^[a-zA-Z]]*-l[^ ]*//g'`
-    LDFLAGS="$CURL_LIB_PATHS $LDFLAGS"
-
-    if test "${enable_debug}" = yes; then
-        echo "LIBCURL = ${LIBCURL}"
-        echo "LIBCURL_CPPFLAGS = ${LIBCURL_CPPFLAGS}"
-        echo "CURL_LIB_PATHS = ${CURL_LIB_PATHS}"
-        echo "LDFLAGS = ${LDFLAGS}"
-    fi
-
+    CLIENTLIBS="${CLIENTLIBS} ${LIBCURL}"
 fi
 
 
 dnl ---------- SSL (m4/check_ssl.m4)
 CHECK_SSL
 if test "${found_ssl}" = "yes"; then
-   BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${SSL_LIBS}"
+   CLIENTLIBS="${CLIENTLIBS} ${SSL_LIBS}"
 fi
 
 AC_CHECK_LIB([cygipc], [shmget])
-AC_CHECK_LIB([aio], [aio_fork])
-AC_CHECK_LIB([dl], [dlopen])
+#AC_CHECK_LIB([aio], [aio_fork])
+#AC_CHECK_LIB([dl], [dlopen])
 AC_CHECK_LIB([nsl], [gethostbyname])
-#AC_CHECK_LIB([wsock32], [fopen])
-#AC_CHECK_LIB([wsock], [fopen])
 AC_CHECK_LIB([socket], [bind])
-AC_CHECK_LIB([z], [gzopen])
-AC_CHECK_LIB([cups], [md5_finish])
-AC_CHECK_LIB([curl], [curl_easy_init],,, [${LIBCURL}])
 AC_CHECK_LIB([m],[sin])
 AC_CHECK_LIB([pthread],[pthread_join])
 AC_CHECK_LIB([wsock32],[fopen])
+
 
 dnl check for pthread
 ACX_PTHREAD(AC_DEFINE(HAVE_PTHREAD,1, [Have pthread]))
@@ -207,6 +192,15 @@ CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
 CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 LIBS="$PTHREAD_LIBS $LIBS"
 
+dnl add these libraries only to CLIENTLIBS, not global LIBS
+SAVELIBS="${LIBS}";
+AC_CHECK_LIB([curl], [curl_easy_init],,, [${LIBCURL}])
+AC_CHECK_LIB([z], [gzopen])
+AC_CHECK_LIB([cups], [md5_finish])
+CLIENTLIBS="${LIBS} ${CLIENTLIBS}";
+LIBS="${SAVELIBS}";
+
+AC_SUBST(CLIENTLIBS)
 
 dnl ---------- decide wether to build the graphical boinc-api libs or not
 dnl check for X11 
@@ -464,9 +458,6 @@ if test "${enable_debug}" = yes; then
 fi
 
 CLIENTGUILIBS=${WX_LIBS}
-
-## prepend BOINC_EXTRA_LIBS (mangled or not) to LIBS for standard linking
-LIBS="${BOINC_EXTRA_LIBS} $LIBS"
 
 AC_SUBST(CLIENTGUIFLAGS)
 AC_SUBST(CLIENTGUILIBS)
