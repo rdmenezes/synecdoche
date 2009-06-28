@@ -3,7 +3,7 @@
 
 include $(top_srcdir)/Makefile.incl
 
-LIBS += @CLIENTLIBS@
+#LIBS += @CLIENTLIBS@
 
 
 if OS_DARWIN
