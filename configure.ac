@@ -494,7 +494,6 @@ AC_CONFIG_FILES([
                  client/Makefile
                  lib/Makefile
                  Makefile
-                 m4/Makefile
                  ])
 
 dnl AC_CONFIG_HEADER([config.h])
