@@ -16,7 +16,7 @@ endif
 
 # ORDER MATTERS below.  One must build dependencies FIRST, then things
 # that depend on them later
-SUBDIRS = m4 $(API_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS)
+SUBDIRS = $(API_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS)
 
 # Putting a directory name recursively copies the entire contents - the
 # dist-hook below gets rid of SVN directories.
