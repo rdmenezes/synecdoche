@@ -7,7 +7,7 @@ include $(top_srcdir)/Makefile.incl
 # now)
 #STATIC_FLAGS=@STATIC_FLAGS@
 
-#LIBS += @CLIENTLIBS@
+LIBS += @CLIENTLIBS@
 
 if OS_DARWIN
    LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa
