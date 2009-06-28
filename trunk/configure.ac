@@ -142,21 +142,6 @@ fi
 
 dnl Checks for libraries.
 
-dnl We'll store these libs in a separate variable BOINC_EXTRA_LIBS for later 
-dnl post-processing instead of the default-action, which would append 
-dnl them to LIBS (note, we also dont define HAVE_LIBXXX, because 
-dnl currently they arent used)
-
-dnl Special rules for specific targets go here:  It's easier to add static libs
-dnl than subtract them.  If you need to remove something from the list above,
-dnl please add it to the lists below...
-case ${target} in
-	*-linux*|*-k*bsd*-gnu)	STATIC_LIB_LIST="${STATIC_LIB_LIST} nsl"
-	;;
-	*-solaris*)	STATIC_LIB_LIST="${STATIC_LIB_LIST} X* ssl crypto"
-	;;
-esac
-
 dnl m4/boinc_getsockopt.m4
 BOINC_GETSOCKOPT_TYPE
 
