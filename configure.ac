@@ -202,7 +202,12 @@ LIBS="${SAVELIBS}";
 
 AC_SUBST(CLIENTLIBS)
 
-dnl ---------- decide wether to build the graphical boinc-api libs or not
+# Disable OpenGL checking. It's only needed for the API, which is currently
+# disabled.
+
+if false; then
+
+dnl ---------- decide whether to build the graphical boinc-api libs or not
 dnl check for X11 
 AC_PATH_X
 AC_PATH_XTRA
@@ -269,7 +274,9 @@ HINT: on MacOSX/Darwin these libs/includes are sometimes found in '/sw/' (if usi
    fi
 fi
 
-AM_CONDITIONAL(BUILD_GRAPHICS_API, [ test "$have_glut" = yes ])
+#AM_CONDITIONAL(BUILD_GRAPHICS_API, [ test "$have_glut" = yes ])
+
+fi; # End disabling of OpenGL checks
 
 dnl --------------------------------------------------------------------------------
 dnl put double-inclusion protection into config.h
