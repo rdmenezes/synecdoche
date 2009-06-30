@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision=`svnversion "$2" 2>/dev/null`
+revision=`env LANG=C svnversion "$2" 2>/dev/null`
 if test $revision && test "x$revision" != "xexported"; then
     revision="\"$revision\"";
 else
