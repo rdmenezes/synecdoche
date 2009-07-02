@@ -45,5 +45,32 @@ void TestStrUtil::testStripWsStdString()
     strip_whitespace(input);
     CPPUNIT_ASSERT_EQUAL(std::string("test"), input);
 }
+void TestStrUtil::testStartsWith()
+{
+    CPPUNIT_ASSERT_EQUAL(true, starts_with("preteststring", "pre"));
+    CPPUNIT_ASSERT_EQUAL(true, starts_with("pre", "pre"));
+    CPPUNIT_ASSERT_EQUAL(false, starts_with("teststring", "pre"));
+    CPPUNIT_ASSERT_EQUAL(false, starts_with("long", "longer"));
+
+    // empty strings don't start with anything
+    CPPUNIT_ASSERT_EQUAL(false, starts_with("", "foo"));
+
+    // but everything starts with the empty string
+    CPPUNIT_ASSERT_EQUAL(true, starts_with("foo", ""));
+    CPPUNIT_ASSERT_EQUAL(true, starts_with("", ""));
+}
+void TestStrUtil::testEndsWith()
+{
+    CPPUNIT_ASSERT_EQUAL(true, ends_with("teststringpost", "post"));
+    CPPUNIT_ASSERT_EQUAL(true, ends_with("post", "post"));
+    CPPUNIT_ASSERT_EQUAL(false, ends_with("teststring", "post"));
+
+    // empty strings don't end with anything
+    CPPUNIT_ASSERT_EQUAL(false, ends_with("", "foo"));
+
+    // but everything ends with the empty string
+    CPPUNIT_ASSERT_EQUAL(true, ends_with("foo", ""));
+    CPPUNIT_ASSERT_EQUAL(true, ends_with("", ""));
+}
 CPPUNIT_TEST_SUITE_REGISTRATION(TestStrUtil);
 

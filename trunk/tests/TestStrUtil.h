@@ -27,10 +27,14 @@ class TestStrUtil: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestStrUtil);
     CPPUNIT_TEST(testStripWsStdString);
+    CPPUNIT_TEST(testStartsWith);
+    CPPUNIT_TEST(testEndsWith);
     CPPUNIT_TEST_SUITE_END();
 
   public:
     void testStripWsStdString();
+    void testStartsWith();
+    void testEndsWith();
 
 };
 
