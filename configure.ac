@@ -202,6 +202,9 @@ LIBS="${SAVELIBS}";
 
 AC_SUBST(CLIENTLIBS)
 
+dnl check for cppunit
+AM_PATH_CPPUNIT(1.12)
+
 # Disable OpenGL checking. It's only needed for the API, which is currently
 # disabled.
 
@@ -476,6 +479,7 @@ AC_CONFIG_FILES([
                  clientgui/res/Makefile
                  client/Makefile
                  lib/Makefile
+                 tests/Makefile
                  Makefile
                  ])
 
