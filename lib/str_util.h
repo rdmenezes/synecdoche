@@ -131,12 +131,6 @@ inline void downcase_string(std::string& w) {
     std::transform(w.begin(), w.end(), w.begin(), static_cast<int(*)(int)>(tolower));
 }
 
-/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-std::string mysql_timestamp(double dt);
-
-/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-int mysql_timestamp(double dt, char* p, size_t len);
-
 /// Returns short text description of error numbers.
 const char* boincerror(int which_error);
 
