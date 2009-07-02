@@ -646,41 +646,6 @@ std::string escape_project_url(const std::string& in) {
     return result;
 }
 
-/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-///
-/// \param[in] dt UNIX timestamp.
-/// \return The MySQL timestamp equivalent of the given timestamp as string.
-std::string mysql_timestamp(double dt) {
-    struct tm* tmp;
-    time_t t = (time_t)dt;
-    tmp = localtime(&t);     // MySQL timestamps are in local time
-    std::ostringstream res;
-    res << std::setw(4) << (tmp->tm_year + 1900);
-    res.fill('0');
-    res.width(2);
-    res << (tmp->tm_mon + 1) << tmp->tm_mday << tmp->tm_hour;
-    res << tmp->tm_min << tmp->tm_sec;
-    return res.str();
-}
-
-/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-///
-/// \param[in] dt UNIX timestamp.
-/// \param[out] p Pointer to a char array that will receive the string
-///               with the MySQL timestamp equivalent to the given UNIX
-///               timestamp.
-/// \param[in] len Size of the buffer \a p.
-/// \return 0 if no error occured, \ref ERR_BUFFER_OVERFLOW if the given buffer
-///         \a p is too small.
-int mysql_timestamp(double dt, char* p, size_t len) {
-    std::string buf = mysql_timestamp(dt);
-    if (buf.length() >= len) {
-        return ERR_BUFFER_OVERFLOW;
-    }
-    strlcpy(p, buf.c_str(), len);
-    return 0;
-}
-
 /// Return a text-string description of a given error.
 /// Must be kept consistent with error_numbers.h
 ///
