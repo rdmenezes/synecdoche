@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-/* Cocoa routines for BOINC Manager OS X System Icon Menu.
-    Written by Charlie Fenton for UC Berkeley Space Sciences Laboratory 2005
-    
-    Adapted from Apple Developer Tech Support sample code, including:
-      SpellingChecker-CarbonCocoa
-      MenuMadness
-*/
+/// \file
+/// Cocoa routines for BOINC Manager OS X System Icon Menu.
+/// Written by Charlie Fenton for UC Berkeley Space Sciences Laboratory 2005
+///
+/// Adapted from Apple Developer Tech Support sample code, including:
+///   SpellingChecker-CarbonCocoa
+///   MenuMadness
 
 #include <Carbon/Carbon.h>
 #include <Cocoa/Cocoa.h>
@@ -74,18 +74,13 @@ void	InitializeCocoa() {
 FallbackMethod:
 	{   /* NSApplication *NSApp = */ [NSApplication sharedApplication]; }
 }
-
-
-
-/*
-*/
-void	SetUpSystemMenu(MenuRef menuToCopy, CGImageRef theIcon) {
+void SetUpSystemMenu(MenuRef menuToCopy, CGImageRef theIcon) {
     NSAutoreleasePool* pool;
     
     if (gSystemMenu == NULL)
         InitializeCocoa();
         
-    pool	= [[NSAutoreleasePool alloc] init];
+    pool = [[NSAutoreleasePool alloc] init];
     
     if (gSystemMenu)
         [gSystemMenu release];
@@ -94,7 +89,7 @@ void	SetUpSystemMenu(MenuRef menuToCopy, CGImageRef theIcon) {
     [gSystemMenu retain];
     
     [gSystemMenu BuildSysMenu:menuToCopy];
-//    [gStatusItem setImage: [NSImage imageNamed:@"Icon0"]];
+    //[gStatusItem setImage: [NSImage imageNamed:@"Icon0"]];
     SetSystemMenuIcon(theIcon);
 
     [pool release];
