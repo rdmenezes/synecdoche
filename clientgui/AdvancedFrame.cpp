@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard, Peter Kortschack
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -1664,6 +1664,14 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
     // Restart timers to continue normal operations.
     StartTimers();
 
+    // Notify all notebook tabs about the successful connection attempt:
+    for (size_t index = 0; index < m_pNotebook->GetPageCount(); ++index) {
+        wxNotebookPage* page = m_pNotebook->GetPage(index);
+        CBOINCBaseView* view = dynamic_cast<CBOINCBaseView*>(page);
+        if (view) {
+            view->OnConnect();
+        }
+    }
 
     // Set the correct refresh interval, then manually fire the refresh
     //   event to do the initial population of the view.
