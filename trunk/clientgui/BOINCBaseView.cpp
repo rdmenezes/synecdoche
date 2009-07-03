@@ -719,6 +719,10 @@ const ColumnListMap& CBOINCBaseView::GetColumnKeys() const {
     return m_column_keys;
 }
 
+/// Called when the manager has successfully connected to a client.
+void CBOINCBaseView::OnConnect() {
+}
+
 /// Read and apply stored settings like column widths.
 void CBOINCBaseView::RestoreState() {
     wxConfigBase* pConfig = wxConfigBase::Get(FALSE);

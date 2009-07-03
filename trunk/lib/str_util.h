@@ -140,6 +140,9 @@ const char* network_status_string(int n);
 /// Return a text-string description of a given reason for a rpc request.
 const char* rpc_reason_string(rpc_reason reason);
 
+/// Compare two strings in lexicographical order.
+bool NoCaseLess(const std::string& a, const std::string& b);
+
 #ifdef _WIN32
 #include <windows.h>
 

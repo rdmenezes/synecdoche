@@ -1255,6 +1255,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\clientgui\DlgMsgFilter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\clientgui\DlgMsgFilter.h"
+					>
+				</File>
+				<File
 					RelativePath="..\clientgui\DlgOptions.cpp"
 					>
 				</File>
@@ -1268,6 +1276,14 @@
 				</File>
 				<File
 					RelativePath="..\clientgui\DlgSelectComputer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\clientgui\MsgFilterData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\clientgui\MsgFilterData.h"
 					>
 				</File>
 				<File

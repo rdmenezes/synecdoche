@@ -828,6 +828,24 @@ const char* rpc_reason_string(rpc_reason reason) {
     }
 }
 
+namespace {
+    class case_insensitive_less : public std::binary_function<char, char, bool> {
+    public:
+        bool operator () (char x, char y) const {
+            return toupper(static_cast<unsigned char>(x)) < toupper(static_cast<unsigned char>(y));
+        }
+    };
+}
+
+/// Compare two strings in lexicographical order.
+///
+/// \param[in] a First string.
+/// \param[in] b Second string.
+/// \return True if the string \a a comes before string \a b in lexicographical order.
+bool NoCaseLess(const std::string& a, const std::string& b) {
+    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), case_insensitive_less());
+}
+
 #ifdef WIN32
 
 /// Get a message for the last error.
