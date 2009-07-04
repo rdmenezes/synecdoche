@@ -78,6 +78,12 @@
 ||18042||client, Mac: don't do res_init(). It causes a crash. / client (Unix): if client crashes while benchmark processes are going, make sure they detect this and exit. _NOTE: 17711 needs to be applied before this one._||
 ||18054||Mac client: fix parent died test in benchmark_time_to_stop()||
 ||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
+||18291||MGR: Accept Unicode input for usernames and password in the manager now that the manager is Unicode enabled. Input will show up as UTF-8 strings in the CC and project.||
+||18330||GUI RPC: include hostid in PROJECT||
+||18340||lib: FILE_LOCK::lock() makes lockfile group-writable so both client and manager can create and write it under sandbox security||
+||18408/18410||MGR: Wizard retries acct_mgr_rpc() if acct_mgr_rpc_poll() sets ERR_RETRY||
+||18427||client: don't require that file upload URLs contain "file_upload_handler".||
+||18456||MGR: Massive wizard cleanup||
 
 
 
@@ -116,6 +122,7 @@
 ||17728/17731||WINSCR: It appears newer notebook models with multiple video chipsets exhibit an interesting situation. It appears as though in certain conditions a single monitor machine actually reports itself as having three monitors. Normally the monitor that contains the primary window (coord 0,0) is on monitor 0, but on these machines coord 0,0 is actually on monitor 2. This led to the screensaver not properly exiting when keyboard and/or mouse activity was detected. Now when we detect that keyboard and/or mouse activity has happened we send the WM_INTERRUPTSAVER event to all windows on all monitors.||
 ||17815||SS: launch default screensaver graphics app as user and group boinc_project, not boinc_master||
 ||18222||SS: Add new optional boolean xml tag <default_ss_first>||
+||18444||SS: remove unused func||
 
 
 == Rejected changes ==
@@ -179,7 +186,8 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/17596 17596]||We don't need these tabs, do we?||
 ||[http://boinc.berkeley.edu/trac/changeset/18077 18077] `*`||MGR: Include support for Firefox 3.x cookie support for the attach to project wizard.||
 ||[http://boinc.berkeley.edu/trac/changeset/18088 18088]||MGR: Merge "Attach to account manager" functionality into "Attach to project" wizard; Synchronize and Remove Acct Mgr not yet merged. Additional changesets: 18112/18113/18114/18115 _Doesn't make any sense to me._||
+||[http://boinc.berkeley.edu/trac/changeset/18311 18311]||MGR: !CBOINCClientManager::!ProcessExists?() finds the process by name if we don't have a pid (Mac, Linux) or process HANDLE (Windows) _What is the purpose of this?!?_ Additional changesets: 18316/18317/18318/18319||
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18274 18274]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18500 18500]
