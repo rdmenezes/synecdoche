@@ -54,25 +54,21 @@ BEGIN_EVENT_TABLE (CViewMessages, CTaskViewBase)
 END_EVENT_TABLE ()
 
 
-CViewMessages::CViewMessages() {
+CViewMessages::CViewMessages() : m_enableMsgFilter(false) {
 }
 
 CViewMessages::CViewMessages(wxNotebook* pNotebook) :
-    CTaskViewBase(pNotebook) {
+    CTaskViewBase(pNotebook), m_enableMsgFilter(false) {
     m_pMessageInfoAttr = NULL;
     m_pMessageErrorAttr = NULL;
 }
 
 CViewMessages::~CViewMessages() {
-    if (m_pMessageInfoAttr) {
-        delete m_pMessageInfoAttr;
-        m_pMessageInfoAttr = NULL;
-    }
+    delete m_pMessageInfoAttr;
+    m_pMessageInfoAttr = 0;
 
-    if (m_pMessageErrorAttr) {
-        delete m_pMessageErrorAttr;
-        m_pMessageErrorAttr = NULL;
-    }
+    delete m_pMessageErrorAttr;
+    m_pMessageErrorAttr = 0;
 }
 
 void CViewMessages::DemandLoadView() {
@@ -124,7 +120,6 @@ void CViewMessages::DemandLoadView() {
                           ID_TASK_MESSAGES_EDIT_FILTER);
     pGroup->m_Tasks.push_back(pItem);
     
-    m_enableMsgFilter = false;
     pItem = new CTaskItem(_("Enable message filter"),
                           _("Enable message filtering based on the current filter settings."),
                           ID_TASK_MESSAGES_ENABLE_FILTER);
@@ -235,8 +230,9 @@ void CViewMessages::OnMessagesEditFilter(wxCommandEvent& /* event */) {
         
         // Refresh the list if filtering is currently enabled:
         if (m_enableMsgFilter) {
-            FilterMessages();
-            wxGetApp().GetFrame()->FireRefreshView();
+            long docCount = GetDocCount();
+            m_pListPane->SetItemCount(docCount);
+            m_pListPane->RefreshItems(0, docCount - 1);
         }
     }
 }
@@ -247,13 +243,16 @@ void CViewMessages::OnMessagesEnableFilter(wxCommandEvent& /* event */) {
         m_pTaskPane->UpdateTask(m_TaskGroups[0]->m_Tasks[BTN_ENABLEFILTER],
                                 _("Disable message filter"),
                                 _("Disable message filtering."));
-        FilterMessages();
     } else {
         m_pTaskPane->UpdateTask(m_TaskGroups[0]->m_Tasks[BTN_ENABLEFILTER],
                                 _("Enable message filter"),
                                 _("Enable message filtering based on the current filter settings."));
     }
-    wxGetApp().GetFrame()->FireRefreshView();
+
+    // Refresh the list:
+    long docCount = GetDocCount();
+    m_pListPane->SetItemCount(docCount);
+    m_pListPane->RefreshItems(0, docCount - 1);
 }
 
 /// Called when the manager has successfully connected to a client.
