@@ -58,9 +58,9 @@ AC_DEFUN([LIBCURL_CHECK_CONFIG],
 
   AC_ARG_WITH(libcurl,
      AC_HELP_STRING([--with-libcurl=DIR],[look for the curl library in DIR]),
-     [_libcurl_with=$withval],[_libcurl_with=ifelse([$1],,[yes],[$1])])
+     [],[with_libcurl=ifelse([$1],,[yes],[$1])])
 
-  if test "$_libcurl_with" != "no" ; then
+  if test "$with_libcurl" != "no" ; then
 
      AC_PROG_AWK
 
@@ -68,7 +68,7 @@ AC_DEFUN([LIBCURL_CHECK_CONFIG],
 
      _libcurl_try_link=yes
 
-     if test -d "$_libcurl_with" ; then
+     if test -d "$with_libcurl" ; then
         LIBCURL_CPPFLAGS="-I$withval/include"
         _libcurl_ldflags="-L$withval/lib"
         AC_PATH_PROG([_libcurl_config],[curl-config],["$withval/bin"],
@@ -228,7 +228,7 @@ x=CURLOPT_VERBOSE;
      unset _libcurl_ldflags
   fi
 
-  if test x$_libcurl_with = xno || test x$libcurl_cv_lib_curl_usable != xyes ; then
+  if test x$with_libcurl = xno || test x$libcurl_cv_lib_curl_usable != xyes ; then
      # This is the IF-NO path
      ifelse([$4],,:,[$4])
   else
@@ -236,5 +236,4 @@ x=CURLOPT_VERBOSE;
      ifelse([$3],,:,[$3])
   fi
 
-  unset _libcurl_with
 ])dnl
