@@ -45,6 +45,12 @@ Currently, the install location cannot be changed.
 By default, it also installs the Synecdoche screensaver
 and a project list to be used by the GUI.
 
+*Warning*: A certificate file to attach to projects that use HTTPS, 
+like World Community Grid, should have been included, but was 
+accidentally left out. This will be fixed in the next release.
+
+  * A temporary fix to the above is to copy the *ca-bundle.crt* file from a BOINC installation (/Library/Application Support/BOINC Data) or from another Synecdoche release bundle, and place it in the Synecdoche data directory (/Library/Application Support/Synecdoche Data).
+
 To start, open Synecdoche.app in the Applications folder.
 
 To make it run on boot, add Synecdoche.app to your
