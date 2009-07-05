@@ -96,7 +96,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
 
     FILE_INFO* fip;
     unsigned int i;
-    char path[256];
     int retval;
     double size;
 
@@ -111,9 +110,11 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
         for (i=0; i<rp->output_files.size(); i++) {
             FILE_REF& fref = rp->output_files[i];
             fip = fref.file_info;
-            if (fip->uploaded) continue;
-            get_pathname(fip, path, sizeof(path));
-            retval = file_size(path, size);
+            if (fip->uploaded) {
+                continue;
+            }
+            std::string path = get_pathname(fip);
+            retval = file_size(path.c_str(), size);
             if (retval) {
                 if (fref.optional) {
                     fip->upload_when_present = false;
@@ -146,7 +147,7 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
                         retval = fip->gzip();
                     }
                     if (!retval) {
-                        retval = md5_file(path, fip->md5_cksum, fip->nbytes);
+                        retval = md5_file(path.c_str(), fip->md5_cksum, fip->nbytes);
                     }
                     if (retval) {
                         fip->status = retval;

@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -96,9 +97,6 @@ int PERS_FILE_XFER::create_xfer() {
     // Does the file exist already? this could happen for example if we are
     // downloading an application which exists from a previous installation
     if (!is_upload) {
-        char pathname[256];
-        get_pathname(fip, pathname, sizeof(pathname));
-
         // see if file already exists and is valid
         if (!fip->verify_file(true, false)) {
             retval = fip->set_permissions();
