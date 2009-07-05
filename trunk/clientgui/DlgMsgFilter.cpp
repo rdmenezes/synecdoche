@@ -47,7 +47,7 @@ namespace {
 }
 
 DlgMsgFilter::DlgMsgFilter(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) : wxDialog(parent, id, title, pos, size, style) {
-    SetSizeHints(wxDefaultSize, wxDefaultSize);
+    SetMinSize(wxSize(377, 337));
 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
