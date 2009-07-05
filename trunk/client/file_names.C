@@ -116,13 +116,6 @@ std::string job_log_filename(const PROJECT& project) {
 
 /// Returns the location of a numbered slot directory.
 ///
-/// \deprecated Use get_slot_dir(int) instead.
-void get_slot_dir(int slot, char* path, int len) {
-    snprintf(path, len, "%s/%d", SLOTS_DIR, slot);
-}
-
-/// Returns the location of a numbered slot directory.
-///
 /// \param[in] slot The number of the slot.
 /// \return The (relative) path to the requested slot directory.
 std::string get_slot_dir(int slot) {

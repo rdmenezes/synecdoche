@@ -129,8 +129,7 @@ int ACTIVE_TASK::get_shmem_seg_name() {
         shmem_seg_name = -1;
         return 0;
     }
-    std::string init_data_path = std::string(slot_dir) + std::string("/")
-                                                       + std::string(INIT_DATA_FILE);
+    std::string init_data_path = slot_dir + std::string("/") + std::string(INIT_DATA_FILE);
 
     // ftok() only works if there's a file at the given location
     //
@@ -206,8 +205,7 @@ int ACTIVE_TASK::write_app_init_file() {
     //
     aid.wu_cpu_time = episode_start_cpu_time;
 
-    std::string init_data_path = std::string(slot_dir) + std::string("/")
-                                                       + std::string(INIT_DATA_FILE);
+    std::string init_data_path = slot_dir + std::string("/") + std::string(INIT_DATA_FILE);
     f = boinc_fopen(init_data_path.c_str(), "w");
     if (!f) {
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
@@ -244,11 +242,11 @@ static int make_soft_link(const PROJECT* project, const char* link_path, const c
 /// -# else make a soft link
 static int setup_file(
     const PROJECT* project, const FILE_INFO* fip, const FILE_REF& fref,
-    const std::string& file_path, const char* slot_dir, bool input
+    const std::string& file_path, const std::string& slot_dir, bool input
 ) {
     int retval;
 
-    std::string link_path = std::string(slot_dir) + std::string("/");
+    std::string link_path = slot_dir + std::string("/");
     if (strlen(fref.open_name)) {
         link_path += std::string(fref.open_name);
     } else {
@@ -317,8 +315,7 @@ int ACTIVE_TASK::copy_output_files() {
             continue;
         }
         const FILE_INFO* fip = fref.file_info;
-        std::string slotfile = std::string(slot_dir) + std::string("/")
-                                                     + std::string(fref.open_name);
+        std::string slotfile = slot_dir + std::string("/") + std::string(fref.open_name);
         std::string projfile = get_pathname(fip);
         int retval = boinc_rename(slotfile.c_str(), projfile.c_str());
         if (retval) {
@@ -629,8 +626,7 @@ int ACTIVE_TASK::start() {
     if (!app_client_shm.shm) {
         if (app_version->api_major_version() >= 6) {
             // Use mmap() shared memory
-            std::string buf = std::string(slot_dir) + std::string("/")
-                                                    + std::string(MMAPPED_FILE_NAME);
+            std::string buf = slot_dir + std::string("/") + std::string(MMAPPED_FILE_NAME);
             if (g_use_sandbox) {
                 if (!boinc_file_exists(buf.c_str())) {
                     int fd = open(buf.c_str(), O_RDWR | O_CREAT, 0660);
@@ -716,7 +712,7 @@ int ACTIVE_TASK::start() {
         libpath << "../../" << pdir << ":.:../..";
         setenv("LD_LIBRARY_PATH", libpath.str().c_str(), 1);
 
-        retval = chdir(slot_dir);
+        retval = chdir(slot_dir.c_str());
         if (retval) {
             perror("chdir");
             fflush(NULL);

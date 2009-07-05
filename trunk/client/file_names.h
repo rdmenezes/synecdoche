@@ -33,10 +33,6 @@ std::string get_pathname(const FILE_INFO* fip);
 /// Get the directory for a given project.
 std::string get_project_dir(const PROJECT* p);
 
-/// get the pathname (relative to client home dir) of the
-/// directory used for a particular application "slot".
-void get_slot_dir(int slot, char* path, int len) __attribute__((deprecated));
-
 /// Returns the location of a numbered slot directory.
 std::string get_slot_dir(int slot);
 
