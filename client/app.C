@@ -94,7 +94,6 @@ ACTIVE_TASK::ACTIVE_TASK() {
     _task_state = PROCESS_UNINITIALIZED;
     scheduler_state = CPU_SCHED_UNINITIALIZED;
     signal = 0;
-    strcpy(slot_dir, "");
     graphics_mode_acked = MODE_UNSUPPORTED;
     graphics_mode_ack_timeout = 0;
     fraction_done = 0;
@@ -202,9 +201,8 @@ int ACTIVE_TASK::init(RESULT* rp) {
     max_cpu_time = rp->wup->rsc_fpops_bound/gstate.host_info.p_fpops;
     max_disk_usage = rp->wup->rsc_disk_bound;
     max_mem_usage = rp->wup->rsc_memory_bound;
-    get_slot_dir(slot, slot_dir, sizeof(slot_dir));
-    std::string buf = relative_to_absolute(slot_dir);
-    strlcpy(slot_path, buf.c_str(), sizeof(slot_path));
+    slot_dir = ::get_slot_dir(slot);
+    slot_path = relative_to_absolute(slot_dir);
     return 0;
 }
 
@@ -352,7 +350,7 @@ int ACTIVE_TASK::current_disk_usage(double& size) const {
     int retval;
     std::string path;
 
-    retval = dir_size(slot_dir, size);
+    retval = dir_size(slot_dir.c_str(), size);
     if (retval) return retval;
     for (size_t i=0; i<result->output_files.size(); i++) {
         const FILE_INFO* fip = result->output_files[i].file_info;
@@ -495,7 +493,7 @@ int ACTIVE_TASK::write_gui(MIOFILE& fout) const {
             "   <graphics_exec_path>%s</graphics_exec_path>\n"
             "   <slot_path>%s</slot_path>\n",
             app_version->graphics_exec_path,
-            slot_path
+            slot_path.c_str()
         );
     }
     if (supports_graphics() && !gstate.disable_graphics) {
@@ -603,6 +601,11 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
         }
     }
     return ERR_XML_PARSE;
+}
+
+/// Return the slot directory (relative path).
+std::string ACTIVE_TASK::get_slot_dir() const {
+    return slot_dir;
 }
 
 /// Write XML information about this active task set

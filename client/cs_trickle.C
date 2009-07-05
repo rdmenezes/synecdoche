@@ -151,7 +151,7 @@ int CLIENT_STATE::handle_trickle_down(const PROJECT* project, FILE* in) {
                 return ERR_NULL;
             }
             std::ostringstream path;
-            path << atp->slot_dir << "/trickle_down_" << send_time;
+            path << atp->get_slot_dir() << "/trickle_down_" << send_time;
             FILE* f = fopen(path.str().c_str(), "w"); // Shouldn't this use boinc_fopen?
             if (!f) {
                 return ERR_FOPEN;
