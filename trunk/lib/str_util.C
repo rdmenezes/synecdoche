@@ -425,28 +425,6 @@ void escape_url(std::string& url) {
 }
 
 /// Escape a URL for the project directory, cutting off the "http://",
-/// converting everthing other than alphanumbers, ., - and _ to "_".
-void escape_url_readable(const char *in, char* out) {
-    int x, y;
-    const char *temp;
-
-    temp = strstr(in,"://");
-    if (temp) {
-        in = temp + strlen("://");
-    }
-    for (x=0, y=0; in[x]; ++x) {
-        if (isalnum(in[x]) || in[x]=='.' || in[x]=='-' || in[x]=='_') {
-            out[y] = in[x];
-            ++y;
-        } else {
-            out[y] = '_';
-            ++y;
-        }
-    }
-    out[y] = 0;
-}
-
-/// Escape a URL for the project directory, cutting off the "http://",
 /// converting everything other than letters, numbers, ., - and _ to "_".
 ///
 /// \param[in] in The URL to escape.
@@ -624,15 +602,6 @@ std::string timediff_format(double diff) {
 
     buf << tdiff << " weeks " << days << " days " << hours << " hr " << min << " min " << sex << " sec";
     return buf.str();
-}
-
-void escape_project_url(const char *in, char* out) {
-    escape_url_readable(in, out);
-    char& last = out[strlen(out)-1];
-    // remove trailing _
-    if (last == '_') {
-        last = '\0';
-    }
 }
 
 /// Escape a URL for the project directory
