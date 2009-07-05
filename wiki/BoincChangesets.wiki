@@ -84,6 +84,8 @@
 ||18408/18410||MGR: Wizard retries acct_mgr_rpc() if acct_mgr_rpc_poll() sets ERR_RETRY||
 ||18427||client: don't require that file upload URLs contain "file_upload_handler".||
 ||18456||MGR: Massive wizard cleanup||
+||18531||client: record the time results are received. _Might be usefull some day, at least as displayed value._||
+||18534||manager tweak _The code-cleanup part looks useful, the message change should not be applied._||
 
 
 
@@ -190,4 +192,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18500 18500]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18545 18545]
