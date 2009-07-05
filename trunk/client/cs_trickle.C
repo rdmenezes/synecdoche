@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -43,8 +43,7 @@
 ///              content of the trickle files.
 /// \return Always returns zero.
 int CLIENT_STATE::read_trickle_files(const PROJECT* project, FILE* f) {
-    char project_dir[256];
-    get_project_dir(project, project_dir, sizeof(project_dir));
+    std::string project_dir = get_project_dir(project);
 
     DirScanner ds(project_dir);
     std::string fn;
@@ -106,8 +105,7 @@ int CLIENT_STATE::read_trickle_files(const PROJECT* project, FILE* f) {
 ///                    the trickle files should be removed.
 /// \return Always returns zero.
 int CLIENT_STATE::remove_trickle_files(const PROJECT* project) {
-    char project_dir[256];
-    get_project_dir(project, project_dir, sizeof(project_dir));
+    std::string project_dir = get_project_dir(project);
 
     DirScanner ds(project_dir);
     std::string fn;
