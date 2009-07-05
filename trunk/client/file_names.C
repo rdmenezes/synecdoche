@@ -71,29 +71,15 @@ void get_project_dir(const PROJECT* p, char* path, int len) {
 /// \return File name for the given FILE_INFO instance.
 std::string get_pathname(const FILE_INFO* fip) {
     const PROJECT* p = fip->project;
+
+    // for testing purposes, it's handy to allow a FILE_INFO without
+    // an associated PROJECT.
     if (p) {
         std::ostringstream result;
         result << get_project_dir(p) << '/' << fip->name;
         return result.str();
     } else {
         return fip->name;
-    }
-}
-
-/// Gets the pathname of a file
-///
-/// \deprecated Use get_pathname(const FILE_INFO*) instead.
-void get_pathname(const FILE_INFO* fip, char* path, int len) {
-    const PROJECT* p = fip->project;
-    char buf[1024];
-
-    // for testing purposes, it's handy to allow a FILE_INFO without
-    // an associated PROJECT.
-    if (p) {
-        get_project_dir(p, buf, sizeof(buf));
-        snprintf(path, len, "%s/%s", buf, fip->name.c_str());
-    } else {
-        strlcpy(path, fip->name.c_str(), len);
     }
 }
 

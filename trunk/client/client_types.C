@@ -660,22 +660,21 @@ int FILE_INFO::set_permissions() {
     return 0;
 #else
     int retval;
-    char pathname[256];
-    get_pathname(this, pathname, sizeof(pathname));
+    std::string pathname = get_pathname(this);
 
     if (g_use_sandbox) {
         // give exec permissions for user, group and others but give
         // read permissions only for user and group to protect account keys
-        retval = set_to_project_group(pathname);
+        retval = set_to_project_group(pathname.c_str());
         if (retval) return retval;
         if (executable) {
-            retval = chmod(pathname,
+            retval = chmod(pathname.c_str(),
                 S_IRUSR|S_IWUSR|S_IXUSR
                 |S_IRGRP|S_IWGRP|S_IXGRP
                 |S_IXOTH
             );
         } else {
-            retval = chmod(pathname,
+            retval = chmod(pathname.c_str(),
                 S_IRUSR|S_IWUSR
                 |S_IRGRP|S_IWGRP
             );
@@ -684,13 +683,13 @@ int FILE_INFO::set_permissions() {
         // give read/exec permissions for user, group and others
         // in case someone runs Synecdoche from different user
         if (executable) {
-            retval = chmod(pathname,
+            retval = chmod(pathname.c_str(),
                 S_IRUSR|S_IWUSR|S_IXUSR
                 |S_IRGRP|S_IXGRP
                 |S_IROTH|S_IXOTH
             );
         } else {
-            retval = chmod(pathname,
+            retval = chmod(pathname.c_str(),
                 S_IRUSR|S_IWUSR
                 |S_IRGRP
                 |S_IROTH
@@ -872,12 +871,10 @@ int FILE_INFO::write_gui(MIOFILE& out) const {
 
 /// Delete physical underlying file associated with FILE_INFO.
 int FILE_INFO::delete_file() {
-    char path[256];
-
-    get_pathname(this, path, sizeof(path));
-    int retval = delete_project_owned_file(path, true);
+    std::string path = get_pathname(this);
+    int retval = delete_project_owned_file(path.c_str(), true);
     if (retval && status != FILE_NOT_PRESENT) {
-        msg_printf(project, MSG_INTERNAL_ERROR, "Couldn't delete file %s", path);
+        msg_printf(project, MSG_INTERNAL_ERROR, "Couldn't delete file %s", path.c_str());
     }
     status = FILE_NOT_PRESENT;
     return retval;
@@ -1025,12 +1022,11 @@ std::string FILE_INFO::failure_message() const {
 int FILE_INFO::gzip() {
     const size_t BUFSIZE = 16384;
     char buf[BUFSIZE];
-    char inpath[256];
 
-    get_pathname(this, inpath, sizeof(inpath));
+    std::string inpath = get_pathname(this);
     std::string outpath(inpath);
     outpath.append(".gz");
-    FILE* in = boinc_fopen(inpath, "rb");
+    FILE* in = boinc_fopen(inpath.c_str(), "rb");
     if (!in) {
         return ERR_FOPEN;
     }
@@ -1050,8 +1046,8 @@ int FILE_INFO::gzip() {
     }
     fclose(in);
     gzclose(out);
-    delete_project_owned_file(inpath, true);
-    boinc_rename(outpath.c_str(), inpath);
+    delete_project_owned_file(inpath.c_str(), true);
+    boinc_rename(outpath.c_str(), inpath.c_str());
     return 0;
 }
 

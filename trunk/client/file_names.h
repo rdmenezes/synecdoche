@@ -30,9 +30,6 @@ class MIOFILE;
 /// Gets the pathname (relative to client home dir) of a project file.
 std::string get_pathname(const FILE_INFO* fip);
 
-/// Gets the pathname (relative to client home dir) of a project file.
-void get_pathname(const FILE_INFO* fip, char* path, int len) __attribute__((deprecated));
-
 /// Get the directory for a given project.
 std::string get_project_dir(const PROJECT* p);
 
