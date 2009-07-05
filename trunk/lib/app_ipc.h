@@ -241,6 +241,4 @@ int boinc_resolve_filename_s(const char *virtual_name, std::string& physical_nam
 /// Get the directory for a project denoted by its master-url.
 std::string url_to_project_dir(const std::string& url);
 
-void url_to_project_dir(const char* url, char* dir) __attribute__((deprecated));
-
 #endif // APP_IPC_H
