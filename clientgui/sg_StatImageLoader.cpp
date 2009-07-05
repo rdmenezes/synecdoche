@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -208,11 +209,9 @@ void StatImageLoader::LoadStatIcon(wxBitmap& image) {
 ///
 /// \return A string containing the path to the project icon.
 std::string StatImageLoader::GetProjectIconLoc() {
-    char urlDirectory[256];
-    CMainDocument* pDoc = wxGetApp().GetDocument();
-    const PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
-    url_to_project_dir(project->master_url.c_str(), urlDirectory);
-    return std::string(urlDirectory) + std::string("/stat_icon");
+    const PROJECT* project = wxGetApp().GetDocument()->state.lookup_project(m_prjUrl);
+    std::string urlDirectory = url_to_project_dir(project->master_url);
+    return urlDirectory + std::string("/stat_icon");
 }
 
 
