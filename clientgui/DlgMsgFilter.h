@@ -30,7 +30,7 @@ public:
                  const wxString& title = _("Message filter"),
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxSize(377, 337),
-                 long style = wxDEFAULT_DIALOG_STYLE);
+                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     ~DlgMsgFilter();
     
     const MsgFilterData& GetFilterData() const;
