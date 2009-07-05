@@ -55,15 +55,6 @@ std::string get_project_dir(const PROJECT* p) {
     return result.str();
 }
 
-/// Get the directory for a given project.
-///
-/// \deprecated Use get_project_dir(const PROJECT*) instead.
-void get_project_dir(const PROJECT* p, char* path, int len) {
-    char buf[1024];
-    escape_project_url(p->master_url, buf);
-    snprintf(path, len, "%s/%s", PROJECTS_DIR, buf);
-}
-
 /// Gets the pathname (relative to client home dir) of a project file.
 ///
 /// \param[in] fip Pointer to a FILE_INFO instance for which the physical file
