@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -74,12 +74,8 @@ void unescape_url(std::string& url);
 /// Escape an URL.
 void escape_url(std::string& url);
 
-void escape_url_readable(const char* in, char* out) __attribute__((deprecated));
-
 /// Escape a URL for the project directory
 std::string escape_url_readable(const std::string& in);
-
-void escape_project_url(const char *in, char* out) __attribute__((deprecated));
 
 /// Escape a URL for the project directory
 std::string escape_project_url(const std::string& in);
