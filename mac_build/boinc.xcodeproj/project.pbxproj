@@ -2607,7 +2607,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2646,28 +2646,10 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
-				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/include";
 				OTHER_LDFLAGS = (
-					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
-					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=ppc]" = (
-					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
-					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
-					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"$(LIBCURL_DIR)/lib/libcurl.a",
+					"$(C_ARES_DIR)/lib/libcares.a",
 					"-lcrypto",
 					"-lssl",
 					"-lldap",
@@ -2773,7 +2755,6 @@
 					SANDBOX,
 					_MAC_INSTALLER,
 				);
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				PRODUCT_NAME = PostInstall;
 			};
@@ -2804,7 +2785,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				PRODUCT_NAME = "BOINC Installer";
 			};
@@ -2871,7 +2851,6 @@
 		0E73D5300F5B3EA6006596B2 /* Universal_Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Uninstaller-Info.plist";
 				PRODUCT_NAME = "Uninstall BOINC";
 				WRAPPER_EXTENSION = app;
@@ -2889,7 +2868,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				PRODUCT_NAME = "BOINC Installer";
 			};
@@ -2899,7 +2877,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				PRODUCT_NAME = "BOINC Installer";
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -2910,7 +2887,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				PRODUCT_NAME = "BOINC Installer";
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -2921,7 +2897,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				PRODUCT_NAME = "BOINC Installer";
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -3135,7 +3110,6 @@
 		DD4688450C165F3C0089F500 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Uninstaller-Info.plist";
 				PRODUCT_NAME = "Uninstall BOINC";
 				WRAPPER_EXTENSION = app;
@@ -3145,7 +3119,6 @@
 		DD4688460C165F3C0089F500 /* Dev_noSandbox */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Uninstaller-Info.plist";
 				PRODUCT_NAME = "Uninstall BOINC";
 				WRAPPER_EXTENSION = app;
@@ -3155,7 +3128,6 @@
 		DD4688470C165F3C0089F500 /* ppc_Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Uninstaller-Info.plist";
 				PRODUCT_NAME = "Uninstall BOINC";
 				WRAPPER_EXTENSION = app;
@@ -3165,7 +3137,6 @@
 		DD4688480C165F3C0089F500 /* i386_Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Uninstaller-Info.plist";
 				PRODUCT_NAME = "Uninstall BOINC";
 				WRAPPER_EXTENSION = app;
@@ -3175,7 +3146,6 @@
 		DD4688490C165F3C0089F500 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Uninstaller-Info.plist";
 				PRODUCT_NAME = "Uninstall BOINC";
 				WRAPPER_EXTENSION = app;
@@ -3185,7 +3155,6 @@
 		DD46884A0C165F3C0089F500 /* Deploy_noSandbox */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Uninstaller-Info.plist";
 				PRODUCT_NAME = "Uninstall BOINC";
 				WRAPPER_EXTENSION = app;
@@ -3302,28 +3271,10 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
-				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/include";
 				OTHER_LDFLAGS = (
-					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
-					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=ppc]" = (
-					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
-					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
-					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"$(LIBCURL_DIR)/lib/libcurl.a",
+					"$(C_ARES_DIR)/lib/libcares.a",
 					"-lcrypto",
 					"-lssl",
 					"-lldap",
@@ -3348,28 +3299,10 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
-				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/include";
 				OTHER_LDFLAGS = (
-					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
-					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=ppc]" = (
-					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
-					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
-					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"$(LIBCURL_DIR)/lib/libcurl.a",
+					"$(C_ARES_DIR)/lib/libcares.a",
 					"-lcrypto",
 					"-lssl",
 					"-lldap",
@@ -3410,7 +3343,6 @@
 					_DEBUG,
 					_MAC_INSTALLER,
 				);
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				PRODUCT_NAME = PostInstall;
 			};
@@ -3425,7 +3357,6 @@
 					NDEBUG,
 					_MAC_INSTALLER,
 				);
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				PRODUCT_NAME = PostInstall;
 			};
@@ -3499,7 +3430,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				PRODUCT_NAME = "BOINC Installer";
 			};
@@ -3509,7 +3439,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				PRODUCT_NAME = "BOINC Installer";
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -3700,7 +3629,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -3751,7 +3680,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -3831,7 +3760,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -3869,28 +3798,10 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
-				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/include";
 				OTHER_LDFLAGS = (
-					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
-					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=ppc]" = (
-					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
-					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
-					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"$(LIBCURL_DIR)/lib/libcurl.a",
+					"$(C_ARES_DIR)/lib/libcares.a",
 					"-lcrypto",
 					"-lssl",
 					"-lldap",
@@ -3988,7 +3899,6 @@
 					SANDBOX,
 					_MAC_INSTALLER,
 				);
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				PRODUCT_NAME = PostInstall;
 			};
@@ -4019,7 +3929,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				PRODUCT_NAME = "BOINC Installer";
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -4087,7 +3996,6 @@
 		DD9670790CED9A800009D32B /* Deployment-no64 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "Uninstaller-Info.plist";
 				PRODUCT_NAME = "Uninstall BOINC";
 				WRAPPER_EXTENSION = app;
@@ -4166,28 +4074,10 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
-				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/include";
 				OTHER_LDFLAGS = (
-					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
-					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=ppc]" = (
-					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
-					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
-					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"$(LIBCURL_DIR)/lib/libcurl.a",
+					"$(C_ARES_DIR)/lib/libcares.a",
 					"-lcrypto",
 					"-lssl",
 					"-lldap",
@@ -4219,7 +4109,6 @@
 					SANDBOX,
 					_MAC_INSTALLER,
 				);
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				PRODUCT_NAME = PostInstall;
 			};
@@ -4299,7 +4188,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -4412,28 +4301,10 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
-				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/include";
 				OTHER_LDFLAGS = (
-					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
-					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=ppc]" = (
-					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
-					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
-					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"$(LIBCURL_DIR)/lib/libcurl.a",
+					"$(C_ARES_DIR)/lib/libcares.a",
 					"-lcrypto",
 					"-lssl",
 					"-lldap",
@@ -4453,28 +4324,10 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
-				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/include";
 				OTHER_LDFLAGS = (
-					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
-					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=ppc]" = (
-					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
-					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
-					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"$(LIBCURL_DIR)/lib/libcurl.a",
+					"$(C_ARES_DIR)/lib/libcares.a",
 					"-lcrypto",
 					"-lssl",
 					"-lldap",
@@ -4516,7 +4369,6 @@
 					SANDBOX,
 					_MAC_INSTALLER,
 				);
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				PRODUCT_NAME = PostInstall;
 			};
@@ -4532,7 +4384,6 @@
 					SANDBOX,
 					_MAC_INSTALLER,
 				);
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				PRODUCT_NAME = PostInstall;
 			};
@@ -4645,7 +4496,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -4695,7 +4546,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -4758,28 +4609,10 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
-				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
+				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/include";
 				OTHER_LDFLAGS = (
-					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
-					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=ppc]" = (
-					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
-					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
-					"-lldap",
-					"-lz",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
-					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
+					"$(LIBCURL_DIR)/lib/libcurl.a",
+					"$(C_ARES_DIR)/lib/libcares.a",
 					"-lcrypto",
 					"-lssl",
 					"-lldap",
@@ -4811,7 +4644,6 @@
 					SANDBOX,
 					_MAC_INSTALLER,
 				);
-				"GCC_VERSION[arch=ppc]" = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				PRODUCT_NAME = PostInstall;
 			};
@@ -4890,7 +4722,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = YES;
