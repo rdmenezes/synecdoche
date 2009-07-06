@@ -100,64 +100,52 @@ void SetUpSystemMenu(MenuRef menuToCopy, CGImageRef theIcon) {
 @implementation SystemMenu
 
 - (void)BuildSysMenu:(MenuRef)menuToCopy {
-    NSStatusBar *bar;
     NSMenuItem *newItem;
     NSMenu *sysMenu;
     int i, n;
-    Str255 s;
     CFStringRef CFText;
     UInt32 tag;
     OSErr err;
 
     // Add the submenu
-    newItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:@"Synecdoche" action:NULL keyEquivalent:@""];
-    sysMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:@"Synecdoche"];
-    [newItem setSubmenu:sysMenu];
-
+    sysMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:@""];
+    
     if (gStatusItem == NULL) {
-        bar = [NSStatusBar systemStatusBar];
-
-        gStatusItem = [bar statusItemWithLength:NSSquareStatusItemLength];
+        gStatusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
         [gStatusItem retain];
     }
 
-    [gStatusItem setTitle: NSLocalizedString(@"",@"")];
     [gStatusItem setHighlightMode:YES];
     [gStatusItem setMenu:sysMenu];
 
     [sysMenu release];
-    [newItem release];
-
+    
     n = CountMenuItems(menuToCopy);
     // Add the items
     for (i=1; i<=n; i++)
     {
-        GetMenuItemText(menuToCopy, i, s);
+        CopyMenuItemTextAsCFString(menuToCopy, i, &CFText);
         err = GetMenuItemCommandID(menuToCopy, i, &tag);
 
-        if ((PLstrcmp(s, "\p-") == 0) || (tag == 0))
+        if ((CFStringCompare(CFText, CFSTR("-"), 0) == 0) || (tag == 0))
         {
             [sysMenu addItem:[NSMenuItem separatorItem]];
             continue;
         }
 
-        CFText = CFStringCreateWithPascalString(kCFAllocatorDefault, s, kCFStringEncodingMacRoman);
         if (CFText != NULL)
         {
             newItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:(NSString*)CFText action:NULL keyEquivalent:@""];
-           if (err == noErr) {
-                [newItem setTarget:self];
-                [sysMenu addItem:newItem];
-                if( IsMenuItemEnabled(menuToCopy, i) )
-                    [newItem setEnabled:YES];
-                else
-                    [newItem setEnabled:NO];
+            if (err == noErr) {
+                 [newItem setTarget:self];
+                 [sysMenu addItem:newItem];
+                 [newItem setEnabled:IsMenuItemEnabled(menuToCopy, i)];
 
-                // setTag and setAction are needed only in OS 10.5
-                [newItem setTag:tag];
-                [newItem setAction:@selector(postEvent:)];
+                 // setTag and setAction are needed only in OS 10.5
+                 [newItem setTag:tag];
+                 [newItem setAction:@selector(postEvent:)];
 
-                [newItem release];
+                 [newItem release];
             }
             CFRelease(CFText);
         }
