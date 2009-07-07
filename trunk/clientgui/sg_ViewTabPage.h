@@ -28,6 +28,18 @@
 #define LARGE_FONT 16
 #endif
 
+#include <vector>
+#include <wx/window.h>
+#include <wx/panel.h>
+#include <wx/notebook.h>
+#include "common/wxFlatNotebook.h"
+
+class RESULT;
+
+class ImageLoader;
+
+class wxStaticText;
+
 class MyCanvas : public wxWindow
 {
 public:

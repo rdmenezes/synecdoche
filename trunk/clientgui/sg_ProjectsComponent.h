@@ -15,15 +15,23 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PROJECTSCOMPONENT_H_
-#define _PROJECTSCOMPONENT_H_
+#ifndef PROJECTSCOMPONENT_H
+#define PROJECTSCOMPONENT_H
 
+#include <vector>
+
+#include <wx/panel.h>
 
 class SkinClass;
 class StatImageLoader;
 class CSimplePanel;
 class ImageLoader;
 class CTransparentStaticLine;
+
+class wxBitmapButton;
+class wxStaticText;
+class wxTimer;
+class wxTimerEvent;
 
 class CProjectsComponent : public wxPanel {
     DECLARE_DYNAMIC_CLASS( CProjectsComponent )
