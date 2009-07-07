@@ -478,23 +478,7 @@ void canonicalize_master_url(std::string& url) {
     url = std::string("http") + (bSSL ? "s://" : "://") + buf;
 }
 
-/// Canonicalize a master URL.
-///   - Convert the first part of a URL (before the "://") to http://,
-/// or prepend it
-///   - Remove double slashes in the rest
-///   - Add a trailing slash if necessary
-///
-/// \param[in,out] url The url that should get canonicalized.
-/// \deprecated Use canonicalize_master_url(std::string&) instead which
-///             is more secure.
-void canonicalize_master_url(char* url) {
-    std::string buf(url);
-    canonicalize_master_url(buf);
-    strcpy(url, buf.c_str());
-}
-
 // is the string a valid master URL, in canonical form?
-//
 bool valid_master_url(const char* url) {
     const char *p, *q;
     size_t n;

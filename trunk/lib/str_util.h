@@ -83,9 +83,6 @@ std::string escape_project_url(const std::string& in);
 bool valid_master_url(const char* url);
 
 /// Canonicalize a master URL.
-void canonicalize_master_url(char *url) __attribute__((deprecated));
-
-/// Canonicalize a master URL.
 void canonicalize_master_url(std::string&);
 
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))

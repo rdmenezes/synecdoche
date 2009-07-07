@@ -168,7 +168,7 @@ static void handle_get_disk_usage(MIOFILE& fout) {
             "  <master_url>%s</master_url>\n"
             "  <disk_usage>%f</disk_usage>\n"
             "</project>\n",
-            p->master_url, size
+            p->get_master_url().c_str(), size
         );
         boinc_total += size;
     }
@@ -577,7 +577,7 @@ static void handle_get_project_init_status(const char*, MIOFILE& fout) {
         "    <name>%s</name>\n"
         "    %s\n"
         "</get_project_init_status>\n",
-        gstate.project_init.url,
+        gstate.project_init.url.c_str(),
         gstate.project_init.name,
         strlen(gstate.project_init.account_key)?"<has_account_key/>":""
     );
@@ -661,7 +661,7 @@ static void handle_project_attach(const char* buf, MIOFILE& fout) {
     // Get URL/auth from project_init.xml?
     //
     if (parse_bool(buf, "use_config_file", use_config_file)) {
-        if (!strlen(gstate.project_init.url)) {
+        if (gstate.project_init.url.empty()) {
             fout.printf("<error>Missing URL</error>\n");
             return;
         }
@@ -690,20 +690,12 @@ static void handle_project_attach(const char* buf, MIOFILE& fout) {
         parse_str(buf, "<project_name>", project_name);
     }
 
-    bool already_attached = false;
-
-    for (size_t i=0; i<gstate.projects.size(); i++) {
-        PROJECT* p = gstate.projects[i];
-        if (url == p->master_url) already_attached = true;
-    }
-
-    if (already_attached) {
+    if (gstate.lookup_project(url)) {
         fout.printf("<error>Already attached to project</error>\n");
         return;
     }
 
     // clear messages from previous attach to project.
-    //
     gstate.project_attach.messages.clear();
     gstate.project_attach.error_num = gstate.add_project(
         url.c_str(), authenticator.c_str(), project_name.c_str(), false
@@ -712,8 +704,7 @@ static void handle_project_attach(const char* buf, MIOFILE& fout) {
     // if project_init.xml refers to this project,
     // delete the file, otherwise we'll just
     // reattach the next time the core client starts
-    //
-    if (!strcmp(url.c_str(), gstate.project_init.url)) {
+    if (url == gstate.project_init.url) {
         int retval = gstate.project_init.remove();
         if (retval) {
             msg_printf(NULL, MSG_INTERNAL_ERROR,

@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -144,7 +144,7 @@ int ACCT_MGR_OP::do_rpc(
             "      <hostid>%d</hostid>\n"
             "%s"
             "   </project>\n",
-            p->master_url,
+            p->get_master_url().c_str(),
             p->project_name,
             p->suspended_via_gui,
             p->authenticator,
@@ -437,7 +437,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                             if (pp->ams_resource_share >= 0) {
                                 pp->ams_resource_share = -1;
                                 PROJECT p2;
-                                strcpy(p2.master_url, pp->master_url);
+                                p2.set_master_url(pp->get_master_url());
                                 retval = p2.parse_account_file();
                                 if (!retval) {
                                     pp->resource_share = p2.resource_share;

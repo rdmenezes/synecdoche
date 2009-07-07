@@ -123,7 +123,7 @@ struct SCHEDULER_REPLY {
     // may include <venue> elements
     char* project_prefs_xml;
 
-    char master_url[256];
+    std::string master_url;
     char host_venue[256];
 
     unsigned int user_create_time;

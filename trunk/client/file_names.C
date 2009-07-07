@@ -51,7 +51,7 @@
 /// \return The directory for the given project.
 std::string get_project_dir(const PROJECT* p) {
     std::ostringstream result;
-    result << PROJECTS_DIR << '/' << escape_project_url(p->master_url);
+    result << PROJECTS_DIR << '/' << escape_project_url(p->get_master_url());
     return result.str();
 }
 
@@ -80,7 +80,7 @@ std::string get_pathname(const FILE_INFO* fip) {
 /// \return The file name of the scheduler request file for the given project.
 std::string get_sched_request_filename(const PROJECT& project) {
     std::ostringstream result;
-    result << SCHED_OP_REQUEST_BASE << escape_project_url(project.master_url) << ".xml";
+    result << SCHED_OP_REQUEST_BASE << escape_project_url(project.get_master_url()) << ".xml";
     return result.str();
 }
 
@@ -90,7 +90,7 @@ std::string get_sched_request_filename(const PROJECT& project) {
 /// \return The file name of the scheduler reply file for the given project.
 std::string get_sched_reply_filename(const PROJECT& project) {
     std::ostringstream result;
-    result << SCHED_OP_REPLY_BASE << escape_project_url(project.master_url) << ".xml";
+    result << SCHED_OP_REPLY_BASE << escape_project_url(project.get_master_url()) << ".xml";
     return result.str();
 }
 
@@ -100,7 +100,7 @@ std::string get_sched_reply_filename(const PROJECT& project) {
 /// \return The file name of the master file for the given project.
 std::string get_master_filename(const PROJECT& project) {
     std::ostringstream result;
-    result << MASTER_BASE << escape_project_url(project.master_url) << ".xml";
+    result << MASTER_BASE << escape_project_url(project.get_master_url()) << ".xml";
     return result.str();
 }
 
@@ -110,7 +110,7 @@ std::string get_master_filename(const PROJECT& project) {
 /// \return The file name of the sjob log file for the given project.
 std::string job_log_filename(const PROJECT& project) {
     std::ostringstream result;
-    result << JOB_LOG_BASE << escape_project_url(project.master_url) << ".xml";
+    result << JOB_LOG_BASE << escape_project_url(project.get_master_url()) << ".xml";
     return result.str();
 }
 

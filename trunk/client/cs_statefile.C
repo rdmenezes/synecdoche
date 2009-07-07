@@ -116,7 +116,7 @@ int CLIENT_STATE::parse_state_file() {
             if (retval) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR, "Can't parse project in state file");
             } else {
-                project = lookup_project(temp_project.master_url);
+                project = lookup_project(temp_project.get_master_url());
                 if (project) {
                     project->copy_state_fields(temp_project);
                 } else {

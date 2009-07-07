@@ -38,7 +38,7 @@
 #include "miofile.h"
 
 void PROJECT_INIT::clear() {
-    strcpy(url, "");
+    url.clear();
     strcpy(name, "");
     strcpy(account_key, "");
 }
@@ -59,7 +59,7 @@ int PROJECT_INIT::init() {
         while(mf.fgets(buf, sizeof(buf))) {
             if (match_tag(buf, "</project_init>")) break;
             else if (parse_str(buf, "<name>", name, 256)) continue;
-            else if (parse_str(buf, "<url>", url, 256)) {
+            else if (parse_str(buf, "<url>", url)) {
                 canonicalize_master_url(url);
                 continue;
             } else if (parse_str(buf, "<account_key>", account_key, 256)) {
