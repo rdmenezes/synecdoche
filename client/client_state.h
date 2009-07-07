@@ -195,7 +195,7 @@ public:
 
     void do_io_or_sleep(double sec);
     bool time_to_exit() const;
-    PROJECT* lookup_project(const char* master_url);
+    PROJECT* lookup_project(const std::string& master_url);
     APP* lookup_app(const PROJECT* project, const char* name);
     FILE_INFO* lookup_file_info(const PROJECT* project, const std::string& name);
     RESULT* lookup_result(const PROJECT* project, const char* name);
@@ -284,7 +284,7 @@ public:
 /// @name cs_account.C
 public:
     /// Add a project.
-    int add_project(const char* master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr);
+    int add_project(const std::string& master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr);
 private:
     int parse_account_files();
     int parse_account_files_venue();

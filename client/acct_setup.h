@@ -25,7 +25,7 @@
 /// represents the contents of project_info.xml
 ///
 struct PROJECT_INIT {
-    char url[256];
+    std::string url;
     char name[256];
     char account_key[256];
 

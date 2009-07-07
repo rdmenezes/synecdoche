@@ -63,7 +63,7 @@ int PROJECT::write_account_file() const {
         "<account>\n"
         "    <master_url>%s</master_url>\n"
         "    <authenticator>%s</authenticator>\n",
-        master_url, authenticator);
+        master_url.c_str(), authenticator);
 
     // Put the project name in account file for informational purposes only
     // (client state file is authoritative)
@@ -89,7 +89,7 @@ int PROJECT::parse_account(FILE* in) {
     int retval;
     bool in_project_prefs = false;
 
-    strcpy(master_url, "");
+    master_url.clear();
     strcpy(authenticator, "");
     while (fgets(buf, 256, in)) {
         if (match_tag(buf, "<account>")) continue;
@@ -108,7 +108,7 @@ int PROJECT::parse_account(FILE* in) {
             retval = copy_element_contents(in, "</venue>", devnull);
             if (retval) return retval;
             continue;
-        } else if (parse_str(buf, "<master_url>", master_url, sizeof(master_url))) {
+        } else if (parse_str(buf, "<master_url>", master_url)) {
             canonicalize_master_url(master_url);
             continue;
         } else if (parse_str(buf, "<authenticator>", authenticator, sizeof(authenticator))) continue;
@@ -242,7 +242,7 @@ int CLIENT_STATE::parse_account_files() {
             );
             delete project;
         } else {
-            if (lookup_project(project->master_url)) {
+            if (lookup_project(project->get_master_url().c_str())) {
                 msg_printf(project, MSG_INFO,
                     "Duplicate account file %s - ignoring", name.c_str()
                 );
@@ -299,7 +299,7 @@ int PROJECT::parse_statistics(FILE* in) {
             }
             continue;
         }
-        if (parse_str(buf, "<master_url>", master_url, sizeof(master_url))) {
+        if (parse_str(buf, "<master_url>", master_url)) {
             canonicalize_master_url(master_url);
             continue;
         }
@@ -323,7 +323,7 @@ int CLIENT_STATE::parse_statistics_files() {
                     "Couldn't parse %s", name.c_str()
                 );
             } else {
-                PROJECT* project = lookup_project(temp.master_url);
+                PROJECT* project = lookup_project(temp.get_master_url().c_str());
                 if (project == NULL) {
                     msg_printf(NULL, MSG_INFO,
                         "Project for %s not found - ignoring",
@@ -375,17 +375,16 @@ int PROJECT::write_statistics_file() const {
 ///                                 project specified by \a master_url because
 ///                                 of an account manager.
 /// \return Zero on success, nonzero on error.
-int CLIENT_STATE::add_project(const char* master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr) {
+int CLIENT_STATE::add_project(const std::string& master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr) {
     if (config.disallow_attach) {
         return ERR_USER_PERMISSION;
     }
 
-    char canonical_master_url[256];
-    safe_strcpy(canonical_master_url, master_url);
+    std::string canonical_master_url = master_url;
     strip_whitespace(canonical_master_url);
     canonicalize_master_url(canonical_master_url);
-    if (!valid_master_url(canonical_master_url)) {
-        msg_printf(0, MSG_USER_ERROR, "Invalid URL: %s", canonical_master_url);
+    if (!valid_master_url(canonical_master_url.c_str())) {
+        msg_printf(0, MSG_USER_ERROR, "Invalid URL: %s", canonical_master_url.c_str());
         return ERR_INVALID_URL;
     }
 
@@ -398,14 +397,14 @@ int CLIENT_STATE::add_project(const char* master_url, const char* _auth, const c
     }
 
     // check if we're already attached to this project
-    if (lookup_project(canonical_master_url)) {
-        msg_printf(0, MSG_USER_ERROR, "Already attached to %s", canonical_master_url);
+    if (lookup_project(canonical_master_url.c_str())) {
+        msg_printf(0, MSG_USER_ERROR, "Already attached to %s", canonical_master_url.c_str());
         return ERR_ALREADY_ATTACHED;
     }
 
     // create project state
     PROJECT* project = new PROJECT;
-    strcpy(project->master_url, canonical_master_url);
+    project->set_master_url(canonical_master_url);
     strcpy(project->authenticator, auth);
     strcpy(project->project_name, project_name);
     project->attached_via_acct_mgr = attached_via_acct_mgr;

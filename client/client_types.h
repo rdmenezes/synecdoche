@@ -203,14 +203,16 @@ public:
 typedef std::vector<WORKUNIT*> WORKUNIT_PVEC;
 
 class PROJECT {
-public:
+private:
     /// @name Account file
     /// The following items come from the account file.
     /// They are a function only of the user and the project.
     /// @{
 
     /// URL of site that contains scheduler tags for this project.
-    char master_url[256];
+    std::string master_url;
+    
+public:
     char authenticator[256]; ///< User's authenticator on this project.
 
     /// Project preferences without the enclosing <project_preferences> tags.
@@ -478,6 +480,12 @@ public:
     void init();
     void copy_state_fields(const PROJECT& p);
     const char *get_project_name() const;
+
+    /// Return the master URL for this project.
+    std::string get_master_url() const;
+    
+    /// Set the master URL for this project.
+    void set_master_url(const std::string& master_url);
 
     /// Write account_*.xml file.
     int write_account_file() const;

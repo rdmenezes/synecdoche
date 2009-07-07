@@ -63,7 +63,7 @@ PROJECT::PROJECT() {
 }
 
 void PROJECT::init() {
-    strcpy(master_url, "");
+    master_url.clear();
     strcpy(authenticator, "");
     project_specific_prefs = "";
     gui_urls = "";
@@ -125,8 +125,21 @@ void PROJECT::init() {
     deadlines_missed = 0;
 }
 
-/// Parse project fields from client_state.xml.
+/// Return the master URL for this project.
 ///
+/// \return The master URL.
+std::string PROJECT::get_master_url() const {
+    return master_url;
+}
+
+/// Set the master URL for this project.
+///
+/// \param[in] master_url The new master URL.
+void PROJECT::set_master_url(const std::string& master_url) {
+    this->master_url = master_url;
+}
+
+/// Parse project fields from client_state.xml.
 int PROJECT::parse_state(MIOFILE& in) {
     char buf[256];
     std::string sched_url;
@@ -147,7 +160,7 @@ int PROJECT::parse_state(MIOFILE& in) {
             scheduler_urls.push_back(sched_url);
             continue;
         }
-        if (parse_str(buf, "<master_url>", master_url, sizeof(master_url))) continue;
+        if (parse_str(buf, "<master_url>", master_url)) continue;
         if (parse_str(buf, "<project_name>", project_name, sizeof(project_name))) continue;
         if (parse_str(buf, "<symstore>", symstore, sizeof(symstore))) continue;
         if (parse_str(buf, "<user_name>", user_name, sizeof(user_name))) continue;
@@ -247,7 +260,7 @@ int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
         "    <send_time_stats_log>%d</send_time_stats_log>\n"
         "    <send_job_log>%d</send_job_log>\n"
         "%s%s%s%s%s%s%s%s%s%s%s",
-        master_url,
+        master_url.c_str(),
         project_name,
         symstore,
         un,
@@ -374,7 +387,7 @@ int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) const {
     out.printf(
         "<project_statistics>\n"
         "    <master_url>%s</master_url>\n",
-        master_url
+        master_url.c_str()
     );
 
     for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
@@ -405,7 +418,7 @@ const char* PROJECT::get_project_name() const {
     if (strlen(project_name)) {
         return project_name;
     } else {
-        return master_url;
+        return master_url.c_str();
     }
 }
 
@@ -853,7 +866,7 @@ int FILE_INFO::write_gui(MIOFILE& out) const {
         "    <nbytes>%f</nbytes>\n"
         "    <max_nbytes>%f</max_nbytes>\n"
         "    <status>%d</status>\n",
-        project->master_url, project->project_name, name.c_str(),
+        project->get_master_url().c_str(), project->project_name, name.c_str(),
         nbytes, max_nbytes, status);
 
     if (generated_locally) out.printf("    <generated_locally/>\n");
@@ -1585,7 +1598,7 @@ int RESULT::write_gui(MIOFILE& out) const {
         "    <estimated_cpu_time_remaining>%f</estimated_cpu_time_remaining>\n",
         name,
         wu_name,
-        project->master_url,
+        project->get_master_url().c_str(),
         final_cpu_time,
         exit_status,
         state(),

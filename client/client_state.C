@@ -324,7 +324,7 @@ int CLIENT_STATE::init() {
         }
         msg_printf(p, MSG_INFO,
             "URL: %s; Computer ID: %s; location: %s; project prefs: %s",
-            p->master_url,
+            p->get_master_url().c_str(),
             buf, strlen(p->host_venue)?p->host_venue:"(none)",
             p->using_venue_specific_prefs?p->host_venue:"default"
         );
@@ -646,19 +646,18 @@ bool CLIENT_STATE::poll_slow_events() {
 
 /// See if the project specified by master_url already exists
 /// in the client state record.  Ignore any trailing "/" characters
-PROJECT* CLIENT_STATE::lookup_project(const char* master_url) {
-    int len1, len2;
-    const char *mu;
-
-    len1 = (int)strlen(master_url);
-    if (master_url[strlen(master_url)-1] == '/') len1--;
-
-    for (unsigned int i=0; i<projects.size(); i++) {
-        mu = projects[i]->master_url;
-        len2 = (int)strlen(mu);
-        if (mu[strlen(mu)-1] == '/') len2--;
-        if (!strncmp(master_url, projects[i]->master_url, std::max(len1,len2))) {
-            return projects[i];
+PROJECT* CLIENT_STATE::lookup_project(const std::string& master_url) {
+    std::string mu1 = master_url;
+    if (ends_with(master_url, "/")) {
+        mu1.erase(mu1.end() - 1);
+    }
+    for (std::vector<PROJECT*>::const_iterator p = projects.begin(); p != projects.end(); ++p) {
+        std::string mu2 = (*p)->get_master_url();
+        if (ends_with(mu2, "/")) {
+            mu2.erase(mu2.end() - 1);
+        }
+        if (mu1 == mu2) {
+            return *p;
         }
     }
     return 0;
@@ -851,9 +850,9 @@ void CLIENT_STATE::print_summary() const {
     for (i=0; i<projects.size(); i++) {
         t = projects[i]->min_rpc_time;
         if (t) {
-            msg_printf(0, MSG_INFO, "    %s min RPC %f.0 seconds from now", projects[i]->master_url, t-now);
+            msg_printf(0, MSG_INFO, "    %s min RPC %f.0 seconds from now", projects[i]->get_master_url().c_str(), t-now);
         } else {
-            msg_printf(0, MSG_INFO, "    %s", projects[i]->master_url);
+            msg_printf(0, MSG_INFO, "    %s", projects[i]->get_master_url().c_str());
         }
     }
     msg_printf(0, MSG_INFO, "%lu file_infos:", file_infos.size());
@@ -1490,14 +1489,14 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     }
 
     // Delete statistics file:
-    std::string path = get_statistics_filename(project->master_url);
+    std::string path = get_statistics_filename(project->get_master_url());
     int retval = boinc_delete_file(path);
     if (retval) {
         msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete statistics file: %s", boincerror(retval));
     }
 
     // Delete account file:
-    path = get_account_filename(project->master_url);
+    path = get_account_filename(project->get_master_url());
     retval = boinc_delete_file(path);
     if (retval) {
         msg_printf(project, MSG_INTERNAL_ERROR, "Can't delete account file: %s", boincerror(retval));

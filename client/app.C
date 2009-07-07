@@ -435,7 +435,7 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         "    <stats_pagefault_rate>%f</stats_pagefault_rate>\n"
         "    <stats_disk>%f</stats_disk>\n"
         "    <stats_checkpoint>%d</stats_checkpoint>\n",
-        result->project->master_url,
+        result->project->get_master_url().c_str(),
         result->name,
         task_state(),
         app_version->version_num,
