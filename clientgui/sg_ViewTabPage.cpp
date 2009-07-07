@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "sg_ViewTabPage.h"
+
 #include "stdwx.h"
 #include "common/wxFlatNotebook.h"
 #include "BOINCGUIApp.h"
@@ -25,7 +27,6 @@
 #include "sg_ProgressBar.h"
 #include "sg_ImageButton.h"
 #include "sg_ImageLoader.h"
-#include "sg_ViewTabPage.h"
 #include "app_ipc.h"
 
 

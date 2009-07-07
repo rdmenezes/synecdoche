@@ -20,8 +20,9 @@
 
 #include <string>
 #include <wx/bitmap.h>
-#include <wx/menu.h>
 #include <wx/window.h>
+
+class wxMenu;
 
 class StatImageLoader : public wxWindow 
 {
