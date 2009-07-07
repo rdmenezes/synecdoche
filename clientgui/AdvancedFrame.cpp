@@ -36,7 +36,11 @@
 #include "BOINCBaseFrame.h"
 #include "BOINCBaseView.h"
 #include "BOINCTaskBar.h"
-#include "BOINCDialupManager.h"
+
+#ifndef __WXMAC__
+#    include "BOINCDialupManager.h"
+#endif // __WXMAC__
+
 #include "ViewProjects.h"
 #include "ViewWork.h"
 #include "ViewTransfers.h"

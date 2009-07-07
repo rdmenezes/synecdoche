@@ -20,6 +20,10 @@
 
 #include <wx/object.h>
 
+#ifdef __WXMAC__
+#include <Carbon/Carbon.h>
+#endif // __WXMAC__
+
 class CBOINCClientManager : public wxObject
 {
 public:
