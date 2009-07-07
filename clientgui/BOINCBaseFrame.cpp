@@ -586,12 +586,6 @@ void CBOINCBaseFrame::ShowAlert( const wxString title, const wxString message, c
     AddPendingEvent(event);
 }
 
-/// \deprecated
-void CBOINCBaseFrame::ExecuteBrowserLink(const wxString &strLink) {
-    HyperLink::ExecuteLink(strLink);
-}
-
-
 bool CBOINCBaseFrame::SaveState() {
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::SaveState - Function Begin"));
 

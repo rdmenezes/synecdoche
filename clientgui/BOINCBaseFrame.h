@@ -90,8 +90,6 @@ public:
                             const FrameAlertEventType alert_event_type = AlertNormal
                         );
 
-    void                ExecuteBrowserLink( const wxString& strLink ) __attribute__((deprecated));
-
 #ifdef __WXMAC__
     bool                Show( bool show = true );
     int                 m_iWindowType;              // BOINC_SIMPLEGUI or BOINC_ADVANCEDGUI

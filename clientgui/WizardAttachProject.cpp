@@ -437,7 +437,7 @@ void CWizardAttachProject::OnFinished(wxWizardEvent& event) {
     CBOINCBaseFrame* pFrame = wxGetApp().GetFrame();
 
     if (GetAccountCreatedSuccessfully() && GetAttachedToProjectSuccessfully()) {
-        pFrame->ExecuteBrowserLink(GetProjectURL() + wxT("account_finish.php?auth=") + GetProjectAuthenticator());
+        HyperLink::ExecuteLink(GetProjectURL() + wxT("account_finish.php?auth=") + GetProjectAuthenticator());
     }
 
     // Let the framework clean things up.

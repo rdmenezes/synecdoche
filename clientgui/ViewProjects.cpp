@@ -19,14 +19,16 @@
 #include "ViewProjects.h"
 
 #include "stdwx.h"
-#include "str_util.h"
-#include "BOINCGUIApp.h"
-#include "BOINCBaseFrame.h"
-#include "MainDocument.h"
+
 #include "AdvancedFrame.h"
-#include "BOINCTaskCtrl.h"
+#include "BOINCBaseFrame.h"
+#include "BOINCGUIApp.h"
 #include "BOINCListCtrl.h"
+#include "BOINCTaskCtrl.h"
 #include "Events.h"
+#include "hyperlink.h"
+#include "MainDocument.h"
+#include "str_util.h"
 
 #include "res/proj.xpm"
 
@@ -516,10 +518,8 @@ void CViewProjects::OnProjectWebsiteClicked( wxEvent& event ) {
     pFrame->UpdateStatusText(_("Launching browser..."));
 
     int website_task_index = event.GetId() - ID_TASK_PROJECT_WEB_PROJDEF_MIN;
-    pFrame->ExecuteBrowserLink(
-        m_TaskGroups[1]->m_Tasks[website_task_index]->m_strWebSiteLink
-    );
-
+    HyperLink::ExecuteLink(m_TaskGroups[1]->m_Tasks[website_task_index]->m_strWebSiteLink);
+    
     pFrame->UpdateStatusText(wxT(""));
 
     UpdateSelection();

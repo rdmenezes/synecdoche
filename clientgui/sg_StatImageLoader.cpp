@@ -16,14 +16,17 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdwx.h"
-#include "BOINCGUIApp.h"
-#include "SkinManager.h"
-#include "MainDocument.h"
-#include "BOINCBaseFrame.h"
 #include "sg_StatImageLoader.h" 
-#include "sg_ProjectsComponent.h" 
+
+#include "stdwx.h"
+
 #include "app_ipc.h"
+#include "BOINCBaseFrame.h"
+#include "BOINCGUIApp.h"
+#include "hyperlink.h"
+#include "MainDocument.h"
+#include "sg_ProjectsComponent.h" 
+#include "SkinManager.h"
 
 enum{
     WEBSITE_URL_MENU_ID = 34500,
@@ -137,28 +140,28 @@ void StatImageLoader::AddMenuItems()
 
 void StatImageLoader::OnMenuLinkClicked(wxCommandEvent& event) 
 { 
-     CMainDocument* pDoc = wxGetApp().GetDocument();
-     wxASSERT(pDoc);
-     int menuIDevt =  event.GetId();
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    wxASSERT(pDoc);
+    int menuIDevt =  event.GetId();
 
-     if(menuIDevt == WEBSITE_URL_MENU_ID_REMOVE_PROJECT){
-         //call detach project function
-         OnProjectDetach();
-     } else if (menuIDevt == WEBSITE_URL_MENU_ID_HOMEPAGE ) {
-         CBOINCBaseFrame* pFrame = wxDynamicCast(m_parent->GetParent(),CBOINCBaseFrame);
-         wxASSERT(pFrame);
-         wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
-         pFrame->ExecuteBrowserLink(wxString(m_prjUrl.c_str(),wxConvUTF8));
-     } else{
-         int menuId = menuIDevt - WEBSITE_URL_MENU_ID;
-         PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
-         project->gui_urls[menuId].name.c_str();
-     
-         CBOINCBaseFrame* pFrame = wxDynamicCast(m_parent->GetParent(),CBOINCBaseFrame);
-         wxASSERT(pFrame);
-         wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
-         pFrame->ExecuteBrowserLink(wxString(project->gui_urls[menuId].url.c_str(),wxConvUTF8));
-     }
+    if(menuIDevt == WEBSITE_URL_MENU_ID_REMOVE_PROJECT){
+        //call detach project function
+        OnProjectDetach();
+    } else if (menuIDevt == WEBSITE_URL_MENU_ID_HOMEPAGE ) {
+        CBOINCBaseFrame* pFrame = wxDynamicCast(m_parent->GetParent(),CBOINCBaseFrame);
+        wxASSERT(pFrame);
+        wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
+        HyperLink::ExecuteLink(wxString(m_prjUrl.c_str(),wxConvUTF8));
+    } else{
+        int menuId = menuIDevt - WEBSITE_URL_MENU_ID;
+        PROJECT* project = pDoc->state.lookup_project(m_prjUrl);
+        project->gui_urls[menuId].name.c_str();
+
+        CBOINCBaseFrame* pFrame = wxDynamicCast(m_parent->GetParent(),CBOINCBaseFrame);
+        wxASSERT(pFrame);
+        wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
+        HyperLink::ExecuteLink(wxString(project->gui_urls[menuId].url.c_str(),wxConvUTF8));
+    }
 } 
 
 

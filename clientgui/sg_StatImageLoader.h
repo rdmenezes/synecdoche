@@ -15,9 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _STATIMAGELOADER_H_
-#define _STATIMAGELOADER_H_
+#ifndef STATIMAGELOADER_H
+#define STATIMAGELOADER_H
 
+#include <string>
+#include <wx/bitmap.h>
+#include <wx/menu.h>
+#include <wx/window.h>
 
 class StatImageLoader : public wxWindow 
 {
@@ -55,4 +59,4 @@ private:
     DECLARE_EVENT_TABLE() 
 };
 
-#endif
+#endif // STATIMAGELOADER_H
