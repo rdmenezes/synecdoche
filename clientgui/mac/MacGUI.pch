@@ -77,6 +77,6 @@
 #include "config.h"
 
 // Prototypes for Mac_GUI.cpp
-Boolean Mac_Authorize(void);
+bool Mac_Authorize(void);
 
 #endif

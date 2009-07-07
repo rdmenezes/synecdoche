@@ -23,23 +23,24 @@
 #include <unistd.h>
 #include "sandbox.h"
 
+/// Determine if the currently logged-in user is auhorized to 
+/// perform operations which have potential security risks.  
+/// An example is "Attach to Project", where a dishonest user might
+/// attach to a rogue project which could then read private files 
+/// belonging to the user who owns the BOINC application.  This 
+/// would be possible because the BOINC Manager runs with the 
+/// effectve user ID of its owner on the Mac.
 
-// Determine if the currently logged-in user is auhorized to 
-// perform operations which have potential security risks.  
-// An example is "Attach to Project", where a dishonest user might
-// attach to a rogue project which could then read private files 
-// belonging to the user who owns the BOINC application.  This 
-// would be possible because the BOINC Manager runs with the 
-// effectve user ID of its owner on the Mac.
-
-Boolean Mac_Authorize()
+bool Mac_Authorize()
 {
-    static Boolean      sIsAuthorized = false;
-    AuthorizationRef	ourAuthRef = NULL;
-    AuthorizationRights	ourAuthRights;
-    AuthorizationFlags	ourAuthFlags;
-    AuthorizationItem	ourAuthItem[1];
-    OSStatus		err = noErr;
+    static bool sIsAuthorized = false;
+
+    AuthorizationRef ourAuthRef = NULL;
+    AuthorizationRights ourAuthRights;
+    AuthorizationFlags ourAuthFlags;
+    AuthorizationItem ourAuthItem[1];
+
+    OSStatus err = noErr;
     
     if (sIsAuthorized)
         return true;
