@@ -26,7 +26,9 @@
 
 class CFrameEvent;
 class CFrameAlertEvent;
+#ifndef __WXMAC__
 class CBOINCDialUpManager;
+#endif // __WXMAC__
 
 enum FrameAlertEventType {
     AlertNormal = 0,
@@ -97,7 +99,9 @@ public:
 
 protected:
 
+#ifndef __WXMAC__
     CBOINCDialUpManager* m_pDialupManager;
+#endif // __WXMAC__
 
     wxTimer*            m_pDocumentPollTimer;
     wxTimer*            m_pAlertPollTimer;

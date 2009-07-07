@@ -27,7 +27,11 @@
 #include "MainDocument.h"
 #include "BOINCClientManager.h"
 #include "BOINCTaskBar.h"
-#include "BOINCDialupManager.h"
+
+#ifndef __WXMAC__
+#    include "BOINCDialupManager.h"
+#endif // __WXMAC__
+
 #include "Events.h"
 
 
@@ -74,8 +78,10 @@ CBOINCBaseFrame::CBOINCBaseFrame(wxWindow* parent, const wxWindowID id, const wx
 
     m_bShowConnectionFailedAlert = false;
 
+#ifndef __WXMAC__
     m_pDialupManager = new CBOINCDialUpManager();
     wxASSERT(m_pDialupManager->IsOk());
+#endif // __WXMAC__
 
 
     m_pDocumentPollTimer = new wxTimer(this, ID_DOCUMENTPOLLTIMER);
@@ -123,8 +129,10 @@ CBOINCBaseFrame::~CBOINCBaseFrame() {
         m_pDocumentPollTimer = 0;
     }
 
+#ifndef __WXMAC__
     delete m_pDialupManager;
     m_pDialupManager = 0;
+#endif // __WXMAC__
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::~CBOINCBaseFrame - Function End"));
 }
@@ -158,6 +166,7 @@ void CBOINCBaseFrame::OnAlertPoll(wxTimerEvent& WXUNUSED(event)) {
         // Update idle detection if needed.
         wxGetApp().UpdateSystemIdleDetection();
 
+#ifndef __WXMAC__
         // Check to see if there is anything that we need to do from the
         //   dial up user perspective.
         if (pDoc && m_pDialupManager) {
@@ -165,6 +174,7 @@ void CBOINCBaseFrame::OnAlertPoll(wxTimerEvent& WXUNUSED(event)) {
                 m_pDialupManager->OnPoll();
             }
         }
+#endif // __WXMAC__
 
         if (m_bShowConnectionFailedAlert && IsShown() && !IsIconized()) {
             m_bShowConnectionFailedAlert = false;
