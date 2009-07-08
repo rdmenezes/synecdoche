@@ -55,14 +55,16 @@ ADD_EXECUTABLE(synecmgr WIN32
 	CompletionErrorPage.cpp
 	CompletionPage.cpp
 	DlgAbout.cpp
-	DlgAdvPreferences.cpp
 	DlgAdvPreferencesBase.cpp
+	DlgAdvPreferences.cpp
 	DlgGenericMessage.cpp
+	DlgMsgFilter.cpp
 	DlgOptions.cpp
 	DlgSelectComputer.cpp
 	hyperlink.cpp
 	LogBOINC.cpp
 	MainDocument.cpp
+	MsgFilterData.cpp
 	NoInternetConnectionPage.cpp
 	NotDetectedPage.cpp
 	NotFoundPage.cpp
