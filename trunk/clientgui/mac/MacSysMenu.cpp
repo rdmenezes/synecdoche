@@ -368,7 +368,6 @@ pascal OSStatus SysMenuEventHandler( EventHandlerCallRef inHandlerCallRef,
                         typeMenuRef, NULL, sizeof(sysMenuRef), NULL, &sysMenuRef);
 
             // If not our system menu, pass event on to next event handler
-            CFStringRef CFText;
             CopyMenuTitleAsCFString((sysMenuRef), &theMenuTitle);
             if (CFStringCompare(CFSTR("BOINC!"), theMenuTitle, 0)) 
             //if (PLstrcmp("\pBOINC!", (GetMenuTitle((sysMenuRef), theMenuTitle) )))
