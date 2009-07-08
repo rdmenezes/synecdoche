@@ -270,7 +270,7 @@ pascal OSStatus SysMenuEventHandler( EventHandlerCallRef inHandlerCallRef,
                                     EventRef inEvent, void* pData) {
     HICommand command;
     MenuRef baseMenuRef, sysMenuRef;
-    Str255 theMenuTitle;
+    CFStringRef theMenuTitle;
     short i, n, m;
     CharParameter markChar;
     const UInt32 eventClass = GetEventClass(inEvent);
@@ -320,9 +320,11 @@ pascal OSStatus SysMenuEventHandler( EventHandlerCallRef inHandlerCallRef,
                 
             // If not our system menu, pass event on to next event handler
            if (command.menu.menuRef != (MenuRef)'SYNE') {           // Used only in OS 10.5
-                if (PLstrcmp("\pBOINC!", (GetMenuTitle((command.menu.menuRef), theMenuTitle) ))) {
-                    return eventNotHandledErr;
-                }
+               CopyMenuTitleAsCFString((command.menu.menuRef), &theMenuTitle);
+               if (CFStringCompare(CFSTR("BOINC!"), theMenuTitle, 0)) {
+                //if (PLstrcmp("\pBOINC!", (GetMenuTitle((command.menu.menuRef), theMenuTitle) ))) {
+                   return eventNotHandledErr;
+               }
             }
             
             // The following code is adapted from wxTaskBarIcon's wxDockEventHandler().
@@ -366,7 +368,10 @@ pascal OSStatus SysMenuEventHandler( EventHandlerCallRef inHandlerCallRef,
                         typeMenuRef, NULL, sizeof(sysMenuRef), NULL, &sysMenuRef);
 
             // If not our system menu, pass event on to next event handler
-            if (PLstrcmp("\pBOINC!", (GetMenuTitle((sysMenuRef), theMenuTitle) )))
+            CFStringRef CFText;
+            CopyMenuTitleAsCFString((sysMenuRef), &theMenuTitle);
+            if (CFStringCompare(CFSTR("BOINC!"), theMenuTitle, 0)) 
+            //if (PLstrcmp("\pBOINC!", (GetMenuTitle((sysMenuRef), theMenuTitle) )))
                 return eventNotHandledErr;
 
             pMSM = wxGetApp().GetMacSystemMenu();

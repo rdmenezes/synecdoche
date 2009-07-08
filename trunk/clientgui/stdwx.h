@@ -43,7 +43,6 @@
 #endif
 
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
 
 // Use localtime_r and fmtime_r in wxWidgets and eliminate compiler warnings
 #define HAVE_LOCALTIME_R 1

@@ -28,6 +28,7 @@
 #define LARGE_FONT 16
 #endif
 
+#include <string>
 #include <vector>
 #include <wx/window.h>
 #include <wx/panel.h>
