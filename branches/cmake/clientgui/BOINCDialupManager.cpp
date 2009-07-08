@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef __WXMAC__
+
 #include "stdwx.h"
 #include "network.h"
 #include "error_numbers.h"
@@ -530,3 +532,4 @@ void CBOINCDialUpManager::ResetReminderTimers() {
     m_dtDialupConnectionTimeout = wxDateTime((time_t)0);
 }
 
+#endif // __WXMAC__

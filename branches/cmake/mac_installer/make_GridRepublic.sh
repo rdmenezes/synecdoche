@@ -1,27 +1,25 @@
 #!/bin/csh
 
-## Berkeley Open Infrastructure for Network Computing
-## http://boinc.berkeley.edu
-## Copyright (C) 2005 University of California
-##
-## This is free software; you can redistribute it and/or
-## modify it under the terms of the GNU Lesser General Public
-## License as published by the Free Software Foundation;
-## either version 2.1 of the License, or (at your option) any later version.
-##
-## This software is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-## See the GNU Lesser General Public License for more details.
-##
-## To view the GNU Lesser General Public License visit
-## http://www.gnu.org/copyleft/lesser.html
-## or write to the Free Software Foundation, Inc.,
-## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# This file is part of BOINC.
+# http://boinc.berkeley.edu
+# Copyright (C) 2008 University of California
+#
+# BOINC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# BOINC is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
 ##
 # Script to convert Macintosh BOINC installer to GridRepublic Desktop installer
-# updated 2/21/08 by Charlie Fenton
+# updated 6/3/09 by Charlie Fenton
 ##
 
 ## Usage:
@@ -33,16 +31,25 @@
 ##     GR_install.icns
 ##     GR_uninstall.icns
 ##     COPYING
+##     COPYING.LESSER (for version 6.3.x and later only)
 ##     COPYRIGHT
-##     gridrepublic.tiff (for screensaver)
-##     gridrepublic_ss_logo (for screensaver)
 ##     skins directory containing GridRepublic skin (optional)
+##     acct_mgr_url.xml (to have BOINC automatically connect to Account Manager)
+##     PostInstall.app (needed only for version 6.2.x or earlier)
+##     gridrepublic.tiff (for screensaver coordinator)
+##     gridrepublic_ss_logo (for screensaver coordinator)
+##     GR_saver directory containing GridRepublic default screensaver and associated files, including:
+##          boincscr (default screensaver)
+##
+## NOTE: This script uses PackageMaker, which is installed as part of the 
+##   XCode developer tools.  So you must have installed XCode Developer 
+##   Tools on the Mac before running this script.
 ##
 ## cd to the working directory:
 ##
 ## Invoke this script with the three parts of version number as arguments.  
 ## For example, if the version is 3.2.1:
-##     source [path_to_this_script] 3 2 1
+##     sh [path_to_this_script] 3 2 1
 ##
 ## This will create a directory "BOINC_Installer" in the parent directory of 
 ## the current directory
@@ -58,6 +65,7 @@ BRANDING_INFO="BrandId=1"
 ICNS_FILE="gridrepublic.icns"
 INSTALLER_ICNS_FILE="GR_install.icns"
 UNINSTALLER_ICNS_FILE="GR_uninstall.icns"
+SAVER_DIR="GR_saver"
 SAVER_SYSPREF_ICON="gridrepublic.tiff"
 SAVER_LOGO="gridrepublic_ss_logo.png"
 BRAND_NAME="GridRepublic"
@@ -76,6 +84,12 @@ exit 1
 fi
 
 pushd ./
+
+## Make sure sed uses UTF-8 text encoding
+unset LC_CTYPE
+unset LC_MESSAGES
+unset __CF_USER_TEXT_ENCODING
+export LANG=en_US.UTF-8
 
 if [ -f /Developer/usr/bin/packagemaker ]; then
     PACKAGEMAKER_VERSION=3
@@ -127,18 +141,28 @@ fi
 
 cp -fp "${SOURCE_PKG_PATH}/Resources/postinstall" "${SCRIPTS_PATH}/"
 cp -fp "${SOURCE_PKG_PATH}/Resources/postupgrade" "${SCRIPTS_PATH}/"
-cp -fpR "${SOURCE_PKG_PATH}/Resources/PostInstall.app" "${IR_PATH}/"
+if [ "$1" = "6" ] && [ "$2" = "2" ]; then
+    cp -fpR "PostInstall.app" "${IR_PATH}/"
+else
+    cp -fpR "${SOURCE_PKG_PATH}/Resources/PostInstall.app" "${IR_PATH}/"
+fi
+cp -fp "${SOURCE_PKG_PATH}/Resources/all_projects_list.xml" "${IR_PATH}/"
 
 ##### We've decided not to customize BOINC Data directory name for branding
 #### mkdir -p "${PR_PATH}/Library/Application Support/${BRAND_NAME} Data"
 #### mkdir -p "${PR_PATH}/Library/Application Support/${BRAND_NAME} Data/locale"
 
-## Put Branding file into BOINC Data folder to make it available to screensaver
+## Put Branding file into BOINC Data folder to make it available to screensaver coordinator
 sudo echo ${BRANDING_INFO} > "${PR_PATH}/Library/Application Support/BOINC Data/Branding"
 
 ## If skins folder is present. copy it into BOINC Data folder
 if [ -d "skins" ]; then
-    cp -fpR "skins" "${PR_PATH}/Library/Application Support/BOINC Data/"
+    sudo cp -fR "skins" "${PR_PATH}/Library/Application Support/BOINC Data/"
+fi
+
+## If account manager URL file is present, copy it into BOINC Data folder
+if [ -f "acct_mgr_url.xml" ]; then
+    sudo cp -fR "acct_mgr_url.xml" "${PR_PATH}/Library/Application Support/BOINC Data/acct_mgr_url.xml"
 fi
 
 ## Modify for Grid Republic
@@ -159,21 +183,30 @@ sudo rm -f "${PR_PATH}/Applications/${MANAGER_NAME}.app/Contents/Resources/BOINC
 sudo echo ${BRANDING_INFO} > "${IR_PATH}/Branding"
 sudo cp -fp "${IR_PATH}/Branding" "${PR_PATH}/Applications/${MANAGER_NAME}.app/Contents/Resources/Branding"
 
-# Rename the screensaver bundle and its executable inside the bundle
+# Rename the screensaver coordinator bundle and its executable inside the bundle
 sudo mv -f "${PR_PATH}/Library/Screen Savers/BOINCSaver.saver" "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver"
 sudo mv -f "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver/Contents/MacOS/BOINCSaver" "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver/Contents/MacOS/${BRAND_NAME}"
 
-# Update screensaver's info.plist, InfoPlist.strings files
+# Update screensaver coordinator's info.plist, InfoPlist.strings files
 sudo sed -i "" s/BOINCSaver/"${BRAND_NAME}"/g "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver/Contents/Info.plist"
 sudo sed -i "" s/BOINC/"${BRAND_NAME}"/g "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver/Contents/Resources/English.lproj/InfoPlist.strings"
 
-# Replace screensaver's boinc.tiff or boinc.jpg file
+# Replace screensaver coordinator's boinc.tiff or boinc.jpg file
 sudo rm -f "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver/Contents/Resources/boinc.jpg"
 sudo cp -fp "${SAVER_SYSPREF_ICON}" "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver/Contents/Resources/boinc.tiff"
 
-# Replace screensaver's boinc_ss_logo.png file
+# Replace screensaver coordinator's boinc_ss_logo.png file
 sudo rm -f "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver/Contents/Resources/boinc_ss_logo.png"
 sudo cp -fp "${SAVER_LOGO}" "${PR_PATH}/Library/Screen Savers/${BRAND_NAME}.saver/Contents/Resources/boinc_ss_logo.png"
+
+# Delete the BOINC default screensaver and its associated files
+sudo rm -f "${PR_PATH}/Library/Application Support/BOINC Data/boinc_logo_black.jpg"
+sudo rm -f "${PR_PATH}/Library/Application Support/BOINC Data/Helvetica.tx"
+sudo rm -f "${PR_PATH}/Library/Application Support/BOINC Data/ss_config.xm"
+sudo rm -f "${PR_PATH}/Library/Application Support/BOINC Data/boincsc"
+
+# Copy the GridRepublic default screensaver files into BOINC Data folder
+sudo cp -fR "${SAVER_DIR}/" "${PR_PATH}/Library/Application Support/BOINC Data/"
 
 # Copy and rename the Uninstall application's bundle and rename its executable inside the bundle
 sudo cp -fpR "Uninstall BOINC.app" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/Uninstall ${BRAND_NAME}.app"
@@ -182,7 +215,7 @@ sudo mv -f "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/Un
 # Update Uninstall application's info.plist, InfoPlist.strings files
 sudo sed -i "" s/BOINC/"${BRAND_NAME}"/g "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/Uninstall ${BRAND_NAME}.app/Contents/Info.plist"
 sudo sed -i "" s/MacUninstaller.icns/"${UNINSTALLER_ICNS_FILE}"/g "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/Uninstall ${BRAND_NAME}.app/Contents/Info.plist"
-#### sed -i "" s/BOINC/"${BRAND_NAME}"/g "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/Uninstall ${BRAND_NAME}.app/Contents/Resources/English.lproj/InfoPlist.strings"
+sudo sed -i "" s/BOINC/"${BRAND_NAME}"/g "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/Uninstall ${BRAND_NAME}.app/Contents/Resources/English.lproj/InfoPlist.strings"
 
 # Replace the Uninstall application's MacUninstaller.icns file
 sudo cp -fp "${UNINSTALLER_ICNS_FILE}" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/Uninstall ${BRAND_NAME}.app/Contents/Resources/${UNINSTALLER_ICNS_FILE}"
@@ -216,6 +249,13 @@ sudo cp -fp "COPYRIGHT" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_univer
 sudo chown -R 501:admin "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYRIGHT"
 sudo chmod -R 644 "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYRIGHT"
 
+# COPYING.LESSER is part of GNU License v3, included only with BOINC 6.3.x and later
+if [ -f "COPYING.LESSER" ]; then
+    sudo cp -fp "COPYING.LESSER" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras"
+    sudo chown -R 501:admin "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYING.LESSER"
+    sudo chmod -R 644 "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/extras/COPYING.LESSER"
+fi
+
 # Make temporary copies of Pkg-Info.plist and Description.plist for PackageMaker and update for this branding
 sudo cp -fp "${SOURCE_PKG_PATH}/Info.plist" "${NEW_DIR_PATH}/Pkg-Info.plist"
 sudo chown -R 501:admin "${NEW_DIR_PATH}/Pkg-Info.plist"
@@ -228,10 +268,13 @@ fi
 sudo chown -R 501:admin "${NEW_DIR_PATH}/Description.plist"
 sudo chmod -R 666 "${NEW_DIR_PATH}/Description.plist"
 
-sudo sed -i "" s/"BOINC Manager"/"${MANAGER_NAME}"/g "${NEW_DIR_PATH}/Pkg-Info.plist"
-sudo sed -i "" s/BOINC/"${BRAND_NAME}"/g "${NEW_DIR_PATH}/Pkg-Info.plist"
-sudo sed -i "" s/"BOINC Manager"/"${MANAGER_NAME}"/g "${NEW_DIR_PATH}/Description.plist"
-sudo sed -i "" s/BOINC/"${BRAND_NAME}"/g "${NEW_DIR_PATH}/Description.plist"
+# Update Pkg-Info.plist name and ensure it is in XML format
+defaults write "`pwd`/${NEW_DIR_PATH}/Pkg-Info" "CFBundleGetInfoString" "$BRAND_NAME $1.$2.$3"
+plutil -convert xml1 "`pwd`/${NEW_DIR_PATH}/Pkg-Info.plist"
+
+# Update Description.plist name and ensure it is in XML format
+defaults write "`pwd`/${NEW_DIR_PATH}/Description" "IFPkgDescriptionTitle" "$MANAGER_NAME"
+plutil -convert xml1 "`pwd`/${NEW_DIR_PATH}/Description.plist"
 
 # Copy the installer wrapper application "${BRAND_NAME} Installer.app"
 sudo cp -fpR "BOINC Installer.app" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app"
@@ -240,7 +283,7 @@ sudo rm -dfR "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND
 # Update the installer wrapper application's info.plist, InfoPlist.strings files
 sudo sed -i "" s/BOINC/"${BRAND_NAME}"/g "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app/Contents/Info.plist"
 sudo sed -i "" s/MacInstaller.icns/"${INSTALLER_ICNS_FILE}"/g "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app/Contents/Info.plist"
-## sed -i "" s/BOINC/"${MANAGER_NAME}"/g "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app/Contents/Resources/English.lproj/InfoPlist.strings"
+sudo sed -i "" s/BOINC/"${MANAGER_NAME}"/g "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app/Contents/Resources/English.lproj/InfoPlist.strings"
 
 # Replace the installer wrapper application's MacInstaller.icns file
 sudo cp -fp "${INSTALLER_ICNS_FILE}" "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app/Contents/Resources/${INSTALLER_ICNS_FILE}"
@@ -263,8 +306,22 @@ else
     /Developer/Tools/packagemaker -build -p "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app/Contents/Resources/${BRAND_NAME}.pkg" -f "${PR_PATH}" -r "${IR_PATH}" -i "${NEW_DIR_PATH}/Pkg-Info.plist" -d "${NEW_DIR_PATH}/Description.plist" -ds 
 fi
 
+## for debugging
+## if [  $? -ne 0 ]; then
+## echo ""
+## echo "********** /Pkg-Info.plist File contents: *************"
+## echo ""
+## cp "${NEW_DIR_PATH}/Pkg-Info.plist" /dev/stdout
+## echo ""
+## echo "********** End /Pkg-Info.plist File contents *************"
+## echo ""
+## fi
+
 # Allow the installer wrapper application to modify the package's Info.plist file
 sudo chmod u+w,g+w,o+w "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app/Contents/Resources/${BRAND_NAME}.pkg/Contents/Info.plist"
+
+# Update the installer wrapper application's creation date
+sudo touch "${NEW_DIR_PATH}/${LC_BRAND_NAME}_$1.$2.$3_macOSX_universal/${BRAND_NAME} Installer.app"
 
 # Remove temporary copies of Pkg-Info.plist and Description.plist
 sudo rm ${NEW_DIR_PATH}/Pkg-Info.plist

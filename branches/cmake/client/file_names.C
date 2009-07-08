@@ -51,17 +51,8 @@
 /// \return The directory for the given project.
 std::string get_project_dir(const PROJECT* p) {
     std::ostringstream result;
-    result << PROJECTS_DIR << '/' << escape_project_url(p->master_url);
+    result << PROJECTS_DIR << '/' << escape_project_url(p->get_master_url());
     return result.str();
-}
-
-/// Get the directory for a given project.
-///
-/// \deprecated Use get_project_dir(const PROJECT*) instead.
-void get_project_dir(const PROJECT* p, char* path, int len) {
-    char buf[1024];
-    escape_project_url(p->master_url, buf);
-    snprintf(path, len, "%s/%s", PROJECTS_DIR, buf);
 }
 
 /// Gets the pathname (relative to client home dir) of a project file.
@@ -71,6 +62,9 @@ void get_project_dir(const PROJECT* p, char* path, int len) {
 /// \return File name for the given FILE_INFO instance.
 std::string get_pathname(const FILE_INFO* fip) {
     const PROJECT* p = fip->project;
+
+    // for testing purposes, it's handy to allow a FILE_INFO without
+    // an associated PROJECT.
     if (p) {
         std::ostringstream result;
         result << get_project_dir(p) << '/' << fip->name;
@@ -80,30 +74,13 @@ std::string get_pathname(const FILE_INFO* fip) {
     }
 }
 
-/// Gets the pathname of a file
-///
-/// \deprecated Use get_pathname(const FILE_INFO*) instead.
-void get_pathname(const FILE_INFO* fip, char* path, int len) {
-    const PROJECT* p = fip->project;
-    char buf[1024];
-
-    // for testing purposes, it's handy to allow a FILE_INFO without
-    // an associated PROJECT.
-    if (p) {
-        get_project_dir(p, buf, sizeof(buf));
-        snprintf(path, len, "%s/%s", buf, fip->name.c_str());
-    } else {
-        strlcpy(path, fip->name.c_str(), len);
-    }
-}
-
 /// Get the scheduler request file name for a project.
 ///
 /// \param[in] The project for which the file name should be returned.
 /// \return The file name of the scheduler request file for the given project.
 std::string get_sched_request_filename(const PROJECT& project) {
     std::ostringstream result;
-    result << SCHED_OP_REQUEST_BASE << escape_project_url(project.master_url) << ".xml";
+    result << SCHED_OP_REQUEST_BASE << escape_project_url(project.get_master_url()) << ".xml";
     return result.str();
 }
 
@@ -113,7 +90,7 @@ std::string get_sched_request_filename(const PROJECT& project) {
 /// \return The file name of the scheduler reply file for the given project.
 std::string get_sched_reply_filename(const PROJECT& project) {
     std::ostringstream result;
-    result << SCHED_OP_REPLY_BASE << escape_project_url(project.master_url) << ".xml";
+    result << SCHED_OP_REPLY_BASE << escape_project_url(project.get_master_url()) << ".xml";
     return result.str();
 }
 
@@ -123,7 +100,7 @@ std::string get_sched_reply_filename(const PROJECT& project) {
 /// \return The file name of the master file for the given project.
 std::string get_master_filename(const PROJECT& project) {
     std::ostringstream result;
-    result << MASTER_BASE << escape_project_url(project.master_url) << ".xml";
+    result << MASTER_BASE << escape_project_url(project.get_master_url()) << ".xml";
     return result.str();
 }
 
@@ -133,18 +110,22 @@ std::string get_master_filename(const PROJECT& project) {
 /// \return The file name of the sjob log file for the given project.
 std::string job_log_filename(const PROJECT& project) {
     std::ostringstream result;
-    result << JOB_LOG_BASE << escape_project_url(project.master_url) << ".xml";
+    result << JOB_LOG_BASE << escape_project_url(project.get_master_url()) << ".xml";
     return result.str();
 }
 
-/// Returns the location of a numbered slot directory
-void get_slot_dir(int slot, char* path, int len) {
-    snprintf(path, len, "%s/%d", SLOTS_DIR, slot);
+/// Returns the location of a numbered slot directory.
+///
+/// \param[in] slot The number of the slot.
+/// \return The (relative) path to the requested slot directory.
+std::string get_slot_dir(int slot) {
+    std::ostringstream path;
+    path << SLOTS_DIR << '/' << slot;
+    return path.str();
 }
 
-/// Create the directory for the project p
+/// Create the directory for the project \a p.
 int make_project_dir(const PROJECT& p) {
-    char buf[1024];
     int retval;
 
     boinc_mkdir(PROJECTS_DIR);
@@ -160,40 +141,37 @@ int make_project_dir(const PROJECT& p) {
         umask(old_mask);
     }
 #endif
-    get_project_dir(&p, buf, sizeof(buf));
-    retval = boinc_mkdir(buf);
+    std::string project_dir = get_project_dir(&p);
+    retval = boinc_mkdir(project_dir.c_str());
 #ifndef _WIN32
     if (g_use_sandbox) {
         old_mask = umask(2);     // Project directories must be world-readable
-        chmod(buf,
+        chmod(project_dir.c_str(),
             S_IRUSR|S_IWUSR|S_IXUSR
             |S_IRGRP|S_IWGRP|S_IXGRP
             |S_IROTH|S_IXOTH
         );
         umask(old_mask);
-        set_to_project_group(buf);
+        set_to_project_group(project_dir.c_str());
     }
 #endif
     return retval;
 }
 
 int remove_project_dir(const PROJECT& p) {
-    char buf[1024];
     int retval;
 
-    get_project_dir(&p, buf, sizeof(buf));
-    retval = client_clean_out_dir(buf);
+    std::string project_dir = get_project_dir(&p);
+    retval = client_clean_out_dir(project_dir.c_str());
     if (retval) {
         msg_printf(&p, MSG_INTERNAL_ERROR, "Can't delete file %s", boinc_failed_file);
         return retval;
     }
-    return remove_project_owned_dir(buf);
+    return remove_project_owned_dir(project_dir.c_str());
 }
 
-/// Create the slot directory for the specified slot #
+/// Create the slot directory for the specified slot number.
 int make_slot_dir(int slot) {
-    char buf[1024];
-
     if (slot<0) {
         msg_printf(NULL, MSG_INTERNAL_ERROR, "Bad slot number %d", slot);
         return ERR_NEG;
@@ -211,24 +189,24 @@ int make_slot_dir(int slot) {
         umask(old_mask);
     }
 #endif
-    get_slot_dir(slot, buf, sizeof(buf));
-    int retval = boinc_mkdir(buf);
+    std::string slot_dir = get_slot_dir(slot);
+    int retval = boinc_mkdir(slot_dir.c_str());
 #ifndef _WIN32
     if (g_use_sandbox) {
         old_mask = umask(2);     // Slot directories must be world-readable
-        chmod(buf,
+        chmod(slot_dir.c_str(),
             S_IRUSR|S_IWUSR|S_IXUSR
             |S_IRGRP|S_IWGRP|S_IXGRP
             |S_IROTH|S_IXOTH
         );
         umask(old_mask);
-        set_to_project_group(buf);
+        set_to_project_group(slot_dir.c_str());
     }
 #endif
     return retval;
 }
 
-/// Delete unused stuff in the slots/ directory.
+/// Delete unused subdirectories in the slots/ directory.
 void delete_old_slot_dirs() {
     DirScanner dscan(SLOTS_DIR);
     while (1) {
@@ -254,7 +232,7 @@ void delete_old_slot_dirs() {
                 destroy_shmem(shmem_seg_name);
             }
 #endif
-            if (!gstate.active_tasks.is_slot_dir_in_use(path.c_str())) {
+            if (!gstate.active_tasks.is_slot_dir_in_use(path)) {
                 client_clean_out_dir(path.c_str());
                 remove_project_owned_dir(path.c_str());
             }
@@ -295,8 +273,8 @@ static bool bad_account_filename(const std::string& filename) {
 bool is_account_file(const std::string& filename) {
     if (!starts_with(filename, "account_")) {
         // Just return without an error message here because this would
-        // generate an error message for each file in the data directory
-        // but error messages should only be shown for maleformed
+        // generate an error message for each file in the data directory;
+        // but error messages should only be shown for malformed
         // account files.
         return false;
     }
@@ -335,7 +313,7 @@ bool is_statistics_file(const std::string& filename) {
     if (!starts_with(filename, "statistics_")) {
         // Just return without an error message here because this would
         // generate an error message for each file in the data directory
-        // but error messages should only be shown for maleformed
+        // but error messages should only be shown for malformed
         // statistics files.
         return false;
     }
@@ -372,8 +350,8 @@ std::string get_statistics_filename(const std::string& master_url) {
 /// \return True if the given file name denotes an image file.
 bool is_image_file(std::string filename) {
     downcase_string(filename);
-    if (ends_with(filename, std::string(".jpg"))) return true;
-    if (ends_with(filename, std::string(".jpeg"))) return true;
-    if (ends_with(filename, std::string(".png"))) return true;
+    if (ends_with(filename, ".jpg")) return true;
+    if (ends_with(filename, ".jpeg")) return true;
+    if (ends_with(filename, ".png")) return true;
     return false;
 }

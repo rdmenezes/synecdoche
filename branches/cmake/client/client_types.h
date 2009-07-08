@@ -203,14 +203,16 @@ public:
 typedef std::vector<WORKUNIT*> WORKUNIT_PVEC;
 
 class PROJECT {
-public:
+private:
     /// @name Account file
     /// The following items come from the account file.
     /// They are a function only of the user and the project.
     /// @{
 
     /// URL of site that contains scheduler tags for this project.
-    char master_url[256];
+    std::string master_url;
+    
+public:
     char authenticator[256]; ///< User's authenticator on this project.
 
     /// Project preferences without the enclosing <project_preferences> tags.
@@ -479,6 +481,12 @@ public:
     void copy_state_fields(const PROJECT& p);
     const char *get_project_name() const;
 
+    /// Return the master URL for this project.
+    std::string get_master_url() const;
+    
+    /// Set the master URL for this project.
+    void set_master_url(const std::string& master_url);
+
     /// Write account_*.xml file.
     int write_account_file() const;
 
@@ -616,10 +624,10 @@ public:
     double estimated_cpu_time_uncorrected() const;
     double estimated_cpu_time_remaining() const;
     bool computing_done() const;
-    
+
     /// Check if the result was started yet.
     bool not_started() const;
-    
+
     /// Downloaded, not finished, not suspended, project not suspended.
     bool runnable() const;
     /// Downloading or downloaded,
@@ -630,10 +638,10 @@ public:
     /// Some input or app file is downloading, and backed off.
     /// That is, it may be a long time before we can run this result.
     bool some_download_stalled() const;
-    
+
     /// Get the project this result belongs to.
     PROJECT* get_project() const;
-    
+
     /// Get the name of this result.
     std::string get_name() const;
 

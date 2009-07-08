@@ -30,18 +30,11 @@ class MIOFILE;
 /// Gets the pathname (relative to client home dir) of a project file.
 std::string get_pathname(const FILE_INFO* fip);
 
-/// Gets the pathname (relative to client home dir) of a project file.
-void get_pathname(const FILE_INFO* fip, char* path, int len) __attribute__((deprecated));
-
 /// Get the directory for a given project.
 std::string get_project_dir(const PROJECT* p);
 
-/// Get the directory for a given project.
-void get_project_dir(const PROJECT* p, char* path, int len) __attribute__((deprecated));
-
-/// get the pathname (relative to client home dir) of the
-/// directory used for a particular application "slot".
-void get_slot_dir(int slot, char* path, int len);
+/// Returns the location of a numbered slot directory.
+std::string get_slot_dir(int slot);
 
 int make_project_dir(const PROJECT&);
 int remove_project_dir(const PROJECT&);

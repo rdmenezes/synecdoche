@@ -102,16 +102,16 @@ int CLIENT_STATE::make_project_dirs() {
 /// to error out (via APP_VERSION::had_download_failure()
 /// WORKUNIT::had_download_failure())
 int FILE_INFO::verify_file(bool strict, bool show_errors) {
-    char cksum[64], pathname[256];
+    char cksum[64];
     bool verified;
     int retval;
     double size, local_nbytes;
 
-    get_pathname(this, pathname, sizeof(pathname));
+    std::string pathname = get_pathname(this);
 
     // If the file isn't there at all, set status to FILE_NOT_PRESENT;
     // this will trigger a new download rather than erroring out
-    if (file_size(pathname, size)) {
+    if (file_size(pathname.c_str(), size)) {
         status = FILE_NOT_PRESENT;
         return ERR_FILE_MISSING;
     }
@@ -141,7 +141,7 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
             status = ERR_NO_SIGNATURE;
             return ERR_NO_SIGNATURE;
         }
-        retval = verify_file2(pathname, file_signature.c_str(), project->code_sign_key, verified);
+        retval = verify_file2(pathname.c_str(), file_signature.c_str(), project->code_sign_key, verified);
         if (retval) {
             msg_printf(project, MSG_INTERNAL_ERROR, "Signature verification error for %s", name.c_str());
             error_msg = "signature verification error";
@@ -156,7 +156,7 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
             return ERR_RSA_FAILED;
         }
     } else if (strlen(md5_cksum)) {
-        retval = md5_file(pathname, cksum, local_nbytes);
+        retval = md5_file(pathname.c_str(), cksum, local_nbytes);
         if (retval) {
             msg_printf(project, MSG_INTERNAL_ERROR, "MD5 computation error for %s: %s\n",
                     name.c_str(), boincerror(retval));

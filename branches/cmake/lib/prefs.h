@@ -76,28 +76,28 @@ public:
         Never,
         Between
     };
-    
+
     /// Construct a TIME_SPAN instance.
     TIME_SPAN();
-    
+
     /// Construct a TIME_SPAN instance.
     TIME_SPAN(time_t start, time_t end);
-    
+
     TIME_SPAN& operator=(const TIME_SPAN& r);
     bool operator==(const TIME_SPAN& r);
 
     /// Check if the client should be suspended for a given point in time.
     bool suspended(const time_t point_in_time) const;
-    
+
     /// Get the run mode determined by this TIME_SPAN instance.
     TimeMode mode() const;
-    
+
     /// Reset this instance to its default values.
     void clear();
-    
+
     time_t get_start() const;
     time_t get_end() const;
-    
+
     void set_start(const time_t start);
     void set_end(const time_t end);
 
@@ -107,7 +107,7 @@ private:
 private:
     time_t m_start; ///< Start of the time span in seconds after midnight.
     time_t m_end; ///< End of the time span in seconds after midnight.
-    
+
 };
 
 /// This class maintains time spans for a whole week with one time span for each day.
@@ -119,25 +119,25 @@ public:
 
     /// Get the set time span for a given day.
     const TIME_SPAN* get(int day) const;
-    
+
     /// Set a time span in which the client is allowed to run.
     void set(int day, time_t start, time_t end);
-    
+
     /// Set a time span in which the client is allowed to run.
     void set(int day, const TIME_SPAN& time);
-    
+
     /// Remove the timespan for a given day.
     void unset(int day);
-    
+
     /// Reset this instance to its default values.
     void clear();
-    
+
     WEEK_PREFS& operator=(const WEEK_PREFS& rhs);
 
 private:
     /// Create a deep copy.
     void copy(const WEEK_PREFS& original);
-    
+
     TIME_SPAN* days[7];
 
 };
@@ -149,13 +149,13 @@ class TIME_PREFS : public TIME_SPAN {
 public:
     TIME_PREFS();
     TIME_PREFS(time_t start, time_t end);
-    
+
     /// Reset this instance to its default values.
     void        clear();
-    
+
     /// Check if the client should be currently suspended based on this TIME_PREFS instance.
     bool        suspended() const;
-    
+
     WEEK_PREFS  week;
 };
 

@@ -21,7 +21,7 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
-#else 
+#else
 #include <signal.h>
 #ifdef __cplusplus
 #include <cassert>

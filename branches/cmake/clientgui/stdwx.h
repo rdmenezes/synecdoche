@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __STDWX_H__
-#define __STDWX_H__
+#ifndef STDWX_H
+#define STDWX_H
 
 
 #ifdef _WIN32
@@ -43,7 +43,6 @@
 #endif
 
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
 
 // Use localtime_r and fmtime_r in wxWidgets and eliminate compiler warnings
 #define HAVE_LOCALTIME_R 1
@@ -56,6 +55,7 @@
 #include <wx/app.h>
 #include <wx/bitmap.h>          // bitmap modification support
 #include <wx/button.h>
+#include <wx/checklst.h>
 #include <wx/clipbrd.h>         // clipboard support
 #include <wx/cmdline.h>         // command line support
 #include <wx/colour.h>
@@ -96,6 +96,7 @@
 #include <wx/regex.h>           // regular expression support
 #include <wx/settings.h>        // system settings support
 #include <wx/sizer.h>
+#include <wx/spinctrl.h>
 #include <wx/statline.h>        // static line support
 #include <wx/statbmp.h>         // static bitmap support
 #include <wx/statbox.h>
@@ -260,5 +261,5 @@
 
 #endif //__WIN32__ && __VISUALC && !__AFX_H__
 
-#endif //__STDWX_H__
+#endif // STDWX_H
 

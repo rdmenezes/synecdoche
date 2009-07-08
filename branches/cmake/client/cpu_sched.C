@@ -96,7 +96,7 @@ static bool more_preemptable(ACTIVE_TASK* t0, ACTIVE_TASK* t1) {
 /// -# results with active tasks that have no process
 /// -# results with no active task
 ///
-/// \todo this is called in a loop over NCPUs, which is silly. 
+/// \todo this is called in a loop over NCPUs, which is silly.
 /// Should call it once, and have it make an ordered list per project.
 void CLIENT_STATE::assign_results_to_projects() {
     unsigned int i;
@@ -827,79 +827,83 @@ bool CLIENT_STATE::enforce_schedule() {
             );
         }
         switch (atp->next_scheduler_state) {
-        case CPU_SCHED_PREEMPTED:
-            bool preempt_by_quit;
-            switch (atp->task_state()) {
-            case PROCESS_EXECUTING:
-                action = true;
-                preempt_by_quit = !global_prefs.leave_apps_in_memory;
-                if (check_swap && swap_left < 0) {
-                    if (log_flags.mem_usage_debug) {
-                        msg_printf(atp->result->project, MSG_INFO,
-                            "[mem_usage_debug] out of swap space, will preempt by quit"
-                        );
-                    }
-                    preempt_by_quit = true;
+            case CPU_SCHED_PREEMPTED:
+                bool preempt_by_quit;
+                switch (atp->task_state()) {
+                    case PROCESS_EXECUTING:
+                        action = true;
+                        preempt_by_quit = !global_prefs.leave_apps_in_memory;
+                        if (check_swap && swap_left < 0) {
+                            if (log_flags.mem_usage_debug) {
+                                msg_printf(atp->result->project, MSG_INFO,
+                                    "[mem_usage_debug] out of swap space, will preempt by quit"
+                                );
+                            }
+                            preempt_by_quit = true;
+                        }
+                        if (atp->too_large) {
+                            if (log_flags.mem_usage_debug) {
+                                msg_printf(atp->result->project, MSG_INFO,
+                                    "[mem_usage_debug] job using too much memory, will preempt by quit"
+                                );
+                            }
+                            preempt_by_quit = true;
+                        }
+                        atp->preempt(preempt_by_quit);
+                        break;
+                    case PROCESS_SUSPENDED:
+                        // Handle the case where user changes prefs from "leave in
+                        // memory" to "remove from memory".
+                        // Need to quit suspended tasks:
+                        if ((atp->checkpoint_cpu_time) && (!global_prefs.leave_apps_in_memory)) {
+                            atp->preempt(true);
+                        }
+                        break;
+                    default: // fix compiler warnings on some platforms
+                        break;
                 }
-                if (atp->too_large) {
-                    if (log_flags.mem_usage_debug) {
-                        msg_printf(atp->result->project, MSG_INFO,
-                            "[mem_usage_debug] job using too much memory, will preempt by quit"
-                        );
-                    }
-                    preempt_by_quit = true;
-                }
-                atp->preempt(preempt_by_quit);
+                atp->scheduler_state = CPU_SCHED_PREEMPTED;
                 break;
-            case PROCESS_SUSPENDED:
-                // Handle the case where user changes prefs from "leave in
-                // memory" to "remove from memory".
-                // Need to quit suspended tasks:
-                if ((atp->checkpoint_cpu_time) && (!global_prefs.leave_apps_in_memory)) {
-                    atp->preempt(true);
+            case CPU_SCHED_SCHEDULED:
+                switch (atp->task_state()) {
+                    case PROCESS_UNINITIALIZED:
+                        // fall through
+                    case PROCESS_SUSPENDED:
+                        action = true;
+                        retval = atp->resume_or_start(!atp->is_full_init_done());
+                        if ((!retval) && (atp->task_state() == PROCESS_UNINITIALIZED)) {
+                            // Starting the application failed because of missing files.
+                            // This should not be treated as error, but we can't act as
+                            // if the application was already started and everything is
+                            // already initialized. Therefore don't update the task
+                            // status here. Just trigger the scheduler and jump to the
+                            // next task.
+                            request_schedule_cpus("start failed (missing files");
+                            continue;
+                        }
+                        if ((retval == ERR_SHMGET) || (retval == ERR_SHMAT)) {
+                            // Assume no additional shared memory segs
+                            // will be available in the next 10 seconds
+                            // (run only tasks which are already attached to shared memory).
+                            if (gstate.retry_shmem_time < gstate.now) {
+                                request_schedule_cpus("no more shared memory");
+                            }
+                            gstate.retry_shmem_time = gstate.now + 10.0;
+                            continue;
+                        }
+                        if (retval) {
+                            report_result_error(*(atp->result), "Couldn't start or resume: %d", retval);
+                            request_schedule_cpus("start failed");
+                            continue;
+                        }
+                        atp->run_interval_start_wall_time = now;
+                        app_started = now;
+                    default: // fix compiler warnings on some platforms
+                        break;
                 }
+                atp->scheduler_state = CPU_SCHED_SCHEDULED;
+                swap_left -= atp->procinfo.swap_size;
                 break;
-            }
-            atp->scheduler_state = CPU_SCHED_PREEMPTED;
-            break;
-        case CPU_SCHED_SCHEDULED:
-            switch (atp->task_state()) {
-            case PROCESS_UNINITIALIZED:
-                // fall through
-            case PROCESS_SUSPENDED:
-                action = true;
-                retval = atp->resume_or_start(!atp->is_full_init_done());
-                if ((!retval) && (atp->task_state() == PROCESS_UNINITIALIZED)) {
-                    // Starting the application failed because of missing files.
-                    // This should not be treated as error, but we can't act as
-                    // if the application was already started and everything is
-                    // already initialized. Therefore don't update the task
-                    // status here. Just trigger the scheduler and jump to the
-                    // next task.
-                    request_schedule_cpus("start failed (missing files");
-                    continue;
-                }
-                if ((retval == ERR_SHMGET) || (retval == ERR_SHMAT)) {
-                    // Assume no additional shared memory segs
-                    // will be available in the next 10 seconds
-                    // (run only tasks which are already attached to shared memory).
-                    if (gstate.retry_shmem_time < gstate.now) {
-                        request_schedule_cpus("no more shared memory");
-                    }
-                    gstate.retry_shmem_time = gstate.now + 10.0;
-                    continue;
-                }
-                if (retval) {
-                    report_result_error(*(atp->result), "Couldn't start or resume: %d", retval);
-                    request_schedule_cpus("start failed");
-                    continue;
-                }
-                atp->run_interval_start_wall_time = now;
-                app_started = now;
-            }
-            atp->scheduler_state = CPU_SCHED_SCHEDULED;
-            swap_left -= atp->procinfo.swap_size;
-            break;
         }
     }
     if (action) {
@@ -1035,11 +1039,13 @@ double CLIENT_STATE::nearly_runnable_resource_share() {
 
 bool ACTIVE_TASK::process_exists() {
     switch (task_state()) {
-    case PROCESS_EXECUTING:
-    case PROCESS_SUSPENDED:
-    case PROCESS_ABORT_PENDING:
-    case PROCESS_QUIT_PENDING:
-        return true;
+        case PROCESS_EXECUTING:
+        case PROCESS_SUSPENDED:
+        case PROCESS_ABORT_PENDING:
+        case PROCESS_QUIT_PENDING:
+            return true;
+        default: // fix compiler warnings on some platforms
+			return false;
     }
     return false;
 }

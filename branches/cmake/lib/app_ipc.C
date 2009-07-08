@@ -413,12 +413,6 @@ int boinc_resolve_filename_s(const char *virtual_name, string& physical_name) {
     return 0;
 }
 
-void url_to_project_dir(const char* url, char* dir) {
-    char buf[256];
-    escape_project_url(url, buf);
-    sprintf(dir, "%s/%s", PROJECT_DIR, buf);
-}
-
 /// Get the directory for a project denoted by its master-url.
 ///
 /// \param[in] url The master-url of the project.

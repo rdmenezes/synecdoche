@@ -25,6 +25,8 @@
 #include "config.h"
 #endif
 
+#include <string>
+
 using std::string;
 
 /// Table of characters coding the 64 values.

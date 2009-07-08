@@ -425,28 +425,6 @@ void escape_url(std::string& url) {
 }
 
 /// Escape a URL for the project directory, cutting off the "http://",
-/// converting everthing other than alphanumbers, ., - and _ to "_".
-void escape_url_readable(const char *in, char* out) {
-    int x, y;
-    const char *temp;
-
-    temp = strstr(in,"://");
-    if (temp) {
-        in = temp + strlen("://");
-    }
-    for (x=0, y=0; in[x]; ++x) {
-        if (isalnum(in[x]) || in[x]=='.' || in[x]=='-' || in[x]=='_') {
-            out[y] = in[x];
-            ++y;
-        } else {
-            out[y] = '_';
-            ++y;
-        }
-    }
-    out[y] = 0;
-}
-
-/// Escape a URL for the project directory, cutting off the "http://",
 /// converting everything other than letters, numbers, ., - and _ to "_".
 ///
 /// \param[in] in The URL to escape.
@@ -500,23 +478,7 @@ void canonicalize_master_url(std::string& url) {
     url = std::string("http") + (bSSL ? "s://" : "://") + buf;
 }
 
-/// Canonicalize a master URL.
-///   - Convert the first part of a URL (before the "://") to http://,
-/// or prepend it
-///   - Remove double slashes in the rest
-///   - Add a trailing slash if necessary
-///
-/// \param[in,out] url The url that should get canonicalized.
-/// \deprecated Use canonicalize_master_url(std::string&) instead which
-///             is more secure.
-void canonicalize_master_url(char* url) {
-    std::string buf(url);
-    canonicalize_master_url(buf);
-    strcpy(url, buf.c_str());
-}
-
 // is the string a valid master URL, in canonical form?
-//
 bool valid_master_url(const char* url) {
     const char *p, *q;
     size_t n;
@@ -626,15 +588,6 @@ std::string timediff_format(double diff) {
     return buf.str();
 }
 
-void escape_project_url(const char *in, char* out) {
-    escape_url_readable(in, out);
-    char& last = out[strlen(out)-1];
-    // remove trailing _
-    if (last == '_') {
-        last = '\0';
-    }
-}
-
 /// Escape a URL for the project directory
 std::string escape_project_url(const std::string& in) {
     std::string result = escape_url_readable(in);
@@ -644,41 +597,6 @@ std::string escape_project_url(const std::string& in) {
         result.erase(result.end() - 1);
     }
     return result;
-}
-
-/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-///
-/// \param[in] dt UNIX timestamp.
-/// \return The MySQL timestamp equivalent of the given timestamp as string.
-std::string mysql_timestamp(double dt) {
-    struct tm* tmp;
-    time_t t = (time_t)dt;
-    tmp = localtime(&t);     // MySQL timestamps are in local time
-    std::ostringstream res;
-    res << std::setw(4) << (tmp->tm_year + 1900);
-    res.fill('0');
-    res.width(2);
-    res << (tmp->tm_mon + 1) << tmp->tm_mday << tmp->tm_hour;
-    res << tmp->tm_min << tmp->tm_sec;
-    return res.str();
-}
-
-/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-///
-/// \param[in] dt UNIX timestamp.
-/// \param[out] p Pointer to a char array that will receive the string
-///               with the MySQL timestamp equivalent to the given UNIX
-///               timestamp.
-/// \param[in] len Size of the buffer \a p.
-/// \return 0 if no error occured, \ref ERR_BUFFER_OVERFLOW if the given buffer
-///         \a p is too small.
-int mysql_timestamp(double dt, char* p, size_t len) {
-    std::string buf = mysql_timestamp(dt);
-    if (buf.length() >= len) {
-        return ERR_BUFFER_OVERFLOW;
-    }
-    strlcpy(p, buf.c_str(), len);
-    return 0;
 }
 
 /// Return a text-string description of a given error.
@@ -861,6 +779,24 @@ const char* rpc_reason_string(rpc_reason reason) {
     case RPC_REASON_PROJECT_REQ: return "Requested by project";
     default: return "Unknown reason";
     }
+}
+
+namespace {
+    class case_insensitive_less : public std::binary_function<char, char, bool> {
+    public:
+        bool operator () (char x, char y) const {
+            return toupper(static_cast<unsigned char>(x)) < toupper(static_cast<unsigned char>(y));
+        }
+    };
+}
+
+/// Compare two strings in lexicographical order.
+///
+/// \param[in] a First string.
+/// \param[in] b Second string.
+/// \return True if the string \a a comes before string \a b in lexicographical order.
+bool NoCaseLess(const std::string& a, const std::string& b) {
+    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), case_insensitive_less());
 }
 
 #ifdef WIN32

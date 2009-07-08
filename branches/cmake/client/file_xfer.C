@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -42,7 +43,6 @@ FILE_XFER::FILE_XFER() {
     file_xfer_done = false;
     file_xfer_retval = 0;
     fip = NULL;
-    strcpy(pathname, "");
     strcpy(header, "");
     file_size_query = false;
 }
@@ -56,12 +56,11 @@ FILE_XFER::~FILE_XFER() {
 int FILE_XFER::init_download(FILE_INFO& file_info) {
     is_upload = false;
     fip = &file_info;
-    get_pathname(fip, pathname, sizeof(pathname));
+    pathname = get_pathname(fip);
 
     // if file is already as large or larger than it's supposed to be,
     // something's screwy; start reading it from the beginning.
-    //
-    if (file_size(pathname, starting_size) || starting_size >= fip->nbytes) {
+    if (file_size(pathname.c_str(), starting_size) || starting_size >= fip->nbytes) {
         starting_size = 0;
     }
     bytes_xferred = starting_size;
@@ -70,7 +69,7 @@ int FILE_XFER::init_download(FILE_INFO& file_info) {
     if (!url) {
         return ERR_INVALID_URL;
 	}
-    return HTTP_OP::init_get(url, pathname, false, (int)starting_size);
+    return HTTP_OP::init_get(url, pathname.c_str(), false, (int)starting_size);
 }
 
 /// For uploads, we need to build a header with xml_signature etc.
@@ -81,9 +80,8 @@ int FILE_XFER::init_download(FILE_INFO& file_info) {
 int FILE_XFER::init_upload(FILE_INFO& file_info) {
     // If upload_offset < 0, we need to query the upload handler
     // for the offset information
-    //
     fip = &file_info;
-    get_pathname(fip, pathname, sizeof(pathname));
+    pathname = get_pathname(fip);
 
     is_upload = true;
 
@@ -132,7 +130,7 @@ int FILE_XFER::init_upload(FILE_INFO& file_info) {
         const char* url = fip->get_current_url(is_upload);
         if (!url) return ERR_INVALID_URL;
         return HTTP_OP::init_post2(
-            url, header, sizeof(header), pathname, fip->upload_offset
+            url, header, sizeof(header), pathname.c_str(), fip->upload_offset
         );
     }
 }
@@ -218,7 +216,6 @@ bool FILE_XFER_SET::poll() {
     FILE_XFER* fxp;
     bool action = false;
     static double last_time=0;
-    char pathname[256];
     double size;
 
     if (gstate.now - last_time < 1.0) return false;
@@ -280,8 +277,10 @@ bool FILE_XFER_SET::poll() {
 
         // deal with various error cases for downloads
         if (!fxp->is_upload) {
-            get_pathname(fxp->fip, pathname, sizeof(pathname));
-            if (file_size(pathname, size)) continue;
+            std::string pathname = get_pathname(fxp->fip);
+            if (file_size(pathname.c_str(), size)) {
+                continue;
+            }
             double diff = size - fxp->starting_size;
             if (fxp->http_op_retval == 0) {
                 // If no HTTP error,
@@ -294,7 +293,7 @@ bool FILE_XFER_SET::poll() {
                         msg_printf(fxp->fip->project, MSG_INFO,
                             "Incomplete read of %f < 5KB for %s - truncating",
                             diff, fxp->fip->name.c_str());
-                        boinc_truncate(pathname, fxp->starting_size);
+                        boinc_truncate(pathname.c_str(), fxp->starting_size);
                     }
                 }
             } else {
@@ -305,7 +304,7 @@ bool FILE_XFER_SET::poll() {
                 } else {
                     diff -= MIN_DOWNLOAD_INCREMENT;
                 }
-                boinc_truncate(pathname, fxp->starting_size + diff);
+                boinc_truncate(pathname.c_str(), fxp->starting_size + diff);
             }
         }
 
@@ -316,16 +315,16 @@ bool FILE_XFER_SET::poll() {
         // (i.e. it doesn't understand Range: requests).
         // In this case, trim off the initial part of the file
         if ((!fxp->is_upload) && (fxp->starting_size) && (fxp->response == HTTP_STATUS_OK)) {
-            get_pathname(fxp->fip, pathname, sizeof(pathname));
-            if (file_size(pathname, size)) {
+            std::string pathname = get_pathname(fxp->fip);
+            if (file_size(pathname.c_str(), size)) {
                 continue;
             }
             if (size > fxp->fip->nbytes) {
-                FILE* f1 = boinc_fopen(pathname, "rb");
+                FILE* f1 = boinc_fopen(pathname.c_str(), "rb");
                 if (!f1) {
                     fxp->file_xfer_retval = ERR_FOPEN;
                     msg_printf(fxp->fip->project, MSG_INTERNAL_ERROR,
-                                "File size mismatch, can't open %s", pathname); 
+                                "File size mismatch, can't open %s", pathname.c_str()); 
                     continue;
                 }
                 FILE* f2 = boinc_fopen(TEMP_FILE_NAME, "wb");
@@ -341,7 +340,7 @@ bool FILE_XFER_SET::poll() {
                 fclose(f1);
                 fclose(f2);
                 f1 = boinc_fopen(TEMP_FILE_NAME, "rb");
-                f2 = boinc_fopen(pathname, "wb");
+                f2 = boinc_fopen(pathname.c_str(), "wb");
                 copy_stream(f1, f2);
                 fclose(f1);
                 fclose(f2);

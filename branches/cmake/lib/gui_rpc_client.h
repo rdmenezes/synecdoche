@@ -27,7 +27,6 @@
 #include <vector>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <locale.h>
@@ -419,7 +418,7 @@ struct ACCT_MGR_INFO {
     std::string acct_mgr_name;
     std::string acct_mgr_url;
     bool have_credentials;
-    
+
     ACCT_MGR_INFO();
     ~ACCT_MGR_INFO(){}
 

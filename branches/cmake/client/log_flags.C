@@ -238,13 +238,6 @@ int CONFIG::parse_options(XML_PARSER& xp) {
             alt_platforms.push_back(s);
             continue;
         }
-        if (xp.parse_str(tag, "data_dir", path, sizeof(path))) {
-            if (chdir(path)) {
-                perror("chdir");
-                exit(1);
-            }
-            continue;
-        }
         if (xp.parse_int(tag, "max_stdout_file_size", max_stdout_file_size)) continue;
         if (xp.parse_int(tag, "max_stderr_file_size", max_stderr_file_size)) continue;
         if (xp.parse_bool(tag, "report_results_immediately", report_results_immediately)) continue;

@@ -1,33 +1,31 @@
 #!/bin/sh
 
-# Berkeley Open Infrastructure for Network Computing
+# This file is part of BOINC.
 # http://boinc.berkeley.edu
-# Copyright (C) 2005 University of California
+# Copyright (C) 2008 University of California
 #
-# This is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation;
-# either version 2.1 of the License, or (at your option) any later version.
+# BOINC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
+# BOINC is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Lesser General Public License for more details.
 #
-# To view the GNU Lesser General Public License visit
-# http://www.gnu.org/copyleft/lesser.html
-# or write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# You should have received a copy of the GNU Lesser General Public License
+# along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
-# Script to build Macintosh Universal Binary library of c-ares-1.5.1 for
+# Script to build Macintosh Universal Binary library of c-ares-1.6.0 for
 # use in building BOINC.
 #
 # by Charlie Fenton 7/21/06
-# Updated 5/14/08
+# Updated 12/17/08
 #
-## In Terminal, CD to the c-ares-1.5.1 directory.
-##     cd [path]/c-ares-1.5.1/
+## In Terminal, CD to the c-ares-1.6.0 directory.
+##     cd [path]/c-ares-1.6.0/
 ## then run this script:
 ##     source [path]/buildc-ares.sh [ -clean ] [ -gcc33 ]
 ##
@@ -58,7 +56,7 @@ fi
 fi
 
 if [ $AlreadyBuilt -ne 0 ]; then
-    echo "c-ares-1.5.1 already built"
+    echo "c-ares-1.6.0 already built"
     return 0
 fi
 
@@ -96,7 +94,7 @@ export LDFLAGS="-arch ppc -D_NONSTD_SOURCE -isystem /Developer/SDKs/MacOSX10.3.9
 export CPPFLAGS="-arch ppc -D_NONSTD_SOURCE -isystem /Developer/SDKs/MacOSX10.3.9.sdk"
 export CFLAGS="-arch ppc -D_NONSTD_SOURCE -isystem /Developer/SDKs/MacOSX10.3.9.sdk"
 
-# curl configure and make expect a path to _installed_ c-ares-1.5.1
+# curl configure and make expect a path to _installed_ c-ares-1.6.0
 # so set a temporary install path that does not contain spaces.
 ./configure --enable-shared=NO prefix=/tmp/installed-c-ares --host=ppc
 if [  $? -ne 0 ]; then return 1; fi

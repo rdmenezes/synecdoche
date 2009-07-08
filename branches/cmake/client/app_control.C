@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -378,7 +378,7 @@ void ACTIVE_TASK::handle_exited_app(int stat)
     if (!will_restart) {
         copy_output_files();
         read_stderr_file();
-        client_clean_out_dir(slot_dir);
+        client_clean_out_dir(slot_dir.c_str());
     }
     gstate.request_schedule_cpus("application exited");
     gstate.request_work_fetch("application exited");
@@ -643,8 +643,8 @@ bool ACTIVE_TASK::read_stderr_file() {
     // it's unlikely that more than that will be useful
     //
     int max_len = 63*1024;
-    std::string path = std::string(slot_dir) + std::string("/")
-                                             + std::string(STDERR_FILE);
+    std::string path = slot_dir + std::string("/")
+                                + std::string(STDERR_FILE);
     if (!boinc_file_exists(path.c_str())) return false;
     if (read_file_string(path.c_str(), stderr_file, max_len, true)) return false;
 

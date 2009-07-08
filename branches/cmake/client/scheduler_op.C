@@ -39,7 +39,6 @@
 #include "client_msgs.h"
 #include "file_names.h"
 #include "log_flags.h"
-#include "main.h"
 
 SCHEDULER_OP::SCHEDULER_OP(HTTP_OP_SET* h) {
     cur_proj = NULL;
@@ -245,7 +244,7 @@ int SCHEDULER_OP::init_master_fetch(PROJECT* p) {
         msg_printf(p, MSG_INFO, "[sched_op_debug] Fetching master file");
     }
     http_op.set_proxy(&gstate.proxy_info);
-    retval = http_op.init_get(p->master_url, master_filename.c_str(), true);
+    retval = http_op.init_get(p->get_master_url().c_str(), master_filename.c_str(), true);
     if (retval) return retval;
     retval = http_ops->insert(&http_op);
     if (retval) return retval;
@@ -485,7 +484,7 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
         // the project won't send us a venue if it's doing maintenance
         // or doesn't check the DB because no work.
         // Don't overwrite the host venue in that case.
-    strcpy(master_url, "");
+    master_url.clear();
     code_sign_key = 0;
     code_sign_key_signature = 0;
     message_ack = false;
@@ -545,7 +544,7 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
         else if (parse_str(buf, "<project_name>", project->project_name, sizeof(project->project_name))) {
             continue;
         }
-        else if (parse_str(buf, "<master_url>", master_url, sizeof(master_url))) {
+        else if (parse_str(buf, "<master_url>", master_url)) {
             continue;
         }
         else if (parse_str(buf, "<symstore>", project->symstore, sizeof(project->symstore))) continue;

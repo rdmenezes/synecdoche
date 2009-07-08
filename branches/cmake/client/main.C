@@ -54,6 +54,8 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 #include "SetupSecurity.h"
 #endif
 
+#include "main.h"
+
 #include "diagnostics.h"
 #include "error_numbers.h"
 #include "str_util.h"
@@ -70,7 +72,9 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 #include "http_curl.h"
 #include "sandbox.h"
 
-#include "main.h"
+#ifdef HARDCODED_DIRS
+#include "dirs.h"
+#endif
 
 int finalize();
 
@@ -195,12 +199,23 @@ static void signal_handler(int signum) {
 }
 #endif
 
-static void init_core_client(int argc, char** argv) {
+static void init_core_client(int argc, const char** argv) {
     setbuf(stdout, 0);
     setbuf(stderr, 0);
 
+#ifdef HARDCODED_DIRS
+    gstate.data_directory = DIRECTORIES::localstate;
+    gstate.data_directory.append("/synecdoche");
+#endif
+
     gstate.parse_cmdline(argc, argv);
 
+    if (!gstate.data_directory.empty()) {
+        if (chdir(gstate.data_directory.c_str()) < 0) {
+            perror("chdir");
+            exit(1);
+        }
+    }
 #ifdef _WIN32
     if (!config.allow_multiple_clients) {
         chdir_to_data_dir();
@@ -480,7 +495,7 @@ int finalize() {
 /// Entry point.
 ///
 /// \todo Clean up the Windows-specific initialization code.
-int main(int argc, char** argv) {
+int main(int argc, const char** argv) {
     int retval = 0;
 
 #ifdef _WIN32

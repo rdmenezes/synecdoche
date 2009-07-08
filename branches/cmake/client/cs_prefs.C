@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -63,19 +63,17 @@ double CLIENT_STATE::allowed_disk_usage(double boinc_total) {
     return size;
 }
 
-int CLIENT_STATE::project_disk_usage(PROJECT* p, double& size) {
-    char buf[256];
-    unsigned int i;
-    double s;
+int CLIENT_STATE::project_disk_usage(const PROJECT* p, double& size) {
+    std::string path = get_project_dir(p);
+    dir_size(path.c_str(), size);
 
-    get_project_dir(p, buf, sizeof(buf));
-    dir_size(buf, size);
+    for (size_t i=0; i<active_tasks.active_tasks.size(); i++) {
+        const ACTIVE_TASK* atp = active_tasks.active_tasks[i];
+        double s;
 
-    for (i=0; i<active_tasks.active_tasks.size(); i++) {
-        ACTIVE_TASK* atp = active_tasks.active_tasks[i];
         if (atp->wup->project != p) continue;
-        get_slot_dir(atp->slot, buf, sizeof(buf));
-        dir_size(buf, s);
+        std::string slot_dir = get_slot_dir(atp->slot);
+        dir_size(slot_dir.c_str(), s);
         size += s;
     }
 
