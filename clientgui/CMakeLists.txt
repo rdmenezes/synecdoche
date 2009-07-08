@@ -116,6 +116,10 @@ IF(WIN32)
 	TARGET_LINK_LIBRARIES(synecmgr clientlib)
 	TARGET_LINK_LIBRARIES(synecmgr wininet.lib)
 ENDIF(WIN32)
+IF(APPLE)
+	FIND_LIBRARY(SECURITY_LIBRARY Security)
+	TARGET_LINK_LIBRARIES(synecmgr ${SECURITY_LIBRARY})
+ENDIF(APPLE)
 
 ENDIF(wxWidgets_FOUND)
 # vim: set fdm=marker:
