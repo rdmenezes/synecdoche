@@ -20,6 +20,7 @@
 #define TASK_H_INCLUDED
 
 #include <cstdio>
+#include <string>
 #include <vector>
 
 #include "common_defs.h"
@@ -62,6 +63,15 @@ private:
     /// Determines if everything is set up for starting the science application
     /// including all links in the slot directory.
     bool full_init_done;
+
+    /// Directory where process runs (relative).
+    std::string slot_dir;
+
+    /// Directory where process runs (absolute).
+    /// This is used only to run graphics apps
+    /// (that way don't have to worry about top-level dirs
+    /// being non-readable, etc).
+    std::string slot_path;
 
 public:
 #ifdef _WIN32
@@ -109,15 +119,6 @@ public:
 
     /// Disk used by output files and temp files of this task.
     int current_disk_usage(double& size) const;
-
-    /// Directory where process runs (relative).
-    char slot_dir[256];
-
-    /// Directory where process runs (absolute).
-    /// This is used only to run graphics apps
-    /// (that way don't have to worry about top-level dirs
-    /// being non-readable, etc).
-    char slot_path[512];
 
     double max_cpu_time;    ///< Abort if total CPU exceeds this.
     double max_disk_usage;  ///< Abort if disk usage (in+out+temp) exceeds this.
@@ -228,6 +229,9 @@ public:
     bool read_stderr_file();
     bool finish_file_present() const;
     bool supports_graphics() const;
+    
+    /// Return the slot directory (relative path).
+    std::string get_slot_dir() const;
 
     /// Write the app init file.
     int write_app_init_file();
@@ -273,7 +277,7 @@ public:
     bool check_rsc_limits_exceeded();
     bool check_quit_timeout_exceeded();
     bool is_slot_in_use(int slot) const;
-    bool is_slot_dir_in_use(const char* dir) const;
+    bool is_slot_dir_in_use(const std::string& dir) const;
     int get_free_slot() const;
     void send_heartbeats();
     void send_trickle_downs();

@@ -22,6 +22,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <wx/datetime.h>
 #include "common_defs.h"
 #include "gui_rpc_client.h"
 #include "hostinfo.h"
@@ -38,6 +39,7 @@ typedef struct {
 } RUNNING_GFX_APP;
 
 typedef std::map<std::string, PROJECT*> projects_map;
+typedef std::vector<std::string> project_names_vec;
 
 extern bool g_use_sandbox;
 
@@ -69,7 +71,7 @@ public:
     bool           IsConnectEventSignaled() { return m_bConnectEvent; };
     bool           IsConnected() { return m_bConnected; };
     bool           IsReconnecting() { return m_bReconnecting; };
-
+    
 private:
     CMainDocument* m_pDocument;
     bool           m_bFrameShutdownDetected;
@@ -170,6 +172,9 @@ public:
     
     /// Return a std::map containing all projects this client is attached to.
     projects_map                GetProjectsMap() const;
+    
+    /// Returns a sorted vector containing the names of all projects this client is attached to.
+    project_names_vec           GetProjectNames() const;
     
     float                       m_fProjectTotalResourceShare;
 

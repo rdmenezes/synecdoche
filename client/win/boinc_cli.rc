@@ -106,7 +106,7 @@ BEGIN
             VALUE "FileDescription", "Synecdoche Client"
             VALUE "FileVersion", SYNEC_VERSION_STRING "\0"
             VALUE "InternalName", "synecdoche"
-            VALUE "LegalCopyright", "© 2008 Synecdoche contributors"
+            VALUE "LegalCopyright", "© 2009 Synecdoche contributors"
             VALUE "OriginalFilename", "synecdoche.exe"
             VALUE "ProductName", "Synecdoche"
             VALUE "ProductVersion", SYNEC_VERSION_STRING "\0"

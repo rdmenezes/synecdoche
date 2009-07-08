@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,9 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _FILE_XFER_
-#define _FILE_XFER_
+#ifndef FILE_XFER_H
+#define FILE_XFER_H
 
+#include <string>
 #include <vector>
 
 #include "http_curl.h"
@@ -30,9 +32,11 @@ class FILE_INFO;
 /// (see pers_file_xfer.h), i.e.\ an HTTP transaction with a
 /// particular data server.
 class FILE_XFER : public HTTP_OP {
+private:
+    std::string pathname;
+
 public:
     FILE_INFO* fip;
-    char pathname[256];
     char header[4096];
     bool file_size_query;
     bool is_upload;
@@ -69,4 +73,4 @@ public:
     void set_bandwidth_limits(bool is_upload);
 };
 
-#endif
+#endif // FILE_XFER_H

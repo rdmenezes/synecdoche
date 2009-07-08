@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Nicolas Alvarez, Peter Kortschack
+// Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -74,20 +74,13 @@ void unescape_url(std::string& url);
 /// Escape an URL.
 void escape_url(std::string& url);
 
-void escape_url_readable(const char* in, char* out) __attribute__((deprecated));
-
 /// Escape a URL for the project directory
 std::string escape_url_readable(const std::string& in);
-
-void escape_project_url(const char *in, char* out) __attribute__((deprecated));
 
 /// Escape a URL for the project directory
 std::string escape_project_url(const std::string& in);
 
 bool valid_master_url(const char* url);
-
-/// Canonicalize a master URL.
-void canonicalize_master_url(char *url) __attribute__((deprecated));
 
 /// Canonicalize a master URL.
 void canonicalize_master_url(std::string&);
@@ -131,12 +124,6 @@ inline void downcase_string(std::string& w) {
     std::transform(w.begin(), w.end(), w.begin(), static_cast<int(*)(int)>(tolower));
 }
 
-/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-std::string mysql_timestamp(double dt);
-
-/// Convert UNIX time to MySQL timestamp (yyyymmddhhmmss).
-int mysql_timestamp(double dt, char* p, size_t len);
-
 /// Returns short text description of error numbers.
 const char* boincerror(int which_error);
 
@@ -145,6 +132,9 @@ const char* network_status_string(int n);
 
 /// Return a text-string description of a given reason for a rpc request.
 const char* rpc_reason_string(rpc_reason reason);
+
+/// Compare two strings in lexicographical order.
+bool NoCaseLess(const std::string& a, const std::string& b);
 
 #ifdef _WIN32
 #include <windows.h>

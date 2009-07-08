@@ -19,13 +19,14 @@
 #include "ViewMessages.h"
 
 #include "stdwx.h"
-#include "BOINCGUIApp.h"
-#include "BOINCBaseFrame.h"
-#include "MainDocument.h"
 #include "AdvancedFrame.h"
-#include "BOINCTaskCtrl.h"
+#include "BOINCBaseFrame.h"
+#include "BOINCGUIApp.h"
 #include "BOINCListCtrl.h"
+#include "BOINCTaskCtrl.h"
+#include "DlgMsgFilter.h"
 #include "Events.h"
+#include "MainDocument.h"
 
 #include "res/mess.xpm"
 
@@ -37,6 +38,8 @@
 // buttons in the "tasks" area
 #define BTN_COPYALL      0
 #define BTN_COPYSELECTED 1
+#define BTN_EDITFILTER   2
+#define BTN_ENABLEFILTER 3
 
 
 IMPLEMENT_DYNAMIC_CLASS(CViewMessages, CTaskViewBase)
@@ -44,35 +47,29 @@ IMPLEMENT_DYNAMIC_CLASS(CViewMessages, CTaskViewBase)
 BEGIN_EVENT_TABLE (CViewMessages, CTaskViewBase)
     EVT_BUTTON(ID_TASK_MESSAGES_COPYALL, CViewMessages::OnMessagesCopyAll)
     EVT_BUTTON(ID_TASK_MESSAGES_COPYSELECTED, CViewMessages::OnMessagesCopySelected)
+    EVT_BUTTON(ID_TASK_MESSAGES_EDIT_FILTER, CViewMessages::OnMessagesEditFilter)
+    EVT_BUTTON(ID_TASK_MESSAGES_ENABLE_FILTER, CViewMessages::OnMessagesEnableFilter)
     EVT_LIST_ITEM_FOCUSED(ID_LIST_MESSAGESVIEW, CViewMessages::OnListSelected)
     EVT_LIST_ITEM_SELECTED(ID_LIST_MESSAGESVIEW, CViewMessages::OnListSelected)
 END_EVENT_TABLE ()
 
 
-CViewMessages::CViewMessages()
-{}
-
+CViewMessages::CViewMessages() : m_enableMsgFilter(false) {
+}
 
 CViewMessages::CViewMessages(wxNotebook* pNotebook) :
-    CTaskViewBase(pNotebook)
-{
+    CTaskViewBase(pNotebook), m_enableMsgFilter(false) {
     m_pMessageInfoAttr = NULL;
     m_pMessageErrorAttr = NULL;
 }
 
-
 CViewMessages::~CViewMessages() {
-    if (m_pMessageInfoAttr) {
-        delete m_pMessageInfoAttr;
-        m_pMessageInfoAttr = NULL;
-    }
+    delete m_pMessageInfoAttr;
+    m_pMessageInfoAttr = 0;
 
-    if (m_pMessageErrorAttr) {
-        delete m_pMessageErrorAttr;
-        m_pMessageErrorAttr = NULL;
-    }
+    delete m_pMessageErrorAttr;
+    m_pMessageErrorAttr = 0;
 }
-
 
 void CViewMessages::DemandLoadView() {
     wxASSERT(!m_bViewLoaded);
@@ -84,26 +81,19 @@ void CViewMessages::DemandLoadView() {
         DEFAULT_LIST_MULTI_SEL_FLAGS
     );
 
-    CTaskItemGroup* pGroup = NULL;
-    CTaskItem*      pItem = NULL;
-
     wxASSERT(m_pTaskPane);
     wxASSERT(m_pListPane);
 
-
-    //
     // Initialize variables used in later parts of the class
-    //
     m_iPreviousDocCount = 0;
+    m_maxFilteredIndex = 0;
 
 
-    //
     // Setup View
-    //
-    pGroup = new CTaskItemGroup( _("Commands") );
+    CTaskItemGroup* pGroup = new CTaskItemGroup( _("Commands") );
     m_TaskGroups.push_back( pGroup );
 
-    pItem = new CTaskItem(
+    CTaskItem* pItem = new CTaskItem(
         _("Copy all messages"),
         _("Copy all the messages to the clipboard."),
         ID_TASK_MESSAGES_COPYALL 
@@ -125,6 +115,15 @@ void CViewMessages::DemandLoadView() {
     );
     pGroup->m_Tasks.push_back( pItem );
 
+    pItem = new CTaskItem(_("Edit message filter"),
+                          _("Edit the settings of the message filter."),
+                          ID_TASK_MESSAGES_EDIT_FILTER);
+    pGroup->m_Tasks.push_back(pItem);
+    
+    pItem = new CTaskItem(_("Enable message filter"),
+                          _("Enable message filtering based on the current filter settings."),
+                          ID_TASK_MESSAGES_ENABLE_FILTER);
+    pGroup->m_Tasks.push_back(pItem);
 
     // Create Task Pane Items
     m_pTaskPane->UpdateControls();
@@ -142,23 +141,19 @@ void CViewMessages::DemandLoadView() {
     UpdateSelection();
 }
 
-
 const wxString& CViewMessages::GetViewName() {
     static wxString strViewName(wxT("Messages"));
     return strViewName;
 }
-
 
 const wxString& CViewMessages::GetViewDisplayName() {
     static wxString strViewName(_("Messages"));
     return strViewName;
 }
 
-
 const char** CViewMessages::GetViewIcon() {
     return mess_xpm;
 }
-
 
 void CViewMessages::OnMessagesCopyAll( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewMessages::OnMessagesCopyAll - Function Begin"));
@@ -189,7 +184,6 @@ void CViewMessages::OnMessagesCopyAll( wxCommandEvent& WXUNUSED(event) ) {
 
     wxLogTrace(wxT("Function Start/End"), wxT("CViewMessages::OnMessagesCopyAll - Function End"));
 }
-
 
 void CViewMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewMessages::OnMessagesCopySelected - Function Begin"));
@@ -226,11 +220,65 @@ void CViewMessages::OnMessagesCopySelected( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewMessages::OnMessagesCopySelected - Function End"));
 }
 
-
-wxInt32 CViewMessages::GetDocCount() {
-    return static_cast<wxInt32>(wxGetApp().GetDocument()->GetMessageCount());
+void CViewMessages::OnMessagesEditFilter(wxCommandEvent& /* event */) {
+    DlgMsgFilter dlg(this);
+    dlg.SetFilterData(m_msgFilterData);
+    if (dlg.ShowModal() == wxID_OK) {
+        m_msgFilterData = dlg.GetFilterData();
+        m_maxFilteredIndex = 0;
+        m_filteredIndexes.clear();
+        
+        // Refresh the list if filtering is currently enabled:
+        if (m_enableMsgFilter) {
+            long docCount = GetDocCount();
+            m_pListPane->SetItemCount(docCount);
+            m_pListPane->RefreshItems(0, docCount - 1);
+        }
+    }
 }
 
+void CViewMessages::OnMessagesEnableFilter(wxCommandEvent& /* event */) {
+    m_enableMsgFilter = !m_enableMsgFilter;
+    if (m_enableMsgFilter) {
+        m_pTaskPane->UpdateTask(m_TaskGroups[0]->m_Tasks[BTN_ENABLEFILTER],
+                                _("Disable message filter"),
+                                _("Disable message filtering."));
+    } else {
+        m_pTaskPane->UpdateTask(m_TaskGroups[0]->m_Tasks[BTN_ENABLEFILTER],
+                                _("Enable message filter"),
+                                _("Enable message filtering based on the current filter settings."));
+    }
+
+    // Refresh the list:
+    long docCount = GetDocCount();
+    m_pListPane->SetItemCount(docCount);
+    m_pListPane->RefreshItems(0, docCount - 1);
+}
+
+/// Called when the manager has successfully connected to a client.
+void CViewMessages::OnConnect() {
+    // Reset the filter data because the client the manager is now connected to may be
+    // attached to different porjects than the client the manager was connected to before:
+    m_msgFilterData.ResetToDefaults();
+    m_filteredIndexes.clear();
+    m_maxFilteredIndex = 0;
+    
+    if (m_enableMsgFilter) {
+        m_enableMsgFilter = false;
+        m_pTaskPane->UpdateTask(m_TaskGroups[0]->m_Tasks[BTN_ENABLEFILTER],
+                                _("Enable message filter"),
+                                _("Enable message filtering based on the current filter settings."));
+    }
+}
+
+wxInt32 CViewMessages::GetDocCount() {
+    if (m_enableMsgFilter) {
+        FilterMessages();
+        return m_filteredIndexes.size();
+    } else {
+        return wxGetApp().GetDocument()->GetMessageCount();
+    }
+}
 
 void CViewMessages::OnListRender (wxTimerEvent& event) {
     bool isConnected;
@@ -299,29 +347,28 @@ void CViewMessages::OnListRender (wxTimerEvent& event) {
     event.Skip();
 }
 
-
 wxString CViewMessages::OnListGetItemText(long item, long column) const {
-    wxString        strBuffer   = wxEmptyString;
+    wxString strBuffer = wxEmptyString;
+    size_t index = GetFilteredIndex(item);
 
     switch(column) {
     case COLUMN_PROJECT:
-        FormatProjectName(item, strBuffer);
+        FormatProjectName(index, strBuffer);
         break;
     case COLUMN_TIME:
-        FormatTime(item, strBuffer);
+        FormatTime(index, strBuffer);
         break;
     case COLUMN_MESSAGE:
-        FormatMessage(item, strBuffer);
+        FormatMessage(index, strBuffer);
         break;
     }
 
     return strBuffer;
 }
 
-
 wxListItemAttr* CViewMessages::OnListGetItemAttr(long item) const {
-    wxListItemAttr* pAttribute  = NULL;
-    MESSAGE*        message     = wxGetApp().GetDocument()->message(item);
+    wxListItemAttr* pAttribute = 0;
+    MESSAGE* message = wxGetApp().GetDocument()->message(GetFilteredIndex(item));
 
     if (message) {
         switch(message->priority) {
@@ -337,7 +384,6 @@ wxListItemAttr* CViewMessages::OnListGetItemAttr(long item) const {
     return pAttribute;
 }
 
-
 bool CViewMessages::EnsureLastItemVisible() {
     int numVisible = m_pListPane->GetCountPerPage();
 
@@ -350,7 +396,6 @@ bool CViewMessages::EnsureLastItemVisible() {
     
     return true;
 }
-
 
 void CViewMessages::UpdateSelection() {
     CTaskItemGroup*     pGroup = NULL;
@@ -367,7 +412,6 @@ void CViewMessages::UpdateSelection() {
     CTaskViewBase::PostUpdateSelection();
 }
 
-
 wxInt32 CViewMessages::FormatProjectName(wxInt32 item, wxString& strBuffer) const {
     MESSAGE* message = wxGetApp().GetDocument()->message(item);
 
@@ -377,7 +421,6 @@ wxInt32 CViewMessages::FormatProjectName(wxInt32 item, wxString& strBuffer) cons
 
     return 0;
 }
-
 
 wxInt32 CViewMessages::FormatTime(wxInt32 item, wxString& strBuffer) const {
     wxDateTime dtBuffer;
@@ -391,7 +434,6 @@ wxInt32 CViewMessages::FormatTime(wxInt32 item, wxString& strBuffer) const {
     return 0;
 }
 
-
 wxInt32 CViewMessages::FormatMessage(wxInt32 item, wxString& strBuffer) const {
     MESSAGE*   message = wxGetApp().GetDocument()->message(item);
 
@@ -404,7 +446,71 @@ wxInt32 CViewMessages::FormatMessage(wxInt32 item, wxString& strBuffer) const {
     return 0;
 }
 
+/// Filter the messages based on the current filter settings.
+/// This function stores the index of the last filtered message and won't touch
+/// messages older than this if the function is called again. It will only check all
+/// messages that are newer than the one remembered. This makes calling this function
+/// as cheap as possible.
+/// If you want this function to filter all the messages, for example because the
+/// filter settings changed or the manager is now connected to a different client,
+/// then you need to set m_maxFilteredIndex to zero and clear m_filteredIndexes
+/// before calling this function.
+void CViewMessages::FilterMessages() {
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+    size_t end = pDoc->GetMessageCount();
+    
+    for (size_t index = m_maxFilteredIndex; index < end; ++index) {
+        MESSAGE* msg = pDoc->message(index);
+        if ((msg->project.empty()) || m_msgFilterData.IsProjectSelected(msg->project)) {            
+            bool includeThisMsg = true;
+            
+            // Check if the message contains a debug flag:
+            std::string::size_type start = msg->body.find('[');
+            if (start != std::string::npos) {
+                std::string::size_type end = msg->body.find(']', start);
+                if (end != std::string::npos) {
+                    std::string debugFlag = msg->body.substr(start + 1, end - start - 1);
+                    if ((m_msgFilterData.IsDebugFlagValid(debugFlag))
+                            && (!m_msgFilterData.IsDebugFlagSelected(debugFlag))) {
+                        includeThisMsg = false;
+                    }
+                }
+            }
 
+            if (includeThisMsg) {
+                // The message has passed all filters, thus add it to the list:
+                m_filteredIndexes.push_back(index);
+            }
+        }
+    }
+    
+    // Check if more messages passed the filters than should be shown and truncate the
+    // list if necessary. The oldest messages (e.g. the ones added first) are removed first.
+    if (m_filteredIndexes.size() > m_msgFilterData.GetNumVisibleMsg()) {
+        m_filteredIndexes.erase(m_filteredIndexes.begin(),
+                                m_filteredIndexes.end() - m_msgFilterData.GetNumVisibleMsg());
+    }
+    
+    m_maxFilteredIndex = end;
+}
+
+/// Return the message index for the requested row index.
+/// Call this function whenever you need to get a certain message from the client
+/// based on a row index of the list control. These too indexes may not be identical
+/// if message filtering is activated, therefore using this function is the only way
+/// to get the correct message.
+///
+/// \param[in] index The row index as returned by the list control.
+/// \return The corresponding message index that can be used to get the correct message
+///         from the core client.
+size_t CViewMessages::GetFilteredIndex(size_t index) const {
+    if (m_enableMsgFilter) {
+        return m_filteredIndexes.at(index);
+    } else {
+        return index;
+    }
+}
+    
 #ifdef wxUSE_CLIPBOARD
 bool CViewMessages::OpenClipboard(wxInt32 row_count) {
     bool bRetVal = false;
@@ -423,7 +529,6 @@ bool CViewMessages::OpenClipboard(wxInt32 row_count) {
     return bRetVal;
 }
 
-
 wxInt32 CViewMessages::CopyToClipboard(wxInt32 item) {
     wxInt32        iRetVal = -1;
 
@@ -432,10 +537,12 @@ wxInt32 CViewMessages::CopyToClipboard(wxInt32 item) {
         wxString       strTimeStamp = wxEmptyString;
         wxString       strProject = wxEmptyString;
         wxString       strMessage = wxEmptyString;
+        
+        size_t index = GetFilteredIndex(item);
 
-        FormatTime(item, strTimeStamp);
-        FormatProjectName(item, strProject);
-        FormatMessage(item, strMessage);
+        FormatTime(index, strTimeStamp);
+        FormatProjectName(index, strProject);
+        FormatMessage(index, strMessage);
 
 #ifdef __WXMSW__
         strBuffer.Printf(wxT("%s|%s|%s\r\n"), strTimeStamp.c_str(), strProject.c_str(), strMessage.c_str());
@@ -450,7 +557,6 @@ wxInt32 CViewMessages::CopyToClipboard(wxInt32 item) {
 
     return iRetVal;
 }
-
 
 bool CViewMessages::CloseClipboard() {
     bool bRetVal = false;

@@ -16,6 +16,8 @@
 #include "common/wxFNBDropTarget.h"
 
 class wxPageContainerBase;
+class wxBufferedDC;
+class wxBufferedPaintDC;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979

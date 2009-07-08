@@ -59,7 +59,7 @@
 #define EPOCHFILETIME_SEC (11644473600.)
 #define TEN_MILLION 10000000.
 
-/// return time of day (seconds since 1970) as a double
+/// Return time of day (seconds since 1970) as a double.
 double dtime() {
 #ifdef _WIN32
     LARGE_INTEGER time;
@@ -81,7 +81,7 @@ double dtime() {
 
 /// Return time today 0:00 in seconds since 1970 as a double.
 double dday() {
-    double now=dtime();
+    double now = dtime();
     return (now-fmod(now, SECONDS_PER_DAY));
 }
 

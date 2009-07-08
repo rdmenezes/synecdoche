@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -84,6 +84,9 @@ public:
 
     /// Get a map containing the keys for all columns.
     const ColumnListMap&    GetColumnKeys() const;
+    
+    /// Called when the manager has successfully connected to a client.
+    virtual void            OnConnect();
 
     int                     m_iSortColumn;
     bool                    m_bReverseSort;

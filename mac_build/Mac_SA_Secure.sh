@@ -1,23 +1,21 @@
 #! /bin/sh
 
-# Berkeley Open Infrastructure for Network Computing
+# This file is part of BOINC.
 # http://boinc.berkeley.edu
-# Copyright (C) 2006 University of California
+# Copyright (C) 2008 University of California
 #
-# This is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation;
-# either version 2.1 of the License, or (at your option) any later version.
+# BOINC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
+# BOINC is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Lesser General Public License for more details.
 #
-# To view the GNU Lesser General Public License visit
-# http://www.gnu.org/copyleft/lesser.html
-# or write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# You should have received a copy of the GNU Lesser General Public License
+# along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
 # Make a BOINC installation "secure" on a Macintosh with stand-alone BOINC Client
 # The BOINC installer does this for a Macintosh installation with BOINC Manager; 
@@ -64,7 +62,7 @@
 # sudo dscl . -delete /groups/boinc_master users mary
 # 
 
-# Last updated 1/17/08 for BOINC version 5.10.38
+# Last updated 4/2/09 for BOINC version 6.7
 # WARNING: do not use this script with older versions of BOINC
 
 function make_boinc_user() {
@@ -181,7 +179,7 @@ make_boinc_users
 dscl . -merge /groups/boinc_master users "$(LOGNAME)"
 dscl . -merge /groups/boinc_project users "$(LOGNAME)"
 
-set_perm_recursive . boinc_master boinc_master u+rw,g+rw,o+r-w
+set_perm_recursive . boinc_master boinc_master u+rw,g+rw,o-rw
 set_perm . boinc_master boinc_master 0771
 if [ -f gui_rpc_auth.cfg ] ; then
     set_perm gui_rpc_auth.cfg boinc_master boinc_master 0660
@@ -216,19 +214,23 @@ if [ -f boinc ] ; then
     set_perm boinc boinc_master boinc_master 6555       # boinc client
 fi
 
-if [ -f boinc_cmd ] ; then
-    set_perm boinc_cmd boinc_master boinc_master 0550
+if [ -f boinccmd ] ; then
+    set_perm boinccmd boinc_master boinc_master 0550
 fi
 
-if [ -x /Applications/Synecdoche.app/Contents/MacOS/Synecdoche ] ; then 
-    set_perm  /Applications/Synecdoche.app/Contents/MacOS/Synecdoche boinc_master boinc_master 2555
+if [ -f ss_config.xml ] ; then
+    set_perm ss_config.xml boinc_master boinc_master 0664
 fi
 
-if [ -x /Applications/Synecdoche.app/Contents/Resources/synecd ] ; then 
-    set_perm /Applications/Synecdoche.app/Contents/Resources/synecd boinc_master boinc_master 6555
+if [ -x /Applications/BOINCManager.app/Contents/MacOS/BOINCManager ] ; then 
+    set_perm  /Applications/BOINCManager.app/Contents/MacOS/BOINCManager boinc_master boinc_master 2555
+fi
+
+if [ -x /Applications/BOINCManager.app/Contents/Resources/boinc ] ; then 
+    set_perm /Applications/BOINCManager.app/Contents/Resources/boinc boinc_master boinc_master 6555
 fi
 
 # Version 6 screensaver has its own embedded switcher application, but older versions don't.
-if [ -x "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher" ] ; then 
-    set_perm  "/Library/Screen Savers/Synecdoche.saver/Contents/Resources/gfx_switcher" root boinc_master 4555
+if [ -x "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher" ] ; then 
+    set_perm  "/Library/Screen Savers/BOINCSaver.saver/Contents/Resources/gfx_switcher" root boinc_master 4555
 fi

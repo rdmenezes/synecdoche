@@ -26,7 +26,9 @@
 
 class CFrameEvent;
 class CFrameAlertEvent;
+#ifndef __WXMAC__
 class CBOINCDialUpManager;
+#endif // __WXMAC__
 
 enum FrameAlertEventType {
     AlertNormal = 0,
@@ -90,8 +92,6 @@ public:
                             const FrameAlertEventType alert_event_type = AlertNormal
                         );
 
-    void                ExecuteBrowserLink( const wxString& strLink ) __attribute__((deprecated));
-
 #ifdef __WXMAC__
     bool                Show( bool show = true );
     int                 m_iWindowType;              // BOINC_SIMPLEGUI or BOINC_ADVANCEDGUI
@@ -99,7 +99,9 @@ public:
 
 protected:
 
+#ifndef __WXMAC__
     CBOINCDialUpManager* m_pDialupManager;
+#endif // __WXMAC__
 
     wxTimer*            m_pDocumentPollTimer;
     wxTimer*            m_pAlertPollTimer;

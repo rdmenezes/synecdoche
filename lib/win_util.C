@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifdef _BOINC_DLL
 #include "stdafx.h"
 #else
@@ -24,15 +23,13 @@
 
 #include "win_util.h"
 
-/**
- * Find out if we are on a Windows 2000 compatible system
- **/
+/// Find out if we are on a Windows 2000 compatible system.
 BOOL IsWindows2000Compatible() {
    OSVERSIONINFO osvi;
    ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 
-    if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) ) 
+    if (!GetVersionEx((OSVERSIONINFO *) &osvi))
         return FALSE;
 
     return (osvi.dwMajorVersion >= 5);
@@ -54,14 +51,12 @@ BOOL IsWindows2000Compatible() {
 #define VER_SUITE_SINGLEUSERTS              0x00000100
 #endif
 
-/**
- * This function performs the basic check to see if
- * the platform on which it is running is Terminal
- * services enabled.  Note, this code is compatible on
- * all Win32 platforms.  For the Windows 2000 platform
- * we perform a "lazy" bind to the new product suite
- * APIs that were first introduced on that platform.
- */
+/// Checks if the platform on which it is running is Terminal services enabled.
+///
+/// Note, this code is compatible on all Win32 platforms. For the Windows 2000
+/// platform we perform a "lazy" bind to the new product suite APIs that were
+/// first introduced on that platform.
+
 BOOL IsTerminalServicesEnabled() {
     BOOL    bResult = FALSE;    // assume Terminal Services is not enabled
 
@@ -121,11 +116,9 @@ BOOL IsTerminalServicesEnabled() {
 }
 
 
-/**
- * This function compares the passed in "suite name" string
- * to the product suite information stored in the registry.
- * This only works on the Terminal Server 4.0 platform.
- */
+/// Compares the passed in "suite name" string to the product suite information
+/// stored in the registry. This only works on the Terminal Server 4.0
+/// platform.
 BOOL ValidateProductSuite (LPSTR SuiteName) {
     BOOL rVal = FALSE;
     LONG Rslt;
@@ -179,9 +172,7 @@ exit:
 }
 
 
-/**
- * This function terminates a process by process id instead of a handle.
- */
+/// Terminates a process by process id instead of a handle.
 BOOL TerminateProcessById( DWORD dwProcessID ) {
     HANDLE hProcess;
     BOOL bRetVal = FALSE;
@@ -198,12 +189,9 @@ BOOL TerminateProcessById( DWORD dwProcessID ) {
 }
 
 
-/**
- * This function adjusts the specified WindowStation to include the specfied
- *   user.
-
- * See: http://msdn2.microsoft.com/en-us/library/aa379608(VS.85).aspx
- */
+/// Adjusts the specified WindowStation to include the specifieduser.
+///
+/// See: http://msdn2.microsoft.com/en-us/library/aa379608(VS.85).aspx
 BOOL AddAceToWindowStation(HWINSTA hwinsta, PSID psid)
 {
    ACCESS_ALLOWED_ACE   *pace = NULL;
@@ -434,12 +422,9 @@ BOOL AddAceToWindowStation(HWINSTA hwinsta, PSID psid)
 }
 
 
-/**
- * This function adjusts the specified Desktop to include the specfied
- * user.
- *
- * See: http://msdn2.microsoft.com/en-us/library/aa379608(VS.85).aspx
- */
+/// This function adjusts the specified Desktop to include the specfied user.
+///
+/// See: http://msdn2.microsoft.com/en-us/library/aa379608(VS.85).aspx
 BOOL AddAceToDesktop(HDESK hdesk, PSID psid)
 {
    ACL_SIZE_INFORMATION aclSizeInfo;
@@ -633,20 +618,17 @@ BOOL AddAceToDesktop(HDESK hdesk, PSID psid)
 }
 
 
-/**
-This function attempts to obtain a SID representing the supplied
-account on the supplied system.
-
-If the function succeeds, the return value is TRUE. A buffer is
-allocated which contains the SID representing the supplied account.
-This buffer should be freed when it is no longer needed by calling
-HeapFree(GetProcessHeap(), 0, buffer)
-
-If the function fails, the return value is FALSE. Call GetLastError()
-to obtain extended error information.
-
-Scott Field (sfield)    12-Jul-95
-*/
+/// Attempts to obtain a SID representing the supplied account on the supplied
+/// system.
+///
+/// A buffer is allocated which contains the SID representing the supplied
+/// account. This buffer should be freed when it is no longer needed by calling
+/// HeapFree(GetProcessHeap(), 0, buffer)
+///
+/// \returns TRUE on success, FALSE on error. Call GetLastError() to obtain
+///          extended error information.
+///
+/// \author Scott Field (sfield)    12-Jul-95
 BOOL GetAccountSid(
     LPCTSTR SystemName,
     LPCTSTR AccountName,
@@ -744,41 +726,41 @@ typedef HANDLE (WINAPI *tOT)(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD d
 /// The only way to do this on Windows is to enumerate
 /// all the threads in the entire system,
 /// and find those belonging to the process (ugh!!)
-int suspend_or_resume_threads(DWORD pid, bool resume) { 
+int suspend_or_resume_threads(DWORD pid, bool resume) {
     HANDLE threads, thread;
     HMODULE hKernel32Lib = NULL;
-    THREADENTRY32 te = {0}; 
+    THREADENTRY32 te = {0};
     tOT pOT = NULL;
- 
+
     // Dynamically link to the proper function pointers.
     hKernel32Lib = GetModuleHandle("kernel32.dll");
-    pOT = (tOT) GetProcAddress( hKernel32Lib, "OpenThread" );
+    pOT = (tOT) GetProcAddress(hKernel32Lib, "OpenThread");
 
     if (!pOT) {
         return -1;
     }
 
-    threads = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0); 
+    threads = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
     if (threads == INVALID_HANDLE_VALUE) return -1;
- 
-    te.dwSize = sizeof(THREADENTRY32); 
-    if (!Thread32First(threads, &te)) { 
-        CloseHandle(threads); 
+
+    te.dwSize = sizeof(THREADENTRY32);
+    if (!Thread32First(threads, &te)) {
+        CloseHandle(threads);
         return -1;
     }
 
-    do { 
+    do {
         if (te.th32OwnerProcessID == pid) {
             thread = pOT(THREAD_SUSPEND_RESUME, FALSE, te.th32ThreadID);
-            resume ?  ResumeThread(thread) : SuspendThread(thread);
+            resume ? ResumeThread(thread) : SuspendThread(thread);
             CloseHandle(thread);
-        } 
-    } while (Thread32Next(threads, &te)); 
+        }
+    } while (Thread32Next(threads, &te));
 
-    CloseHandle (threads); 
+    CloseHandle(threads);
 
     return 0;
-} 
+}
 
 void chdir_to_data_dir() {
     /*
@@ -789,9 +771,9 @@ void chdir_to_data_dir() {
 
     // change the current directory to the boinc data directory if it exists
     lReturnValue = RegOpenKeyEx(
-        HKEY_LOCAL_MACHINE, 
-        _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"),  
-        0, 
+        HKEY_LOCAL_MACHINE,
+        _T("SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"),
+        0,
         KEY_READ,
         &hkSetupHive
     );
@@ -811,7 +793,7 @@ void chdir_to_data_dir() {
             (*lpszRegistryValue) = NULL;
 
             // Now get the data
-            lReturnValue = RegQueryValueEx( 
+            lReturnValue = RegQueryValueEx(
                 hkSetupHive,
                 _T("DATADIR"),
                 NULL,

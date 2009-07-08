@@ -122,11 +122,11 @@ int NET_STATS::parse(MIOFILE& in) {
 /// - WANT_DISCONNECT if we don't have any connections, and don't need any
 /// - LOOKUP_PENDING if a website lookup is pending (try again later)
 ///
-/// There's a 10-second slop factor;
-/// if we've done network comm in the last 10 seconds,
+/// There's a 10-second slop factor:
+/// if we've done network communication in the last 10 seconds,
 /// we act as if we're doing it now.
-/// (so that polling mechanisms have a chance to start other xfers,
-/// in the case of a modem connection waiting to be closed by the mgr)
+/// (so that polling mechanisms have a chance to start other transfers,
+/// in the case of a modem connection waiting to be closed by the manager)
 ///
 int NET_STATUS::network_status() {
     int retval;

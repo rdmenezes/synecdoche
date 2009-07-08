@@ -78,7 +78,6 @@ GUI_RPC_CONN::~GUI_RPC_CONN() {
 
 GUI_RPC_CONN_SET::GUI_RPC_CONN_SET() {
     lsock = -1;
-    time_of_last_rpc_needing_network = 0;
 }
 
 bool GUI_RPC_CONN_SET::poll() {
@@ -90,12 +89,6 @@ bool GUI_RPC_CONN_SET::poll() {
         }
     }
     return action;
-}
-
-bool GUI_RPC_CONN_SET::recent_rpc_needs_network(double interval) const {
-    if (!time_of_last_rpc_needing_network) return false;
-    if (gstate.now < time_of_last_rpc_needing_network + interval) return true;
-    return false;
 }
 
 int GUI_RPC_CONN_SET::get_password() {

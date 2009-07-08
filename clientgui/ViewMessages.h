@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _VIEWMESSAGES_H_
-#define _VIEWMESSAGES_H_
+#ifndef VIEWMESSAGES_H
+#define VIEWMESSAGES_H
 
-
+#include "MsgFilterData.h"
 #include "TaskViewBase.h"
 
 class CViewMessages : public CTaskViewBase
@@ -37,8 +37,14 @@ public:
     virtual const wxString& GetViewDisplayName();
     virtual const char**    GetViewIcon();
 
-    void                    OnMessagesCopyAll( wxCommandEvent& event );
-    void                    OnMessagesCopySelected( wxCommandEvent& event );
+    void                    OnMessagesCopyAll(wxCommandEvent& event);
+    void                    OnMessagesCopySelected(wxCommandEvent& event);
+    
+    void                    OnMessagesEditFilter(wxCommandEvent& event);
+    void                    OnMessagesEnableFilter(wxCommandEvent& event);
+
+    /// Called when the manager has successfully connected to a client.
+    void                    OnConnect();
 
 protected:
 
@@ -71,6 +77,18 @@ protected:
     wxInt32                 CopyToClipboard( wxInt32 item );
     bool                    CloseClipboard();
 #endif
+
+private:
+    /// Filter the messages based on the current filter settings.
+    void                    FilterMessages();
+    
+    /// Return the message index for the requested row index.
+    size_t                  GetFilteredIndex(size_t index) const;
+    
+    bool                    m_enableMsgFilter;  ///< Toggle message filtering.
+    MsgFilterData           m_msgFilterData;    ///< The current message filter settings.
+    std::vector<size_t>     m_filteredIndexes;  ///< Internal mapping between row indexes and message indexes based on filter settings.
+    size_t                  m_maxFilteredIndex; ///< Index of the last filtered message (plus one).
 };
 
-#endif
+#endif // VIEWMESSAGES_H

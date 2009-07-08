@@ -48,7 +48,7 @@
 #include "hostinfo.h"
 
 void version(){
-    printf("syneccmd,  built from %s \n", PACKAGE_STRING );
+    printf("syneccmd, built from %s\n", PACKAGE_STRING );
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSACleanup();
 #endif
@@ -101,16 +101,16 @@ Commands:\n\
     exit(1);
 }
 
-void parse_display_args(char** argv, int& i, DISPLAY_INFO& di) {
+void parse_display_args(const char** argv, int& i, DISPLAY_INFO& di) {
     di.window_station = "winsta0";
     di.desktop = "default";
     di.display = "";
     while (argv[i]) {
         if (!strcmp(argv[i], "--window_station")) {
             di.window_station = argv[++i];
-        } else if (!strcpy(argv[i], "--desktop")) {
+        } else if (!strcmp(argv[i], "--desktop")) {
             di.desktop = argv[++i];
-        } else if (!strcpy(argv[i], "--display")) {
+        } else if (!strcmp(argv[i], "--display")) {
             di.display = argv[++i];
         }
         ++i;
@@ -121,7 +121,7 @@ void show_error(int retval) {
     fprintf(stderr, "Error %d: %s\n", retval, boincerror(retval));
 }
 
-char* next_arg(int argc, char** argv, int& i) {
+const char* next_arg(int argc, const char** argv, int& i) {
     if (i >= argc) {
         fprintf(stderr, "Missing command-line argument\n");
         usage();
@@ -142,7 +142,7 @@ const char* prio_name(int prio) {
     }
 }
 
-int main_impl(int argc, char** argv) {
+int main_impl(int argc, const char** argv) {
     RPC_CLIENT rpc;
     int retval, port=GUI_RPC_PORT;
     MESSAGES messages;
@@ -233,7 +233,7 @@ int main_impl(int argc, char** argv) {
         }
     }
 
-    char* cmd = next_arg(argc, argv, i);
+    const char* cmd = next_arg(argc, argv, i);
     if (!strcmp(cmd, "--get_state")) {
         CC_STATE state;
         retval = rpc.get_state(state);
@@ -260,11 +260,11 @@ int main_impl(int argc, char** argv) {
         if (!retval) du.print();
     } else if (!strcmp(cmd, "--result")) {
         RESULT result;
-        char* project_url = next_arg(argc, argv, i);
+        const char* project_url = next_arg(argc, argv, i);
         result.project_url = project_url;
-        char* name = next_arg(argc, argv, i);
+        const char* name = next_arg(argc, argv, i);
         result.name = name;
-        char* op = next_arg(argc, argv, i);
+        const char* op = next_arg(argc, argv, i);
         if (!strcmp(op, "suspend")) {
             retval = rpc.result_op(result, "suspend");
         } else if (!strcmp(op, "resume")) {
@@ -286,7 +286,7 @@ int main_impl(int argc, char** argv) {
         PROJECT project;
         project.master_url =  next_arg(argc, argv, i);
         canonicalize_master_url(project.master_url);
-        char* op = next_arg(argc, argv, i);
+        const char* op = next_arg(argc, argv, i);
         if (!strcmp(op, "reset")) {
             retval = rpc.project_op(project, "reset");
         } else if (!strcmp(op, "suspend")) {
@@ -315,14 +315,14 @@ int main_impl(int argc, char** argv) {
     } else if (!strcmp(cmd, "--project_attach")) {
         std::string url(next_arg(argc, argv, i));
         canonicalize_master_url(url);
-        char* auth = next_arg(argc, argv, i);
+        const char* auth = next_arg(argc, argv, i);
         retval = rpc.project_attach(url.c_str(), auth, "");
     } else if (!strcmp(cmd, "--file_transfer")) {
         FILE_TRANSFER ft;
 
         ft.project_url = next_arg(argc, argv, i);
         ft.name = next_arg(argc, argv, i);
-        char* op = next_arg(argc, argv, i);
+        const char* op = next_arg(argc, argv, i);
         if (!strcmp(op, "retry")) {
             retval = rpc.file_transfer_op(ft, "retry");
         } else if (!strcmp(op, "abort")) {
@@ -331,7 +331,7 @@ int main_impl(int argc, char** argv) {
             fprintf(stderr, "Unknown op %s\n", op);
         }
     } else if (!strcmp(cmd, "--set_run_mode")) {
-        char* op = next_arg(argc, argv, i);
+        const char* op = next_arg(argc, argv, i);
         double duration;
         if (i >= argc || (argv[i][0] == '-')) {
             duration = 0;
@@ -348,7 +348,7 @@ int main_impl(int argc, char** argv) {
             fprintf(stderr, "Unknown op %s\n", op);
         }
     } else if (!strcmp(cmd, "--set_network_mode")) {
-        char* op = next_arg(argc, argv, i);
+        const char* op = next_arg(argc, argv, i);
         double duration;
         if (i >= argc || (argv[i][0] == '-')) {
             duration = 0;
@@ -408,9 +408,9 @@ int main_impl(int argc, char** argv) {
         retval = rpc.get_host_info(hi);
         if (!retval) hi.print();
     } else if (!strcmp(cmd, "--join_acct_mgr")) {
-        char* am_url = next_arg(argc, argv, i);
-        char* am_name = next_arg(argc, argv, i);
-        char* am_passwd = next_arg(argc, argv, i);
+        const char* am_url = next_arg(argc, argv, i);
+        const char* am_name = next_arg(argc, argv, i);
+        const char* am_passwd = next_arg(argc, argv, i);
         retval = rpc.acct_mgr_rpc(am_url, am_name, am_passwd);
         if (!retval) {
             while (1) {
@@ -441,7 +441,7 @@ int main_impl(int argc, char** argv) {
     } else if (!strcmp(cmd, "--run_benchmarks")) {
         retval = rpc.run_benchmarks();
     } else if (!strcmp(cmd, "--get_project_config")) {
-        char* gpc_url = next_arg(argc, argv,i);
+        const char* gpc_url = next_arg(argc, argv,i);
         retval = rpc.get_project_config(std::string(gpc_url));
     } else if (!strcmp(cmd, "--get_project_config_poll")) {
         PROJECT_CONFIG pc;
@@ -540,7 +540,7 @@ int main_impl(int argc, char** argv) {
     return retval;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, const char** argv) {
     try {
         return main_impl(argc, argv);
     } catch (std::exception& ex) {

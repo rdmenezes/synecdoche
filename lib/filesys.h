@@ -42,7 +42,7 @@ extern "C" {
   int boinc_delete_file(const std::string& path);
 
   /// Create an empty file.
-  int boinc_touch_file(const char *path);
+  int boinc_touch_file(const char* path);
 
   /// Open a file for reading or writing.
   FILE* boinc_fopen(const char* path, const char* mode);

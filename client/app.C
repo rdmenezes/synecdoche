@@ -94,7 +94,6 @@ ACTIVE_TASK::ACTIVE_TASK() {
     _task_state = PROCESS_UNINITIALIZED;
     scheduler_state = CPU_SCHED_UNINITIALIZED;
     signal = 0;
-    strcpy(slot_dir, "");
     graphics_mode_acked = MODE_UNSUPPORTED;
     graphics_mode_ack_timeout = 0;
     fraction_done = 0;
@@ -202,9 +201,8 @@ int ACTIVE_TASK::init(RESULT* rp) {
     max_cpu_time = rp->wup->rsc_fpops_bound/gstate.host_info.p_fpops;
     max_disk_usage = rp->wup->rsc_disk_bound;
     max_mem_usage = rp->wup->rsc_memory_bound;
-    get_slot_dir(slot, slot_dir, sizeof(slot_dir));
-    std::string buf = relative_to_absolute(slot_dir);
-    strlcpy(slot_path, buf.c_str(), sizeof(slot_path));
+    slot_dir = ::get_slot_dir(slot);
+    slot_path = relative_to_absolute(slot_dir);
     return 0;
 }
 
@@ -352,7 +350,7 @@ int ACTIVE_TASK::current_disk_usage(double& size) const {
     int retval;
     std::string path;
 
-    retval = dir_size(slot_dir, size);
+    retval = dir_size(slot_dir.c_str(), size);
     if (retval) return retval;
     for (size_t i=0; i<result->output_files.size(); i++) {
         const FILE_INFO* fip = result->output_files[i].file_info;
@@ -374,12 +372,11 @@ bool ACTIVE_TASK_SET::is_slot_in_use(int slot) const {
     return false;
 }
 
-bool ACTIVE_TASK_SET::is_slot_dir_in_use(const char* dir) const {
-    char path[1024];
-    unsigned int i;
-    for (i=0; i<active_tasks.size(); i++) {
-        get_slot_dir(active_tasks[i]->slot, path, sizeof(path));
-        if (!strcmp(path, dir)) return true;
+bool ACTIVE_TASK_SET::is_slot_dir_in_use(const std::string& dir) const {
+    for (size_t i = 0; i < active_tasks.size(); ++i) {
+        if (get_slot_dir(active_tasks[i]->slot) == dir) {
+            return true;
+        }
     }
     return false;
 }
@@ -388,17 +385,15 @@ bool ACTIVE_TASK_SET::is_slot_dir_in_use(const char* dir) const {
 /// and make a slot dir if needed
 int ACTIVE_TASK_SET::get_free_slot() const {
     int j, retval;
-    char path[1024];
 
     for (j=0; ; j++) {
         if (is_slot_in_use(j)) continue;
 
         // make sure we can make an empty directory for this slot
-        //
-        get_slot_dir(j, path, sizeof(path));
-        if (boinc_file_exists(path)) {
-            if (is_dir(path)) {
-                retval = client_clean_out_dir(path);
+        std::string slot_dir = get_slot_dir(j);
+        if (boinc_file_exists(slot_dir.c_str())) {
+            if (is_dir(slot_dir.c_str())) {
+                retval = client_clean_out_dir(slot_dir.c_str());
                 if (!retval) return j;
             }
         } else {
@@ -440,7 +435,7 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
         "    <stats_pagefault_rate>%f</stats_pagefault_rate>\n"
         "    <stats_disk>%f</stats_disk>\n"
         "    <stats_checkpoint>%d</stats_checkpoint>\n",
-        result->project->master_url,
+        result->project->get_master_url().c_str(),
         result->name,
         task_state(),
         app_version->version_num,
@@ -498,7 +493,7 @@ int ACTIVE_TASK::write_gui(MIOFILE& fout) const {
             "   <graphics_exec_path>%s</graphics_exec_path>\n"
             "   <slot_path>%s</slot_path>\n",
             app_version->graphics_exec_path,
-            slot_path
+            slot_path.c_str()
         );
     }
     if (supports_graphics() && !gstate.disable_graphics) {
@@ -608,6 +603,11 @@ int ACTIVE_TASK::parse(MIOFILE& fin) {
     return ERR_XML_PARSE;
 }
 
+/// Return the slot directory (relative path).
+std::string ACTIVE_TASK::get_slot_dir() const {
+    return slot_dir;
+}
+
 /// Write XML information about this active task set
 int ACTIVE_TASK_SET::write(MIOFILE& fout) const {
     unsigned int i;
@@ -651,7 +651,7 @@ int ACTIVE_TASK_SET::parse(MIOFILE& fin) {
     return ERR_XML_PARSE;
 }
 
-void MSG_QUEUE::init(char* n) {
+void MSG_QUEUE::init(const char* n) {
     strcpy(name, n);
     last_block = 0;
     msgs.clear();

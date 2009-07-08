@@ -17,15 +17,23 @@ bin_PROGRAMS = synecd switcher
 
 synecd_SOURCES = \
     acct_mgr.C \
+    acct_mgr.h \
     acct_setup.C \
+    acct_setup.h \
     app.C \
+    app.h \
     app_control.C \
     app_graphics.C \
     app_start.C \
     check_state.C \
     client_msgs.C \
+    client_msgs.h \
     client_state.C \
+    client_state.h \
     client_types.C \
+    client_types.h \
+    cpp.h \
+    cpu_benchmark.h \
     cpu_sched.C \
     cs_account.C \
     cs_apps.C \
@@ -37,43 +45,63 @@ synecd_SOURCES = \
     cs_scheduler.C \
     cs_statefile.C \
     cs_trickle.C \
+    dirs.h \
     dhrystone.C \
+    dhrystone.h \
     dhrystone2.C \
     file_names.C \
+    file_names.h \
     file_xfer.C \
+    file_xfer.h \
     gui_http.C \
+    gui_http.h \
     gui_rpc_server.C \
+    gui_rpc_server.h \
     gui_rpc_server_ops.C \
     hostinfo_network.C \
+    hostinfo_network.h \
     hostinfo_unix.C \
     http_curl.C \
+    http_curl.h \
     log_flags.C \
+    log_flags.h \
     main.C \
+    main.h \
     net_stats.C \
+    net_stats.h \
     pers_file_xfer.C \
+    pers_file_xfer.h \
     rr_sim.cpp \
+    rr_sim.h \
     sandbox.C \
+    sandbox.h \
     scheduler_op.C \
+    scheduler_op.h \
     time_stats.C \
+    time_stats.h \
     whetstone.C \
-    work_fetch.C \
-    ../svnversion.cpp
+    work_fetch.C
 
-synecd_DEPENDENCIES =
-synecd_CPPFLAGS = -O3 -fomit-frame-pointer -fforce-addr -ffast-math $(AM_CPPFLAGS)
-synecd_LDFLAGS = -static-libgcc
+nodist_synecd_SOURCES = ../svnversion.cpp dirs.cpp
+
+synecd_CPPFLAGS = $(AM_CPPFLAGS) -DHARDCODED_DIRS
 synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
 
 synecddir = $(bindir)
-synecd_DATA = ../curl/ca-bundle.crt
+dist_synecd_DATA = ../curl/ca-bundle.crt
 
 switcher_SOURCES = switcher.C
 
-all-local: synecd
+install-data-local:
+	$(MKDIR_P) $(DESTDIR)$(localstatedir)/synecdoche
 
-## these source files need to be specified because no rule uses them.
+dirs.cpp: dirs.cpp.in Makefile
+	sed -e 's,[@]sysconfdir[@],$(sysconfdir),g' \
+		-e 's,[@]localstatedir[@],$(localstatedir),g' \
+		< $(srcdir)/dirs.cpp.in > dirs.cpp
 
-EXTRA_DIST = *.h \
-    mac \
-    translation \
-    win
+EXTRA_DIST = dirs.cpp.in \
+    win \
+    scripts
+
+CLEANFILES = dirs.cpp

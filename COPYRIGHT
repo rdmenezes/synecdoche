@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Source: http://code.google.com/p/synecdoche/source/list
-// Copyright(C) 2008 University of California, David Barnard et al.
+// Copyright(C) 2009 University of California, David Barnard et al.
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -19,8 +19,8 @@
 //
 // Berkeley Open Infrastructure for Network Computing
 // http://boinc.berkeley.edu
-// Source: http://boinc.berkeley.edu/source_code.php
-// Copyright(C) 2002-2007 University of California
+// Source: http://boinc.berkeley.edu/trac/wiki/SourceCode
+// Copyright(C) 2002-2009 University of California
 //
 //
 // wxWidgets Library Licence, Version 3.1

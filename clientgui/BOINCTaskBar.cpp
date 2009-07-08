@@ -16,14 +16,17 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdwx.h"
-#include "BOINCGUIApp.h"
-#include "SkinManager.h"
-#include "MainDocument.h"
 #include "BOINCTaskBar.h"
+
+#include "stdwx.h"
+
 #include "BOINCBaseFrame.h"
+#include "BOINCGUIApp.h"
 #include "DlgAbout.h"
 #include "Events.h"
+#include "hyperlink.h"
+#include "MainDocument.h"
+#include "SkinManager.h"
 
 #ifdef __WXMAC__
 #include "res/macsnoozebadge.xpm"
@@ -209,7 +212,7 @@ void CTaskBarIcon::OnOpenWebsite(wxCommandEvent& WXUNUSED(event)) {
 
     pDoc->rpc.acct_mgr_info(ami);
     url = wxString(ami.acct_mgr_url.c_str(), wxConvUTF8);
-    pFrame->ExecuteBrowserLink(url);
+    HyperLink::ExecuteLink(url);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CTaskBarIcon::OnOpenWebsite - Function End"));
 }

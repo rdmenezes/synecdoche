@@ -745,6 +745,19 @@ projects_map CMainDocument::GetProjectsMap() const {
     return ret_val;
 }
 
+/// Returns a sorted vector containing the names of all projects this client is attached to.
+///
+/// \return A sorted vector containing the names of all projects this client is attached to.
+project_names_vec CMainDocument::GetProjectNames() const {
+    project_names_vec ret_val;
+    ret_val.reserve(state.projects.size());
+    for (std::vector<PROJECT*>::const_iterator p = state.projects.begin(); p != state.projects.end(); ++p) {
+        ret_val.push_back((*p)->project_name);
+    }
+    std::sort(ret_val.begin(), ret_val.end(), NoCaseLess);
+    return ret_val;
+}
+
 size_t CMainDocument::GetProjectCount() {
     CachedProjectStatusUpdate();
     CachedStateUpdate();

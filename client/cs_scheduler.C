@@ -189,7 +189,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         if (project->cpid_time < winner->cpid_time) {
             winner = project;
         } else if (project->cpid_time == winner->cpid_time) {
-            if (strcmp(project->master_url, winner->master_url) < 0) {
+            if (project->get_master_url() < winner->get_master_url()) {
                 winner = project;
             }
         }
@@ -268,7 +268,6 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     }
 
     // send names of results in progress for this project
-    //
     fprintf(f, "<other_results>\n");
     for (i=0; i<results.size(); i++) {
         rp = results[i];
@@ -276,8 +275,10 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
             fprintf(f,
                 "    <other_result>\n"
                 "        <name>%s</name>\n"
+                "        <plan_class>%s</plan_class>\n"
                 "    </other_result>\n",
-                rp->name
+                rp->name,
+                rp->plan_class
             );
         }
     }
@@ -409,18 +410,18 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     }
 
     // check that master URL is correct
-    if (strlen(sr.master_url)) {
+    if (!sr.master_url.empty()) {
         canonicalize_master_url(sr.master_url);
-        if (strcmp(sr.master_url, project->master_url)) {
+        if (sr.master_url != project->get_master_url()) {
             msg_printf(project, MSG_USER_ERROR, "You used the wrong URL for this project");
-            msg_printf(project, MSG_USER_ERROR, "The correct URL is %s", sr.master_url);
+            msg_printf(project, MSG_USER_ERROR, "The correct URL is %s", sr.master_url.c_str());
             if (lookup_project(sr.master_url)) {
                 msg_printf(project, MSG_INFO, "You seem to be attached to this project twice");
                 msg_printf(project, MSG_INFO, "We suggest that you detach projects named %s,", project->project_name);
-                msg_printf(project, MSG_INFO, "then reattach to %s", sr.master_url);
+                msg_printf(project, MSG_INFO, "then reattach to %s", sr.master_url.c_str());
             } else {
                 msg_printf(project, MSG_INFO, "Using the wrong URL can cause problems in some cases.");
-                msg_printf(project, MSG_INFO, "When convenient, detach this project, then reattach to %s", sr.master_url);
+                msg_printf(project, MSG_INFO, "When convenient, detach this project, then reattach to %s", sr.master_url.c_str());
             }
         }
     }
@@ -468,7 +469,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
         // skip this if we have host-specific prefs
         // and we're talking to an old scheduler
         if (!global_prefs.host_specific || sr.scheduler_version >= 507) {
-            retval = save_global_prefs(sr.global_prefs_xml, project->master_url, scheduler_url);
+            retval = save_global_prefs(sr.global_prefs_xml, project->get_master_url().c_str(), scheduler_url);
             if (retval) {
                 return retval;
             }

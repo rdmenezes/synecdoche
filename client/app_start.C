@@ -124,13 +124,12 @@ int ACTIVE_TASK::get_shmem_seg_name() {
     }
     sprintf(shmem_seg_name, "boinc_%d", i);
 #else
-    // shmem_seg_name is not used with mmap() shared memory 
+    // shmem_seg_name is not used with mmap() shared memory
     if (app_version->api_major_version() >= 6) {
         shmem_seg_name = -1;
         return 0;
     }
-    std::string init_data_path = std::string(slot_dir) + std::string("/")
-                                                       + std::string(INIT_DATA_FILE);
+    std::string init_data_path = slot_dir + std::string("/") + std::string(INIT_DATA_FILE);
 
     // ftok() only works if there's a file at the given location
     //
@@ -206,8 +205,7 @@ int ACTIVE_TASK::write_app_init_file() {
     //
     aid.wu_cpu_time = episode_start_cpu_time;
 
-    std::string init_data_path = std::string(slot_dir) + std::string("/")
-                                                       + std::string(INIT_DATA_FILE);
+    std::string init_data_path = slot_dir + std::string("/") + std::string(INIT_DATA_FILE);
     f = boinc_fopen(init_data_path.c_str(), "w");
     if (!f) {
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
@@ -244,17 +242,17 @@ static int make_soft_link(const PROJECT* project, const char* link_path, const c
 /// -# else make a soft link
 static int setup_file(
     const PROJECT* project, const FILE_INFO* fip, const FILE_REF& fref,
-    const char* file_path, const char* slot_dir, bool input
+    const std::string& file_path, const std::string& slot_dir, bool input
 ) {
     int retval;
 
-    std::string link_path = std::string(slot_dir) + std::string("/");
+    std::string link_path = slot_dir + std::string("/");
     if (strlen(fref.open_name)) {
         link_path += std::string(fref.open_name);
     } else {
         link_path += std::string(fip->name);
     }
-    std::string rel_file_path = std::string("../../") + std::string(file_path);
+    std::string rel_file_path = std::string("../../") + file_path;
 
     // if anonymous platform, this is called even if not first time,
     // so link may already be there
@@ -265,10 +263,10 @@ static int setup_file(
 
     if (fref.copy_file) {
         if (input) {
-            retval = boinc_copy(file_path, link_path.c_str());
+            retval = boinc_copy(file_path.c_str(), link_path.c_str());
             if (retval) {
                 msg_printf(project, MSG_INTERNAL_ERROR,
-                    "Can't copy %s to %s: %s", file_path, link_path.c_str(),
+                    "Can't copy %s to %s: %s", file_path.c_str(), link_path.c_str(),
                     boincerror(retval)
                 );
                 return retval;
@@ -299,32 +297,30 @@ int ACTIVE_TASK::link_user_files() {
     unsigned int i;
     FILE_REF fref;
     FILE_INFO* fip;
-    char file_path[1024];
 
     for (i=0; i<project->user_files.size(); i++) {
         fref = project->user_files[i];
         fip = fref.file_info;
         if (fip->status != FILE_PRESENT) continue;
-        get_pathname(fip, file_path, sizeof(file_path));
+        std::string file_path = get_pathname(fip);
         setup_file(project, fip, fref, file_path, slot_dir, true);
     }
     return 0;
 }
 
 int ACTIVE_TASK::copy_output_files() {
-    char projfile[256];
-    unsigned int i;
-    for (i=0; i<result->output_files.size(); i++) {
+    for (size_t i = 0; i < result->output_files.size(); ++i) {
         FILE_REF& fref = result->output_files[i];
-        if (!fref.copy_file) continue;
+        if (!fref.copy_file) {
+            continue;
+        }
         const FILE_INFO* fip = fref.file_info;
-        std::string slotfile = std::string(slot_dir) + std::string("/")
-                                                     + std::string(fref.open_name);
-        get_pathname(fip, projfile, sizeof(projfile));
-        int retval = boinc_rename(slotfile.c_str(), projfile);
+        std::string slotfile = slot_dir + std::string("/") + std::string(fref.open_name);
+        std::string projfile = get_pathname(fip);
+        int retval = boinc_rename(slotfile.c_str(), projfile.c_str());
         if (retval) {
             msg_printf(wup->project, MSG_INTERNAL_ERROR, "Can't rename output file %s to %s: %s",
-                    fip->name.c_str(), projfile, boincerror(retval));
+                    fip->name.c_str(), projfile.c_str(), boincerror(retval));
         }
     }
     return 0;
@@ -345,7 +341,7 @@ int ACTIVE_TASK::copy_output_files() {
 ///
 /// \return 0 on success, nonzero otherwise.
 int ACTIVE_TASK::start() {
-    char exec_name[256], file_path[256], exec_path[256];
+    char exec_name[256], exec_path[256];
     unsigned int i;
     FILE_REF fref;
     int retval;
@@ -433,7 +429,7 @@ int ACTIVE_TASK::start() {
     for (i=0; i<app_version->app_files.size(); i++) {
         fref = app_version->app_files[i];
         FILE_INFO* fip = fref.file_info;
-        get_pathname(fip, file_path, sizeof(file_path));
+        std::string file_path = get_pathname(fip);
         if (fref.main_program) {
             if (is_image_file(fip->name)) {
                 err_stream << "Main program " << fip->name << " is an image file";
@@ -446,7 +442,7 @@ int ACTIVE_TASK::start() {
                 goto error;
             }
             safe_strcpy(exec_name, fip->name.c_str());
-            safe_strcpy(exec_path, file_path);
+            safe_strcpy(exec_path, file_path.c_str());
         }
         // anonymous platform may use different files than
         // when the result was started, so link files even if not first time
@@ -469,7 +465,7 @@ int ACTIVE_TASK::start() {
         for (i=0; i<wup->input_files.size(); i++) {
             fref = wup->input_files[i];
             const FILE_INFO* fip = fref.file_info;
-            get_pathname(fref.file_info, file_path, sizeof(file_path));
+            std::string file_path = get_pathname(fref.file_info);
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, true);
             if (retval) {
                 err_stream << "Can't link input file";
@@ -480,7 +476,7 @@ int ACTIVE_TASK::start() {
             fref = result->output_files[i];
             if (fref.copy_file) continue;
             const FILE_INFO* fip = fref.file_info;
-            get_pathname(fref.file_info, file_path, sizeof(file_path));
+            std::string file_path = get_pathname(fref.file_info);
             retval = setup_file(result->project, fip, fref, file_path, slot_dir, false);
             if (retval) {
                 err_stream << "Can't link output file";
@@ -514,7 +510,7 @@ int ACTIVE_TASK::start() {
     app_client_shm.reset_msgs();
 
     if (config.run_apps_manually) {
-        // fill in core client's PID so we won't think app has exited 
+        // fill in core client's PID so we won't think app has exited
         pid = GetCurrentProcessId();
         pid_handle = GetCurrentProcess();
         set_task_state(PROCESS_EXECUTING, "start");
@@ -630,8 +626,7 @@ int ACTIVE_TASK::start() {
     if (!app_client_shm.shm) {
         if (app_version->api_major_version() >= 6) {
             // Use mmap() shared memory
-            std::string buf = std::string(slot_dir) + std::string("/")
-                                                    + std::string(MMAPPED_FILE_NAME);
+            std::string buf = slot_dir + std::string("/") + std::string(MMAPPED_FILE_NAME);
             if (g_use_sandbox) {
                 if (!boinc_file_exists(buf.c_str())) {
                     int fd = open(buf.c_str(), O_RDWR | O_CREAT, 0660);
@@ -717,7 +712,7 @@ int ACTIVE_TASK::start() {
         libpath << "../../" << pdir << ":.:../..";
         setenv("LD_LIBRARY_PATH", libpath.str().c_str(), 1);
 
-        retval = chdir(slot_dir);
+        retval = chdir(slot_dir.c_str());
         if (retval) {
             perror("chdir");
             fflush(NULL);

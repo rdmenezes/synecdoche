@@ -93,6 +93,7 @@ public:
     bool user_active;       ///< there has been recent mouse/kbd input
     bool allow_remote_gui_rpc;
     int cmdline_gui_rpc_port;
+    std::string data_directory; ///< Path to the data directory, from the command line.
     bool requested_exit;
     /// venue from project that gave us general prefs
     /// or from account manager
@@ -194,7 +195,7 @@ public:
 
     void do_io_or_sleep(double sec);
     bool time_to_exit() const;
-    PROJECT* lookup_project(const char* master_url);
+    PROJECT* lookup_project(const std::string& master_url);
     APP* lookup_app(const PROJECT* project, const char* name);
     FILE_INFO* lookup_file_info(const PROJECT* project, const std::string& name);
     RESULT* lookup_result(const PROJECT* project, const char* name);
@@ -225,7 +226,7 @@ private:
 
     int nresults_for_project(const PROJECT* project) const;
     void check_clock_reset();
-    
+
     /// Abort all jobs that are not started yet but already missed their deadline.
     bool abort_unstarted_late_jobs();
 /// @}
@@ -283,7 +284,7 @@ public:
 /// @name cs_account.C
 public:
     /// Add a project.
-    int add_project(const char* master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr);
+    int add_project(const std::string& master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr);
 private:
     int parse_account_files();
     int parse_account_files_venue();
@@ -313,7 +314,7 @@ private:
 
     /// Find latest version of app for given platform
     int latest_version(const APP* app, const std::string& platform);
-    
+
     int app_finished(ACTIVE_TASK& at);
     bool start_apps();
     bool handle_finished_apps();
@@ -360,7 +361,7 @@ private:
 
 /// @name cs_prefs.C
 public:
-    int project_disk_usage(PROJECT* p, double& size);
+    int project_disk_usage(const PROJECT* p, double& size);
     int total_disk_usage(double& size); ///< returns the total disk usage of Synecdoche on this host
     double allowed_disk_usage(double boinc_total);
     int suspend_tasks(int reason);
