@@ -30,9 +30,6 @@ ELSEIF(APPLE)
 		mac/browser_safari.mm
 		mac/Mac_GUI.cpp
 		mac/MacSysMenu.cpp
-		mac/SecurityUtility.cpp
-		mac/SetupSecurity.cpp
-		mac/SetVersion.C
 		mac/SystemMenu.m
 	)
 ENDIF(WIN32)
