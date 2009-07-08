@@ -175,12 +175,12 @@ bool wxFlatNotebookBase::InsertPage(size_t index, wxWindow* page, const wxString
     {
         std::vector<wxWindow*>::iterator iter = m_windows.begin() + index;
         m_windows.insert(iter, page);
-        wxLogTrace(wxTraceMask(), "New page inserted. Index = %lu", index);
+        wxLogTrace(wxTraceMask(), wxT("New page inserted. Index = %lu"), index);
     }
     else
     {
         m_windows.push_back(page);
-        wxLogTrace(wxTraceMask(), "New page appended. Index = %lu", index);
+        wxLogTrace(wxTraceMask(), wxT("New page appended. Index = %lu"), index);
     }
     m_pages->InsertPage(index, page, text, bSelected, imgindex);
     if((int)index <= curSel) curSel++;
@@ -2039,12 +2039,12 @@ wxDragResult wxPageContainerBase::OnDropTarget(wxCoord x, wxCoord y, int nTabPag
     if(!((wxPageContainerBase *)wnd_oldContainer)->m_pagesInfoVec[nTabPage].GetEnabled())
         return wxDragCancel;
 
-    wxLogTrace(wxTraceMask(), "Old Page Index = %i", nTabPage);
+    wxLogTrace(wxTraceMask(), wxT("Old Page Index = %i"), nTabPage);
     wxPageContainerBase * oldContainer = (wxPageContainerBase *)wnd_oldContainer;
     int nIndex = -1;
     wxPageInfo pgInfo;
     int where = HitTest(wxPoint(x, y), pgInfo, nIndex);
-    wxLogTrace(wxTraceMask(), "OnDropTarget: index by HitTest = %i", nIndex);
+    wxLogTrace(wxTraceMask(), wxT("OnDropTarget: index by HitTest = %i"), nIndex);
     wxFlatNotebookBase * oldNotebook = (wxFlatNotebookBase *)oldContainer->GetParent();
     wxFlatNotebookBase * newNotebook = (wxFlatNotebookBase *)GetParent();
 
