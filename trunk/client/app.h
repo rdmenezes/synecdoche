@@ -264,7 +264,7 @@ public:
     void suspend_all(bool cpu_throttle);
 
     void unsuspend_all();
-    bool is_task_executing();
+    bool is_task_executing() const;
     void request_tasks_exit(PROJECT* p=0);
     int wait_for_exit(double, PROJECT* p=0);
     int exit_tasks(PROJECT* p=0);
