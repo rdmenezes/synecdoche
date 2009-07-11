@@ -325,7 +325,7 @@ bool ACTIVE_TASK_SET::poll() {
 /// Move a trickle file from the slot directory to the project directory.
 /// If moving the file files it will be deleted.
 ///
-/// \return Zero on success, ERR_RENAME on error.
+/// \return Zero on success, #ERR_RENAME on error.
 int ACTIVE_TASK::move_trickle_file() {
     std::string project_dir = get_project_dir(result->project);
 
@@ -344,7 +344,7 @@ int ACTIVE_TASK::move_trickle_file() {
     return 0;
 }
 
-/// size of output files and files in slot dir
+/// Disk used by output files and temp files of this task.
 int ACTIVE_TASK::current_disk_usage(double& size) const {
     double x;
     int retval;
