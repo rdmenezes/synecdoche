@@ -99,7 +99,7 @@ public:
     /// will be zero if the app doesn't use this call.
     double fraction_done;
 
-    /// CPU time when adjust_debts() last ran.
+    /// CPU time when CLIENT_STATE::adjust_debts() last ran.
     double debt_interval_start_cpu_time;
 
     /// CPU time at the start of current episode.

@@ -469,11 +469,10 @@ void CLIENT_STATE::do_io_or_sleep(double sec) {
 
 /// Poll the client's finite-state machines
 /// possibly triggering state transitions.
-/// Returns true if something happened
-/// (in which case should call this again immediately)
 /// This function never blocks.
 ///
-/// \return True if something happened, false otherwise.
+/// \return True if something happened (in which case this function should be
+/// called again immediately), false otherwise.
 bool CLIENT_STATE::poll_slow_events() {
     int actions = 0, retval;
     static int last_suspend_reason=0;
@@ -644,8 +643,8 @@ bool CLIENT_STATE::poll_slow_events() {
     }
 }
 
-/// See if the project specified by master_url already exists
-/// in the client state record.  Ignore any trailing "/" characters
+/// See if the project specified by \a master_url already exists
+/// in the client state record. Ignore any trailing "/" characters
 PROJECT* CLIENT_STATE::lookup_project(const std::string& master_url) {
     std::string mu1 = master_url;
     if (ends_with(master_url, "/")) {
@@ -1550,7 +1549,7 @@ int CLIENT_STATE::quit_activities() {
     return 0;
 }
 
-/// return a random double in the range [rmin,rmax)
+/// Return a random double in the range [rmin,rmax)
 static inline double rand_range(double rmin, double rmax) {
     if (rmin < rmax) {
         return drand() * (rmax-rmin) + rmin;
@@ -1559,7 +1558,7 @@ static inline double rand_range(double rmin, double rmax) {
     }
 }
 
-/// return a random double in the range [MIN,min(e^n,MAX))
+/// Return a random double in the range [MIN,min(e^n,MAX))
 double calculate_exponential_backoff( int n, double MIN, double MAX) {
     double rmax = std::min(MAX, exp((double)n));
     return rand_range(MIN, rmax);

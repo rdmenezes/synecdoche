@@ -271,8 +271,8 @@ public:
     void request_enforce_schedule(const char* where);
     /// Check for reschedule CPUs ASAP.  Called when:
     /// - core client starts (CLIENT_STATE::init())
-    /// - an app exits (ACTIVE_TASK_STATE::check_app_exited())
-    /// - Tasks are killed (ACTIVE_TASK_STATE::exit_tasks())
+    /// - an app exits (ACTIVE_TASK_SET::check_app_exited())
+    /// - Tasks are killed (ACTIVE_TASK_SET::exit_tasks())
     /// - a result's input files finish downloading (CLIENT_STATE::update_results())
     /// - an app fails to start (CLIENT_STATE::schedule_cpus())
     /// - any project op is done via RPC (suspend/resume)

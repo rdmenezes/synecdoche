@@ -21,7 +21,7 @@
 ///
 /// Terminology:
 ///
-/// Episode
+/// \par Episode
 /// The execution of a task is divided into "episodes".
 /// An episode starts then the application is executed,
 /// and ends when it exits or dies
@@ -30,10 +30,10 @@
 /// A task may checkpoint now and then.
 /// Each episode begins with the state of the last checkpoint.
 ///
-/// Debt interval
+/// \par Debt interval
 /// The interval between consecutive executions of adjust_debts()
 ///
-/// Run interval
+/// \par Run interval
 /// If an app is running (not suspended), the interval
 /// during which it's been running.
 
@@ -55,10 +55,10 @@
 
 using std::vector;
 
-/// maximum short-term debt
+/// Maximum short-term debt.
 #define MAX_STD   (86400)
 
-/// try to finish jobs this much in advance of their deadline
+/// Try to finish jobs this much in advance of their deadline.
 #define DEADLINE_CUSHION    0
 
 
@@ -84,7 +84,7 @@ static bool more_preemptable(ACTIVE_TASK* t0, ACTIVE_TASK* t1) {
 
 /// Choose a "best" runnable result for each project
 ///
-/// Values are returned in \c project->next_runnable_result
+/// Values are returned in PROJECT::next_runnable_result
 /// (skip projects for which this is already non-NULL)
 ///
 /// Don't choose results with <tt>already_selected == true</tt>;
@@ -189,7 +189,8 @@ RESULT* CLIENT_STATE::largest_debt_project_best_result() {
     return rp;
 }
 
-/// Return earliest-deadline result from a project with <tt>deadlines_missed > 0</tt>
+/// Return earliest-deadline result from a project with
+/// <tt>\link PROJECT::deadlines_missed deadlines_missed \endlink > 0</tt>
 RESULT* CLIENT_STATE::earliest_deadline_result() {
     RESULT *best_result = NULL;
     ACTIVE_TASK* best_atp = NULL;
@@ -401,7 +402,7 @@ void CLIENT_STATE::adjust_debts() {
 /// Decide whether to run the CPU scheduler.
 /// This is called periodically.
 /// Scheduled tasks are placed in order of urgency for scheduling
-/// in the \ref ordered_scheduled_results vector.
+/// in the #ordered_scheduled_results vector.
 bool CLIENT_STATE::possibly_schedule_cpus() {
     double elapsed_time;
     static double last_reschedule=0;
@@ -467,7 +468,7 @@ static bool schedule_if_possible(
 }
 
 /// Decide which results to run.
-/// output: sets ordered_scheduled_result.
+/// \post Sets #ordered_scheduled_result.
 void CLIENT_STATE::schedule_cpus() {
     RESULT* rp;
     PROJECT* p;
@@ -564,18 +565,19 @@ void CLIENT_STATE::make_running_task_heap(
 
 /// Enforce the CPU schedule.
 /// - Inputs:
-///   - \c ordered_scheduled_results \n
+///   - #ordered_scheduled_results: 
 ///      List of tasks that should (ideally) run, set by schedule_cpus().
 ///      Most important tasks (e.g. early deadline) are first
 /// - Method:
 ///   - Make a list "running_tasks" of currently running tasks
 ///     Most preemptable tasks are first in list.
 /// - Details:
-///   - Initially, each task's scheduler_state is \c PREEMPTED or \c SCHEDULED
-///     depending on whether or not it is running.
-///   - This function sets each task's next_scheduler_state,
+///   - Initially, each task's \link ACTIVE_TASK::scheduler_state scheduler state\endlink is
+///     \c #PREEMPTED or \c #SCHEDULED depending on whether or not it is running.
+///   - This function sets each task's \link ACTIVE_TASK::next_scheduler_state next_scheduler_state\endlink,
 ///     and at the end it starts/resumes and preempts tasks
-///     based on scheduler_state and next_scheduler_state.
+///     based on \link ACTIVE_TASK::scheduler_state scheduler_state\endlink and
+///     \link ACTIVE_TASK::next_scheduler_state next_scheduler_state\endlink.
 ///
 /// \return True if something changed, false otherwise.
 bool CLIENT_STATE::enforce_schedule() {
@@ -1126,8 +1128,8 @@ void CLIENT_STATE::set_ncpus() {
 }
 
 /// Preempt this task.
-/// Called from the CLIENT_STATE::schedule_cpus().
-/// If quit_task is true, do this by quitting.
+/// Called from CLIENT_STATE::schedule_cpus().
+/// If \a quit_task is true, do this by quitting.
 ///
 /// \param[in] quit_task If true and app has checkpointed
 ///                      it will be removed from memory

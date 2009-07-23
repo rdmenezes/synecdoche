@@ -97,7 +97,7 @@ bool ACTIVE_TASK::kill_all_children() {
 #endif
 
 /// Ask the process to exit gracefully,
-/// i.e. by sending a <quit> message
+/// i.e.\ by sending a <quit> message
 ///
 /// \return 1 if shared memory is not set up, 0 on success.
 int ACTIVE_TASK::request_exit() {
@@ -203,7 +203,7 @@ static void limbo_message(ACTIVE_TASK& at) {
 #endif
 }
 
-/// Handle a task that exited prematurely (i.e. the job isn't done).
+/// Handle a task that exited prematurely (i.e.\ the job isn't done).
 ///
 /// \param[out] will_restart Reference to a bool-variable that will be set
 ///                          to true if the task should get restarted.
