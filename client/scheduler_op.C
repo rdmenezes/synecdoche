@@ -68,7 +68,7 @@ bool SCHEDULER_OP::check_master_fetch_start() {
 }
 
 /// Try to get work from eligible project with biggest long term debt.
-/// PRECONDITION: \link CLIENT_STATE::compute_work_requests compute_work_requests()\endlink has been called
+/// PRECONDITION: CLIENT_STATE::compute_work_requests has been called
 /// to fill in PROJECT::work_request
 /// and CLIENT_STATE::overall_work_fetch_urgency
 int SCHEDULER_OP::init_get_work() {
