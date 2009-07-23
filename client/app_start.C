@@ -104,7 +104,7 @@ static void debug_print_argv(const std::list<std::string>& argv) {
 /// Make a unique key for core/app shared memory segment.
 /// Windows: also create and attach to the segment.
 ///
-/// \return 0 on success, ERR_SHMEM_NAME or ERR_SHMGET on error.
+/// \return 0 on success, #ERR_SHMEM_NAME or #ERR_SHMGET on error.
 int ACTIVE_TASK::get_shmem_seg_name() {
 #ifdef _WIN32
     int i;
@@ -145,7 +145,7 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 /// This is done before starting the app,
 /// and when project prefs have changed during app execution.
 ///
-/// \return 0 on success, ERR_FOPEN if the file could not be opened.
+/// \return 0 on success, #ERR_FOPEN if the file could not be opened.
 int ACTIVE_TASK::write_app_init_file() {
     APP_INIT_DATA aid;
     FILE *f;
@@ -332,12 +332,12 @@ int ACTIVE_TASK::copy_output_files() {
 ///
 /// Current dir is top-level Synecdoche dir.
 ///
-/// Postcondition:
+/// \post
 /// - If any error occurs
-///   - ACTIVE_TASK::task_state is PROCESS_COULDNT_START
-///   - report_result_error() is called
+///   - #task_state is #PROCESS_COULDNT_START
+///   - CLIENT_STATE::report_result_error() is called
 /// - else
-///   - ACTIVE_TASK::task_state is PROCESS_EXECUTING
+///   - #task_state is #PROCESS_EXECUTING
 ///
 /// \return 0 on success, nonzero otherwise.
 int ACTIVE_TASK::start() {
@@ -794,7 +794,8 @@ error:
 }
 
 /// Resume the task if it was previously running; otherwise start it.
-/// Postcondition: "state" is set correctly.
+///
+/// \post #task_state is set correctly.
 ///
 /// \param[in] first_time Set this to true if the app
 ///                       will be started for the first time.
