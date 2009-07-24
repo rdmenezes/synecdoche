@@ -38,7 +38,7 @@ PROJECT_NUMBER         = 0.2.0
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ../docs
+OUTPUT_DIRECTORY       = ./docs
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -1122,7 +1122,7 @@ PREDEFINED             = __cplusplus _WIN32 USE_NATIVE_LISTCONTROL=1 WXUNUSED(x)
 # The macro definition that is found in the sources will be used. 
 # Use the PREDEFINED tag if you want to use a different macro definition.
 
-EXPAND_AS_DEFINED      = LISTCTRL_BASE wxCHECK_VERSION
+EXPAND_AS_DEFINED      = LISTCTRL_BASE
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES (the default) then 
 # doxygen's preprocessor will remove all function-like macros that are alone 
