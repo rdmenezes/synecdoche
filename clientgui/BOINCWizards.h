@@ -148,7 +148,7 @@
 /// The header files for all existing wizards need to be included in this file
 /// because dynamic_cast needs the class to be defined.
 ///
-/// \param[in] wiz The class name of the wizard that should be checked.
+/// \tparam wiz The class name of the wizard that should be checked.
 /// \param[in] cur_page A pointer to the wizard's page for which the wizard type
 ///                     should be checked.
 /// \return True if the wizard is of the same class as specified by \a wiz,

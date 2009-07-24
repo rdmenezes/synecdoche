@@ -764,7 +764,7 @@ const char* network_status_string(int n) {
 /// Return a text-string description of a given reason for a rpc request.
 /// Must be kept consistent with common_defs.h
 ///
-/// \param[in] n The rpc request reason identifier for which the string should
+/// \param[in] reason The rpc request reason identifier for which the string should
 ///              be returned.
 /// \return A string containing the rpc request reason corresponding to
 ///         the rpc request reason number in \a reason.

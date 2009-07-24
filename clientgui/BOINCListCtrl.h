@@ -45,7 +45,7 @@ class CBOINCListCtrl : public LISTCTRL_BASE {
 
 public:
     CBOINCListCtrl();
-    CBOINCListCtrl(CBOINCBaseView* pView, wxWindowID iListWindowID, int iListWindowFlags);
+    CBOINCListCtrl(CBOINCBaseView* pView, wxWindowID iListWindowID, wxInt32 iListWindowFlags);
 
     ~CBOINCListCtrl();
 

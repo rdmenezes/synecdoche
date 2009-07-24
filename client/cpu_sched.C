@@ -468,7 +468,7 @@ static bool schedule_if_possible(
 }
 
 /// Decide which results to run.
-/// \post Sets #ordered_scheduled_result.
+/// \post Sets #ordered_scheduled_results.
 void CLIENT_STATE::schedule_cpus() {
     RESULT* rp;
     PROJECT* p;
@@ -573,7 +573,7 @@ void CLIENT_STATE::make_running_task_heap(
 ///     Most preemptable tasks are first in list.
 /// - Details:
 ///   - Initially, each task's \link ACTIVE_TASK::scheduler_state scheduler state\endlink is
-///     \c #PREEMPTED or \c #SCHEDULED depending on whether or not it is running.
+///     \c #CPU_SCHED_PREEMPTED or \c #CPU_SCHED_SCHEDULED depending on whether or not it is running.
 ///   - This function sets each task's \link ACTIVE_TASK::next_scheduler_state next_scheduler_state\endlink,
 ///     and at the end it starts/resumes and preempts tasks
 ///     based on \link ACTIVE_TASK::scheduler_state scheduler_state\endlink and

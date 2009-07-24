@@ -85,10 +85,10 @@ typedef BOOL (WINAPI *tDEB)(LPVOID lpEnvironment);
 
 #endif
 
+#ifndef _WIN32
 /// Goes through a list of strings, and prints each string.
 ///
 /// \param[in] argv The list of strings that should get printed.
-#ifndef _WIN32
 static void debug_print_argv(const std::list<std::string>& argv) {
     msg_printf(0, MSG_INFO, "[task_debug] Arguments:");
     int count = 0;

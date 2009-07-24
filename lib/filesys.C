@@ -240,9 +240,8 @@ DirScanner::DirScanner(const std::string& path) {
 
 /// Scan through a directory and return the next file name in it.
 ///
-/// \param[out] p Reference to a buffer that will receive the name of the
+/// \param[out] s Reference to a buffer that will receive the name of the
 ///               next file.
-/// \param[in,out] dirp Pointer retrieved from a call to dir_open.
 /// \return True on success, false if there are no files left.
 bool DirScanner::scan(std::string& s) {
 #ifdef _WIN32
