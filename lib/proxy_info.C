@@ -107,3 +107,22 @@ void PROXY_INFO::clear() {
     strcpy(http_user_passwd, "");
     socks_version = 0;
 }
+
+PROXY_INFO& PROXY_INFO::operator=(const PROXY_INFO& rhs)
+{
+    this->use_http_proxy = rhs.use_http_proxy;
+    strcpy(this->http_user_name, rhs.http_user_name);
+    strcpy(this->http_user_passwd, rhs.http_user_passwd);
+    strcpy(this->http_server_name, rhs.http_server_name);
+    this->http_server_port = rhs.http_server_port;
+    this->use_http_auth = rhs.use_http_auth;
+ 
+    this->use_socks_proxy = rhs.use_socks_proxy;
+    strcpy(this->socks5_user_name, rhs.socks5_user_name);
+    strcpy(this->socks5_user_passwd, rhs.socks5_user_passwd);
+    strcpy(this->socks_server_name, rhs.socks_server_name);
+    this->socks_server_port = rhs.socks_server_port;
+    this->socks_version = rhs.socks_version;
+
+    return *this;
+}

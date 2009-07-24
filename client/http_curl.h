@@ -150,7 +150,7 @@ public:
         double offset
     );
     bool http_op_done();
-    int set_proxy(PROXY_INFO *new_pi);
+    int set_proxy(const PROXY_INFO *new_pi);
     void setupProxyCurl();
     bool is_active() {
         return curlEasy!=NULL;
