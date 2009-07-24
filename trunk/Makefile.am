@@ -38,3 +38,5 @@ CLEANFILES = svnversion.cpp
 
 .PHONY: svnversion.cpp
 
+docs:
+	doxygen Doxyfile 2>&1 | grep -v 'Unsupported xml/html tag'
