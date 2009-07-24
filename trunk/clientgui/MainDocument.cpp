@@ -1116,7 +1116,7 @@ void CMainDocument::KillGraphicsApp(HANDLE pid) {
 }
 #else
 void CMainDocument::KillGraphicsApp(int pid) {
-    char* argv[6];
+    const char* argv[6];
     char currentDir[1024];
     char thePIDbuf[10];
     int id, iRetVal;
@@ -1169,7 +1169,7 @@ int CMainDocument::WorkShowGraphics(const RESULT* result)
         previous_gfx_app = GetRunningGraphicsApp(result, slot);
 
 #ifndef __WXMSW__
-        char* argv[4];
+        const char* argv[4];
 
         if (previous_gfx_app) {
 #ifdef __WXMAC__
@@ -1190,8 +1190,8 @@ int CMainDocument::WorkShowGraphics(const RESULT* result)
         // exits with "RegisterProcess failed (error = -50)" unless 
         // we pass its full path twice in the argument list to execv.
         //
-        argv[1] = (char *)result->graphics_exec_path.c_str();
-        argv[2] = (char *)result->graphics_exec_path.c_str();
+        argv[1] = result->graphics_exec_path.c_str();
+        argv[2] = result->graphics_exec_path.c_str();
         argv[3] = 0;
     
          if (g_use_sandbox) {

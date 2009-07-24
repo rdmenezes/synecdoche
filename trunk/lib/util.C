@@ -334,7 +334,7 @@ int read_file_string(const char* path, std::string& result, int max_len, bool ta
 ///
 /// \a argv is set up Unix-style, i.e. argv[0] is the program name
 int run_program(
-    const char* dir, const char* file, int argc, char *const argv[], double nsecs, HANDLE& id
+    const char* dir, const char* file, int argc, const char* const argv[], double nsecs, HANDLE& id
 ) {
     int retval;
     PROCESS_INFORMATION process_info;
@@ -391,7 +391,7 @@ int run_program(
 ///
 /// argv is set up Unix-style, i.e. argv[0] is the program name
 int run_program(
-    const char* dir, const char* file, int , char *const argv[], double nsecs, int& id
+    const char* dir, const char* file, int , const char *const argv[], double nsecs, int& id
 ) {
     int retval;
     int pid = fork();
@@ -400,7 +400,9 @@ int run_program(
             retval = chdir(dir);
             if (retval) return retval;
         }
-        execv(file, argv);
+        // Cast is ugly but necessary as execv takes a char* const* instead of
+        // const char* const* in many platforms
+        execv(file, const_cast<char**>(argv));
         perror("execv");
         exit(errno);
     }
