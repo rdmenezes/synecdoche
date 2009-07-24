@@ -371,9 +371,9 @@ int PROJECT::write_statistics_file() const {
 /// \param[in] master_url The master URL for the project.
 /// \param[in] _auth The account key for the project specified by \a master_url.
 /// \param[in] project_name The name of the project specified by \a master_url.
-/// \param[in] attached_via_acc_mgr Set this to true if we attach to the
-///                                 project specified by \a master_url because
-///                                 of an account manager.
+/// \param[in] attached_via_acct_mgr Set this to true if we attach to the
+///                                  project specified by \a master_url because
+///                                  of an account manager.
 /// \return Zero on success, nonzero on error.
 int CLIENT_STATE::add_project(const std::string& master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr) {
     if (config.disallow_attach) {

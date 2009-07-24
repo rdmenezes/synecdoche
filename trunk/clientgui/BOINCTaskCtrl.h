@@ -16,20 +16,24 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BOINCTASKCTRL_H_
-#define _BOINCTASKCTRL_H_
+#ifndef BOINCTASKCTRL_H
+#define BOINCTASKCTRL_H
 
+#include <wx/scrolwin.h>
 
 class CTaskItem;
 class CTaskItemGroup;
 class CTaskViewBase;
+
+class wxConfigBase;
+class wxBoxSizer;
 
 class CBOINCTaskCtrl : public wxScrolledWindow {
     DECLARE_DYNAMIC_CLASS( CBOINCTaskCtrl )
 
 public:
     CBOINCTaskCtrl();
-    CBOINCTaskCtrl( CTaskViewBase* pView, wxWindowID iTaskWindowID, int iTaskWindowFlags );
+    CBOINCTaskCtrl( CTaskViewBase* pView, wxWindowID iTaskWindowID, wxInt32 iTaskWindowFlags );
 
     ~CBOINCTaskCtrl();
 

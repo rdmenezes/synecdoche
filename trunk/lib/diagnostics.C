@@ -16,7 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-/// \file Stuff related to stderr/stdout direction and exception handling;
+/// \file
+/// Stuff related to stderr/stdout direction and exception handling;
 /// used by both core client and by apps
 
 #include "diagnostics.h"

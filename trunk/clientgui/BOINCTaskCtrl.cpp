@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "BOINCTaskCtrl.h"
+
 #include "stdwx.h"
 #include "TaskViewBase.h"
-#include "BOINCTaskCtrl.h"
 
 
 IMPLEMENT_DYNAMIC_CLASS(CBOINCTaskCtrl, wxScrolledWindow)

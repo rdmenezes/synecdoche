@@ -76,7 +76,7 @@ std::string get_pathname(const FILE_INFO* fip) {
 
 /// Get the scheduler request file name for a project.
 ///
-/// \param[in] The project for which the file name should be returned.
+/// \param[in] project The project for which the file name should be returned.
 /// \return The file name of the scheduler request file for the given project.
 std::string get_sched_request_filename(const PROJECT& project) {
     std::ostringstream result;
@@ -86,7 +86,7 @@ std::string get_sched_request_filename(const PROJECT& project) {
 
 /// Get the scheduler reply file name for a project.
 ///
-/// \param[in] The project for which the file name should be returned.
+/// \param[in] project The project for which the file name should be returned.
 /// \return The file name of the scheduler reply file for the given project.
 std::string get_sched_reply_filename(const PROJECT& project) {
     std::ostringstream result;
@@ -96,7 +96,7 @@ std::string get_sched_reply_filename(const PROJECT& project) {
 
 /// Get the name of the master file for a project.
 ///
-/// \param[in] The project for which the file name should be returned.
+/// \param[in] project The project for which the file name should be returned.
 /// \return The file name of the master file for the given project.
 std::string get_master_filename(const PROJECT& project) {
     std::ostringstream result;
@@ -106,7 +106,7 @@ std::string get_master_filename(const PROJECT& project) {
 
 /// Get the job log file name for a project.
 ///
-/// \param[in] The project for which the file name should be returned.
+/// \param[in] project The project for which the file name should be returned.
 /// \return The file name of the sjob log file for the given project.
 std::string job_log_filename(const PROJECT& project) {
     std::ostringstream result;
