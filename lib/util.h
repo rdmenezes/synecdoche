@@ -67,7 +67,7 @@ int read_file_string(const char* path, std::string&, int max_len=0, bool tail=fa
 #ifdef _WIN32
 
 int run_program(
-    const char* path, const char* cdir, int argc, char *const argv[], double, HANDLE& id
+    const char* path, const char* cdir, int argc, const char* const argv[], double, HANDLE& id
 );
 
 void kill_program(HANDLE proc);
@@ -76,7 +76,7 @@ bool process_exists(HANDLE proc);
 
 #else
 int run_program(
-    const char* path, const char* cdir, int argc, char *const argv[], double, int&
+    const char* path, const char* cdir, int argc, const char* const argv[], double, int&
 );
 void kill_program(int pid);
 int get_exit_status(int pid);
