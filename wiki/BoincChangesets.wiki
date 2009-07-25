@@ -90,12 +90,10 @@
 ||18593/18601/18602/18603/18604/18662/18663||client: restored code for project-wide backoff on file||
 ||18594||client: if malloc fails in MFILE writes, exit.||
 ||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
-||18599||clientlib: Remove backwards compatible mouse and keyboard activity _Most of this was already applied in r1001 but we might have missed some changes._||
 ||18605/18606||client: changed file upload logic||
 ||18633||lib: gcc 4.4 fix; fixes #854||
 ||18667||client: Treat power events similiar to the snooze events||
 ||18712||client: in get_project_config_poll() GUI RPC, return ERR_IN_PROGRESS is the reference site check is in progress.||
-||18717||lib: more code cleanup _Looks like deprecated Windows stuff._||
 ||18719||WINSCR: Remove Win9x compatibility code from the screen saver.||
 
 
