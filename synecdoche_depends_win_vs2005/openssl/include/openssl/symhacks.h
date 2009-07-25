@@ -6,7 +6,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer. 
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -61,6 +61,10 @@
    symbol names.  In the case of VMS, the limit is 31 characters on VMS for
    VAX. */
 #ifdef OPENSSL_SYS_VMS
+
+/* Hack a long name in crypto/cryptlib.c */
+#undef int_CRYPTO_set_do_dynlock_callback
+#define int_CRYPTO_set_do_dynlock_callback	int_CRYPTO_set_do_dynlock_cb
 
 /* Hack a long name in crypto/ex_data.c */
 #undef CRYPTO_get_ex_data_implementation
