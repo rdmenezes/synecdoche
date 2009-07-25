@@ -41,7 +41,6 @@
 ||16929||client: fix boinc_copy (again); Mac Mgr: fix bugs showing Mgr when minimized to Dock;||
 ||16998||client: clear debts when reset project||
 ||17063/17065/17075||MGR: Add a list of account managers. It's included in all_projects_list.xml. As we don't use BOINC's xml file we should either put the account manager list into a separated file or fix the structure of the file. BOINC currently treats account managers as projects in this file, which is wrong.||
-||17070||client: if user requests RPC, do it even if project is backed off _NOTE: The change needs to be done in work_fetch.C for synecdoche. BOINC moved the affected function from work_fetch.cpp to cs_scheduler.cpp some time ago._||
 ||17142||MAC MGR: Use symbolic file name GUI_RPC_PASSWD_FILE for gui_rpc_auth.cfg.||
 ||17195||client: add SCHEDULER_OP::rpc_failed(); this gets called when the op fails, either at initialization or later on; it clears the project's sched_rpc_pending flag if needed. This fixes a bug that caused user-requested RPCs to retry every 10 seconds when the network is down.||
 ||17196||client: if master file doesn't have URLs, clear RPC request||
@@ -66,7 +65,6 @@
 ||17617||In linux client, Added code to detect capability to run 64-bit binaries from 32-bit BOINC client, and capability to run 32-bit binaries on a 64-bit linux system. _This one might need some cleanup before applying._||
 ||17637||client: initial support for detecting the CPU L2 cache size on Windows.||
 ||17639|| client: add --no_priority_change cmdline arg (and <no_priority_change> flag in cc_config.xml). If set, run apps at same priority as client.||
-||17644||client: garbage collect after scheduler RPC; if project sent some irrelevant FILE_INFOs, this will avoid starting transfers for them.||
 ||17711||client: (unix): if host name lookup fails, call res_init(). This is an attempt to fix a problem on Linux where, if the client starts before a VPN is set up, it can never communicate||
 ||17765/17831/17838||client: for each app version, keep track of the largest WSS of tasks using it. In checking whether tasks fit in RAM, use this as an estimate for tasks that haven't started yet. This avoids a situation where the client starts a lot of tasks in sequence, only to find that each one doesn't fit in RAM.||
 ||17814||client: eliminate the need to write the state file on each checkpoint. Instead, write the info into a file in the slot directory, and check for these files on startup. This should reduce the overhead of state-file writing on machines with lots of cores. There will still be a flurry of writes each time a job finishes, but reducing that overhead would be a larger job. / client: make sure we write the state file after a failed RPC||
@@ -79,7 +77,6 @@
 ||18054||Mac client: fix parent died test in benchmark_time_to_stop()||
 ||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
 ||18291||MGR: Accept Unicode input for usernames and password in the manager now that the manager is Unicode enabled. Input will show up as UTF-8 strings in the CC and project.||
-||18330||GUI RPC: include hostid in PROJECT||
 ||18340||lib: FILE_LOCK::lock() makes lockfile group-writable so both client and manager can create and write it under sandbox security||
 ||18408/18410/18684||MGR: Wizard retries acct_mgr_rpc() if acct_mgr_rpc_poll() sets ERR_RETRY||
 ||18427||client: don't require that file upload URLs contain "file_upload_handler".||
@@ -94,7 +91,6 @@
 ||18633||lib: gcc 4.4 fix; fixes #854||
 ||18667||client: Treat power events similiar to the snooze events||
 ||18712||client: in get_project_config_poll() GUI RPC, return ERR_IN_PROGRESS is the reference site check is in progress.||
-||18719||WINSCR: Remove Win9x compatibility code from the screen saver.||
 
 
 == Changesets for the (new OpenGL) screensaver (Might be useful some day) ==
