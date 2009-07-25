@@ -58,17 +58,6 @@ struct INTERNALMONITORINFO
 
 
 //-----------------------------------------------------------------------------
-// Name: struct LASTINPUTINFO
-// Desc: Structure for holding input idle detection values on Win2k+
-//       systems.
-//-----------------------------------------------------------------------------
-typedef struct tagLASTINPUTINFO {
-    UINT cbSize;
-    DWORD dwTime;
-} LASTINPUTINFO, *PLASTINPUTINFO;
-
-
-//-----------------------------------------------------------------------------
 // Name: struct INTERNALMONITORINFO
 // Desc: Use the following structure rather than DISPLAY_DEVICE, since some
 //       old versions of DISPLAY_DEVICE are missing the last two fields and
@@ -83,23 +72,6 @@ struct DISPLAY_DEVICE_FULL
     TCHAR  DeviceID[128];
     TCHAR  DeviceKey[128];
 };
-
-
-// Prototype for VerifyScreenSavePwd() in password.cpl, used on Win9x
-typedef BOOL (WINAPI *VERIFYPWDPROC)(HWND);
-
-// Prototype for GetLastInputInto() in user32.dll, used on Win2k or better.
-typedef BOOL (WINAPI *MYGETLASTINPUTINFO)(PLASTINPUTINFO);
-
-// Prototype for GetLastInputInto() in user32.dll, used on Win2k or better.
-typedef BOOL (WINAPI *MYISHUNGAPPWINDOW)(HWND hWnd);
-
-// Prototype for BroadcastSystemMessage() in user32.dll.
-typedef long (WINAPI *MYBROADCASTSYSTEMMESSAGE)(DWORD dwFlags, LPDWORD lpdwRecipients, UINT uiMessage, WPARAM wParam, LPARAM lParam);
-
-// Prototype for SHGetFolderPath() in shlwapi.dll.
-typedef HRESULT (WINAPI *MYSHGETFOLDERPATH)(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath);
-
 
 //-----------------------------------------------------------------------------
 // Name: class CScreensaver
@@ -212,8 +184,6 @@ protected:
     HINSTANCE               m_hInstance;
     BOOL                    m_bWaitForInputIdle;  // Used to pause when preview starts
     DWORD                   m_dwSaverMouseMoveCount;
-    BOOL                    m_bIs9x;
-    BOOL                    m_bCheckingSaverPassword;
     BOOL                    m_bWindowed;
 
     INTERNALMONITORINFO     m_Monitors[MAX_DISPLAYS];

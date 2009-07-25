@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 David Barnard
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -45,12 +45,6 @@
 #endif
 
 
-static HMODULE                  gshUser32 = NULL;
-static HMODULE                  gshPasswordCPL = NULL;
-static VERIFYPWDPROC            gspfnMyVerifyPwdProc = NULL;
-static MYGETLASTINPUTINFO       gspfnMyGetLastInputInfo = NULL;
-static MYISHUNGAPPWINDOW        gspfnMyIsHungAppWindow = NULL;
-static MYBROADCASTSYSTEMMESSAGE gspfnMyBroadcastSystemMessage = NULL;
 static CScreensaver*            gspScreensaver = NULL;
 
 const UINT                      WM_SETTIMER = RegisterWindowMessage(TEXT("BOINCSetTimer"));
@@ -58,18 +52,13 @@ const UINT                      WM_INTERRUPTSAVER = RegisterWindowMessage(TEXT("
 const UINT                      WM_BOINCSFW = RegisterWindowMessage(TEXT("BOINCSetForegroundWindow"));
 
 
-INT WINAPI WinMain(
-    HINSTANCE hInstance, HINSTANCE UNUSED(hPrevInstance), LPSTR UNUSED(lpCmdLine), int UNUSED(nCmdShow)
-) {
+INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE UNUSED(hPrevInstance), LPSTR UNUSED(lpCmdLine), int UNUSED(nCmdShow)) {
     HRESULT      hr;
     CScreensaver BOINCSS;
     int          retval;
     WSADATA      wsdata;
-    BOOL         bIs95 = FALSE;
-    BOOL         bIs9x = FALSE;
     DWORD        dwVal;
     DWORD        dwSize = sizeof(dwVal); 
-    HKEY         hKey;
 
 #ifdef _DEBUG
     // Initialize Diagnostics
@@ -89,39 +78,6 @@ INT WINAPI WinMain(
         MessageBox(NULL, NULL, "Synecdoche Screensaver Diagnostic Error", MB_OK);
     }
 #endif
-
-    // Figure out if we're on Win9x
-    OSVERSIONINFO osvi; 
-    osvi.dwOSVersionInfoSize = sizeof(osvi);
-    GetVersionEx(&osvi);
-    bIs9x =   osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS;
-    bIs95 =   (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) &&
-              ((osvi.dwMajorVersion == 4) && (osvi.dwMinorVersion == 0));
-
-    // Load dynamically linked modules
-    gshUser32 = LoadLibrary(_T("USER32.DLL"));
-    if (bIs9x) {
-        gshPasswordCPL = LoadLibrary(_T("PASSWORD.CPL"));
-    }
-
-    // Map function pointers
-    if (gshUser32) {
-        gspfnMyGetLastInputInfo = (MYGETLASTINPUTINFO) GetProcAddress(gshUser32, _T("GetLastInputInfo"));
-        gspfnMyIsHungAppWindow = (MYISHUNGAPPWINDOW) GetProcAddress(gshUser32, _T("IsHungAppWindow"));
-        if (bIs95) {
-            gspfnMyBroadcastSystemMessage = (MYBROADCASTSYSTEMMESSAGE) GetProcAddress(gshUser32, _T("BroadcastSystemMessage"));
-        } else {
-            gspfnMyBroadcastSystemMessage = (MYBROADCASTSYSTEMMESSAGE) GetProcAddress(gshUser32, _T("BroadcastSystemMessageA"));
-        }
-    }
-    if (gshPasswordCPL) {
-        if (RegOpenKey(HKEY_CURRENT_USER , REGSTR_PATH_SCREENSAVE , &hKey) == ERROR_SUCCESS) { 
-             if ((RegQueryValueEx(hKey, REGSTR_VALUE_USESCRPASSWORD, NULL, NULL, (BYTE *)&dwVal, &dwSize) == ERROR_SUCCESS) && dwVal) { 
-                gspfnMyVerifyPwdProc = (VERIFYPWDPROC)GetProcAddress(gshPasswordCPL, _T("VerifyScreenSavePwd"));
-                RegCloseKey(hKey);
-            }
-        }
-    }
 
     // Initialize the CRT random number generator.
     srand((unsigned int)time(0));
@@ -144,19 +100,6 @@ INT WINAPI WinMain(
     // Cleanup the Windows sockets interface.
     WSACleanup();
 
-    // Clean up function pointers.
-    gspfnMyGetLastInputInfo = NULL;
-    gspfnMyIsHungAppWindow = NULL;
-    gspfnMyBroadcastSystemMessage = NULL;
-    gspfnMyVerifyPwdProc = NULL;
-
-    // Free modules
-    FreeLibrary(gshUser32);
-    if (gshPasswordCPL) {
-        FreeLibrary(gshPasswordCPL);
-        gshPasswordCPL = NULL;
-    }
-    
     return retval;
 }
 
@@ -164,8 +107,6 @@ INT WINAPI WinMain(
 CScreensaver::CScreensaver() {
     gspScreensaver = this;
 
-    m_bCheckingSaverPassword = FALSE;
-    m_bIs9x = FALSE;
     m_dwSaverMouseMoveCount = 0;
     m_hWnd = NULL;
     m_hWndParent = NULL;
@@ -200,7 +141,6 @@ CScreensaver::CScreensaver() {
 
 
 // Have the client program call this function before calling Run().
-//
 HRESULT CScreensaver::Create(HINSTANCE hInstance) {
     HRESULT hr;
     BOOL    bReturnValue;
@@ -210,21 +150,12 @@ HRESULT CScreensaver::Create(HINSTANCE hInstance) {
     // Parse the command line and do the appropriate thing
     m_SaverMode = ParseCommandLine(GetCommandLine());
 
-    // Figure out if we're on Win9x
-    OSVERSIONINFO osvi; 
-    osvi.dwOSVersionInfoSize = sizeof(osvi);
-    GetVersionEx(&osvi);
-    m_bIs9x = (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS);
-
     // Store last input value if it exists
-    if (gspfnMyGetLastInputInfo) {
-        LASTINPUTINFO lii;
-        lii.cbSize = sizeof(LASTINPUTINFO);
+    LASTINPUTINFO lii;
+    lii.cbSize = sizeof(LASTINPUTINFO);
+    GetLastInputInfo(&lii);
 
-        gspfnMyGetLastInputInfo(&lii);
-
-        m_dwLastInputTimeAtStartup = lii.dwTime;
-    }
+    m_dwLastInputTimeAtStartup = lii.dwTime;
 
     // Enumerate Monitors
     EnumMonitors();
@@ -609,24 +540,15 @@ int CScreensaver::UtilGetRegStartupStr(LPCTSTR name, LPTSTR str) {
 
     *str = 0;
 
-    if (m_bIs9x) {
-        error = RegOpenKeyEx(
-            HKEY_LOCAL_MACHINE, 
-            _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
-            0, 
-            KEY_ALL_ACCESS,
-            &boinc_key
-        );
-        if (error != ERROR_SUCCESS) return -1;
-    } else {
-        error = RegOpenKeyEx(
-            HKEY_CURRENT_USER, 
-            _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
-            0, 
-            KEY_ALL_ACCESS, 
-            &boinc_key
-        );
-        if (error != ERROR_SUCCESS) return -1;
+    error = RegOpenKeyEx(
+        HKEY_CURRENT_USER, 
+        _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"),
+        0, 
+        KEY_ALL_ACCESS, 
+        &boinc_key
+    );
+    if (error != ERROR_SUCCESS) {
+        return -1;
     }
 
     error = RegQueryValueEx(boinc_key, name, NULL, &type, (BYTE*)str, &size);
@@ -788,9 +710,6 @@ VOID CScreensaver::UpdateErrorBoxText() {
     BOINCTRACE(_T("CScreensaver::UpdateErrorBoxText - Updated Text '%s'\n"), m_szError);
 }
 
-
-
-
 // Translate an HRESULT error code into a string that can be displayed
 //       to explain the error.  A class derived from CD3DScreensaver can 
 //       provide its own version of this function that provides app-specific
@@ -798,7 +717,6 @@ VOID CScreensaver::UpdateErrorBoxText() {
 //       This function returns TRUE if a specific error was translated, or
 //       FALSE if no specific translation for the HRESULT was found (though
 //       it still puts a generic string into pszError).
-//
 BOOL CScreensaver::GetTextForError(
     HRESULT hr, TCHAR* pszError, DWORD dwNumChars
 ) {
@@ -841,10 +759,7 @@ BOOL CScreensaver::GetTextForError(
     }
 }
 
-
-
 // Create the thread that is used to talk to the daemon.
-//
 BOOL CScreensaver::CreateDataManagementThread() {
     DWORD dwThreadID = 0;
     BOINCTRACE(_T("CScreensaver::CreateDataManagementThread Start\n"));
@@ -864,11 +779,7 @@ BOOL CScreensaver::CreateDataManagementThread() {
    return TRUE;
 }
 
-
-
-
 // Terminate the thread that is used to talk to the daemon.
-//
 BOOL CScreensaver::DestroyDataManagementThread() {
     m_QuitDataManagementProc = TRUE;  // Tell RPC Thread to exit
     
@@ -930,16 +841,14 @@ void CScreensaver::CheckForegroundWindow() {
                 BOINCTRACE(_T("CScreensaver::CheckForegroundWindow - Graphics Window Detected but NOT the foreground window, bringing window to foreground. (Final Try)\n"));
 
                 // This may be needed on Windows 2000 or better machines
-                if (gspfnMyBroadcastSystemMessage) {
-                    DWORD dwComponents = BSM_APPLICATIONS;
-                    gspfnMyBroadcastSystemMessage(
-                        BSF_ALLOWSFW, 
-                        &dwComponents,
-                        WM_BOINCSFW,
-                        NULL,
-                        NULL
-                    );
-                }
+                DWORD dwComponents = BSM_APPLICATIONS;
+                BroadcastSystemMessage(
+                    BSF_ALLOWSFW, 
+                    &dwComponents,
+                    WM_BOINCSFW,
+                    NULL,
+                    NULL
+                );
             }
         } else {
             // Science application has focus, and is visible.
@@ -956,20 +865,17 @@ void CScreensaver::CheckForegroundWindow() {
             // we should hide the window from this process and exit out of the screensaver to
             // return control back to the user as quickly as possible.
             BOINCTRACE(_T("CScreensaver::CheckForegroundWindow - Graphics Window Detected and is the foreground window.\n"));
-            if (gspfnMyGetLastInputInfo) {
-                BOINCTRACE(_T("CScreensaver::CheckForegroundWindow - Checking idle actvity.\n"));
-                LASTINPUTINFO lii;
-                lii.cbSize = sizeof(LASTINPUTINFO);
+            BOINCTRACE(_T("CScreensaver::CheckForegroundWindow - Checking idle actvity.\n"));
+            LASTINPUTINFO lii;
+            lii.cbSize = sizeof(LASTINPUTINFO);
+            GetLastInputInfo(&lii);
 
-                gspfnMyGetLastInputInfo(&lii);
-
-                if (m_dwLastInputTimeAtStartup != lii.dwTime) {
-                    BOINCTRACE(_T("CScreensaver::CheckForegroundWindow - Activity Detected.\n"));
-                    ShowWindow(hwndBOINCGraphicsWindow, SW_MINIMIZE);
-                    ShowWindow(hwndBOINCGraphicsWindow, SW_FORCEMINIMIZE);
-                    SetError(TRUE, SCRAPPERR_BOINCSHUTDOWNEVENT);
-                    SendMessage(m_Monitors[iMonitor].hWnd, WM_INTERRUPTSAVER, NULL, NULL);
-                }
+            if (m_dwLastInputTimeAtStartup != lii.dwTime) {
+                BOINCTRACE(_T("CScreensaver::CheckForegroundWindow - Activity Detected.\n"));
+                ShowWindow(hwndBOINCGraphicsWindow, SW_MINIMIZE);
+                ShowWindow(hwndBOINCGraphicsWindow, SW_FORCEMINIMIZE);
+                SetError(TRUE, SCRAPPERR_BOINCSHUTDOWNEVENT);
+                SendMessage(m_Monitors[iMonitor].hWnd, WM_INTERRUPTSAVER, NULL, NULL);
             }
         }
     } else {
@@ -1265,7 +1171,7 @@ LRESULT CScreensaver::SaverProc(
 
         case WM_SETCURSOR:
             BOINCTRACE(_T("CScreensaver::SaverProc Received WM_SETCURSOR\n"));
-            if (m_SaverMode == sm_full && !m_bCheckingSaverPassword) {
+            if (m_SaverMode == sm_full) {
                 // Hide cursor
                 SetCursor(NULL);
                 return TRUE;
@@ -1274,7 +1180,7 @@ LRESULT CScreensaver::SaverProc(
 
         case WM_POWERBROADCAST:
             BOINCTRACE(_T("CScreensaver::SaverProc Received WM_POWERBROADCAST\n"));
-            if (wParam == PBT_APMQUERYSUSPEND && gspfnMyVerifyPwdProc == NULL)
+            if (wParam == PBT_APMQUERYSUSPEND)
                 InterruptSaver();
             break;
     }
@@ -1386,9 +1292,6 @@ VOID CScreensaver::ShutdownSaver() {
     }
 }
 
-
-
-
 // A message was received (mouse move, keydown, etc.) that may mean
 //       the screen saver should show the password dialog and/or shut down.
 //
@@ -1396,51 +1299,9 @@ VOID CScreensaver::InterruptSaver() {
     BOOL bPasswordOkay = FALSE;
 
     BOINCTRACE(_T("CScreensaver::InterruptSaver Function Begin\n"));
-    if (m_SaverMode == sm_test || m_SaverMode == sm_full && !m_bCheckingSaverPassword) {
-        if (m_bIs9x && m_SaverMode == sm_full) {
-            // If no VerifyPassword function, then no password is set 
-            // or we're not on 9x. 
-            if (gspfnMyVerifyPwdProc) {
-                BOINCTRACE(_T("CScreensaver::InterruptSaver Win9x Detected and Password Configured\n"));
-                m_bCheckingSaverPassword = TRUE;
-
-                BOINCTRACE(_T("CScreensaver::InterruptSaver Calling VerifyScreenSavePwd\n"));
-                bPasswordOkay = gspfnMyVerifyPwdProc(m_hWnd);
-                BOINCTRACE(_T("CScreensaver::InterruptSaver Finished\n"));
-
-                m_bCheckingSaverPassword = FALSE;
-
-                if (!bPasswordOkay) {
-                    // Back to screen saving...
-                    BOINCTRACE(_T("CScreensaver::InterruptSaver Incorrect Password Given, Resetting m_dwSaverMouseMoveCount\n"));
-                    SetCursor(NULL);
-                    m_dwSaverMouseMoveCount = 0;
-                    return;
-                }
-            }
-        }
-        ShutdownSaver();
-    } else {
-        if (m_bIs9x && m_SaverMode == sm_full && m_bCheckingSaverPassword) {
-            // Win9x sucks so bad the darn password dialog can get stuck behind the
-            // screensaver window.  Which leaves the screensaver in a state where
-            // you have to reboot the machine.
-            HWND hwndPassword = FindWindow(_T("#32770"), _T("Windows Screen Saver"));
-            HWND hwndForeWindow = GetForegroundWindow();
-            if (hwndPassword) {
-                BOINCTRACE(_T("CScreensaver::InterruptSaver Password Dialog Detected\n"));
-                if (hwndPassword != hwndForeWindow) {
-                    BOINCTRACE(_T("CScreensaver::InterruptSaver Password Dialog is NOT the foreground window, bringing to foreground\n"));
-                    SetForegroundWindow(hwndPassword);
-                }
-            }
-        }
-    }
+    ShutdownSaver();
     BOINCTRACE(_T("CScreensaver::InterruptSaver Function End\n"));
 }
-
-
-
 
 /// Update the box that shows the error message
 ///
