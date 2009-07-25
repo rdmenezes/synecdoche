@@ -85,7 +85,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmtd.lib libcpmtd.lib kernel32.lib user32.lib gdi32.lib advapi32.lib boinc_dll.lib"
+				AdditionalDependencies="libcmtd.lib libcpmtd.lib kernel32.lib user32.lib gdi32.lib advapi32.lib boinc_dll.lib libboincd.lib"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\idlemon.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
@@ -195,7 +195,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmtd.lib libcpmtd.lib kernel32.lib user32.lib gdi32.lib advapi32.lib boinc_dll.lib"
+				AdditionalDependencies="libcmtd.lib libcpmtd.lib kernel32.lib user32.lib gdi32.lib advapi32.lib boinc_dll.lib libboincd.lib"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
@@ -303,7 +303,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmt.lib libcpmt.lib kernel32.lib user32.lib gdi32.lib advapi32.lib boinc_dll.lib"
+				AdditionalDependencies="libcmt.lib libcpmt.lib kernel32.lib user32.lib gdi32.lib advapi32.lib boinc_dll.lib libboinc.lib"
 				ShowProgress="0"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\idlemon.exe"
 				LinkIncremental="1"
@@ -411,7 +411,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmt.lib libcpmt.lib kernel32.lib user32.lib gdi32.lib advapi32.lib boinc_dll.lib"
+				AdditionalDependencies="libcmt.lib libcpmt.lib kernel32.lib user32.lib gdi32.lib advapi32.lib boinc_dll.lib libboinc.lib"
 				ShowProgress="0"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="1"
@@ -467,10 +467,6 @@
 				RelativePath="..\clienttray\tray_win.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\lib\win_util.C"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -486,10 +482,6 @@
 			</File>
 			<File
 				RelativePath="..\clienttray\tray_win.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\win_util.h"
 				>
 			</File>
 		</Filter>

@@ -24,7 +24,6 @@
  **/ 
 HMODULE   g_hUser32 = NULL;
 HANDLE    g_hMemoryMappedData = NULL;
-BOOL      g_bIsWindows2000Compatible = FALSE;
 BOOL      g_bIsTerminalServicesEnabled = FALSE;
 
 /**
@@ -66,10 +65,8 @@ GETLASTINPUTINFO g_fnGetLastInputInfo = NULL;
 /**
  * Keyboard hook: record tick count
  **/
-LRESULT CALLBACK KeyboardTracker(int code, WPARAM wParam, LPARAM lParam)
-{
-    if (code==HC_ACTION)
-    {
+LRESULT CALLBACK KeyboardTracker(int code, WPARAM wParam, LPARAM lParam) {
+    if (code == HC_ACTION) {
         g_dwLastTick = GetTickCount();
     }
     return ::CallNextHookEx(g_hHkKeyboard, code, wParam, lParam);
@@ -78,14 +75,11 @@ LRESULT CALLBACK KeyboardTracker(int code, WPARAM wParam, LPARAM lParam)
 /**
  * Mouse hook: record tick count
  **/
-LRESULT CALLBACK MouseTracker(int code, WPARAM wParam, LPARAM lParam)
-{
-    if (code==HC_ACTION) 
-    {
+LRESULT CALLBACK MouseTracker(int code, WPARAM wParam, LPARAM lParam) {
+    if (code == HC_ACTION) {
         MOUSEHOOKSTRUCT* pStruct = (MOUSEHOOKSTRUCT*)lParam;
         //we will assume that any mouse msg with the same locations as spurious
-        if (pStruct->pt.x != g_mouseLocX || pStruct->pt.y != g_mouseLocY)
-        {
+        if (pStruct->pt.x != g_mouseLocX || pStruct->pt.y != g_mouseLocY) {
             g_mouseLocX = pStruct->pt.x;
             g_mouseLocY = pStruct->pt.y;
             g_dwLastTick = GetTickCount();
@@ -97,153 +91,103 @@ LRESULT CALLBACK MouseTracker(int code, WPARAM wParam, LPARAM lParam)
 /**
  * Get tick count of last keyboard or mouse event
  **/
-EXTERN_C __declspec(dllexport) DWORD BOINCGetIdleTickCount()
-{
+EXTERN_C __declspec(dllexport) DWORD BOINCGetIdleTickCount() {
     DWORD dwCurrentTickCount = GetTickCount();
     DWORD dwLastTickCount = 0;
 
-    if ( g_bIsWindows2000Compatible )
-    {
-        if ( g_pSystemWideIdleData )
-        {
-            LASTINPUTINFO lii;
-            ZeroMemory( &lii, sizeof(lii) );
-            lii.cbSize = sizeof(lii);
-            g_fnGetLastInputInfo( &lii );
+    if (g_pSystemWideIdleData) {
+        LASTINPUTINFO lii;
+        ZeroMemory(&lii, sizeof(lii));
+        lii.cbSize = sizeof(lii);
+        g_fnGetLastInputInfo(&lii);
 
-            /**
-             * If both values are greater than the system tick count then
-             *   the system must have looped back to the beginning.
-             **/
-            if ( ( dwCurrentTickCount < lii.dwTime ) &&
-                 ( dwCurrentTickCount < g_pSystemWideIdleData->dwLastTick ) )
-            {
-                lii.dwTime = dwCurrentTickCount;
-                g_pSystemWideIdleData->dwLastTick = dwCurrentTickCount;
-            }
-
-            if ( lii.dwTime > g_pSystemWideIdleData->dwLastTick )
-                g_pSystemWideIdleData->dwLastTick = lii.dwTime;
-
-            dwLastTickCount = g_pSystemWideIdleData->dwLastTick;
+        /**
+         * If both values are greater than the system tick count then
+         *   the system must have looped back to the beginning.
+         **/
+        if ((dwCurrentTickCount < lii.dwTime) &&
+             (dwCurrentTickCount < g_pSystemWideIdleData->dwLastTick)) {
+            lii.dwTime = dwCurrentTickCount;
+            g_pSystemWideIdleData->dwLastTick = dwCurrentTickCount;
         }
-    }
-    else
-    {
-        dwLastTickCount = g_dwLastTick;
-    }
 
+        if (lii.dwTime > g_pSystemWideIdleData->dwLastTick) {
+            g_pSystemWideIdleData->dwLastTick = lii.dwTime;
+        }
+
+        dwLastTickCount = g_pSystemWideIdleData->dwLastTick;
+    }
     return (dwCurrentTickCount - dwLastTickCount);
 }
 
 /**
  * Initialize DLL: install kbd/mouse hooks.
  **/
-BOOL IdleTrackerStartup()
-{
+BOOL IdleTrackerStartup() {
     BOOL                bExists = FALSE;
     BOOL                bResult = FALSE;
     SECURITY_ATTRIBUTES sec_attr;
     SECURITY_DESCRIPTOR sd;
 
-
-    g_bIsWindows2000Compatible = IsWindows2000Compatible();
     g_bIsTerminalServicesEnabled = IsTerminalServicesEnabled();
-
         
-    if ( !g_bIsWindows2000Compatible )
-    {
-        if ( NULL == g_hHkKeyboard )
-        {
-            g_hHkKeyboard = SetWindowsHookEx( 
-                WH_KEYBOARD, 
-                KeyboardTracker, 
-                g_hModule,
-                0
-            );
-        }
-        if ( NULL == g_hHkMouse )
-        {
-            g_hHkMouse = SetWindowsHookEx( 
-                WH_MOUSE, 
-                MouseTracker, 
-                g_hModule,
-                0
-            );
-        }
-
-        _ASSERT( g_hHkKeyboard );
-        _ASSERT( g_hHkMouse );
+    g_hUser32 = LoadLibrary("user32.dll");            
+    if (g_hUser32) {
+        g_fnGetLastInputInfo = (GETLASTINPUTINFO)GetProcAddress(g_hUser32, "GetLastInputInfo");
     }
-    else
-    {
-        g_hUser32 = LoadLibrary("user32.dll");            
-        if (g_hUser32)
-            g_fnGetLastInputInfo = (GETLASTINPUTINFO)GetProcAddress(g_hUser32, "GetLastInputInfo");
 
 
-        /*
-        * Create a security descriptor that will allow
-        * everyone full access.
-        */
-        InitializeSecurityDescriptor( &sd, SECURITY_DESCRIPTOR_REVISION );
-        SetSecurityDescriptorDacl( &sd, TRUE, NULL, FALSE );
+    /*
+    * Create a security descriptor that will allow
+    * everyone full access.
+    */
+    InitializeSecurityDescriptor( &sd, SECURITY_DESCRIPTOR_REVISION );
+    SetSecurityDescriptorDacl( &sd, TRUE, NULL, FALSE );
 
-        sec_attr.nLength = sizeof(sec_attr);
-        sec_attr.bInheritHandle = TRUE;
-        sec_attr.lpSecurityDescriptor = &sd;
+    sec_attr.nLength = sizeof(sec_attr);
+    sec_attr.bInheritHandle = TRUE;
+    sec_attr.lpSecurityDescriptor = &sd;
 
-        /*
-        * Create a filemap object that is global for everyone,
-        * including users logged in via terminal services.
-        */
-        g_hMemoryMappedData = 
-            CreateFileMapping(
-                INVALID_HANDLE_VALUE,
-                &sec_attr,
-                PAGE_READWRITE,
+    /*
+    * Create a filemap object that is global for everyone,
+    * including users logged in via terminal services.
+    */
+    g_hMemoryMappedData = 
+        CreateFileMapping(
+            INVALID_HANDLE_VALUE,
+            &sec_attr,
+            PAGE_READWRITE,
+            0,
+            4096,
+            "Global\\IdleMonitor"
+        );
+
+    if (NULL != g_hMemoryMappedData ) {
+        if (ERROR_ALREADY_EXISTS == GetLastError()) {
+            bExists = TRUE;
+        }
+
+        g_pSystemWideIdleData = (struct SystemWideIdleData*) 
+            MapViewOfFile(
+                g_hMemoryMappedData, 
+                FILE_MAP_ALL_ACCESS,
                 0,
-                4096,
-                "Global\\IdleMonitor"
+                0,
+                0
             );
 
-        if( NULL != g_hMemoryMappedData )
-        {
-            if( ERROR_ALREADY_EXISTS == GetLastError() )
-                bExists = TRUE;
+        _ASSERT(g_pSystemWideIdleData);
+    }
 
-            g_pSystemWideIdleData = (struct SystemWideIdleData*) 
-                MapViewOfFile(
-                    g_hMemoryMappedData, 
-                    FILE_MAP_ALL_ACCESS,
-                    0,
-                    0,
-                    0
-                );
-
-            _ASSERT( g_pSystemWideIdleData );
-        }
-
-        if( !bExists && g_pSystemWideIdleData )
-        {
-            g_pSystemWideIdleData->dwLastTick = GetTickCount();
-        }
+    if (!bExists && g_pSystemWideIdleData) {
+        g_pSystemWideIdleData->dwLastTick = GetTickCount();
     }
 
 
-    if ( !g_bIsWindows2000Compatible )
-    {
-        if ( !g_hHkKeyboard || !g_hHkMouse )
-            bResult = FALSE;
-        else
-            bResult = TRUE;
-    }
-    else
-    {
-        if ( !g_hUser32 || !g_fnGetLastInputInfo || !g_hMemoryMappedData || !g_pSystemWideIdleData )
-            bResult = FALSE;
-        else
-            bResult = TRUE;
+    if (!g_hUser32 || !g_fnGetLastInputInfo || !g_hMemoryMappedData || !g_pSystemWideIdleData) {
+        bResult = FALSE;
+    } else {
+        bResult = TRUE;
     }
 
     return bResult;
@@ -252,33 +196,13 @@ BOOL IdleTrackerStartup()
 /**
  * Terminate DLL: remove hooks.
  **/
-void IdleTrackerShutdown()
-{
-    if ( !g_bIsWindows2000Compatible )
-    {
-        BOOL bResult;
-        if ( g_hHkKeyboard )
-        {
-            bResult = UnhookWindowsHookEx( g_hHkKeyboard );
-            _ASSERT( bResult );
-            g_hHkKeyboard = NULL;
-        }
-        if ( g_hHkMouse )
-        {
-            bResult = UnhookWindowsHookEx(g_hHkMouse);
-            _ASSERT( bResult );
-            g_hHkMouse = NULL;
-        }
+void IdleTrackerShutdown() {
+    if (NULL != g_pSystemWideIdleData) {
+        UnmapViewOfFile(g_pSystemWideIdleData);
+        CloseHandle(g_hMemoryMappedData);
     }
-    else
-    {
-        if( NULL != g_pSystemWideIdleData )
-        {
-            UnmapViewOfFile(g_pSystemWideIdleData);
-            CloseHandle(g_hMemoryMappedData);
-        }
 
-        if ( NULL != g_hUser32 )
-            FreeLibrary(g_hUser32);
+    if (NULL != g_hUser32) {
+        FreeLibrary(g_hUser32);
     }
 }

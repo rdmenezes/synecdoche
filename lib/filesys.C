@@ -863,8 +863,8 @@ std::string relative_to_absolute(const std::string& relname) {
 ///                 filesystem for which the total and free space should be
 ///                 calculated.
 /// \return Always returns Zero.
-int get_filesystem_info(double& total_space, double& free_space, const char* path) {
 #ifdef _WIN32
+int get_filesystem_info(double& total_space, double& free_space, const char* SYNEC_UNUSED(path)) {
     std::string cwd = boinc_getcwd();
     FreeFn pGetDiskFreeSpaceEx;
     pGetDiskFreeSpaceEx = (FreeFn)GetProcAddress(GetModuleHandle("kernel32.dll"), "GetDiskFreeSpaceExA");
@@ -890,6 +890,7 @@ int get_filesystem_info(double& total_space, double& free_space, const char* pat
         total_space = (double)dwTotalClusters * dwSectPerClust * dwBytesPerSect;
     }
 #else
+int get_filesystem_info(double& total_space, double& free_space, const char* path) {
 #ifdef STATFS
     struct STATFS fs_info;
 
