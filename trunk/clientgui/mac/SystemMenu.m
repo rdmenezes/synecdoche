@@ -111,7 +111,7 @@ void SetUpSystemMenu(MenuRef menuToCopy, CGImageRef theIcon) {
     sysMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:@""];
     
     if (gStatusItem == NULL) {
-        gStatusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
+        gStatusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:24];
         [gStatusItem retain];
     }
 
