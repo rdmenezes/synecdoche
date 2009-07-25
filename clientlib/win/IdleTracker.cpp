@@ -1,18 +1,20 @@
-/**
- * IdleTracker - a DLL that tracks the user's idle input time
- *               system-wide.
- *
- * Usage
- * =====
- * - call IdleTrackerInit() when you want to start monitoring.
- * - call IdleTrackerTerm() when you want to stop monitoring.
- * - to get the time past since last user input, do the following:
- *    GetTickCount() - IdleTrackerGetLastTickCount()
- *
- * Author: Sidney Chong
- * Date: 25/5/2000
- * Version: 1.0
- **/
+// This file is part of Synecdoche.
+// http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2005 University of California
+//
+// Synecdoche is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Synecdoche is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 #include "boinc_dll.h"
@@ -22,22 +24,7 @@
 /**
  * The following global data is only shared in this instance of the DLL
  **/ 
-HMODULE   g_hUser32 = NULL;
 HANDLE    g_hMemoryMappedData = NULL;
-BOOL      g_bIsTerminalServicesEnabled = FALSE;
-
-/**
- * The following global data is SHARED among all instances of the DLL
- * (processes) within a terminal services session.
- **/ 
-#pragma data_seg(".IdleTrac")   // you must define as SHARED in .def
-HHOOK   g_hHkKeyboard = NULL;   // handle to the keyboard hook
-HHOOK   g_hHkMouse = NULL;      // handle to the mouse hook
-LONG    g_mouseLocX = -1;       // x-location of mouse position
-LONG    g_mouseLocY = -1;       // y-location of mouse position
-DWORD   g_dwLastTick = 0;       // tick time of last input event
-#pragma data_seg()
-#pragma comment(linker, "/section:.IdleTrac,rws")
 
 /**
  * The following global data is SHARED among all instances of the DLL
@@ -51,44 +38,6 @@ struct SystemWideIdleData
 struct SystemWideIdleData* g_pSystemWideIdleData = NULL;
 
 /**
- * Define stuff that only exists on Windows 2000 compatible machines
- **/
-typedef struct tagLASTINPUTINFO {
-    UINT cbSize;
-    DWORD dwTime;
-} LASTINPUTINFO, *PLASTINPUTINFO;
-
-typedef BOOL (WINAPI *GETLASTINPUTINFO)(PLASTINPUTINFO);
-
-GETLASTINPUTINFO g_fnGetLastInputInfo = NULL;
-
-/**
- * Keyboard hook: record tick count
- **/
-LRESULT CALLBACK KeyboardTracker(int code, WPARAM wParam, LPARAM lParam) {
-    if (code == HC_ACTION) {
-        g_dwLastTick = GetTickCount();
-    }
-    return ::CallNextHookEx(g_hHkKeyboard, code, wParam, lParam);
-}
-
-/**
- * Mouse hook: record tick count
- **/
-LRESULT CALLBACK MouseTracker(int code, WPARAM wParam, LPARAM lParam) {
-    if (code == HC_ACTION) {
-        MOUSEHOOKSTRUCT* pStruct = (MOUSEHOOKSTRUCT*)lParam;
-        //we will assume that any mouse msg with the same locations as spurious
-        if (pStruct->pt.x != g_mouseLocX || pStruct->pt.y != g_mouseLocY) {
-            g_mouseLocX = pStruct->pt.x;
-            g_mouseLocY = pStruct->pt.y;
-            g_dwLastTick = GetTickCount();
-        }
-    }
-    return ::CallNextHookEx(g_hHkMouse, code, wParam, lParam);
-}
-
-/**
  * Get tick count of last keyboard or mouse event
  **/
 EXTERN_C __declspec(dllexport) DWORD BOINCGetIdleTickCount() {
@@ -99,7 +48,7 @@ EXTERN_C __declspec(dllexport) DWORD BOINCGetIdleTickCount() {
         LASTINPUTINFO lii;
         ZeroMemory(&lii, sizeof(lii));
         lii.cbSize = sizeof(lii);
-        g_fnGetLastInputInfo(&lii);
+        GetLastInputInfo(&lii);
 
         /**
          * If both values are greater than the system tick count then
@@ -120,22 +69,11 @@ EXTERN_C __declspec(dllexport) DWORD BOINCGetIdleTickCount() {
     return (dwCurrentTickCount - dwLastTickCount);
 }
 
-/**
- * Initialize DLL: install kbd/mouse hooks.
- **/
 BOOL IdleTrackerStartup() {
     BOOL                bExists = FALSE;
     BOOL                bResult = FALSE;
     SECURITY_ATTRIBUTES sec_attr;
     SECURITY_DESCRIPTOR sd;
-
-    g_bIsTerminalServicesEnabled = IsTerminalServicesEnabled();
-        
-    g_hUser32 = LoadLibrary("user32.dll");            
-    if (g_hUser32) {
-        g_fnGetLastInputInfo = (GETLASTINPUTINFO)GetProcAddress(g_hUser32, "GetLastInputInfo");
-    }
-
 
     /*
     * Create a security descriptor that will allow
@@ -184,7 +122,7 @@ BOOL IdleTrackerStartup() {
     }
 
 
-    if (!g_hUser32 || !g_fnGetLastInputInfo || !g_hMemoryMappedData || !g_pSystemWideIdleData) {
+    if (!g_hMemoryMappedData || !g_pSystemWideIdleData) {
         bResult = FALSE;
     } else {
         bResult = TRUE;
@@ -193,16 +131,9 @@ BOOL IdleTrackerStartup() {
     return bResult;
 }
 
-/**
- * Terminate DLL: remove hooks.
- **/
 void IdleTrackerShutdown() {
     if (NULL != g_pSystemWideIdleData) {
         UnmapViewOfFile(g_pSystemWideIdleData);
         CloseHandle(g_hMemoryMappedData);
-    }
-
-    if (NULL != g_hUser32) {
-        FreeLibrary(g_hUser32);
     }
 }
