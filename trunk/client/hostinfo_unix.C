@@ -176,8 +176,8 @@ int get_timezone() {
     return 0;
 }
 
-/// Returns true if the host is currently running off battery power
-/// If you can't figure out, return false
+/// Returns true if the host is currently running off battery power.
+/// If you can't figure out, return false.
 ///
 bool HOST_INFO::host_is_running_on_batteries() {
 #if defined(__APPLE__)
@@ -914,7 +914,7 @@ int HOST_INFO::get_host_info() {
     return 0;
 }
 
-/// returns true iff device was last accessed before t
+/// Returns true iff device was last accessed before \a t
 /// or if an error occurred looking at the device.
 ///
 inline bool device_idle(time_t t, const char *device) {
