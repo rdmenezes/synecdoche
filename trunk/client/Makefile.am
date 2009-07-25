@@ -88,7 +88,6 @@ synecd_CPPFLAGS = $(AM_CPPFLAGS) -DHARDCODED_DIRS
 synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
 
 synecddir = $(bindir)
-dist_synecd_DATA = ../curl/ca-bundle.crt
 
 switcher_SOURCES = switcher.C
 
