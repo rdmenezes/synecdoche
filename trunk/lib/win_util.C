@@ -52,114 +52,22 @@ BOOL IsTerminalServicesEnabled() {
     DWORD   dwVersion;
     OSVERSIONINFOEXA osVersionInfo;
     DWORDLONG dwlConditionMask = 0;
-    HMODULE hmodK32 = NULL;
-    HMODULE hmodNtDll = NULL;
-    typedef ULONGLONG (WINAPI *PFnVerSetConditionMask)(ULONGLONG,ULONG,UCHAR);
-    typedef BOOL (WINAPI *PFnVerifyVersionInfoA)(POSVERSIONINFOEXA, DWORD, DWORDLONG);
-    PFnVerSetConditionMask pfnVerSetConditionMask;
-    PFnVerifyVersionInfoA pfnVerifyVersionInfoA;
 
     dwVersion = GetVersion();
 
     // are we running NT ?
     if (!(dwVersion & 0x80000000))
     {
-        // Is it Windows 2000 (NT 5.0) or greater ?
-        if (LOBYTE(LOWORD(dwVersion)) > 4)
-        {
-            // In Windows 2000 we need to use the Product Suite APIs
-            // Don't static link because it won't load on non-Win2000 systems
-            hmodNtDll = GetModuleHandle( "NTDLL.DLL" );
-            if (hmodNtDll != NULL)
-            {
-                pfnVerSetConditionMask = (PFnVerSetConditionMask )GetProcAddress( hmodNtDll, "VerSetConditionMask");
-                if (pfnVerSetConditionMask != NULL)
-                {
-                    dwlConditionMask = (*pfnVerSetConditionMask)( dwlConditionMask, VER_SUITENAME, VER_AND );
-                    hmodK32 = GetModuleHandle( "KERNEL32.DLL" );
-                    if (hmodK32 != NULL)
-                    {
-                        pfnVerifyVersionInfoA = (PFnVerifyVersionInfoA)GetProcAddress( hmodK32, "VerifyVersionInfoA") ;
-                        if (pfnVerifyVersionInfoA != NULL)
-                        {
-                            ZeroMemory(&osVersionInfo, sizeof(osVersionInfo));
-                            osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
-                            osVersionInfo.wSuiteMask = VER_SUITE_TERMINAL | VER_SUITE_SINGLEUSERTS;
-                            bResult = (*pfnVerifyVersionInfoA)(
-                                              &osVersionInfo,
-                                              VER_SUITENAME,
-                                              dwlConditionMask);
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            // This is NT 4.0 or older
-            bResult = ValidateProductSuite( "Terminal Server" );
-        }
+        dwlConditionMask = VerSetConditionMask(dwlConditionMask, VER_SUITENAME, VER_AND);
+
+        ZeroMemory(&osVersionInfo, sizeof(osVersionInfo));
+        osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
+        osVersionInfo.wSuiteMask = VER_SUITE_TERMINAL | VER_SUITE_SINGLEUSERTS;
+        bResult = VerifyVersionInfoA(&osVersionInfo, VER_SUITENAME, dwlConditionMask);
     }
 
     return bResult;
 }
-
-
-/// Compares the passed in "suite name" string to the product suite information
-/// stored in the registry. This only works on the Terminal Server 4.0
-/// platform.
-BOOL ValidateProductSuite (LPSTR SuiteName) {
-    BOOL rVal = FALSE;
-    LONG Rslt;
-    HKEY hKey = NULL;
-    DWORD Type = 0;
-    DWORD Size = 0;
-    LPSTR ProductSuite = NULL;
-    LPSTR p;
-
-    Rslt = RegOpenKeyA(
-        HKEY_LOCAL_MACHINE,
-        "System\\CurrentControlSet\\Control\\ProductOptions",
-        &hKey
-        );
-
-    if (Rslt != ERROR_SUCCESS)
-        goto exit;
-
-    Rslt = RegQueryValueExA( hKey, "ProductSuite", NULL, &Type, NULL, &Size );
-    if (Rslt != ERROR_SUCCESS || !Size)
-        goto exit;
-
-    ProductSuite = (LPSTR) LocalAlloc( LPTR, Size );
-    if (!ProductSuite)
-        goto exit;
-
-    Rslt = RegQueryValueExA( hKey, "ProductSuite", NULL, &Type,
-        (LPBYTE) ProductSuite, &Size );
-     if (Rslt != ERROR_SUCCESS || Type != REG_MULTI_SZ)
-        goto exit;
-
-    p = ProductSuite;
-    while (*p)
-    {
-        if (lstrcmpA( p, SuiteName ) == 0)
-        {
-            rVal = TRUE;
-            break;
-        }
-        p += (lstrlenA( p ) + 1);
-    }
-
-exit:
-    if (ProductSuite)
-        LocalFree( ProductSuite );
-
-    if (hKey)
-        RegCloseKey( hKey );
-
-    return rVal;
-}
-
 
 /// Terminates a process by process id instead of a handle.
 BOOL TerminateProcessById( DWORD dwProcessID ) {
@@ -707,30 +615,18 @@ BOOL GetAccountSid(
     return bSuccess;
 }
 
-// OpenThread
-typedef HANDLE (WINAPI *tOT)(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwThreadId);
-
-
 /// Suspend or resume the threads in a given process.
 /// The only way to do this on Windows is to enumerate
 /// all the threads in the entire system,
 /// and find those belonging to the process (ugh!!)
 int suspend_or_resume_threads(DWORD pid, bool resume) {
     HANDLE threads, thread;
-    HMODULE hKernel32Lib = NULL;
     THREADENTRY32 te = {0};
-    tOT pOT = NULL;
-
-    // Dynamically link to the proper function pointers.
-    hKernel32Lib = GetModuleHandle("kernel32.dll");
-    pOT = (tOT) GetProcAddress(hKernel32Lib, "OpenThread");
-
-    if (!pOT) {
-        return -1;
-    }
 
     threads = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
-    if (threads == INVALID_HANDLE_VALUE) return -1;
+    if (threads == INVALID_HANDLE_VALUE) {
+        return -1;
+    }
 
     te.dwSize = sizeof(THREADENTRY32);
     if (!Thread32First(threads, &te)) {
@@ -740,7 +636,7 @@ int suspend_or_resume_threads(DWORD pid, bool resume) {
 
     do {
         if (te.th32OwnerProcessID == pid) {
-            thread = pOT(THREAD_SUSPEND_RESUME, FALSE, te.th32ThreadID);
+            thread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, te.th32ThreadID);
             resume ? ResumeThread(thread) : SuspendThread(thread);
             CloseHandle(thread);
         }
@@ -751,6 +647,8 @@ int suspend_or_resume_threads(DWORD pid, bool resume) {
     return 0;
 }
 
+/// Change the current working directory to the data directory.
+/// (Currently does nothing.)
 void chdir_to_data_dir() {
     /*
     LONG    lReturnValue;
