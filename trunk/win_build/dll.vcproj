@@ -82,9 +82,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="sensapi.lib wininet.lib"
+				AdditionalDependencies="sensapi.lib wininet.lib libboincd.lib"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\$(SolutionName).dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;;"
 				MergedIDLBaseFileName="_boinc_dll.idl"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc_dll.pdb"
@@ -183,9 +184,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="sensapi.lib wininet.lib"
+				AdditionalDependencies="sensapi.lib wininet.lib libboincd.lib"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;;"
 				MergedIDLBaseFileName="_boinc_dll.idl"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc_dll.pdb"
@@ -281,9 +283,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="sensapi.lib wininet.lib"
+				AdditionalDependencies="sensapi.lib wininet.lib libboinc.lib"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\$(SolutionName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;;"
 				MergedIDLBaseFileName="_boinc_dll.idl"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc_dll.pdb"
@@ -382,9 +385,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="sensapi.lib wininet.lib"
+				AdditionalDependencies="sensapi.lib wininet.lib libboinc.lib"
 				OutputFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc.dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;;"
 				MergedIDLBaseFileName="_boinc_dll.idl"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Build\$(PlatformName)\$(ConfigurationName)\boinc_dll.pdb"
@@ -479,42 +483,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath="..\lib\win_util.C"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -535,10 +503,6 @@
 			</File>
 			<File
 				RelativePath="..\clientlib\win\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath="..\lib\win_util.h"
 				>
 			</File>
 		</Filter>

@@ -223,4 +223,7 @@ struct VERSION_INFO {
 #define ASSIGNED_WU_STR "asgn"
 #define GUI_RPC_PASSWD_FILE "gui_rpc_auth.cfg"
 
+/// Used for suppressing compiler warnings for unused parameters.
+#define SYNEC_UNUSED(param)
+
 #endif // COMMON_DEFS_H

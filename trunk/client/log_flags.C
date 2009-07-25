@@ -208,7 +208,7 @@ void CONFIG::defaults() {
 }
 
 int CONFIG::parse_options(XML_PARSER& xp) {
-    char tag[1024], path[256];
+    char tag[1024];
     bool is_tag;
     std::string s;
 

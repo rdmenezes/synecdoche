@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2006 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -22,18 +23,6 @@
 #endif
 
 #include "win_util.h"
-
-/// Find out if we are on a Windows 2000 compatible system.
-BOOL IsWindows2000Compatible() {
-   OSVERSIONINFO osvi;
-   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
-   osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-
-    if (!GetVersionEx((OSVERSIONINFO *) &osvi))
-        return FALSE;
-
-    return (osvi.dwMajorVersion >= 5);
-}
 
 /**
  * Define these if they aren't defined.  They are normally found in

@@ -497,13 +497,9 @@ int do_execv(const std::string& path, const std::list<std::string>& argv)
 ///
 /// \param[in] dir Directory containing the lockfile (not used on Windows).
 /// \return ERR_ALREADY_RUNNING if the mutex already exists, zero otherwise.
-static int get_client_mutex(const char* dir) {
-    std::string buf;
-
-    // Global mutex on Win2k and later
-    if (IsWindows2000Compatible()) {
-        buf = "Global\\";
-    }
+static int get_client_mutex(const char* SYNEC_UNUSED(dir)) {
+    // Global mutex
+    std::string buf = "Global\\";
     buf += RUN_MUTEX;
 
     HANDLE h = CreateMutex(NULL, true, buf.c_str());
