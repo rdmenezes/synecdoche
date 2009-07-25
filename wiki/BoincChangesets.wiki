@@ -26,7 +26,7 @@
 ||16432/16433||client: make host CPID a function of: MAC addresses + hostname + IP addr + OS name||
 ||16479||API: free project prefs before parsing init file||
 ||16484||MGR: Erase and refresh entire Tasks panel when selecting a new tab to try to fix cosmetic bug reported by David on Windows _Which bug? Is it caused by the RPC thread?_||
-||16488||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. _Looks like this is only needed for service install on Vista. Do we support/need this?_||
+||16488/18720||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. _Looks like this is only needed for service install on Vista. Do we support/need this?_||
 ||16539||manager: tweak strings in Options dialog||
 ||16545||client: in round-robin simulation, only increment CPU shortfall (per-project or overall) if there are no pending tasks.||
 ||16548/18172||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. _NOTE: Stackwalker still uses boinc.berkeley.edu as server!_||
@@ -81,12 +81,22 @@
 ||18291||MGR: Accept Unicode input for usernames and password in the manager now that the manager is Unicode enabled. Input will show up as UTF-8 strings in the CC and project.||
 ||18330||GUI RPC: include hostid in PROJECT||
 ||18340||lib: FILE_LOCK::lock() makes lockfile group-writable so both client and manager can create and write it under sandbox security||
-||18408/18410||MGR: Wizard retries acct_mgr_rpc() if acct_mgr_rpc_poll() sets ERR_RETRY||
+||18408/18410/18684||MGR: Wizard retries acct_mgr_rpc() if acct_mgr_rpc_poll() sets ERR_RETRY||
 ||18427||client: don't require that file upload URLs contain "file_upload_handler".||
 ||18456||MGR: Massive wizard cleanup||
 ||18531||client: record the time results are received. _Might be usefull some day, at least as displayed value._||
 ||18534||manager tweak _The code-cleanup part looks useful, the message change should not be applied._||
-
+||18576||GUI RPC: add get_message_seqno() RPC. fixes #931||
+||18593/18601/18602/18603/18604/18662/18663||client: restored code for project-wide backoff on file||
+||18594||client: if malloc fails in MFILE writes, exit.||
+||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
+||18599||clientlib: Remove backwards compatible mouse and keyboard activity _Most of this was already applied in r1001 but we might have missed some changes._||
+||18605/18606||client: changed file upload logic||
+||18633||lib: gcc 4.4 fix; fixes #854||
+||18667||client: Treat power events similiar to the snooze events||
+||18712||client: in get_project_config_poll() GUI RPC, return ERR_IN_PROGRESS is the reference site check is in progress.||
+||18717||lib: more code cleanup _Looks like deprecated Windows stuff._||
+||18719||WINSCR: Remove Win9x compatibility code from the screen saver.||
 
 
 == Changesets for the (new OpenGL) screensaver (Might be useful some day) ==
@@ -189,7 +199,9 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/18077 18077] `*`||MGR: Include support for Firefox 3.x cookie support for the attach to project wizard.||
 ||[http://boinc.berkeley.edu/trac/changeset/18088 18088]||MGR: Merge "Attach to account manager" functionality into "Attach to project" wizard; Synchronize and Remove Acct Mgr not yet merged. Additional changesets: 18112/18113/18114/18115 _Doesn't make any sense to me._||
 ||[http://boinc.berkeley.edu/trac/changeset/18311 18311]||MGR: !CBOINCClientManager::!ProcessExists?() finds the process by name if we don't have a pid (Mac, Linux) or process HANDLE (Windows) _What is the purpose of this?!?_ Additional changesets: 18316/18317/18318/18319||
+||[http://boinc.berkeley.edu/trac/changeset/18592 18592] `*`||file_info changes - Nicolas should review this, he knows more about this stuff.||
+||[http://boinc.berkeley.edu/trac/changeset/18607 18607] `*`||client: change the way a resource's "estimated delay" (passed to server for crude deadline check) is computed. _Doesn't seem to be a real fix but might still be a large improvement._ Additional changeset: 18629||
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18545 18545]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18726 18726]
