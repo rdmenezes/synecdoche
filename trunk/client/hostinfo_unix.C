@@ -982,7 +982,8 @@ inline bool all_tty_idle(time_t t) {
     return true;
 }
 
-#ifdef HAVE_UTMP_H
+#if defined(HAVE_UTMP_H) && !defined(__APPLE__)
+// the below code is not used on Apple systems, and just causes warnings on it
 inline bool user_idle(time_t t, struct utmp* u) {
     char tty[5 + sizeof u->ut_line + 1] = "/dev/";
     unsigned int i;
@@ -1046,7 +1047,7 @@ inline bool user_idle(time_t t, struct utmp* u) {
       }
       return true;
   }
-#endif  // HAVE_UTMP_H
+#endif // defined(HAVE_UTMP_H) && !defined(__APPLE__)
 
 #ifdef __APPLE__
 
