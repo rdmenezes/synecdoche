@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -184,6 +184,7 @@ int PROJECT::parse(MIOFILE& in) {
         if (parse_str(buf, "<project_name>", project_name)) continue;
         if (parse_str(buf, "<user_name>", user_name)) continue;
         if (parse_str(buf, "<team_name>", team_name)) continue;
+        if (parse_int(buf, "<hostid>", hostid)) continue;
         if (parse_double(buf, "<user_total_credit>", user_total_credit)) continue;
         if (parse_double(buf, "<user_expavg_credit>", user_expavg_credit)) continue;
         if (parse_double(buf, "<host_total_credit>", host_total_credit)) continue;

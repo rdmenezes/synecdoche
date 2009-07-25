@@ -777,5 +777,9 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
         project->set_min_rpc_time(x, "requested by project");
     }
 
+    // Garbage collect in case the project sent us some irrelevant FILE_INFOs;
+    // avoid starting transfers for them
+    gstate.garbage_collect_always();
+
     return 0;
 }

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -91,6 +91,7 @@ public:
     std::string project_name;
     std::string user_name;
     std::string team_name;
+    int hostid;
     std::vector<GUI_URL> gui_urls;
     double user_total_credit;
     double user_expavg_credit;

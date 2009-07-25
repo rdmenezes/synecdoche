@@ -146,8 +146,6 @@ PROJECT* CLIENT_STATE::next_project_sched_rpc_pending() {
         if (p->next_rpc_time && p->next_rpc_time<now) {
             p->sched_rpc_pending = RPC_REASON_PROJECT_REQ;
             p->next_rpc_time = 0;
-        } else if (p->waiting_until_min_rpc_time()) {
-            continue;
         }
 
         if (p->sched_rpc_pending) {
