@@ -321,17 +321,11 @@ int RPC::do_rpc(const char* req) {
 
     //fprintf(stderr, "RPC::do_rpc rpc_client->sock = '%d'", rpc_client->sock);
     if (rpc_client->sock == -1) return ERR_CONNECT;
-#ifdef DEBUG
-    puts(req);
-#endif
     retval = rpc_client->send_request(req);
     if (retval) return retval;
     retval = rpc_client->get_reply(mbuf);
     if (retval) return retval;
     fin.init_buf_read(mbuf);
-#ifdef DEBUG
-    puts(mbuf);
-#endif
     return 0;
 }
 
