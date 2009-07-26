@@ -83,7 +83,6 @@
 ||18456||MGR: Massive wizard cleanup||
 ||18531||client: record the time results are received. _Might be usefull some day, at least as displayed value._||
 ||18534||manager tweak _The code-cleanup part looks useful, the message change should not be applied._||
-||18576||GUI RPC: add get_message_seqno() RPC. fixes #931||
 ||18593/18601/18602/18603/18604/18662/18663||client: restored code for project-wide backoff on file||
 ||18594||client: if malloc fails in MFILE writes, exit.||
 ||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
