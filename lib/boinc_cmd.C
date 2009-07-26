@@ -72,6 +72,7 @@ Commands:\n\
  --get_disk_usage                   show disk usage\n\
  --get_proxy_settings\n\
  --get_messages [seqno]             show messages > seqno\n\
+ --get_message_count                show number of messages in the queue\n\
  --get_host_info\n\
  --version, -V                      show core client version\n\
  --result url result_name op        job operation\n\
@@ -402,6 +403,12 @@ int main_impl(int argc, const char** argv) {
                 std::cout << md.body << "\n";
             }
             std::cout << std::flush;
+        }
+    } else if (!strcmp(cmd, "--get_message_count")) {
+        int msg_count;
+        retval = rpc.get_message_count(msg_count);
+        if (!retval) {
+            std::cout << "Number of messages in the queue: " << msg_count << std::endl;
         }
     } else if (!strcmp(cmd, "--get_host_info")) {
         HOST_INFO hi;

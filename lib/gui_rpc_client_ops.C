@@ -1772,6 +1772,24 @@ int RPC_CLIENT::get_messages(int seqno, MESSAGES& msgs) {
     return retval;
 }
 
+int RPC_CLIENT::get_message_count(int& msg_count) {
+    // Send request:
+    RPC rpc(this);
+    int retval = rpc.do_rpc("<get_message_count/>\n");
+    if (retval) {
+        return retval;
+    }
+
+    // Parse reply:
+    char buf[256];
+    while (rpc.fin.fgets(buf, sizeof(buf))) {
+        if (parse_int(buf, "<seqno>", msg_count)) {
+            return 0;
+        }
+    }
+    return ERR_XML_PARSE;
+}
+
 int RPC_CLIENT::file_transfer_op(const FILE_TRANSFER& ft, const char* op) {
     int retval;
     SET_LOCALE sl;

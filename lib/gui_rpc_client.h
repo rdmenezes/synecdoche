@@ -590,6 +590,7 @@ public:
     int set_proxy_settings(const GR_PROXY_INFO& pi);
     int get_proxy_settings(GR_PROXY_INFO& pi);
     int get_messages(int seqno, MESSAGES& msgs);
+    int get_message_count(int& msg_count);
     int file_transfer_op(const FILE_TRANSFER& ft, const char* op);
     int result_op(RESULT& result, const char* op);
     int get_host_info(HOST_INFO& host);
