@@ -26,7 +26,7 @@
 ||16432/16433||client: make host CPID a function of: MAC addresses + hostname + IP addr + OS name||
 ||16479||API: free project prefs before parsing init file||
 ||16484||MGR: Erase and refresh entire Tasks panel when selecting a new tab to try to fix cosmetic bug reported by David on Windows _Which bug? Is it caused by the RPC thread?_||
-||16488/18720||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. _Looks like this is only needed for service install on Vista. Do we support/need this?_||
+||16488/18720/18730/18735||SVCCTRL: Introduce a new binary that is used to start and stop the BOINC service, if it is installed as a service. _Looks like this is only needed for service install on Vista. Do we support/need this?_||
 ||16539||manager: tweak strings in Options dialog||
 ||16545||client: in round-robin simulation, only increment CPU shortfall (per-project or overall) if there are no pending tasks.||
 ||16548/18172||DIAG: On Windows move the symbol store directory under the BOINC data directory structure. _NOTE: Stackwalker still uses boinc.berkeley.edu as server!_||
@@ -86,7 +86,7 @@
 ||18593/18601/18602/18603/18604/18662/18663||client: restored code for project-wide backoff on file||
 ||18594||client: if malloc fails in MFILE writes, exit.||
 ||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
-||18605/18606||client: changed file upload logic||
+||18605/18606/18737||client: changed file upload logic||
 ||18633||lib: gcc 4.4 fix; fixes #854||
 ||18667||client: Treat power events similiar to the snooze events||
 ||18712||client: in get_project_config_poll() GUI RPC, return ERR_IN_PROGRESS is the reference site check is in progress.||
@@ -197,4 +197,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18726 18726]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18741 18741]
