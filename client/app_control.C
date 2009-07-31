@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -54,8 +54,10 @@
 
 #include "app.h"
 
-#include <vector>
+#include <fstream>
 #include <sstream>
+#include <stdexcept>
+#include <vector>
 
 #include "filesys.h"
 #include "error_numbers.h"
@@ -960,22 +962,16 @@ bool ACTIVE_TASK::get_trickle_up_msg() {
 }
 
 /// Check for msgs from active tasks.
-/// Return true if any of them has changed its checkpoint_cpu_time
-/// (since in that case we need to write state file)
-bool ACTIVE_TASK_SET::get_msgs() {
-    double old_time;
-    bool action = false;
-
+void ACTIVE_TASK_SET::get_msgs() {
     for (size_t i=0; i<active_tasks.size(); i++) {
         ACTIVE_TASK* atp = active_tasks[i];
         if (!atp->process_exists()) continue;
-        old_time = atp->checkpoint_cpu_time;
+        double old_time = atp->checkpoint_cpu_time;
         if (atp->get_app_status_msg()) {
             if (old_time != atp->checkpoint_cpu_time) {
                 gstate.request_enforce_schedule("Checkpoint reached");
                 atp->checkpoint_wall_time = gstate.now;
                 atp->premature_exit_count = 0;
-                action = true;
                 if (log_flags.task_debug) {
                     msg_printf(atp->wup->project, MSG_INFO,
                         "[task_debug] result %s checkpointed",
@@ -988,9 +984,57 @@ bool ACTIVE_TASK_SET::get_msgs() {
                     );
                 }
                 atp->stats_checkpoint++;
+                atp->write_task_state_file();
             }
         }
         atp->get_trickle_up_msg();
     }
-    return action;
 }
+
+/// Write checkpoint state to a file in the slot dir.
+/// This avoids rewriting the state file on each checkpoint,
+void ACTIVE_TASK::write_task_state_file() {
+    std::ostringstream path;
+    path << slot_dir << '/' << TASK_STATE_FILENAME;
+    std::ofstream ofs(path.str().c_str());
+    if (!ofs) {
+        throw std::runtime_error(std::string("Can't open file: ") + path.str());
+    }
+    ofs << "<active_task>\n";
+    ofs << "    <project_master_url>" << result->project->get_master_url() << "</project_master_url>\n";
+    ofs << "    <result_name>" << result->name << "</result_name>\n";
+    ofs << "    <checkpoint_cpu_time>" << checkpoint_cpu_time << "</checkpoint_cpu_time>\n";
+    ofs << "</active_task>\n" << std::flush;
+}
+
+/// Read the task state file in case it's more recent then the main state file.
+/// Called on startup.
+void ACTIVE_TASK::read_task_state_file() {
+    std::ostringstream path;
+    path << slot_dir << '/' << TASK_STATE_FILENAME;
+    std::ifstream ifs(path.str().c_str());
+    if (!ifs) {
+        return;
+    }
+    std::string buf;
+    std::string master_url;
+    std::string result_name;
+    double new_checkpoint_cpu_time = -1.0;
+    while (std::getline(ifs, buf)) {
+        if (parse_str(buf.c_str(), "<project_master_url>", master_url)) {
+            continue;
+        } else if (parse_str(buf.c_str(), "<result_name>", result_name)) {
+            continue;
+        } else {
+            parse_double(buf.c_str(), "<checkpoint_cpu_time>", new_checkpoint_cpu_time);
+        }
+    }
+    
+    // sanity checks - project and result name must match 
+    if ((master_url != result->project->get_master_url()) || (result_name != result->name)) {
+        return;
+    }
+    if (new_checkpoint_cpu_time > checkpoint_cpu_time) { 
+        checkpoint_cpu_time = new_checkpoint_cpu_time; 
+    } 
+} 

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -349,7 +349,6 @@ bool SCHEDULER_OP::poll() {
             state = SCHEDULER_OP_STATE_IDLE;
             cur_proj->master_url_fetch_pending = false;
             http_ops->remove(&http_op);
-            gstate.set_client_state_dirty("master URL fetch done");
             if (http_op.http_op_retval == 0) {
                 if (log_flags.sched_op_debug) {
                     msg_printf(cur_proj, MSG_INFO,
@@ -382,6 +381,7 @@ bool SCHEDULER_OP::poll() {
                 cur_proj->master_fetch_failures++;
                 backoff(cur_proj, buf);
             }
+            gstate.set_client_state_dirty("Master fetch complete");
             gstate.request_work_fetch("Master fetch complete");
             cur_proj = NULL;
             return true;
@@ -434,6 +434,7 @@ bool SCHEDULER_OP::poll() {
                 cur_proj->work_request = 0;    // don't ask again right away
             }
             cur_proj = NULL;
+            gstate.set_client_state_dirty("RPC complete");
             gstate.request_work_fetch("RPC complete");
             return true;
         }
