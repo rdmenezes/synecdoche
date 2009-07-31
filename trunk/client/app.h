@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -57,22 +57,6 @@ typedef int PROCESS_ID;
 /// thus the task can use the slot directory for temp files
 /// that aren't tracked directly.
 class ACTIVE_TASK {
-private:
-    TASK_STATE _task_state;
-
-    /// Determines if everything is set up for starting the science application
-    /// including all links in the slot directory.
-    bool full_init_done;
-
-    /// Directory where process runs (relative).
-    std::string slot_dir;
-
-    /// Directory where process runs (absolute).
-    /// This is used only to run graphics apps
-    /// (that way don't have to worry about top-level dirs
-    /// being non-readable, etc).
-    std::string slot_path;
-
 public:
 #ifdef _WIN32
     HANDLE pid_handle, shm_handle;
@@ -249,6 +233,28 @@ public:
     int write(MIOFILE& fout) const;
     int write_gui(MIOFILE& fout) const;
     int parse(MIOFILE& fin);
+    
+    /// Read the task state file in case it's more recent then the main state file.
+    void read_task_state_file();
+
+    /// Write checkpoint state to a file in the slot dir.
+    void write_task_state_file();
+
+private:
+    TASK_STATE _task_state;
+
+    /// Determines if everything is set up for starting the science application
+    /// including all links in the slot directory.
+    bool full_init_done;
+
+    /// Directory where process runs (relative).
+    std::string slot_dir;
+
+    /// Directory where process runs (absolute).
+    /// This is used only to run graphics apps
+    /// (that way don't have to worry about top-level dirs
+    /// being non-readable, etc).
+    std::string slot_path;
 };
 typedef std::vector<ACTIVE_TASK*> ACTIVE_TASK_PVEC;
 
@@ -270,7 +276,9 @@ public:
     int exit_tasks(PROJECT* p=0);
     void kill_tasks(PROJECT* p=0);
     int abort_project(PROJECT* project);
-    bool get_msgs();
+
+    /// Check for msgs from active tasks.
+    void get_msgs();
 
     /// See if any processes have exited.
     bool check_app_exited();
