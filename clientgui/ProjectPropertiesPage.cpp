@@ -283,7 +283,6 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
     wxDateTime dtCurrentExecutionTime;
     wxTimeSpan tsExecutionTime;
     bool bPostNewEvent = true;
-    bool bSuccessfulCondition = false;
     int  iReturnValue = 0;
  
     wxASSERT(pDoc);
@@ -331,25 +330,14 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
             //   they do not support account creation through the wizard.  In either
             //   case we should claim success and set the correct flags to show the
             //   correct 'next' page.
-            bSuccessfulCondition = 
-                (!iReturnValue) && (!pc->error_num) ||
-                (!iReturnValue) && (ERR_ACCT_CREATION_DISABLED == pc->error_num);
-            if (bSuccessfulCondition && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIES)) {
+            if ((!iReturnValue) && (!CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIES))
+                        && ((!pc->error_num) || (ERR_ACCT_CREATION_DISABLED == pc->error_num))) {
                 SetProjectPropertiesSucceeded(true);
 
-                bSuccessfulCondition = pc->account_creation_disabled;
-                if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTCREATIONDISABLED)) {
-                    SetProjectAccountCreationDisabled(true);
-                } else {
-                    SetProjectAccountCreationDisabled(false);
-                }
-
-                bSuccessfulCondition = pc->client_account_creation_disabled;
-                if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRCLIENTACCOUNTCREATIONDISABLED)) {
-                    SetProjectClientAccountCreationDisabled(true);
-                } else {
-                    SetProjectClientAccountCreationDisabled(false);
-                }
+                SetProjectAccountCreationDisabled(pc->account_creation_disabled
+                                    || CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTCREATIONDISABLED));
+                SetProjectClientAccountCreationDisabled(pc->client_account_creation_disabled
+                                    || CHECK_DEBUG_FLAG(WIZDEBUG_ERRCLIENTACCOUNTCREATIONDISABLED));
  
                 // Check if we are already attached to this project. This may happen if the user
                 // entered a different URL (e. g. primegrid.com instead of www.primegrid.com) to
@@ -371,15 +359,12 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
                 SetNextState(PROJPROP_CLEANUP);
             } else {
                 SetProjectPropertiesSucceeded(false);
-                bSuccessfulCondition = 
-                    (!iReturnValue) && (ERR_FILE_NOT_FOUND == pc->error_num) ||
-                    (!iReturnValue) && (ERR_GETHOSTBYNAME == pc->error_num) ||
-                    (!iReturnValue) && (ERR_XML_PARSE == pc->error_num);
-                if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
-                    SetProjectPropertiesURLFailure(true);
-                } else {
-                    SetProjectPropertiesURLFailure(false);
-                }
+                bool urlFailure = (!iReturnValue)
+                                    && ((ERR_FILE_NOT_FOUND == pc->error_num)
+                                        || (ERR_GETHOSTBYNAME == pc->error_num)
+                                        || (ERR_XML_PARSE == pc->error_num))
+                                    || (CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL));
+                SetProjectPropertiesURLFailure(urlFailure);
                 SetNextState(PROJPROP_DETERMINENETWORKSTATUS_BEGIN);
             }
             break;
@@ -409,12 +394,8 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
                 ::wxSafeYield(GetParent());
             }
 
-            bSuccessfulCondition = NETWORK_STATUS_WANT_CONNECTION != status.network_status;
-            if (bSuccessfulCondition && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRNETDETECTION)) {
-                SetNetworkConnectionDetected(true);
-            } else {
-                SetNetworkConnectionDetected(false);
-            }
+            SetNetworkConnectionDetected((NETWORK_STATUS_WANT_CONNECTION != status.network_status)
+                                            && (!CHECK_DEBUG_FLAG(WIZDEBUG_ERRNETDETECTION)));
             SetNextState(PROJPROP_CLEANUP);
 
             break;
