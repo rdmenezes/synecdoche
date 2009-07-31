@@ -52,7 +52,6 @@
 ||17389||client: if you put <host_venue> in global_prefs_override.xml, it should select the venue from the network prefs. Now it does.||
 ||17391||API: file descriptor leak in obscure case. fixes #103||
 ||17396||client: make timeout values into #defines _Note: The defines should be turned into constants before applying this changeset._||
-||17404|| client: shuffle the startup code to avoid showing wrong prefs info on first-time startup. / client: don't do an RPC until we've done CPU benchmarks. We need the benchmark values to fill in app_version.flops||
 ||17409||manager: fix roundoff error in Advanced Prefs; fixes #613 _Note: This is not a real fix but a simple workaround._||
 ||17410||MGR: Make CTRL-SHIFT-A the accelerator in the simple GUI that switches back to the advanced view. refs #147||
 ||17432/17434/17436/17438||client: Revise Apple idle time detection for compatibility with OS 10.6||
@@ -67,7 +66,6 @@
 ||17639|| client: add --no_priority_change cmdline arg (and <no_priority_change> flag in cc_config.xml). If set, run apps at same priority as client.||
 ||17711||client: (unix): if host name lookup fails, call res_init(). This is an attempt to fix a problem on Linux where, if the client starts before a VPN is set up, it can never communicate||
 ||17765/17831/17838||client: for each app version, keep track of the largest WSS of tasks using it. In checking whether tasks fit in RAM, use this as an estimate for tasks that haven't started yet. This avoids a situation where the client starts a lot of tasks in sequence, only to find that each one doesn't fit in RAM.||
-||17814||client: eliminate the need to write the state file on each checkpoint. Instead, write the info into a file in the slot directory, and check for these files on startup. This should reduce the overhead of state-file writing on machines with lots of cores. There will still be a flurry of writes each time a job finishes, but reducing that overhead would be a larger job. / client: make sure we write the state file after a failed RPC||
 ||17826/17846||Mac MGR: Add keyboard shortcuts command-shift-S, command-shift-A to switch views||
 ||17843||client: if detach a project, adjust debts and trigger CPU sched and work fetch||
 ||17847||client: improve CPU sched debug messages (say what kind of job and why we're scheduling it)||
@@ -82,9 +80,7 @@
 ||18427||client: don't require that file upload URLs contain "file_upload_handler".||
 ||18456||MGR: Massive wizard cleanup||
 ||18531||client: record the time results are received. _Might be usefull some day, at least as displayed value._||
-||18534||manager tweak _The code-cleanup part looks useful, the message change should not be applied._||
 ||18593/18601/18602/18603/18604/18662/18663/18753||client: restored code for project-wide backoff on file||
-||18594||client: if malloc fails in MFILE writes, exit.||
 ||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
 ||18605/18606/18737||client: changed file upload logic||
 ||18633||lib: gcc 4.4 fix; fixes #854||
