@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -28,6 +28,7 @@
 #include <cstring>
 #include <string>
 #include <cerrno>
+#include <iostream>
 #if HAVE_MALLOC_H
 #include <malloc.h>
 #endif
@@ -68,8 +69,8 @@ int MFILE::vprintf(const char* format, va_list ap) {
     }
     buf = (char*)realloc(buf, len + k + 1);
     if (!buf) {
-        errno = ERR_MALLOC;
-        return ERR_MALLOC;
+        std::cerr << "ERROR: realloc() failed in MFILE::vprintf()" << std::endl;
+        exit(1);
     }
     strncpy(buf + len, mfile_vprintf_buf2, k);
     len += k;
@@ -90,8 +91,8 @@ int MFILE::printf(const char* format, ...) {
 size_t MFILE::write(const void* data, size_t size, size_t nitems) {
     buf = (char *)realloc(buf, len+(size*nitems)+1);
     if (!buf) {
-        errno = ERR_MALLOC;
-        return 0;
+        std::cerr << "ERROR: realloc() failed in MFILE::write()" << std::endl;
+        exit(1);
     }
     memcpy(buf+len, data, size*nitems);
     len += (int)size*(int)nitems;
@@ -102,8 +103,8 @@ size_t MFILE::write(const void* data, size_t size, size_t nitems) {
 int MFILE::_putchar(char c) {
     buf = (char*)realloc(buf, len+1+1);
     if (!buf) {
-        errno = ERR_MALLOC;
-        return EOF;
+        std::cerr << "ERROR: realloc() failed in MFILE::_putchar()" << std::endl;
+        exit(1);
     }
     buf[len] = c;
     len++;
@@ -115,8 +116,8 @@ int MFILE::puts(const char* str) {
     int n = (int)strlen(str);
     buf = (char*)realloc(buf, len+n+1);
     if (!buf) {
-        errno = ERR_MALLOC;
-        return EOF;
+        std::cerr << "ERROR: realloc() failed in MFILE::puts()" << std::endl;
+        exit(1);
     }
     strncpy(buf+len, str, n);
     len += n;
