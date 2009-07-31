@@ -83,13 +83,15 @@
 ||18456||MGR: Massive wizard cleanup||
 ||18531||client: record the time results are received. _Might be usefull some day, at least as displayed value._||
 ||18534||manager tweak _The code-cleanup part looks useful, the message change should not be applied._||
-||18593/18601/18602/18603/18604/18662/18663||client: restored code for project-wide backoff on file||
+||18593/18601/18602/18603/18604/18662/18663/18753||client: restored code for project-wide backoff on file||
 ||18594||client: if malloc fails in MFILE writes, exit.||
 ||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
 ||18605/18606/18737||client: changed file upload logic||
 ||18633||lib: gcc 4.4 fix; fixes #854||
 ||18667||client: Treat power events similiar to the snooze events||
-||18712||client: in get_project_config_poll() GUI RPC, return ERR_IN_PROGRESS is the reference site check is in progress.||
+||18747/18749||MGR: Don't make ERR_FILE_NOT_FOUND part of the requirements to detect the need for a proxy server.||
+||18760|| client: if an HTTP op fails within 30 sec of client startup, don't skip the reference site check.||
+||18772/18785||client: Initial swipe at automatic proxy server configuration detection on Windows. Fixes #35 _This probably needs some cleanup first._||
 
 
 == Changesets for the (new OpenGL) screensaver (Might be useful some day) ==
@@ -197,4 +199,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18741 18741]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18785 18785]
