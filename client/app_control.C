@@ -33,6 +33,11 @@
 #include "config.h"
 #include <unistd.h>
 
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+#include <vector>
+
 #if HAVE_SYS_IPC_H
 #include <sys/ipc.h>
 #endif
@@ -53,11 +58,6 @@
 #endif
 
 #include "app.h"
-
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
-#include <vector>
 
 #include "filesys.h"
 #include "error_numbers.h"
