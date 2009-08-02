@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -50,7 +50,7 @@ size_t strlcat(char* dst, const char* src, size_t size);
 
 #if !defined(HAVE_STRCASESTR)
 /// Search for a substring while ignoring upper-/lowercase.
-char* strcasestr(const char* s1, const char* s2);
+const char* strcasestr(const char* s1, const char* s2);
 #endif
 
 /// Convert a double precision time into a string.
