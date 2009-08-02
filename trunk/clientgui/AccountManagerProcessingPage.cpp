@@ -229,24 +229,21 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
             }
             username = (const char*)pWAM->GetAccountInfoPage()->GetAccountEmailAddress().mb_str();
             password = (const char*)pWAM->GetAccountInfoPage()->GetAccountPassword().mb_str();
-            pDoc->rpc.acct_mgr_rpc(
-                url.c_str(),
-                username.c_str(),
-                password.c_str(),
-                pWAM->GetCredentialsCached()
-            );
     
             // Wait until we are done processing the request.
             dtStartExecutionTime = wxDateTime::Now();
             dtCurrentExecutionTime = wxDateTime::Now();
             tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
             iReturnValue = 0;
-            reply.error_num = ERR_IN_PROGRESS;
-            while ((!iReturnValue && (ERR_IN_PROGRESS == reply.error_num)) &&
-                tsExecutionTime.GetSeconds() <= 60 &&
-                !CHECK_CLOSINGINPROGRESS()
-                )
-            {
+            reply.error_num = ERR_RETRY;
+            while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60)
+                        && (!CHECK_CLOSINGINPROGRESS())
+                        && ((ERR_IN_PROGRESS == reply.error_num)
+                            || (ERR_RETRY == reply.error_num))) {
+                if (ERR_RETRY == reply.error_num) {
+                    pDoc->rpc.acct_mgr_rpc(url.c_str(), username.c_str(), password.c_str(),
+                                            pWAM->GetCredentialsCached());
+                }
                 dtCurrentExecutionTime = wxDateTime::Now();
                 tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                 iReturnValue = pDoc->rpc.acct_mgr_rpc_poll(reply);

@@ -329,20 +329,19 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                 }
 
                 if (acc_info_page->CreateNewAccount()) {
-                    pDoc->rpc.create_account(*ai);
                     creating_account = true;
 
                     // Wait until we are done processing the request.
                     dtStartExecutionTime = wxDateTime::Now();
                     dtCurrentExecutionTime = wxDateTime::Now();
                     tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
-                    ao->error_num = ERR_IN_PROGRESS;
-                    while (
-                        ERR_IN_PROGRESS == ao->error_num && !iReturnValue &&
-                        tsExecutionTime.GetSeconds() <= 60 &&
-                        !CHECK_CLOSINGINPROGRESS()
-                        )
-                    {
+                    ao->error_num = ERR_RETRY;
+                    while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60)
+                            && (!CHECK_CLOSINGINPROGRESS())
+                            && ((ERR_IN_PROGRESS == ao->error_num) || (ERR_RETRY == ao->error_num))) {
+                        if (ERR_RETRY == ao->error_num) {
+                            pDoc->rpc.create_account(*ai);
+                        }
                         dtCurrentExecutionTime = wxDateTime::Now();
                         tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                         iReturnValue = pDoc->rpc.create_account_poll(*ao);
@@ -356,20 +355,18 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     if ((!iReturnValue) && (!ao->error_num)) {
                         pWAP->SetAccountCreatedSuccessfully(true);
                     }
-                } else {
-                    pDoc->rpc.lookup_account(*ai);
- 
+                } else { 
                     // Wait until we are done processing the request.
                     dtStartExecutionTime = wxDateTime::Now();
                     dtCurrentExecutionTime = wxDateTime::Now();
                     tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
-                    ao->error_num = ERR_IN_PROGRESS;
-                    while (
-                        ERR_IN_PROGRESS == ao->error_num && !iReturnValue &&
-                        tsExecutionTime.GetSeconds() <= 60 &&
-                        !CHECK_CLOSINGINPROGRESS()
-                        )
-                    {
+                    ao->error_num = ERR_RETRY;
+                    while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60)
+                            && (!CHECK_CLOSINGINPROGRESS())
+                            && ((ERR_IN_PROGRESS == ao->error_num) || (ERR_RETRY == ao->error_num))) {
+                        if (ERR_RETRY == ao->error_num) {
+                            pDoc->rpc.lookup_account(*ai);
+                        }
                         dtCurrentExecutionTime = wxDateTime::Now();
                         tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                         iReturnValue = pDoc->rpc.lookup_account_poll(*ao);
@@ -426,28 +423,24 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
             SetNextState(ATTACHPROJECT_ATTACHPROJECT_EXECUTE);
             break;
         case ATTACHPROJECT_ATTACHPROJECT_EXECUTE:
-            if (GetProjectCommunitcationsSucceeded()) {
-                if (pWAP->GetCredentialsCached()) {
-                    pDoc->rpc.project_attach_from_file();
-                } else {
-                    pDoc->rpc.project_attach(
-                        ai->url.c_str(),
-                        ao->authenticator.c_str(),
-                        pWAP->GetProjectConfig()->name.c_str()
-                    );
-                }
-     
+            if (GetProjectCommunitcationsSucceeded()) {     
                 // Wait until we are done processing the request.
                 dtStartExecutionTime = wxDateTime::Now();
                 dtCurrentExecutionTime = wxDateTime::Now();
                 tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                 iReturnValue = 0;
-                reply.error_num = ERR_IN_PROGRESS;
-                while ((!iReturnValue && (ERR_IN_PROGRESS == reply.error_num)) &&
-                    tsExecutionTime.GetSeconds() <= 60 &&
-                    !CHECK_CLOSINGINPROGRESS()
-                    )
-                {
+                reply.error_num = ERR_RETRY;
+                while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60) 
+                        && (!CHECK_CLOSINGINPROGRESS())
+                        && ((ERR_IN_PROGRESS == reply.error_num) || (ERR_RETRY == reply.error_num))) {
+                    if (ERR_RETRY == reply.error_num) {
+                        if (pWAP->GetCredentialsCached()) {
+                            pDoc->rpc.project_attach_from_file();
+                        } else {
+                            pDoc->rpc.project_attach(ai->url.c_str(), ao->authenticator.c_str(),
+                                                        pWAP->GetProjectConfig()->name.c_str());
+                        }
+                    }
                     dtCurrentExecutionTime = wxDateTime::Now();
                     tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                     iReturnValue = pDoc->rpc.project_attach_poll(reply);

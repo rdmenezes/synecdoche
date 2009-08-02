@@ -213,23 +213,21 @@ void CAccountManagerPropertiesPage::OnStateChange(CAccountManagerPropertiesPageE
             SetNextState(ACCTMGRPROP_RETRPROJECTPROPERTIES_EXECUTE);
             break;
         case ACCTMGRPROP_RETRPROJECTPROPERTIES_EXECUTE:
-            // Attempt to retrieve the project's account creation policies
-            pDoc->rpc.get_project_config(
-                (const char*)pWAM->GetAccountManagerInfoPage()->GetProjectURL().mb_str()
-            );
- 
+            // Attempt to retrieve the project's account creation policies 
             // Wait until we are done processing the request.
             dtStartExecutionTime = wxDateTime::Now();
             dtCurrentExecutionTime = wxDateTime::Now();
             tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
             iReturnValue = 0;
             pc->clear();
-            pc->error_num = ERR_IN_PROGRESS;
-            while ((!iReturnValue && (ERR_IN_PROGRESS == pc->error_num)) &&
-                   tsExecutionTime.GetSeconds() <= 60 &&
-                   !CHECK_CLOSINGINPROGRESS()
-                  )
-            {
+            pc->error_num = ERR_RETRY;
+            while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60)
+                    && (!CHECK_CLOSINGINPROGRESS())
+                    && ((ERR_IN_PROGRESS == pc->error_num) || (ERR_RETRY == pc->error_num))) {
+                if (ERR_RETRY == pc->error_num) {
+                    pDoc->rpc.get_project_config((const char*)
+                                    pWAM->GetAccountManagerInfoPage()->GetProjectURL().mb_str());
+                }
                 dtCurrentExecutionTime = wxDateTime::Now();
                 tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                 iReturnValue = pDoc->rpc.get_project_config_poll(*pc);
