@@ -103,7 +103,7 @@ size_t strlcat(char* dst, const char* src, size_t size) {
 /// \return A pointer pointing to the start of the sequence determined
 ///         by \a s2 in the string \a s1. If \a s2 cannot be found in
 ///         \a s1 NULL is returned.
-extern char* strcasestr(const char* s1, const char* s2) {
+extern const char* strcasestr(const char* s1, const char* s2) {
   char *needle, *haystack, *p=NULL;
   // Is alloca() really less likely to fail with out of memory error 
   // than strdup?
