@@ -257,7 +257,7 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
                 ::wxSafeYield(GetParent());
             }
     
-            if (!iReturnValue && !reply.error_num && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTATTACH)) {
+            if (!iReturnValue && !reply.error_num) {
                 SetProjectAttachSucceeded(true);
             } else {
                 SetProjectAttachSucceeded(false);
@@ -265,8 +265,7 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
                 if ((ERR_NOT_FOUND == reply.error_num) ||
                     (ERR_DB_NOT_FOUND == reply.error_num) ||
                     (ERR_BAD_EMAIL_ADDR == reply.error_num) ||
-                    (ERR_BAD_PASSWD == reply.error_num) ||
-                    CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTNOTFOUND)) {
+                    (ERR_BAD_PASSWD == reply.error_num)) {
 
                     // For any logon error, make sure we do not attempt to use cached credentials
                     //   on any follow-ups.
@@ -277,7 +276,7 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
                 }
 
                 strBuffer = pWAM->GetCompletionErrorPage()->GetErrorMessage();
-                if ((HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
+                if (HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) {
                     strBuffer += _("An internal server error has occurred.\n");
                 } else {
                     for (i=0; i<reply.messages.size(); i++) {

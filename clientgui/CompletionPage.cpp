@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -180,21 +180,6 @@ void CCompletionPage::OnPageChanged(wxWizardEvent& event) {
             }
             m_pCompletionTitle->SetLabel(strTitle);
             m_pCompletionMessage->SetLabel(_("Click Finish to close."));
-
-        } else if (wiz->IsRemoveWizard()) {
-            // Remove Completed
-            wxString strTitle;
-            if (pSkinAdvanced->IsBranded()) {
-                // %s is the project name
-                //    i.e. 'GridRepublic'
-                strTitle.Printf(_("Removal from %s completed."),
-                    pSkinAdvanced->GetApplicationShortName().c_str());
-            } else {
-                strTitle = _("Removal succeeded!");
-            }
-            m_pCompletionTitle->SetLabel(strTitle);
-            m_pCompletionMessage->SetLabel(_("Click Finish to close."));
-
         } else {
             // Attach Completed
 

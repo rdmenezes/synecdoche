@@ -353,7 +353,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                         ::wxSafeYield(GetParent());
                     }
 
-                    if ((!iReturnValue) && !ao->error_num && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTCOMM)) {
+                    if ((!iReturnValue) && (!ao->error_num)) {
                         pWAP->SetAccountCreatedSuccessfully(true);
                     }
                 } else {
@@ -381,7 +381,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     }
                 }
  
-                if ((!iReturnValue) && !ao->error_num && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTCOMM)) {
+                if ((!iReturnValue) && (!ao->error_num)) {
                     SetProjectCommunitcationsSucceeded(true);
                 } else {
                     SetProjectCommunitcationsSucceeded(false);
@@ -389,7 +389,6 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     if ((ao->error_num == ERR_DB_NOT_UNIQUE)
                         || (ao->error_num == ERR_NONUNIQUE_EMAIL)
                         || (ao->error_num == ERR_BAD_PASSWD && creating_account)
-                        || CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTALREADYEXISTS)
                     ) {
                         SetProjectAccountAlreadyExists(true);
                     } else {
@@ -399,19 +398,18 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     if ((ERR_NOT_FOUND == ao->error_num) ||
                         (ao->error_num == ERR_DB_NOT_FOUND) ||
                         (ERR_BAD_EMAIL_ADDR == ao->error_num) ||
-                        (ERR_BAD_PASSWD == ao->error_num) ||
-                        CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTNOTFOUND)) {
+                        (ERR_BAD_PASSWD == ao->error_num)) {
                         SetProjectAccountNotFound(true);
                     } else {
                         SetProjectAccountNotFound(false);
                     }
 
                     strBuffer = pWAP->GetCompletionErrorPage()->GetErrorMessage();
-                    if ((HTTP_STATUS_NOT_FOUND == ao->error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
+                    if (HTTP_STATUS_NOT_FOUND == ao->error_num) {
                         strBuffer += 
                             _("Required wizard file(s) are missing from the target server.\n"
                               "(lookup_account.php/create_account.php)\n");
-                    } else if ((HTTP_STATUS_INTERNAL_SERVER_ERROR == ao->error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
+                    } else if (HTTP_STATUS_INTERNAL_SERVER_ERROR == ao->error_num) {
                         strBuffer += 
                             _("An internal server error has occurred.\n");
                     } else {
@@ -460,7 +458,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     ::wxSafeYield(GetParent());
                 }
      
-                if (!iReturnValue && !reply.error_num && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTATTACH)) {
+                if (!iReturnValue && !reply.error_num) {
                     SetProjectAttachSucceeded(true);
                     pWAP->SetAttachedToProjectSuccessfully(true);
                     pWAP->SetProjectURL(wxString(ai->url.c_str(), wxConvUTF8));
@@ -469,7 +467,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     SetProjectAttachSucceeded(false);
 
                     strBuffer = pWAP->GetCompletionErrorPage()->GetErrorMessage();
-                    if ((HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
+                    if (HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) {
                         strBuffer += 
                             _("An internal server error has occurred.\n");
                     } else {
