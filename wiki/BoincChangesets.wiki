@@ -76,16 +76,11 @@
 ||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
 ||18291||MGR: Accept Unicode input for usernames and password in the manager now that the manager is Unicode enabled. Input will show up as UTF-8 strings in the CC and project.||
 ||18340||lib: FILE_LOCK::lock() makes lockfile group-writable so both client and manager can create and write it under sandbox security||
-||18408/18410/18684||MGR: Wizard retries acct_mgr_rpc() if acct_mgr_rpc_poll() sets ERR_RETRY||
 ||18427||client: don't require that file upload URLs contain "file_upload_handler".||
-||18456||MGR: Massive wizard cleanup||
 ||18531||client: record the time results are received. _Might be usefull some day, at least as displayed value._||
 ||18593/18601/18602/18603/18604/18662/18663/18753||client: restored code for project-wide backoff on file||
 ||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
 ||18605/18606/18737||client: changed file upload logic||
-||18633||lib: gcc 4.4 fix; fixes #854||
-||18667||client: Treat power events similiar to the snooze events||
-||18747/18749||MGR: Don't make ERR_FILE_NOT_FOUND part of the requirements to detect the need for a proxy server.||
 ||18760|| client: if an HTTP op fails within 30 sec of client startup, don't skip the reference site check.||
 ||18772/18785||client: Initial swipe at automatic proxy server configuration detection on Windows. Fixes #35 _This probably needs some cleanup first._||
 
