@@ -330,14 +330,12 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
             //   they do not support account creation through the wizard.  In either
             //   case we should claim success and set the correct flags to show the
             //   correct 'next' page.
-            if ((!iReturnValue) && (!CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIES))
-                        && ((!pc->error_num) || (ERR_ACCT_CREATION_DISABLED == pc->error_num))) {
+            if ((!iReturnValue) && ((!pc->error_num)
+                                    || (ERR_ACCT_CREATION_DISABLED == pc->error_num))) {
                 SetProjectPropertiesSucceeded(true);
 
-                SetProjectAccountCreationDisabled(pc->account_creation_disabled
-                                    || CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTCREATIONDISABLED));
-                SetProjectClientAccountCreationDisabled(pc->client_account_creation_disabled
-                                    || CHECK_DEBUG_FLAG(WIZDEBUG_ERRCLIENTACCOUNTCREATIONDISABLED));
+                SetProjectAccountCreationDisabled(pc->account_creation_disabled);
+                SetProjectClientAccountCreationDisabled(pc->client_account_creation_disabled);
  
                 // Check if we are already attached to this project. This may happen if the user
                 // entered a different URL (e. g. primegrid.com instead of www.primegrid.com) to
@@ -362,8 +360,7 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
                 bool urlFailure = (!iReturnValue)
                                     && ((ERR_FILE_NOT_FOUND == pc->error_num)
                                         || (ERR_GETHOSTBYNAME == pc->error_num)
-                                        || (ERR_XML_PARSE == pc->error_num))
-                                    || (CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL));
+                                        || (ERR_XML_PARSE == pc->error_num));
                 SetProjectPropertiesURLFailure(urlFailure);
                 SetNextState(PROJPROP_DETERMINENETWORKSTATUS_BEGIN);
             }
@@ -394,8 +391,7 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
                 ::wxSafeYield(GetParent());
             }
 
-            SetNetworkConnectionDetected((NETWORK_STATUS_WANT_CONNECTION != status.network_status)
-                                            && (!CHECK_DEBUG_FLAG(WIZDEBUG_ERRNETDETECTION)));
+            SetNetworkConnectionDetected(NETWORK_STATUS_WANT_CONNECTION != status.network_status);
             SetNextState(PROJPROP_CLEANUP);
 
             break;

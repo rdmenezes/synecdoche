@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -134,12 +134,12 @@ void CErrUnavailablePage::OnPageChanged(wxWizardEvent& event) {
     if (CheckWizardTypeByPage<CWizardAttachProject>(this)) {
         m_pTitleStaticCtrl->SetLabel(_("Project temporarily unavailable"));
         m_pDirectionsStaticCtrl->SetLabel(
-            _("The project is temporarily unavailable.\n\nPlease try again later.")
+            _("The project is temporarily unavailable.\n\nPlease check the URL or try again later.")
         );
     } else if (CheckWizardTypeByPage<CWizardAccountManager>(this)) {
         m_pTitleStaticCtrl->SetLabel(_("Account manager temporarily unavailable"));
         m_pDirectionsStaticCtrl->SetLabel(
-            _("The account manager is temporarily unavailable.\n\nPlease try again later.")
+            _("The account manager is temporarily unavailable.\n\nPlease check the URL or try again later.")
         );
     } else {
         wxASSERT(FALSE);

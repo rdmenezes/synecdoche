@@ -106,9 +106,6 @@ public:
     /// Check if the wizard is currently in update mode.
     bool IsUpdateWizard() const;
 
-    /// Check if the wizard is currently in remove mode.
-    bool IsRemoveWizard() const;
-
 private:
     CWelcomePage* m_WelcomePage;
     CAccountManagerInfoPage* m_AccountManagerInfoPage;
