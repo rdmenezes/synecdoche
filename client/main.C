@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 David Barnard, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -423,8 +423,8 @@ int boinc_main_loop() {
         }
 #ifdef _WIN32
         if (requested_suspend) {
-            gstate.run_mode.set(RUN_MODE_NEVER, 0);
-            gstate.network_mode.set(RUN_MODE_NEVER, 0);
+            gstate.run_mode.set(RUN_MODE_NEVER, 3600.0);
+            gstate.network_mode.set(RUN_MODE_NEVER, 3600.0);
             requested_suspend = false;
         }
         if (requested_resume) {
