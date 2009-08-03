@@ -203,6 +203,9 @@
 /* Define to 1 if you have the `strlcpy' function. */
 #define HAVE_STRLCPY 1
 
+/* Define to 1 if you have the `strcasestr' function. */
+#define HAVE_STRCASESTR 1
+
 /* Define to 1 if `tm_zone' is member of `struct tm'. */
 #define HAVE_STRUCT_TM_TM_ZONE 1
 
