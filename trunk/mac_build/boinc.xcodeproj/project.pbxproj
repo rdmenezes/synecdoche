@@ -2745,6 +2745,7 @@
 					"-lpthread",
 					"-liconv",
 					"-lm",
+					"-w",
 				);
 				PREPROCESSOR_COMMON = "HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _LARGE_FILES NO_GCC_PRAGMA NOCLIPBOARD __WXMAC__ HAVE_STRCASECMP_IN_STRING_H";
 				PRODUCT_NAME = Synecdoche;
@@ -2851,6 +2852,7 @@
 					"-lpthread",
 					"-liconv",
 					"-lm",
+					"-w",
 				);
 				PREPROCESSOR_COMMON = "HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _LARGE_FILES NO_GCC_PRAGMA NOCLIPBOARD __WXMAC__ HAVE_STRCASECMP_IN_STRING_H";
 				PRODUCT_NAME = Synecdoche;
@@ -2902,6 +2904,7 @@
 					"-lpthread",
 					"-liconv",
 					"-lm",
+					"-w",
 				);
 				PREPROCESSOR_COMMON = "HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _LARGE_FILES NO_GCC_PRAGMA NOCLIPBOARD __WXMAC__ HAVE_STRCASECMP_IN_STRING_H";
 				PRODUCT_NAME = Synecdoche;
@@ -2953,6 +2956,7 @@
 					"-lpthread",
 					"-liconv",
 					"-lm",
+					"-w",
 				);
 				PREPROCESSOR_COMMON = "HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _LARGE_FILES NO_GCC_PRAGMA NOCLIPBOARD __WXMAC__ HAVE_STRCASECMP_IN_STRING_H";
 				PRODUCT_NAME = Synecdoche;
@@ -3004,6 +3008,7 @@
 					"-lpthread",
 					"-liconv",
 					"-lm",
+					"-w",
 				);
 				PREPROCESSOR_COMMON = "HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _LARGE_FILES NO_GCC_PRAGMA NOCLIPBOARD __WXMAC__ HAVE_STRCASECMP_IN_STRING_H";
 				PRODUCT_NAME = Synecdoche;
@@ -3441,6 +3446,7 @@
 					"-lpthread",
 					"-liconv",
 					"-lm",
+					"-w",
 				);
 				PREPROCESSOR_COMMON = "HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _LARGE_FILES NO_GCC_PRAGMA NOCLIPBOARD __WXMAC__ HAVE_STRCASECMP_IN_STRING_H";
 				PRODUCT_NAME = Synecdoche;
@@ -3491,6 +3497,7 @@
 					"-lpthread",
 					"-liconv",
 					"-lm",
+					"-w",
 				);
 				PREPROCESSOR_COMMON = "HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _LARGE_FILES NO_GCC_PRAGMA NOCLIPBOARD __WXMAC__ HAVE_STRCASECMP_IN_STRING_H";
 				PRODUCT_NAME = Synecdoche;
@@ -3890,6 +3897,7 @@
 					"-lpthread",
 					"-liconv",
 					"-lm",
+					"-w",
 				);
 				PREPROCESSOR_COMMON = "HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _LARGE_FILES NO_GCC_PRAGMA NOCLIPBOARD __WXMAC__ HAVE_STRCASECMP_IN_STRING_H";
 				PRODUCT_NAME = Synecdoche;
