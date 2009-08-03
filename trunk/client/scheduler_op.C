@@ -156,7 +156,7 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, rpc_reason r) {
 void SCHEDULER_OP::backoff(PROJECT* p, const std::string& reason_msg) {
     if (p->master_fetch_failures >= gstate.master_fetch_retry_cap) {
         std::ostringstream buf;
-        buf << p->master_fetch_failures << "consecutive failures fetching scheduler list";
+        buf << p->master_fetch_failures << " consecutive failures fetching scheduler list";
         p->master_url_fetch_pending = true;
         p->set_min_rpc_time(gstate.now + gstate.master_fetch_interval, buf.str().c_str());
         return;
