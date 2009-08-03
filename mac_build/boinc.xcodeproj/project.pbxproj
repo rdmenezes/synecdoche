@@ -33,6 +33,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0E216B151027A2A400FAC4C5 /* libboinc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD407A4A07D2FB1200163EF5 /* libboinc.a */; };
+		0E216B321027A48400FAC4C5 /* libboinc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD407A4A07D2FB1200163EF5 /* libboinc.a */; };
+		0E216B3D1027A50500FAC4C5 /* libboinc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD407A4A07D2FB1200163EF5 /* libboinc.a */; };
+		0E216B431027A76F00FAC4C5 /* gui_rpc_server_ops.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E36208A06ED400656EB1 /* gui_rpc_server_ops.C */; };
 		0E44E6AE0F5886880009950D /* svnversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E44E6AD0F5886880009950D /* svnversion.cpp */; };
 		0E44E6B70F5888E40009950D /* TaskViewBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E44E6B50F5888E40009950D /* TaskViewBase.cpp */; };
 		0E44E6B90F5889520009950D /* svnversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E44E6AD0F5886880009950D /* svnversion.cpp */; };
@@ -48,7 +52,6 @@
 		0E79718D100019B90014D415 /* MsgFilterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E79718A100019B90014D415 /* MsgFilterData.cpp */; };
 		DD01B6790C16723C0023A806 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
 		DD01B7120C16723D0023A806 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD1929D80918A2F100C31BCF /* Security.framework */; };
-		DD0A06F50869A2D2007CD86E /* prefs.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BE407C5B1670043025C /* prefs.C */; };
 		DD0C5A8B0816711400CEC5D7 /* screensaver.bmp in Resources */ = {isa = PBXBuildFile; fileRef = DD0C5A8A0816711400CEC5D7 /* screensaver.bmp */; };
 		DD1277C2081F3E73007B5DE1 /* LoginItemAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = DD1277BE081F3E73007B5DE1 /* LoginItemAPI.c */; };
 		DD1277C4081F3E73007B5DE1 /* PostInstall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD1277C0081F3E73007B5DE1 /* PostInstall.cpp */; };
@@ -88,39 +91,25 @@
 		DD3E14EB0A774397007E0084 /* BOINCTaskCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C40607C5D1020098A04D /* BOINCTaskCtrl.cpp */; };
 		DD3E14EC0A774397007E0084 /* CompletionErrorPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C43708F3347D00C1DF66 /* CompletionErrorPage.cpp */; };
 		DD3E14ED0A774397007E0084 /* CompletionPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C43908F3347D00C1DF66 /* CompletionPage.cpp */; };
-		DD3E14EE0A774397007E0084 /* diagnostics.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BA207C5AE5A0043025C /* diagnostics.C */; };
 		DD3E14EF0A774397007E0084 /* DlgAbout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C40207C5D1020098A04D /* DlgAbout.cpp */; };
 		DD3E14F00A774397007E0084 /* DlgGenericMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDC63EEF0985B89600383FD2 /* DlgGenericMessage.cpp */; };
 		DD3E14F10A774397007E0084 /* DlgOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C3FF07C5D1020098A04D /* DlgOptions.cpp */; };
 		DD3E14F20A774397007E0084 /* DlgSelectComputer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD2D25CB07FAB41700151141 /* DlgSelectComputer.cpp */; };
-		DD3E14F30A774397007E0084 /* filesys.C in Sources */ = {isa = PBXBuildFile; fileRef = F5EAD475031AEFF8018E201A /* filesys.C */; };
-		DD3E14F40A774397007E0084 /* gui_rpc_client.C in Sources */ = {isa = PBXBuildFile; fileRef = DD81C5CC07C5D7D90098A04D /* gui_rpc_client.C */; };
-		DD3E14F50A774397007E0084 /* gui_rpc_client_ops.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E34E08A0694000656EB1 /* gui_rpc_client_ops.C */; };
-		DD3E14F60A774397007E0084 /* gui_rpc_client_print.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E34F08A0694100656EB1 /* gui_rpc_client_print.C */; };
-		DD3E14F70A774397007E0084 /* hostinfo.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BB607C5AEEE0043025C /* hostinfo.C */; };
 		DD3E14F80A774397007E0084 /* hyperlink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD5EEB6A0873DD4400963F44 /* hyperlink.cpp */; };
 		DD3E14F90A774397007E0084 /* Localization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD73E3A308A078AF00656EB1 /* Localization.cpp */; };
 		DD3E14FA0A774397007E0084 /* LogBOINC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C41407C5D13E0098A04D /* LogBOINC.cpp */; };
 		DD3E14FB0A774397007E0084 /* MacSysMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD2F32F707F2A88B00645DDC /* MacSysMenu.cpp */; };
 		DD3E14FD0A774397007E0084 /* Mac_GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDA9D3BB09189A8C0060E7A7 /* Mac_GUI.cpp */; };
 		DD3E14FE0A774397007E0084 /* MainDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C41607C5D13E0098A04D /* MainDocument.cpp */; };
-		DD3E14FF0A774397007E0084 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = F5159562029EB02001F5651B /* md5.c */; };
-		DD3E15000A774397007E0084 /* md5_file.C in Sources */ = {isa = PBXBuildFile; fileRef = F5159564029EB02001F5651B /* md5_file.C */; };
-		DD3E15010A774397007E0084 /* mfile.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BD207C5B1150043025C /* mfile.C */; };
-		DD3E15020A774397007E0084 /* miofile.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BD507C5B1150043025C /* miofile.C */; };
-		DD3E15050A774397007E0084 /* network.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6D0A8507E9A61B007F882B /* network.C */; };
 		DD3E15060A774397007E0084 /* NoInternetConnectionPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C44608F334B500C1DF66 /* NoInternetConnectionPage.cpp */; };
 		DD3E15070A774397007E0084 /* NotDetectedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C44808F334B500C1DF66 /* NotDetectedPage.cpp */; };
 		DD3E15080A774397007E0084 /* NotFoundPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C44A08F334B500C1DF66 /* NotFoundPage.cpp */; };
-		DD3E15090A774397007E0084 /* parse.C in Sources */ = {isa = PBXBuildFile; fileRef = F54B901602AC0A2201FB7237 /* parse.C */; };
-		DD3E150A0A774397007E0084 /* prefs.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BE407C5B1670043025C /* prefs.C */; };
 		DD3E150B0A774397007E0084 /* ProjectInfoPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C44C08F334B500C1DF66 /* ProjectInfoPage.cpp */; };
 		DD3E150C0A774397007E0084 /* ProjectProcessingPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C44E08F334B500C1DF66 /* ProjectProcessingPage.cpp */; };
 		DD3E150D0A774397007E0084 /* ProjectPropertiesPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C45008F334B500C1DF66 /* ProjectPropertiesPage.cpp */; };
 		DD3E150E0A774397007E0084 /* ProxyInfoPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDB506F80958446900181B75 /* ProxyInfoPage.cpp */; };
 		DD3E150F0A774397007E0084 /* ProxyPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD58C45E08F334EA00C1DF66 /* ProxyPage.cpp */; };
 		DD3E15100A774397007E0084 /* stdwx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C41707C5D13E0098A04D /* stdwx.cpp */; };
-		DD3E15110A774397007E0084 /* util.C in Sources */ = {isa = PBXBuildFile; fileRef = F5EAD479031AF001018E201A /* util.C */; };
 		DD3E15130A774397007E0084 /* ValidateEmailAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDBDF4A90987091800464F83 /* ValidateEmailAddress.cpp */; };
 		DD3E15140A774397007E0084 /* ValidateURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C42607C5D1D70098A04D /* ValidateURL.cpp */; };
 		DD3E151A0A774397007E0084 /* ViewStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDEF388E0802B73500E87552 /* ViewStatistics.cpp */; };
@@ -139,8 +128,6 @@
 		DD3E15290A774397007E0084 /* sg_StatImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCAD7D90A6C603A0086C7EE /* sg_StatImageLoader.cpp */; };
 		DD3E152A0A774397007E0084 /* sg_ViewTabPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCAD7DB0A6C603A0086C7EE /* sg_ViewTabPage.cpp */; };
 		DD3E152C0A774397007E0084 /* wxFlatNotebook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCE78300A70BD55008218B6 /* wxFlatNotebook.cpp */; };
-		DD3E152D0A774397007E0084 /* app_ipc.C in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6B1B046C364400A80164 /* app_ipc.C */; };
-		DD3E152E0A774397007E0084 /* proxy_info.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BEF07C5B1770043025C /* proxy_info.C */; };
 		DD3E152F0A774397007E0084 /* sg_ProjectsComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCE783E0A70BF72008218B6 /* sg_ProjectsComponent.cpp */; };
 		DD3E15310A774397007E0084 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
 		DD3E15320A774397007E0084 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDE2552B07C62F3E008E7D6E /* IOKit.framework */; };
@@ -174,8 +161,6 @@
 		DD4C561C0AD389A2009E23C6 /* sg_ProgressBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD4C56100AD389A2009E23C6 /* sg_ProgressBar.cpp */; };
 		DD4C561E0AD389A2009E23C6 /* sg_SGUIListControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD4C56120AD389A2009E23C6 /* sg_SGUIListControl.cpp */; };
 		DD4E704C0BCDAC360010A522 /* browser.C in Sources */ = {isa = PBXBuildFile; fileRef = DD4E70490BCDAC360010A522 /* browser.C */; };
-		DD4EC65A08A0A7AF009AA08F /* gui_rpc_client_ops.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E34E08A0694000656EB1 /* gui_rpc_client_ops.C */; };
-		DD4EC65B08A0A83F009AA08F /* gui_rpc_client_print.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E34F08A0694100656EB1 /* gui_rpc_client_print.C */; };
 		DD51DC8F0A4943A300BD24E6 /* check_security.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6617870A3FFD8C00FFEBEB /* check_security.C */; };
 		DD52C81108B5D44D008D9AA4 /* gui_rpc_client.C in Sources */ = {isa = PBXBuildFile; fileRef = DD81C5CC07C5D7D90098A04D /* gui_rpc_client.C */; };
 		DD52C81208B5D44E008D9AA4 /* gui_rpc_client_ops.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E34E08A0694000656EB1 /* gui_rpc_client_ops.C */; };
@@ -190,21 +175,11 @@
 		DD63F7510B64EECE0053037F /* libwx_mac_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDA90F260B64673D008F2E87 /* libwx_mac_static.a */; };
 		DD6617880A3FFD8C00FFEBEB /* check_security.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6617870A3FFD8C00FFEBEB /* check_security.C */; };
 		DD67F8140ADB9DD000B0015E /* wxPieCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD40E75D0ADB87BC00214518 /* wxPieCtrl.cpp */; };
-		DD69FEF508416C6B00C01361 /* gui_rpc_client.C in Sources */ = {isa = PBXBuildFile; fileRef = DD81C5CC07C5D7D90098A04D /* gui_rpc_client.C */; };
 		DD69FEF708416C9A00C01361 /* boinc_cmd.C in Sources */ = {isa = PBXBuildFile; fileRef = DD69FEF608416C9A00C01361 /* boinc_cmd.C */; };
-		DD69FF0C084171CF00C01361 /* network.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6D0A8507E9A61B007F882B /* network.C */; };
 		DD6ABCD10BD4C5CA009AA7A1 /* browser_safari.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD6ABCD00BD4C5CA009AA7A1 /* browser_safari.mm */; };
-		DD6D0A8707E9A61E007F882B /* network.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6D0A8507E9A61B007F882B /* network.C */; };
-		DD73E36E08A0720500656EB1 /* gui_rpc_server_ops.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E36208A06ED400656EB1 /* gui_rpc_server_ops.C */; };
-		DD73E3A708A07CA600656EB1 /* hostinfo.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BB607C5AEEE0043025C /* hostinfo.C */; };
-		DD73E3B608A07FC600656EB1 /* gui_rpc_client_ops.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E34E08A0694000656EB1 /* gui_rpc_client_ops.C */; };
 		DD7748B50A356D6C0025D05E /* SetupSecurity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7748B40A356D6C0025D05E /* SetupSecurity.cpp */; };
 		DD7749680A3596380025D05E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD1929D80918A2F100C31BCF /* Security.framework */; };
 		DD7AEB4A0C87CE1300AC3B5C /* screensaver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7AEB490C87CE1300AC3B5C /* screensaver.cpp */; };
-		DD7BF7DA0B8E7A9800A009F7 /* str_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DD7BF7D70B8E7A9800A009F7 /* str_util.C */; };
-		DD7BF7E10B8E7B3700A009F7 /* str_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DD7BF7D70B8E7A9800A009F7 /* str_util.C */; };
-		DD7BF7E40B8E7B5000A009F7 /* str_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DD7BF7D70B8E7A9800A009F7 /* str_util.C */; };
-		DD7BF7E60B8E7B6C00A009F7 /* str_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DD7BF7D70B8E7A9800A009F7 /* str_util.C */; };
 		DD7BF7E80B8E7BBE00A009F7 /* work_fetch.C in Sources */ = {isa = PBXBuildFile; fileRef = DD7BF7E70B8E7BBE00A009F7 /* work_fetch.C */; };
 		DD7DD79B0B8BFA4000B11279 /* ViewResources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C42307C5D1D70098A04D /* ViewResources.cpp */; };
 		DD7DD7C90B8BFD4800B11279 /* ViewMessages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD81C42507C5D1D70098A04D /* ViewMessages.cpp */; };
@@ -225,7 +200,6 @@
 		DDB873F20C850BC800E0DE1F /* texture.C in Sources */ = {isa = PBXBuildFile; fileRef = DD4EC60F08A0A083009AA08F /* texture.C */; };
 		DDB873F40C850BC800E0DE1F /* gutil_text.C in Sources */ = {isa = PBXBuildFile; fileRef = DD64DF0409DCC5E000668B3A /* gutil_text.C */; };
 		DDB873F60C850BC800E0DE1F /* txf_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DD65020809F599B9008E8A3A /* txf_util.C */; };
-		DDB873F70C850BC800E0DE1F /* str_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DD7BF7D70B8E7A9800A009F7 /* str_util.C */; };
 		DDB874470C850D3000E0DE1F /* graphics2_unix.C in Sources */ = {isa = PBXBuildFile; fileRef = DDB874450C850D3000E0DE1F /* graphics2_unix.C */; };
 		DDB874480C850D3000E0DE1F /* graphics2.C in Sources */ = {isa = PBXBuildFile; fileRef = DDB874460C850D3000E0DE1F /* graphics2.C */; };
 		DDBD51760C169B770074905B /* LoginItemAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = DD1277BE081F3E73007B5DE1 /* LoginItemAPI.c */; };
@@ -267,55 +241,39 @@
 		DDD74DAB07CF490C0065AC9D /* scheduler_op.C in Sources */ = {isa = PBXBuildFile; fileRef = F519F98D02C44A7501BDB3CA /* scheduler_op.C */; };
 		DDD74DAD07CF490E0065AC9D /* time_stats.C in Sources */ = {isa = PBXBuildFile; fileRef = F54B8FE402AC0A0C01FB7237 /* time_stats.C */; };
 		DDD74DAE07CF490F0065AC9D /* whetstone.C in Sources */ = {isa = PBXBuildFile; fileRef = DD5EF07007C5B329007CCE8D /* whetstone.C */; };
-		DDD74DC307CF492A0065AC9D /* app_ipc.C in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6B1B046C364400A80164 /* app_ipc.C */; };
-		DDD74DC407CF492A0065AC9D /* base64.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344B6307C5ACEB0043025C /* base64.C */; };
-		DDD74DC507CF492B0065AC9D /* crypt.C in Sources */ = {isa = PBXBuildFile; fileRef = F51DA64D02DB97FF010E292A /* crypt.C */; };
-		DDD74DC607CF492C0065AC9D /* diagnostics.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BA207C5AE5A0043025C /* diagnostics.C */; };
-		DDD74DC707CF492D0065AC9D /* filesys.C in Sources */ = {isa = PBXBuildFile; fileRef = F5EAD475031AEFF8018E201A /* filesys.C */; };
-		DDD74DC807CF492E0065AC9D /* hostinfo.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BB607C5AEEE0043025C /* hostinfo.C */; };
-		DDD74DCB07CF49310065AC9D /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = F5159562029EB02001F5651B /* md5.c */; };
-		DDD74DCC07CF49320065AC9D /* md5_file.C in Sources */ = {isa = PBXBuildFile; fileRef = F5159564029EB02001F5651B /* md5_file.C */; };
-		DDD74DCD07CF49330065AC9D /* mfile.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BD207C5B1150043025C /* mfile.C */; };
-		DDD74DCE07CF49390065AC9D /* miofile.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BD507C5B1150043025C /* miofile.C */; };
-		DDD74DCF07CF493A0065AC9D /* msg_log.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BDA07C5B11E0043025C /* msg_log.C */; };
-		DDD74DD007CF493B0065AC9D /* parse.C in Sources */ = {isa = PBXBuildFile; fileRef = F54B901602AC0A2201FB7237 /* parse.C */; };
-		DDD74DD107CF493C0065AC9D /* prefs.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BE407C5B1670043025C /* prefs.C */; };
-		DDD74DD207CF493C0065AC9D /* proxy_info.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BEF07C5B1770043025C /* proxy_info.C */; };
-		DDD74DD307CF493D0065AC9D /* shmem.C in Sources */ = {isa = PBXBuildFile; fileRef = AAA31C97042157A800A80164 /* shmem.C */; };
-		DDD74DD407CF493E0065AC9D /* util.C in Sources */ = {isa = PBXBuildFile; fileRef = F5EAD479031AF001018E201A /* util.C */; };
 		DDD7EF4707F0526E00BA3B90 /* SystemMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = DD40CDFE07F038990096C645 /* SystemMenu.m */; };
 		DDDC35260909212D006076EC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F51BDF4903086C46012012A7 /* InfoPlist.strings */; };
 		DDDC70440C7A86A200179273 /* Uninstaller.rsrc in Rez */ = {isa = PBXBuildFile; fileRef = DDDC70430C7A86A200179273 /* Uninstaller.rsrc */; };
 		DDE41C260C1FCA8F00CA1F86 /* graphics2_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DDE41C250C1FCA8F00CA1F86 /* graphics2_util.C */; };
 		DDFA60E20CB3391C0037B88C /* gfx_switcher in Resources */ = {isa = PBXBuildFile; fileRef = DDFA60D40CB337D40037B88C /* gfx_switcher */; };
 		DDFA60E40CB3396C0037B88C /* gfx_switcher.C in Sources */ = {isa = PBXBuildFile; fileRef = DDFA60E30CB3396C0037B88C /* gfx_switcher.C */; };
-		DDFA61520CB347500037B88C /* app_ipc.C in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6B1B046C364400A80164 /* app_ipc.C */; };
-		DDFA61570CB347730037B88C /* filesys.C in Sources */ = {isa = PBXBuildFile; fileRef = F5EAD475031AEFF8018E201A /* filesys.C */; };
-		DDFA61780CB348660037B88C /* mfile.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BD207C5B1150043025C /* mfile.C */; };
-		DDFA617A0CB3486D0037B88C /* miofile.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BD507C5B1150043025C /* miofile.C */; };
-		DDFA617E0CB3487F0037B88C /* parse.C in Sources */ = {isa = PBXBuildFile; fileRef = F54B901602AC0A2201FB7237 /* parse.C */; };
-		DDFA61860CB3489E0037B88C /* str_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DD7BF7D70B8E7A9800A009F7 /* str_util.C */; };
-		DDFA61890CB348A90037B88C /* util.C in Sources */ = {isa = PBXBuildFile; fileRef = F5EAD479031AF001018E201A /* util.C */; };
-		DDFA618C0CB348C50037B88C /* hostinfo.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BB607C5AEEE0043025C /* hostinfo.C */; };
-		DDFA618F0CB348E80037B88C /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = F5159562029EB02001F5651B /* md5.c */; };
-		DDFA61900CB348E90037B88C /* md5_file.C in Sources */ = {isa = PBXBuildFile; fileRef = F5159564029EB02001F5651B /* md5_file.C */; };
-		DDFA61920CB349020037B88C /* proxy_info.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BEF07C5B1770043025C /* proxy_info.C */; };
-		DDFA61940CB349160037B88C /* prefs.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BE407C5B1670043025C /* prefs.C */; };
-		DDFD5F0F0818F2EE002B23D4 /* gui_rpc_client.C in Sources */ = {isa = PBXBuildFile; fileRef = DD81C5CC07C5D7D90098A04D /* gui_rpc_client.C */; };
-		DDFD5F270818F329002B23D4 /* filesys.C in Sources */ = {isa = PBXBuildFile; fileRef = F5EAD475031AEFF8018E201A /* filesys.C */; };
-		DDFD5F280818F33C002B23D4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = F5159562029EB02001F5651B /* md5.c */; };
-		DDFD5F290818F346002B23D4 /* md5_file.C in Sources */ = {isa = PBXBuildFile; fileRef = F5159564029EB02001F5651B /* md5_file.C */; };
-		DDFD5F2A0818F34F002B23D4 /* mfile.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BD207C5B1150043025C /* mfile.C */; };
-		DDFD5F2B0818F359002B23D4 /* miofile.C in Sources */ = {isa = PBXBuildFile; fileRef = DD344BD507C5B1150043025C /* miofile.C */; };
-		DDFD5F2C0818F368002B23D4 /* network.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6D0A8507E9A61B007F882B /* network.C */; };
-		DDFD5F2D0818F372002B23D4 /* parse.C in Sources */ = {isa = PBXBuildFile; fileRef = F54B901602AC0A2201FB7237 /* parse.C */; };
-		DDFD5F2E0818F3A1002B23D4 /* util.C in Sources */ = {isa = PBXBuildFile; fileRef = F5EAD479031AF001018E201A /* util.C */; };
 		DDFE84E50B60CD66009B43D9 /* DlgAdvPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDFE84E10B60CD66009B43D9 /* DlgAdvPreferences.cpp */; };
 		DDFE84E70B60CD66009B43D9 /* DlgAdvPreferencesBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDFE84E30B60CD66009B43D9 /* DlgAdvPreferencesBase.cpp */; };
 		DDFF2AE90A53D599002BC19D /* setprojectgrp.C in Sources */ = {isa = PBXBuildFile; fileRef = DDFF2AE80A53D599002BC19D /* setprojectgrp.C */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0E216B161027A2A900FAC4C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20286C28FDCF999611CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD407A4907D2FB1200163EF5 /* libboinc */;
+			remoteInfo = libboinc;
+		};
+		0E216B301027A48100FAC4C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20286C28FDCF999611CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD407A4907D2FB1200163EF5 /* libboinc */;
+			remoteInfo = libboinc;
+		};
+		0E216B3B1027A50100FAC4C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20286C28FDCF999611CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD407A4907D2FB1200163EF5 /* libboinc */;
+			remoteInfo = libboinc;
+		};
 		0ECE374A0FCBA46B009029DE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 20286C28FDCF999611CA2CEA /* Project object */;
@@ -895,6 +853,7 @@
 				DD63F7510B64EECE0053037F /* libwx_mac_static.a in Frameworks */,
 				DD21B49D0D750FC600AFFEE5 /* AppKit.framework in Frameworks */,
 				0E44E6BE0F5889D40009950D /* OpenGL.framework in Frameworks */,
+				0E216B151027A2A400FAC4C5 /* libboinc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -953,6 +912,7 @@
 				DD130E740820C422001A0291 /* ScreenSaver.framework in Frameworks */,
 				DDB6E3EF0D5B27AA00ED12B8 /* Carbon.framework in Frameworks */,
 				DDB74A6C0D74259E00E97A40 /* AppKit.framework in Frameworks */,
+				0E216B321027A48400FAC4C5 /* libboinc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -992,6 +952,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E216B3D1027A50500FAC4C5 /* libboinc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1545,6 +1506,7 @@
 				DD3E14D40A774397007E0084 /* PBXTargetDependency */,
 				DD3E14D60A774397007E0084 /* PBXTargetDependency */,
 				DD3E14D80A774397007E0084 /* PBXTargetDependency */,
+				0E216B171027A2A900FAC4C5 /* PBXTargetDependency */,
 			);
 			name = mgr_boinc;
 			productName = mgr_boinc;
@@ -1666,6 +1628,7 @@
 			dependencies = (
 				DDAD19CF09090833004E7DD0 /* PBXTargetDependency */,
 				DDFA60DD0CB338940037B88C /* PBXTargetDependency */,
+				0E216B311027A48100FAC4C5 /* PBXTargetDependency */,
 			);
 			name = ScreenSaver;
 			productName = ScreenSaver;
@@ -1753,6 +1716,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				0E216B3C1027A50100FAC4C5 /* PBXTargetDependency */,
 			);
 			name = gfx_switcher;
 			productName = switcher;
@@ -2124,39 +2088,25 @@
 				DD3E14EB0A774397007E0084 /* BOINCTaskCtrl.cpp in Sources */,
 				DD3E14EC0A774397007E0084 /* CompletionErrorPage.cpp in Sources */,
 				DD3E14ED0A774397007E0084 /* CompletionPage.cpp in Sources */,
-				DD3E14EE0A774397007E0084 /* diagnostics.C in Sources */,
 				DD3E14EF0A774397007E0084 /* DlgAbout.cpp in Sources */,
 				DD3E14F00A774397007E0084 /* DlgGenericMessage.cpp in Sources */,
 				DD3E14F10A774397007E0084 /* DlgOptions.cpp in Sources */,
 				DD3E14F20A774397007E0084 /* DlgSelectComputer.cpp in Sources */,
-				DD3E14F30A774397007E0084 /* filesys.C in Sources */,
-				DD3E14F40A774397007E0084 /* gui_rpc_client.C in Sources */,
-				DD3E14F50A774397007E0084 /* gui_rpc_client_ops.C in Sources */,
-				DD3E14F60A774397007E0084 /* gui_rpc_client_print.C in Sources */,
-				DD3E14F70A774397007E0084 /* hostinfo.C in Sources */,
 				DD3E14F80A774397007E0084 /* hyperlink.cpp in Sources */,
 				DD3E14F90A774397007E0084 /* Localization.cpp in Sources */,
 				DD3E14FA0A774397007E0084 /* LogBOINC.cpp in Sources */,
 				DD3E14FB0A774397007E0084 /* MacSysMenu.cpp in Sources */,
 				DD3E14FD0A774397007E0084 /* Mac_GUI.cpp in Sources */,
 				DD3E14FE0A774397007E0084 /* MainDocument.cpp in Sources */,
-				DD3E14FF0A774397007E0084 /* md5.c in Sources */,
-				DD3E15000A774397007E0084 /* md5_file.C in Sources */,
-				DD3E15010A774397007E0084 /* mfile.C in Sources */,
-				DD3E15020A774397007E0084 /* miofile.C in Sources */,
-				DD3E15050A774397007E0084 /* network.C in Sources */,
 				DD3E15060A774397007E0084 /* NoInternetConnectionPage.cpp in Sources */,
 				DD3E15070A774397007E0084 /* NotDetectedPage.cpp in Sources */,
 				DD3E15080A774397007E0084 /* NotFoundPage.cpp in Sources */,
-				DD3E15090A774397007E0084 /* parse.C in Sources */,
-				DD3E150A0A774397007E0084 /* prefs.C in Sources */,
 				DD3E150B0A774397007E0084 /* ProjectInfoPage.cpp in Sources */,
 				DD3E150C0A774397007E0084 /* ProjectProcessingPage.cpp in Sources */,
 				DD3E150D0A774397007E0084 /* ProjectPropertiesPage.cpp in Sources */,
 				DD3E150E0A774397007E0084 /* ProxyInfoPage.cpp in Sources */,
 				DD3E150F0A774397007E0084 /* ProxyPage.cpp in Sources */,
 				DD3E15100A774397007E0084 /* stdwx.cpp in Sources */,
-				DD3E15110A774397007E0084 /* util.C in Sources */,
 				DD3E15130A774397007E0084 /* ValidateEmailAddress.cpp in Sources */,
 				DD3E15140A774397007E0084 /* ValidateURL.cpp in Sources */,
 				DD3E151A0A774397007E0084 /* ViewStatistics.cpp in Sources */,
@@ -2175,8 +2125,6 @@
 				DD3E15290A774397007E0084 /* sg_StatImageLoader.cpp in Sources */,
 				DD3E152A0A774397007E0084 /* sg_ViewTabPage.cpp in Sources */,
 				DD3E152C0A774397007E0084 /* wxFlatNotebook.cpp in Sources */,
-				DD3E152D0A774397007E0084 /* app_ipc.C in Sources */,
-				DD3E152E0A774397007E0084 /* proxy_info.C in Sources */,
 				DD3E152F0A774397007E0084 /* sg_ProjectsComponent.cpp in Sources */,
 				DD4C56160AD389A2009E23C6 /* sg_ClientStateIndicator.cpp in Sources */,
 				DD4C56180AD389A2009E23C6 /* sg_DlgMessages.cpp in Sources */,
@@ -2190,7 +2138,6 @@
 				DDFE84E70B60CD66009B43D9 /* DlgAdvPreferencesBase.cpp in Sources */,
 				DD7DD79B0B8BFA4000B11279 /* ViewResources.cpp in Sources */,
 				DD7DD7C90B8BFD4800B11279 /* ViewMessages.cpp in Sources */,
-				DD7BF7E60B8E7B6C00A009F7 /* str_util.C in Sources */,
 				DD205A1A0BAF596E0008D473 /* ProjectListCtrl.cpp in Sources */,
 				DD4E704C0BCDAC360010A522 /* browser.C in Sources */,
 				DD6ABCD10BD4C5CA009AA7A1 /* browser_safari.mm in Sources */,
@@ -2263,11 +2210,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD69FEF708416C9A00C01361 /* boinc_cmd.C in Sources */,
-				DD69FEF508416C6B00C01361 /* gui_rpc_client.C in Sources */,
-				DD4EC65A08A0A7AF009AA08F /* gui_rpc_client_ops.C in Sources */,
-				DD4EC65B08A0A83F009AA08F /* gui_rpc_client_print.C in Sources */,
-				DD69FF0C084171CF00C01361 /* network.C in Sources */,
-				DD7BF7E10B8E7B3700A009F7 /* str_util.C in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2284,19 +2226,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDFD5F0F0818F2EE002B23D4 /* gui_rpc_client.C in Sources */,
-				DD73E3B608A07FC600656EB1 /* gui_rpc_client_ops.C in Sources */,
-				DDFD5F270818F329002B23D4 /* filesys.C in Sources */,
-				DD73E3A708A07CA600656EB1 /* hostinfo.C in Sources */,
-				DDFD5F280818F33C002B23D4 /* md5.c in Sources */,
-				DDFD5F290818F346002B23D4 /* md5_file.C in Sources */,
-				DDFD5F2A0818F34F002B23D4 /* mfile.C in Sources */,
-				DDFD5F2B0818F359002B23D4 /* miofile.C in Sources */,
-				DDFD5F2C0818F368002B23D4 /* network.C in Sources */,
-				DDFD5F2D0818F372002B23D4 /* parse.C in Sources */,
-				DDFD5F2E0818F3A1002B23D4 /* util.C in Sources */,
-				DD0A06F50869A2D2007CD86E /* prefs.C in Sources */,
-				DD7BF7DA0B8E7A9800A009F7 /* str_util.C in Sources */,
 				DDB873990C85072500E0DE1F /* mac_saver_module.cpp in Sources */,
 				DDB8739A0C85072500E0DE1F /* Mac_Saver_ModuleView.m in Sources */,
 				DD7AEB4A0C87CE1300AC3B5C /* screensaver.cpp in Sources */,
@@ -2325,7 +2254,6 @@
 				DDB873F10C850BC800E0DE1F /* reduce_main.C in Sources */,
 				DDB873F20C850BC800E0DE1F /* texture.C in Sources */,
 				DDB873F60C850BC800E0DE1F /* txf_util.C in Sources */,
-				DDB873F70C850BC800E0DE1F /* str_util.C in Sources */,
 				DD635A420D384FA500BAC1A5 /* texfont.C in Sources */,
 				DD5BF77D0D4F3D0C00EDF980 /* mac_icon.C in Sources */,
 			);
@@ -2343,12 +2271,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E216B431027A76F00FAC4C5 /* gui_rpc_server_ops.C in Sources */,
 				DDD74D8907CF48E50065AC9D /* acct_mgr.C in Sources */,
 				DD33C6F808B5BB4500768630 /* acct_setup.C in Sources */,
 				DDD74D8A07CF48E70065AC9D /* app.C in Sources */,
 				DDD74D8B07CF48E80065AC9D /* app_control.C in Sources */,
 				DDD74D8C07CF48E90065AC9D /* app_graphics.C in Sources */,
-				DDD74DC307CF492A0065AC9D /* app_ipc.C in Sources */,
 				DDD74D8D07CF48EA0065AC9D /* app_start.C in Sources */,
 				DDD74D8E07CF48EB0065AC9D /* check_state.C in Sources */,
 				DDD74D8F07CF48EC0065AC9D /* client_msgs.C in Sources */,
@@ -2378,29 +2306,11 @@
 				DDD74DAB07CF490C0065AC9D /* scheduler_op.C in Sources */,
 				DDD74DAD07CF490E0065AC9D /* time_stats.C in Sources */,
 				DDD74DAE07CF490F0065AC9D /* whetstone.C in Sources */,
-				DDD74DC407CF492A0065AC9D /* base64.C in Sources */,
-				DDD74DC507CF492B0065AC9D /* crypt.C in Sources */,
-				DDD74DC607CF492C0065AC9D /* diagnostics.C in Sources */,
-				DDD74DC707CF492D0065AC9D /* filesys.C in Sources */,
 				DD33C6F308B5BAF500768630 /* gui_http.C in Sources */,
-				DD73E36E08A0720500656EB1 /* gui_rpc_server_ops.C in Sources */,
-				DDD74DC807CF492E0065AC9D /* hostinfo.C in Sources */,
 				DD33C70408B5BEDE00768630 /* http_curl.C in Sources */,
-				DDD74DCB07CF49310065AC9D /* md5.c in Sources */,
-				DDD74DCC07CF49320065AC9D /* md5_file.C in Sources */,
-				DDD74DCD07CF49330065AC9D /* mfile.C in Sources */,
-				DDD74DCE07CF49390065AC9D /* miofile.C in Sources */,
-				DDD74DCF07CF493A0065AC9D /* msg_log.C in Sources */,
-				DD6D0A8707E9A61E007F882B /* network.C in Sources */,
-				DDD74DD007CF493B0065AC9D /* parse.C in Sources */,
-				DDD74DD107CF493C0065AC9D /* prefs.C in Sources */,
-				DDD74DD207CF493C0065AC9D /* proxy_info.C in Sources */,
-				DDD74DD307CF493D0065AC9D /* shmem.C in Sources */,
-				DDD74DD407CF493E0065AC9D /* util.C in Sources */,
 				DD6617880A3FFD8C00FFEBEB /* check_security.C in Sources */,
 				DD431F240A415EE70060585A /* SetupSecurity.cpp in Sources */,
 				DDB693500ABFE9C600689FD8 /* procinfo_mac.C in Sources */,
-				DD7BF7E40B8E7B5000A009F7 /* str_util.C in Sources */,
 				DD7BF7E80B8E7BBE00A009F7 /* work_fetch.C in Sources */,
 				DDBE74390C03B1C600453BB8 /* cs_platforms.C in Sources */,
 				DD80C83F0CBAEB4F00F1121D /* sandbox.C in Sources */,
@@ -2414,18 +2324,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDFA60E40CB3396C0037B88C /* gfx_switcher.C in Sources */,
-				DDFA61520CB347500037B88C /* app_ipc.C in Sources */,
-				DDFA61570CB347730037B88C /* filesys.C in Sources */,
-				DDFA61780CB348660037B88C /* mfile.C in Sources */,
-				DDFA617A0CB3486D0037B88C /* miofile.C in Sources */,
-				DDFA617E0CB3487F0037B88C /* parse.C in Sources */,
-				DDFA61860CB3489E0037B88C /* str_util.C in Sources */,
-				DDFA61890CB348A90037B88C /* util.C in Sources */,
-				DDFA618C0CB348C50037B88C /* hostinfo.C in Sources */,
-				DDFA618F0CB348E80037B88C /* md5.c in Sources */,
-				DDFA61900CB348E90037B88C /* md5_file.C in Sources */,
-				DDFA61920CB349020037B88C /* proxy_info.C in Sources */,
-				DDFA61940CB349160037B88C /* prefs.C in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2440,6 +2338,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0E216B171027A2A900FAC4C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD407A4907D2FB1200163EF5 /* libboinc */;
+			targetProxy = 0E216B161027A2A900FAC4C5 /* PBXContainerItemProxy */;
+		};
+		0E216B311027A48100FAC4C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD407A4907D2FB1200163EF5 /* libboinc */;
+			targetProxy = 0E216B301027A48100FAC4C5 /* PBXContainerItemProxy */;
+		};
+		0E216B3C1027A50100FAC4C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD407A4907D2FB1200163EF5 /* libboinc */;
+			targetProxy = 0E216B3B1027A50100FAC4C5 /* PBXContainerItemProxy */;
+		};
 		0ECE374B0FCBA46B009029DE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DD407A4907D2FB1200163EF5 /* libboinc */;
