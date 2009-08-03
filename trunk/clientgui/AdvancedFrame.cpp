@@ -1793,7 +1793,8 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
                         SetStatusText(strStatusText, STATUS_CONNECTION_STATUS);
                     }
                 } else {
-                    SetStatusText(_("Disconnected"), STATUS_CONNECTION_STATUS);
+                    m_cachedStatusText = _("Disconnected");
+                    SetStatusText(m_cachedStatusText, STATUS_CONNECTION_STATUS);
 
                     if (GetTitle() != m_strBaseTitle)
                         SetTitle(m_strBaseTitle);
