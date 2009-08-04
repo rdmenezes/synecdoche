@@ -7,16 +7,16 @@ include $(top_srcdir)/Makefile.incl
 
 
 if OS_DARWIN
-   LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa -framework Security
-   mac_sources = mac/SystemMenu.m \
-                 mac/MacSysMenu.cpp \
-                 mac/Mac_GUI.cpp\
-                 mac/browser_safari.mm
+    LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa -framework Security
+    mac_sources = mac/SystemMenu.m \
+                  mac/MacSysMenu.cpp \
+                  mac/Mac_GUI.cpp
+                  mac/browser_safari.mm
 
     mac_headers = mac/MacSysMenu.h
 else
-   mac_headers =
-   mac_sources = 
+    mac_headers =
+    mac_sources = 
 endif
 
 bin_PROGRAMS = synecmgr
