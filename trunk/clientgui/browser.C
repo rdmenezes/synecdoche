@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "browser.h"
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -30,7 +31,6 @@
 #include "mfile.h"
 #include "miofile.h"
 #include "str_util.h"
-#include "browser.h"
 
 
 //

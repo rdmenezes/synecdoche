@@ -15,17 +15,17 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BROWSER_
-#define _BROWSER_
+#ifndef MGR_BROWSER_H
+#define MGR_BROWSER_H
 
-//
 // The BOINC client now supports the ability to lookup a users
 //   authenticator during automatic attachments via a browser
 //   cookie.
-//
+
+#include <string>
 
 bool detect_setup_authenticator(std::string& project_url, std::string& authenticator);
-// is_authenticator_valid() is used by detect_setup_authenticator_safari() in mac_bowser.mm
+// is_authenticator_valid() is used by detect_setup_authenticator_safari() in browser_safari.mm
 bool is_authenticator_valid(const std::string authenticator);
 
 // These functions are browser specific functions
