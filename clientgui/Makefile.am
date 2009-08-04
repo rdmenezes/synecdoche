@@ -10,7 +10,7 @@ if OS_DARWIN
     LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa -framework Security
     mac_sources = mac/SystemMenu.m \
                   mac/MacSysMenu.cpp \
-                  mac/Mac_GUI.cpp
+                  mac/Mac_GUI.cpp \
                   mac/browser_safari.mm
 
     mac_headers = mac/MacSysMenu.h
