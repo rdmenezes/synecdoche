@@ -51,14 +51,14 @@ gui_headers = \
     DlgAdvPreferencesBase.h \
     DlgAdvPreferences.h \
     DlgGenericMessage.h \
-	DlgMsgFilter.h \
+    DlgMsgFilter.h \
     DlgOptions.h \
     DlgSelectComputer.h \
     Events.h \
     hyperlink.h \
     LogBOINC.h \
     MainDocument.h \
-	MsgFilterData.h \
+    MsgFilterData.h \
     NoInternetConnectionPage.h \
     NotDetectedPage.h \
     NotFoundPage.h \
@@ -191,13 +191,13 @@ synecmgr_SOURCES = \
     DlgAdvPreferences.cpp \
     DlgAdvPreferencesBase.cpp \
     DlgGenericMessage.cpp \
-	DlgMsgFilter.cpp \
+    DlgMsgFilter.cpp \
     DlgOptions.cpp \
     DlgSelectComputer.cpp \
     hyperlink.cpp \
     LogBOINC.cpp \
     MainDocument.cpp \
-	MsgFilterData.cpp \
+    MsgFilterData.cpp \
     NoInternetConnectionPage.cpp \
     NotDetectedPage.cpp \
     NotFoundPage.cpp \
