@@ -7,7 +7,7 @@ The idea behind this page is to provide information for the case when changes at
 
 || *Project*                   || *0.1.1*      || *0.2.0*      ||
 || ABC@home                    || *OK*         || *OK*         ||
-|| AQUA@home                   || *FAILED* (2) || *FAILED* (2) ||
+|| AQUA@home                   || *FAILED* (2) || *OK*         ||
 || Climate Prediction          || *OK*         || *OK*         ||
 || Cosmology@Home              || _not tested_ || _not tested_ ||
 || Docking@Home                || _not tested_ || _not tested_ ||
@@ -19,7 +19,7 @@ The idea behind this page is to provide information for the case when changes at
 || !MilkyWay@home              || *OK*         || *OK*         ||
 || NQueens@Home Project        || *OK*         || *OK*         ||
 || POEM@HOME                   || *FAILED* (1) || *FAILED* (1) ||
-|| !PrimeGrid                  || *FAILED* (3) || *FAILED* (3) ||
+|| !PrimeGrid                  || *FAILED* (3) || *OK*         ||
 || QMC@Home                    || *OK*         || *OK*         ||
 || Rectilinear Crossing Number || *OK*         || *OK*         ||
 || Rosetta@home                || *OK*         || *OK*         ||
