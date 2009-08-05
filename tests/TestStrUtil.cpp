@@ -27,6 +27,8 @@ class TestStrUtil: public CppUnit::TestFixture
     CPPUNIT_TEST(testStripWsStdString);
     CPPUNIT_TEST(testStartsWith);
     CPPUNIT_TEST(testEndsWith);
+    CPPUNIT_TEST(testCmdLineParse);
+    CPPUNIT_TEST(testCmdLineParseSingleCharLast);
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -79,6 +81,25 @@ class TestStrUtil: public CppUnit::TestFixture
         // but everything ends with the empty string
         CPPUNIT_ASSERT_EQUAL(true, ends_with("foo", ""));
         CPPUNIT_ASSERT_EQUAL(true, ends_with("", ""));
+    }
+    void testCmdLineParse()
+    {
+        std::list<std::string> args = parse_command_line("simple test");
+        CPPUNIT_ASSERT_EQUAL(size_t(2), args.size());
+
+        std::list<std::string>::iterator it = args.begin();
+        CPPUNIT_ASSERT_EQUAL(std::string("simple"), *it++);
+        CPPUNIT_ASSERT_EQUAL(std::string("test"), *it++);
+    }
+    void testCmdLineParseSingleCharLast()
+    {
+        std::list<std::string> args = parse_command_line("foo --nthreads 2");
+        CPPUNIT_ASSERT_EQUAL(size_t(3), args.size());
+
+        std::list<std::string>::iterator it = args.begin();
+        CPPUNIT_ASSERT_EQUAL(std::string("foo"), *it++);
+        CPPUNIT_ASSERT_EQUAL(std::string("--nthreads"), *it++);
+        CPPUNIT_ASSERT_EQUAL(std::string("2"), *it++);
     }
 };
 
