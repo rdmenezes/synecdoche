@@ -64,3 +64,4 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
    by running the client with --dir. This avoids problems if users start the
    client by hand, from "wrong" places.
 
+# vim: set ai et tw=78 fo=tqn flp=^\\s*\\(\\d\\+\\|\\*\\)[\\]\:.\\t\ ]\\s*:
