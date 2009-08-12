@@ -10,8 +10,8 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
  * All server code was removed from the repository. The application API is not
    maintained, and will be also removed eventually.
 
- * Workarounds and special code for Win9x platforms removed. BOINC recently
-   removed it too (in 6.8).
+ * Workarounds and special code for Win9x was removed. BOINC recently removed it
+   too (in 6.8).
 
  * All special code for OS/2 was removed.
 
@@ -37,12 +37,13 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
  * When aborting multiple tasks at once, the confirmation dialog now lets you
    say "Yes to all", instead of having to click "Yes" for every aborted task.
 
- * Removed the accessible view. It was essentially the same as the advanced view.
+ * Removed the accessible view. It was essentially the same as the advanced
+   view.
 
 
 [Core client]
 
- * Remove bad fix for a security bug: if a GUI RPC client fails to authenticate,
+ * Removed bad fix for a security bug: if a GUI RPC client fails to authenticate,
    drop the connection. Instead, avoid the denial of service by only writing to
    the socket if the socket is actually ready to write, and queue data
    otherwise.
@@ -65,4 +66,4 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
    by running the client with --dir. This avoids problems if users start the
    client by hand, from "wrong" places.
 
-# vim: set ai et tw=78 fo=tqn flp=^\\s*\\(\\d\\+\\|\\*\\)[\\]\:.\\t\ ]\\s*:
+# vim: set ai et tw=80 fo=tqn flp=^\\s*\\(\\d\\+\\|\\*\\)[\\]\:.\\t\ ]\\s*:
