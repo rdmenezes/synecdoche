@@ -2,13 +2,16 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
 
 [General]
 
- * Tons of code cleanup, including removal of many fixed-size buffers in favor of
-   std::string.
+ * Tons of code cleanup, including removal of many fixed-size buffers in favor
+   of std::string.
 
  * Existing code documentation converted to Doxygen, and some more added.
 
+ * All server code was removed from the repository. The application API is not
+   maintained, and will be also removed eventually.
+
  * Workarounds and special code for Win9x platforms removed. BOINC recently
-   removed it too removed it too (in 6.8).
+   removed it too (in 6.8).
 
  * All special code for OS/2 was removed.
 
@@ -16,12 +19,10 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
 
  * There is a new Mac installer using Iceberg.
 
- * The Unix buildsystem was improved. 'make dist' now produces a usable
+ * The Unix build system was improved. 'make dist' now produces a usable
    tarball, 'make install' works with staging (it used to try installing things
-   into /etc no matter what), 
+   into /etc no matter what).
 
- * The application API has been mostly removed, and is not supported.
- 
  * The Mac Xcode project has been cleaned up significantly internally.
 
 
