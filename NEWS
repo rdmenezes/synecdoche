@@ -31,8 +31,8 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
  * Separated suspend/resume and allow new tasks / no more tasks buttons. This
    allows users to use these operations on multiple selections.
 
- * In the attach project wizard, sort the list of projects by name, instead of
-   using random order. BOINC recently changed this too (6.8?).
+ * In the attach project wizard, the list of projects is now sorted by name,
+   instead of using random order. BOINC recently changed this too (6.8?).
 
  * When aborting multiple tasks at once, the confirmation dialog now lets you
    say "Yes to all", instead of having to click "Yes" for every aborted task.
@@ -43,27 +43,29 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
 
 [Core client]
 
- * Removed bad fix for a security bug: if a GUI RPC client fails to authenticate,
-   drop the connection. Instead, avoid the denial of service by only writing to
-   the socket if the socket is actually ready to write, and queue data
-   otherwise.
+ * The --attach_project, --detach_project, etc. switches from the core client
+   were removed. They are supposed to be for debugging, but they confuse users
+   who think that's the correct way to attach new projects.
+
+ * Removed misfeature that silently enables network activity if a user does
+   something that needs the network, like updating a project.
+
+ * A strict verification of input files is done before starting tasks.
+   NOTE: this causes problems with POEM@Home, because of a bug on *their* side.
 
  * Don't try to get new version notifications or updated project list from BOINC
    server.
 
- * Remove --attach_project, --detach_project, etc. switches from the core
-   client. They are supposed to be for debugging, but they really confuse users
-   who think that's the correct way to attach new projects.
-
- * Do a strict verification of input files before starting tasks.
-   NOTE: this causes problems with POEM@Home, because of a bug on *their* side.
-
- * Remove misfeature that silently enables network activity if a user does
-   something that needs the network, like updating a project.
-
  * Unix: don't use current working directory as data directory. Instead,
    hardcode the correct path into the binary at compile time. It can be changed
    by running the client with --dir. This avoids problems if users start the
-   client by hand, from "wrong" places.
+   client by hand, from "wrong" places. In the future, syneccmd and synecmgr
+   will do the same.
+
+ * In BOINC, if a GUI RPC client fails to authenticate, the connection is
+   dropped. This is to avoid a possible denial of service vulnerability, but
+   doesn't solve the underlying problem. We removed that 'fix', and instead
+   avoid the denial of service by only writing to the socket if the socket is
+   actually ready to write, and queue data otherwise.
 
 # vim: set ai et tw=80 fo=tqn flp=^\\s*\\(\\d\\+\\|\\*\\)[\\]\:.\\t\ ]\\s*:
