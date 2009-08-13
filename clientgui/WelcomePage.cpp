@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -156,7 +156,6 @@ void CWelcomePage::OnPageChanged(wxWizardEvent& event) {
     if (event.GetDirection() == false) return;
 
     CMainDocument*         pDoc = wxGetApp().GetDocument();
-    CWizardAccountManager* pWAM = ((CWizardAccountManager*)GetParent());
     ACCT_MGR_INFO          ami;
     bool                   is_acct_mgr_detected = false;
     wxString               strBuffer = wxEmptyString;
