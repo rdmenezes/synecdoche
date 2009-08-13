@@ -1094,6 +1094,8 @@
 								<integer>0</integer>
 								<key>Path</key>
 								<string></string>
+								<key>Path Type</key>
+								<integer>1</integer>
 							</dict>
 							<key>License</key>
 							<dict>
@@ -1103,6 +1105,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>ReadMe</key>
@@ -1113,6 +1117,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>Welcome</key>
@@ -1123,6 +1129,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 						</dict>
@@ -1186,7 +1194,7 @@
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
-																<integer>432</integer>
+																<integer>438</integer>
 																<key>Type</key>
 																<integer>3</integer>
 																<key>UID</key>
@@ -1202,7 +1210,7 @@
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
-																<integer>420</integer>
+																<integer>438</integer>
 																<key>Type</key>
 																<integer>3</integer>
 																<key>UID</key>
@@ -1216,7 +1224,7 @@
 														<key>Path Type</key>
 														<integer>1</integer>
 														<key>Privileges</key>
-														<integer>509</integer>
+														<integer>511</integer>
 														<key>Type</key>
 														<integer>2</integer>
 														<key>UID</key>
