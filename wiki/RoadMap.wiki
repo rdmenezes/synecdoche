@@ -20,3 +20,38 @@ In order to get the first release available quickly, Synecdoche will not diverge
  * New theme engine for simple view.
  * Multi-computer view.
  * Standard XML library.
+
+= "Vague ideas" =
+(to be cleaned up and formatted properly!)
+
+== ASAP ==
+ * Installation docs
+ * Release notes
+ * Set up unit testing
+
+== Ongoing tasks ==
+ * Unit testing (requires refactoring)
+
+== Small tasks ==
+ * Consistent error notification
+ * Improved CLI
+ * Flexible columns (allow user to change what columns to show)
+   * More information allowed in the manager (DCF for projects comes to mind)
+ * Complete installers/uninstallers for all platforms
+   * Single package application (OS X only?)
+   * Did we decide on WiX for Windows?
+
+== Big tasks ==
+ * Short term
+   * Standard XML library
+   * Multi-host support in manager
+   * Replace simple GUI
+   * New GUI RPC protocol
+   * Improved message reporting (message hierarchy, templated messages)
+   * Multithreaded (or asynchronous) RPC
+ * One day
+   * GPU support (CUDA, Stream, OpenCL)
+   * Goal-based CPU scheduler
+
+== Unclassified ==
+ * Fix Unicode for user names, team names, etc.
