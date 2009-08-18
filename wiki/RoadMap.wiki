@@ -1,18 +1,25 @@
 #summary The future of Synecdoche
 
-= First Release=
-
-For manageability, the first release will be built for Linux and Win32 only. The server and API code will not be maintained, and the Windows and Mac installers will not be maintained. Support for these will hopefully be replaced in a future release.
+= First Release =
 
 In order to get the first release available quickly, Synecdoche will not diverge far from BOINC. Tasks for the first milestone are:
  * Replacing the BOINC branding, and correcting situations where the BOINC branding is hardcoded.
  * Fixing known bugs.
- * Code cleanup and documentation.
  * Incremental performance improvements for the GUI.
  * Opportunistic usability improvements. Usability will be addressed properly in the second release.
 
 = Second Release =
- * New Windows installer.
+ * Installation docs
+ * Release note template (what to do, and where)
+ * Complete installers/uninstallers for all platforms
+   * Single package application (OS X only?)
+   * Did we decide on WiX for Windows?
+
+= Third Release =
+ * Consistent error notification
+ * Improved CLI
+ * Flexible columns (allow user to change what columns to show)
+   * More information allowed in the manager (project DCF comes to mind)
 
 = Tasks not yet assigned to a milestone =
 
@@ -20,38 +27,16 @@ In order to get the first release available quickly, Synecdoche will not diverge
  * New theme engine for simple view.
  * Multi-computer view.
  * Standard XML library.
+ * Fix Unicode for user names, team names, etc.
 
-= "Vague ideas" =
-(to be cleaned up and formatted properly!)
-
-== ASAP ==
- * Installation docs
- * Release notes
- * Set up unit testing
-
-== Ongoing tasks ==
- * Unit testing (requires refactoring)
-
-== Small tasks ==
- * Consistent error notification
- * Improved CLI
- * Flexible columns (allow user to change what columns to show)
-   * More information allowed in the manager (DCF for projects comes to mind)
- * Complete installers/uninstallers for all platforms
-   * Single package application (OS X only?)
-   * Did we decide on WiX for Windows?
-
-== Big tasks ==
  * Short term
-   * Standard XML library
-   * Multi-host support in manager
-   * Replace simple GUI
    * New GUI RPC protocol
    * Improved message reporting (message hierarchy, templated messages)
-   * Multithreaded (or asynchronous) RPC
  * One day
    * GPU support (CUDA, Stream, OpenCL)
    * Goal-based CPU scheduler
 
-== Unclassified ==
- * Fix Unicode for user names, team names, etc.
+== Ongoing tasks ==
+ * Code cleanup and documentation.
+ * Unit testing (requires refactoring)
+
