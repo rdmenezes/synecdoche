@@ -766,7 +766,7 @@ int HOST_INFO::get_host_info() {
 				   );
     }
     m_nbytes = (1024. * 1024.) * (double)mem_size;
-#elif defined(LINUX_LIKE_SYSTEM)
+#elif LINUX_LIKE_SYSTEM
     parse_meminfo_linux(*this);
 #elif defined(_SC_USEABLE_MEMORY)
     // UnixWare
