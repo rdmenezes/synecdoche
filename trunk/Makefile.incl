@@ -18,6 +18,6 @@ LIBBOINC = $(top_builddir)/lib/libboinc.a
 $(LIBBOINC):
 	cd $(top_builddir)/lib; ${MAKE} libboinc.a
 
-LIBAPI = = $(top_builddir)/api/libboinc_api.a
+LIBAPI = $(top_builddir)/api/libboinc_api.a
 $(LIBAPI):
 	cd $(top_builddir)/api; ${MAKE} libboinc_api.a
