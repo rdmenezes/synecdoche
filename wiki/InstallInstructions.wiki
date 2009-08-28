@@ -1,0 +1,78 @@
+#summary Installation instructions for the different platforms
+#labels Featured,Phase-Deploy
+
+= Installation instructions =
+
+*You cannot run BOINC and Synecdoche at the same time.*
+Be especially careful if BOINC is configured
+to start automatically when the computer boots.
+You will have to either uninstall BOINC first,
+or keep it from auto-starting.
+
+== Windows ==
+There is no real installer yet.
+Synecdoche is available as a zip archive
+containing the needed programs.
+For this reason,
+there is no sandboxing,
+service install,
+or starting on boot.
+
+To "install" it, extract the zip archive into its own folder.
+Then run "synecmgr.exe" to start Synecdoche.
+
+Data files will be created inside that same folder.
+There is no separate "data directory".
+Everything is in the same folder, like BOINC used to do before 6.x.
+
+== Mac OS X ==
+Synecdoche requires Mac OS X 10.4 or later.
+It comes packaged as a standard Installer package.
+Run the package, and it will install Synecdoche in the Applications folder for you.
+Currently, the install location cannot be changed.
+By default, it also installs the Synecdoche screensaver; however, this can be deselected.
+
+*Warning*: A certificate file to attach to projects that use SSL, 
+like World Community Grid, should have been included, but was 
+accidentally left out in 0.1.1. This will be fixed in the next release (probably 0.1.2).
+
+  * A temporary fix to the above is to copy the *ca-bundle.crt* file from a BOINC installation (/Library/Application Support/BOINC Data) or from Synecdoche release bundle for another platform, and place it in the Synecdoche data directory (/Library/Application Support/Synecdoche Data).
+
+To start, open the Synecdoche application in the Applications folder.
+
+To make it run on boot,
+add Synecdoche.app to your Login Items in System Preferences.
+
+Note that if you run as a non-admin user,
+even if you enter the admin password while installing,
+you may not be able to run Synecdoche later.
+This issue has been worked around in 0.1.2.
+
+There is currently no uninstaller.
+Dragging the application to the Trash is not enough;
+the project data and the screensaver would remain in the system.
+This will be addressed in a future version.
+
+For now, if you want to completely uninstall Synecdoche,
+delete /Applications/Synecdoche,
+/Library/Screen Savers/Synecdoche
+and the directory "/Library/Application Support/Synecdoche Data".
+
+== Linux ==
+Making a portable Linux binary is hard,
+so we only provide source code for Linux.
+Packages for specific Linux distributions may be available in future versions.
+
+The code should compile on any Unix-like system.
+There are basic compilation instructions in the `INSTALL` file of the source distribution.
+More detailed instructions may be available as a separate wiki page soon.
+
+Unlike BOINC, the Synecdoche client on Linux will always use the same directory to store its data,
+regardless of the current working directory.
+This eliminates common confusion when people run the client from a different place than the previous time
+and "lose their projects".
+
+Once you run `make install`, you cannot move the directory you used as `--prefix`,
+since it gets hardcoded into the `synecd` binary.
+To change the data directory at runtime, use `synecd --dir path/to/dir`.
+
