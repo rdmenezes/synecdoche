@@ -1,4 +1,5 @@
 #summary Planned schedule for releases
+#labels Deprecated
 = Release Plan =
 
 _"Release early, release often."_ Because we have inherited a mature code-base from BOINC, we are able to timetable the first release very early.
