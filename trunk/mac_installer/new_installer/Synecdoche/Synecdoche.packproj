@@ -1152,7 +1152,7 @@
 						<key>Mode</key>
 						<integer>1</integer>
 						<key>Path</key>
-						<string>License.rtf</string>
+						<string>English/License.rtf</string>
 						<key>Path Type</key>
 						<integer>2</integer>
 					</dict>
@@ -1164,7 +1164,7 @@
 						<key>Mode</key>
 						<integer>1</integer>
 						<key>Path</key>
-						<string>Readme.rtf</string>
+						<string>English/Readme.rtf</string>
 						<key>Path Type</key>
 						<integer>2</integer>
 					</dict>
@@ -1176,7 +1176,7 @@
 						<key>Mode</key>
 						<integer>1</integer>
 						<key>Path</key>
-						<string>Welcome.rtf</string>
+						<string>English/Welcome.rtf</string>
 						<key>Path Type</key>
 						<integer>2</integer>
 					</dict>
