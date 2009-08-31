@@ -1,4 +1,4 @@
-﻿#summary Tracking BOINC revisions
+#summary Tracking BOINC revisions
 
 == Pending merge ==
 
@@ -54,7 +54,6 @@
 ||17396||client: make timeout values into #defines _Note: The defines should be turned into constants before applying this changeset._||
 ||17409||manager: fix roundoff error in Advanced Prefs; fixes #613 _Note: This is not a real fix but a simple workaround._||
 ||17410||MGR: Make CTRL-SHIFT-A the accelerator in the simple GUI that switches back to the advanced view. refs #147||
-||17432/17434/17436/17438||client: Revise Apple idle time detection for compatibility with OS 10.6||
 ||17456/17467||manager: when filtering messages by project, show messages not tagged with a project (fixes #852)||
 ||17486/17487||client: change garbage-collect logic. old: reference-count files involved in a PERS_FILE_XFER new: if a PERS_FILE_XFER refers to an unreferenced file, delete it (and the associated FILE_XFER and HTTP_OP if present) May fix #366||
 ||17507||client: if using anonymous platform, ignore (and complain about) app versions in scheduler reply client: when reporting anonymous platform apps in sched request, don't include <file_info>s (not relevant to server)||
