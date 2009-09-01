@@ -27,6 +27,8 @@ Everything is in the same folder, like BOINC used to do before 6.x.
 
 == Mac OS X ==
 Synecdoche requires Mac OS X 10.4 or later.
+*Synecdoche does not currently work on 10.6 or later.*
+This is to be fixed soon, probably in 0.1.2.
 It comes packaged as a standard Installer package.
 Run the package, and it will install Synecdoche in the Applications folder for you.
 Currently, the install location cannot be changed.
@@ -69,7 +71,8 @@ More detailed instructions may be available as a separate wiki page soon.
 
 Unlike BOINC, the Synecdoche client on Linux will always use the same directory to store its data,
 regardless of the current working directory.
-This eliminates common confusion when people run the client from a different place than the previous time
+This eliminates common confusion when people run the client
+from a different place than the previous time
 and "lose their projects".
 
 Once you run `make install`, you cannot move the directory you used as `--prefix`,
