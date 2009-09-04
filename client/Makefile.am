@@ -10,7 +10,7 @@ include $(top_srcdir)/Makefile.incl
 LIBS += @CLIENTLIBS@
 
 if OS_DARWIN
-   LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa
+   LIBS += -framework IOKit -framework Foundation -framework Carbon
 endif
 
 bin_PROGRAMS = synecd switcher
