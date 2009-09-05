@@ -35,6 +35,10 @@ The Linux Information Project has this to say about [http://www.bellevuelinux.or
 
 Our hope is that the BOINC project will benefit from our efforts, but if not, Synecdoche can benefit from past and future BOINC developments, while making our own improvements at the same time.
 
+= Will you support GPUs/CUDA? =
+
+Currently there are no plans to add any kind of GPU support, but we don't rule out the possibility of doing it in the future. We will not use BOINC's current code for GPU scheduling, though.
+
 = BOINC rejected my idea. Will you accept it? =
 
 == I have a feature request ==
