@@ -339,7 +339,7 @@ std::list<std::string> parse_command_line(const char* p) {
     }
 
     // There may be one argument left:
-    if ((state == IN_UNQUOTED_TOKEN) && ((p - start) > 1)) {
+    if ((state == IN_UNQUOTED_TOKEN) && ((p - start) >= 1)) {
         result.push_back(std::string(start, p));
     }
     return result;
