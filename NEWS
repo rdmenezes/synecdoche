@@ -1,12 +1,14 @@
-Changes between Synecdoche 0.2.0 and 0.1.1:
+
+Synecdoche 0.2.0:
 
 [Core client]
 
- * Removed misfeature that silently enables network activity if a user does
+ * Removed "misfeature" that silently enables network activity if a user does
    something that needs the network, like updating a project.
 
- * A serious bug was fixed that caused workunit failure at startup for AQUA@Home
-   and the AP26 subproject of Primegrid.
+ * Fixed a bug when handling command line arguments of project apps, that
+   caused workunit failure at startup for AQUA@Home and the AP26 subproject
+   of Primegrid.
 
 [GUI]
 
@@ -14,9 +16,11 @@ Changes between Synecdoche 0.2.0 and 0.1.1:
 
 [Misc]
 
- * The Unix build system was cleaned up further: forced optimization switches
-   were removed, OpenGL isn't tested for (only used in API), libcurl is now not
-   linked to the manager, libcurl.m4 was updated
+ * The Unix build system was cleaned up further:
+   - Forced optimization switches were removed.
+   - configure now doesn't test for OpenGL (it's only used in API).
+   - libcurl isn't uselessly linked to the manager anymore.
+   - The configure script now properly follows --with-libcurl=PATH.
 
  * Added cppunit-based unit tests for the code in lib. Client code is currently
    not tested, because it would need significant refactoring to be "testable".
@@ -27,17 +31,20 @@ Changes between Synecdoche 0.2.0 and 0.1.1:
 
 
 
-Changes between BOINC 6.2 and Synecdoche 0.1.1:
+Synecdoche 0.1.1:
+
+Initial release. What follows is the list of changes done since forking
+BOINC 6.2.
 
 [General]
 
- * Tons of code cleanup, including removal of many fixed-size buffers in favor
+ * Lots of code cleanup, including removal of many fixed-size buffers in favor
    of std::string.
 
  * Existing code documentation converted to Doxygen, and some more added.
 
  * All server code was removed from the repository. The application API is not
-   maintained, and will be also removed eventually.
+   maintained, and will also be removed eventually.
 
  * Workarounds and special code for Win9x was removed. BOINC recently removed it
    too (in 6.8).
@@ -56,13 +63,13 @@ Changes between BOINC 6.2 and Synecdoche 0.1.1:
 [GUI]
 
  * Separated suspend/resume and allow new tasks / no more tasks buttons. This
-   allows users to use these operations on multiple selections.
+   allows using these operations on multiple selections.
 
- * In the attach project wizard, the list of projects is now sorted by name,
+ * In the attach project wizard, the list of projects is sorted by name,
    instead of using random order. BOINC recently changed this too (6.8?).
 
- * When aborting multiple tasks at once, the confirmation dialog now lets you
-   say "Yes to all", instead of having to click "Yes" for every aborted task.
+ * When aborting multiple tasks at once, the confirmation dialog now has a
+   "Yes to all" button, instead of having to click "Yes" for every aborted task.
 
  * Removed the accessible view. It was essentially the same as the advanced
    view.
