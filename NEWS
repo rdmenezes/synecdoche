@@ -1,14 +1,9 @@
-
 Synecdoche 0.2.0:
 
 [Core client]
 
  * Removed "misfeature" that silently enables network activity if a user does
    something that needs the network, like updating a project.
-
- * Fixed a bug when handling command line arguments of project apps, that
-   caused workunit failure at startup for AQUA@Home and the AP26 subproject
-   of Primegrid.
 
 [GUI]
 
@@ -29,6 +24,12 @@ Synecdoche 0.2.0:
 
  * As usual, quite a lot of code cleanup, and bug fixes ported from BOINC.
 
+
+Synecdoche 0.1.2:
+
+ * Fixed a bug when handling command line arguments of project apps, that
+   caused workunit failure at startup for AQUA@Home and the AP26 subproject
+   of Primegrid.
 
 
 Synecdoche 0.1.1:
