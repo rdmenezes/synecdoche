@@ -7,10 +7,8 @@ Synecdoche 0.2.0
  * The manager now supports filtering the messages tab by project.
 
  * The Unix build system was cleaned up further:
-   - Forced optimization switches were removed.
    - configure now doesn't test for OpenGL (it's only used in API).
    - libcurl isn't uselessly linked to the manager anymore.
-   - The configure script now properly follows --with-libcurl=PATH.
 
  * Added cppunit-based unit tests for the code in lib. Client code is currently
    not tested, because it would need significant refactoring to be "testable".
@@ -26,6 +24,10 @@ Synecdoche 0.1.2
  * Fixed a bug when handling command line arguments of project apps, that
    caused workunit failure at startup for AQUA@Home and the AP26 subproject
    of Primegrid.
+
+ * Forced optimization switches were removed from the makefiles.
+
+ * The configure script now properly follows --with-libcurl=PATH
 
 
 Synecdoche 0.1.1
