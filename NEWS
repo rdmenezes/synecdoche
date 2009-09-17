@@ -29,6 +29,9 @@ Synecdoche 0.1.2
 
  * The configure script now properly follows --with-libcurl=PATH
 
+ * The Mac installer now installs the SSL certificate bundle, needed to connect
+   to World Community Grid, which was accidentally left out in 0.1.1.
+
 
 Synecdoche 0.1.1
 ================
