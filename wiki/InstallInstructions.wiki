@@ -17,7 +17,7 @@ containing the needed programs.
 To "install" it, extract the zip archive into its own folder.
 Run "synecmgr.exe" to start Synecdoche.
 
-Data files will be created inside that same folder.
+Project files will be saved inside that same folder.
 There is no separate "data directory".
 Everything is in the same folder, like BOINC used to do before 6.x.
 
