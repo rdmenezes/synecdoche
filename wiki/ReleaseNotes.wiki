@@ -9,27 +9,28 @@ and things you will want to watch out for when running Synecdoche.
 = Notes for 0.1.1 =
 
 Synecdoche is based on BOINC 6.2.
-This means there is no support for running CUDA applications,
+This means there is no support for running GPU applications,
 since it was added in BOINC 6.4.
 We have no plans to implement CUDA or ATI Stream support in the near future.
 
 == Differences from BOINC ==
- * Some UI updates
  * Performance and security updates
- * BOINC API included, but not actively maintained
+ * Separated suspend/resume and allow new tasks / no more tasks buttons. This allows using these operations on multiple selections.
+ * In the attach project wizard, the list of projects is sorted by name.
+ * When aborting multiple tasks at once, the confirmation dialog now has a "Yes to all" button, instead of having to click "Yes" for every aborted task.
+ * Some usability fixes.
 
 == Platform notes ==
+__(see also InstallInstructions)__
 
 === Windows ===
 There is no real installer yet.
 Synecdoche is available as a zip archive
 containing the needed programs.
-
-To use it, extract the archive into its own folder
-and run "synecmgr.exe".
-
-Due to the lack of a real installer,
-it will not auto-start on boot.
+For this reason,
+there is no sandboxing,
+service install,
+or starting on boot.
 
 Windows 95/98/ME are *not* supported.
 Internally, they are like a different operating system
@@ -40,30 +41,13 @@ Synecdoche requires Mac OS X 10.4 or later.
 It will run on a PowerPC machine or an Intel machine,
 and will attempt to make use of 64-bit on supported Intel processors.
 It comes packaged as a standard Installer package.
-Run the package, and it will install Synecdoche in the Applications folder for you.
-Currently, the install location cannot be changed.
-By default, it also installs the Synecdoche screensaver
-and a project list to be used by the GUI.
 
-*Warning*: A certificate file to attach to projects that use HTTPS, 
-like World Community Grid, should have been included, but was 
-accidentally left out. This will be fixed in the next release.
-
-  * A temporary fix to the above is to copy the *ca-bundle.crt* file from a BOINC installation (/Library/Application Support/BOINC Data) or from another Synecdoche release bundle, and place it in the Synecdoche data directory (/Library/Application Support/Synecdoche Data).
-
-To start, open Synecdoche.app in the Applications folder.
-
-To make it run on boot, add Synecdoche.app to your
-Login Items in System Preferences.
-
-Note that if you run as a non-admin user,
-even if you enter the admin password while installing,
-you may not be able to run Synecdoche later.
-This issue is being investigated.
+*Warning*: A certificate file to attach to projects that use HTTPS,
+like World Community Grid,
+was accidentally left out from 0.1.1.
+This will be fixed in 0.1.2.
 
 There is currently no uninstaller.
-Dragging the application to the Trash is not enough;
-the project data and the screensaver will remain in the system.
 This will be addressed in a future version.
 
 === Linux ===
@@ -72,17 +56,10 @@ so we only provide source code for Linux.
 A Debian package may be available for the next version.
 Other distros will be supported if someone volunteers to make a package.
 
-The code should compile on any Unix-like system.
-There are basic compilation instructions in the INSTALL file of the source distribution.
-More detailed instructions may be available as a separate wiki page soon.
-
 Unlike BOINC, the Synecdoche client will always use the same directory to store its data,
 instead of the current working directory.
 This eliminates common confusion when people run the client from a different place than the previous time
 and notice "they lost their running tasks".
-Once you run `make install`, you cannot move the directory you used as `--prefix`,
-since it gets hardcoded into the `synecd` binary.
-To change the data directory at runtime, use `synecd --dir path/to/dir`.
 
 == Limitations ==
 
