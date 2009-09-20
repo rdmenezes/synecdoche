@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -50,24 +51,29 @@
 
 NET_STATUS net_status;
 
-NET_STATS::NET_STATS() {
-    memset(&up, 0, sizeof(up));
-    memset(&down, 0, sizeof(down));
+NET_INFO::NET_INFO() {
+    clear();
 }
 
-// called after file xfer to update rates
-//
+/// Updates the variables in this structure.
+/// Called after file xfer to update rates.
+///
+/// \param[in] nbytes Number of bytes transferred
+/// \param[in] dt Time in seconds which passed since the file xfer started.
 void NET_INFO::update(double nbytes, double dt) {
-    if (nbytes == 0 || dt==0) return;
-    double bytes_sec = nbytes/dt;
-    if (max_rate == 0) {
+    if (nbytes == 0.0 || dt == 0.0) {
+        return;
+    }
+    double bytes_sec = nbytes / dt;
+    if (max_rate == 0.0) {
         max_rate = bytes_sec;   // first time
     } else {
         // somewhat arbitrary weighting formula
-        //
-        double w = log(nbytes)/500;
-        if (w>1) w = 1;
-        max_rate = w*bytes_sec + (1-w)*max_rate;
+        double w = log(nbytes) / 500.0;
+        if (w > 1) {
+            w = 1;
+        }
+        max_rate = w * bytes_sec + (1 - w) * max_rate;
     }
     double start_time = gstate.now - dt;
     update_average(
@@ -77,6 +83,16 @@ void NET_INFO::update(double nbytes, double dt) {
         avg_rate,
         avg_time
     );
+}
+
+/// Resets all variables to zero.
+void NET_INFO::clear() {
+    max_rate = 0.0;
+    avg_rate = 0.0;
+    avg_time = 0.0;
+}
+
+NET_STATS::NET_STATS() {
 }
 
 int NET_STATS::write(MIOFILE& out) const {
@@ -102,7 +118,8 @@ int NET_STATS::write(MIOFILE& out) const {
 int NET_STATS::parse(MIOFILE& in) {
     char buf[256];
 
-    memset(this, 0, sizeof(NET_STATS));
+    up.clear();
+    down.clear();
     while (in.fgets(buf, 256)) {
         if (match_tag(buf, "</net_stats>")) return 0;
         if (parse_double(buf, "<bwup>", up.max_rate)) continue;

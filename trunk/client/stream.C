@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -112,8 +113,13 @@ void mem_bw(double &avg_bw, double &cache_size) {
     a=(double *)realloc(a,(N+OFFSET)*sizeof(double));
     b=(double *)realloc(b,(N+OFFSET)*sizeof(double));
     c=(double *)realloc(c,(N+OFFSET)*sizeof(double));
-    if ( !a || !b || !c ) return;
-
+    if ( !a || !b || !c ) {
+        free(a);
+        free(b);
+        free(c);
+        return;
+    }
+    
     for (j=0; j<N; j++) {
       a[j] = 1.0;
       b[j] = 2.0;
