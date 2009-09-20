@@ -32,6 +32,10 @@ Synecdoche 0.1.2
  * The Mac installer now installs the SSL certificate bundle, needed to connect
    to World Community Grid, which was accidentally left out in 0.1.1.
 
+ * The detach button is disabled if multiple projects are selected, as a
+   temporary workaround for a serious bug when detaching multiple projects.
+   The bug will be properly fixed in a future version.
+
 
 Synecdoche 0.1.1
 ================
