@@ -76,11 +76,17 @@
 ||18340||lib: FILE_LOCK::lock() makes lockfile group-writable so both client and manager can create and write it under sandbox security||
 ||18427||client: don't require that file upload URLs contain "file_upload_handler".||
 ||18531||client: record the time results are received. _Might be usefull some day, at least as displayed value._||
-||18593/18601/18602/18603/18604/18662/18663/18753||client: restored code for project-wide backoff on file||
+||18593/18601/18602/18603/18604/18662/18663/18753/18786/18790||client: restored code for project-wide backoff on file||
 ||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
 ||18605/18606/18737||client: changed file upload logic||
 ||18760|| client: if an HTTP op fails within 30 sec of client startup, don't skip the reference site check.||
-||18772/18785||client: Initial swipe at automatic proxy server configuration detection on Windows. Fixes #35 _This probably needs some cleanup first._||
+||18772/18785/18798/18799/18819/18893||client: Initial swipe at automatic proxy server configuration detection on Windows. Fixes #35 _This probably needs some cleanup first._||
+||18800/18803/18805/18811/18812/18813||client: refactor the CC startup process, move majority of the windows code into sysmon_win.cpp, .h||
+||18833||GUI RPC: fix memory leak in authorize()||
+||18845||client: in the final stage of CPU scheduling, give preference to multi-threaded jobs. Avoid running N-1 1-thread jobs and 1 N-thread job on N !CPUs / client: change file transfer giveup time from 14 to 90 days||
+||18866||manager: allow 24:00 to be used in advanced prefs dialog||
+||18915/18916||client: when writing XML, entity-encode the following fields / client: XML_PARSER::parse_str() now does xml_unescape(), same as ::parse_str().||
+||18917/18919||MGR: on Linux, accept 2 optional args: -clientdir or -e and -datadir or -d, use when launching client||
 
 
 == Changesets for the (new OpenGL) screensaver (Might be useful some day) ==
@@ -119,7 +125,7 @@
 ||17815||SS: launch default screensaver graphics app as user and group boinc_project, not boinc_master||
 ||18222||SS: Add new optional boolean xml tag <default_ss_first>||
 ||18444||SS: remove unused func||
-
+||18867||Mac SS: Changes for compatibility with OS 10.6||
 
 == Rejected changes ==
 
@@ -185,7 +191,8 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 ||[http://boinc.berkeley.edu/trac/changeset/18311 18311]||MGR: !CBOINCClientManager::!ProcessExists?() finds the process by name if we don't have a pid (Mac, Linux) or process HANDLE (Windows) _What is the purpose of this?!?_ Additional changesets: 18316/18317/18318/18319||
 ||[http://boinc.berkeley.edu/trac/changeset/18592 18592] `*`||file_info changes - Nicolas should review this, he knows more about this stuff.||
 ||[http://boinc.berkeley.edu/trac/changeset/18607 18607] `*`||client: change the way a resource's "estimated delay" (passed to server for crude deadline check) is computed. _Doesn't seem to be a real fix but might still be a large improvement._ Additional changeset: 18629||
+||[http://boinc.berkeley.edu/trac/changeset/18816 18816]||MGR: Implement "Show active tasks / Show all tasks" button _We should implement some real filtering mechanism_||
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18785 18785]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18924 18924]
