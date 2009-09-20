@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -672,6 +673,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
             continue;
         }
         rp->wup->version_num = rp->version_num;
+        rp->set_received_time(now);
         results.push_back(rp);
         rp->set_state(RESULT_NEW, "handle_scheduler_reply");
         nresults++;

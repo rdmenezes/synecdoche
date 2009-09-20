@@ -363,7 +363,8 @@ int RESULT::parse(MIOFILE& in) {
         if (parse_str(buf, "<name>", name)) continue;
         if (parse_str(buf, "<wu_name>", wu_name)) continue;
         if (parse_str(buf, "<project_url>", project_url)) continue;
-        if (parse_int(buf, "<report_deadline>", report_deadline)) continue;
+        if (parse_double(buf, "<received_time>", received_time)) continue;
+        if (parse_double(buf, "<report_deadline>", report_deadline)) continue;
         if (parse_bool(buf, "ready_to_report", ready_to_report)) continue;
         if (parse_bool(buf, "got_server_ack", got_server_ack)) continue;
         if (parse_bool(buf, "suspended_via_gui", suspended_via_gui)) continue;
@@ -406,7 +407,8 @@ void RESULT::clear() {
     project_url.clear();
     graphics_exec_path.clear();
     slot_path.clear();
-    report_deadline = 0;
+    received_time = 0.0;
+    report_deadline = 0.;
     ready_to_report = false;
     got_server_ack = false;
     final_cpu_time = 0.0;

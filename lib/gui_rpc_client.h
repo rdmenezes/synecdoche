@@ -195,7 +195,8 @@ public:
     std::string name;
     std::string wu_name;
     std::string project_url;
-    int report_deadline;
+    double received_time;
+    double report_deadline;
     bool ready_to_report;
     bool got_server_ack;
     double final_cpu_time;

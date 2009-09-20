@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -1381,6 +1381,7 @@ int RESULT::parse_name(FILE* in, const char* end_tag) {
 void RESULT::clear() {
     strcpy(name, "");
     strcpy(wu_name, "");
+    completed_time = 0.0;
     report_deadline = 0;
     output_files.clear();
     _state = RESULT_NEW;
@@ -1455,6 +1456,7 @@ int RESULT::parse_state(MIOFILE& in) {
         }
         if (parse_str(buf, "<name>", name, sizeof(name))) continue;
         if (parse_str(buf, "<wu_name>", wu_name, sizeof(wu_name))) continue;
+        if (parse_double(buf, "<received_time>", received_time)) continue;
         if (parse_double(buf, "<report_deadline>", report_deadline)) {
             continue;
         }
@@ -1572,8 +1574,10 @@ int RESULT::write(MIOFILE& out, bool to_server) const {
         if (suspended_via_gui) out.printf("    <suspended_via_gui/>\n");
         out.printf(
             "    <wu_name>%s</wu_name>\n"
+            "    <received_time>%f</received_time>\n"
             "    <report_deadline>%f</report_deadline>\n",
             wu_name,
+            received_time,
             report_deadline
         );
         for (i=0; i<output_files.size(); i++) {
@@ -1594,6 +1598,7 @@ int RESULT::write_gui(MIOFILE& out) const {
         "    <final_cpu_time>%f</final_cpu_time>\n"
         "    <exit_status>%d</exit_status>\n"
         "    <state>%d</state>\n"
+        "    <received_time>%f</received_time>\n"
         "    <report_deadline>%f</report_deadline>\n"
         "    <estimated_cpu_time_remaining>%f</estimated_cpu_time_remaining>\n",
         name,
@@ -1602,6 +1607,7 @@ int RESULT::write_gui(MIOFILE& out) const {
         final_cpu_time,
         exit_status,
         state(),
+        received_time,
         report_deadline,
         estimated_cpu_time_remaining()
     );
@@ -1701,6 +1707,20 @@ PROJECT* RESULT::get_project() const {
 /// \return The name of this result.
 std::string RESULT::get_name() const {
     return name;
+}
+
+/// Get the time when this result was received from the server.
+///
+/// \return The time when this result was received from the server.
+double RESULT::get_received_time() const {
+    return received_time;
+}
+
+/// Set the time when this result was received from the server.
+///
+/// \param[int] received_time The time when this result was received from the server.
+void RESULT::set_received_time(double received_time) {
+    this->received_time = received_time;
 }
 
 const FILE_REF* RESULT::lookup_file(const FILE_INFO* fip) const {
