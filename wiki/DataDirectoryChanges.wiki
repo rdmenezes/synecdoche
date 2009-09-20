@@ -68,3 +68,6 @@ directory.
 
 However, the `--dir` switch will still exist, to let the client run under a
 different directory than it was originally configured to use.
+
+As of 2009-06-24, this solution has been implemented in synecd (r892),
+but not yet in syneccmd or synecmgr.
