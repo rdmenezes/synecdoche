@@ -61,7 +61,7 @@ int curl_cleanup();
 class HTTP_OP {
 public:
     HTTP_OP();
-    ~HTTP_OP();
+    virtual ~HTTP_OP();
 
     PROXY_INFO pi;
 

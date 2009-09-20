@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -33,17 +34,22 @@ class HTTP_OP_SET;
 class MIOFILE;
 
 // there's one of these each for upload and download
-//
-struct NET_INFO {
+class NET_INFO {
+public:
     /// estimate of max transfer rate; computed as an average of
     /// the rates of recent file transfers, weighted by file size.
     /// This ignores concurrency of transfers.
     double max_rate;
     double avg_rate;        ///< recent average transfer rate
     double avg_time;        ///< when avg_rate was last updated
+    
+    NET_INFO();
+    
     /// Updates the variables in this structure.
     void update(double nbytes, double dt);
 
+    /// Resets all variables to zero.
+    void clear();
 };
 
 class NET_STATS {

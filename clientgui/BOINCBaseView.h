@@ -51,7 +51,7 @@ public:
     CBOINCBaseView();
     CBOINCBaseView(wxNotebook* pNotebook);
 
-    ~CBOINCBaseView();
+    virtual ~CBOINCBaseView();
 
     /// Return the name of the view.
     virtual const wxString& GetViewName();

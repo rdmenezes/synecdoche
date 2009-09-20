@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -30,7 +31,7 @@ class CSkinItem : public wxObject
 
 public:
     CSkinItem();
-    ~CSkinItem();
+    virtual ~CSkinItem();
 
     static wxColour ParseColor(wxString strColor);
 };
