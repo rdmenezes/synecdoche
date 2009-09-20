@@ -754,13 +754,6 @@ void CViewProjects::GetDocProjectName(size_t item, wxString& strBuffer) const {
     }
 }
 
-wxInt32 CViewProjects::FormatProjectName(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = project->m_strProjectName;
-
-    return 0;
-}
-
 void CViewProjects::GetDocAccountName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
@@ -775,13 +768,6 @@ void CViewProjects::GetDocAccountName(size_t item, wxString& strBuffer) const {
     }
 }
 
-wxInt32 CViewProjects::FormatAccountName(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = project->m_strAccountName;
-
-    return 0;
-}
-
 void CViewProjects::GetDocTeamName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
@@ -794,13 +780,6 @@ void CViewProjects::GetDocTeamName(size_t item, wxString& strBuffer) const {
     } else {
         strBuffer = wxEmptyString;
     }
-}
-
-wxInt32 CViewProjects::FormatTeamName(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = project->m_strTeamName;
-
-    return 0;
 }
 
 void CViewProjects::GetDocTotalCredit(size_t item, float& fBuffer) const {
@@ -908,13 +887,6 @@ void CViewProjects::GetDocStatus(size_t item, wxString& strBuffer) const {
             AppendToStatus(strBuffer, _("Communication deferred ") + tsNextRPC.Format());
         }
     }
-}
-
-wxInt32 CViewProjects::FormatStatus(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = project->m_strStatus;
-
-    return 0;
 }
 
 double CViewProjects::GetProgressValue(long item) {
