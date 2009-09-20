@@ -71,7 +71,7 @@ int PROJECT::write_account_file() const {
         fprintf(f, "    <project_name>%s</project_name>\n", project_name);
     }
     fprintf(f, "<project_preferences>\n%s</project_preferences>\n", project_prefs.c_str());
-    fprintf(f, gui_urls.c_str());
+    fprintf(f, "%s", gui_urls.c_str());
     fprintf(f, "</account>\n");
     fclose(f);
 

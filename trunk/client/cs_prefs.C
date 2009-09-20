@@ -168,8 +168,8 @@ static string reason_string(int reason) {
 }
 
 void print_suspend_tasks_message(int reason) {
-    string s_reason = "Suspending computation" + reason_string(reason);
-    msg_printf(NULL, MSG_INFO, s_reason.c_str());
+    string s_reason = reason_string(reason);
+    msg_printf(NULL, MSG_INFO, "Suspending computation%s", s_reason.c_str());
 }
 
 int CLIENT_STATE::suspend_tasks(int reason) {
@@ -215,9 +215,8 @@ int CLIENT_STATE::check_suspend_network() {
 }
 
 int CLIENT_STATE::suspend_network(int reason) {
-    string s_reason;
-    s_reason = "Suspending network activity" + reason_string(reason);
-    msg_printf(NULL, MSG_INFO, s_reason.c_str());
+    string s_reason = reason_string(reason);
+    msg_printf(NULL, MSG_INFO, "Suspending network activity%s", s_reason.c_str());
     pers_file_xfers->suspend();
     return 0;
 }
