@@ -1094,6 +1094,8 @@
 								<integer>0</integer>
 								<key>Path</key>
 								<string></string>
+								<key>Path Type</key>
+								<integer>1</integer>
 							</dict>
 							<key>License</key>
 							<dict>
@@ -1103,6 +1105,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>ReadMe</key>
@@ -1113,6 +1117,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>Welcome</key>
@@ -1123,6 +1129,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 						</dict>
@@ -1186,7 +1194,23 @@
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
-																<integer>432</integer>
+																<integer>438</integer>
+																<key>Type</key>
+																<integer>3</integer>
+																<key>UID</key>
+																<integer>0</integer>
+															</dict>
+															<dict>
+																<key>Children</key>
+																<array/>
+																<key>GID</key>
+																<integer>80</integer>
+																<key>Path</key>
+																<string>ca-bundle.crt</string>
+																<key>Path Type</key>
+																<integer>2</integer>
+																<key>Privileges</key>
+																<integer>438</integer>
 																<key>Type</key>
 																<integer>3</integer>
 																<key>UID</key>
@@ -1200,7 +1224,7 @@
 														<key>Path Type</key>
 														<integer>1</integer>
 														<key>Privileges</key>
-														<integer>509</integer>
+														<integer>511</integer>
 														<key>Type</key>
 														<integer>2</integer>
 														<key>UID</key>
@@ -1830,13 +1854,13 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 						<key>IFPkgDescriptionTitle</key>
 						<string>Synecdoche</string>
 						<key>IFPkgDescriptionVersion</key>
-						<string>0.1.1</string>
+						<string>0.1.2</string>
 					</dict>
 				</dict>
 				<key>Display Information</key>
 				<dict>
 					<key>CFBundleGetInfoString</key>
-					<string>0.1.1, Copyright © 2009 Synecdoche contributors</string>
+					<string>0.1.2 RC, Copyright © 2009 Synecdoche contributors</string>
 					<key>CFBundleIconFile</key>
 					<string>../../../graphics/icons/synecdoche_installer.icns</string>
 					<key>CFBundleIconFile Path Type</key>
@@ -1846,7 +1870,7 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 					<key>CFBundleName</key>
 					<string>Synecdoche</string>
 					<key>CFBundleShortVersionString</key>
-					<string>0.1.1</string>
+					<string>0.1.2 RC</string>
 				</dict>
 				<key>Version</key>
 				<dict>

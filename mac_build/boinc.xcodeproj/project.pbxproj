@@ -2632,7 +2632,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -2640,7 +2640,7 @@
 				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
-				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				LIBCURL_DIR = /Users/mtughan/boinc/depends/curl;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Security,
@@ -2891,7 +2891,7 @@
 				PRODUCT_NAME = Synecdoche;
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+				WX_DIRECTORY = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
 			};
 			name = Universal_Development;
 		};
@@ -3027,7 +3027,7 @@
 				PRODUCT_NAME = Synecdoche;
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+				WX_DIRECTORY = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
 			};
 			name = Development;
 		};
@@ -3084,7 +3084,7 @@
 				PRODUCT_NAME = Synecdoche;
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+				WX_DIRECTORY = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
 			};
 			name = ppc_Deployment;
 		};
@@ -3141,7 +3141,7 @@
 				PRODUCT_NAME = Synecdoche;
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+				WX_DIRECTORY = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
 			};
 			name = i386_Deployment;
 		};
@@ -3198,7 +3198,7 @@
 				PRODUCT_NAME = Synecdoche;
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+				WX_DIRECTORY = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
 			};
 			name = Deployment;
 		};
@@ -3384,7 +3384,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -3392,7 +3392,7 @@
 				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
-				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				LIBCURL_DIR = /Users/mtughan/boinc/depends/curl;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Security,
@@ -3438,7 +3438,7 @@
 					ppc,
 				);
 				COPY_PHASE_STRIP = NO;
-				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -3446,7 +3446,7 @@
 				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
-				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				LIBCURL_DIR = /Users/mtughan/boinc/depends/curl;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Security,
@@ -3773,7 +3773,7 @@
 				PRODUCT_NAME = Synecdoche;
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+				WX_DIRECTORY = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
 			};
 			name = Dev_noSandbox;
 		};
@@ -3829,7 +3829,7 @@
 				PRODUCT_NAME = Synecdoche;
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+				WX_DIRECTORY = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
 			};
 			name = Deploy_noSandbox;
 		};
@@ -3842,6 +3842,7 @@
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -3853,7 +3854,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_STYLE = STATIC;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.3;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -4040,7 +4040,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -4048,7 +4048,7 @@
 				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
-				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				LIBCURL_DIR = /Users/mtughan/boinc/depends/curl;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Security,
@@ -4293,7 +4293,7 @@
 				PRODUCT_NAME = Synecdoche;
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WX_DIRECTORY = "/Users/mtughan/boinc/wxMac-2.8.9";
+				WX_DIRECTORY = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
 			};
 			name = "Deployment-no64";
 		};
@@ -4392,7 +4392,7 @@
 					x86_64,
 				);
 				COPY_PHASE_STRIP = NO;
-				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -4400,7 +4400,7 @@
 				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
-				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				LIBCURL_DIR = /Users/mtughan/boinc/depends/curl;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Security,
@@ -4682,7 +4682,7 @@
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_32_BIT)";
 				COPY_PHASE_STRIP = NO;
-				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -4690,7 +4690,7 @@
 				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
-				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				LIBCURL_DIR = /Users/mtughan/boinc/depends/curl;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Security,
@@ -4732,7 +4732,7 @@
 			buildSettings = {
 				ARCHS = ppc;
 				COPY_PHASE_STRIP = NO;
-				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -4740,7 +4740,7 @@
 				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
-				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				LIBCURL_DIR = /Users/mtughan/boinc/depends/curl;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Security,
@@ -5082,7 +5082,7 @@
 			buildSettings = {
 				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
-				C_ARES_DIR = "/Users/mtughan/boinc/c-ares";
+				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -5090,7 +5090,7 @@
 				HEADER_SEARCH_PATHS = "$(LIBCURL_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBCURL_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBCURL_DIR)/x86_64/include";
-				LIBCURL_DIR = /Users/mtughan/boinc/curl;
+				LIBCURL_DIR = /Users/mtughan/boinc/depends/curl;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Security,
