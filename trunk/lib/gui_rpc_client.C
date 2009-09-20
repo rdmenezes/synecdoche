@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -238,11 +238,14 @@ int RPC_CLIENT::authorize(const char* passwd) {
             break;
         }
     }
+    
     if (!found) {
         //fprintf(stderr, "Nonce not found\n");
         return ERR_AUTHENTICATOR;
     }
 
+    free(rpc.mbuf);
+    
     std::ostringstream input;
     input << nonce << passwd;
     std::string nonce_hash = md5_string(input.str());
