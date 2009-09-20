@@ -653,6 +653,9 @@ void CViewProjects::UpdateSelection() {
         // Allow everything.
         m_pTaskPane->EnableTaskGroupTasks(pGroup);
 
+        // ...except detaching; see http://code.google.com/p/synecdoche/issues/detail?id=63
+        m_pTaskPane->DisableTask(pGroup->m_Tasks[BTN_DETACH]);
+
     } else {
         // No selection
         m_pTaskPane->DisableTaskGroupTasks(pGroup);
