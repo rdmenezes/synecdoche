@@ -1,4 +1,4 @@
-#summary Tracking BOINC revisions
+﻿#summary Tracking BOINC revisions
 
 == Pending merge ==
 
@@ -16,7 +16,6 @@
 ||16280||MGR: Add a new tab status to the Simple GUI for when the client has been instructed to delay starting applications via the <delay_start> option in cc_config.xml (From Kevin Reed)||
 ||16327||MGR: If simple_gui_only flag is set in cc_config.xml, trigger call of CSimpleFrame::!OnConnect()||
 ||16336/16337/16347||MGR: When removing a row from sorted lists, refresh all rows to ensure proper display update _Does anyone know which bug is fixed by this changeset? Do we need it?_||
-||16352||MGR: Always sort after a row is added or deleted.||
 ||16355/16400||client: the preemptability order was wrong||
 ||16356||client: cleaned up CPU scheduler logic somewhat||
 ||16366/16383/16386/16391||client: revise round-robin simulation to take variable avg_ncpus into account _I'm not sure if we need this or if this change works with our ncpu-fix._||
