@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -595,6 +595,7 @@ public:
 
 private:
     int _state;                  ///< State of this result: see lib/common_defs.h
+    double received_time; ///< when we got this from server
 
 public:
     RESULT(){}
@@ -644,6 +645,12 @@ public:
 
     /// Get the name of this result.
     std::string get_name() const;
+
+    /// Get the time when this result was received from the server.
+    double get_received_time() const;
+    
+    /// Set the time when this result was received from the server.
+    void set_received_time(double received_time);
 
     // temporaries used in CLIENT_STATE::rr_simulation():
     double rrsim_cpu_left;
