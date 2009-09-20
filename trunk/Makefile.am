@@ -28,7 +28,6 @@ EXTRA_DIST =   \
 
 dist-hook:
 	rm -rf `find $(distdir) -name .backup -prune -o -name '*~' -o -name .svn`
-#	cd $(distdir) && ./_autosetup
 
 svnversion.cpp: version.sh
 	$(srcdir)/version.sh svnversion.cpp $(top_srcdir)

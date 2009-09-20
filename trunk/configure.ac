@@ -1,10 +1,5 @@
 dnl -*- autoconf -*-
 
-dnl $Id: configure.ac 15490 2008-06-26 18:26:21Z romw $
-
-dnl NOTE: on milkyway.ssl and jill.ssl , need autoconf/automake et al from quarls
-dnl directory; the _autosetup script does this.
-
 dnl not sure exactly what the minimum version is (but 2.13 wont work)
 AC_PREREQ(2.57)
 
