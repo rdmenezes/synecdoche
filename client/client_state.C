@@ -202,7 +202,7 @@ int CLIENT_STATE::init() {
     start_msg << " (DEBUG)";
 #endif // _DEBUG
 
-    msg_printf(NULL, MSG_INFO, start_msg.str().c_str());
+    msg_printf(NULL, MSG_INFO, "%s", start_msg.str().c_str());
 
     if (core_client_version.prerelease) {
         msg_printf(NULL, MSG_USER_ERROR,
