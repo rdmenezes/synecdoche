@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -54,17 +55,17 @@ void HOST_INFO::clear_host_info() {
     strcpy(p_vendor, "");
     strcpy(p_model, "");
     strcpy(p_features, "");
-    p_fpops = 0;
-    p_iops = 0;
-    p_membw = 0;
-    p_calculated = 0;
+    p_fpops = 0.0;
+    p_iops = 0.0;
+    p_membw = 0.0;
+    p_calculated = 0.0;
 
-    m_nbytes = 0;
-    m_cache = 0;
-    m_swap = 0;
+    m_nbytes = 0.0;
+    m_cache = 0.0;
+    m_swap = 0.0;
 
-    d_total = 0;
-    d_free = 0;
+    d_total = 0.0;
+    d_free = 0.0;
 
     strcpy(os_name, "");
     strcpy(os_version, "");
@@ -73,7 +74,7 @@ void HOST_INFO::clear_host_info() {
 int HOST_INFO::parse(MIOFILE& in) {
     char buf[1024];
 
-    memset(this, 0, sizeof(HOST_INFO));
+    clear_host_info();
     while (in.fgets(buf, sizeof(buf))) {
         if (match_tag(buf, "</host_info>")) return 0;
         else if (parse_int(buf, "<timezone>", timezone)) continue;
