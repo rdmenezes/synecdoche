@@ -23,7 +23,7 @@
 #define _SCREENSAVER_MAC_H
 
 #include <Carbon/Carbon.h>
-
+#include <sys/param.h>
 
 
 #ifdef __cplusplus
