@@ -24,7 +24,7 @@
 #include <dirent.h>
 #include <cerrno>
 
-#if (defined(__APPLE__) && defined(_DEBUG))
+#ifdef __APPLE__
 #include <Carbon/Carbon.h>
 #endif
 
