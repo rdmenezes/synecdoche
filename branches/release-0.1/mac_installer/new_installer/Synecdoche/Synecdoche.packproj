@@ -1833,6 +1833,34 @@ Currently only contains a list of projects.</string>
 						<key>TestOperator</key>
 						<string>&gt;=</string>
 					</dict>
+					<dict>
+						<key>AlertDialog</key>
+						<dict>
+							<key>International</key>
+							<dict>
+								<key>MessageKey</key>
+								<string>Synecdoche currently does not run on Mac OS X 10.6 or later.</string>
+								<key>TitleKey</key>
+								<string>OS X Version Not Supported</string>
+							</dict>
+						</dict>
+						<key>LabelKey</key>
+						<string>10.6 Check (Temporary)</string>
+						<key>Level</key>
+						<integer>0</integer>
+						<key>SpecArgument</key>
+						<string>sys1</string>
+						<key>SpecTag</key>
+						<integer>2</integer>
+						<key>SpecType</key>
+						<string>gestalt</string>
+						<key>Status</key>
+						<true/>
+						<key>TestObject</key>
+						<string>6</string>
+						<key>TestOperator</key>
+						<string>&lt;</string>
+					</dict>
 				</array>
 			</dict>
 			<key>Settings</key>
