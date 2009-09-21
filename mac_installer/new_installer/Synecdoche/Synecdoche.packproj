@@ -1821,7 +1821,7 @@ Currently only contains a list of projects.</string>
 						<key>Level</key>
 						<integer>0</integer>
 						<key>SpecArgument</key>
-						<string>sys1</string>
+						<string>sys2</string>
 						<key>SpecTag</key>
 						<integer>2</integer>
 						<key>SpecType</key>
@@ -1839,7 +1839,7 @@ Currently only contains a list of projects.</string>
 							<key>International</key>
 							<dict>
 								<key>MessageKey</key>
-								<string>Synecdoche currently does not run on Mac OS X 10.6 or later.</string>
+								<string>Synecdoche currently does not run on Mac OS X 10.6 (Snow Leopard) or later.</string>
 								<key>TitleKey</key>
 								<string>OS X Version Not Supported</string>
 							</dict>
@@ -1849,7 +1849,7 @@ Currently only contains a list of projects.</string>
 						<key>Level</key>
 						<integer>0</integer>
 						<key>SpecArgument</key>
-						<string>sys1</string>
+						<string>sys2</string>
 						<key>SpecTag</key>
 						<integer>2</integer>
 						<key>SpecType</key>
