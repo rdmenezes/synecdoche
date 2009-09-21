@@ -70,10 +70,12 @@ int main(int argc, char** argv) {
 
 std::string version_string() {
 	std::string version = SYNEC_VERSION_STRING;
+#if SYNEC_PRERELEASE
 	if(SYNEC_SVN_VERSION) {
 		version += " r";
 		version += SYNEC_SVN_VERSION;
 	}
+#endif
 	return version;
 }
 
@@ -88,10 +90,17 @@ int IsFileCurrent(const char* filePath) {
         c = fgets(buf, sizeof(buf), f);
         if (c == NULL)
             break;   // EOF reached without finding correct version string
-        c = strstr(buf, version_string().c_str());
+        c = strstr(buf, (version_string() + "<").c_str());
         if (c) {
             fclose(f);
             return true;  // File contains current version string
+        }
+        else {
+            c = strstr(buf, (version_string() + "\"").c_str());
+            if (c) {
+                fclose(f);
+                return true;  // File contains current version string
+            }
         }
     }
     fclose(f);
