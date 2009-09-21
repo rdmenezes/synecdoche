@@ -49,6 +49,9 @@
 // Flags for testing & debugging
 #define SIMULATE_NO_GRAPHICS 0
 
+#ifndef _T
+#define _T(x) x
+#endif
 
 bool CScreensaver::is_same_task(RESULT* taska, RESULT* taskb) {
     if ((taska == NULL) || (taskb == NULL)) return false;
