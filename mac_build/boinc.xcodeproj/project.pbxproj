@@ -2789,7 +2789,7 @@
 		DD62C39F0A801FB500B3D68A /* Dev_noSandbox */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(NATIVE_ARCH)";
 				BUNDLE_IDENTIFIER = com.googlecode.synecdoche;
 				COPY_PHASE_STRIP = NO;
 				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
@@ -3154,7 +3154,7 @@
 		DD9E2382091CBDAE0048316E /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(NATIVE_ARCH)";
 				BUNDLE_IDENTIFIER = com.googlecode.synecdoche;
 				COPY_PHASE_STRIP = NO;
 				C_ARES_DIR = "/Users/mtughan/boinc/depends/c-ares";
