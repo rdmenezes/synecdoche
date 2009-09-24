@@ -666,8 +666,7 @@ int GLOBAL_PREFS::parse_override(XML_PARSER& xp, const char* host_venue, bool& f
     return ERR_XML_PARSE;
 }
 
-// Parse global prefs file
-//
+/// Parse global prefs file.
 int GLOBAL_PREFS::parse_file(
     const char* filename, const char* host_venue, bool& found_venue
 ) {
@@ -778,9 +777,8 @@ int GLOBAL_PREFS::write(MIOFILE& f) const {
     return 0;
 }
 
-// write a subset of the global preferences,
-// as selected by the mask of bools
-//
+/// Write a subset of the global preferences,
+/// as selected by the mask of bools.
 int GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
     if (!mask.are_prefs_set()) return 0;
     
