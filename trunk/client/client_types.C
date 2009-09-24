@@ -1718,7 +1718,7 @@ double RESULT::get_received_time() const {
 
 /// Set the time when this result was received from the server.
 ///
-/// \param[int] received_time The time when this result was received from the server.
+/// \param[in] received_time The time when this result was received from the server.
 void RESULT::set_received_time(double received_time) {
     this->received_time = received_time;
 }
