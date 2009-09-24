@@ -536,7 +536,7 @@
 									<key>IFPkgDescriptionTitle</key>
 									<string>Synecdoche</string>
 									<key>IFPkgDescriptionVersion</key>
-									<string>0.1.1</string>
+									<string>0.2.0</string>
 								</dict>
 							</dict>
 							<key>Display Information</key>
@@ -552,7 +552,7 @@
 								<key>CFBundleName</key>
 								<string>Synecdoche</string>
 								<key>CFBundleShortVersionString</key>
-								<string>0.1.1</string>
+								<string>0.2.0</string>
 							</dict>
 							<key>Options</key>
 							<dict>
@@ -580,7 +580,7 @@
 								<key>IFMajorVersion</key>
 								<integer>0</integer>
 								<key>IFMinorVersion</key>
-								<integer>1</integer>
+								<integer>2</integer>
 							</dict>
 						</dict>
 					</dict>
@@ -1072,7 +1072,7 @@
 									<key>IFPkgDescriptionTitle</key>
 									<string>Screen Saver</string>
 									<key>IFPkgDescriptionVersion</key>
-									<string>0.1.1</string>
+									<string>0.2.0</string>
 								</dict>
 							</dict>
 							<key>Display Information</key>
@@ -1088,7 +1088,7 @@
 								<key>CFBundleName</key>
 								<string>Screen Saver</string>
 								<key>CFBundleShortVersionString</key>
-								<string>0.1.1</string>
+								<string>0.2.0</string>
 							</dict>
 							<key>Options</key>
 							<dict>
@@ -1116,14 +1116,14 @@
 								<key>IFMajorVersion</key>
 								<integer>0</integer>
 								<key>IFMinorVersion</key>
-								<integer>1</integer>
+								<integer>2</integer>
 							</dict>
 						</dict>
 					</dict>
 					<key>IFPkgFlagPackageSelection</key>
 					<integer>0</integer>
 					<key>Name</key>
-					<string>Screen Saver</string>
+					<string>Synecdoche Screen Saver</string>
 					<key>Status</key>
 					<integer>1</integer>
 					<key>Type</key>
@@ -1333,13 +1333,13 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 						<key>IFPkgDescriptionTitle</key>
 						<string>Synecdoche</string>
 						<key>IFPkgDescriptionVersion</key>
-						<string>0.1.1</string>
+						<string>0.2.0</string>
 					</dict>
 				</dict>
 				<key>Display Information</key>
 				<dict>
 					<key>CFBundleGetInfoString</key>
-					<string>0.1.1, Copyright © 2009 Synecdoche contributors</string>
+					<string>0.2.0, Copyright © 2009 Synecdoche contributors</string>
 					<key>CFBundleIconFile</key>
 					<string>../../../graphics/icons/synecdoche_installer.icns</string>
 					<key>CFBundleIconFile Path Type</key>
@@ -1349,14 +1349,14 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 					<key>CFBundleName</key>
 					<string>Synecdoche</string>
 					<key>CFBundleShortVersionString</key>
-					<string>0.1.1</string>
+					<string>0.2.0</string>
 				</dict>
 				<key>Version</key>
 				<dict>
 					<key>IFMajorVersion</key>
 					<integer>0</integer>
 					<key>IFMinorVersion</key>
-					<integer>1</integer>
+					<integer>2</integer>
 				</dict>
 			</dict>
 		</dict>
