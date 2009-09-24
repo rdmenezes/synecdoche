@@ -22,16 +22,13 @@
 #ifndef GUI_RPC_CLIENT_H
 #define GUI_RPC_CLIENT_H
 
-#if !defined(_WIN32) || defined (__CYGWIN__)
-#include <stdio.h>
-#include <vector>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
 #include <locale.h>
+
+#if !defined(_WIN32) || defined (__CYGWIN__)
+#include <netinet/in.h>
 #endif
 
+#include <vector>
 #include <string>
 
 #include "miofile.h"
