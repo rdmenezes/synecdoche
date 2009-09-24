@@ -32,10 +32,6 @@
 #include "md5_file.h"
 #include "error_numbers.h"
 
-// NOTE: the fast CGI I/O library doesn't have fscanf(),
-// so some of the following have been modified to use
-// fgets() and sscanf() instead
-
 /// Write some data in hex notation into a file.
 /// NOTE: since length may not be known to the reader,
 /// we follow the data with a non-hex character '.'

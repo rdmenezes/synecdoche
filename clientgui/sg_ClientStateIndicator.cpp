@@ -17,6 +17,8 @@
 
 #include "sg_ClientStateIndicator.h"
 
+#include <time.h>
+
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
@@ -24,7 +26,6 @@
 #include "BOINCBaseFrame.h"
 #include "sg_BoincSimpleGUI.h"
 #include "sg_ImageLoader.h"
-#include "time.h"
 
 #define ID_ANIMATIONRENDERTIMER  12000
 
