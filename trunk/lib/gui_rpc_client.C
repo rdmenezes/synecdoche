@@ -47,6 +47,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "miofile.h"
+#include "mfile.h"
 #include "md5_file.h"
 #include "network.h"
 #include "common_defs.h"

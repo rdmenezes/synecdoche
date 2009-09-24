@@ -27,6 +27,7 @@
 #include "client_state.h"
 
 #include "miofile.h"
+#include "mfile.h"
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"

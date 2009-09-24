@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "mfile.h"
+class MFILE;
 
 /// MIOFILE lets you do formatted I/O to either a FILE or a memory buffer,
 /// depending on how you initialize it.
