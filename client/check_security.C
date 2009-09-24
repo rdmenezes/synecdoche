@@ -69,7 +69,7 @@ int use_sandbox, int isManager
     int                 retval;
     int                 useFakeProjectUserAndGroup = 0;
 #if (defined(__APPLE__) && defined(_DEBUG))
-    long                response;
+    SInt32              response;
     OSStatus            err = noErr;
 #endif
 #ifdef __WXMAC__                            // If Mac BOINC Manager

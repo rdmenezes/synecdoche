@@ -801,7 +801,7 @@ static OSStatus SetFakeMasterNames() {
     group               *grp;
     gid_t               boinc_master_gid;
     uid_t               boinc_master_uid;
-    long                response;
+    SInt32              response;
     OSStatus            err = noErr;
 
     boinc_master_uid = geteuid();
