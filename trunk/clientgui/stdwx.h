@@ -156,8 +156,8 @@
     #pragma message("")
 #endif // wxUSE_ACCESSIBILITY
 
-#include "wx/msw/ole/oleutils.h"
-#include "wx/msw/winundef.h"
+#include <wx/msw/ole/oleutils.h>
+#include <wx/msw/winundef.h>
 
 #ifndef OBJID_CLIENT
     #define OBJID_CLIENT 0xFFFFFFFC
