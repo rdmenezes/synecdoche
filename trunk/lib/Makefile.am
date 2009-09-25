@@ -56,6 +56,7 @@ libboinc_a_SOURCES = \
     mem_usage.h \
     mfile.h \
     miofile.h \
+    miofile_wrap.h \
     msg_log.h \
     network.h \
     parse.h \
