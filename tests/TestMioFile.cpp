@@ -23,6 +23,7 @@
 
 #include "lib/miofile.h"
 #include "lib/mfile.h"
+#include "lib/miofile_wrap.h"
 
 /* These tests are incomplete; but I plan to get rid of MIOFILE and MFILE anyway. */
 
@@ -74,6 +75,38 @@ class TestMioFile: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL((void*)0, (void*)retval);
     }
 };
+class TestMioFileAdapter: public CppUnit::TestFixture
+{
+    CPPUNIT_TEST_SUITE(TestMioFileAdapter);
+    CPPUNIT_TEST(testTestFuncStandalone);
+    CPPUNIT_TEST(testWrapper);
+    CPPUNIT_TEST_SUITE_END();
+
+  public:
+    void funcUsingMiofile(MIOFILE& out, int n) {
+        out.printf("Test%d", n);
+    }
+    void testTestFuncStandalone() {
+        MIOFILE mf;
+        MFILE m;
+        mf.init_mfile(&m);
+
+        funcUsingMiofile(mf, 42);
+        
+        char* p; int n;
+        m.get_buf(p, n);
+        CPPUNIT_ASSERT(0 != p);
+        CPPUNIT_ASSERT_EQUAL(6, n);
+        CPPUNIT_ASSERT(strcmp("Test42", p) == 0);
+        free(p);
+    }
+    void testWrapper() {
+        std::ostringstream oss;
+        funcUsingMiofile(MiofileAdapter(oss), 42);
+        CPPUNIT_ASSERT_EQUAL(std::string("Test42"), oss.str());
+    }
+};
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestMfile);
 CPPUNIT_TEST_SUITE_REGISTRATION(TestMioFile);
+CPPUNIT_TEST_SUITE_REGISTRATION(TestMioFileAdapter);
