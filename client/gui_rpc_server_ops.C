@@ -45,6 +45,7 @@
 #include <cstdio>
 #include <vector>
 #include <sstream>
+#include <ostream>
 
 #include "gui_rpc_server.h"
 #include "str_util.h"
@@ -54,6 +55,7 @@
 #include "parse.h"
 #include "miofile.h"
 #include "mfile.h"
+#include "miofile_wrap.h"
 #include "network.h"
 #include "filesys.h"
 #include "version.h"
@@ -70,52 +72,48 @@
 using std::string;
 using std::vector;
 
-static void auth_failure(MIOFILE& fout) {
-    fout.printf("<unauthorized/>\n");
+static void auth_failure(std::ostream& out) {
+    out << "<unauthorized/>\n";
 }
 
 /// Handle an authorization request by creating and sending a nonce.
 ///
-/// \param[in] fout Reference to the MIOFILE instance used for the rpc.
-void GUI_RPC_CONN::handle_auth1(MIOFILE& fout) {
+/// \param[in] out The output stream where the request will be written.
+void GUI_RPC_CONN::handle_auth1(std::ostream& out) {
     std::ostringstream buf;
     buf << dtime();
     nonce = buf.str();
-    fout.printf("<nonce>%s</nonce>\n", nonce.c_str());
+    out << "<nonce>" << nonce << "</nonce>\n";
 }
 
 /// Check if the response to the challenge sent by handle_auth1 is correct.
 ///
 /// \param[in] buf The string containing the response from the client.
-/// \param[in] fout Reference to the MIOFILE instance used for the rpc.
-void GUI_RPC_CONN::handle_auth2(const char* buf, MIOFILE& fout) {
+/// \param[in] out The output stream where the request will be written.
+void GUI_RPC_CONN::handle_auth2(const char* buf, std::ostream& out) {
     std::string nonce_hash;
     if (!parse_str(buf, "<nonce_hash>", nonce_hash)) {
-        auth_failure(fout);
+        auth_failure(out);
         return;
     }
     std::string buf2 = nonce + std::string(gstate.gui_rpcs.password);
     std::string nonce_hash_correct = md5_string(buf2);
     if (nonce_hash != nonce_hash_correct) {
-        auth_failure(fout);
+        auth_failure(out);
         return;
     }
-    fout.printf("<authorized/>\n");
+    out << "<authorized/>\n";
     auth_needed = false;
 }
 
 // client passes its version, but ignore it for now
-static void handle_exchange_versions(MIOFILE& fout) {
-    fout.printf(
-        "<server_version>\n"
-        "   <major>%d</major>\n"
-        "   <minor>%d</minor>\n"
-        "   <release>%d</release>\n"
-        "</server_version>\n",
-        SYNEC_MAJOR_VERSION,
-        SYNEC_MINOR_VERSION,
-        SYNEC_RELEASE
-    );
+static void handle_exchange_versions(std::ostream& out) {
+    out <<
+    "<server_version>\n"
+    "   <major>" << SYNEC_MAJOR_VERSION << "</major>\n"
+    "   <minor>" << SYNEC_MINOR_VERSION << "</minor>\n"
+    "   <release>" << SYNEC_RELEASE << "</release>\n"
+    "</server_version>\n";
 }
 
 static void handle_get_simple_gui_info(MIOFILE& fout) {
@@ -592,74 +590,71 @@ static void handle_get_project_init_status(const char*, MIOFILE& fout) {
     );
 }
 
-void GUI_RPC_CONN::handle_get_project_config(const char* buf, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_get_project_config(const char* buf, std::ostream& out) {
     string url;
 
     parse_str(buf, "<url>", url);
 
     canonicalize_master_url(url);
     get_project_config_op.do_rpc(url);
-    fout.printf("<success/>\n");
+    out << "<success/>\n";
 }
 
-void GUI_RPC_CONN::handle_get_project_config_poll(const char*, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_get_project_config_poll(const char*, std::ostream& out) {
     if (get_project_config_op.error_num) {
-        fout.printf(
+        out <<
             "<project_config>\n"
-            "    <error_num>%d</error_num>\n"
-            "</project_config>\n",
-            get_project_config_op.error_num
-        );
+            "    <error_num>" << get_project_config_op.error_num << "</error_num>\n"
+            "</project_config>\n"
+        ;
     } else {
-        fout.printf("%s", get_project_config_op.reply.c_str());
+        out << get_project_config_op.reply;
     }
 }
 
-void GUI_RPC_CONN::handle_lookup_account(const char* buf, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_lookup_account(const char* buf, std::ostream& out) {
     ACCOUNT_IN ai;
 
     ai.parse(buf);
     if (ai.url.empty() || ai.email_addr.empty() || ai.passwd_hash.empty()) {
-        fout.printf("<error>missing URL, email address, or password</error>\n");
+        out << "<error>missing URL, email address, or password</error>\n";
         return;
     }
 
     lookup_account_op.do_rpc(ai);
-    fout.printf("<success/>\n");
+    out << "<success/>\n";
 }
 
-void GUI_RPC_CONN::handle_lookup_account_poll(const char*, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_lookup_account_poll(const char*, std::ostream& out) {
     if (lookup_account_op.error_num) {
-        fout.printf(
+        out <<
             "<account_out>\n"
-            "    <error_num>%d</error_num>\n"
-            "</account_out>\n",
-            lookup_account_op.error_num
-        );
+            "    <error_num>" << lookup_account_op.error_num << "</error_num>\n"
+            "</account_out>\n"
+        ;
     } else {
-        fout.printf("%s", lookup_account_op.reply.c_str());
+        out << lookup_account_op.reply;
     }
 }
 
-void GUI_RPC_CONN::handle_create_account(const char* buf, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_create_account(const char* buf, std::ostream& out) {
     ACCOUNT_IN ai;
 
     ai.parse(buf);
 
     create_account_op.do_rpc(ai);
-    fout.printf("<success/>\n");
+    out << "<success/>\n";
 }
 
-void GUI_RPC_CONN::handle_create_account_poll(const char*, MIOFILE& fout) {
+void GUI_RPC_CONN::handle_create_account_poll(const char*, std::ostream& out) {
     if (create_account_op.error_num) {
-        fout.printf(
+        out <<
             "<account_out>\n"
-            "    <error_num>%d</error_num>\n"
-            "</account_out>\n",
-            create_account_op.error_num
-        );
+            "    <error_num>" << create_account_op.error_num << "</error_num>\n"
+            "</account_out>\n"
+        ;
     } else {
-        fout.printf("%s", create_account_op.reply.c_str());
+        out << create_account_op.reply;
     }
 }
 
@@ -981,9 +976,7 @@ static void handle_set_cc_config(/* const */ char* buf, MIOFILE& fout) {
 int GUI_RPC_CONN::handle_rpc() {
     char request_msg[4096];
     int n;
-    MIOFILE mf;
-    MFILE m;
-    mf.init_mfile(&m);
+    std::ostringstream reply;
 
     // read the request message in one read()
     // so that the core client won't hang because
@@ -1003,13 +996,13 @@ int GUI_RPC_CONN::handle_rpc() {
         );
     }
 
-    mf.printf("<boinc_gui_rpc_reply>\n");
+    reply << "<boinc_gui_rpc_reply>\n";
     if (match_tag(request_msg, "<auth1")) {
-        handle_auth1(mf);
+        handle_auth1(reply);
     } else if (match_tag(request_msg, "<auth2")) {
-        handle_auth2(request_msg, mf);
+        handle_auth2(request_msg, reply);
     } else if (auth_needed && !is_local) {
-        auth_failure(mf);
+        auth_failure(reply);
 
     // operations that require authentication only for non-local clients start here.
     // Use this only for information that should be available to people
@@ -1017,103 +1010,103 @@ int GUI_RPC_CONN::handle_rpc() {
     // but not for anything sensitive (passwords etc.)
 
     } else if (match_tag(request_msg, "<exchange_versions")) {
-        handle_exchange_versions(mf);
+        handle_exchange_versions(reply);
     } else if (match_tag(request_msg, "<get_state")) {
-        gstate.write_state_gui(mf);
+        gstate.write_state_gui(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_results")) {
-        mf.printf("<results>\n");
-        gstate.write_tasks_gui(mf);
-        mf.printf("</results>\n");
+        reply << "<results>\n";
+        gstate.write_tasks_gui(MiofileAdapter(reply));
+        reply << "</results>\n";
     } else if (match_tag(request_msg, "<get_screensaver_tasks")) {
-        handle_get_screensaver_tasks(mf);
+        handle_get_screensaver_tasks(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<result_show_graphics")) {
-        handle_result_show_graphics(request_msg, mf);
+        handle_result_show_graphics(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_file_transfers")) {
-        gstate.write_file_transfers_gui(mf);
+        gstate.write_file_transfers_gui(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_simple_gui_info")) {
-        handle_get_simple_gui_info(mf);
+        handle_get_simple_gui_info(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_project_status")) {
-        handle_get_project_status(mf);
+        handle_get_project_status(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_disk_usage")) {
-        handle_get_disk_usage(mf);
+        handle_get_disk_usage(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_messages")) {
-        handle_get_messages(request_msg, mf);
+        handle_get_messages(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_message_count")) {
-        handle_get_message_count(mf);
+        handle_get_message_count(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_host_info")) {
-        handle_get_host_info(request_msg, mf);
+        handle_get_host_info(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_statistics")) {
-        handle_get_statistics(request_msg, mf);
+        handle_get_statistics(request_msg, MiofileAdapter(reply));
 #ifdef ENABLE_UPDATE_CHECK
     } else if (match_tag(request_msg, "<get_newer_version>")) {
-        handle_get_newer_version(mf);
+        handle_get_newer_version(MiofileAdapter(reply));
 #endif
     } else if (match_tag(request_msg, "<get_cc_status")) {
-        handle_get_cc_status(mf);
+        handle_get_cc_status(MiofileAdapter(reply));
 
     // Operations that require authentication start here
 
     } else if (auth_needed) {
-        auth_failure(mf);
+        auth_failure(reply);
     } else if (match_tag(request_msg, "<project_nomorework")) {
-        handle_project_op(request_msg, mf, "nomorework");
-     } else if (match_tag(request_msg, "<project_allowmorework")) {
-        handle_project_op(request_msg, mf, "allowmorework");
+        handle_project_op(request_msg, MiofileAdapter(reply), "nomorework");
+    } else if (match_tag(request_msg, "<project_allowmorework")) {
+        handle_project_op(request_msg, MiofileAdapter(reply), "allowmorework");
     } else if (match_tag(request_msg, "<project_detach_when_done")) {
-        handle_project_op(request_msg, mf, "detach_when_done");
+        handle_project_op(request_msg, MiofileAdapter(reply), "detach_when_done");
     } else if (match_tag(request_msg, "<project_dont_detach_when_done")) {
-        handle_project_op(request_msg, mf, "dont_detach_when_done");
+        handle_project_op(request_msg, MiofileAdapter(reply), "dont_detach_when_done");
     } else if (match_tag(request_msg, "<set_network_mode")) {
-        handle_set_network_mode(request_msg, mf);
+        handle_set_network_mode(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<run_benchmarks")) {
-        handle_run_benchmarks(request_msg, mf);
+        handle_run_benchmarks(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_proxy_settings")) {
-        handle_get_proxy_settings(request_msg, mf);
+        handle_get_proxy_settings(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<set_proxy_settings")) {
-        handle_set_proxy_settings(request_msg, mf);
+        handle_set_proxy_settings(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<network_available")) {
-        handle_network_available(request_msg, mf);
+        handle_network_available(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<abort_file_transfer")) {
-        handle_file_transfer_op(request_msg, mf, "abort");
+        handle_file_transfer_op(request_msg, MiofileAdapter(reply), "abort");
     } else if (match_tag(request_msg, "<project_detach")) {
-        handle_project_op(request_msg, mf, "detach");
+        handle_project_op(request_msg, MiofileAdapter(reply), "detach");
     } else if (match_tag(request_msg, "<abort_result")) {
-        handle_result_op(request_msg, mf, "abort");
+        handle_result_op(request_msg, MiofileAdapter(reply), "abort");
     } else if (match_tag(request_msg, "<suspend_result")) {
-        handle_result_op(request_msg, mf, "suspend");
+        handle_result_op(request_msg, MiofileAdapter(reply), "suspend");
     } else if (match_tag(request_msg, "<resume_result")) {
-        handle_result_op(request_msg, mf, "resume");
+        handle_result_op(request_msg, MiofileAdapter(reply), "resume");
     } else if (match_tag(request_msg, "<project_suspend")) {
-        handle_project_op(request_msg, mf, "suspend");
+        handle_project_op(request_msg, MiofileAdapter(reply), "suspend");
     } else if (match_tag(request_msg, "<project_resume")) {
-        handle_project_op(request_msg, mf, "resume");
+        handle_project_op(request_msg, MiofileAdapter(reply), "resume");
     } else if (match_tag(request_msg, "<set_run_mode")) {
-        handle_set_run_mode(request_msg, mf);
+        handle_set_run_mode(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<quit")) {
-        handle_quit(request_msg, mf);
+        handle_quit(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<acct_mgr_info")) {
-        handle_acct_mgr_info(request_msg, mf);
+        handle_acct_mgr_info(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<read_global_prefs_override/>")) {
-        mf.printf("<success/>\n");
+        reply << "<success/>\n";
         gstate.read_global_prefs();
         gstate.request_schedule_cpus("Preferences override");
         gstate.request_work_fetch("Preferences override");
     } else if (match_tag(request_msg, "<get_project_init_status")) {
-        handle_get_project_init_status(request_msg, mf);
+        handle_get_project_init_status(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_global_prefs_file")) {
-        handle_get_global_prefs_file(mf);
+        handle_get_global_prefs_file(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_global_prefs_working")) {
-        handle_get_global_prefs_working(mf);
+        handle_get_global_prefs_working(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_global_prefs_override")) {
-        handle_get_global_prefs_override(mf);
+        handle_get_global_prefs_override(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<set_global_prefs_override")) {
-        handle_set_global_prefs_override(request_msg, mf);
+        handle_set_global_prefs_override(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_cc_config")) {
-        handle_get_cc_config(mf);
+        handle_get_cc_config(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<set_cc_config")) {
-        handle_set_cc_config(request_msg, mf);
+        handle_set_cc_config(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<read_cc_config/>")) {
-        mf.printf("<success/>\n");
+        reply << "<success/>\n";
         read_config_file(false);
         msg_printf(0, MSG_INFO, "Re-read config file");
         log_flags.show();
@@ -1122,60 +1115,60 @@ int GUI_RPC_CONN::handle_rpc() {
         gstate.request_schedule_cpus("Core client configuration");
         gstate.request_work_fetch("Core client configuration");
     } else if (match_tag(request_msg, "<get_all_projects_list/>")) {
-        read_all_projects_list_file(mf);
+        read_all_projects_list_file(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<set_debts")) {
-        handle_set_debts(request_msg, mf);
+        handle_set_debts(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<retry_file_transfer")) {
-        handle_file_transfer_op(request_msg, mf, "retry");
+        handle_file_transfer_op(request_msg, MiofileAdapter(reply), "retry");
     } else if (match_tag(request_msg, "<project_reset")) {
-        handle_project_op(request_msg, mf, "reset");
+        handle_project_op(request_msg, MiofileAdapter(reply), "reset");
     } else if (match_tag(request_msg, "<project_update")) {
-        handle_project_op(request_msg, mf, "update");
+        handle_project_op(request_msg, MiofileAdapter(reply), "update");
     } else if (match_tag(request_msg, "<get_project_config>")) {
-        handle_get_project_config(request_msg, mf);
+        handle_get_project_config(request_msg, reply);
     } else if (match_tag(request_msg, "<get_project_config_poll")) {
-        handle_get_project_config_poll(request_msg, mf);
+        handle_get_project_config_poll(request_msg, reply);
     } else if (match_tag(request_msg, "<lookup_account>")) {
-        handle_lookup_account(request_msg, mf);
+        handle_lookup_account(request_msg, reply);
     } else if (match_tag(request_msg, "<lookup_account_poll")) {
-        handle_lookup_account_poll(request_msg, mf);
+        handle_lookup_account_poll(request_msg, reply);
     } else if (match_tag(request_msg, "<create_account>")) {
-        handle_create_account(request_msg, mf);
+        handle_create_account(request_msg, reply);
     } else if (match_tag(request_msg, "<create_account_poll")) {
-        handle_create_account_poll(request_msg, mf);
+        handle_create_account_poll(request_msg, reply);
     } else if (match_tag(request_msg, "<project_attach>")) {
-        handle_project_attach(request_msg, mf);
+        handle_project_attach(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<project_attach_poll")) {
-        handle_project_attach_poll(request_msg, mf);
+        handle_project_attach_poll(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<acct_mgr_rpc>")) {
-        handle_acct_mgr_rpc(request_msg, mf);
+        handle_acct_mgr_rpc(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<acct_mgr_rpc_poll")) {
-        handle_acct_mgr_rpc_poll(request_msg, mf);
+        handle_acct_mgr_rpc_poll(request_msg, MiofileAdapter(reply));
 
     // DON'T JUST ADD NEW RPCS HERE - THINK ABOUT THEIR
     // AUTHENTICATION AND NETWORK REQUIREMENTS FIRST
 
     } else {
-        mf.printf("<error>unrecognized op</error>\n");
+        reply << "<error>unrecognized op</error>\n";
     }
 
-    mf.printf("</boinc_gui_rpc_reply>\n\003");
+    reply << "</boinc_gui_rpc_reply>\n\003";
 
-    char* p;
-    m.get_buf(p, n);
-    if (p) {
-        if (write_buffer.length() > MAX_WRITE_BUFFER) {
-            return ERR_BUFFER_OVERFLOW;
-        }
-        write_buffer.append(p, n);
-        p[n-1]=0;   // replace 003 with NULL
-        if (log_flags.guirpc_debug) {
-            if (n > 50) p[50] = 0;
-            msg_printf(0, MSG_INFO,
-                "[guirpc_debug] GUI RPC reply: '%s'\n", p
-            );
-        }
-        free(p);
+    std::string s_reply = reply.str();
+    if (write_buffer.length() > MAX_WRITE_BUFFER) {
+        return ERR_BUFFER_OVERFLOW;
+    }
+    write_buffer.append(s_reply);
+
+    // strip final \003
+    if (s_reply[s_reply.size()-1] == '\003') {
+        s_reply.resize(s_reply.size()-1);
+    }
+
+    if (log_flags.guirpc_debug) {
+        msg_printf(0, MSG_INFO,
+            "[guirpc_debug] GUI RPC reply: '%.50s'\n", s_reply.c_str()
+        );
     }
     return 0;
 }
