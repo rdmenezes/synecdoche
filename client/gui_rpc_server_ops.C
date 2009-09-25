@@ -1056,13 +1056,13 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (auth_needed) {
         auth_failure(mf);
     } else if (match_tag(request_msg, "<project_nomorework")) {
-         handle_project_op(request_msg, mf, "nomorework");
+        handle_project_op(request_msg, mf, "nomorework");
      } else if (match_tag(request_msg, "<project_allowmorework")) {
-         handle_project_op(request_msg, mf, "allowmorework");
+        handle_project_op(request_msg, mf, "allowmorework");
     } else if (match_tag(request_msg, "<project_detach_when_done")) {
-         handle_project_op(request_msg, mf, "detach_when_done");
+        handle_project_op(request_msg, mf, "detach_when_done");
     } else if (match_tag(request_msg, "<project_dont_detach_when_done")) {
-         handle_project_op(request_msg, mf, "dont_detach_when_done");
+        handle_project_op(request_msg, mf, "dont_detach_when_done");
     } else if (match_tag(request_msg, "<set_network_mode")) {
         handle_set_network_mode(request_msg, mf);
     } else if (match_tag(request_msg, "<run_benchmarks")) {
