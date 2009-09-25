@@ -44,6 +44,8 @@ class TestMfile: public CppUnit::TestFixture
         CPPUNIT_ASSERT(0 != p);
         CPPUNIT_ASSERT_EQUAL(4, n);
         CPPUNIT_ASSERT(memcmp("Test", p, 4) == 0);
+
+        free(p);
     }
 };
 class TestMioFile: public CppUnit::TestFixture
@@ -75,4 +77,3 @@ class TestMioFile: public CppUnit::TestFixture
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestMfile);
 CPPUNIT_TEST_SUITE_REGISTRATION(TestMioFile);
-
