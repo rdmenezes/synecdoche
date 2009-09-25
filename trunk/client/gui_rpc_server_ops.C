@@ -135,10 +135,10 @@ static void handle_get_project_status(MIOFILE& fout) {
     fout.printf("</projects>\n");
 }
 
-static void handle_get_disk_usage(MIOFILE& fout) {
+static void handle_get_disk_usage(std::ostream& out) {
     double size, boinc_non_project, d_allowed, boinc_total;
 
-    fout.printf("<disk_usage_summary>\n");
+    out << "<disk_usage_summary>\n";
     get_filesystem_info(gstate.host_info.d_total, gstate.host_info.d_free);
     dir_size(".", boinc_non_project, false);
     dir_size("locale", size, false);
@@ -162,24 +162,22 @@ static void handle_get_disk_usage(MIOFILE& fout) {
     for (size_t i=0; i<gstate.projects.size(); i++) {
         const PROJECT* p = gstate.projects[i];
         gstate.project_disk_usage(p, size);
-        fout.printf(
+        out <<
             "<project>\n"
-            "  <master_url>%s</master_url>\n"
-            "  <disk_usage>%f</disk_usage>\n"
-            "</project>\n",
-            p->get_master_url().c_str(), size
-        );
+            "  <master_url>" << p->get_master_url() << "</master_url>\n"
+            "  <disk_usage>" << size << "</disk_usage>\n"
+            "</project>\n"
+        ;
         boinc_total += size;
     }
     d_allowed = gstate.allowed_disk_usage(boinc_total);
-    fout.printf(
-        "<d_total>%f</d_total>\n"
-        "<d_free>%f</d_free>\n"
-        "<d_boinc>%f</d_boinc>\n"
-        "<d_allowed>%f</d_allowed>\n",
-        gstate.host_info.d_total, gstate.host_info.d_free, boinc_non_project, d_allowed
-    );
-    fout.printf("</disk_usage_summary>\n");
+    out <<
+        "<d_total>" << gstate.host_info.d_total << "</d_total>\n"
+        "<d_free>" << gstate.host_info.d_free << "</d_free>\n"
+        "<d_boinc>" << boinc_non_project << "</d_boinc>\n"
+        "<d_allowed>" << d_allowed << "</d_allowed>\n"
+    ;
+    out << "</disk_usage_summary>\n";
 }
 
 static PROJECT* get_project(const char* buf, std::ostream& out) {
@@ -359,7 +357,7 @@ static void handle_get_proxy_settings(const char* , MIOFILE& fout) {
 // [ <seqno>n</seqno> ]
 //    return only msgs with seqno > n; if absent or zero, return all
 //
-static void handle_get_messages(const char* buf, MIOFILE& fout) {
+static void handle_get_messages(const char* buf, std::ostream& out) {
     int seqno=0, i, j;
     unsigned int k;
     MESSAGE_DESC* mdp;
@@ -379,25 +377,20 @@ static void handle_get_messages(const char* buf, MIOFILE& fout) {
         }
     }
 
-    fout.printf("<msgs>\n");
+    out << "<msgs>\n";
     for (i=j; i>=0; i--) {
         mdp = message_descs[i];
-        fout.printf(
+        out <<
             "<msg>\n"
-            " <project>%s</project>\n"
-            " <pri>%d</pri>\n"
-            " <seqno>%d</seqno>\n"
-            " <body>\n%s\n</body>\n"
-            " <time>%d</time>\n",
-            mdp->project_name,
-            mdp->priority,
-            mdp->seqno,
-            mdp->message.c_str(),
-            mdp->timestamp
-        );
-        fout.printf("</msg>\n");
+            " <project>" << mdp->project_name << "</project>\n"
+            " <pri>" << mdp->priority << "</pri>\n"
+            " <seqno>" << mdp->seqno << "</seqno>\n"
+            " <body>\n" << mdp->message << "\n</body>\n"
+            " <time>" << mdp->timestamp << "</time>\n"
+        ;
+        out << "</msg>\n";
     }
-    fout.printf("</msgs>\n");
+    out << "</msgs>\n";
 }
 
 static void handle_get_message_count(std::ostream& out) {
@@ -518,17 +511,15 @@ static void handle_quit(const char*, std::ostream& out) {
     out << "<success/>\n";
 }
 
-static void handle_acct_mgr_info(const char*, MIOFILE& fout) {
-    fout.printf(
+static void handle_acct_mgr_info(const char*, std::ostream& out) {
+    out <<
         "<acct_mgr_info>\n"
-        "   <acct_mgr_url>%s</acct_mgr_url>\n"
-        "   <acct_mgr_name>%s</acct_mgr_name>\n"
-        "   %s\n"
-        "</acct_mgr_info>\n",
-        gstate.acct_mgr_info.acct_mgr_url,
-        gstate.acct_mgr_info.acct_mgr_name,
-        strlen(gstate.acct_mgr_info.login_name)?"<have_credentials/>":""
-    );
+        "   <acct_mgr_url>" << gstate.acct_mgr_info.acct_mgr_url << "</acct_mgr_url>\n"
+        "   <acct_mgr_name>" << gstate.acct_mgr_info.acct_mgr_name << "</acct_mgr_name>\n";
+    if (strlen(gstate.acct_mgr_info.login_name)) {
+        out << "    <have_credentials/>\n";
+    }
+    out << "</acct_mgr_info>\n";
 }
 
 static void handle_get_statistics(const char*, MIOFILE& fout) {
@@ -577,17 +568,16 @@ static void handle_network_available(const char*, std::ostream& out) {
     out << "<success/>\n";
 }
 
-static void handle_get_project_init_status(const char*, MIOFILE& fout) {
-    fout.printf(
+static void handle_get_project_init_status(const char*, std::ostream& out) {
+    out <<
         "<get_project_init_status>\n"
-        "    <url>%s</url>\n"
-        "    <name>%s</name>\n"
-        "    %s\n"
-        "</get_project_init_status>\n",
-        gstate.project_init.url.c_str(),
-        gstate.project_init.name,
-        strlen(gstate.project_init.account_key)?"<has_account_key/>":""
-    );
+        "    <url>" << gstate.project_init.url << "</url>\n"
+        "    <name>" << gstate.project_init.name << "</name>\n"
+    ;
+    if (strlen(gstate.project_init.account_key)) {
+        out << "    <has_account_key/>\n";
+    }
+    out << "</get_project_init_status>\n";
 }
 
 void GUI_RPC_CONN::handle_get_project_config(const char* buf, std::ostream& out) {
@@ -720,23 +710,13 @@ static void handle_project_attach(const char* buf, std::ostream& out) {
     out << "<success/>\n";
 }
 
-static void handle_project_attach_poll(const char*, MIOFILE& fout) {
-    fout.printf(
-        "<project_attach_reply>\n"
-    );
+static void handle_project_attach_poll(const char*, std::ostream& out) {
+    out << "<project_attach_reply>\n";
     for (size_t i=0; i<gstate.project_attach.messages.size(); i++) {
-        fout.printf(
-            "    <message>%s</message>\n",
-            gstate.project_attach.messages[i].c_str()
-        );
+        out << "    <message>" << gstate.project_attach.messages[i] << "</message>\n";
     }
-    fout.printf(
-        "    <error_num>%d</error_num>\n",
-        gstate.project_attach.error_num
-    );
-    fout.printf(
-        "</project_attach_reply>\n"
-    );
+    out << "    <error_num>" << gstate.project_attach.error_num << "</error_num>\n";
+    out << "</project_attach_reply>\n";
 }
 
 static void handle_acct_mgr_rpc(const char* buf, std::ostream& out) {
@@ -770,23 +750,13 @@ static void handle_acct_mgr_rpc(const char* buf, std::ostream& out) {
     }
 }
 
-static void handle_acct_mgr_rpc_poll(const char*, MIOFILE& fout) {
-    fout.printf(
-        "<acct_mgr_rpc_reply>\n"
-    );
+static void handle_acct_mgr_rpc_poll(const char*, std::ostream& out) {
+    out << "<acct_mgr_rpc_reply>\n";
     if (!gstate.acct_mgr_op.error_str.empty()) {
-        fout.printf(
-            "    <message>%s</message>\n",
-            gstate.acct_mgr_op.error_str.c_str()
-        );
+        out << "    <message>" << gstate.acct_mgr_op.error_str << "</message>\n";
     }
-    fout.printf(
-        "    <error_num>%d</error_num>\n",
-        gstate.acct_mgr_op.error_num
-    );
-    fout.printf(
-        "</acct_mgr_rpc_reply>\n"
-    );
+    out << "    <error_num>" << gstate.acct_mgr_op.error_num << "</error_num>\n";
+    out << "</acct_mgr_rpc_reply>\n";
 }
 
 #ifdef ENABLE_UPDATE_CHECK
@@ -823,7 +793,7 @@ static void handle_get_global_prefs_override(std::ostream& out) {
     }
 }
 
-static void handle_set_global_prefs_override(/* const */ char* buf, MIOFILE& fout) {
+static void handle_set_global_prefs_override(/* const */ char* buf, std::ostream& out) {
     char *p, *q=0;
     int retval = ERR_XML_PARSE;
 
@@ -850,29 +820,28 @@ static void handle_set_global_prefs_override(/* const */ char* buf, MIOFILE& fou
             retval = boinc_delete_file(GLOBAL_PREFS_OVERRIDE_FILE);
         }
     }
-    fout.printf(
+    out <<
         "<set_global_prefs_override_reply>\n"
-        "    <status>%d</status>\n"
-        "</set_global_prefs_override_reply>\n",
-        retval
-    );
+        "    <status>" << retval << "</status>\n"
+        "</set_global_prefs_override_reply>\n"
+    ;
 }
 
-static void handle_get_cc_config(MIOFILE& fout) {
+static void handle_get_cc_config(std::ostream& out) {
     string s;
     int retval = read_file_string(CONFIG_FILE, s);
     if (!retval) {
         strip_whitespace(s);
-        fout.printf("%s\n", s.c_str());
+        out << s;
     }
 }
 
-static void read_all_projects_list_file(MIOFILE& fout) {
+static void read_all_projects_list_file(std::ostream& out) {
     string s;
     int retval = read_file_string(ALL_PROJECTS_LIST_FILENAME, s);
     if (!retval) {
         strip_whitespace(s);
-        fout.printf("%s\n", s.c_str());
+        out << s;
     }
 }
 
@@ -936,7 +905,7 @@ static void handle_set_debts(const char* buf, std::ostream& out) {
     out << "<error>No end tag</error>\n";
 }
 
-static void handle_set_cc_config(/* const */ char* buf, MIOFILE& fout) {
+static void handle_set_cc_config(/* const */ char* buf, std::ostream& out) {
     char *p, *q=0;
     int retval = ERR_XML_PARSE;
 
@@ -963,12 +932,11 @@ static void handle_set_cc_config(/* const */ char* buf, MIOFILE& fout) {
             retval = boinc_delete_file(CONFIG_FILE);
         }
     }
-    fout.printf(
+    out <<
         "<set_cc_config_reply>\n"
-        "    <status>%d</status>\n"
-        "</set_cc_config_reply>\n",
-        retval
-    );
+        "    <status>" << retval << "</status>\n"
+        "</set_cc_config_reply>\n"
+    ;
 }
 
 int GUI_RPC_CONN::handle_rpc() {
@@ -1026,9 +994,9 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<get_project_status")) {
         handle_get_project_status(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_disk_usage")) {
-        handle_get_disk_usage(MiofileAdapter(reply));
+        handle_get_disk_usage(reply);
     } else if (match_tag(request_msg, "<get_messages")) {
-        handle_get_messages(request_msg, MiofileAdapter(reply));
+        handle_get_messages(request_msg, reply);
     } else if (match_tag(request_msg, "<get_message_count")) {
         handle_get_message_count(reply);
     } else if (match_tag(request_msg, "<get_host_info")) {
@@ -1037,7 +1005,7 @@ int GUI_RPC_CONN::handle_rpc() {
         handle_get_statistics(request_msg, MiofileAdapter(reply));
 #ifdef ENABLE_UPDATE_CHECK
     } else if (match_tag(request_msg, "<get_newer_version>")) {
-        handle_get_newer_version(MiofileAdapter(reply));
+        handle_get_newer_version(reply);
 #endif
     } else if (match_tag(request_msg, "<get_cc_status")) {
         handle_get_cc_status(MiofileAdapter(reply));
@@ -1083,14 +1051,14 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<quit")) {
         handle_quit(request_msg, reply);
     } else if (match_tag(request_msg, "<acct_mgr_info")) {
-        handle_acct_mgr_info(request_msg, MiofileAdapter(reply));
+        handle_acct_mgr_info(request_msg, reply);
     } else if (match_tag(request_msg, "<read_global_prefs_override/>")) {
         reply << "<success/>\n";
         gstate.read_global_prefs();
         gstate.request_schedule_cpus("Preferences override");
         gstate.request_work_fetch("Preferences override");
     } else if (match_tag(request_msg, "<get_project_init_status")) {
-        handle_get_project_init_status(request_msg, MiofileAdapter(reply));
+        handle_get_project_init_status(request_msg, reply);
     } else if (match_tag(request_msg, "<get_global_prefs_file")) {
         handle_get_global_prefs_file(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_global_prefs_working")) {
@@ -1098,11 +1066,11 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<get_global_prefs_override")) {
         handle_get_global_prefs_override(reply);
     } else if (match_tag(request_msg, "<set_global_prefs_override")) {
-        handle_set_global_prefs_override(request_msg, MiofileAdapter(reply));
+        handle_set_global_prefs_override(request_msg, reply);
     } else if (match_tag(request_msg, "<get_cc_config")) {
-        handle_get_cc_config(MiofileAdapter(reply));
+        handle_get_cc_config(reply);
     } else if (match_tag(request_msg, "<set_cc_config")) {
-        handle_set_cc_config(request_msg, MiofileAdapter(reply));
+        handle_set_cc_config(request_msg, reply);
     } else if (match_tag(request_msg, "<read_cc_config/>")) {
         reply << "<success/>\n";
         read_config_file(false);
@@ -1113,7 +1081,7 @@ int GUI_RPC_CONN::handle_rpc() {
         gstate.request_schedule_cpus("Core client configuration");
         gstate.request_work_fetch("Core client configuration");
     } else if (match_tag(request_msg, "<get_all_projects_list/>")) {
-        read_all_projects_list_file(MiofileAdapter(reply));
+        read_all_projects_list_file(reply);
     } else if (match_tag(request_msg, "<set_debts")) {
         handle_set_debts(request_msg, reply);
     } else if (match_tag(request_msg, "<retry_file_transfer")) {
@@ -1137,11 +1105,11 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<project_attach>")) {
         handle_project_attach(request_msg, reply);
     } else if (match_tag(request_msg, "<project_attach_poll")) {
-        handle_project_attach_poll(request_msg, MiofileAdapter(reply));
+        handle_project_attach_poll(request_msg, reply);
     } else if (match_tag(request_msg, "<acct_mgr_rpc>")) {
         handle_acct_mgr_rpc(request_msg, reply);
     } else if (match_tag(request_msg, "<acct_mgr_rpc_poll")) {
-        handle_acct_mgr_rpc_poll(request_msg, MiofileAdapter(reply));
+        handle_acct_mgr_rpc_poll(request_msg, reply);
 
     // DON'T JUST ADD NEW RPCS HERE - THINK ABOUT THEIR
     // AUTHENTICATION AND NETWORK REQUIREMENTS FIRST
