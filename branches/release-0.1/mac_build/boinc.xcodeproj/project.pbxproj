@@ -1937,7 +1937,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"$BUILD_STYLE\" != \"Deploy_noSandbox\" ] && [ \"$BUILD_STYLE\" != \"Dev_noSandbox\" ]; then\n    chown -R ${USER}:${GROUP} \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}\"\n    chmod u+s,g+s \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}\"\nfi";
+			shellScript = "if [ \"$BUILD_STYLE\" != \"Deploy_noSandbox\" ] && [ \"$BUILD_STYLE\" != \"Dev_noSandbox\" ] && [ \"$BUILD_STYLE\" != \"Universal_Development\" ]; then\n    chown -R ${USER}:${GROUP} \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}\"\n    chmod u+s,g+s \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}\"\nfi";
 		};
 		DD32CC900C27CFB90016F571 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1965,7 +1965,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"$BUILD_STYLE\" != \"Deploy_noSandbox\" ] && [ \"$BUILD_STYLE\" != \"Dev_noSandbox\" ]; then\n    chown -R ${USER}:${GROUP} \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\"\n    chmod g+s \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/MacOS/${PRODUCT_NAME}\"\n    chmod u+s,g+s \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/Resources/synecd\"\nfi\n";
+			shellScript = "if [ \"$BUILD_STYLE\" != \"Deploy_noSandbox\" ] && [ \"$BUILD_STYLE\" != \"Dev_noSandbox\" ] && [ \"$BUILD_STYLE\" != \"Universal_Development\" ]; then\n    chown -R ${USER}:${GROUP} \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\"\n    chmod g+s \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/MacOS/${PRODUCT_NAME}\"\n    chmod u+s,g+s \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/Resources/synecd\"\nfi\n";
 		};
 		DD5FD59B0A0234400093C19F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2644,8 +2644,8 @@
 					Security,
 					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
 					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -2654,8 +2654,8 @@
 					Security,
 					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
 					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -2664,8 +2664,8 @@
 					Security,
 					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
 					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -2700,11 +2700,10 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
-				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				LIBJPEG_DIR = /Users/mtughan/boinc/depends/jpeglib;
 				PRODUCT_NAME = boinc_graphics2;
 			};
 			name = Universal_Development;
@@ -2714,7 +2713,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				PRODUCT_NAME = boinc_api;
 			};
 			name = Universal_Development;
@@ -2769,7 +2767,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -2819,7 +2816,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -2870,13 +2866,11 @@
 					"-DNOCLIPBOARD",
 					"-D_THREAD_SAFE",
 					"-D__WXMAC__",
-					"-DSANDBOX",
 					"-D_DEBUG",
 					"-DHAVE_STRCASECMP_IN_STRING_H",
 				);
-				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA -DNOCLIPBOARD -D_THREAD_SAFE -D__WXMAC__ -DSANDBOX -D_DEBUG -DHAVE_STRCASECMP_IN_STRING_H";
-				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA -DNOCLIPBOARD -D_THREAD_SAFE -D__WXMAC__ -DSANDBOX -D_DEBUG -DHAVE_STRCASECMP_IN_STRING_H";
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_CFLAGS_i386 = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1040 -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA -DNOCLIPBOARD -D_THREAD_SAFE -D__WXMAC__ -D_DEBUG -DHAVE_STRCASECMP_IN_STRING_H";
+				OTHER_CFLAGS_ppc = "-DMAC_OS_X_VERSION_MAX_ALLOWED=1030 -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA -DNOCLIPBOARD -D_THREAD_SAFE -D__WXMAC__ -D_DEBUG -DHAVE_STRCASECMP_IN_STRING_H";
 				OTHER_LDFLAGS = (
 					"-bind_at_load",
 					"-D_THREAD_SAFE",
@@ -2917,7 +2911,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -2931,7 +2924,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -2946,7 +2938,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -2961,7 +2952,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -3306,7 +3296,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				PRODUCT_NAME = boinc_api;
 			};
 			name = Dev_noSandbox;
@@ -3321,7 +3310,6 @@
 				);
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				PRODUCT_NAME = boinc_api;
 			};
 			name = Deploy_noSandbox;
@@ -3396,8 +3384,8 @@
 					Security,
 					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
 					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -3406,8 +3394,8 @@
 					Security,
 					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
 					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -3416,8 +3404,8 @@
 					Security,
 					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
 					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -3450,8 +3438,8 @@
 					Security,
 					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
 					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -3460,8 +3448,8 @@
 					Security,
 					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
 					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -3470,8 +3458,8 @@
 					Security,
 					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
 					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -3517,7 +3505,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -3541,7 +3528,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -3637,7 +3623,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -3651,7 +3636,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -4054,8 +4038,8 @@
 					Security,
 					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
 					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4064,8 +4048,8 @@
 					Security,
 					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
 					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4074,8 +4058,8 @@
 					Security,
 					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
 					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4110,11 +4094,10 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
-				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				LIBJPEG_DIR = /Users/mtughan/boinc/depends/jpeglib;
 				PRODUCT_NAME = boinc_graphics2;
 			};
 			name = "Deployment-no64";
@@ -4124,7 +4107,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				PRODUCT_NAME = boinc_api;
 			};
 			name = "Deployment-no64";
@@ -4171,7 +4153,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -4222,7 +4203,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "Installer-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -4348,7 +4328,6 @@
 				);
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1050",
 					"-D_THREAD_SAFE",
@@ -4406,8 +4385,8 @@
 					Security,
 					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
 					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4416,8 +4395,8 @@
 					Security,
 					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
 					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4426,8 +4405,8 @@
 					Security,
 					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
 					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4457,7 +4436,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -4611,7 +4589,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				PRODUCT_NAME = boinc_api;
 			};
 			name = Development;
@@ -4621,7 +4598,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				PRODUCT_NAME = boinc_api;
 			};
 			name = ppc_Deployment;
@@ -4697,8 +4673,8 @@
 					Security,
 					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
 					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4707,8 +4683,8 @@
 					Security,
 					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
 					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4717,8 +4693,8 @@
 					Security,
 					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
 					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4747,8 +4723,8 @@
 					Security,
 					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
 					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4757,8 +4733,8 @@
 					Security,
 					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
 					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4767,8 +4743,8 @@
 					Security,
 					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
 					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -4814,7 +4790,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -4839,7 +4814,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -5051,7 +5025,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				PRODUCT_NAME = boinc_api;
 			};
 			name = i386_Deployment;
@@ -5097,8 +5070,8 @@
 					Security,
 					"$(LIBCURL_DIR)/i386/lib/libcurl.a",
 					"$(C_ARES_DIR)/i386/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/i386/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -5107,8 +5080,8 @@
 					Security,
 					"$(LIBCURL_DIR)/ppc/lib/libcurl.a",
 					"$(C_ARES_DIR)/ppc/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/ppc/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -5117,8 +5090,8 @@
 					Security,
 					"$(LIBCURL_DIR)/x86_64/lib/libcurl.a",
 					"$(C_ARES_DIR)/x86_64/lib/libcares.a",
-					"-lcrypto",
-					"-lssl",
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libcrypto.a,
+					/Users/mtughan/boinc/depends/openssl/x86_64/lib/libssl.a,
 					"-lldap",
 					"-lz",
 				);
@@ -5148,7 +5121,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = stabs;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "PostInstall-Info.plist";
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1040",
@@ -5259,11 +5231,10 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
-				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				LIBJPEG_DIR = /Users/mtughan/boinc/depends/jpeglib;
 				PRODUCT_NAME = boinc_graphics2;
 			};
 			name = Development;
@@ -5273,11 +5244,10 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
-				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				LIBJPEG_DIR = /Users/mtughan/boinc/depends/jpeglib;
 				PRODUCT_NAME = boinc_graphics2;
 			};
 			name = Dev_noSandbox;
@@ -5287,11 +5257,10 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
-				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				LIBJPEG_DIR = /Users/mtughan/boinc/depends/jpeglib;
 				PRODUCT_NAME = boinc_graphics2;
 			};
 			name = ppc_Deployment;
@@ -5301,11 +5270,10 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
-				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				LIBJPEG_DIR = /Users/mtughan/boinc/depends/jpeglib;
 				PRODUCT_NAME = boinc_graphics2;
 			};
 			name = i386_Deployment;
@@ -5320,11 +5288,10 @@
 				);
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
-				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				LIBJPEG_DIR = /Users/mtughan/boinc/depends/jpeglib;
 				OTHER_CFLAGS = (
 					"-DMAC_OS_X_VERSION_MAX_ALLOWED=1050",
 					"-D_THREAD_SAFE",
@@ -5342,11 +5309,10 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = "$(LIBJPEG_DIR)/i386/include";
 				"HEADER_SEARCH_PATHS[arch=ppc]" = "$(LIBJPEG_DIR)/ppc/include";
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = "$(LIBJPEG_DIR)/x86_64/include";
-				LIBJPEG_DIR = /Users/mtughan/boinc/jpeglib;
+				LIBJPEG_DIR = /Users/mtughan/boinc/depends/jpeglib;
 				PRODUCT_NAME = boinc_graphics2;
 			};
 			name = Deploy_noSandbox;
