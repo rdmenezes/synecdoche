@@ -48,6 +48,7 @@
 #include "log_flags.h"
 #include "parse.h"
 #include "miofile.h"
+#include "miofile_wrap.h"
 #include "util.h"
 #include "str_util.h"
 #include "client_state.h"
@@ -857,28 +858,26 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
     return 0;
 }
 
-int FILE_INFO::write_gui(MIOFILE& out) const {
-    out.printf(
+int FILE_INFO::write_gui(std::ostream& out) const {
+    out <<
         "<file_transfer>\n"
-        "    <project_url>%s</project_url>\n"
-        "    <project_name>%s</project_name>\n"
-        "    <name>%s</name>\n"
-        "    <nbytes>%f</nbytes>\n"
-        "    <max_nbytes>%f</max_nbytes>\n"
-        "    <status>%d</status>\n",
-        project->get_master_url().c_str(), project->project_name, name.c_str(),
-        nbytes, max_nbytes, status);
+        "    <project_url>" << project->get_master_url() << "</project_url>\n"
+        "    <project_name>" << project->project_name << "</project_name>\n"
+        "    <name>" << name << "</name>\n"
+        "    <nbytes>" << nbytes << "</nbytes>\n"
+        "    <max_nbytes>" << max_nbytes << "</max_nbytes>\n"
+        "    <status>" << status << "</status>\n";
 
-    if (generated_locally) out.printf("    <generated_locally/>\n");
-    if (uploaded) out.printf("    <uploaded/>\n");
-    if (upload_when_present) out.printf("    <upload_when_present/>\n");
-    if (sticky) out.printf("    <sticky/>\n");
-    if (marked_for_delete) out.printf("    <marked_for_delete/>\n");
+    if (generated_locally) out << "    <generated_locally/>\n";
+    if (uploaded) out << "    <uploaded/>\n";
+    if (upload_when_present) out << "    <upload_when_present/>\n";
+    if (sticky) out << "    <sticky/>\n";
+    if (marked_for_delete) out << "    <marked_for_delete/>\n";
 
     if (pers_file_xfer) {
-        pers_file_xfer->write(out);
+        pers_file_xfer->write(MiofileAdapter(out));
     }
-    out.printf("</file_transfer>\n");
+    out << "</file_transfer>\n";
     return 0;
 }
 

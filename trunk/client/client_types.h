@@ -114,7 +114,7 @@ public:
     int set_permissions();
     int parse(MIOFILE& in, bool from_server);
     int write(MIOFILE& out, bool to_server) const;
-    int write_gui(MIOFILE& out) const;
+    int write_gui(std::ostream& out) const;
     int delete_file();      ///< Attempt to delete the underlying file.
     const char* get_init_url(bool is_upload);
     const char* get_next_url(bool is_upload);

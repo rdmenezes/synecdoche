@@ -978,7 +978,7 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<result_show_graphics")) {
         handle_result_show_graphics(request_msg, reply);
     } else if (match_tag(request_msg, "<get_file_transfers")) {
-        gstate.write_file_transfers_gui(MiofileAdapter(reply));
+        gstate.write_file_transfers_gui(reply);
     } else if (match_tag(request_msg, "<get_simple_gui_info")) {
         handle_get_simple_gui_info(MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_project_status")) {
