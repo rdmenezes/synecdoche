@@ -501,7 +501,7 @@ public:
 
     std::vector<DAILY_STATS> statistics; ///< Statistics of the last x days.
     int parse_statistics(FILE* in);
-    int write_statistics(MIOFILE& out, bool gui_rpc=false) const;
+    int write_statistics(std::ostream& out, bool gui_rpc=false) const;
 
     /// Write the statistics file.
     int write_statistics_file() const;

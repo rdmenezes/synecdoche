@@ -522,14 +522,14 @@ static void handle_acct_mgr_info(const char*, std::ostream& out) {
     out << "</acct_mgr_info>\n";
 }
 
-static void handle_get_statistics(const char*, MIOFILE& fout) {
-    fout.printf("<statistics>\n");
+static void handle_get_statistics(const char*, std::ostream& out) {
+    out << "<statistics>\n";
     for (std::vector<PROJECT*>::const_iterator i=gstate.projects.begin();
         i != gstate.projects.end(); ++i
     ) {
-        (*i)->write_statistics(fout, true);
+        (*i)->write_statistics(out, true);
     }
-    fout.printf("</statistics>\n");
+    out << "</statistics>\n";
 }
 
 #define XMLTAG(tag, content) "   <"tag">" << (content) << "</"tag">\n"
@@ -992,7 +992,7 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<get_host_info")) {
         handle_get_host_info(request_msg, MiofileAdapter(reply));
     } else if (match_tag(request_msg, "<get_statistics")) {
-        handle_get_statistics(request_msg, MiofileAdapter(reply));
+        handle_get_statistics(request_msg, reply);
 #ifdef ENABLE_UPDATE_CHECK
     } else if (match_tag(request_msg, "<get_newer_version>")) {
         handle_get_newer_version(reply);
