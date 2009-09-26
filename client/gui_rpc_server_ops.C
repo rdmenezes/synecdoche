@@ -532,36 +532,26 @@ static void handle_get_statistics(const char*, MIOFILE& fout) {
     fout.printf("</statistics>\n");
 }
 
-static void handle_get_cc_status(MIOFILE& fout) {
-    fout.printf(
+#define XMLTAG(tag, content) "   <"tag">" << (content) << "</"tag">\n"
+static void handle_get_cc_status(std::ostream& out) {
+    out <<
         "<cc_status>\n"
-        "   <network_status>%d</network_status>\n"
-        "   <ams_password_error>%d</ams_password_error>\n"
-        "   <task_suspend_reason>%d</task_suspend_reason>\n"
-        "   <network_suspend_reason>%d</network_suspend_reason>\n"
-        "   <task_mode>%d</task_mode>\n"
-        "   <network_mode>%d</network_mode>\n"
-        "   <task_mode_perm>%d</task_mode_perm>\n"
-        "   <network_mode_perm>%d</network_mode_perm>\n"
-        "   <task_mode_delay>%f</task_mode_delay>\n"
-        "   <network_mode_delay>%f</network_mode_delay>\n"
-        "   <disallow_attach>%d</disallow_attach>\n"
-        "   <simple_gui_only>%d</simple_gui_only>\n"
-        "</cc_status>\n",
-        net_status.network_status(),
-        gstate.acct_mgr_info.password_error?1:0,
-        gstate.suspend_reason,
-        gstate.network_suspend_reason,
-        gstate.run_mode.get_current(),
-        gstate.network_mode.get_current(),
-        gstate.run_mode.get_perm(),
-        gstate.network_mode.get_perm(),
-        gstate.run_mode.delay(),
-        gstate.network_mode.delay(),
-        config.disallow_attach?1:0,
-        config.simple_gui_only?1:0
-    );
+        XMLTAG("network_status",         net_status.network_status())
+        XMLTAG("ams_password_error",     gstate.acct_mgr_info.password_error?1:0)
+        XMLTAG("task_suspend_reason",    gstate.suspend_reason)
+        XMLTAG("network_suspend_reason", gstate.network_suspend_reason)
+        XMLTAG("task_mode",              gstate.run_mode.get_current())
+        XMLTAG("network_mode",           gstate.network_mode.get_current())
+        XMLTAG("task_mode_perm",         gstate.run_mode.get_perm())
+        XMLTAG("network_mode_perm",      gstate.network_mode.get_perm())
+        XMLTAG("task_mode_delay",        gstate.run_mode.delay())
+        XMLTAG("network_mode_delay",     gstate.network_mode.delay())
+        XMLTAG("disallow_attach",        config.disallow_attach?1:0)
+        XMLTAG("simple_gui_only",        config.simple_gui_only?1:0)
+        "</cc_status>\n"
+    ;
 }
+#undef XMLTAG
 
 static void handle_network_available(const char*, std::ostream& out) {
     net_status.network_available();
@@ -1008,7 +998,7 @@ int GUI_RPC_CONN::handle_rpc() {
         handle_get_newer_version(reply);
 #endif
     } else if (match_tag(request_msg, "<get_cc_status")) {
-        handle_get_cc_status(MiofileAdapter(reply));
+        handle_get_cc_status(reply);
 
     // Operations that require authentication start here
 
