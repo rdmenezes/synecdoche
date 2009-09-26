@@ -17,6 +17,9 @@
 
 #include <cstring>
 
+#include <sstream>
+#include <string>
+
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestAssert.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -80,6 +83,7 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE(TestMioFileAdapter);
     CPPUNIT_TEST(testTestFuncStandalone);
     CPPUNIT_TEST(testWrapper);
+    CPPUNIT_TEST(testEmpty);
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -104,6 +108,15 @@ class TestMioFileAdapter: public CppUnit::TestFixture
         std::ostringstream oss;
         funcUsingMiofile(MiofileAdapter(oss), 42);
         CPPUNIT_ASSERT_EQUAL(std::string("Test42"), oss.str());
+    }
+    void noop(MIOFILE& out) {
+        ;
+    }
+    void testEmpty() {
+        std::ostringstream oss;
+        noop(MiofileAdapter(oss));
+
+        CPPUNIT_ASSERT(oss.str().empty());
     }
 };
 
