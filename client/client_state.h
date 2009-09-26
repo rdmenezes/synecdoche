@@ -407,7 +407,7 @@ public:
     void check_anonymous();
     int parse_app_info(PROJECT* p, FILE* in);
     int write_state_gui(MIOFILE& f) const;
-    int write_file_transfers_gui(MIOFILE& f) const;
+    int write_file_transfers_gui(std::ostream& out) const;
     int write_tasks_gui(MIOFILE& f) const;
 /// @}
 

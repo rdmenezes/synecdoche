@@ -24,6 +24,8 @@
 #include <cstring>
 #include <errno.h>
 
+#include <ostream>
+
 #include "client_state.h"
 
 #include "miofile.h"
@@ -823,19 +825,18 @@ int CLIENT_STATE::write_tasks_gui(MIOFILE& f) const {
     return 0;
 }
 
-int CLIENT_STATE::write_file_transfers_gui(MIOFILE& f) const {
-    unsigned int i;
+int CLIENT_STATE::write_file_transfers_gui(std::ostream& out) const {
+    out << "<file_transfers>\n";
 
-    f.printf("<file_transfers>\n");
-    for (i=0; i<file_infos.size(); i++) {
+    for (size_t i=0; i<file_infos.size(); i++) {
         const FILE_INFO* fip = file_infos[i];
         if (fip->pers_file_xfer
            || (fip->upload_when_present && fip->status == FILE_PRESENT && !fip->uploaded)
         ) {
-            fip->write_gui(f);
+            fip->write_gui(out);
         }
     }
-    f.printf("</file_transfers>\n");
+    out << "</file_transfers>\n";
 
     return 0;
 }
