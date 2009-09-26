@@ -70,8 +70,10 @@ public:
         char* p;
         int n;
         m.get_buf(p, n);
-        stream.write(p, n);
-        free(p);
+        if (p) {
+            stream.write(p, n);
+            free(p);
+        }
     }
 };
 
