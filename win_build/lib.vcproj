@@ -646,6 +646,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\lib\miofile_wrap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\lib\network.h"
 				>
 			</File>
