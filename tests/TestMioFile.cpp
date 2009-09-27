@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+/// \file
+/// \ingroup tests
+/// Unit tests for MIOFILE, MFILE, and the temporary adapters for iostreams.
+
 #include <cstring>
 
 #include <sstream>
@@ -28,8 +32,11 @@
 #include "lib/mfile.h"
 #include "lib/miofile_wrap.h"
 
-/* These tests are incomplete; but I plan to get rid of MIOFILE and MFILE anyway. */
+// These tests are incomplete; but I plan to get rid of MIOFILE and MFILE anyway.
 
+/// Unit tests for MFILE.
+/// Currently there is only one test, and it doesn't do much.
+/// \ingroup tests
 class TestMfile: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestMfile);
@@ -52,6 +59,9 @@ class TestMfile: public CppUnit::TestFixture
         free(p);
     }
 };
+/// Unit tests for MIOFILE.
+/// Currently there is only one test, and it doesn't do much.
+/// \ingroup tests
 class TestMioFile: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestMioFile);
@@ -78,40 +88,37 @@ class TestMioFile: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL((void*)0, (void*)retval);
     }
 };
+/// Unit tests for MiofileAdapter.
+/// Currently only tests MiofileAdapter (to wrap an ostream and be passed in
+/// place of a MIOFILE). When new adapters are made, this class may be renamed
+/// "TestMioFileAdapters" (plural) and test them all.
+/// \ingroup tests
 class TestMioFileAdapter: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestMioFileAdapter);
-    CPPUNIT_TEST(testTestFuncStandalone);
     CPPUNIT_TEST(testWrapper);
     CPPUNIT_TEST(testEmpty);
     CPPUNIT_TEST_SUITE_END();
 
   public:
-    void funcUsingMiofile(MIOFILE& out, int n) {
-        out.printf("Test%d", n);
+    /// Writes \a str to the given MIOFILE. Helper function for the actual
+    /// tests.
+    void funcUsingMiofile(MIOFILE& out, const char* str) {
+        out.printf("%s", str);
     }
-    void testTestFuncStandalone() {
-        MIOFILE mf;
-        MFILE m;
-        mf.init_mfile(&m);
-
-        funcUsingMiofile(mf, 42);
-        
-        char* p; int n;
-        m.get_buf(p, n);
-        CPPUNIT_ASSERT(0 != p);
-        CPPUNIT_ASSERT_EQUAL(6, n);
-        CPPUNIT_ASSERT(strcmp("Test42", p) == 0);
-        free(p);
-    }
+    /// Tests MiofileAdapter by using it with a stringstream, passing the
+    /// adapter to funcUsingMiofile(), and checking the resulting string.
     void testWrapper() {
         std::ostringstream oss;
-        funcUsingMiofile(MiofileAdapter(oss), 42);
-        CPPUNIT_ASSERT_EQUAL(std::string("Test42"), oss.str());
+        funcUsingMiofile(MiofileAdapter(oss), "foobar");
+        CPPUNIT_ASSERT_EQUAL(std::string("foobar"), oss.str());
     }
+    /// Does nothing. Used in testEmpty().
     void noop(MIOFILE& out) {
         ;
     }
+    /// Tests that MiofileAdapter works correctly when passed to a function that
+    /// doesn't actually write to the MIOFILE.
     void testEmpty() {
         std::ostringstream oss;
         noop(MiofileAdapter(oss));

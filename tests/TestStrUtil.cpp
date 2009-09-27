@@ -15,12 +15,16 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+/// \file
+/// Unit tests for lib/str_util.h
+
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestAssert.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "lib/str_util.h"
 
+/// Unit tests for several functions in lib/str_util.h.
 class TestStrUtil: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestStrUtil);
@@ -32,6 +36,9 @@ class TestStrUtil: public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE_END();
 
   public:
+    /// Tests basic usage of strip_whitespace().
+    /// \note Only the std::string overload is being tested here. However, the
+    /// char* overload is implemented by calling the string overload...
     void testStripWsStdString()
     {
         std::string input;
@@ -55,6 +62,8 @@ class TestStrUtil: public CppUnit::TestFixture
         strip_whitespace(input);
         CPPUNIT_ASSERT_EQUAL(std::string("test"), input);
     }
+    /// Tests the starts_with() function.
+    /// It checks normal situations, and corner cases like empty strings.
     void testStartsWith()
     {
         CPPUNIT_ASSERT_EQUAL(true, starts_with("preteststring", "pre"));
@@ -69,6 +78,8 @@ class TestStrUtil: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL(true, starts_with("foo", ""));
         CPPUNIT_ASSERT_EQUAL(true, starts_with("", ""));
     }
+    /// Tests the ends_with() function.
+    /// It checks normal situations, and corner cases like empty strings.
     void testEndsWith()
     {
         CPPUNIT_ASSERT_EQUAL(true, ends_with("teststringpost", "post"));
@@ -82,6 +93,8 @@ class TestStrUtil: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL(true, ends_with("foo", ""));
         CPPUNIT_ASSERT_EQUAL(true, ends_with("", ""));
     }
+    /// Tests the parse_command_line() function, passing two arguments with no
+    /// quotes.
     void testCmdLineParse()
     {
         std::list<std::string> args = parse_command_line("simple test");
@@ -91,6 +104,10 @@ class TestStrUtil: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL(std::string("simple"), *it++);
         CPPUNIT_ASSERT_EQUAL(std::string("test"), *it++);
     }
+    /// Tests parse_command_line() with the last argument being a single
+    /// character. This functionality was broken, crashing workunits for some
+    /// BOINC projects.
+    /// \sa Synecdoche issue 59.
     void testCmdLineParseSingleCharLast()
     {
         std::list<std::string> args = parse_command_line("foo --nthreads 2");
