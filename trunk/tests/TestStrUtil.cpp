@@ -36,7 +36,7 @@ class TestStrUtil: public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE_END();
 
   public:
-    /// Tests basic usage of strip_whitespace().
+    /// \test Basic usage of strip_whitespace().
     /// \note Only the std::string overload is being tested here. However, the
     /// char* overload is implemented by calling the string overload...
     void testStripWsStdString()
@@ -62,7 +62,7 @@ class TestStrUtil: public CppUnit::TestFixture
         strip_whitespace(input);
         CPPUNIT_ASSERT_EQUAL(std::string("test"), input);
     }
-    /// Tests the starts_with() function.
+    /// \test Tests the starts_with() function.
     /// It checks normal situations, and corner cases like empty strings.
     void testStartsWith()
     {
@@ -78,7 +78,7 @@ class TestStrUtil: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL(true, starts_with("foo", ""));
         CPPUNIT_ASSERT_EQUAL(true, starts_with("", ""));
     }
-    /// Tests the ends_with() function.
+    /// \test Tests the ends_with() function.
     /// It checks normal situations, and corner cases like empty strings.
     void testEndsWith()
     {
@@ -93,8 +93,8 @@ class TestStrUtil: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL(true, ends_with("foo", ""));
         CPPUNIT_ASSERT_EQUAL(true, ends_with("", ""));
     }
-    /// Tests the parse_command_line() function, passing two arguments with no
-    /// quotes.
+    /// \test Calls parse_command_line() in the simplest situation, passing two
+    /// arguments with no quotes.
     void testCmdLineParse()
     {
         std::list<std::string> args = parse_command_line("simple test");
@@ -104,10 +104,10 @@ class TestStrUtil: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL(std::string("simple"), *it++);
         CPPUNIT_ASSERT_EQUAL(std::string("test"), *it++);
     }
-    /// Tests parse_command_line() with the last argument being a single
-    /// character. This functionality was broken, crashing workunits for some
-    /// BOINC projects.
-    /// \sa Synecdoche issue 59.
+    /// \test Calls parse_command_line() with a single character as the last
+    /// argument. This functionality was broken before, crashing workunits for
+    /// some BOINC projects.
+    /// \sa Synecdoche \issue{59}.
     void testCmdLineParseSingleCharLast()
     {
         std::list<std::string> args = parse_command_line("foo --nthreads 2");

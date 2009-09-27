@@ -16,7 +16,6 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 /// \file
-/// \ingroup tests
 /// Unit tests for MIOFILE, MFILE, and the temporary adapters for iostreams.
 
 #include <cstring>
@@ -36,7 +35,6 @@
 
 /// Unit tests for MFILE.
 /// Currently there is only one test, and it doesn't do much.
-/// \ingroup tests
 class TestMfile: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestMfile);
@@ -61,7 +59,6 @@ class TestMfile: public CppUnit::TestFixture
 };
 /// Unit tests for MIOFILE.
 /// Currently there is only one test, and it doesn't do much.
-/// \ingroup tests
 class TestMioFile: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestMioFile);
@@ -92,7 +89,6 @@ class TestMioFile: public CppUnit::TestFixture
 /// Currently only tests MiofileAdapter (to wrap an ostream and be passed in
 /// place of a MIOFILE). When new adapters are made, this class may be renamed
 /// "TestMioFileAdapters" (plural) and test them all.
-/// \ingroup tests
 class TestMioFileAdapter: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestMioFileAdapter);
@@ -106,8 +102,8 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     void funcUsingMiofile(MIOFILE& out, const char* str) {
         out.printf("%s", str);
     }
-    /// Tests MiofileAdapter by using it with a stringstream, passing the
-    /// adapter to funcUsingMiofile(), and checking the resulting string.
+    /// \test Creates a MiofileAdapter with a stringstream, passes the adapter
+    /// to funcUsingMiofile(), and checks the resulting string.
     void testWrapper() {
         std::ostringstream oss;
         funcUsingMiofile(MiofileAdapter(oss), "foobar");
@@ -117,8 +113,10 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     void noop(MIOFILE& out) {
         ;
     }
-    /// Tests that MiofileAdapter works correctly when passed to a function that
-    /// doesn't actually write to the MIOFILE.
+    /// \test Passes a MiofileAdapter to a function that doesn't actually write
+    /// to the MIOFILE, and checks if the string is empty. It's unlikely that
+    /// the string wouldn't be empty; the real test is that nothing \e crashes
+    /// while running this code.
     void testEmpty() {
         std::ostringstream oss;
         noop(MiofileAdapter(oss));

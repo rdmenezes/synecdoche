@@ -19,7 +19,6 @@
 
 /// \file
 /// CppUnit test runner.
-/// \ingroup tests
 
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
