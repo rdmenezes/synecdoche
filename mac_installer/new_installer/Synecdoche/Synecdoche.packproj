@@ -1872,11 +1872,11 @@
 									<key>IFPkgDescriptionDescription</key>
 									<string>Data folder with optional files to enable more functionality by default.
 
-Currently only contains a list of projects.</string>
+Contains a list of projects and a certificate file to allow attaching to secure connection projects such as World Community Grid.</string>
 									<key>IFPkgDescriptionTitle</key>
 									<string>Synecdoche Data</string>
 									<key>IFPkgDescriptionVersion</key>
-									<string>1.0</string>
+									<string>1.1</string>
 								</dict>
 							</dict>
 							<key>Display Information</key>
@@ -1892,7 +1892,7 @@ Currently only contains a list of projects.</string>
 								<key>CFBundleName</key>
 								<string>Synecdoche Data</string>
 								<key>CFBundleShortVersionString</key>
-								<string>1.0</string>
+								<string>1.1</string>
 							</dict>
 							<key>Options</key>
 							<dict>
@@ -1920,7 +1920,7 @@ Currently only contains a list of projects.</string>
 								<key>IFMajorVersion</key>
 								<integer>1</integer>
 								<key>IFMinorVersion</key>
-								<integer>0</integer>
+								<integer>1</integer>
 							</dict>
 						</dict>
 					</dict>
@@ -2140,7 +2140,7 @@ Currently only contains a list of projects.</string>
 						<key>Status</key>
 						<true/>
 						<key>TestObject</key>
-						<string>7</string>
+						<string>6</string>
 						<key>TestOperator</key>
 						<string>&lt;</string>
 					</dict>
@@ -2157,7 +2157,7 @@ Currently only contains a list of projects.</string>
 						<key>IFPkgDescriptionDescription</key>
 						<string>Synecdoche is a platform for distributed computing grids. Applications for Synecdoche include volunteer computing projects, and virtual supercomputing for universities and research organizations.
 
-Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC). The goals of the fork are to:
+Synecdoche is a fork of Berkeley Open Infrastructure for Network Computing (BOINC). The goals of the fork are to:
 - Remain compatible with BOINC
 - Provide better usability
 - Work on bugs and features ignored by BOINC
@@ -2171,7 +2171,7 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 				<key>Display Information</key>
 				<dict>
 					<key>CFBundleGetInfoString</key>
-					<string>0.1.2 RC, Copyright © 2009 Synecdoche contributors</string>
+					<string>0.1.2, Copyright © 2009 Synecdoche contributors</string>
 					<key>CFBundleIconFile</key>
 					<string>../../../graphics/icons/synecdoche_installer.icns</string>
 					<key>CFBundleIconFile Path Type</key>
@@ -2181,7 +2181,7 @@ Synecdoche is a fork of Berkely Open Infrastructure for Network Computing (BOINC
 					<key>CFBundleName</key>
 					<string>Synecdoche</string>
 					<key>CFBundleShortVersionString</key>
-					<string>0.1.2 RC</string>
+					<string>0.1.2</string>
 				</dict>
 				<key>Version</key>
 				<dict>
