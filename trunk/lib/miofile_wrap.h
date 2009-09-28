@@ -30,15 +30,18 @@
 /// Adapts a std::ostream to a MIOFILE so that functions that weren't yet
 /// modified to use std::ostream can keep working.
 ///
-/// This adapter is designed to be used as a temporary object in an argument
-/// list. Pass the ostream to the constructor. The constructor will create a
-/// new internal MIOFILE backed by an MFILE. The returned object is convertible
-/// to MIOFILE via an explicit conversion operator, which returns the internal
-/// object. When the temporary MiofileAdapter is destructed, the data that was
-/// written to the MIOFILE will be written to the ostream.
+/// This adapter should be used as a temporary object in an argument list.
+/// Pass the ostream to the constructor.
+/// The constructor will create a new internal MIOFILE backed by an MFILE.
+/// This adapter object is convertible to MIOFILE&
+/// via an explicit conversion operator,
+/// which returns the internal MIOFILE.
+/// When the temporary MiofileAdapter is destructed,
+/// the data that was written to the MIOFILE will be written to the ostream.
 ///
-/// It's your responsibility to ensure the std::ostream passed to the
-/// constructor remains alive until the MiofileAdapter is destroyed.
+/// It's your responsibility to ensure that the std::ostream
+/// passed to the constructor remains alive
+/// until the MiofileAdapter is destroyed.
 ///
 /// \par Example
 /// \code
