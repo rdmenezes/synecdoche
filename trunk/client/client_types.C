@@ -1578,39 +1578,31 @@ int RESULT::write(MIOFILE& out, bool to_server) const {
     return 0;
 }
 
-int RESULT::write_gui(MIOFILE& out) const {
-    out.printf(
+int RESULT::write_gui(std::ostream& out) const {
+    out <<
         "<result>\n"
-        "    <name>%s</name>\n"
-        "    <wu_name>%s</wu_name>\n"
-        "    <project_url>%s</project_url>\n"
-        "    <final_cpu_time>%f</final_cpu_time>\n"
-        "    <exit_status>%d</exit_status>\n"
-        "    <state>%d</state>\n"
-        "    <received_time>%f</received_time>\n"
-        "    <report_deadline>%f</report_deadline>\n"
-        "    <estimated_cpu_time_remaining>%f</estimated_cpu_time_remaining>\n",
-        name,
-        wu_name,
-        project->get_master_url().c_str(),
-        final_cpu_time,
-        exit_status,
-        state(),
-        received_time,
-        report_deadline,
-        estimated_cpu_time_remaining()
-    );
-    if (got_server_ack) out.printf("    <got_server_ack/>\n");
-    if (ready_to_report) out.printf("    <ready_to_report/>\n");
-    if (completed_time) out.printf("    <completed_time>%f</completed_time>\n", completed_time);
-    if (suspended_via_gui) out.printf("    <suspended_via_gui/>\n");
-    if (project->suspended_via_gui) out.printf("    <project_suspended_via_gui/>\n");
-    if (edf_scheduled) out.printf("    <edf_scheduled/>\n");
+        "    <name>"            << name             << "</name>\n"
+        "    <wu_name>"         << wu_name          << "</wu_name>\n"
+        "    <project_url>"     << project->get_master_url() << "</project_url>\n"
+        "    <final_cpu_time>"  << final_cpu_time   << "</final_cpu_time>\n"
+        "    <exit_status>"     << exit_status      << "</exit_status>\n"
+        "    <state>"           << state()          << "</state>\n"
+        "    <received_time>"   << received_time    << "</received_time>\n"
+        "    <report_deadline>" << report_deadline  << "</report_deadline>\n"
+        "    <estimated_cpu_time_remaining>" << estimated_cpu_time_remaining() << "</estimated_cpu_time_remaining>\n"
+    ;
+    if (got_server_ack)     out << "    <got_server_ack/>\n";
+    if (ready_to_report)    out << "    <ready_to_report/>\n";
+    if (completed_time)     out << "    <completed_time>" << completed_time << "</completed_time>\n";
+    if (suspended_via_gui)  out << "    <suspended_via_gui/>\n";
+    if (project->suspended_via_gui) out << "    <project_suspended_via_gui/>\n";
+    if (edf_scheduled)      out << "    <edf_scheduled/>\n";
+
     const ACTIVE_TASK* atp = gstate.active_tasks.lookup_result(this);
     if (atp) {
-        atp->write_gui(out);
+        atp->write_gui(MiofileFromOstream(out));
     }
-    out.printf("</result>\n");
+    out << "</result>\n";
     return 0;
 }
 

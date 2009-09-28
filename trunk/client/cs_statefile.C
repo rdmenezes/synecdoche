@@ -29,6 +29,7 @@
 #include "client_state.h"
 
 #include "miofile.h"
+#include "miofile_wrap.h"
 #include "mfile.h"
 #include "parse.h"
 #include "str_util.h"
@@ -787,7 +788,7 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) const {
             if (workunits[i]->project == p) workunits[i]->write(f);
         }
         for (i=0; i<results.size(); i++) {
-            if (results[i]->project == p) results[i]->write_gui(f);
+            if (results[i]->project == p) results[i]->write_gui(OstreamFromMiofile(f));
         }
     }
     f.printf(
@@ -815,12 +816,10 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) const {
     return 0;
 }
 
-int CLIENT_STATE::write_tasks_gui(MIOFILE& f) const {
-    unsigned int i;
-
-    for (i=0; i<results.size(); i++) {
+int CLIENT_STATE::write_tasks_gui(std::ostream& out) const {
+    for (size_t i=0; i<results.size(); i++) {
         const RESULT* rp = results[i];
-        rp->write_gui(f);
+        rp->write_gui(out);
     }
     return 0;
 }
