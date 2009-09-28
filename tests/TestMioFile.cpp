@@ -87,12 +87,9 @@ class TestMioFile: public CppUnit::TestFixture
     }
 };
 
-/// Unit tests for MiofileAdapter.
+/// Unit tests for the Miofile-iostream adapters.
 ///
-/// Currently only tests MiofileAdapter
-/// (to wrap an ostream and be passed in place of a MIOFILE).
-/// When new adapters are made, this class may be renamed
-/// "TestMioFileAdapters" (plural) and test them all.
+/// Currently tests MiofileFromOstream and OstreamFromMiofile.
 class TestMioFileAdapter: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestMioFileAdapter);
@@ -124,35 +121,36 @@ class TestMioFileAdapter: public CppUnit::TestFixture
 
     /// @}
 
-    /// \test Tests basic use of MiofileAdapter to adapt an ostream
+    /// \test Tests basic use of MiofileFromOstream to adapt an ostream
     /// and pass it to a function that expects a MIOFILE.
     /// First it creates a stringstream.
-    /// Then it calls funcUsingMiofile(), giving it a MiofileAdapter created from the stream.
+    /// Then it calls funcUsingMiofile(), giving it an adapter object created from the stream.
     /// Finally, it compares the contents of the stream's string
     /// with the text written to the MIOFILE.
     void testWrapper() {
         std::ostringstream oss;
-        funcUsingMiofile(MiofileAdapter(oss), "foobar");
+        funcUsingMiofile(MiofileFromOstream(oss), "foobar");
         CPPUNIT_ASSERT_EQUAL(std::string("foobar"), oss.str());
     }
 
-    /// \test Passes a MiofileAdapter to a function that doesn't actually write
-    /// to the MIOFILE, and checks if the string is empty.
+    /// \test Passes a MiofileFromOstream adapter
+    /// to a function that doesn't actually write to the MIOFILE,
+    /// and checks if the string is empty.
     /// It's unlikely that the string wouldn't be empty;
     /// the real test is that nothing \e crashes while running this code.
     void testEmpty() {
         std::ostringstream oss;
-        noop(MiofileAdapter(oss));
+        noop(MiofileFromOstream(oss));
 
         CPPUNIT_ASSERT(oss.str().empty());
     }
 
-    /// \test Tests basic use of MiofileRevAdapter to adapt a MIOFILE
+    /// \test Tests basic use of OstreamFromMiofile to adapt a MIOFILE
     /// and pass it to a function that expects an ostream.
     ///
     /// First it creates a MIOFILE attached to an MFILE.
     /// Then it calls funcUsingOstream(),
-    /// giving it a MiofileRevAdapter created from the MIOFILE.
+    /// giving it an OstreamFromMiofile adapter created from the MIOFILE.
     /// Finally, it compares the contents of the MFILE
     /// with the text written to the ostream.
     void testReverseWrapper() {
@@ -160,7 +158,7 @@ class TestMioFileAdapter: public CppUnit::TestFixture
         MFILE m;
         mf.init_mfile(&m);
 
-        funcUsingOstream(MiofileRevAdapter(mf), "test");
+        funcUsingOstream(OstreamFromMiofile(mf), "test");
 
         char* p;
         int n;

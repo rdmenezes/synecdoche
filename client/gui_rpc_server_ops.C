@@ -968,21 +968,21 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<exchange_versions")) {
         handle_exchange_versions(reply);
     } else if (match_tag(request_msg, "<get_state")) {
-        gstate.write_state_gui(MiofileAdapter(reply));
+        gstate.write_state_gui(MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<get_results")) {
         reply << "<results>\n";
-        gstate.write_tasks_gui(MiofileAdapter(reply));
+        gstate.write_tasks_gui(MiofileFromOstream(reply));
         reply << "</results>\n";
     } else if (match_tag(request_msg, "<get_screensaver_tasks")) {
-        handle_get_screensaver_tasks(MiofileAdapter(reply));
+        handle_get_screensaver_tasks(MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<result_show_graphics")) {
         handle_result_show_graphics(request_msg, reply);
     } else if (match_tag(request_msg, "<get_file_transfers")) {
         gstate.write_file_transfers_gui(reply);
     } else if (match_tag(request_msg, "<get_simple_gui_info")) {
-        handle_get_simple_gui_info(MiofileAdapter(reply));
+        handle_get_simple_gui_info(MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<get_project_status")) {
-        handle_get_project_status(MiofileAdapter(reply));
+        handle_get_project_status(MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<get_disk_usage")) {
         handle_get_disk_usage(reply);
     } else if (match_tag(request_msg, "<get_messages")) {
@@ -990,7 +990,7 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<get_message_count")) {
         handle_get_message_count(reply);
     } else if (match_tag(request_msg, "<get_host_info")) {
-        handle_get_host_info(request_msg, MiofileAdapter(reply));
+        handle_get_host_info(request_msg, MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<get_statistics")) {
         handle_get_statistics(request_msg, reply);
 #ifdef ENABLE_UPDATE_CHECK
@@ -1017,7 +1017,7 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<run_benchmarks")) {
         handle_run_benchmarks(request_msg, reply);
     } else if (match_tag(request_msg, "<get_proxy_settings")) {
-        handle_get_proxy_settings(request_msg, MiofileAdapter(reply));
+        handle_get_proxy_settings(request_msg, MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<set_proxy_settings")) {
         handle_set_proxy_settings(request_msg, reply);
     } else if (match_tag(request_msg, "<network_available")) {
@@ -1050,9 +1050,9 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<get_project_init_status")) {
         handle_get_project_init_status(request_msg, reply);
     } else if (match_tag(request_msg, "<get_global_prefs_file")) {
-        handle_get_global_prefs_file(MiofileAdapter(reply));
+        handle_get_global_prefs_file(MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<get_global_prefs_working")) {
-        handle_get_global_prefs_working(MiofileAdapter(reply));
+        handle_get_global_prefs_working(MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<get_global_prefs_override")) {
         handle_get_global_prefs_override(reply);
     } else if (match_tag(request_msg, "<set_global_prefs_override")) {

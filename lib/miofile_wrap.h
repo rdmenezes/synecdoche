@@ -37,12 +37,12 @@
 /// This adapter object is convertible to MIOFILE&
 /// via an explicit conversion operator,
 /// which returns the internal MIOFILE.
-/// When the temporary MiofileAdapter is destructed,
+/// When the temporary MiofileFromOstream is destructed,
 /// the data that was written to the MIOFILE will be written to the ostream.
 ///
 /// It's your responsibility to ensure that the std::ostream
 /// passed to the constructor remains alive
-/// until the MiofileAdapter is destroyed.
+/// until the adapter is destroyed.
 ///
 /// \par Example
 /// \code
@@ -52,17 +52,17 @@
 ///
 /// void write_bar(std::ostream& out) {
 ///     out << "<bar>";
-///     write_foo(MiofileAdapter(out));
+///     write_foo(MiofileFromOstream(out));
 ///     out << "</bar>";
 /// }
 /// \endcode
 
-class MiofileAdapter {
+class MiofileFromOstream {
     MIOFILE mf;
     MFILE m;
     std::ostream& stream;
 public:
-    MiofileAdapter(std::ostream& stream):
+    MiofileFromOstream(std::ostream& stream):
         stream(stream)
     {
         mf.init_mfile(&m);
@@ -70,7 +70,7 @@ public:
     operator MIOFILE&() {
         return mf;
     }
-    ~MiofileAdapter() {
+    ~MiofileFromOstream() {
         char* p;
         int n;
         m.get_buf(p, n);
@@ -96,7 +96,7 @@ public:
 ///
 /// It's your responsibility to ensure that the MIOFILE
 /// passed to the constructor, and its associated MFILE if any,
-/// remain alive until the MiofileRevAdapter is destroyed.
+/// remain alive until the adapter is destroyed.
 ///
 /// \par Example
 /// \code
@@ -106,23 +106,23 @@ public:
 ///
 /// void write_bar(MIOFILE& out) {
 ///     out.printf("<bar>");
-///     write_foo(MiofileRevAdapter(out));
+///     write_foo(OstreamFromMiofile(out));
 ///     out.printf("</bar>");
 /// }
 /// \endcode
 
-class MiofileRevAdapter {
+class OstreamFromMiofile {
     MIOFILE& mf;
     std::ostringstream oss;
 public:
-    MiofileRevAdapter(MIOFILE& miofile):
+    OstreamFromMiofile(MIOFILE& miofile):
         mf(miofile)
     {
     }
     operator std::ostream&() {
         return oss;
     }
-    ~MiofileRevAdapter() {
+    ~OstreamFromMiofile() {
         mf.printf("%s", oss.str().c_str());
     }
 };

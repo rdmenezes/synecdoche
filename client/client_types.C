@@ -865,7 +865,7 @@ int FILE_INFO::write_gui(std::ostream& out) const {
     if (marked_for_delete) out << "    <marked_for_delete/>\n";
 
     if (pers_file_xfer) {
-        pers_file_xfer->write(MiofileAdapter(out));
+        pers_file_xfer->write(MiofileFromOstream(out));
     }
     out << "</file_transfer>\n";
     return 0;
