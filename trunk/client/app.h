@@ -231,7 +231,7 @@ public:
     int copy_output_files();
 
     int write(MIOFILE& fout) const;
-    int write_gui(MIOFILE& fout) const;
+    int write_gui(std::ostream& out) const;
     int parse(MIOFILE& fin);
     
     /// Read the task state file in case it's more recent then the main state file.
