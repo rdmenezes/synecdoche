@@ -57,6 +57,7 @@ class TestMfile: public CppUnit::TestFixture
         free(p);
     }
 };
+
 /// Unit tests for MIOFILE.
 /// Currently there is only one test, and it doesn't do much.
 class TestMioFile: public CppUnit::TestFixture
@@ -85,6 +86,7 @@ class TestMioFile: public CppUnit::TestFixture
         CPPUNIT_ASSERT_EQUAL((void*)0, (void*)retval);
     }
 };
+
 /// Unit tests for MiofileAdapter.
 /// Currently only tests MiofileAdapter (to wrap an ostream and be passed in
 /// place of a MIOFILE). When new adapters are made, this class may be renamed
@@ -97,22 +99,40 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE_END();
 
   public:
-    /// Writes \a str to the given MIOFILE. Helper function for the actual
-    /// tests.
+    /// \name Helpers
+    /// @{
+
+    /// Writes \a str to the given MIOFILE.
+    /// Helper function for the actual tests.
     void funcUsingMiofile(MIOFILE& out, const char* str) {
         out.printf("%s", str);
     }
-    /// \test Creates a MiofileAdapter with a stringstream, passes the adapter
-    /// to funcUsingMiofile(), and checks the resulting string.
+
+    /// Does nothing. Used in testEmpty().
+    void noop(MIOFILE& out) {
+        ;
+    }
+
+    /// Writes \a str to the given std::ostream.
+    /// Helper function for the actual tests.
+    void funcUsingOstream(std::ostream& out, const char* str) {
+        out << str;
+    }
+
+    /// @}
+
+    /// \test Tests basic use of MiofileAdapter to adapt an ostream and pass
+    /// it to a function that expects a MIOFILE.
+    /// First it creates a stringstream. Then it calls funcUsingMiofile(),
+    /// giving it a MiofileAdapter created from the stream. Finally, it compares
+    /// the contents of the stream's string with the text written to the
+    /// MIOFILE.
     void testWrapper() {
         std::ostringstream oss;
         funcUsingMiofile(MiofileAdapter(oss), "foobar");
         CPPUNIT_ASSERT_EQUAL(std::string("foobar"), oss.str());
     }
-    /// Does nothing. Used in testEmpty().
-    void noop(MIOFILE& out) {
-        ;
-    }
+
     /// \test Passes a MiofileAdapter to a function that doesn't actually write
     /// to the MIOFILE, and checks if the string is empty. It's unlikely that
     /// the string wouldn't be empty; the real test is that nothing \e crashes
