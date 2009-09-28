@@ -1600,7 +1600,7 @@ int RESULT::write_gui(std::ostream& out) const {
 
     const ACTIVE_TASK* atp = gstate.active_tasks.lookup_result(this);
     if (atp) {
-        atp->write_gui(MiofileFromOstream(out));
+        atp->write_gui(out);
     }
     out << "</result>\n";
     return 0;

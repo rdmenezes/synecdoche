@@ -458,52 +458,36 @@ int ACTIVE_TASK::write(MIOFILE& fout) const {
     return 0;
 }
 
-int ACTIVE_TASK::write_gui(MIOFILE& fout) const {
-    fout.printf(
-        "<active_task>\n"
-        "    <active_task_state>%d</active_task_state>\n"
-        "    <app_version_num>%d</app_version_num>\n"
-        "    <slot>%d</slot>\n"
-        "    <scheduler_state>%d</scheduler_state>\n"
-        "    <checkpoint_cpu_time>%f</checkpoint_cpu_time>\n"
-        "    <fraction_done>%f</fraction_done>\n"
-        "    <current_cpu_time>%f</current_cpu_time>\n"
-        "    <swap_size>%f</swap_size>\n"
-        "    <working_set_size>%f</working_set_size>\n"
-        "    <working_set_size_smoothed>%f</working_set_size_smoothed>\n"
-        "    <page_fault_rate>%f</page_fault_rate>\n"
-        "%s"
-        "%s",
-        task_state(),
-        app_version->version_num,
-        slot,
-        scheduler_state,
-        checkpoint_cpu_time,
-        fraction_done,
-        current_cpu_time,
-        procinfo.swap_size,
-        procinfo.working_set_size,
-        procinfo.working_set_size_smoothed,
-        procinfo.page_fault_rate,
-        too_large?"   <too_large/>\n":"",
-        needs_shmem?"   <needs_shmem/>\n":""
-    );
+int ACTIVE_TASK::write_gui(std::ostream& out) const {
+    out << "<active_task>\n";
+    out <<
+        "    <active_task_state>" << task_state() << "</active_task_state>\n"                      
+        "    <app_version_num>" << app_version->version_num << "</app_version_num>\n"          
+        "    <slot>" << slot << "</slot>\n"                              
+        "    <scheduler_state>" << scheduler_state << "</scheduler_state>\n"                   
+        "    <checkpoint_cpu_time>" << checkpoint_cpu_time << "</checkpoint_cpu_time>\n"               
+        "    <fraction_done>" << fraction_done << "</fraction_done>\n"                     
+        "    <current_cpu_time>" << current_cpu_time << "</current_cpu_time>\n"                  
+        "    <swap_size>" << procinfo.swap_size << "</swap_size>\n"                
+        "    <working_set_size>" << procinfo.working_set_size << "</working_set_size>\n"         
+        "    <working_set_size_smoothed>" << procinfo.working_set_size_smoothed << "</working_set_size_smoothed>\n"
+        "    <page_fault_rate>" << procinfo.page_fault_rate << "</page_fault_rate>\n"          
+    ;
+    if (too_large) {
+        out << "   <too_large/>\n";
+    }
+    if (needs_shmem) {
+        out << "   <needs_shmem/>\n";
+    }
     if (strlen(app_version->graphics_exec_path)) {
-        fout.printf(
-            "   <graphics_exec_path>%s</graphics_exec_path>\n"
-            "   <slot_path>%s</slot_path>\n",
-            app_version->graphics_exec_path,
-            slot_path.c_str()
-        );
+        out << "   <graphics_exec_path>" << app_version->graphics_exec_path << "</graphics_exec_path>\n";
+        out << "   <slot_path>" << slot_path << "</slot_path>\n";
     }
     if (supports_graphics() && !gstate.disable_graphics) {
-        fout.printf(
-            "   <supports_graphics/>\n"
-            "   <graphics_mode_acked>%d</graphics_mode_acked>\n",
-            graphics_mode_acked
-        );
+        out << "   <supports_graphics/>\n";
+        out << "   <graphics_mode_acked>" << graphics_mode_acked << "</graphics_mode_acked>\n";
     }
-    fout.printf("</active_task>\n");
+    out << "</active_task>\n";
     return 0;
 }
 
