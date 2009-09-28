@@ -116,14 +116,14 @@ static void handle_exchange_versions(std::ostream& out) {
     "</server_version>\n";
 }
 
-static void handle_get_simple_gui_info(MIOFILE& fout) {
-    fout.printf("<simple_gui_info>\n");
+static void handle_get_simple_gui_info(std::ostream& out) {
+    out << "<simple_gui_info>\n";
     for (size_t i=0; i<gstate.projects.size(); i++) {
         const PROJECT* p = gstate.projects[i];
-        p->write_state(fout, true);
+        p->write_state(MiofileFromOstream(out), true);
     }
-    gstate.write_tasks_gui(fout);
-    fout.printf("</simple_gui_info>\n");
+    gstate.write_tasks_gui(out);
+    out << "</simple_gui_info>\n";
 }
 
 static void handle_get_project_status(MIOFILE& fout) {
@@ -489,21 +489,19 @@ static void handle_get_host_info(const char*, MIOFILE& fout) {
     gstate.host_info.write(fout, false);
 }
 
-static void handle_get_screensaver_tasks(MIOFILE& fout) {
-    fout.printf(
-        "<handle_get_screensaver_tasks>\n"
-        "    <suspend_reason>%d</suspend_reason>\n",
-        gstate.suspend_reason
-    );
+static void handle_get_screensaver_tasks(std::ostream& out) {
+    out << "<handle_get_screensaver_tasks>\n";
+    out << "    <suspend_reason>" << gstate.suspend_reason << "</suspend_reason>\n";
+
     for (size_t i=0; i<gstate.active_tasks.active_tasks.size(); i++) {
         const ACTIVE_TASK* atp = gstate.active_tasks.active_tasks[i];
         if ((atp->task_state() == PROCESS_EXECUTING) ||
                 ((atp->task_state() == PROCESS_SUSPENDED) &&
                         (gstate.suspend_reason & SUSPEND_REASON_CPU_USAGE_LIMIT))) {
-            atp->result->write_gui(fout);
+            atp->result->write_gui(out);
         }
     }
-    fout.printf("</handle_get_screensaver_tasks>\n");
+    out << "</handle_get_screensaver_tasks>\n";
 }
 
 static void handle_quit(const char*, std::ostream& out) {
@@ -971,16 +969,16 @@ int GUI_RPC_CONN::handle_rpc() {
         gstate.write_state_gui(MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<get_results")) {
         reply << "<results>\n";
-        gstate.write_tasks_gui(MiofileFromOstream(reply));
+        gstate.write_tasks_gui(reply);
         reply << "</results>\n";
     } else if (match_tag(request_msg, "<get_screensaver_tasks")) {
-        handle_get_screensaver_tasks(MiofileFromOstream(reply));
+        handle_get_screensaver_tasks(reply);
     } else if (match_tag(request_msg, "<result_show_graphics")) {
         handle_result_show_graphics(request_msg, reply);
     } else if (match_tag(request_msg, "<get_file_transfers")) {
         gstate.write_file_transfers_gui(reply);
     } else if (match_tag(request_msg, "<get_simple_gui_info")) {
-        handle_get_simple_gui_info(MiofileFromOstream(reply));
+        handle_get_simple_gui_info(reply);
     } else if (match_tag(request_msg, "<get_project_status")) {
         handle_get_project_status(MiofileFromOstream(reply));
     } else if (match_tag(request_msg, "<get_disk_usage")) {
