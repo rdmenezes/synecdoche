@@ -98,6 +98,7 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE(TestMioFileAdapter);
     CPPUNIT_TEST(testWrapper);
     CPPUNIT_TEST(testEmpty);
+    CPPUNIT_TEST(testReverseWrapper);
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -144,6 +145,32 @@ class TestMioFileAdapter: public CppUnit::TestFixture
         noop(MiofileAdapter(oss));
 
         CPPUNIT_ASSERT(oss.str().empty());
+    }
+
+    /// \test Tests basic use of MiofileRevAdapter to adapt a MIOFILE
+    /// and pass it to a function that expects an ostream.
+    ///
+    /// First it creates a MIOFILE attached to an MFILE.
+    /// Then it calls funcUsingOstream(),
+    /// giving it a MiofileRevAdapter created from the MIOFILE.
+    /// Finally, it compares the contents of the MFILE
+    /// with the text written to the ostream.
+    void testReverseWrapper() {
+        MIOFILE mf;
+        MFILE m;
+        mf.init_mfile(&m);
+
+        funcUsingOstream(MiofileRevAdapter(mf), "test");
+
+        char* p;
+        int n;
+        m.get_buf(p, n);
+
+        CPPUNIT_ASSERT(0 != p);
+        CPPUNIT_ASSERT_EQUAL(4, n);
+        CPPUNIT_ASSERT(memcmp("test", p, 4) == 0);
+
+        free(p);
     }
 };
 
