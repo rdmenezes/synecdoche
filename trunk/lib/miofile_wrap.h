@@ -23,6 +23,7 @@
 
 #include <cstdlib>
 #include <ostream>
+#include <sstream>
 
 #include "miofile.h"
 #include "mfile.h"
@@ -77,6 +78,52 @@ public:
             stream.write(p, n);
             free(p);
         }
+    }
+};
+
+/// Adapts a MIOFILE to a std::ostream so that functions that were already
+/// modified to use standard streams can still be called by functions not yet
+/// converted.
+///
+/// This adapter should be used as a temporary object in an argument list.
+/// Pass the MIOFILE to the constructor.
+/// The constructor will create an internal ostringstream.
+/// This class is convertible to std::ostream via an explicit conversion operator,
+/// which returns the internal stringstream.
+/// When this adapter is destructed,
+/// the data that was written to the stream
+/// will be written to the MIOFILE by calling printf.
+///
+/// It's your responsibility to ensure that the MIOFILE
+/// passed to the constructor, and its associated MFILE if any,
+/// remain alive until the MiofileRevAdapter is destroyed.
+///
+/// \par Example
+/// \code
+/// void write_foo(std::ostream& out) {
+///     out << "<foo/>";
+/// }
+///
+/// void write_bar(MIOFILE& out) {
+///     out.printf("<bar>");
+///     write_foo(MiofileRevAdapter(out));
+///     out.printf("</bar>");
+/// }
+/// \endcode
+
+class MiofileRevAdapter {
+    MIOFILE& mf;
+    std::ostringstream oss;
+public:
+    MiofileRevAdapter(MIOFILE& miofile):
+        mf(miofile)
+    {
+    }
+    operator std::ostream&() {
+        return oss;
+    }
+    ~MiofileRevAdapter() {
+        mf.printf("%s", oss.str().c_str());
     }
 };
 
