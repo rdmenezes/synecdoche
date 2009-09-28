@@ -88,8 +88,10 @@ class TestMioFile: public CppUnit::TestFixture
 };
 
 /// Unit tests for MiofileAdapter.
-/// Currently only tests MiofileAdapter (to wrap an ostream and be passed in
-/// place of a MIOFILE). When new adapters are made, this class may be renamed
+///
+/// Currently only tests MiofileAdapter
+/// (to wrap an ostream and be passed in place of a MIOFILE).
+/// When new adapters are made, this class may be renamed
 /// "TestMioFileAdapters" (plural) and test them all.
 class TestMioFileAdapter: public CppUnit::TestFixture
 {
@@ -121,12 +123,12 @@ class TestMioFileAdapter: public CppUnit::TestFixture
 
     /// @}
 
-    /// \test Tests basic use of MiofileAdapter to adapt an ostream and pass
-    /// it to a function that expects a MIOFILE.
-    /// First it creates a stringstream. Then it calls funcUsingMiofile(),
-    /// giving it a MiofileAdapter created from the stream. Finally, it compares
-    /// the contents of the stream's string with the text written to the
-    /// MIOFILE.
+    /// \test Tests basic use of MiofileAdapter to adapt an ostream
+    /// and pass it to a function that expects a MIOFILE.
+    /// First it creates a stringstream.
+    /// Then it calls funcUsingMiofile(), giving it a MiofileAdapter created from the stream.
+    /// Finally, it compares the contents of the stream's string
+    /// with the text written to the MIOFILE.
     void testWrapper() {
         std::ostringstream oss;
         funcUsingMiofile(MiofileAdapter(oss), "foobar");
@@ -134,9 +136,9 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     }
 
     /// \test Passes a MiofileAdapter to a function that doesn't actually write
-    /// to the MIOFILE, and checks if the string is empty. It's unlikely that
-    /// the string wouldn't be empty; the real test is that nothing \e crashes
-    /// while running this code.
+    /// to the MIOFILE, and checks if the string is empty.
+    /// It's unlikely that the string wouldn't be empty;
+    /// the real test is that nothing \e crashes while running this code.
     void testEmpty() {
         std::ostringstream oss;
         noop(MiofileAdapter(oss));
