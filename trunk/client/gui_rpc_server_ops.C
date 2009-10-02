@@ -59,6 +59,7 @@
 #include "network.h"
 #include "filesys.h"
 #include "version.h"
+#include "xml_write.h"
 
 #include "file_names.h"
 #include "client_msgs.h"
@@ -530,26 +531,23 @@ static void handle_get_statistics(const char*, std::ostream& out) {
     out << "</statistics>\n";
 }
 
-#define XMLTAG(tag, content) "   <"tag">" << (content) << "</"tag">\n"
 static void handle_get_cc_status(std::ostream& out) {
-    out <<
-        "<cc_status>\n"
-        XMLTAG("network_status",         net_status.network_status())
-        XMLTAG("ams_password_error",     gstate.acct_mgr_info.password_error?1:0)
-        XMLTAG("task_suspend_reason",    gstate.suspend_reason)
-        XMLTAG("network_suspend_reason", gstate.network_suspend_reason)
-        XMLTAG("task_mode",              gstate.run_mode.get_current())
-        XMLTAG("network_mode",           gstate.network_mode.get_current())
-        XMLTAG("task_mode_perm",         gstate.run_mode.get_perm())
-        XMLTAG("network_mode_perm",      gstate.network_mode.get_perm())
-        XMLTAG("task_mode_delay",        gstate.run_mode.delay())
-        XMLTAG("network_mode_delay",     gstate.network_mode.delay())
-        XMLTAG("disallow_attach",        config.disallow_attach?1:0)
-        XMLTAG("simple_gui_only",        config.simple_gui_only?1:0)
-        "</cc_status>\n"
+    out << "<cc_status>\n"
+        << XmlTag("network_status",         net_status.network_status())
+        << XmlTag("ams_password_error",     gstate.acct_mgr_info.password_error?1:0)
+        << XmlTag("task_suspend_reason",    gstate.suspend_reason)
+        << XmlTag("network_suspend_reason", gstate.network_suspend_reason)
+        << XmlTag("task_mode",              gstate.run_mode.get_current())
+        << XmlTag("network_mode",           gstate.network_mode.get_current())
+        << XmlTag("task_mode_perm",         gstate.run_mode.get_perm())
+        << XmlTag("network_mode_perm",      gstate.network_mode.get_perm())
+        << XmlTag("task_mode_delay",        gstate.run_mode.delay())
+        << XmlTag("network_mode_delay",     gstate.network_mode.delay())
+        << XmlTag("disallow_attach",        config.disallow_attach?1:0)
+        << XmlTag("simple_gui_only",        config.simple_gui_only?1:0)
+        << "</cc_status>\n"
     ;
 }
-#undef XMLTAG
 
 static void handle_network_available(const char*, std::ostream& out) {
     net_status.network_available();
