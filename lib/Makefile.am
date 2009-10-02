@@ -67,7 +67,8 @@ libboinc_a_SOURCES = \
     std_fixes.h \
     str_util.h \
     unix_util.h \
-    util.h
+    util.h \
+    xml_write.h
 
 crypt_prog_SOURCES = crypt_prog.C crypt.C md5.c md5_file.C
 crypt_prog_LDADD = $(RSA_LIBS) $(PTHREAD_LIBS)
