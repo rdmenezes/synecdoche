@@ -828,7 +828,7 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         out.printf("    <url>%s</url>\n", urls[i].c_str());
     }
     if (!to_server && pers_file_xfer) {
-        retval = pers_file_xfer->write(out);
+        retval = pers_file_xfer->write(OstreamFromMiofile(out));
         if (retval) return retval;
     }
     if (!to_server) {
@@ -865,7 +865,7 @@ int FILE_INFO::write_gui(std::ostream& out) const {
     if (marked_for_delete) out << "    <marked_for_delete/>\n";
 
     if (pers_file_xfer) {
-        pers_file_xfer->write(MiofileFromOstream(out));
+        pers_file_xfer->write(out);
     }
     out << "</file_transfer>\n";
     return 0;
