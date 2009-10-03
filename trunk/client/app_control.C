@@ -70,6 +70,7 @@
 #include "file_names.h"
 #include "procinfo.h"
 #include "sandbox.h"
+#include "xml_write.h"
 
 #ifdef _WIN32
 bool ACTIVE_TASK::kill_all_children() {
@@ -992,7 +993,7 @@ void ACTIVE_TASK_SET::get_msgs() {
 }
 
 /// Write checkpoint state to a file in the slot dir.
-/// This avoids rewriting the state file on each checkpoint,
+/// This avoids rewriting the state file on each checkpoint.
 void ACTIVE_TASK::write_task_state_file() {
     std::ostringstream path;
     path << slot_dir << '/' << TASK_STATE_FILENAME;
@@ -1000,11 +1001,11 @@ void ACTIVE_TASK::write_task_state_file() {
     if (!ofs) {
         throw std::runtime_error(std::string("Can't open file: ") + path.str());
     }
-    ofs << "<active_task>\n";
-    ofs << "    <project_master_url>" << result->project->get_master_url() << "</project_master_url>\n";
-    ofs << "    <result_name>" << result->name << "</result_name>\n";
-    ofs << "    <checkpoint_cpu_time>" << checkpoint_cpu_time << "</checkpoint_cpu_time>\n";
-    ofs << "</active_task>\n" << std::flush;
+    ofs << "<active_task>\n"
+        << XmlTag("project_master_url",  result->project->get_master_url())
+        << XmlTag("result_name",         result->name)
+        << XmlTag("checkpoint_cpu_time", checkpoint_cpu_time)
+        << "</active_task>\n";
 }
 
 /// Read the task state file in case it's more recent then the main state file.
