@@ -121,19 +121,19 @@ static void handle_get_simple_gui_info(std::ostream& out) {
     out << "<simple_gui_info>\n";
     for (size_t i=0; i<gstate.projects.size(); i++) {
         const PROJECT* p = gstate.projects[i];
-        p->write_state(MiofileFromOstream(out), true);
+        p->write_state(out, true);
     }
     gstate.write_tasks_gui(out);
     out << "</simple_gui_info>\n";
 }
 
-static void handle_get_project_status(MIOFILE& fout) {
-    fout.printf("<projects>\n");
+static void handle_get_project_status(std::ostream& out) {
+    out << "<projects>\n";
     for (size_t i=0; i<gstate.projects.size(); i++) {
         const PROJECT* p = gstate.projects[i];
-        p->write_state(fout, true);
+        p->write_state(out, true);
     }
-    fout.printf("</projects>\n");
+    out << "</projects>\n";
 }
 
 static void handle_get_disk_usage(std::ostream& out) {
@@ -978,7 +978,7 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<get_simple_gui_info")) {
         handle_get_simple_gui_info(reply);
     } else if (match_tag(request_msg, "<get_project_status")) {
-        handle_get_project_status(MiofileFromOstream(reply));
+        handle_get_project_status(reply);
     } else if (match_tag(request_msg, "<get_disk_usage")) {
         handle_get_disk_usage(reply);
     } else if (match_tag(request_msg, "<get_messages")) {

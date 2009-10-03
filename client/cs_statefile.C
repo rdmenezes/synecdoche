@@ -588,7 +588,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
     if (retval) return retval;
     for (j=0; j<projects.size(); j++) {
         const PROJECT* p = projects[j];
-        retval = p->write_state(f);
+        retval = p->write_state(OstreamFromMiofile(f));
         if (retval) return retval;
         for (i=0; i<apps.size(); i++) {
             if (apps[i]->project == p) {
@@ -773,7 +773,7 @@ int CLIENT_STATE::write_state_gui(MIOFILE& f) const {
 
     for (j=0; j<projects.size(); j++) {
         const PROJECT* p = projects[j];
-        retval = p->write_state(f, true);
+        retval = p->write_state(OstreamFromMiofile(f), true);
         if (retval) return retval;
         for (i=0; i<apps.size(); i++) {
             if (apps[i]->project == p) {

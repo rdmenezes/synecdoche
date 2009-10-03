@@ -55,6 +55,7 @@
 #include "pers_file_xfer.h"
 #include "sandbox.h"
 #include "scheduler_op.h"
+#include "xml_write.h"
 
 using std::string;
 using std::vector;
@@ -223,115 +224,69 @@ int PROJECT::parse_state(MIOFILE& in) {
 
 /// Write project information to client state file or GUI RPC reply.
 ///
-int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
-    unsigned int i;
-    char un[2048], tn[2048];
-
-    out.printf("<project>\n");
-
-    xml_escape(user_name, un, sizeof(un));
-    xml_escape(team_name, tn, sizeof(tn));
-    out.printf(
-        "    <master_url>%s</master_url>\n"
-        "    <project_name>%s</project_name>\n"
-        "    <symstore>%s</symstore>\n"
-        "    <user_name>%s</user_name>\n"
-        "    <team_name>%s</team_name>\n"
-        "    <host_venue>%s</host_venue>\n"
-        "    <email_hash>%s</email_hash>\n"
-        "    <cross_project_id>%s</cross_project_id>\n"
-        "    <cpid_time>%f</cpid_time>\n"
-        "    <user_total_credit>%f</user_total_credit>\n"
-        "    <user_expavg_credit>%f</user_expavg_credit>\n"
-        "    <user_create_time>%f</user_create_time>\n"
-        "    <rpc_seqno>%d</rpc_seqno>\n"
-        "    <hostid>%d</hostid>\n"
-        "    <host_total_credit>%f</host_total_credit>\n"
-        "    <host_expavg_credit>%f</host_expavg_credit>\n"
-        "    <host_create_time>%f</host_create_time>\n"
-        "    <nrpc_failures>%d</nrpc_failures>\n"
-        "    <master_fetch_failures>%d</master_fetch_failures>\n"
-        "    <min_rpc_time>%f</min_rpc_time>\n"
-        "    <next_rpc_time>%f</next_rpc_time>\n"
-        "    <short_term_debt>%f</short_term_debt>\n"
-        "    <long_term_debt>%f</long_term_debt>\n"
-        "    <resource_share>%f</resource_share>\n"
-        "    <duration_correction_factor>%f</duration_correction_factor>\n"
-        "    <sched_rpc_pending>%d</sched_rpc_pending>\n"
-        "    <send_time_stats_log>%d</send_time_stats_log>\n"
-        "    <send_job_log>%d</send_job_log>\n"
-        "%s%s%s%s%s%s%s%s%s%s%s",
-        master_url.c_str(),
-        project_name,
-        symstore,
-        un,
-        tn,
-        host_venue,
-        email_hash,
-        cross_project_id,
-        cpid_time,
-        user_total_credit,
-        user_expavg_credit,
-        user_create_time,
-        rpc_seqno,
-        hostid,
-        host_total_credit,
-        host_expavg_credit,
-        host_create_time,
-        nrpc_failures,
-        master_fetch_failures,
-        min_rpc_time,
-        next_rpc_time,
-        short_term_debt,
-        long_term_debt,
-        resource_share,
-        duration_correction_factor,
-        sched_rpc_pending,
-        send_time_stats_log,
-        send_job_log,
-        master_url_fetch_pending?"    <master_url_fetch_pending/>\n":"",
-        trickle_up_pending?"    <trickle_up_pending/>\n":"",
-        send_file_list?"    <send_file_list/>\n":"",
-        non_cpu_intensive?"    <non_cpu_intensive/>\n":"",
-        suspended_via_gui?"    <suspended_via_gui/>\n":"",
-        dont_request_more_work?"    <dont_request_more_work/>\n":"",
-        detach_when_done?"    <detach_when_done/>\n":"",
-        ended?"    <ended/>\n":"",
-        attached_via_acct_mgr?"    <attached_via_acct_mgr/>\n":"",
-        (this == gstate.scheduler_op->cur_proj)?"   <scheduler_rpc_in_progress/>\n":"",
-        use_symlinks?"    <use_symlinks/>\n":""
-    );
+int PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
+    out << "<project>\n"
+        << XmlTag("master_url",             master_url)
+        << XmlTag("project_name",           project_name)
+        << XmlTag("symstore",               symstore)
+        << XmlTag("user_name",              XmlString(user_name))
+        << XmlTag("team_name",              XmlString(team_name))
+        << XmlTag("host_venue",             host_venue)
+        << XmlTag("email_hash",             email_hash)
+        << XmlTag("cross_project_id",       cross_project_id)
+        << XmlTag("cpid_time",              cpid_time)
+        << XmlTag("user_total_credit",      user_total_credit)
+        << XmlTag("user_expavg_credit",     user_expavg_credit)
+        << XmlTag("user_create_time",       user_create_time)
+        << XmlTag("rpc_seqno",              rpc_seqno)
+        << XmlTag("hostid",                 hostid)
+        << XmlTag("host_total_credit",      host_total_credit)
+        << XmlTag("host_expavg_credit",     host_expavg_credit)
+        << XmlTag("host_create_time",       host_create_time)
+        << XmlTag("nrpc_failures",          nrpc_failures)
+        << XmlTag("master_fetch_failures",  master_fetch_failures)
+        << XmlTag("min_rpc_time",           min_rpc_time)
+        << XmlTag("next_rpc_time",          next_rpc_time)
+        << XmlTag("short_term_debt",        short_term_debt)
+        << XmlTag("long_term_debt",         long_term_debt)
+        << XmlTag("resource_share",         resource_share)
+        << XmlTag("duration_correction_factor", duration_correction_factor)
+        << XmlTag("sched_rpc_pending",      sched_rpc_pending)
+        << XmlTag("send_time_stats_log",    send_time_stats_log)
+        << XmlTag("send_job_log",           send_job_log)
+    ;
+    if (master_url_fetch_pending)   { out << "<master_url_fetch_pending/>\n"; }
+    if (trickle_up_pending)         { out << "<trickle_up_pending/>\n"; }
+    if (send_file_list)             { out << "<send_file_list/>\n"; }
+    if (non_cpu_intensive)          { out << "<non_cpu_intensive/>\n"; }
+    if (suspended_via_gui)          { out << "<suspended_via_gui/>\n"; }
+    if (dont_request_more_work)     { out << "<dont_request_more_work/>\n"; }
+    if (detach_when_done)           { out << "<detach_when_done/>\n"; }
+    if (ended)                      { out << "<ended/>\n"; }
+    if (attached_via_acct_mgr)      { out << "<attached_via_acct_mgr/>\n"; }
+    if (this == gstate.scheduler_op->cur_proj) {
+        out << "<scheduler_rpc_in_progress/>\n";
+    }
+    if (use_symlinks) {
+        out << "<use_symlinks/>\n";
+    }
     if (ams_resource_share >= 0) {
-        out.printf("    <ams_resource_share>%f</ams_resource_share>\n",
-            ams_resource_share
-        );
+        out << XmlTag("ams_resource_share", ams_resource_share);
     }
     if (gui_rpc) {
-        out.printf("%s", gui_urls.c_str());
-        out.printf(
-            "    <rr_sim_deadlines_missed>%d</rr_sim_deadlines_missed>\n"
-            "    <last_rpc_time>%f</last_rpc_time>\n"
-            "    <project_files_downloaded_time>%f</project_files_downloaded_time>\n",
-            rr_sim_status.get_deadlines_missed(),
-            last_rpc_time,
-            project_files_downloaded_time
-        );
+        out << gui_urls;
+        out << XmlTag("rr_sim_deadlines_missed",        rr_sim_status.get_deadlines_missed())
+            << XmlTag("last_rpc_time",                  last_rpc_time)
+            << XmlTag("project_files_downloaded_time",  project_files_downloaded_time);
     } else {
-       for (i=0; i<scheduler_urls.size(); i++) {
-            out.printf(
-                "    <scheduler_url>%s</scheduler_url>\n",
-                scheduler_urls[i].c_str()
-            );
+       for (size_t i=0; i<scheduler_urls.size(); i++) {
+            out << XmlTag("scheduler_url", scheduler_urls[i]);
         }
         if (strlen(code_sign_key)) {
-            out.printf(
-                "    <code_sign_key>\n%s</code_sign_key>\n", code_sign_key
-            );
+            out << "<code_sign_key>\n" << code_sign_key << "</code_sign_key>\n";
         }
     }
-    out.printf(
-        "</project>\n"
-    );
+    out << "</project>\n";
     return 0;
 }
 
