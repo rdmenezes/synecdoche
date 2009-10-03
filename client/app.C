@@ -423,7 +423,8 @@ int ACTIVE_TASK::write(std::ostream& out) const {
         << XmlTag("result_name",        result->name)
         << XmlTag("active_task_state",  task_state())
         << XmlTag("app_version_num",    app_version->version_num)
-        << XmlTag("slot", slot);
+        << XmlTag("slot", slot)
+    ;
     if (full_init_done) {
         out << "<full_init_done/>\n";
     }
