@@ -110,7 +110,7 @@ public:
     void transient_failure(int);
     void permanent_failure(int);
     void abort();
-    int write(MIOFILE& fout) const;
+    int write(std::ostream& out) const;
     int parse(MIOFILE& fin);
     int create_xfer();
     int start_xfer();

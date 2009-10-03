@@ -34,6 +34,7 @@
 #include "miofile.h"
 #include "str_util.h"
 #include "filesys.h"
+#include "xml_write.h"
 
 #include "log_flags.h"
 #include "file_names.h"
@@ -336,30 +337,23 @@ int PERS_FILE_XFER::parse(MIOFILE& fin) {
 }
 
 /// Write XML information about a persistent file transfer
-int PERS_FILE_XFER::write(MIOFILE& fout) const {
-    fout.printf(
-        "    <persistent_file_xfer>\n"
-        "        <num_retries>%d</num_retries>\n"
-        "        <first_request_time>%f</first_request_time>\n"
-        "        <next_request_time>%f</next_request_time>\n"
-        "        <time_so_far>%f</time_so_far>\n"
-        "        <last_bytes_xferred>%f</last_bytes_xferred>\n"
-        "    </persistent_file_xfer>\n",
-        nretry, first_request_time, next_request_time, time_so_far, last_bytes_xferred
-    );
+int PERS_FILE_XFER::write(std::ostream& out) const {
+    out << "<persistent_file_xfer>\n"
+        << XmlTag("num_retries",        nretry)
+        << XmlTag("first_request_time", first_request_time)
+        << XmlTag("next_request_time",  next_request_time)
+        << XmlTag("time_so_far",        time_so_far)
+        << XmlTag("last_bytes_xferred", last_bytes_xferred)
+        << "</persistent_file_xfer>\n"
+    ;
     if (fxp) {
-        fout.printf(
-            "    <file_xfer>\n"
-            "        <bytes_xferred>%f</bytes_xferred>\n"
-            "        <file_offset>%f</file_offset>\n"
-            "        <xfer_speed>%f</xfer_speed>\n"
-            "        <url>%s</url>\n"
-            "    </file_xfer>\n",
-            fxp->bytes_xferred,
-            fxp->file_offset,
-            fxp->xfer_speed,
-            fxp->m_url
-        );
+        out << "<file_xfer>\n"
+            << XmlTag("bytes_xferred", fxp->bytes_xferred)
+            << XmlTag("file_offset",   fxp->file_offset)
+            << XmlTag("xfer_speed",    fxp->xfer_speed)
+            << XmlTag("url",           XmlString(fxp->m_url))
+            << "</file_xfer>\n"
+        ;
     }
     return 0;
 }
