@@ -497,7 +497,7 @@ public:
 
     int parse_account_file();
     int parse_state(MIOFILE& in);
-    int write_state(MIOFILE& out, bool gui_rpc=false) const;
+    int write_state(std::ostream& out, bool gui_rpc=false) const;
 
     std::vector<DAILY_STATS> statistics; ///< Statistics of the last x days.
     int parse_statistics(FILE* in);
