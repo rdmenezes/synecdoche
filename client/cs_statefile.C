@@ -615,7 +615,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         }
         p->write_project_files(f);
     }
-    active_tasks.write(f);
+    active_tasks.write(OstreamFromMiofile(f));
     f.printf(
         "<platform_name>%s</platform_name>\n"
         "<core_client_major_version>%d</core_client_major_version>\n"

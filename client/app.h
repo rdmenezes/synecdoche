@@ -230,7 +230,7 @@ public:
     void upload_notify_app(const FILE_INFO* fip, const FILE_REF* frp);
     int copy_output_files();
 
-    int write(MIOFILE& fout) const;
+    int write(std::ostream& out) const;
     int write_gui(std::ostream& out) const;
     int parse(MIOFILE& fin);
     
@@ -308,7 +308,7 @@ public:
     void request_reread_prefs(PROJECT* project);
     void request_reread_app_info();
 
-    int write(MIOFILE& fout) const;
+    int write(std::ostream& out) const;
     int parse(MIOFILE& fin);
 };
 
