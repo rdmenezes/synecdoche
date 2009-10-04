@@ -99,35 +99,35 @@ class TestXmlWrite: public CppUnit::TestFixture
     std::ostringstream oss;
   public:
     void testInt() {
-        oss << XmlTag("foo", 42);
+        oss << XmlTag<int>("foo", 42);
         CPPUNIT_ASSERT_EQUAL(string("<foo>42</foo>\n"), oss.str());
     }
     void testStrLiteral() {
-        oss << XmlTag("foo", "bar");
+        oss << XmlTag<const char*>("foo", "bar");
         CPPUNIT_ASSERT_EQUAL(string("<foo>bar</foo>\n"), oss.str());
     }
     void testCharp() {
         const char* value = "bar";
-        oss << XmlTag("foo", value);
+        oss << XmlTag<const char*>("foo", value);
         CPPUNIT_ASSERT_EQUAL(string("<foo>bar</foo>\n"), oss.str());
     }
     void testStdString() {
         string value = "bar";
-        oss << XmlTag("foo", value);
+        oss << XmlTag<string>("foo", value);
         CPPUNIT_ASSERT_EQUAL(string("<foo>bar</foo>\n"), oss.str());
     }
     void testStrLiteralEsc() {
-        oss << XmlTag("foo", XmlString("b&r"));
+        oss << XmlTag<XmlString>("foo", "b&r");
         CPPUNIT_ASSERT_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
     }
     void testCharpEsc() {
         const char* value = "b&r";
-        oss << XmlTag("foo", XmlString(value));
+        oss << XmlTag<XmlString>("foo", value);
         CPPUNIT_ASSERT_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
     }
     void testStdStringEsc() {
         string value = "b&r";
-        oss << XmlTag("foo", XmlString(value));
+        oss << XmlTag<XmlString>("foo", value);
         CPPUNIT_ASSERT_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
     }
 };

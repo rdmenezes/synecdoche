@@ -61,6 +61,8 @@
 
 #include <ostream>
 
+using std::string;
+
 #include "client_state.h"
 #include "client_types.h"
 
@@ -419,27 +421,27 @@ bool ACTIVE_TASK_SET::slot_taken(int slot) const {
 //
 int ACTIVE_TASK::write(std::ostream& out) const {
     out << "<active_task>\n"
-        << XmlTag("project_master_url", result->project->get_master_url())
-        << XmlTag("result_name",        result->name)
-        << XmlTag("active_task_state",  task_state())
-        << XmlTag("app_version_num",    app_version->version_num)
-        << XmlTag("slot", slot)
+        << XmlTag<string>("project_master_url", result->project->get_master_url())
+        << XmlTag<char*> ("result_name",        result->name)
+        << XmlTag<int>   ("active_task_state",  task_state())
+        << XmlTag<int>   ("app_version_num",    app_version->version_num)
+        << XmlTag<int>   ("slot", slot)
     ;
     if (full_init_done) {
         out << "<full_init_done/>\n";
     }
-    out << XmlTag("checkpoint_cpu_time",        checkpoint_cpu_time)
-        << XmlTag("fraction_done",              fraction_done)
-        << XmlTag("current_cpu_time",           current_cpu_time)
-        << XmlTag("swap_size",                  procinfo.swap_size)
-        << XmlTag("working_set_size",           procinfo.working_set_size)
-        << XmlTag("working_set_size_smoothed",  procinfo.working_set_size_smoothed)
-        << XmlTag("page_fault_rate",            procinfo.page_fault_rate)
-        << XmlTag("stats_mem",                  stats_mem)
-        << XmlTag("stats_page",                 stats_page)
-        << XmlTag("stats_pagefault_rate",       stats_pagefault_rate)
-        << XmlTag("stats_disk",                 stats_disk)
-        << XmlTag("stats_checkpoint",           stats_checkpoint)
+    out << XmlTag<double>("checkpoint_cpu_time",       checkpoint_cpu_time)
+        << XmlTag<double>("fraction_done",             fraction_done)
+        << XmlTag<double>("current_cpu_time",          current_cpu_time)
+        << XmlTag<double>("swap_size",                 procinfo.swap_size)
+        << XmlTag<double>("working_set_size",          procinfo.working_set_size)
+        << XmlTag<double>("working_set_size_smoothed", procinfo.working_set_size_smoothed)
+        << XmlTag<double>("page_fault_rate",           procinfo.page_fault_rate)
+        << XmlTag<double>("stats_mem",                 stats_mem)
+        << XmlTag<double>("stats_page",                stats_page)
+        << XmlTag<double>("stats_pagefault_rate",      stats_pagefault_rate)
+        << XmlTag<double>("stats_disk",                stats_disk)
+        << XmlTag<int>   ("stats_checkpoint",          stats_checkpoint)
     ;
     out << "</active_task>\n";
     return 0;
@@ -447,17 +449,17 @@ int ACTIVE_TASK::write(std::ostream& out) const {
 
 int ACTIVE_TASK::write_gui(std::ostream& out) const {
     out << "<active_task>\n"
-        << XmlTag("active_task_state",          task_state())
-        << XmlTag("app_version_num",            app_version->version_num)
-        << XmlTag("slot",                       slot)
-        << XmlTag("scheduler_state",            scheduler_state)
-        << XmlTag("checkpoint_cpu_time",        checkpoint_cpu_time)
-        << XmlTag("fraction_done",              fraction_done)
-        << XmlTag("current_cpu_time",           current_cpu_time)
-        << XmlTag("swap_size",                  procinfo.swap_size)
-        << XmlTag("working_set_size",           procinfo.working_set_size)
-        << XmlTag("working_set_size_smoothed",  procinfo.working_set_size_smoothed)
-        << XmlTag("page_fault_rate",            procinfo.page_fault_rate)
+        << XmlTag<int>   ("active_task_state",         task_state())
+        << XmlTag<int>   ("app_version_num",           app_version->version_num)
+        << XmlTag<int>   ("slot",                      slot)
+        << XmlTag<int>   ("scheduler_state",           scheduler_state)
+        << XmlTag<double>("checkpoint_cpu_time",       checkpoint_cpu_time)
+        << XmlTag<double>("fraction_done",             fraction_done)
+        << XmlTag<double>("current_cpu_time",          current_cpu_time)
+        << XmlTag<double>("swap_size",                 procinfo.swap_size)
+        << XmlTag<double>("working_set_size",          procinfo.working_set_size)
+        << XmlTag<double>("working_set_size_smoothed", procinfo.working_set_size_smoothed)
+        << XmlTag<double>("page_fault_rate",           procinfo.page_fault_rate)
     ;
     if (too_large) {
         out << "   <too_large/>\n";
@@ -466,12 +468,12 @@ int ACTIVE_TASK::write_gui(std::ostream& out) const {
         out << "   <needs_shmem/>\n";
     }
     if (strlen(app_version->graphics_exec_path)) {
-        out << XmlTag("graphics_exec_path", app_version->graphics_exec_path);
-        out << XmlTag("slot_path", slot_path);
+        out << XmlTag<char*>("graphics_exec_path", app_version->graphics_exec_path);
+        out << XmlTag<string>("slot_path", slot_path);
     }
     if (supports_graphics() && !gstate.disable_graphics) {
         out << "   <supports_graphics/>\n";
-        out << XmlTag("graphics_mode_acked", graphics_mode_acked);
+        out << XmlTag<int>("graphics_mode_acked", graphics_mode_acked);
     }
     out << "</active_task>\n";
     return 0;

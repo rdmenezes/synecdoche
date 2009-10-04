@@ -21,62 +21,24 @@
 #ifndef XML_WRITE_H
 #define XML_WRITE_H
 
-/// Disallows the use of strings in XmlTag(). If set to \c 1, uses of XmlTag()
-/// with \c char*, \c char array, or \c std::string will fail to compile.
-///
-/// This is useful to see all places that are calling it with a string, and
-/// check if you shouldn't be using XmlString instead (which escapes XML
-/// characters).
-///
-/// \note This feature requires Boost libraries: utility, type_traits, and mpl.
-/// Use only during development. Don't commit with this macro set to \c 1.
-#define DISALLOW_STRINGS 0
-
 #include <cstdlib>
 #include <ostream>
 #include <sstream>
 
 template <typename T>
-class XmlTag_t {
+class XmlTag {
 private:
     const char* name;
     const T& value;
 
-    friend std::ostream& operator<<(std::ostream& stream, const XmlTag_t<T>& tag) {
+    friend std::ostream& operator<<(std::ostream& stream, const XmlTag<T>& tag) {
         return stream << '<' << tag.name << '>' << tag.value << "</" << tag.name << ">\n";
     }
 public:
-    XmlTag_t(const char* name, const T& value):
+    XmlTag(const char* name, const T& value):
         name(name), value(value)
     {}
 };
-
-#if DISALLOW_STRINGS
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/decay.hpp>
-#include <boost/mpl/or.hpp>
-
-// I'd love to add some using declarations here so I can remove the "boost::"
-// and make the template mess more readable; but this is a header file, I'd
-// leak the 'using's to .cpp files that include this.
-template <typename T>
-typename boost::disable_if<
-    boost::mpl::or_<
-        boost::is_same<typename boost::decay<const T>::type, const char*>,
-        boost::is_same<T, std::string>
-    >,
-    XmlTag_t<T>
->::type
-XmlTag(const char* name, const T& value) {
-    return XmlTag_t<T>(name, value);
-}
-#else
-template <typename T>
-XmlTag_t<T> XmlTag(const char* name, const T& value) {
-    return XmlTag_t<T>(name, value);
-}
-#endif
 
 inline void write_escaped_xml(std::ostream& stream, const char* str) {
     for (; *str; ++str) {

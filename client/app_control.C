@@ -1002,9 +1002,9 @@ void ACTIVE_TASK::write_task_state_file() {
         throw std::runtime_error(std::string("Can't open file: ") + path.str());
     }
     ofs << "<active_task>\n"
-        << XmlTag("project_master_url",  result->project->get_master_url())
-        << XmlTag("result_name",         result->name)
-        << XmlTag("checkpoint_cpu_time", checkpoint_cpu_time)
+        << XmlTag<std::string>("project_master_url", result->project->get_master_url())
+        << XmlTag<char*> ("result_name",         result->name)
+        << XmlTag<double>("checkpoint_cpu_time", checkpoint_cpu_time)
         << "</active_task>\n";
 }
 

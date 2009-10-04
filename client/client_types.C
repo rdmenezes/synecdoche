@@ -226,34 +226,34 @@ int PROJECT::parse_state(MIOFILE& in) {
 ///
 int PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
     out << "<project>\n"
-        << XmlTag("master_url",             master_url)
-        << XmlTag("project_name",           project_name)
-        << XmlTag("symstore",               symstore)
-        << XmlTag("user_name",              XmlString(user_name))
-        << XmlTag("team_name",              XmlString(team_name))
-        << XmlTag("host_venue",             host_venue)
-        << XmlTag("email_hash",             email_hash)
-        << XmlTag("cross_project_id",       cross_project_id)
-        << XmlTag("cpid_time",              cpid_time)
-        << XmlTag("user_total_credit",      user_total_credit)
-        << XmlTag("user_expavg_credit",     user_expavg_credit)
-        << XmlTag("user_create_time",       user_create_time)
-        << XmlTag("rpc_seqno",              rpc_seqno)
-        << XmlTag("hostid",                 hostid)
-        << XmlTag("host_total_credit",      host_total_credit)
-        << XmlTag("host_expavg_credit",     host_expavg_credit)
-        << XmlTag("host_create_time",       host_create_time)
-        << XmlTag("nrpc_failures",          nrpc_failures)
-        << XmlTag("master_fetch_failures",  master_fetch_failures)
-        << XmlTag("min_rpc_time",           min_rpc_time)
-        << XmlTag("next_rpc_time",          next_rpc_time)
-        << XmlTag("short_term_debt",        short_term_debt)
-        << XmlTag("long_term_debt",         long_term_debt)
-        << XmlTag("resource_share",         resource_share)
-        << XmlTag("duration_correction_factor", duration_correction_factor)
-        << XmlTag("sched_rpc_pending",      sched_rpc_pending)
-        << XmlTag("send_time_stats_log",    send_time_stats_log)
-        << XmlTag("send_job_log",           send_job_log)
+        << XmlTag<string>("master_url",             master_url)
+        << XmlTag<string>("project_name",           project_name)
+        << XmlTag<string>("symstore",               symstore)
+        << XmlTag<XmlString>("user_name",           user_name)
+        << XmlTag<XmlString>("team_name",           team_name)
+        << XmlTag<string>("host_venue",             host_venue)
+        << XmlTag<string>("email_hash",             email_hash)
+        << XmlTag<string>("cross_project_id",       cross_project_id)
+        << XmlTag<double>("cpid_time",              cpid_time)
+        << XmlTag<double>("user_total_credit",      user_total_credit)
+        << XmlTag<double>("user_expavg_credit",     user_expavg_credit)
+        << XmlTag<double>("user_create_time",       user_create_time)
+        << XmlTag<int>   ("rpc_seqno",              rpc_seqno)
+        << XmlTag<int>   ("hostid",                 hostid)
+        << XmlTag<double>("host_total_credit",      host_total_credit)
+        << XmlTag<double>("host_expavg_credit",     host_expavg_credit)
+        << XmlTag<double>("host_create_time",       host_create_time)
+        << XmlTag<int>   ("nrpc_failures",          nrpc_failures)
+        << XmlTag<int>   ("master_fetch_failures",  master_fetch_failures)
+        << XmlTag<double>("min_rpc_time",           min_rpc_time)
+        << XmlTag<double>("next_rpc_time",          next_rpc_time)
+        << XmlTag<double>("short_term_debt",        short_term_debt)
+        << XmlTag<double>("long_term_debt",         long_term_debt)
+        << XmlTag<double>("resource_share",         resource_share)
+        << XmlTag<double>("duration_correction_factor", duration_correction_factor)
+        << XmlTag<int>   ("sched_rpc_pending",      sched_rpc_pending)
+        << XmlTag<int>   ("send_time_stats_log",    send_time_stats_log)
+        << XmlTag<int>   ("send_job_log",           send_job_log)
     ;
     if (master_url_fetch_pending)   { out << "<master_url_fetch_pending/>\n"; }
     if (trickle_up_pending)         { out << "<trickle_up_pending/>\n"; }
@@ -271,16 +271,16 @@ int PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
         out << "<use_symlinks/>\n";
     }
     if (ams_resource_share >= 0) {
-        out << XmlTag("ams_resource_share", ams_resource_share);
+        out << XmlTag<double>("ams_resource_share", ams_resource_share);
     }
     if (gui_rpc) {
         out << gui_urls;
-        out << XmlTag("rr_sim_deadlines_missed",        rr_sim_status.get_deadlines_missed())
-            << XmlTag("last_rpc_time",                  last_rpc_time)
-            << XmlTag("project_files_downloaded_time",  project_files_downloaded_time);
+        out << XmlTag<int>   ("rr_sim_deadlines_missed",        rr_sim_status.get_deadlines_missed())
+            << XmlTag<double>("last_rpc_time",                  last_rpc_time)
+            << XmlTag<double>("project_files_downloaded_time",  project_files_downloaded_time);
     } else {
        for (size_t i=0; i<scheduler_urls.size(); i++) {
-            out << XmlTag("scheduler_url", scheduler_urls[i]);
+            out << XmlTag<string>("scheduler_url", scheduler_urls[i]);
         }
         if (strlen(code_sign_key)) {
             out << "<code_sign_key>\n" << code_sign_key << "</code_sign_key>\n";
