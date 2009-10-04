@@ -201,18 +201,8 @@ struct APP_INIT_DATA {
     ~APP_INIT_DATA();
 };
 
-struct GRAPHICS_INFO {
-    int xsize;
-    int ysize;
-    double refresh_period;
-};
-
-typedef struct GRAPHICS_INFO GRAPHICS_INFO;
-
 int write_init_data_file(std::ostream& out, APP_INIT_DATA& ai);
 int parse_init_data_file(FILE* f, APP_INIT_DATA& ai);
-int write_graphics_file(FILE* f, GRAPHICS_INFO* gi);
-int parse_graphics_file(FILE* f, GRAPHICS_INFO* gi);
 
 /// \name filenames used in the slot directory
 ///@{
