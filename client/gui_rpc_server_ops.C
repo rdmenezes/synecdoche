@@ -383,7 +383,9 @@ static void handle_get_messages(const char* buf, std::ostream& out) {
             << XmlTag<XmlString>("project", mdp->project_name)
             << XmlTag<int>("pri", mdp->priority)
             << XmlTag<int>("seqno", mdp->seqno)
-            << XmlTag<XmlString>("body", mdp->message)
+            // putting the message contents in its own line is important!
+            // the parser on the other end sucks
+            << "<body>\n" << XmlString(mdp->message) << "\n</body>\n" 
             << XmlTag<int>("time", mdp->timestamp)
         ;
         out << "</msg>\n";
