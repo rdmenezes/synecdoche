@@ -25,6 +25,26 @@
 #include <ostream>
 #include <sstream>
 
+class SaveIosFlags {
+    std::ios_base& stream_;
+    std::ios_base::fmtflags flags_;
+public:
+    SaveIosFlags(std::ios_base& stream): stream_(stream) {
+        flags_ = stream.flags();
+    }
+    ~SaveIosFlags() {
+        stream_.flags(flags_);
+    }
+};
+
+// this is in a separate function so it can be specialized more easily
+template <typename T>
+inline std::ostream& write_tag(std::ostream& stream, const char* name, const T& value) {
+    SaveIosFlags saver(stream);
+    stream << std::fixed;
+    return stream << '<' << name << '>' << value << "</" << name << ">\n";
+}
+
 template <typename T>
 class XmlTag {
 private:
@@ -32,7 +52,7 @@ private:
     const T& value;
 
     friend std::ostream& operator<<(std::ostream& stream, const XmlTag<T>& tag) {
-        return stream << '<' << tag.name << '>' << tag.value << "</" << tag.name << ">\n";
+        return write_tag(stream, tag.name, tag.value);
     }
 public:
     XmlTag(const char* name, const T& value):
