@@ -1341,6 +1341,7 @@ void RESULT::clear() {
     fpops_cumulative = 0;
     intops_per_cpu_sec = 0;
     intops_cumulative = 0;
+    edf_scheduled = false;
     app = NULL;
     wup = NULL;
     project = NULL;
