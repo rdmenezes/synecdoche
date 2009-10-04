@@ -44,6 +44,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "filesys.h"
+#include "xml_write.h"
 
 #include "file_names.h"
 #include "hostinfo.h"
@@ -1329,8 +1330,8 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
             if (cur_finfo->had_failure(failnum)) {
                 std::ostringstream buf;
                 buf << "<upload_error>\n"
-                    << "    <file_name>" << cur_finfo->name << "</file_name>\n"
-                    << "    <error_code>" << failnum << "</error_code>\n"
+                    << XmlTag<std::string>("file_name", cur_finfo->name)
+                    << XmlTag<int> ("error_code", failnum)
                     << "</upload_error>\n";
                 res.stderr_out.append(buf.str());
             }
