@@ -533,18 +533,18 @@ static void handle_get_statistics(const char*, std::ostream& out) {
 
 static void handle_get_cc_status(std::ostream& out) {
     out << "<cc_status>\n"
-        << XmlTag("network_status",         net_status.network_status())
-        << XmlTag("ams_password_error",     gstate.acct_mgr_info.password_error?1:0)
-        << XmlTag("task_suspend_reason",    gstate.suspend_reason)
-        << XmlTag("network_suspend_reason", gstate.network_suspend_reason)
-        << XmlTag("task_mode",              gstate.run_mode.get_current())
-        << XmlTag("network_mode",           gstate.network_mode.get_current())
-        << XmlTag("task_mode_perm",         gstate.run_mode.get_perm())
-        << XmlTag("network_mode_perm",      gstate.network_mode.get_perm())
-        << XmlTag("task_mode_delay",        gstate.run_mode.delay())
-        << XmlTag("network_mode_delay",     gstate.network_mode.delay())
-        << XmlTag("disallow_attach",        config.disallow_attach?1:0)
-        << XmlTag("simple_gui_only",        config.simple_gui_only?1:0)
+        << XmlTag<int>   ("network_status",         net_status.network_status())
+        << XmlTag<int>   ("ams_password_error",     gstate.acct_mgr_info.password_error?1:0)
+        << XmlTag<int>   ("task_suspend_reason",    gstate.suspend_reason)
+        << XmlTag<int>   ("network_suspend_reason", gstate.network_suspend_reason)
+        << XmlTag<int>   ("task_mode",              gstate.run_mode.get_current())
+        << XmlTag<int>   ("network_mode",           gstate.network_mode.get_current())
+        << XmlTag<int>   ("task_mode_perm",         gstate.run_mode.get_perm())
+        << XmlTag<int>   ("network_mode_perm",      gstate.network_mode.get_perm())
+        << XmlTag<double>("task_mode_delay",        gstate.run_mode.delay())
+        << XmlTag<double>("network_mode_delay",     gstate.network_mode.delay())
+        << XmlTag<int>   ("disallow_attach",        config.disallow_attach?1:0)
+        << XmlTag<int>   ("simple_gui_only",        config.simple_gui_only?1:0)
         << "</cc_status>\n"
     ;
 }
