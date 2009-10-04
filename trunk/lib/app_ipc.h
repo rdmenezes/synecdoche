@@ -19,9 +19,11 @@
 #ifndef APP_IPC_H
 #define APP_IPC_H
 
+#include <cstdio>
+
 #include <vector>
 #include <string>
-#include <cstdio>
+#include <iosfwd>
 
 #include "hostinfo.h"
 #include "proxy_info.h"
@@ -207,7 +209,7 @@ struct GRAPHICS_INFO {
 
 typedef struct GRAPHICS_INFO GRAPHICS_INFO;
 
-int write_init_data_file(FILE* f, APP_INIT_DATA& ai);
+int write_init_data_file(std::ostream& out, APP_INIT_DATA& ai);
 int parse_init_data_file(FILE* f, APP_INIT_DATA& ai);
 int write_graphics_file(FILE* f, GRAPHICS_INFO* gi);
 int parse_graphics_file(FILE* f, GRAPHICS_INFO* gi);

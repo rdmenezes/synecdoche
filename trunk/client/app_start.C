@@ -19,8 +19,7 @@
 /// \file
 /// initialization and starting of applications
 
-#include <sstream>
-#include "cpp.h"
+#include "app.h"
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -57,7 +56,8 @@
 #include <fcntl.h>
 #endif
 
-#include "app.h"
+#include <sstream>
+#include <fstream>
 
 #include "filesys.h"
 #include "error_numbers.h"
@@ -146,9 +146,12 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 /// and when project prefs have changed during app execution.
 ///
 /// \return 0 on success, #ERR_FOPEN if the file could not be opened.
+///
+/// \todo This function was modified to use ofstream instead of boinc_fopen().
+/// This means the error checking and retry mechanisms of boinc_fopen() aren't
+/// used now. We may need to restore them. --NA
 int ACTIVE_TASK::write_app_init_file() {
     APP_INIT_DATA aid;
-    FILE *f;
     int retval;
 
     memset(&aid, 0, sizeof(aid));
@@ -206,8 +209,8 @@ int ACTIVE_TASK::write_app_init_file() {
     aid.wu_cpu_time = episode_start_cpu_time;
 
     std::string init_data_path = slot_dir + std::string("/") + std::string(INIT_DATA_FILE);
-    f = boinc_fopen(init_data_path.c_str(), "w");
-    if (!f) {
+    std::ofstream f(init_data_path.c_str(), std::ios::out);
+    if (!f.is_open()) {
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
             "Failed to open init file %s",
             init_data_path.c_str()
@@ -219,7 +222,6 @@ int ACTIVE_TASK::write_app_init_file() {
     aid.global_prefs = gstate.global_prefs;
     aid.proxy_info = gstate.proxy_info;
     retval = write_init_data_file(f, aid);
-    fclose(f);
     return retval;
 }
 
