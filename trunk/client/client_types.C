@@ -341,19 +341,18 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
 ///
 int PROJECT::write_statistics(std::ostream& out, bool /*gui_rpc*/) const {
     out << "<project_statistics>\n";
-    out << "    <master_url>" << master_url << "</master_url>\n";
+    out << XmlTag<string>("master_url", master_url);
 
     for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
         i!=statistics.end(); ++i
     ) {
-        out <<
-            "    <daily_statistics>\n"
-            "        <day>" << i->day << "</day>\n"
-            "        <user_total_credit>" << i->user_total_credit << "</user_total_credit>\n"
-            "        <user_expavg_credit>" << i->user_expavg_credit << "</user_expavg_credit>\n"
-            "        <host_total_credit>" << i->host_total_credit << "</host_total_credit>\n"
-            "        <host_expavg_credit>" << i->host_expavg_credit << "</host_expavg_credit>\n"
-            "    </daily_statistics>\n"
+        out << "<daily_statistics>\n"
+            << XmlTag<double>("day", i->day)
+            << XmlTag<double>("user_total_credit",  i->user_total_credit)
+            << XmlTag<double>("user_expavg_credit", i->user_expavg_credit)
+            << XmlTag<double>("host_total_credit",  i->host_total_credit)
+            << XmlTag<double>("host_expavg_credit", i->host_expavg_credit)
+            << "</daily_statistics>\n"
         ;
     }
     out << "</project_statistics>\n";
@@ -806,12 +805,12 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
 int FILE_INFO::write_gui(std::ostream& out) const {
     out <<
         "<file_transfer>\n"
-        "    <project_url>" << project->get_master_url() << "</project_url>\n"
-        "    <project_name>" << project->project_name << "</project_name>\n"
-        "    <name>" << name << "</name>\n"
-        "    <nbytes>" << nbytes << "</nbytes>\n"
-        "    <max_nbytes>" << max_nbytes << "</max_nbytes>\n"
-        "    <status>" << status << "</status>\n";
+        << XmlTag<string>("project_url", project->get_master_url())
+        << XmlTag<string>("project_name", project->project_name)
+        << XmlTag<string>("name", name)
+        << XmlTag<double>("nbytes", nbytes)
+        << XmlTag<double>("max_nbytes", max_nbytes)
+        << XmlTag<int>("status", status);
 
     if (generated_locally) out << "    <generated_locally/>\n";
     if (uploaded) out << "    <uploaded/>\n";
@@ -1536,19 +1535,19 @@ int RESULT::write(MIOFILE& out, bool to_server) const {
 int RESULT::write_gui(std::ostream& out) const {
     out <<
         "<result>\n"
-        "    <name>"            << name             << "</name>\n"
-        "    <wu_name>"         << wu_name          << "</wu_name>\n"
-        "    <project_url>"     << project->get_master_url() << "</project_url>\n"
-        "    <final_cpu_time>"  << final_cpu_time   << "</final_cpu_time>\n"
-        "    <exit_status>"     << exit_status      << "</exit_status>\n"
-        "    <state>"           << state()          << "</state>\n"
-        "    <received_time>"   << received_time    << "</received_time>\n"
-        "    <report_deadline>" << report_deadline  << "</report_deadline>\n"
-        "    <estimated_cpu_time_remaining>" << estimated_cpu_time_remaining() << "</estimated_cpu_time_remaining>\n"
+        << XmlTag<const char*>("name",            name)
+        << XmlTag<const char*>("wu_name",         wu_name)
+        << XmlTag<string>     ("project_url",     project->get_master_url())
+        << XmlTag<double>     ("final_cpu_time",  final_cpu_time)
+        << XmlTag<int>        ("exit_status",     exit_status)
+        << XmlTag<int>        ("state",           state())
+        << XmlTag<double>     ("received_time",   received_time)
+        << XmlTag<double>     ("report_deadline", report_deadline)
+        << XmlTag<double>     ("estimated_cpu_time_remaining", estimated_cpu_time_remaining())
     ;
     if (got_server_ack)     out << "    <got_server_ack/>\n";
     if (ready_to_report)    out << "    <ready_to_report/>\n";
-    if (completed_time)     out << "    <completed_time>" << completed_time << "</completed_time>\n";
+    if (completed_time)     out << XmlTag<double>("completed_time", completed_time);
     if (suspended_via_gui)  out << "    <suspended_via_gui/>\n";
     if (project->suspended_via_gui) out << "    <project_suspended_via_gui/>\n";
     if (edf_scheduled)      out << "    <edf_scheduled/>\n";

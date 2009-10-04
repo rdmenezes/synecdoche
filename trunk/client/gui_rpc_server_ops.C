@@ -163,20 +163,18 @@ static void handle_get_disk_usage(std::ostream& out) {
     for (size_t i=0; i<gstate.projects.size(); i++) {
         const PROJECT* p = gstate.projects[i];
         gstate.project_disk_usage(p, size);
-        out <<
-            "<project>\n"
-            "  <master_url>" << p->get_master_url() << "</master_url>\n"
-            "  <disk_usage>" << size << "</disk_usage>\n"
-            "</project>\n"
+        out << "<project>\n"
+            << XmlTag<string>("master_url", p->get_master_url())
+            << XmlTag<double>("disk_usage", size)
+            << "</project>\n"
         ;
         boinc_total += size;
     }
     d_allowed = gstate.allowed_disk_usage(boinc_total);
-    out <<
-        "<d_total>" << gstate.host_info.d_total << "</d_total>\n"
-        "<d_free>" << gstate.host_info.d_free << "</d_free>\n"
-        "<d_boinc>" << boinc_non_project << "</d_boinc>\n"
-        "<d_allowed>" << d_allowed << "</d_allowed>\n"
+    out << XmlTag<double>("d_total",    gstate.host_info.d_total)
+        << XmlTag<double>("d_free",     gstate.host_info.d_free)
+        << XmlTag<double>("d_boinc",    boinc_non_project)
+        << XmlTag<double>("d_allowed",  d_allowed)
     ;
     out << "</disk_usage_summary>\n";
 }
@@ -381,13 +379,12 @@ static void handle_get_messages(const char* buf, std::ostream& out) {
     out << "<msgs>\n";
     for (i=j; i>=0; i--) {
         mdp = message_descs[i];
-        out <<
-            "<msg>\n"
-            " <project>" << mdp->project_name << "</project>\n"
-            " <pri>" << mdp->priority << "</pri>\n"
-            " <seqno>" << mdp->seqno << "</seqno>\n"
-            " <body>\n" << mdp->message << "\n</body>\n"
-            " <time>" << mdp->timestamp << "</time>\n"
+        out << "<msg>\n"
+            << XmlTag<XmlString>("project", mdp->project_name)
+            << XmlTag<int>("pri", mdp->priority)
+            << XmlTag<int>("seqno", mdp->seqno)
+            << XmlTag<XmlString>("body", mdp->message)
+            << XmlTag<int>("time", mdp->timestamp)
         ;
         out << "</msg>\n";
     }
@@ -395,11 +392,11 @@ static void handle_get_messages(const char* buf, std::ostream& out) {
 }
 
 static void handle_get_message_count(std::ostream& out) {
-    if (message_descs.empty()) {
-        out << "<seqno>0</seqno>\n";
-    } else {
-        out << "<seqno>" << message_descs.front()->seqno << "</seqno>\n";
+    int seqno = 0;
+    if (!message_descs.empty()) {
+        seqno = message_descs.front()->seqno;
     }
+    out << XmlTag<int>("seqno", seqno);
 }
 
 // <retry_file_transfer>
@@ -511,10 +508,10 @@ static void handle_quit(const char*, std::ostream& out) {
 }
 
 static void handle_acct_mgr_info(const char*, std::ostream& out) {
-    out <<
-        "<acct_mgr_info>\n"
-        "   <acct_mgr_url>" << gstate.acct_mgr_info.acct_mgr_url << "</acct_mgr_url>\n"
-        "   <acct_mgr_name>" << gstate.acct_mgr_info.acct_mgr_name << "</acct_mgr_name>\n";
+    out << "<acct_mgr_info>\n"
+        << XmlTag<const char*>("acct_mgr_url",  gstate.acct_mgr_info.acct_mgr_url)
+        << XmlTag<const char*>("acct_mgr_name", gstate.acct_mgr_info.acct_mgr_name)
+    ;
     if (strlen(gstate.acct_mgr_info.login_name)) {
         out << "    <have_credentials/>\n";
     }
