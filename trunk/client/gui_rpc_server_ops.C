@@ -84,7 +84,7 @@ void GUI_RPC_CONN::handle_auth1(std::ostream& out) {
     std::ostringstream buf;
     buf << dtime();
     nonce = buf.str();
-    out << "<nonce>" << nonce << "</nonce>\n";
+    out << XmlTag<string>("nonce", nonce);
 }
 
 /// Check if the response to the challenge sent by handle_auth1 is correct.
@@ -109,12 +109,12 @@ void GUI_RPC_CONN::handle_auth2(const char* buf, std::ostream& out) {
 
 // client passes its version, but ignore it for now
 static void handle_exchange_versions(std::ostream& out) {
-    out <<
-    "<server_version>\n"
-    "   <major>" << SYNEC_MAJOR_VERSION << "</major>\n"
-    "   <minor>" << SYNEC_MINOR_VERSION << "</minor>\n"
-    "   <release>" << SYNEC_RELEASE << "</release>\n"
-    "</server_version>\n";
+    out << "<server_version>\n"
+        << XmlTag<int>("major", SYNEC_MAJOR_VERSION)
+        << XmlTag<int>("minor", SYNEC_MINOR_VERSION)
+        << XmlTag<int>("release", SYNEC_RELEASE)
+        << "</server_version>\n"
+    ;
 }
 
 static void handle_get_simple_gui_info(std::ostream& out) {
@@ -137,10 +137,10 @@ static void handle_get_project_status(std::ostream& out) {
 }
 
 static void handle_get_disk_usage(std::ostream& out) {
-    double size, boinc_non_project, d_allowed, boinc_total;
-
     out << "<disk_usage_summary>\n";
     get_filesystem_info(gstate.host_info.d_total, gstate.host_info.d_free);
+
+    double size, boinc_non_project;
     dir_size(".", boinc_non_project, false);
     dir_size("locale", size, false);
     boinc_non_project += size;
@@ -159,7 +159,7 @@ static void handle_get_disk_usage(std::ostream& out) {
         if (! err) boinc_non_project += manager_size;
     }
 #endif
-    boinc_total = boinc_non_project;
+    double boinc_total = boinc_non_project;
     for (size_t i=0; i<gstate.projects.size(); i++) {
         const PROJECT* p = gstate.projects[i];
         gstate.project_disk_usage(p, size);
@@ -170,11 +170,11 @@ static void handle_get_disk_usage(std::ostream& out) {
         ;
         boinc_total += size;
     }
-    d_allowed = gstate.allowed_disk_usage(boinc_total);
-    out << XmlTag<double>("d_total",    gstate.host_info.d_total)
-        << XmlTag<double>("d_free",     gstate.host_info.d_free)
-        << XmlTag<double>("d_boinc",    boinc_non_project)
-        << XmlTag<double>("d_allowed",  d_allowed)
+    double d_allowed = gstate.allowed_disk_usage(boinc_total);
+    out << XmlTag<double>("d_total",   gstate.host_info.d_total)
+        << XmlTag<double>("d_free",    gstate.host_info.d_free)
+        << XmlTag<double>("d_boinc",   boinc_non_project)
+        << XmlTag<double>("d_allowed", d_allowed)
     ;
     out << "</disk_usage_summary>\n";
 }
@@ -491,7 +491,7 @@ static void handle_get_host_info(const char*, MIOFILE& fout) {
 
 static void handle_get_screensaver_tasks(std::ostream& out) {
     out << "<handle_get_screensaver_tasks>\n";
-    out << "    <suspend_reason>" << gstate.suspend_reason << "</suspend_reason>\n";
+    out << XmlTag<int>("suspend_reason", gstate.suspend_reason);
 
     for (size_t i=0; i<gstate.active_tasks.active_tasks.size(); i++) {
         const ACTIVE_TASK* atp = gstate.active_tasks.active_tasks[i];
@@ -554,10 +554,9 @@ static void handle_network_available(const char*, std::ostream& out) {
 }
 
 static void handle_get_project_init_status(const char*, std::ostream& out) {
-    out <<
-        "<get_project_init_status>\n"
-        "    <url>" << gstate.project_init.url << "</url>\n"
-        "    <name>" << gstate.project_init.name << "</name>\n"
+    out << "<get_project_init_status>\n"
+        << XmlTag<string>("url",  gstate.project_init.url)
+        << XmlTag<string>("name", gstate.project_init.name)
     ;
     if (strlen(gstate.project_init.account_key)) {
         out << "    <has_account_key/>\n";
@@ -577,10 +576,9 @@ void GUI_RPC_CONN::handle_get_project_config(const char* buf, std::ostream& out)
 
 void GUI_RPC_CONN::handle_get_project_config_poll(const char*, std::ostream& out) {
     if (get_project_config_op.error_num) {
-        out <<
-            "<project_config>\n"
-            "    <error_num>" << get_project_config_op.error_num << "</error_num>\n"
-            "</project_config>\n"
+        out << "<project_config>\n"
+            << XmlTag<int>("error_num", get_project_config_op.error_num)
+            << "</project_config>\n"
         ;
     } else {
         out << get_project_config_op.reply;
@@ -602,10 +600,9 @@ void GUI_RPC_CONN::handle_lookup_account(const char* buf, std::ostream& out) {
 
 void GUI_RPC_CONN::handle_lookup_account_poll(const char*, std::ostream& out) {
     if (lookup_account_op.error_num) {
-        out <<
-            "<account_out>\n"
-            "    <error_num>" << lookup_account_op.error_num << "</error_num>\n"
-            "</account_out>\n"
+        out << "<account_out>\n"
+            << XmlTag<int>("error_num", lookup_account_op.error_num)
+            << "</account_out>\n"
         ;
     } else {
         out << lookup_account_op.reply;
@@ -623,10 +620,9 @@ void GUI_RPC_CONN::handle_create_account(const char* buf, std::ostream& out) {
 
 void GUI_RPC_CONN::handle_create_account_poll(const char*, std::ostream& out) {
     if (create_account_op.error_num) {
-        out <<
-            "<account_out>\n"
-            "    <error_num>" << create_account_op.error_num << "</error_num>\n"
-            "</account_out>\n"
+        out << "<account_out>\n"
+            << XmlTag<int>("error_num", create_account_op.error_num)
+            << "</account_out>\n"
         ;
     } else {
         out << create_account_op.reply;
@@ -698,9 +694,9 @@ static void handle_project_attach(const char* buf, std::ostream& out) {
 static void handle_project_attach_poll(const char*, std::ostream& out) {
     out << "<project_attach_reply>\n";
     for (size_t i=0; i<gstate.project_attach.messages.size(); i++) {
-        out << "    <message>" << gstate.project_attach.messages[i] << "</message>\n";
+        out << XmlTag<string>("message", gstate.project_attach.messages[i]);
     }
-    out << "    <error_num>" << gstate.project_attach.error_num << "</error_num>\n";
+    out << XmlTag<int>("error_num", gstate.project_attach.error_num);
     out << "</project_attach_reply>\n";
 }
 
@@ -738,15 +734,15 @@ static void handle_acct_mgr_rpc(const char* buf, std::ostream& out) {
 static void handle_acct_mgr_rpc_poll(const char*, std::ostream& out) {
     out << "<acct_mgr_rpc_reply>\n";
     if (!gstate.acct_mgr_op.error_str.empty()) {
-        out << "    <message>" << gstate.acct_mgr_op.error_str << "</message>\n";
+        out << XmlTag<string>("message", gstate.acct_mgr_op.error_str);
     }
-    out << "    <error_num>" << gstate.acct_mgr_op.error_num << "</error_num>\n";
+    out << XmlTag<int>("error_num", gstate.acct_mgr_op.error_num);
     out << "</acct_mgr_rpc_reply>\n";
 }
 
 #ifdef ENABLE_UPDATE_CHECK
 static void handle_get_newer_version(std::ostream& out) {
-    out << "<newer_version>" << gstate.newer_version << "</newer_version>\n";
+    out << XmlTag<string>("newer_version", gstate.newer_version);
 }
 #endif
 
@@ -805,10 +801,9 @@ static void handle_set_global_prefs_override(/* const */ char* buf, std::ostream
             retval = boinc_delete_file(GLOBAL_PREFS_OVERRIDE_FILE);
         }
     }
-    out <<
-        "<set_global_prefs_override_reply>\n"
-        "    <status>" << retval << "</status>\n"
-        "</set_global_prefs_override_reply>\n"
+    out << "<set_global_prefs_override_reply>\n"
+        << XmlTag<int>("status", retval)
+        << "</set_global_prefs_override_reply>\n"
     ;
 }
 
@@ -880,7 +875,7 @@ static void handle_set_debts(const char* buf, std::ostream& out) {
         if (!strcmp(tag, "project")) {
             retval = set_debt(xp);
             if (retval) {
-                out << "<error>" << retval << "</error>\n";
+                out << XmlTag<int>("error", retval);
                 return;
             }
             continue;
@@ -917,10 +912,9 @@ static void handle_set_cc_config(/* const */ char* buf, std::ostream& out) {
             retval = boinc_delete_file(CONFIG_FILE);
         }
     }
-    out <<
-        "<set_cc_config_reply>\n"
-        "    <status>" << retval << "</status>\n"
-        "</set_cc_config_reply>\n"
+    out << "<set_cc_config_reply>\n"
+        << XmlTag<int>("status", retval)
+        << "</set_cc_config_reply>\n"
     ;
 }
 

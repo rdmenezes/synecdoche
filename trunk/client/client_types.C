@@ -962,10 +962,10 @@ bool FILE_INFO::had_failure(int& failnum) const {
 std::string FILE_INFO::failure_message() const {
     std::ostringstream buf;
     buf << "<file_xfer_error>\n"
-        << "  <file_name>" << name << "</file_name>\n"
-        << "  <error_code>" << status << "</error_code>\n";
+        << XmlTag<std::string>("file_name", name)
+        << XmlTag<int>("error_code", status);
     if (!error_msg.empty()) {
-        buf << "  <error_message>" << error_msg << "</error_message>\n";
+        buf << XmlTag<std::string>("error_message", error_msg);
     }
     buf << "</file_xfer_error>\n";
     return buf.str();
