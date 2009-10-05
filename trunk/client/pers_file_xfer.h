@@ -18,7 +18,7 @@
 #ifndef PERS_FILE_XFER_H
 #define PERS_FILE_XFER_H
 
-#include <ostream>
+#include <iosfwd>
 #include <vector>
 
 class MIOFILE;

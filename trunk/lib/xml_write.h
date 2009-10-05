@@ -21,9 +21,8 @@
 #ifndef XML_WRITE_H
 #define XML_WRITE_H
 
-#include <cstdlib>
 #include <ostream>
-#include <sstream>
+#include <string>
 
 class SaveIosFlags {
     std::ios_base& stream_;
