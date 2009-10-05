@@ -15,9 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PERS_FILE_XFER_H
-#define _PERS_FILE_XFER_H
+#ifndef PERS_FILE_XFER_H
+#define PERS_FILE_XFER_H
 
+#include <ostream>
 #include <vector>
 
 class MIOFILE;
@@ -129,4 +130,5 @@ public:
     void suspend();
 };
 
-#endif
+#endif // PERS_FILE_XFER_H
+
