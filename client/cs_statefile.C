@@ -40,6 +40,7 @@
 #include "client_msgs.h"
 #include "pers_file_xfer.h"
 #include "version.h"
+#include "xml_write.h"
 
 #define MAX_STATE_FILE_WRITE_ATTEMPTS 2
 
@@ -758,61 +759,58 @@ int CLIENT_STATE::parse_app_info(PROJECT* p, FILE* in) {
     return ERR_XML_PARSE;
 }
 
-int CLIENT_STATE::write_state_gui(MIOFILE& f) const {
+int CLIENT_STATE::write_state_gui(std::ostream& out) const {
     unsigned int i, j;
     int retval;
 
-    f.printf("<client_state>\n");
+    out << "<client_state>\n";
 
-    retval = host_info.write(f, false);
+    retval = host_info.write(MiofileFromOstream(out), false);
     if (retval) return retval;
-    retval = time_stats.write(f, false);
+    retval = time_stats.write(MiofileFromOstream(out), false);
     if (retval) return retval;
-    retval = net_stats.write(f);
+    retval = net_stats.write(MiofileFromOstream(out));
     if (retval) return retval;
 
     for (j=0; j<projects.size(); j++) {
         const PROJECT* p = projects[j];
-        retval = p->write_state(OstreamFromMiofile(f), true);
+        retval = p->write_state(out, true);
         if (retval) return retval;
         for (i=0; i<apps.size(); i++) {
             if (apps[i]->project == p) {
-                retval = apps[i]->write(f);
+                retval = apps[i]->write(MiofileFromOstream(out));
                 if (retval) return retval;
             }
         }
         for (i=0; i<app_versions.size(); i++) {
-            if (app_versions[i]->project == p) app_versions[i]->write(f);
+            if (app_versions[i]->project == p) app_versions[i]->write(MiofileFromOstream(out));
         }
         for (i=0; i<workunits.size(); i++) {
-            if (workunits[i]->project == p) workunits[i]->write(f);
+            if (workunits[i]->project == p) workunits[i]->write(MiofileFromOstream(out));
         }
         for (i=0; i<results.size(); i++) {
-            if (results[i]->project == p) results[i]->write_gui(OstreamFromMiofile(f));
+            if (results[i]->project == p) results[i]->write_gui(out);
         }
     }
-    f.printf(
-        "<platform_name>%s</platform_name>\n"
-        "<core_client_major_version>%d</core_client_major_version>\n"
-        "<core_client_minor_version>%d</core_client_minor_version>\n"
-        "<core_client_release>%d</core_client_release>\n"
-        "%s"
-        "%s",
-        get_primary_platform().c_str(),
-        core_client_version.major,
-        core_client_version.minor,
-        core_client_version.release,
-        executing_as_daemon?"<executing_as_daemon/>\n":"",
-        work_fetch_no_new_work?"<work_fetch_no_new_work/>\n":""
-    );
-
-    global_prefs.write(f);
-
-    if (strlen(main_host_venue)) {
-        f.printf("<host_venue>%s</host_venue>\n", main_host_venue);
+    out << XmlTag<std::string>("platform_name",     get_primary_platform())
+        << XmlTag<int>("core_client_major_version", core_client_version.major)
+        << XmlTag<int>("core_client_minor_version", core_client_version.minor)
+        << XmlTag<int>("core_client_release",       core_client_version.release)
+    ;
+    if (executing_as_daemon) {
+        out << "<executing_as_daemon/>\n";
+    }
+    if (work_fetch_no_new_work) {
+        out << "<work_fetch_no_new_work/>\n";
     }
 
-    f.printf("</client_state>\n");
+    global_prefs.write(MiofileFromOstream(out));
+
+    if (strlen(main_host_venue)) {
+        out << XmlTag<const char*>("host_venue", main_host_venue);
+    }
+
+    out << "</client_state>\n";
     return 0;
 }
 

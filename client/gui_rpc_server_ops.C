@@ -957,7 +957,7 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<exchange_versions")) {
         handle_exchange_versions(reply);
     } else if (match_tag(request_msg, "<get_state")) {
-        gstate.write_state_gui(MiofileFromOstream(reply));
+        gstate.write_state_gui(reply);
     } else if (match_tag(request_msg, "<get_results")) {
         reply << "<results>\n";
         gstate.write_tasks_gui(reply);
