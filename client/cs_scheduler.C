@@ -22,23 +22,20 @@
 ///
 /// The scheduler RPC mechanism is in scheduler_op.C
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
+#else
+#include "config.h"
 #endif
 
-#ifndef _WIN32
-#include "config.h"
 #include <stdio.h>
-#include <math.h>
-#include <time.h>
-#include <strings.h>
+#include <cmath>
+#include <ctime>
+#include <cstring>
 
 #include <limits>
 #include <map>
 #include <set>
-#endif
 
 #include "client_state.h"
 
