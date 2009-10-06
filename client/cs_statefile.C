@@ -582,10 +582,8 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
 
     f.printf("<client_state>\n");
     host_info.write(f, false);
-    retval = time_stats.write(f, false);
-    if (retval) return retval;
-    retval = net_stats.write(f);
-    if (retval) return retval;
+    time_stats.write(f, false);
+    net_stats.write(f);
     for (j=0; j<projects.size(); j++) {
         const PROJECT* p = projects[j];
         retval = p->write_state(OstreamFromMiofile(f));
@@ -764,10 +762,8 @@ int CLIENT_STATE::write_state_gui(std::ostream& out) const {
     out << "<client_state>\n";
 
     host_info.write(MiofileFromOstream(out), false);
-    retval = time_stats.write(MiofileFromOstream(out), false);
-    if (retval) return retval;
-    retval = net_stats.write(MiofileFromOstream(out));
-    if (retval) return retval;
+    time_stats.write(MiofileFromOstream(out), false);
+    net_stats.write(MiofileFromOstream(out));
 
     for (j=0; j<projects.size(); j++) {
         const PROJECT* p = projects[j];
