@@ -16,11 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
-#include "zlib.h"
 #else
 #include "config.h"
 // Somehow having config.h define _FILE_OFFSET_BITS or _LARGE_FILES is
@@ -34,10 +31,12 @@
 #undef _LARGEFILE64_SOURCE
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <zlib.h>
+#endif
+
 #include <cstring>
 #include <sstream>
-#endif
+
+#include <zlib.h>
 
 #include "client_types.h"
 
