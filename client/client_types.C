@@ -337,7 +337,7 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
 
 /// Write project statistic to project statistics file.
 ///
-int PROJECT::write_statistics(std::ostream& out, bool /*gui_rpc*/) const {
+void PROJECT::write_statistics(std::ostream& out, bool /*gui_rpc*/) const {
     out << "<project_statistics>\n";
     out << XmlTag<string>("master_url", master_url);
 
@@ -354,7 +354,6 @@ int PROJECT::write_statistics(std::ostream& out, bool /*gui_rpc*/) const {
         ;
     }
     out << "</project_statistics>\n";
-    return 0;
 }
 
 const char* PROJECT::get_project_name() const {
