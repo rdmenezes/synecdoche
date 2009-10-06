@@ -120,18 +120,6 @@ void parse_attr(const char* buf, const char* name, char* dest, size_t len) {
     strlcpy(dest, p+1, len);
 }
 
-int copy_stream(FILE* in, FILE* out) {
-    char buf[1024];
-    int n, m;
-    while (1) {
-        n = (int)fread(buf, 1, 1024, in);
-        m = (int)fwrite(buf, 1, n, out);
-        if (m != n) return ERR_FWRITE;
-        if (n < 1024) break;
-    }
-    return 0;
-}
-
 /// append to a malloc'd string
 int strcatdup(char*& p, char* buf) {
     p = (char*)realloc(p, strlen(p) + strlen(buf)+1);
