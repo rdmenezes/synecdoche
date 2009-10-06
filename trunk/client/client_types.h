@@ -154,7 +154,7 @@ public:
 
 public:
     int parse(MIOFILE& in);
-    int write(MIOFILE& out) const;
+    void write(MIOFILE& out) const;
 };
 typedef std::vector<FILE_REF> FILE_REF_VEC;
 
@@ -195,7 +195,7 @@ public:
     WORKUNIT(){}
     ~WORKUNIT(){}
     int parse(MIOFILE& in);
-    int write(MIOFILE& out) const;
+    void write(MIOFILE& out) const;
     bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string& str) const;
     void clear_errors();
@@ -517,7 +517,7 @@ public:
     PROJECT* project;
 
     int parse(MIOFILE& in);
-    int write(MIOFILE& out) const;
+    void write(MIOFILE& out) const;
 };
 
 class APP_VERSION {
