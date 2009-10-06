@@ -230,8 +230,8 @@ public:
     void upload_notify_app(const FILE_INFO* fip, const FILE_REF* frp);
     int copy_output_files();
 
-    int write(std::ostream& out) const;
-    int write_gui(std::ostream& out) const;
+    void write(std::ostream& out) const;
+    void write_gui(std::ostream& out) const;
     int parse(MIOFILE& fin);
     
     /// Read the task state file in case it's more recent then the main state file.
@@ -308,7 +308,7 @@ public:
     void request_reread_prefs(PROJECT* project);
     void request_reread_app_info();
 
-    int write(std::ostream& out) const;
+    void write(std::ostream& out) const;
     int parse(MIOFILE& fin);
 };
 

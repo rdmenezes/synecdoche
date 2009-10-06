@@ -419,7 +419,7 @@ bool ACTIVE_TASK_SET::slot_taken(int slot) const {
 // <active_task_state> is here for the benefit of 3rd-party software
 // that reads the client state file
 //
-int ACTIVE_TASK::write(std::ostream& out) const {
+void ACTIVE_TASK::write(std::ostream& out) const {
     out << "<active_task>\n"
         << XmlTag<string>("project_master_url", result->project->get_master_url())
         << XmlTag<char*> ("result_name",        result->name)
@@ -444,10 +444,9 @@ int ACTIVE_TASK::write(std::ostream& out) const {
         << XmlTag<int>   ("stats_checkpoint",          stats_checkpoint)
     ;
     out << "</active_task>\n";
-    return 0;
 }
 
-int ACTIVE_TASK::write_gui(std::ostream& out) const {
+void ACTIVE_TASK::write_gui(std::ostream& out) const {
     out << "<active_task>\n"
         << XmlTag<int>   ("active_task_state",         task_state())
         << XmlTag<int>   ("app_version_num",           app_version->version_num)
@@ -476,7 +475,6 @@ int ACTIVE_TASK::write_gui(std::ostream& out) const {
         out << XmlTag<int>("graphics_mode_acked", graphics_mode_acked);
     }
     out << "</active_task>\n";
-    return 0;
 }
 
 int ACTIVE_TASK::parse(MIOFILE& fin) {
@@ -581,16 +579,12 @@ std::string ACTIVE_TASK::get_slot_dir() const {
 }
 
 /// Write XML information about this active task set
-int ACTIVE_TASK_SET::write(std::ostream& out) const {
-    int retval;
-
+void ACTIVE_TASK_SET::write(std::ostream& out) const {
     out << "<active_task_set>\n";
     for (size_t i=0; i<active_tasks.size(); i++) {
-        retval = active_tasks[i]->write(out);
-        if (retval) return retval;
+        active_tasks[i]->write(out);
     }
     out << "</active_task_set>\n";
-    return 0;
 }
 
 /// Parse XML information about an active task set
