@@ -122,7 +122,6 @@ bool parse_bool(const char* buf, const char* tag, bool& result);
 
 /// @}
 
-int copy_stream(FILE* in, FILE* out);
 int strcatdup(char*& p, char* buf);
 int dup_element_contents(FILE* in, const char* end_tag, char** pp);
 int dup_element(FILE* in, const char* end_tag, char** pp);

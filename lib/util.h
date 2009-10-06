@@ -21,6 +21,7 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <cstdio>
 
 #include <string>
 #include <vector>
@@ -63,6 +64,7 @@ int boinc_calling_thread_cpu_time(double& cpu);
 void boinc_crash();
 int read_file_malloc(const char* path, char*&, int max_len=0, bool tail=false);
 int read_file_string(const char* path, std::string&, int max_len=0, bool tail=false);
+int copy_stream(FILE* in, FILE* out);
 
 #ifdef _WIN32
 

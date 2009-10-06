@@ -327,6 +327,18 @@ int read_file_string(const char* path, std::string& result, int max_len, bool ta
     return 0;
 }
 
+int copy_stream(FILE* in, FILE* out) {
+    char buf[1024];
+    int n, m;
+    while (1) {
+        n = (int)fread(buf, 1, 1024, in);
+        m = (int)fwrite(buf, 1, n, out);
+        if (m != n) return ERR_FWRITE;
+        if (n < 1024) break;
+    }
+    return 0;
+}
+
 #ifdef _WIN32
 
 /// chdir into the given directory, and run a program there.

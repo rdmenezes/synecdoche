@@ -28,7 +28,6 @@
 #include "str_util.h"
 #include "mfile.h"
 #include "miofile.h"
-#include "parse.h"
 #include "BOINCGUIApp.h"
 #include "Events.h"
 #include "SkinManager.h"
