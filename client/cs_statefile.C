@@ -446,7 +446,7 @@ int CLIENT_STATE::parse_state_file() {
 /// Write the client_state.xml file.
 int CLIENT_STATE::write_state_file() const {
     MFILE mf;
-    int retval, ret1, ret2, attempt;
+    int retval, attempt;
 #ifdef _WIN32
     char win_error_msg[4096];
 #endif
@@ -476,8 +476,9 @@ int CLIENT_STATE::write_state_file() const {
         }
         MIOFILE miof;
         miof.init_mfile(&mf);
-        ret1 = write_state(miof);
-        ret2 = mf.close();
+        write_state(miof);
+        retval = mf.close();
+        /*
         if (ret1) {
             if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR,
@@ -487,9 +488,10 @@ int CLIENT_STATE::write_state_file() const {
             if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
             return ret1;
         }
-        if (ret2) {
+        */
+        if (retval) {
             if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
-            return ret2;
+            return retval;
         }
 
         // only attempt to rename the current state file if it exists.
@@ -576,7 +578,7 @@ int CLIENT_STATE::write_state_file() const {
     return 0;
 }
 
-int CLIENT_STATE::write_state(MIOFILE& f) const {
+void CLIENT_STATE::write_state(MIOFILE& f) const {
     unsigned int i, j;
 
     f.printf("<client_state>\n");
@@ -643,7 +645,6 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         f.printf("<host_venue>%s</host_venue>\n", main_host_venue);
     }
     f.printf("</client_state>\n");
-    return 0;
 }
 
 /// Write the client_state.xml file if necessary.
