@@ -497,7 +497,7 @@ public:
 
     int parse_account_file();
     int parse_state(MIOFILE& in);
-    int write_state(std::ostream& out, bool gui_rpc=false) const;
+    void write_state(std::ostream& out, bool gui_rpc=false) const;
 
     std::vector<DAILY_STATS> statistics; ///< Statistics of the last x days.
     int parse_statistics(FILE* in);
@@ -542,7 +542,7 @@ public:
     APP_VERSION(){}
     ~APP_VERSION(){}
     int parse(MIOFILE& in);
-    int write(MIOFILE& out) const;
+    void write(MIOFILE& out) const;
     bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string& str);
     void clear_errors();

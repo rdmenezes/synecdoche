@@ -578,7 +578,6 @@ int CLIENT_STATE::write_state_file() const {
 
 int CLIENT_STATE::write_state(MIOFILE& f) const {
     unsigned int i, j;
-    int retval;
 
     f.printf("<client_state>\n");
     host_info.write(f, false);
@@ -586,8 +585,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
     net_stats.write(f);
     for (j=0; j<projects.size(); j++) {
         const PROJECT* p = projects[j];
-        retval = p->write_state(OstreamFromMiofile(f));
-        if (retval) return retval;
+        p->write_state(OstreamFromMiofile(f));
         for (i=0; i<apps.size(); i++) {
             if (apps[i]->project == p) {
                 apps[i]->write(f);
@@ -754,9 +752,8 @@ int CLIENT_STATE::parse_app_info(PROJECT* p, FILE* in) {
     return ERR_XML_PARSE;
 }
 
-int CLIENT_STATE::write_state_gui(std::ostream& out) const {
+void CLIENT_STATE::write_state_gui(std::ostream& out) const {
     unsigned int i, j;
-    int retval;
 
     out << "<client_state>\n";
 
@@ -766,8 +763,7 @@ int CLIENT_STATE::write_state_gui(std::ostream& out) const {
 
     for (j=0; j<projects.size(); j++) {
         const PROJECT* p = projects[j];
-        retval = p->write_state(out, true);
-        if (retval) return retval;
+        p->write_state(out, true);
         for (i=0; i<apps.size(); i++) {
             if (apps[i]->project == p) {
                 apps[i]->write(MiofileFromOstream(out));
@@ -802,18 +798,16 @@ int CLIENT_STATE::write_state_gui(std::ostream& out) const {
     }
 
     out << "</client_state>\n";
-    return 0;
 }
 
-int CLIENT_STATE::write_tasks_gui(std::ostream& out) const {
+void CLIENT_STATE::write_tasks_gui(std::ostream& out) const {
     for (size_t i=0; i<results.size(); i++) {
         const RESULT* rp = results[i];
         rp->write_gui(out);
     }
-    return 0;
 }
 
-int CLIENT_STATE::write_file_transfers_gui(std::ostream& out) const {
+void CLIENT_STATE::write_file_transfers_gui(std::ostream& out) const {
     out << "<file_transfers>\n";
 
     for (size_t i=0; i<file_infos.size(); i++) {
@@ -825,6 +819,4 @@ int CLIENT_STATE::write_file_transfers_gui(std::ostream& out) const {
         }
     }
     out << "</file_transfers>\n";
-
-    return 0;
 }

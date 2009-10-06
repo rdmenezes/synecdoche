@@ -223,7 +223,7 @@ int PROJECT::parse_state(MIOFILE& in) {
 
 /// Write project information to client state file or GUI RPC reply.
 ///
-int PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
+void PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
     out << "<project>\n"
         << XmlTag<string>("master_url",             master_url)
         << XmlTag<string>("project_name",           project_name)
@@ -286,7 +286,6 @@ int PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
         }
     }
     out << "</project>\n";
-    return 0;
 }
 
 /// Some project data is stored in account file, other in client_state.xml
@@ -1035,9 +1034,7 @@ int APP_VERSION::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int APP_VERSION::write(MIOFILE& out) const {
-    unsigned int i;
-
+void APP_VERSION::write(MIOFILE& out) const {
     out.printf(
         "<app_version>\n"
         "    <app_name>%s</app_name>\n"
@@ -1062,14 +1059,13 @@ int APP_VERSION::write(MIOFILE& out) const {
     if (strlen(cmdline)) {
         out.printf("    <cmdline>%s</cmdline>\n", cmdline);
     }
-    for (i=0; i<app_files.size(); i++) {
+    for (size_t i=0; i<app_files.size(); i++) {
         app_files[i].write(out);
     }
 
     out.printf(
         "</app_version>\n"
     );
-    return 0;
 }
 
 bool APP_VERSION::had_download_failure(int& failnum) const {
