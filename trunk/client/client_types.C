@@ -749,10 +749,7 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
     return ERR_XML_PARSE;
 }
 
-int FILE_INFO::write(MIOFILE& out, bool to_server) const {
-    unsigned int i;
-    int retval;
-
+void FILE_INFO::write(MIOFILE& out, bool to_server) const {
     out.printf(
         "<file_info>\n"
         "    <name>%s</name>\n"
@@ -777,12 +774,11 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         if (is_user_file) out.printf("    <is_user_file/>\n");
         if (!file_signature.empty()) out.printf("    <file_signature>\n%s</file_signature>\n", file_signature.c_str());
     }
-    for (i=0; i<urls.size(); i++) {
+    for (size_t i=0; i<urls.size(); i++) {
         out.printf("    <url>%s</url>\n", urls[i].c_str());
     }
     if (!to_server && pers_file_xfer) {
-        retval = pers_file_xfer->write(OstreamFromMiofile(out));
-        if (retval) return retval;
+        pers_file_xfer->write(OstreamFromMiofile(out));
     }
     if (!to_server) {
         if ((!signed_xml.empty()) && (!xml_signature.empty())) {
@@ -798,10 +794,9 @@ int FILE_INFO::write(MIOFILE& out, bool to_server) const {
         out.printf("    <error_msg>\n%s\n</error_msg>\n", error_msg_nows.c_str());
     }
     out.printf("</file_info>\n");
-    return 0;
 }
 
-int FILE_INFO::write_gui(std::ostream& out) const {
+void FILE_INFO::write_gui(std::ostream& out) const {
     out <<
         "<file_transfer>\n"
         << XmlTag<string>("project_url", project->get_master_url())
@@ -821,7 +816,6 @@ int FILE_INFO::write_gui(std::ostream& out) const {
         pers_file_xfer->write(out);
     }
     out << "</file_transfer>\n";
-    return 0;
 }
 
 /// Delete physical underlying file associated with FILE_INFO.
@@ -1506,8 +1500,7 @@ int RESULT::write(MIOFILE& out, bool to_server) const {
         for (i=0; i<output_files.size(); i++) {
             fip = output_files[i].file_info;
             if (fip->uploaded) {
-                retval = fip->write(out, true);
-                if (retval) return retval;
+                fip->write(out, true);
             }
         }
     } else {

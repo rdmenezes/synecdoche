@@ -124,7 +124,7 @@ void APP_INIT_DATA::copy(const APP_INIT_DATA& a) {
 /// \todo Document this function -- NA
 /// \todo Add unit tests for this function, maybe parsing the result with
 /// parse_init_data_file() and comparing -- NA
-int write_init_data_file(std::ostream& out, APP_INIT_DATA& ai) {
+void write_init_data_file(std::ostream& out, APP_INIT_DATA& ai) {
     out << "<app_init_data>\n"
         << XmlTag<int>("major_version", ai.major_version)
         << XmlTag<int>("minor_version", ai.minor_version)
@@ -191,7 +191,6 @@ int write_init_data_file(std::ostream& out, APP_INIT_DATA& ai) {
     ai.proxy_info.write(MiofileFromOstream(out));
     ai.global_prefs.write(MiofileFromOstream(out));
     out << "</app_init_data>\n";
-    return 0;
 }
 
 int parse_init_data_file(FILE* f, APP_INIT_DATA& ai) {

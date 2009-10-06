@@ -95,7 +95,7 @@ void NET_INFO::clear() {
 NET_STATS::NET_STATS() {
 }
 
-int NET_STATS::write(MIOFILE& out) const {
+void NET_STATS::write(MIOFILE& out) const {
     out.printf(
         "<net_stats>\n"
         "    <bwup>%f</bwup>\n"
@@ -112,7 +112,6 @@ int NET_STATS::write(MIOFILE& out) const {
         down.avg_rate,
         down.avg_time
     );
-    return 0;
 }
 
 int NET_STATS::parse(MIOFILE& in) {

@@ -337,7 +337,7 @@ int PERS_FILE_XFER::parse(MIOFILE& fin) {
 }
 
 /// Write XML information about a persistent file transfer
-int PERS_FILE_XFER::write(std::ostream& out) const {
+void PERS_FILE_XFER::write(std::ostream& out) const {
     out << "<persistent_file_xfer>\n"
         << XmlTag<int>   ("num_retries",        nretry)
         << XmlTag<double>("first_request_time", first_request_time)
@@ -355,7 +355,6 @@ int PERS_FILE_XFER::write(std::ostream& out) const {
             << "</file_xfer>\n"
         ;
     }
-    return 0;
 }
 
 /// Suspend file transfers by killing them.

@@ -221,8 +221,8 @@ int ACTIVE_TASK::write_app_init_file() {
     aid.host_info = gstate.host_info;
     aid.global_prefs = gstate.global_prefs;
     aid.proxy_info = gstate.proxy_info;
-    retval = write_init_data_file(f, aid);
-    return retval;
+    write_init_data_file(f, aid);
+    return 0;
 }
 
 static int make_soft_link(const PROJECT* project, const char* link_path, const char* rel_file_path) {

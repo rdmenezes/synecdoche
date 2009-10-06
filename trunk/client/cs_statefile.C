@@ -581,8 +581,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
     int retval;
 
     f.printf("<client_state>\n");
-    retval = host_info.write(f, false);
-    if (retval) return retval;
+    host_info.write(f, false);
     retval = time_stats.write(f, false);
     if (retval) return retval;
     retval = net_stats.write(f);
@@ -599,8 +598,7 @@ int CLIENT_STATE::write_state(MIOFILE& f) const {
         }
         for (i=0; i<file_infos.size(); i++) {
             if (file_infos[i]->project == p) {
-                retval = file_infos[i]->write(f, false);
-                if (retval) return retval;
+                file_infos[i]->write(f, false);
             }
         }
         for (i=0; i<app_versions.size(); i++) {
@@ -765,8 +763,7 @@ int CLIENT_STATE::write_state_gui(std::ostream& out) const {
 
     out << "<client_state>\n";
 
-    retval = host_info.write(MiofileFromOstream(out), false);
-    if (retval) return retval;
+    host_info.write(MiofileFromOstream(out), false);
     retval = time_stats.write(MiofileFromOstream(out), false);
     if (retval) return retval;
     retval = net_stats.write(MiofileFromOstream(out));
