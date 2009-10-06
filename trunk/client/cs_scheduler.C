@@ -195,17 +195,8 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         winner->cross_project_id
     );
 
-    int retval;
-    retval = time_stats.write(mf, true);
-    if (retval) {
-        fclose(f);
-        return retval;
-    }
-    retval = net_stats.write(mf);
-    if (retval) {
-        fclose(f);
-        return retval;
-    }
+    time_stats.write(mf, true);
+    net_stats.write(mf);
 
     // update hardware info, and write host info
     host_info.get_host_info();
