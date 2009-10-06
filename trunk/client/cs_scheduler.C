@@ -224,7 +224,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         }
     }
 
-    read_trickle_files(p, f);
+    read_trickle_files(p, mf);
 
     // report sticky files as needed
     //
