@@ -61,15 +61,9 @@
 /// try to report results this much before their deadline
 #define REPORT_DEADLINE_CUSHION ((double)SECONDS_PER_DAY)
 
-
 /// Write a scheduler request to a disk file,
 /// to be sent to a scheduling server.
 int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
-    MIOFILE mf;
-    unsigned int i;
-    const RESULT* rp;
-    int retval;
-    double disk_total, disk_project;
 
     std::string sr_file = get_sched_request_filename(*p);
     FILE* f = boinc_fopen(sr_file.c_str(), "wb");
@@ -101,6 +95,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         p->rpc_seqno = 0;
     }
 
+    MIOFILE mf;
     mf.init_file(f);
     fprintf(f,
         "<scheduler_request>\n"
@@ -144,7 +139,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     //
     if (p->anonymous_platform) {
         fprintf(f, "    <app_versions>\n");
-        for (i=0; i<app_versions.size(); i++) {
+        for (size_t i=0; i<app_versions.size(); ++i) {
             const APP_VERSION* avp = app_versions[i];
             if (avp->project != p) continue;
             avp->write(mf);
@@ -183,7 +178,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     // Use project URL as tie-breaker.
     //
     const PROJECT* winner = p;
-    for (i=0; i<projects.size(); i++ ) {
+    for (size_t i=0; i<projects.size(); ++i) {
         const PROJECT* project = projects[i];
         if (project == p) continue;
         if (strcmp(project->email_hash, p->email_hash)) continue;
@@ -200,35 +195,45 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         winner->cross_project_id
     );
 
+    int retval;
     retval = time_stats.write(mf, true);
-    //if (retval) return retval;
-    // can't return without closing file
+    if (retval) {
+        fclose(f);
+        return retval;
+    }
     retval = net_stats.write(mf);
-    //if (retval) return retval;
+    if (retval) {
+        fclose(f);
+        return retval;
+    }
 
     // update hardware info, and write host info
-    //
     host_info.get_host_info();
     retval = host_info.write(mf, config.suppress_net_info);
-    //if (retval) return retval;
+    if (retval) {
+        fclose(f);
+        return retval;
+    }
 
     // get and write disk usage
-    //
-    total_disk_usage(disk_total);
-    project_disk_usage(p, disk_project);
-    fprintf(f,
-        "    <disk_usage>\n"
-        "        <d_boinc_used_total>%f</d_boinc_used_total>\n"
-        "        <d_boinc_used_project>%f</d_boinc_used_project>\n"
-        "    </disk_usage>\n",
-        disk_total, disk_project
-    );
+    {
+        double disk_total, disk_project;
+        total_disk_usage(disk_total);
+        project_disk_usage(p, disk_project);
+        fprintf(f,
+            "    <disk_usage>\n"
+            "        <d_boinc_used_total>%f</d_boinc_used_total>\n"
+            "        <d_boinc_used_project>%f</d_boinc_used_project>\n"
+            "    </disk_usage>\n",
+            disk_total, disk_project
+        );
+    }
 
     // report results
     //
     p->nresults_returned = 0;
-    for (i=0; i<results.size(); i++) {
-        rp = results[i];
+    for (size_t i=0; i<results.size(); ++i) {
+        const RESULT* rp = results[i];
         if (rp->project == p && rp->ready_to_report) {
             p->nresults_returned++;
             rp->write(mf, true);
@@ -239,7 +244,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
 
     // report sticky files as needed
     //
-    for (i=0; i<file_infos.size(); i++) {
+    for (size_t i=0; i<file_infos.size(); ++i) {
         const FILE_INFO* fip = file_infos[i];
         if (fip->project != p) continue;
         if (!fip->report_on_rpc) continue;
@@ -270,8 +275,8 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
 
     // send names of results in progress for this project
     fprintf(f, "<other_results>\n");
-    for (i=0; i<results.size(); i++) {
-        rp = results[i];
+    for (size_t i=0; i<results.size(); ++i) {
+        const RESULT* rp = results[i];
         if (rp->project == p && !rp->ready_to_report) {
             fprintf(f,
                 "    <other_result>\n"
@@ -289,8 +294,8 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     // to give scheduler info on our CPU commitment
     //
     fprintf(f, "<in_progress_results>\n");
-    for (i=0; i<results.size(); i++) {
-        rp = results[i];
+    for (size_t i=0; i<results.size(); ++i) {
+        const RESULT* rp = results[i];
         double x = rp->estimated_cpu_time_remaining();
         if (x == 0) continue;
         fprintf(f,
