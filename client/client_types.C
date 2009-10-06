@@ -558,7 +558,7 @@ int APP::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int APP::write(MIOFILE& out) const {
+void APP::write(MIOFILE& out) const {
     out.printf(
         "<app>\n"
         "    <name>%s</name>\n"
@@ -566,7 +566,6 @@ int APP::write(MIOFILE& out) const {
         "</app>\n",
         name, user_friendly_name
     );
-    return 0;
 }
 
 FILE_INFO::FILE_INFO() {
@@ -1038,7 +1037,6 @@ int APP_VERSION::parse(MIOFILE& in) {
 
 int APP_VERSION::write(MIOFILE& out) const {
     unsigned int i;
-    int retval;
 
     out.printf(
         "<app_version>\n"
@@ -1065,8 +1063,7 @@ int APP_VERSION::write(MIOFILE& out) const {
         out.printf("    <cmdline>%s</cmdline>\n", cmdline);
     }
     for (i=0; i<app_files.size(); i++) {
-        retval = app_files[i].write(out);
-        if (retval) return retval;
+        app_files[i].write(out);
     }
 
     out.printf(
@@ -1140,8 +1137,7 @@ int FILE_REF::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int FILE_REF::write(MIOFILE& out) const {
-
+void FILE_REF::write(MIOFILE& out) const {
     out.printf(
         "    <file_ref>\n"
         "        <file_name>%s</file_name>\n",
@@ -1160,7 +1156,6 @@ int FILE_REF::write(MIOFILE& out) const {
         out.printf("        <optional/>\n");
     }
     out.printf("    </file_ref>\n");
-    return 0;
 }
 
 int WORKUNIT::parse(MIOFILE& in) {
@@ -1226,7 +1221,7 @@ int WORKUNIT::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int WORKUNIT::write(MIOFILE& out) const {
+void WORKUNIT::write(MIOFILE& out) const {
     unsigned int i;
 
     out.printf(
@@ -1260,7 +1255,6 @@ int WORKUNIT::write(MIOFILE& out) const {
         input_files[i].write(out);
     }
     out.printf("</workunit>\n");
-    return 0;
 }
 
 bool WORKUNIT::had_download_failure(int& failnum) const {
@@ -1433,7 +1427,7 @@ int RESULT::parse_state(MIOFILE& in) {
 int RESULT::write(MIOFILE& out, bool to_server) const {
     unsigned int i;
     const FILE_INFO* fip;
-    int n, retval;
+    int n;
 
     out.printf(
         "<result>\n"
@@ -1517,8 +1511,7 @@ int RESULT::write(MIOFILE& out, bool to_server) const {
             report_deadline
         );
         for (i=0; i<output_files.size(); i++) {
-            retval = output_files[i].write(out);
-            if (retval) return retval;
+            output_files[i].write(out);
         }
     }
     out.printf("</result>\n");

@@ -152,7 +152,6 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 /// used now. We may need to restore them. --NA
 int ACTIVE_TASK::write_app_init_file() {
     APP_INIT_DATA aid;
-    int retval;
 
     memset(&aid, 0, sizeof(aid));
 
