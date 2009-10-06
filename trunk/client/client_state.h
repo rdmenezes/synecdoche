@@ -406,9 +406,9 @@ public:
     int write_state_file_if_needed();
     void check_anonymous();
     int parse_app_info(PROJECT* p, FILE* in);
-    int write_state_gui(std::ostream& out) const;
-    int write_file_transfers_gui(std::ostream& out) const;
-    int write_tasks_gui(std::ostream& out) const;
+    void write_state_gui(std::ostream& out) const;
+    void write_file_transfers_gui(std::ostream& out) const;
+    void write_tasks_gui(std::ostream& out) const;
 /// @}
 
 /// @name cs_trickle.C
