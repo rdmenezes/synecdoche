@@ -209,11 +209,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
 
     // update hardware info, and write host info
     host_info.get_host_info();
-    retval = host_info.write(mf, config.suppress_net_info);
-    if (retval) {
-        fclose(f);
-        return retval;
-    }
+    host_info.write(mf, config.suppress_net_info);
 
     // get and write disk usage
     {

@@ -201,7 +201,7 @@ struct APP_INIT_DATA {
     ~APP_INIT_DATA();
 };
 
-int write_init_data_file(std::ostream& out, APP_INIT_DATA& ai);
+void write_init_data_file(std::ostream& out, APP_INIT_DATA& ai);
 int parse_init_data_file(FILE* f, APP_INIT_DATA& ai);
 
 /// \name filenames used in the slot directory

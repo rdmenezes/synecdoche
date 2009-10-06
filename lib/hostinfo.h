@@ -60,9 +60,9 @@ public:
 
     HOST_INFO();
     int parse(MIOFILE& in);
-    int write(MIOFILE& out, bool suppress_net_info) const;
+    void write(MIOFILE& out, bool suppress_net_info) const;
     int parse_cpu_benchmarks(FILE* in);
-    int write_cpu_benchmarks(FILE* out);
+    void write_cpu_benchmarks(FILE* out);
     void print() const;
 
     bool host_is_running_on_batteries();

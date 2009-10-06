@@ -113,7 +113,7 @@ int HOST_INFO::parse(MIOFILE& in) {
 
 /// Write the host information, to the client state XML file
 /// or in a scheduler request message.
-int HOST_INFO::write(MIOFILE& out, bool suppress_net_info) const {
+void HOST_INFO::write(MIOFILE& out, bool suppress_net_info) const {
     out.printf(
         "<host_info>\n"
         "    <timezone>%d</timezone>\n",
@@ -162,7 +162,6 @@ int HOST_INFO::write(MIOFILE& out, bool suppress_net_info) const {
         os_name,
         os_version
     );
-    return 0;
 }
 
 /// Parse CPU benchmarks state file.
@@ -187,7 +186,7 @@ int HOST_INFO::parse_cpu_benchmarks(FILE* in) {
     return 0;
 }
 
-int HOST_INFO::write_cpu_benchmarks(FILE* out) {
+void HOST_INFO::write_cpu_benchmarks(FILE* out) {
     fprintf(out,
         "<cpu_benchmarks>\n"
         "    <p_fpops>%f</p_fpops>\n"
@@ -202,7 +201,6 @@ int HOST_INFO::write_cpu_benchmarks(FILE* out) {
         p_calculated,
         m_cache
     );
-    return 0;
 }
 
 /// Make a random string using host info.

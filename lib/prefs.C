@@ -693,8 +693,7 @@ int GLOBAL_PREFS::parse_file(
 /// global_prefs.xml file (which includes all venues).
 ///
 /// \param[in] f Reference to a file object that will receive the xml-data.
-/// \return Always returns zero.
-int GLOBAL_PREFS::write(MIOFILE& f) const {
+void GLOBAL_PREFS::write(MIOFILE& f) const {
     f.printf(
         "<global_preferences>\n"
         "   <source_project>%s</source_project>\n"
@@ -773,14 +772,12 @@ int GLOBAL_PREFS::write(MIOFILE& f) const {
         }
     }
     f.printf("</global_preferences>\n");
-
-    return 0;
 }
 
 /// Write a subset of the global preferences,
 /// as selected by the mask of bools.
-int GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
-    if (!mask.are_prefs_set()) return 0;
+void GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
+    if (!mask.are_prefs_set()) return;
     
     f.printf("<global_preferences>\n");
     if (mask.run_on_batteries) {
@@ -899,7 +896,6 @@ int GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
         }
     }
     f.printf("</global_preferences>\n");
-    return 0;
 }
 
 
