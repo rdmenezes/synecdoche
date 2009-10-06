@@ -1420,7 +1420,7 @@ int RESULT::parse_state(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int RESULT::write(MIOFILE& out, bool to_server) const {
+void RESULT::write(MIOFILE& out, bool to_server) const {
     unsigned int i;
     const FILE_INFO* fip;
     int n;
@@ -1511,10 +1511,9 @@ int RESULT::write(MIOFILE& out, bool to_server) const {
         }
     }
     out.printf("</result>\n");
-    return 0;
 }
 
-int RESULT::write_gui(std::ostream& out) const {
+void RESULT::write_gui(std::ostream& out) const {
     out <<
         "<result>\n"
         << XmlTag<const char*>("name",            name)
@@ -1539,7 +1538,6 @@ int RESULT::write_gui(std::ostream& out) const {
         atp->write_gui(out);
     }
     out << "</result>\n";
-    return 0;
 }
 
 /// Returns true if the result's output files are all either
