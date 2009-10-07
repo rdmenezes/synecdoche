@@ -27,6 +27,10 @@
 class SaveIosFlags {
     std::ios_base& stream_;
     std::ios_base::fmtflags flags_;
+
+    //disallow copying
+    SaveIosFlags& operator=(const SaveIosFlags&);
+    SaveIosFlags(const SaveIosFlags&);
 public:
     SaveIosFlags(std::ios_base& stream): stream_(stream) {
         flags_ = stream.flags();
@@ -53,6 +57,9 @@ private:
     friend std::ostream& operator<<(std::ostream& stream, const XmlTag<T>& tag) {
         return write_tag(stream, tag.name, tag.value);
     }
+
+    //disallow assignment
+    XmlTag<T>& operator=(const XmlTag<T>&);
 public:
     XmlTag(const char* name, const T& value):
         name(name), value(value)

@@ -58,9 +58,14 @@
 /// \endcode
 
 class MiofileFromOstream {
+private:
     MIOFILE mf;
     MFILE m;
     std::ostream& stream;
+
+    //disallow assignment
+    MiofileFromOstream& operator=(const MiofileFromOstream&);
+
 public:
     MiofileFromOstream(std::ostream& stream):
         stream(stream)
@@ -112,8 +117,13 @@ public:
 /// \endcode
 
 class OstreamFromMiofile {
+private:
     MIOFILE& mf;
     std::ostringstream oss;
+
+    //disallow assignment
+    OstreamFromMiofile& operator=(const OstreamFromMiofile&);
+
 public:
     OstreamFromMiofile(MIOFILE& miofile):
         mf(miofile)
