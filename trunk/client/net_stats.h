@@ -20,11 +20,13 @@
 /// keep track of the network performance of this host,
 /// namely exponentially weighted averages of upload and download speeds
 
-#ifndef _NET_STATS_
-#define _NET_STATS_
+#ifndef NET_STATS_H
+#define NET_STATS_H
 
 #include <cstdio>
+
 #include <string>
+#include <iosfwd>
 
 #include "gui_http.h"
 #include "error_numbers.h"
@@ -61,7 +63,7 @@ public:
     NET_STATS();
     //void poll(FILE_XFER_SET&, HTTP_OP_SET&);
 
-    void write(MIOFILE&) const;
+    void write(std::ostream& out) const;
     int parse(MIOFILE&);
 };
 

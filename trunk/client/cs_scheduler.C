@@ -176,7 +176,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     out << XmlTag<const char*>("cross_project_id", winner->cross_project_id);
 
     time_stats.write(out, true);
-    net_stats.write(MiofileFromOstream(out));
+    net_stats.write(out);
 
     // update hardware info, and write host info
     host_info.get_host_info();

@@ -23,17 +23,17 @@
 /// NET_STATUS keeps track of whether we have a physical connection,
 /// and whether we need one.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
 #include "config.h"
-#include <cstring>
-#include <cmath>
 #endif
 
 #include "net_stats.h"
+
+#include <cstring>
+#include <cmath>
+#include <ostream>
 
 #include "parse.h"
 #include "miofile.h"
@@ -41,6 +41,7 @@
 #include "str_util.h"
 #include "error_numbers.h"
 #include "util.h"
+#include "xml_write.h"
 
 #include "client_msgs.h"
 #include "client_state.h"
@@ -95,23 +96,16 @@ void NET_INFO::clear() {
 NET_STATS::NET_STATS() {
 }
 
-void NET_STATS::write(MIOFILE& out) const {
-    out.printf(
-        "<net_stats>\n"
-        "    <bwup>%f</bwup>\n"
-        "    <avg_up>%f</avg_up>\n"
-        "    <avg_time_up>%f</avg_time_up>\n"
-        "    <bwdown>%f</bwdown>\n"
-        "    <avg_down>%f</avg_down>\n"
-        "    <avg_time_down>%f</avg_time_down>\n"
-        "</net_stats>\n",
-        up.max_rate,
-        up.avg_rate,
-        up.avg_time,
-        down.max_rate,
-        down.avg_rate,
-        down.avg_time
-    );
+void NET_STATS::write(std::ostream& out) const {
+    out << "<net_stats>\n"
+        << XmlTag<double>("bwup",          up.max_rate)
+        << XmlTag<double>("avg_up",        up.avg_rate)
+        << XmlTag<double>("avg_time_up",   up.avg_time)
+        << XmlTag<double>("bwdown",        down.max_rate)
+        << XmlTag<double>("avg_down",      down.avg_rate)
+        << XmlTag<double>("avg_time_down", down.avg_time)
+        << "</net_stats>\n"
+    ;
 }
 
 int NET_STATS::parse(MIOFILE& in) {
