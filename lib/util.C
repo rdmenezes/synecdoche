@@ -331,10 +331,10 @@ int copy_stream(FILE* in, FILE* out) {
     char buf[1024];
     size_t n, m;
     while (1) {
-        n = fread(buf, 1, 1024, in);
+        n = fread(buf, 1, sizeof(buf), in);
         m = fwrite(buf, 1, n, out);
         if (m != n) return ERR_FWRITE;
-        if (n < 1024) break;
+        if (n < sizeof(buf)) break;
     }
     return 0;
 }
@@ -343,12 +343,12 @@ int copy_stream(std::istream& in, std::ostream& out) {
     std::streambuf* s_in = in.rdbuf();
     std::streambuf* s_out= out.rdbuf();
     char buf[1024];
-    size_t n, m;
+    std::streamsize n, m;
     while (1) {
-        n = s_in->sgetn(buf, 1024);
+        n = s_in->sgetn(buf, sizeof(buf));
         m = s_out->sputn(buf, n);
         if (m != n) return ERR_FWRITE;
-        if (n < 1024) break;
+        if (n < sizeof(buf)) break;
     }
     return 0;
 }
