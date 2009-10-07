@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <iosfwd>
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
@@ -65,6 +66,7 @@ void boinc_crash();
 int read_file_malloc(const char* path, char*&, int max_len=0, bool tail=false);
 int read_file_string(const char* path, std::string&, int max_len=0, bool tail=false);
 int copy_stream(FILE* in, FILE* out);
+int copy_stream(std::istream& in, std::ostream& out);
 
 #ifdef _WIN32
 

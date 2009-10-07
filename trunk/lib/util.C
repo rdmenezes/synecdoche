@@ -329,10 +329,24 @@ int read_file_string(const char* path, std::string& result, int max_len, bool ta
 
 int copy_stream(FILE* in, FILE* out) {
     char buf[1024];
-    int n, m;
+    size_t n, m;
     while (1) {
-        n = (int)fread(buf, 1, 1024, in);
-        m = (int)fwrite(buf, 1, n, out);
+        n = fread(buf, 1, 1024, in);
+        m = fwrite(buf, 1, n, out);
+        if (m != n) return ERR_FWRITE;
+        if (n < 1024) break;
+    }
+    return 0;
+}
+
+int copy_stream(std::istream& in, std::ostream& out) {
+    std::streambuf* s_in = in.rdbuf();
+    std::streambuf* s_out= out.rdbuf();
+    char buf[1024];
+    size_t n, m;
+    while (1) {
+        n = s_in->sgetn(buf, 1024);
+        m = s_out->sputn(buf, n);
         if (m != n) return ERR_FWRITE;
         if (n < 1024) break;
     }
