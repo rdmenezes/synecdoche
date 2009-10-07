@@ -582,7 +582,7 @@ void CLIENT_STATE::write_state(MIOFILE& f) const {
     unsigned int i, j;
 
     f.printf("<client_state>\n");
-    host_info.write(f, false);
+    host_info.write(OstreamFromMiofile(f), false);
     time_stats.write(f, false);
     net_stats.write(f);
     for (j=0; j<projects.size(); j++) {
@@ -758,7 +758,7 @@ void CLIENT_STATE::write_state_gui(std::ostream& out) const {
 
     out << "<client_state>\n";
 
-    host_info.write(MiofileFromOstream(out), false);
+    host_info.write(out, false);
     time_stats.write(MiofileFromOstream(out), false);
     net_stats.write(MiofileFromOstream(out));
 

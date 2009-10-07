@@ -30,6 +30,7 @@
 #endif
 #endif
 
+#include <ostream>
 #include <sstream>
 
 #include "hostinfo.h"
@@ -39,6 +40,7 @@
 #include "miofile.h"
 #include "md5_file.h"
 #include "error_numbers.h"
+#include "xml_write.h"
 
 HOST_INFO::HOST_INFO() {
     clear_host_info();
@@ -113,55 +115,29 @@ int HOST_INFO::parse(MIOFILE& in) {
 
 /// Write the host information, to the client state XML file
 /// or in a scheduler request message.
-void HOST_INFO::write(MIOFILE& out, bool suppress_net_info) const {
-    out.printf(
-        "<host_info>\n"
-        "    <timezone>%d</timezone>\n",
-        timezone
-    );
+void HOST_INFO::write(std::ostream& out, bool suppress_net_info) const {
+    out << "<host_info>\n";
+    out << XmlTag<int>("timezone", timezone);
+
     if (!suppress_net_info) {
-        out.printf(
-            "    <domain_name>%s</domain_name>\n"
-            "    <ip_addr>%s</ip_addr>\n",
-            domain_name,
-            ip_addr
-        );
+        out << XmlTag<const char*>("domain_name", domain_name);
+        out << XmlTag<const char*>("ip_addr",     ip_addr);
     }
-    out.printf(
-        "    <host_cpid>%s</host_cpid>\n"
-        "    <p_ncpus>%d</p_ncpus>\n"
-        "    <p_vendor>%s</p_vendor>\n"
-        "    <p_model>%s</p_model>\n"
-        "    <p_features>%s</p_features>\n"
-        "    <p_fpops>%f</p_fpops>\n"
-        "    <p_iops>%f</p_iops>\n"
-        "    <p_membw>%f</p_membw>\n"
-        "    <p_calculated>%f</p_calculated>\n"
-        "    <m_nbytes>%f</m_nbytes>\n"
-        "    <m_cache>%f</m_cache>\n"
-        "    <m_swap>%f</m_swap>\n"
-        "    <d_total>%f</d_total>\n"
-        "    <d_free>%f</d_free>\n"
-        "    <os_name>%s</os_name>\n"
-        "    <os_version>%s</os_version>\n"
-        "</host_info>\n",
-        host_cpid,
-        p_ncpus,
-        p_vendor,
-        p_model,
-        p_features,
-        p_fpops,
-        p_iops,
-        p_membw,
-        p_calculated,
-        m_nbytes,
-        m_cache,
-        m_swap,
-        d_total,
-        d_free,
-        os_name,
-        os_version
-    );
+    out << XmlTag<const char*>("host_cpid",  host_cpid)
+        << XmlTag<int>   ("p_ncpus",         p_ncpus)
+        << XmlTag<double>("p_fpops",         p_fpops)
+        << XmlTag<double>("p_iops",          p_iops)
+        << XmlTag<double>("p_membw",         p_membw)
+        << XmlTag<double>("p_calculated",    p_calculated)
+        << XmlTag<double>("m_nbytes",        m_nbytes)
+        << XmlTag<double>("m_cache",         m_cache)
+        << XmlTag<double>("m_swap",          m_swap)
+        << XmlTag<double>("d_total",         d_total)
+        << XmlTag<double>("d_free",          d_free)
+        << XmlTag<const char*>("os_name",    os_name)
+        << XmlTag<const char*>("os_version", os_version)
+        << "</host_info>\n"
+    ;
 }
 
 /// Parse CPU benchmarks state file.
