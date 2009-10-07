@@ -485,8 +485,8 @@ static void handle_result_op(const char* buf, std::ostream& out, const char* op)
     out << "<success/>\n";
 }
 
-static void handle_get_host_info(const char*, MIOFILE& fout) {
-    gstate.host_info.write(fout, false);
+static void handle_get_host_info(const char*, std::ostream& out) {
+    gstate.host_info.write(out, false);
 }
 
 static void handle_get_screensaver_tasks(std::ostream& out) {
@@ -979,7 +979,7 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<get_message_count")) {
         handle_get_message_count(reply);
     } else if (match_tag(request_msg, "<get_host_info")) {
-        handle_get_host_info(request_msg, MiofileFromOstream(reply));
+        handle_get_host_info(request_msg, reply);
     } else if (match_tag(request_msg, "<get_statistics")) {
         handle_get_statistics(request_msg, reply);
 #ifdef ENABLE_UPDATE_CHECK

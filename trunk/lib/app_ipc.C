@@ -187,7 +187,7 @@ void write_init_data_file(std::ostream& out, APP_INIT_DATA& ai) {
         << XmlTag<double>("rsc_disk_bound",         ai.rsc_disk_bound)
         << XmlTag<double>("computation_deadline",   ai.computation_deadline)
     ;
-    ai.host_info.write(MiofileFromOstream(out), false);
+    ai.host_info.write(out, false);
     ai.proxy_info.write(MiofileFromOstream(out));
     ai.global_prefs.write(MiofileFromOstream(out));
     out << "</app_init_data>\n";

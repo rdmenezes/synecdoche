@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _HOSTINFO_
-#define _HOSTINFO_
+#ifndef HOSTINFO_H
+#define HOSTINFO_H
 
 /// \file
 /// Description of a host's hardware and software.
@@ -28,6 +28,8 @@
 /// Other host-specific info is kept in
 /// - TIME_STATS (on/connected/active fractions)
 /// - NET_STATS (average network bandwidths)
+
+#include <iosfwd>
 
 class MIOFILE;
 
@@ -60,7 +62,7 @@ public:
 
     HOST_INFO();
     int parse(MIOFILE& in);
-    void write(MIOFILE& out, bool suppress_net_info) const;
+    void write(std::ostream& out, bool suppress_net_info) const;
     int parse_cpu_benchmarks(FILE* in);
     void write_cpu_benchmarks(FILE* out);
     void print() const;
