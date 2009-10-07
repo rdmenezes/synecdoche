@@ -792,7 +792,7 @@ void CLIENT_STATE::write_state_gui(std::ostream& out) const {
         out << "<work_fetch_no_new_work/>\n";
     }
 
-    global_prefs.write(MiofileFromOstream(out));
+    global_prefs.write(out);
 
     if (strlen(main_host_venue)) {
         out << XmlTag<const char*>("host_venue", main_host_venue);

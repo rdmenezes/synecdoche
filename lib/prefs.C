@@ -22,20 +22,24 @@
 
 #ifndef _WIN32
 #include "config.h"
+#endif
+
+#include "prefs.h"
+
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <ctime>
+
 #include <sstream>
-#include <time.h>
-#endif
-
 #include <stdexcept>
-
-#include "prefs.h"
+#include <ostream>
+#include <iomanip> // for setprecision
 
 #include "parse.h"
 #include "util.h"
 #include "miofile.h"
+#include "xml_write.h"
 
 #include "error_numbers.h"
 
@@ -692,86 +696,70 @@ int GLOBAL_PREFS::parse_file(
 /// Not used for scheduler request; there, we just copy the
 /// global_prefs.xml file (which includes all venues).
 ///
-/// \param[in] f Reference to a file object that will receive the xml-data.
-void GLOBAL_PREFS::write(MIOFILE& f) const {
-    f.printf(
-        "<global_preferences>\n"
-        "   <source_project>%s</source_project>\n"
-        "   <mod_time>%f</mod_time>\n"
-        "%s%s"
-        "   <suspend_if_no_recent_input>%f</suspend_if_no_recent_input>\n"
-        "   <start_hour>%f</start_hour>\n"
-        "   <end_hour>%f</end_hour>\n"
-        "   <net_start_hour>%f</net_start_hour>\n"
-        "   <net_end_hour>%f</net_end_hour>\n"
-        "%s%s%s%s"
-        "   <work_buf_min_days>%f</work_buf_min_days>\n"
-        "   <work_buf_additional_days>%f</work_buf_additional_days>\n"
-        "   <max_cpus>%d</max_cpus>\n"
-        "   <max_ncpus_pct>%f</max_ncpus_pct>\n"
-        "   <cpu_scheduling_period_minutes>%f</cpu_scheduling_period_minutes>\n"
-        "   <disk_interval>%f</disk_interval>\n"
-        "   <disk_max_used_gb>%f</disk_max_used_gb>\n"
-        "   <disk_max_used_pct>%f</disk_max_used_pct>\n"
-        "   <disk_min_free_gb>%f</disk_min_free_gb>\n"
-        "   <vm_max_used_pct>%f</vm_max_used_pct>\n"
-        "   <ram_max_used_busy_pct>%f</ram_max_used_busy_pct>\n"
-        "   <ram_max_used_idle_pct>%f</ram_max_used_idle_pct>\n"
-        "   <idle_time_to_run>%f</idle_time_to_run>\n"
-        "   <max_bytes_sec_up>%f</max_bytes_sec_up>\n"
-        "   <max_bytes_sec_down>%f</max_bytes_sec_down>\n"
-        "   <cpu_usage_limit>%f</cpu_usage_limit>\n",
-        source_project,
-        mod_time,
-        run_on_batteries?"   <run_on_batteries/>\n":"",
-        run_if_user_active?"   <run_if_user_active/>\n":"",
-        suspend_if_no_recent_input,
-        cpu_times.get_start() / 3600.0,
-        cpu_times.get_end() / 3600.0,
-        net_times.get_start() / 3600.0,
-        net_times.get_end() / 3600.0,
-        leave_apps_in_memory?"   <leave_apps_in_memory/>\n":"",
-        confirm_before_connecting?"   <confirm_before_connecting/>\n":"",
-        hangup_if_dialed?"   <hangup_if_dialed/>\n":"",
-        dont_verify_images?"   <dont_verify_images/>\n":"",
-        work_buf_min_days,
-        work_buf_additional_days,
-        max_cpus,
-        max_ncpus_pct,
-        cpu_scheduling_period_minutes,
-        disk_interval,
-        disk_max_used_gb,
-        disk_max_used_pct,
-        disk_min_free_gb,
-        vm_max_used_frac*100,
-        ram_max_used_busy_frac*100,
-        ram_max_used_idle_frac*100,
-        idle_time_to_run,
-        max_bytes_sec_up,
-        max_bytes_sec_down,
-        cpu_usage_limit
-    );
+/// \param[in] out Output stream that will receive the XML data.
+void GLOBAL_PREFS::write(std::ostream& out) const
+{
+    out << "<global_preferences>\n";
 
-    for (int i = 0; i < 7; i++) {
+    out << XmlTag<const char*>("source_project", source_project);
+    out << XmlTag<double>("mod_time", mod_time);
+
+    if (run_on_batteries)   out << "<run_on_batteries/>\n";
+    if (run_if_user_active) out << "<run_if_user_active/>\n";
+
+    out << XmlTag<double>("suspend_if_no_recent_input", suspend_if_no_recent_input)
+        << XmlTag<double>("start_hour",     cpu_times.get_start() / 3600.0)
+        << XmlTag<double>("end_hour",       cpu_times.get_end()   / 3600.0)
+        << XmlTag<double>("net_start_hour", net_times.get_start() / 3600.0)
+        << XmlTag<double>("net_end_hour",   net_times.get_end()   / 3600.0)
+    ;
+    if (leave_apps_in_memory)       out << "<leave_apps_in_memory/>\n";
+    if (confirm_before_connecting)  out << "<confirm_before_connecting/>\n";
+    if (hangup_if_dialed)           out << "<hangup_if_dialed/>\n";
+    if (dont_verify_images)         out << "<dont_verify_images/>\n";
+
+    out << XmlTag<double>("work_buf_min_days",          work_buf_min_days)
+        << XmlTag<double>("work_buf_additional_days",   work_buf_additional_days)
+        << XmlTag<int>   ("max_cpus",                   max_cpus)
+        << XmlTag<double>("max_ncpus_pct",              max_ncpus_pct)
+        << XmlTag<double>("cpu_scheduling_period_minutes", cpu_scheduling_period_minutes)
+        << XmlTag<double>("disk_interval",              disk_interval)
+        << XmlTag<double>("disk_max_used_gb",           disk_max_used_gb)
+        << XmlTag<double>("disk_max_used_pct",          disk_max_used_pct)
+        << XmlTag<double>("disk_min_free_gb",           disk_min_free_gb)
+        << XmlTag<double>("vm_max_used_pct",            vm_max_used_frac*100)
+        << XmlTag<double>("ram_max_used_busy_pct",      ram_max_used_busy_frac*100)
+        << XmlTag<double>("ram_max_used_idle_pct",      ram_max_used_idle_frac*100)
+        << XmlTag<double>("idle_time_to_run",           idle_time_to_run)
+        << XmlTag<double>("max_bytes_sec_up",           max_bytes_sec_up)
+        << XmlTag<double>("max_bytes_sec_down",         max_bytes_sec_down)
+        << XmlTag<double>("cpu_usage_limit",            cpu_usage_limit)
+    ;
+
+    for (size_t i=0; i < 7; ++i) {
         const TIME_SPAN* cpu = cpu_times.week.get(i);
         const TIME_SPAN* net = net_times.week.get(i);
 
         //write only when needed
         if (net || cpu) {    
-            f.printf("   <day_prefs>\n");                
-            f.printf("      <day_of_week>%d</day_of_week>\n", i);
+            out << "<day_prefs>\n";
+            out << XmlTag<int>("day_of_week", i);
             if (cpu) {
-                f.printf("      <start_hour>%.02f</start_hour>\n", cpu->get_start() / 3600.0);
-                f.printf("      <end_hour>%.02f</end_hour>\n", cpu->get_end() / 3600.0);
+                SaveIosFlags saver(out);
+                out << std::fixed << std::setprecision(2);
+                out << "<start_hour>" << (cpu->get_start() / 3600.0) << "</start_hour>\n";
+                out << "<end_hour>" << (cpu->get_end() / 3600.0) << "</end_hour>\n";
             }
             if (net) {
-                f.printf("      <net_start_hour>%.02f</net_start_hour>\n", net->get_start() / 3600.0);
-                f.printf("      <net_end_hour>%.02f</net_end_hour>\n", net->get_end() / 3600.0);
+                SaveIosFlags saver(out);
+                out << std::fixed << std::setprecision(2);
+                out << "<net_start_hour>" << (net->get_start() / 3600.0) << "</net_start_hour>\n";
+                out << "<net_end_hour>" << (net->get_end() / 3600.0) << "</net_end_hour>\n";
             }
-            f.printf("   </day_prefs>\n");
+            out << "</day_prefs>\n";
         }
     }
-    f.printf("</global_preferences>\n");
+    out << "</global_preferences>\n";
 }
 
 /// Write a subset of the global preferences,

@@ -34,7 +34,6 @@
 #include "str_util.h"
 #include "filesys.h"
 #include "miofile.h"
-#include "miofile_wrap.h"
 #include "xml_write.h"
 
 using std::string;
@@ -189,7 +188,7 @@ void write_init_data_file(std::ostream& out, APP_INIT_DATA& ai) {
     ;
     ai.host_info.write(out, false);
     ai.proxy_info.write(out);
-    ai.global_prefs.write(MiofileFromOstream(out));
+    ai.global_prefs.write(out);
     out << "</app_init_data>\n";
 }
 

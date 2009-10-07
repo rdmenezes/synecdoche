@@ -138,7 +138,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     // send working prefs
     //
     out << "<working_global_preferences>\n";
-    global_prefs.write(MiofileFromOstream(out));
+    global_prefs.write(out);
     out << "</working_global_preferences>\n";
 
     // send master global preferences if present and not host-specific

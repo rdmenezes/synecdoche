@@ -55,7 +55,6 @@
 #include "parse.h"
 #include "miofile.h"
 #include "mfile.h"
-#include "miofile_wrap.h"
 #include "network.h"
 #include "filesys.h"
 #include "version.h"
@@ -746,21 +745,21 @@ static void handle_get_newer_version(std::ostream& out) {
 }
 #endif
 
-static void handle_get_global_prefs_file(MIOFILE& fout) {
+static void handle_get_global_prefs_file(std::ostream& out) {
     GLOBAL_PREFS p;
     bool found;
     int retval = p.parse_file(
         GLOBAL_PREFS_FILE_NAME, gstate.main_host_venue, found
     );
     if (retval) {
-        fout.printf("<error>%d</error>\n", retval);
+        out << XmlTag<int>("error", retval);
         return;
     }
-    p.write(fout);
+    p.write(out);
 }
 
-static void handle_get_global_prefs_working(MIOFILE& fout) {
-    gstate.global_prefs.write(fout);
+static void handle_get_global_prefs_working(std::ostream& out) {
+    gstate.global_prefs.write(out);
 }
 
 static void handle_get_global_prefs_override(std::ostream& out) {
@@ -1039,9 +1038,9 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<get_project_init_status")) {
         handle_get_project_init_status(request_msg, reply);
     } else if (match_tag(request_msg, "<get_global_prefs_file")) {
-        handle_get_global_prefs_file(MiofileFromOstream(reply));
+        handle_get_global_prefs_file(reply);
     } else if (match_tag(request_msg, "<get_global_prefs_working")) {
-        handle_get_global_prefs_working(MiofileFromOstream(reply));
+        handle_get_global_prefs_working(reply);
     } else if (match_tag(request_msg, "<get_global_prefs_override")) {
         handle_get_global_prefs_override(reply);
     } else if (match_tag(request_msg, "<set_global_prefs_override")) {
