@@ -39,6 +39,10 @@
 #ifndef _CRT_SECURE_NO_DEPRECATE
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
+// And this one is for the C++ library "secure" functions.
+#ifndef _SCL_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
+#endif
 #endif
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
