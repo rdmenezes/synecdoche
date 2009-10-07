@@ -736,7 +736,7 @@ void GLOBAL_PREFS::write(std::ostream& out) const
         << XmlTag<double>("cpu_usage_limit",            cpu_usage_limit)
     ;
 
-    for (size_t i=0; i < 7; ++i) {
+    for (int i=0; i < 7; ++i) {
         const TIME_SPAN* cpu = cpu_times.week.get(i);
         const TIME_SPAN* net = net_times.week.get(i);
 
