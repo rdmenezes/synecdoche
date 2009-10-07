@@ -640,7 +640,7 @@ void CLIENT_STATE::write_state(MIOFILE& f) const {
     for (i=1; i<platforms.size(); i++) {
         f.printf("<alt_platform>%s</alt_platform>\n", platforms[i].name.c_str());
     }
-    proxy_info.write(f);
+    proxy_info.write(OstreamFromMiofile(f));
     if (strlen(main_host_venue)) {
         f.printf("<host_venue>%s</host_venue>\n", main_host_venue);
     }

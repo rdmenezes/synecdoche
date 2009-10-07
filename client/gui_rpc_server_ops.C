@@ -348,8 +348,8 @@ static void handle_set_proxy_settings(const char* buf, std::ostream& out) {
     gstate.active_tasks.request_reread_app_info();
 }
 
-static void handle_get_proxy_settings(const char* , MIOFILE& fout) {
-    gstate.proxy_info.write(fout);
+static void handle_get_proxy_settings(const char*, std::ostream& out) {
+    gstate.proxy_info.write(out);
 }
 
 // params:
@@ -1006,7 +1006,7 @@ int GUI_RPC_CONN::handle_rpc() {
     } else if (match_tag(request_msg, "<run_benchmarks")) {
         handle_run_benchmarks(request_msg, reply);
     } else if (match_tag(request_msg, "<get_proxy_settings")) {
-        handle_get_proxy_settings(request_msg, MiofileFromOstream(reply));
+        handle_get_proxy_settings(request_msg, reply);
     } else if (match_tag(request_msg, "<set_proxy_settings")) {
         handle_set_proxy_settings(request_msg, reply);
     } else if (match_tag(request_msg, "<network_available")) {
