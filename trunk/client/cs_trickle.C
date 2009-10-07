@@ -41,8 +41,8 @@
 ///
 /// \param[in] project Pointer to a PROJECT instance for the project for which
 ///                    trickle files should be read.
-/// \param[in] mf The MIOFILE that should receive the XML version of the
-///               content of the trickle files.
+/// \param[in] out The output stream that should receive the XML version of the
+///                content of the trickle files.
 /// \return Always returns zero.
 int CLIENT_STATE::read_trickle_files(const PROJECT* project, std::ostream& out) {
     std::string project_dir = get_project_dir(project);
