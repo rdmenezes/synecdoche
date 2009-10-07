@@ -355,7 +355,7 @@ public:
 private:
     void add_platform(const char* platform);
     void detect_platforms();
-    void write_platforms(PROJECT* p, MIOFILE& mf);
+    void write_platforms(const PROJECT* p, std::ostream& out);
     bool is_supported_platform(const char* p);
 /// @}
 

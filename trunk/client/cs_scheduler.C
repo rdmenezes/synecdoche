@@ -118,7 +118,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     //
     out << "<client_cap_plan_class>1</client_cap_plan_class>\n";
 
-    write_platforms(p, MiofileFromOstream(out));
+    write_platforms(p, out);
 
     // send supported app_versions for anonymous platform clients
     //

@@ -30,17 +30,21 @@ LPFN_ISWOW64PROCESS fnIsWow64Process;
 
 #ifndef _WIN32
 #include "config.h"
-#include <stdio.h>
 #endif
 
-#include "client_types.h"
 #include "client_state.h"
+
+#include <cstdio>
+
+#include <string>
+#include <ostream>
+
+#include "client_types.h"
 #include "error_numbers.h"
 #include "log_flags.h"
 #include "str_util.h"
 #include "util.h"
-#include "miofile.h"
-
+#include "xml_write.h"
 
 /// return the primary platform id.
 std::string CLIENT_STATE::get_primary_platform() const {
@@ -119,22 +123,17 @@ void CLIENT_STATE::detect_platforms() {
 }
 
 
-/// write XML list of supported platforms
-void CLIENT_STATE::write_platforms(PROJECT* p, MIOFILE& mf) {
+/// Write XML list of supported platforms.
+void CLIENT_STATE::write_platforms(const PROJECT* p, std::ostream& out) {
+    out << XmlTag<std::string>("platform_name", p->anonymous_platform ? "anonymous" : get_primary_platform());
 
-    mf.printf(
-        "    <platform_name>%s</platform_name>\n",
-        p->anonymous_platform ? "anonymous" : get_primary_platform().c_str()
-    );
-
-    for (unsigned int i=1; i<platforms.size(); i++) {
-        PLATFORM& platform = platforms[i];
-        mf.printf(
-            "    <alt_platform>\n"
-            "        <name>%s</name>\n"
-            "    </alt_platform>\n",
-            platform.name.c_str()
-        );
+    for (size_t i=1; i<platforms.size(); i++) {
+        const PLATFORM& platform = platforms[i];
+        out << 
+        "    <alt_platform>\n"
+        "        <name>" << platform.name << "</name>\n"
+        "    </alt_platform>\n"
+        ;
     }
 }
 
