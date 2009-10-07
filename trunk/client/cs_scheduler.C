@@ -205,7 +205,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         }
     }
 
-    read_trickle_files(p, MiofileFromOstream(out));
+    read_trickle_files(p, out);
 
     // report sticky files as needed
     //

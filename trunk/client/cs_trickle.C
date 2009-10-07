@@ -44,7 +44,7 @@
 /// \param[in] mf The MIOFILE that should receive the XML version of the
 ///               content of the trickle files.
 /// \return Always returns zero.
-int CLIENT_STATE::read_trickle_files(const PROJECT* project, MIOFILE& mf) {
+int CLIENT_STATE::read_trickle_files(const PROJECT* project, std::ostream& out) {
     std::string project_dir = get_project_dir(project);
 
     DirScanner ds(project_dir);
@@ -77,16 +77,13 @@ int CLIENT_STATE::read_trickle_files(const PROJECT* project, MIOFILE& mf) {
         if (read_file_malloc(path.c_str(), file_contents)) {
             continue;
         }
-        mf.printf(
+        out <<
             "  <msg_from_host>\n"
-            "      <result_name>%s</result_name>\n"
-            "      <time>%d</time>\n"
-            "%s\n"
-            "  </msg_from_host>\n",
-            result_name.c_str(),
-            (int)t,
-            file_contents
-        );
+            "      <result_name>" << result_name << "</result_name>\n"
+            "      <time>" << int(t) << "</time>\n"
+            << file_contents <<
+            "  </msg_from_host>\n"
+        ;
         free(file_contents);
 
         // Append .sent to filename, so we'll know which ones to delete later.
