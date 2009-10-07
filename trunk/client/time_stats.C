@@ -17,23 +17,22 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+#else
+#include "config.h"
 #endif
 
-#ifndef _WIN32
-#include "config.h"
+#include "time_stats.h"
+
 #include <cstdio>
 #include <ctime>
 #include <cmath>
-#include <sstream>
-#endif
+#include <cstring>
 
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
 
-#include <cstring>
-
-#include "time_stats.h"
+#include <sstream>
 
 #include "parse.h"
 #include "miofile.h"
@@ -45,6 +44,7 @@
 #include "client_state.h"
 #include "network.h"
 #include "log_flags.h"
+#include "xml_write.h"
 
 #include "version.h"
 
@@ -250,25 +250,17 @@ void TIME_STATS::update_cpu_efficiency(double cpu_wall_time, double cpu_time) {
 
 /// Write XML based time statistics
 ///
-void TIME_STATS::write(MIOFILE& out, bool to_server) const {
-    out.printf(
-        "<time_stats>\n"
-        "    <on_frac>%f</on_frac>\n"
-        "    <connected_frac>%f</connected_frac>\n"
-        "    <active_frac>%f</active_frac>\n"
-        "    <cpu_efficiency>%f</cpu_efficiency>\n",
-        on_frac,
-        connected_frac,
-        active_frac,
-        cpu_efficiency
-    );
+void TIME_STATS::write(std::ostream& out, bool to_server) const {
+    out << "<time_stats>\n"
+        << XmlTag<double>("on_frac",        on_frac)
+        << XmlTag<double>("connected_frac", connected_frac)
+        << XmlTag<double>("active_frac",    active_frac)
+        << XmlTag<double>("cpu_efficiency", cpu_efficiency)
+    ;
     if (!to_server) {
-        out.printf(
-            "    <last_update>%f</last_update>\n",
-            last_update
-        );
+        out << XmlTag<double>("last_update", last_update);
     }
-    out.printf("</time_stats>\n");
+    out << "</time_stats>\n";
 }
 
 /// Parse XML based time statistics, usually from client_state.xml
