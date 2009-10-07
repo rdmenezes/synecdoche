@@ -37,6 +37,7 @@
 #include <map>
 #include <set>
 #include <fstream>
+#include <ostream>
 
 #include "client_state.h"
 
@@ -47,7 +48,6 @@
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"
-#include "miofile.h"
 #include "miofile_wrap.h"
 #include "xml_write.h"
 
@@ -175,7 +175,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     }
     out << XmlTag<const char*>("cross_project_id", winner->cross_project_id);
 
-    time_stats.write(MiofileFromOstream(out), true);
+    time_stats.write(out, true);
     net_stats.write(MiofileFromOstream(out));
 
     // update hardware info, and write host info
