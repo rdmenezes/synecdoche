@@ -414,7 +414,7 @@ public:
 /// @name cs_trickle.C
 private:
     /// Scan project dir for trickle files and convert them to XML.
-    int read_trickle_files(const PROJECT* project, MIOFILE& f);
+    int read_trickle_files(const PROJECT* project, std::ostream& out);
 
     /// Remove trickle files when ack has been received.
     int remove_trickle_files(const PROJECT* project);
