@@ -15,8 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PROXY_INFO_
-#define _PROXY_INFO_
+#ifndef PROXY_INFO_H
+#define PROXY_INFO_H
+
+#include <iosfwd>
 
 class MIOFILE;
 
@@ -35,7 +37,7 @@ struct PROXY_INFO {
     char socks5_user_passwd[256];
 
     int parse(MIOFILE& in);
-    void write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
     void clear();
 
     PROXY_INFO& operator=(const PROXY_INFO& rhs);

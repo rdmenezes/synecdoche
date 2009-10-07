@@ -188,7 +188,7 @@ void write_init_data_file(std::ostream& out, APP_INIT_DATA& ai) {
         << XmlTag<double>("computation_deadline",   ai.computation_deadline)
     ;
     ai.host_info.write(out, false);
-    ai.proxy_info.write(MiofileFromOstream(out));
+    ai.proxy_info.write(out);
     ai.global_prefs.write(MiofileFromOstream(out));
     out << "</app_init_data>\n";
 }

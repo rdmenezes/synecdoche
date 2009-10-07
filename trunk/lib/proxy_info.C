@@ -32,6 +32,7 @@ using std::string;
 #include "parse.h"
 #include "miofile.h"
 #include "error_numbers.h"
+#include "xml_write.h"
 
 int PROXY_INFO::parse(MIOFILE& in) {
     char buf[1024];
@@ -56,40 +57,23 @@ int PROXY_INFO::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-void PROXY_INFO::write(MIOFILE& out) const {
-    char s5un[2048], s5up[2048], hun[2048], hup[2048];
-    xml_escape(socks5_user_name, s5un, sizeof(s5un));
-    xml_escape(socks5_user_passwd, s5up, sizeof(s5up));
-    xml_escape(http_user_name, hun, sizeof(hun));
-    xml_escape(http_user_passwd, hup, sizeof(hup));
-    out.printf(
-        "<proxy_info>\n"
-        "%s"
-        "%s"
-        "%s"
-        "    <socks_version>%d</socks_version>\n"
-        "    <socks_server_name>%s</socks_server_name>\n"
-        "    <socks_server_port>%d</socks_server_port>\n"
-        "    <http_server_name>%s</http_server_name>\n"
-        "    <http_server_port>%d</http_server_port>\n"
-        "    <socks5_user_name>%s</socks5_user_name>\n"
-        "    <socks5_user_passwd>%s</socks5_user_passwd>\n"
-        "    <http_user_name>%s</http_user_name>\n"
-        "    <http_user_passwd>%s</http_user_passwd>\n"
-        "</proxy_info>\n",
-        use_http_proxy?"    <use_http_proxy/>\n":"",
-        use_socks_proxy?"    <use_socks_proxy/>\n":"",
-        use_http_auth?"    <use_http_auth/>\n":"",
-        socks_version,
-        socks_server_name,
-        socks_server_port,
-        http_server_name,
-        http_server_port,
-        s5un,
-        s5up,
-        hun,
-        hup
-    );
+void PROXY_INFO::write(std::ostream& out) const {
+    out << "<proxy_info>\n";
+    if (use_http_proxy)  out << "<use_http_proxy/>\n";
+    if (use_socks_proxy) out << "<use_socks_proxy/>\n";
+    if (use_http_auth)   out << "<use_http_auth/>\n";
+
+    out << XmlTag<int>      ("socks_version",      socks_version)
+        << XmlTag<XmlString>("socks_server_name",  socks_server_name)
+        << XmlTag<int>      ("socks_server_port",  socks_server_port)
+        << XmlTag<XmlString>("http_server_name",   http_server_name)
+        << XmlTag<int>      ("http_server_port",   http_server_port)
+        << XmlTag<XmlString>("socks5_user_name",   socks5_user_name)
+        << XmlTag<XmlString>("socks5_user_passwd", socks5_user_passwd)
+        << XmlTag<XmlString>("http_user_name",     http_user_name)
+        << XmlTag<XmlString>("http_user_passwd",   http_user_passwd)
+        << "</proxy_info>\n"
+    ;
 }
 
 void PROXY_INFO::clear() {
