@@ -608,7 +608,7 @@ void CLIENT_STATE::write_state(std::ostream& out) const {
             if (workunits[i]->project == p) workunits[i]->write(MiofileFromOstream(out));
         }
         for (i=0; i<results.size(); i++) {
-            if (results[i]->project == p) results[i]->write(MiofileFromOstream(out), false);
+            if (results[i]->project == p) results[i]->write(out, false);
         }
         p->write_project_files(MiofileFromOstream(out));
     }
