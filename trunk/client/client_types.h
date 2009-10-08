@@ -604,7 +604,7 @@ public:
     int parse_server(MIOFILE&);
     int parse_state(MIOFILE&);
     int parse_name(FILE* in, const char* end_tag);
-    void write(MIOFILE& out, bool to_server) const;
+    void write(std::ostream& out, bool to_server) const;
     void write_gui(std::ostream& out) const;
     bool is_upload_done() const;    ///< files uploaded?
     void clear_uploaded_flags();

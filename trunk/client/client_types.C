@@ -1416,93 +1416,78 @@ int RESULT::parse_state(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-void RESULT::write(MIOFILE& out, bool to_server) const {
-    out.printf(
-        "<result>\n"
-        "    <name>%s</name>\n"
-        "    <final_cpu_time>%f</final_cpu_time>\n"
-        "    <exit_status>%d</exit_status>\n"
-        "    <state>%d</state>\n"
-        "    <platform>%s</platform>\n"
-        "    <version_num>%d</version_num>\n",
-        name,
-        final_cpu_time,
-        exit_status,
-        state(),
-        platform,
-        version_num
-    );
+void RESULT::write(std::ostream& out, bool to_server) const {
+    out << "<result>\n"
+        << XmlTag<const char*>("name",           name)
+        << XmlTag<double>     ("final_cpu_time", final_cpu_time)
+        << XmlTag<int>        ("exit_status",    exit_status)
+        << XmlTag<int>        ("state",          state())
+        << XmlTag<const char*>("platform",       platform)
+        << XmlTag<int>        ("version_num",    version_num)
+    ;
     if (strlen(plan_class)) {
-        out.printf("    <plan_class>%s</plan_class>\n", plan_class);
+        out << XmlTag<const char*>("plan_class", plan_class);
     }
     if (fpops_per_cpu_sec) {
-        out.printf("    <fpops_per_cpu_sec>%f</fpops_per_cpu_sec>\n", fpops_per_cpu_sec);
+        out << XmlTag<double>("fpops_per_cpu_sec",  fpops_per_cpu_sec);
     }
     if (fpops_cumulative) {
-        out.printf("    <fpops_cumulative>%f</fpops_cumulative>\n", fpops_cumulative);
+        out << XmlTag<double>("fpops_cumulative",   fpops_cumulative);
     }
     if (intops_per_cpu_sec) {
-        out.printf("    <intops_per_cpu_sec>%f</intops_per_cpu_sec>\n", intops_per_cpu_sec);
+        out << XmlTag<double>("intops_per_cpu_sec", intops_per_cpu_sec);
     }
     if (intops_cumulative) {
-        out.printf("    <intops_cumulative>%f</intops_cumulative>\n", intops_cumulative);
+        out << XmlTag<double>("intops_cumulative",  intops_cumulative);
     }
     if (to_server) {
-        out.printf(
-            "    <app_version_num>%d</app_version_num>\n",
-            wup->version_num
-        );
+        out << XmlTag<int>("app_version_num", wup->version_num);
     }
     int n = (int)stderr_out.length();
     if (n || to_server) {
-        out.printf("<stderr_out>\n");
+        out << "<stderr_out>\n";
 
         // the following is here so that it gets recorded on server
         // (there's no core_client_version field of result table)
         //
         if (to_server) {
-            out.printf(
-                "<core_client_version>%d.%d.%d</core_client_version>\n",
-                gstate.core_client_version.major,
-                gstate.core_client_version.minor,
-                gstate.core_client_version.release
-            );
+            out << "<core_client_version>"
+                << gstate.core_client_version.major << '.'
+                << gstate.core_client_version.minor << '.'
+                << gstate.core_client_version.release
+                << "</core_client_version>\n";
         }
         if (n) {
-            out.printf("<![CDATA[\n");
-            out.printf("%s",stderr_out.c_str());
+            out << "<![CDATA[\n";
+            out << stderr_out;
             if (stderr_out[n-1] != '\n') {
-                out.printf("\n");
+                out << "\n";
             }
-            out.printf("]]>\n");
+            out << "]]>\n";
         }
-        out.printf("</stderr_out>\n");
+        out << "</stderr_out>\n";
     }
     if (to_server) {
         for (size_t i=0; i<output_files.size(); ++i) {
             const FILE_INFO* fip = output_files[i].file_info;
             if (fip->uploaded) {
-                fip->write(OstreamFromMiofile(out), true);
+                fip->write(out, true);
             }
         }
     } else {
-        if (got_server_ack) out.printf("    <got_server_ack/>\n");
-        if (ready_to_report) out.printf("    <ready_to_report/>\n");
-        if (completed_time) out.printf("    <completed_time>%f</completed_time>\n", completed_time);
-        if (suspended_via_gui) out.printf("    <suspended_via_gui/>\n");
-        out.printf(
-            "    <wu_name>%s</wu_name>\n"
-            "    <received_time>%f</received_time>\n"
-            "    <report_deadline>%f</report_deadline>\n",
-            wu_name,
-            received_time,
-            report_deadline
-        );
+        if (got_server_ack)    out << "<got_server_ack/>\n";
+        if (ready_to_report)   out << "<ready_to_report/>\n";
+        if (completed_time)    out << XmlTag<double>("completed_time", completed_time);
+        if (suspended_via_gui) out << "<suspended_via_gui/>\n";
+        out << XmlTag<const char*>("wu_name",    wu_name)
+            << XmlTag<double>("received_time",   received_time)
+            << XmlTag<double>("report_deadline", report_deadline)
+        ;
         for (size_t i=0; i<output_files.size(); ++i) {
-            output_files[i].write(out);
+            output_files[i].write(MiofileFromOstream(out));
         }
     }
-    out.printf("</result>\n");
+    out << "</result>\n";
 }
 
 void RESULT::write_gui(std::ostream& out) const {

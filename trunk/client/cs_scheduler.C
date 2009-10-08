@@ -201,7 +201,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         const RESULT* rp = results[i];
         if (rp->project == p && rp->ready_to_report) {
             p->nresults_returned++;
-            rp->write(MiofileFromOstream(out), true);
+            rp->write(out, true);
         }
     }
 
