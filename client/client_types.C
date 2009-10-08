@@ -1213,40 +1213,27 @@ int WORKUNIT::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-void WORKUNIT::write(MIOFILE& out) const {
-    unsigned int i;
-
-    out.printf(
-        "<workunit>\n"
-        "    <name>%s</name>\n"
-        "    <app_name>%s</app_name>\n"
-        "    <version_num>%d</version_num>\n"
-        //"    <env_vars>%s</env_vars>\n"
-        "    <rsc_fpops_est>%f</rsc_fpops_est>\n"
-        "    <rsc_fpops_bound>%f</rsc_fpops_bound>\n"
-        "    <rsc_memory_bound>%f</rsc_memory_bound>\n"
-        "    <rsc_disk_bound>%f</rsc_disk_bound>\n",
-        name,
-        app_name,
-        version_num,
-        //env_vars,
-        rsc_fpops_est,
-        rsc_fpops_bound,
-        rsc_memory_bound,
-        rsc_disk_bound
-    );
+void WORKUNIT::write(std::ostream& out) const {
+    out << "<workunit>\n"
+        << XmlTag<const char*>("name", name)
+        << XmlTag<const char*>("app_name", app_name)
+        << XmlTag<int>("version_num", version_num)
+        //<< XmlTag<const char*>("env_vars", env_vars)
+        << XmlTag<double>("rsc_fpops_est", rsc_fpops_est)
+        << XmlTag<double>("rsc_fpops_bound", rsc_fpops_bound)
+        << XmlTag<double>("rsc_memory_bound", rsc_memory_bound)
+        << XmlTag<double>("rsc_disk_bound", rsc_disk_bound)
+    ;
     if (!command_line.empty()) {
-        out.printf(
-            "    <command_line>\n"
-            "%s\n"
-            "    </command_line>\n",
-            command_line.c_str()
-        );
+        out << "<command_line>\n"
+            << command_line
+            << "</command_line>\n"
+        ;
     }
-    for (i=0; i<input_files.size(); i++) {
-        input_files[i].write(out);
+    for (size_t i=0; i<input_files.size(); i++) {
+        input_files[i].write(MiofileFromOstream(out));
     }
-    out.printf("</workunit>\n");
+    out << "</workunit>\n";
 }
 
 bool WORKUNIT::had_download_failure(int& failnum) const {

@@ -195,7 +195,7 @@ public:
     WORKUNIT(){}
     ~WORKUNIT(){}
     int parse(MIOFILE& in);
-    void write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
     bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string& str) const;
     void clear_errors();
