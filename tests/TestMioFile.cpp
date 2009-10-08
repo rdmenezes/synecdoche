@@ -176,7 +176,7 @@ class TestMioFileAdapter: public CppUnit::TestFixture
         MFILE m;
         mf.init_mfile(&m);
 
-        const std::string data = rand_string(300*1000, rand_char);
+        const std::string data = rand_string(312345, rand_char);
         funcUsingOstream(OstreamFromMiofile(mf), data);
 
         char* p;
