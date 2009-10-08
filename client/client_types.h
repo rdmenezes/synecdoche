@@ -542,7 +542,7 @@ public:
     APP_VERSION(){}
     ~APP_VERSION(){}
     int parse(MIOFILE& in);
-    void write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
     bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string& str);
     void clear_errors();

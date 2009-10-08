@@ -601,7 +601,7 @@ void CLIENT_STATE::write_state(std::ostream& out) const {
         }
         for (i=0; i<app_versions.size(); i++) {
             if (app_versions[i]->project == p) {
-                app_versions[i]->write(MiofileFromOstream(out));
+                app_versions[i]->write(out);
             }
         }
         for (i=0; i<workunits.size(); i++) {
@@ -762,7 +762,7 @@ void CLIENT_STATE::write_state_gui(std::ostream& out) const {
             }
         }
         for (i=0; i<app_versions.size(); i++) {
-            if (app_versions[i]->project == p) app_versions[i]->write(MiofileFromOstream(out));
+            if (app_versions[i]->project == p) app_versions[i]->write(out);
         }
         for (i=0; i<workunits.size(); i++) {
             if (workunits[i]->project == p) workunits[i]->write(out);

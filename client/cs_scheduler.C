@@ -127,7 +127,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         for (size_t i=0; i<app_versions.size(); ++i) {
             const APP_VERSION* avp = app_versions[i];
             if (avp->project != p) continue;
-            avp->write(MiofileFromOstream(out));
+            avp->write(out);
         }
         out << "</app_versions>\n";
     }
