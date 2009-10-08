@@ -93,33 +93,17 @@ class TestMioFile: public CppUnit::TestFixture
 class TestMioFileAdapter: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TestMioFileAdapter);
-    CPPUNIT_TEST(testWrapper);
-    CPPUNIT_TEST(testEmpty);
-    CPPUNIT_TEST(testReverseWrapper);
+    CPPUNIT_TEST(testMioFromOstream);
+    CPPUNIT_TEST(testMioFromOstreamEmpty);
+    CPPUNIT_TEST(testOstreamFromMio);
     CPPUNIT_TEST_SUITE_END();
 
   public:
-    /// \name Helpers
-    /// @{
-
     /// Writes \a str to the given MIOFILE.
     /// Helper function for the actual tests.
     void funcUsingMiofile(MIOFILE& out, const char* str) {
         out.printf("%s", str);
     }
-
-    /// Does nothing. Used in testEmpty().
-    void noop(MIOFILE& out) {
-        ;
-    }
-
-    /// Writes \a str to the given std::ostream.
-    /// Helper function for the actual tests.
-    void funcUsingOstream(std::ostream& out, const char* str) {
-        out << str;
-    }
-
-    /// @}
 
     /// \test Tests basic use of MiofileFromOstream to adapt an ostream
     /// and pass it to a function that expects a MIOFILE.
@@ -127,10 +111,15 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     /// Then it calls funcUsingMiofile(), giving it an adapter object created from the stream.
     /// Finally, it compares the contents of the stream's string
     /// with the text written to the MIOFILE.
-    void testWrapper() {
+    void testMioFromOstream() {
         std::ostringstream oss;
         funcUsingMiofile(MiofileFromOstream(oss), "foobar");
         CPPUNIT_ASSERT_EQUAL(std::string("foobar"), oss.str());
+    }
+
+    /// Does nothing. Used in testEmpty().
+    void noop(MIOFILE& out) {
+        ;
     }
 
     /// \test Passes a MiofileFromOstream adapter
@@ -138,11 +127,17 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     /// and checks if the string is empty.
     /// It's unlikely that the string wouldn't be empty;
     /// the real test is that nothing \e crashes while running this code.
-    void testEmpty() {
+    void testMioFromOstreamEmpty() {
         std::ostringstream oss;
         noop(MiofileFromOstream(oss));
 
         CPPUNIT_ASSERT(oss.str().empty());
+    }
+
+    /// Writes \a str to the given std::ostream.
+    /// Helper function for the actual tests.
+    void funcUsingOstream(std::ostream& out, const std::string& str) {
+        out << str;
     }
 
     /// \test Tests basic use of OstreamFromMiofile to adapt a MIOFILE
@@ -153,7 +148,7 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     /// giving it an OstreamFromMiofile adapter created from the MIOFILE.
     /// Finally, it compares the contents of the MFILE
     /// with the text written to the ostream.
-    void testReverseWrapper() {
+    void testOstreamFromMio() {
         MIOFILE mf;
         MFILE m;
         mf.init_mfile(&m);
