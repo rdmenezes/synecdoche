@@ -31,6 +31,8 @@
 #include "lib/mfile.h"
 #include "lib/miofile_wrap.h"
 
+#include "Util.h"
+
 // These tests are incomplete; but I plan to get rid of MIOFILE and MFILE anyway.
 
 /// Unit tests for MFILE.
@@ -96,6 +98,7 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     CPPUNIT_TEST(testMioFromOstream);
     CPPUNIT_TEST(testMioFromOstreamEmpty);
     CPPUNIT_TEST(testOstreamFromMio);
+    CPPUNIT_TEST(testOstreamFromMioLarge);
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -162,6 +165,27 @@ class TestMioFileAdapter: public CppUnit::TestFixture
         CPPUNIT_ASSERT(0 != p);
         CPPUNIT_ASSERT_EQUAL(4, n);
         CPPUNIT_ASSERT(memcmp("test", p, 4) == 0);
+
+        free(p);
+    }
+
+    /// \test Tests OstreamFromMiofile with more data than fits
+    /// in MFILE's vprintf buffer.
+    void testOstreamFromMioLarge() {
+        MIOFILE mf;
+        MFILE m;
+        mf.init_mfile(&m);
+
+        const std::string data = rand_string(300*1000, rand_char);
+        funcUsingOstream(OstreamFromMiofile(mf), data);
+
+        char* p;
+        int n;
+        m.get_buf(p, n);
+
+        CPPUNIT_ASSERT(0 != p);
+        CPPUNIT_ASSERT_EQUAL(data.size(), size_t(n));
+        CPPUNIT_ASSERT(data.compare(0, data.size(), p, n) == 0);
 
         free(p);
     }
