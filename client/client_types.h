@@ -154,7 +154,7 @@ public:
 
 public:
     int parse(MIOFILE& in);
-    void write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
 };
 typedef std::vector<FILE_REF> FILE_REF_VEC;
 
@@ -345,7 +345,7 @@ public:
     int parse_project_files(MIOFILE& in, bool delete_existing_symlinks);
 
     /// Write the XML representation of the project files into a file.
-    void write_project_files(MIOFILE& out) const;
+    void write_project_files(std::ostream& out) const;
 
     /// Install pointers from FILE_REFs to FILE_INFOs for project files.
     void link_project_files(bool recreate_symlink_files);

@@ -47,7 +47,6 @@
 #include "log_flags.h"
 #include "parse.h"
 #include "miofile.h"
-#include "miofile_wrap.h"
 #include "util.h"
 #include "str_util.h"
 #include "client_state.h"
@@ -481,16 +480,16 @@ void PROJECT::link_project_files(bool recreate_symlink_files) {
 
 /// Write the XML representation of the project files into a file.
 ///
-/// \param[in] out Reference to a MIOFILE instance representing the target file.
-void PROJECT::write_project_files(MIOFILE& out) const {
+/// \param[in] out The output stream where the XML data will be written.
+void PROJECT::write_project_files(std::ostream& out) const {
     if (project_files.empty()) {
         return;
     }
-    out.printf("<project_files>\n");
+    out << "<project_files>\n";
     for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
         (*it).write(out);
     }
-    out.printf("</project_files>\n");
+    out << "</project_files>\n";
 }
 
 /// Write symlinks for project files.
@@ -1049,7 +1048,7 @@ void APP_VERSION::write(std::ostream& out) const {
         out << XmlTag<const char*>("cmdline", cmdline);
     }
     for (size_t i=0; i<app_files.size(); i++) {
-        app_files[i].write(MiofileFromOstream(out));
+        app_files[i].write(out);
     }
 
     out << "</app_version>\n";
@@ -1120,25 +1119,23 @@ int FILE_REF::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-void FILE_REF::write(MIOFILE& out) const {
-    out.printf(
-        "    <file_ref>\n"
-        "        <file_name>%s</file_name>\n",
-        file_name
-    );
+void FILE_REF::write(std::ostream& out) const {
+    out << "<file_ref>\n";
+    out << XmlTag<const char*>("file_name", file_name);
+
     if (strlen(open_name)) {
-        out.printf("        <open_name>%s</open_name>\n", open_name);
+        out << XmlTag<const char*>("open_name", open_name);
     }
     if (main_program) {
-        out.printf("        <main_program/>\n");
+        out << "<main_program/>\n";
     }
     if (copy_file) {
-        out.printf("        <copy_file/>\n");
+        out << "<copy_file/>\n";
     }
     if (optional) {
-        out.printf("        <optional/>\n");
+        out << "<optional/>\n";
     }
-    out.printf("    </file_ref>\n");
+    out << "</file_ref>\n";
 }
 
 int WORKUNIT::parse(MIOFILE& in) {
@@ -1222,7 +1219,7 @@ void WORKUNIT::write(std::ostream& out) const {
         ;
     }
     for (size_t i=0; i<input_files.size(); i++) {
-        input_files[i].write(MiofileFromOstream(out));
+        input_files[i].write(out);
     }
     out << "</workunit>\n";
 }
@@ -1462,7 +1459,7 @@ void RESULT::write(std::ostream& out, bool to_server) const {
             << XmlTag<double>("report_deadline", report_deadline)
         ;
         for (size_t i=0; i<output_files.size(); ++i) {
-            output_files[i].write(MiofileFromOstream(out));
+            output_files[i].write(out);
         }
     }
     out << "</result>\n";

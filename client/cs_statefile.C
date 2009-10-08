@@ -610,7 +610,7 @@ void CLIENT_STATE::write_state(std::ostream& out) const {
         for (i=0; i<results.size(); i++) {
             if (results[i]->project == p) results[i]->write(out, false);
         }
-        p->write_project_files(MiofileFromOstream(out));
+        p->write_project_files(out);
     }
     active_tasks.write(out);
     out << XmlTag<std::string>("platform_name", get_primary_platform())
