@@ -1030,38 +1030,29 @@ int APP_VERSION::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-void APP_VERSION::write(MIOFILE& out) const {
-    out.printf(
-        "<app_version>\n"
-        "    <app_name>%s</app_name>\n"
-        "    <version_num>%d</version_num>\n"
-        "    <platform>%s</platform>\n"
-        "    <avg_ncpus>%f</avg_ncpus>\n"
-        "    <max_ncpus>%f</max_ncpus>\n"
-        "    <flops>%f</flops>\n",
-        app_name,
-        version_num,
-        platform,
-        avg_ncpus,
-        max_ncpus,
-        flops
-    );
+void APP_VERSION::write(std::ostream& out) const {
+    out << "<app_version>\n"
+        << XmlTag<const char*>("app_name", app_name)
+        << XmlTag<int>("version_num", version_num)
+        << XmlTag<const char*>("platform", platform)
+        << XmlTag<double>("avg_ncpus", avg_ncpus)
+        << XmlTag<double>("max_ncpus", max_ncpus)
+        << XmlTag<double>("flops", flops)
+    ;
     if (strlen(plan_class)) {
-        out.printf("    <plan_class>%s</plan_class>\n", plan_class);
+        out << XmlTag<const char*>("plan_class", plan_class);
     }
     if (strlen(api_version)) {
-        out.printf("    <api_version>%s</api_version>\n", api_version);
+        out << XmlTag<const char*>("api_version", api_version);
     }
     if (strlen(cmdline)) {
-        out.printf("    <cmdline>%s</cmdline>\n", cmdline);
+        out << XmlTag<const char*>("cmdline", cmdline);
     }
     for (size_t i=0; i<app_files.size(); i++) {
-        app_files[i].write(out);
+        app_files[i].write(MiofileFromOstream(out));
     }
 
-    out.printf(
-        "</app_version>\n"
-    );
+    out << "</app_version>\n";
 }
 
 bool APP_VERSION::had_download_failure(int& failnum) const {
