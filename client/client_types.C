@@ -1215,7 +1215,7 @@ void WORKUNIT::write(std::ostream& out) const {
     if (!command_line.empty()) {
         out << "<command_line>\n"
             << command_line
-            << "</command_line>\n"
+            << "\n</command_line>\n"
         ;
     }
     for (size_t i=0; i<input_files.size(); i++) {
