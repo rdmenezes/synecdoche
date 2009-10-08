@@ -596,7 +596,7 @@ void CLIENT_STATE::write_state(std::ostream& out) const {
         }
         for (i=0; i<file_infos.size(); i++) {
             if (file_infos[i]->project == p) {
-                file_infos[i]->write(MiofileFromOstream(out), false);
+                file_infos[i]->write(out, false);
             }
         }
         for (i=0; i<app_versions.size(); i++) {

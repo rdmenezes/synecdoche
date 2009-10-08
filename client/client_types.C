@@ -744,51 +744,50 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
     return ERR_XML_PARSE;
 }
 
-void FILE_INFO::write(MIOFILE& out, bool to_server) const {
-    out.printf(
-        "<file_info>\n"
-        "    <name>%s</name>\n"
-        "    <nbytes>%f</nbytes>\n"
-        "    <max_nbytes>%f</max_nbytes>\n",
-        name.c_str(), nbytes, max_nbytes);
-
+void FILE_INFO::write(std::ostream& out, bool to_server) const {
+    out << "<file_info>\n"
+        << XmlTag<std::string>("name", name)
+        << XmlTag<double>("nbytes", nbytes)
+        << XmlTag<double>("max_nbytes", max_nbytes)
+    ;
     if (strlen(md5_cksum)) {
-        out.printf("    <md5_cksum>%s</md5_cksum>\n", md5_cksum);
+        out << XmlTag<const char*>("md5_cksum", md5_cksum);
     }
     if (!to_server) {
-        if (generated_locally) out.printf("    <generated_locally/>\n");
-        out.printf("    <status>%d</status>\n", status);
-        if (executable) out.printf("    <executable/>\n");
-        if (uploaded) out.printf("    <uploaded/>\n");
-        if (upload_when_present) out.printf("    <upload_when_present/>\n");
-        if (sticky) out.printf("    <sticky/>\n");
-        if (marked_for_delete) out.printf("    <marked_for_delete/>\n");
-        if (report_on_rpc) out.printf("    <report_on_rpc/>\n");
-        if (gzip_when_done) out.printf("    <gzip_when_done/>\n");
-        if (signature_required) out.printf("    <signature_required/>\n");
-        if (is_user_file) out.printf("    <is_user_file/>\n");
-        if (!file_signature.empty()) out.printf("    <file_signature>\n%s</file_signature>\n", file_signature.c_str());
+        out << XmlTag<int>("status", status);
+        if (generated_locally)   out << "<generated_locally/>\n";
+        if (executable)          out << "<executable/>\n";
+        if (uploaded)            out << "<uploaded/>\n";
+        if (upload_when_present) out << "<upload_when_present/>\n";
+        if (sticky)              out << "<sticky/>\n";
+        if (marked_for_delete)   out << "<marked_for_delete/>\n";
+        if (report_on_rpc)       out << "<report_on_rpc/>\n";
+        if (gzip_when_done)      out << "<gzip_when_done/>\n";
+        if (signature_required)  out << "<signature_required/>\n";
+        if (is_user_file)        out << "<is_user_file/>\n";
+        if (!file_signature.empty()) {
+            // newline required after start tag
+            out << "<file_signature>\n" << file_signature << "</file_signature>\n";
+        }
     }
     for (size_t i=0; i<urls.size(); i++) {
-        out.printf("    <url>%s</url>\n", urls[i].c_str());
+        out << XmlTag<std::string>("url", urls[i]);
     }
     if (!to_server && pers_file_xfer) {
-        pers_file_xfer->write(OstreamFromMiofile(out));
+        pers_file_xfer->write(out);
     }
     if (!to_server) {
         if ((!signed_xml.empty()) && (!xml_signature.empty())) {
-            out.printf(
-                "    <signed_xml>\n%s    </signed_xml>\n"
-                "    <xml_signature>\n%s    </xml_signature>\n",
-                signed_xml.c_str(), xml_signature.c_str());
+            out << "<signed_xml>\n" << signed_xml << "</signed_xml>\n";
+            out << "<xml_signature>\n" << xml_signature << "</xml_signature>\n";
         }
     }
     if (!error_msg.empty()) {
         std::string error_msg_nows = error_msg;
         strip_whitespace(error_msg_nows);
-        out.printf("    <error_msg>\n%s\n</error_msg>\n", error_msg_nows.c_str());
+        out << "<error_msg>\n" << error_msg_nows << "\n</error_msg>\n";
     }
-    out.printf("</file_info>\n");
+    out << "</file_info>\n";
 }
 
 void FILE_INFO::write_gui(std::ostream& out) const {
@@ -1487,7 +1486,7 @@ void RESULT::write(MIOFILE& out, bool to_server) const {
         for (i=0; i<output_files.size(); i++) {
             fip = output_files[i].file_info;
             if (fip->uploaded) {
-                fip->write(out, true);
+                fip->write(OstreamFromMiofile(out), true);
             }
         }
     } else {
