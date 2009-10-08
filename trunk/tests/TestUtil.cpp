@@ -25,6 +25,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "lib/util.h"
+#include "Util.h"
 
 class TestUtil: public CppUnit::TestFixture
 {
@@ -44,25 +45,10 @@ class TestUtil: public CppUnit::TestFixture
         copy_stream(iss, oss);
         CPPUNIT_ASSERT_EQUAL(iss.str(), oss.str());
     }
-    static char rand_char() {
-#if 0 // printable only
-        int n = std::rand() % (0x7e - 0x20);
-        return n + 0x20;
-#else
-        int n = std::rand() % (0x7e - 0x20 + 3) - 3;
-        switch (n) {
-            case -3: return '0';
-            case -2: return '\t';
-            case -1: return '\n';
-            default: return n + 0x20;
-        }
-#endif
-    }
+
     void testCopyStreamLarge()
     {
-        std::string str;
-        str.resize(1024 + std::rand() % 1000);
-        std::generate(str.begin(), str.end(), rand_char);
+        std::string str = rand_string(1024 + std::rand() % 1000, rand_char_null);
 
         std::istringstream iss(str);
         std::ostringstream oss;

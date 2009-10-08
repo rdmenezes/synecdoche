@@ -5,7 +5,8 @@ UnitTest_SOURCES = TestRunner.cpp \
                    TestStrUtil.cpp \
                    TestMioFile.cpp \
                    TestXmlWrite.cpp \
-                   TestUtil.cpp
+                   TestUtil.cpp \
+                   Util.cpp
 UnitTest_CPPFLAGS = -I$(top_srcdir)
 UnitTest_CXXFLAGS = $(CPPUNIT_CFLAGS)
 UnitTest_LDADD = $(CPPUNIT_LIBS) ../lib/libboinc.a
