@@ -38,22 +38,20 @@
 #include <signal.h>
 #include <sys/resource.h>
 #include <errno.h>
-#include <cstring>
-#include <list>
 #endif
 
+#include "util.h"
+
+#include <cstring>
+
+#include <list>
 #include <string>
 #include <sstream>
-
-#include "util.h"
 
 #include "error_numbers.h"
 #include "common_defs.h"
 #include "filesys.h"
 #include "str_util.h"
-#include "base64.h"
-#include "mfile.h"
-#include "miofile.h"
 #include "parse.h"
 
 #define EPOCHFILETIME_SEC (11644473600.)
