@@ -517,7 +517,7 @@ public:
     PROJECT* project;
 
     int parse(MIOFILE& in);
-    void write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
 };
 
 class APP_VERSION {

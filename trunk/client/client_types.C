@@ -556,14 +556,12 @@ int APP::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-void APP::write(MIOFILE& out) const {
-    out.printf(
-        "<app>\n"
-        "    <name>%s</name>\n"
-        "    <user_friendly_name>%s</user_friendly_name>\n"
-        "</app>\n",
-        name, user_friendly_name
-    );
+void APP::write(std::ostream& out) const {
+    out << "<app>\n"
+        << XmlTag<const char*>("name", name)
+        << XmlTag<const char*>("user_friendly_name", user_friendly_name)
+        << "</app>\n"
+    ;
 }
 
 FILE_INFO::FILE_INFO() {
