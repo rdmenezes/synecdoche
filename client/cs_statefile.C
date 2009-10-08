@@ -476,7 +476,7 @@ int CLIENT_STATE::write_state_file() const {
         }
         MIOFILE miof;
         miof.init_mfile(&mf);
-        write_state(miof);
+        write_state(OstreamFromMiofile(miof));
         retval = mf.close();
         /*
         if (ret1) {
@@ -579,73 +579,63 @@ int CLIENT_STATE::write_state_file() const {
 }
 
 /// \todo Convert this to use iostreams!
-void CLIENT_STATE::write_state(MIOFILE& f) const {
-    unsigned int i, j;
+void CLIENT_STATE::write_state(std::ostream& out) const {
+    out << "<client_state>\n";
 
-    f.printf("<client_state>\n");
-    host_info.write(OstreamFromMiofile(f), false);
-    time_stats.write(OstreamFromMiofile(f), false);
-    net_stats.write(OstreamFromMiofile(f));
-    for (j=0; j<projects.size(); j++) {
-        const PROJECT* p = projects[j];
-        p->write_state(OstreamFromMiofile(f));
+    host_info.write(out, false);
+    time_stats.write(out, false);
+    net_stats.write(out);
+    for (size_t pn=0; pn<projects.size(); pn++) {
+        const PROJECT* p = projects[pn];
+        size_t i;
+        p->write_state(out);
         for (i=0; i<apps.size(); i++) {
             if (apps[i]->project == p) {
-                apps[i]->write(f);
+                apps[i]->write(MiofileFromOstream(out));
             }
         }
         for (i=0; i<file_infos.size(); i++) {
             if (file_infos[i]->project == p) {
-                file_infos[i]->write(f, false);
+                file_infos[i]->write(MiofileFromOstream(out), false);
             }
         }
         for (i=0; i<app_versions.size(); i++) {
             if (app_versions[i]->project == p) {
-                app_versions[i]->write(f);
+                app_versions[i]->write(MiofileFromOstream(out));
             }
         }
         for (i=0; i<workunits.size(); i++) {
-            if (workunits[i]->project == p) workunits[i]->write(f);
+            if (workunits[i]->project == p) workunits[i]->write(MiofileFromOstream(out));
         }
         for (i=0; i<results.size(); i++) {
-            if (results[i]->project == p) results[i]->write(f, false);
+            if (results[i]->project == p) results[i]->write(MiofileFromOstream(out), false);
         }
-        p->write_project_files(f);
+        p->write_project_files(MiofileFromOstream(out));
     }
-    active_tasks.write(OstreamFromMiofile(f));
-    f.printf(
-        "<platform_name>%s</platform_name>\n"
-        "<core_client_major_version>%d</core_client_major_version>\n"
-        "<core_client_minor_version>%d</core_client_minor_version>\n"
-        "<core_client_release>%d</core_client_release>\n"
-        "<user_run_request>%d</user_run_request>\n"
-        "<user_network_request>%d</user_network_request>\n"
-        "%s",
-        get_primary_platform().c_str(),
-        core_client_version.major,
-        core_client_version.minor,
-        core_client_version.release,
-        run_mode.get_perm(),
-        network_mode.get_perm(),
-        cpu_benchmarks_pending?"<cpu_benchmarks_pending/>\n":""
-    );
+    active_tasks.write(out);
+    out << XmlTag<std::string>("platform_name", get_primary_platform())
+        << XmlTag<int>("core_client_major_version", core_client_version.major)
+        << XmlTag<int>("core_client_minor_version", core_client_version.minor)
+        << XmlTag<int>("core_client_release", core_client_version.release)
+        << XmlTag<int>("user_run_request", run_mode.get_perm())
+        << XmlTag<int>("user_network_request", network_mode.get_perm())
+    ;
+    if (cpu_benchmarks_pending) out << "<cpu_benchmarks_pending/>\n";
+
 #ifdef ENABLE_UPDATE_CHECK
-    f.printf(
-        "<new_version_check_time>%f</new_version_check_time>\n",
-        new_version_check_time
-    );
+    out << XmlTag<double>("new_version_check_time", new_version_check_time);
     if (!newer_version.empty()) {
-        f.printf("<newer_version>%s</newer_version>\n", newer_version.c_str());
+        out << XmlTag<std::string>("newer_version", newer_version);
     }
 #endif
-    for (i=1; i<platforms.size(); i++) {
-        f.printf("<alt_platform>%s</alt_platform>\n", platforms[i].name.c_str());
+    for (size_t i=1; i<platforms.size(); i++) {
+        out << XmlTag<std::string>("alt_platform", platforms[i].name);
     }
-    proxy_info.write(OstreamFromMiofile(f));
+    proxy_info.write(out);
     if (strlen(main_host_venue)) {
-        f.printf("<host_venue>%s</host_venue>\n", main_host_venue);
+        out << XmlTag<const char*>("host_venue", main_host_venue);
     }
-    f.printf("</client_state>\n");
+    out << "</client_state>\n";
 }
 
 /// Write the client_state.xml file if necessary.
