@@ -1417,10 +1417,6 @@ int RESULT::parse_state(MIOFILE& in) {
 }
 
 void RESULT::write(MIOFILE& out, bool to_server) const {
-    unsigned int i;
-    const FILE_INFO* fip;
-    int n;
-
     out.printf(
         "<result>\n"
         "    <name>%s</name>\n"
@@ -1457,7 +1453,7 @@ void RESULT::write(MIOFILE& out, bool to_server) const {
             wup->version_num
         );
     }
-    n = (int)stderr_out.length();
+    int n = (int)stderr_out.length();
     if (n || to_server) {
         out.printf("<stderr_out>\n");
 
@@ -1483,8 +1479,8 @@ void RESULT::write(MIOFILE& out, bool to_server) const {
         out.printf("</stderr_out>\n");
     }
     if (to_server) {
-        for (i=0; i<output_files.size(); i++) {
-            fip = output_files[i].file_info;
+        for (size_t i=0; i<output_files.size(); ++i) {
+            const FILE_INFO* fip = output_files[i].file_info;
             if (fip->uploaded) {
                 fip->write(OstreamFromMiofile(out), true);
             }
@@ -1502,7 +1498,7 @@ void RESULT::write(MIOFILE& out, bool to_server) const {
             received_time,
             report_deadline
         );
-        for (i=0; i<output_files.size(); i++) {
+        for (size_t i=0; i<output_files.size(); ++i) {
             output_files[i].write(out);
         }
     }
