@@ -401,7 +401,7 @@ private:
 public:
     void set_client_state_dirty(const char* source);
     int parse_state_file();
-    void write_state(MIOFILE& f) const;
+    void write_state(std::ostream& out) const;
     int write_state_file() const;
     int write_state_file_if_needed();
     void check_anonymous();
