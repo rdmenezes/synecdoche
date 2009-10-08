@@ -133,7 +133,22 @@ public:
         return oss;
     }
     ~OstreamFromMiofile() {
-        mf.printf("%s", oss.str().c_str());
+        // if the MIOFILE is connected to an MFILE,
+        // there is a buffer limit;
+        // so write in chunks
+        const size_t CHUNK_SIZE = 32768;
+        const std::string& str = oss.str();
+        
+        size_t n = 0;
+        char buf[CHUNK_SIZE+1];
+        while (str.size() - n > CHUNK_SIZE) {
+            str.copy(buf, CHUNK_SIZE, n);
+            buf[CHUNK_SIZE] = '\0';
+            mf.printf("%s", buf);
+            n += CHUNK_SIZE;
+        }
+        //last piece, < CHUNK_SIZE
+        mf.printf("%s", str.c_str()+n);
     }
 };
 
