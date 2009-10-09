@@ -20,8 +20,6 @@
 /// The "policy" part of task execution is here.
 /// The "mechanism" part is in app.C
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #endif

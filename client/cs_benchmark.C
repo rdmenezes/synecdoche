@@ -30,8 +30,6 @@
 /// Each thread/process checks for the relevant file before
 ///  starting or stopping each benchmark
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
