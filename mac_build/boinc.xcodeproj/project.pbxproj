@@ -604,7 +604,6 @@
 		DD7C5E7508110AE3002FCE1E /* ScreenSaver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScreenSaver.framework; path = /System/Library/Frameworks/ScreenSaver.framework; sourceTree = "<absolute>"; };
 		DD80C83D0CBAEB4F00F1121D /* sandbox.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sandbox.C; path = ../client/sandbox.C; sourceTree = SOURCE_ROOT; };
 		DD80C83E0CBAEB4F00F1121D /* sandbox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sandbox.h; path = ../client/sandbox.h; sourceTree = SOURCE_ROOT; };
-		DD81C3D507C5CEB50098A04D /* cpp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cpp.h; path = ../client/cpp.h; sourceTree = SOURCE_ROOT; };
 		DD81C3FE07C5D1020098A04D /* BOINCBaseView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BOINCBaseView.cpp; path = ../clientgui/BOINCBaseView.cpp; sourceTree = SOURCE_ROOT; };
 		DD81C3FF07C5D1020098A04D /* DlgOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DlgOptions.cpp; path = ../clientgui/DlgOptions.cpp; sourceTree = SOURCE_ROOT; };
 		DD81C40207C5D1020098A04D /* DlgAbout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DlgAbout.cpp; path = ../clientgui/DlgAbout.cpp; sourceTree = SOURCE_ROOT; };
@@ -1197,7 +1196,6 @@
 				F54B8FC402AC0A0C01FB7237 /* client_state.h */,
 				F54B8FC502AC0A0C01FB7237 /* client_types.C */,
 				F54B8FC602AC0A0C01FB7237 /* client_types.h */,
-				DD81C3D507C5CEB50098A04D /* cpp.h */,
 				DD16BF8F099D6CE5003E4B69 /* cpu_benchmark.h */,
 				DD16BF7B099D6C90003E4B69 /* cpu_sched.C */,
 				DD344B7907C5AD970043025C /* cs_account.C */,
