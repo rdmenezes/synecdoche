@@ -20,8 +20,6 @@
 /// Determine which platforms are supported and provide a way
 /// of exposing that information to the rest of the client.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);

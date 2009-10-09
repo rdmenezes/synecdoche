@@ -32,7 +32,6 @@ synecd_SOURCES = \
     client_state.h \
     client_types.C \
     client_types.h \
-    cpp.h \
     cpu_benchmark.h \
     cpu_sched.C \
     cs_account.C \

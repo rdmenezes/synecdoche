@@ -22,8 +22,6 @@
 ///
 /// The scheduler RPC mechanism is in scheduler_op.C
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #endif

@@ -20,8 +20,6 @@
 /// The "policy" part of file transfer is here.
 /// The "mechanism" part is in pers_file_xfer.C and file_xfer.C
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #endif
