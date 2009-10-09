@@ -35,7 +35,12 @@ svnversion.cpp: version.sh
 BUILT_SOURCES = svnversion.cpp
 CLEANFILES = svnversion.cpp
 
-.PHONY: svnversion.cpp docs
+.PHONY: svnversion.cpp docs ctags
 
 docs:
 	doxygen Doxyfile 2>&1 | grep -v 'Unsupported xml/html tag'
+
+tags: ctags
+
+ctags:
+	ctags -R --c++-kinds=+p --fields=+iaS --extra=+q $(SUBDIRS)
