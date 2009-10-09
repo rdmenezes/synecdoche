@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# This helper script is used by buildbot. It runs autoreconf and configure
+# if they are needed.
+# 
+# Normally, running "make" would be enough, since automake Makefiles check
+# if the configure script needs to be run or generated again. However, there
+# is a bootstrap problem: the first time buildbot tries to compile on a
+# buildslave, or if it has to clean the source directory for some reason,
+# there will be no Makefile at all, so "make" would fail.
+
+if [ ! -f configure ]; then
+    autoreconf -i;
+fi
+if [ ! -f Makefile ]; then
+    ./configure "$@";
+fi
