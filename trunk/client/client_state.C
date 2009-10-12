@@ -188,7 +188,6 @@ int CLIENT_STATE::init() {
     scheduler_op->url_random = drand();
 
     detect_platforms();
-    time_stats.start();
 
     std::ostringstream start_msg;
     start_msg << "Starting Synecdoche client version " << core_client_version.major;
@@ -1544,7 +1543,6 @@ int CLIENT_STATE::quit_activities() {
     write_state_file();
     gui_rpcs.close();
     abort_cpu_benchmarks();
-    time_stats.quit();
     return 0;
 }
 

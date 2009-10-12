@@ -48,7 +48,6 @@
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"
-#include "miofile_wrap.h"
 #include "xml_write.h"
 
 #include "client_msgs.h"
@@ -221,20 +220,6 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
             << "<report_on_rpc/>\n"
             << "</file_info>\n"
         ;
-    }
-
-    // NOTE: there's also a send_file_list flag, not currently used
-
-    if (p->send_time_stats_log) {
-        out << "<time_stats_log>\n";
-        time_stats.get_log_after(p->send_time_stats_log, MiofileFromOstream(out));
-        out << "</time_stats_log>\n";
-    }
-    if (p->send_job_log) {
-        out << "<job_log>\n";
-        std::string jl_filename = job_log_filename(*p);
-        send_log_after(jl_filename.c_str(), p->send_job_log, MiofileFromOstream(out));
-        out << "</job_log>\n";
     }
 
     // send names of results in progress for this project
@@ -694,8 +679,6 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     if (sr.send_file_list) {
         project->send_file_list = true;
     }
-    project->send_time_stats_log = sr.send_time_stats_log;
-    project->send_job_log = sr.send_job_log;
     project->sched_rpc_pending = NO_RPC_REASON;
     project->trickle_up_pending = false;
 

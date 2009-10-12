@@ -101,8 +101,6 @@ void PROJECT::init() {
     short_term_debt = 0;
     long_term_debt = 0;
     send_file_list = false;
-    send_time_stats_log = 0;
-    send_job_log = 0;
     suspended_via_gui = false;
     dont_request_more_work = false;
     detach_when_done = false;
@@ -200,8 +198,6 @@ int PROJECT::parse_state(MIOFILE& in) {
         if (parse_double(buf, "<next_rpc_time>", next_rpc_time)) continue;
         if (parse_bool(buf, "trickle_up_pending", trickle_up_pending)) continue;
         if (parse_bool(buf, "send_file_list", send_file_list)) continue;
-        if (parse_int(buf, "<send_time_stats_log>", send_time_stats_log)) continue;
-        if (parse_int(buf, "<send_job_log>", send_job_log)) continue;
         if (parse_bool(buf, "non_cpu_intensive", non_cpu_intensive)) continue;
         if (parse_bool(buf, "suspended_via_gui", suspended_via_gui)) continue;
         if (parse_bool(buf, "dont_request_more_work", dont_request_more_work)) continue;
@@ -250,8 +246,6 @@ void PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
         << XmlTag<double>("resource_share",         resource_share)
         << XmlTag<double>("duration_correction_factor", duration_correction_factor)
         << XmlTag<int>   ("sched_rpc_pending",      sched_rpc_pending)
-        << XmlTag<int>   ("send_time_stats_log",    send_time_stats_log)
-        << XmlTag<int>   ("send_job_log",           send_job_log)
     ;
     if (master_url_fetch_pending)   { out << "<master_url_fetch_pending/>\n"; }
     if (trickle_up_pending)         { out << "<trickle_up_pending/>\n"; }
@@ -318,8 +312,6 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
     short_term_debt = p.short_term_debt;
     long_term_debt = p.long_term_debt;
     send_file_list = p.send_file_list;
-    send_time_stats_log = p.send_time_stats_log;
-    send_job_log = p.send_job_log;
     non_cpu_intensive = p.non_cpu_intensive;
     suspended_via_gui = p.suspended_via_gui;
     dont_request_more_work = p.dont_request_more_work;
@@ -1606,25 +1598,6 @@ FILE_INFO* RESULT::lookup_file_logical(const char* lname) {
         }
     }
     return 0;
-}
-
-void RESULT::append_log_record(ACTIVE_TASK& at) {
-    std::string filename = job_log_filename(*project);
-    FILE* f = fopen(filename.c_str(), "ab");
-    if (!f) return;
-    fprintf(f, "%f ue %f ct %f fe %f sm %f sp %f sf %f sd %f sc %d nm %s\n",
-        gstate.now,
-        estimated_cpu_time_uncorrected(),
-        final_cpu_time,
-        wup->rsc_fpops_est,
-        at.stats_mem,
-        at.stats_page,
-        at.stats_pagefault_rate,
-        at.stats_disk,
-        at.stats_checkpoint,
-        name
-    );
-    fclose(f);
 }
 
 /// Abort a result that's not currently running.

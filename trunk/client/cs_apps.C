@@ -173,7 +173,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
         }
     } else {
         rp->set_state(RESULT_FILES_UPLOADING, "CS::app_finished");
-        rp->append_log_record(at);
         rp->project->update_duration_correction_factor(rp);
     }
 
