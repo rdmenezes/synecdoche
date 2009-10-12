@@ -141,8 +141,6 @@ struct SCHEDULER_REPLY {
     bool message_ack;
     bool project_is_down;
     bool send_file_list;
-    int send_time_stats_log;
-    int send_job_log;
     int scheduler_version;
 
     SCHEDULER_REPLY();

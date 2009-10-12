@@ -318,9 +318,6 @@ public:
     /// Send the list of permanent files associated with the project
     /// in the next scheduler reply.
     bool send_file_list;
-
-    int send_time_stats_log;  ///< If nonzero, send time stats log from that point on
-    int send_job_log; ///< if nonzero, send this project's job log from that point on
     /// @}
 
     bool suspended_via_gui;
@@ -614,7 +611,6 @@ public:
     /// Called only for results with no active task
     /// (otherwise you need to abort the active task).
     void abort_inactive(int status);
-    void append_log_record(ACTIVE_TASK& at);
 
     inline int state() const { return _state; }
     void set_state(int val, const char* where);

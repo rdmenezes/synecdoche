@@ -85,65 +85,6 @@ TIME_STATS::TIME_STATS() {
     cpu_efficiency = 1;
     previous_connected_state = CONNECTED_STATE_UNINITIALIZED;
     inactive_start = 0;
-    trim_stats_log();
-    time_stats_log = NULL;
-}
-
-/// If log file is over a megabyte, discard everything older than a year.
-///
-/// \todo Check this function! It writes the contents to a temporary file
-/// but doesn't do anything with it afterwards!
-/// \todo "megabyte" and "year" should be compile-time constants, not numbers
-/// mixed in the code.
-void TIME_STATS::trim_stats_log() {
-    double size;
-    char buf[256];
-    int retval;
-    double x;
-
-    retval = file_size(TIME_STATS_LOG, size);
-    if (retval) return;
-    if (size < 1e6) return;
-    FILE* f = fopen(TIME_STATS_LOG, "r");
-    if (!f) return;
-    FILE* f2 = fopen(TEMP_TIME_STATS_FILE_NAME, "w");
-    if (!f2) {
-        fclose(f);
-        return;
-    }
-    while (fgets(buf, 256, f)) {
-        int n = sscanf(buf, "%lf", &x);
-        if (n != 1) continue;
-        if (x < gstate.now-86400*365) continue;
-        fputs(buf, f2);
-    }
-    fclose(f);
-    fclose(f2);
-}
-
-void send_log_after(const char* filename, double t, MIOFILE& mf) {
-    char buf[256];
-    double x;
-
-    FILE* f = fopen(filename, "r");
-    if (!f) return;
-    while (fgets(buf, 256, f)) {
-        int n = sscanf(buf, "%lf", &x);
-        if (n != 1) continue;
-        if (x < t) continue;
-        mf.printf("%s", buf);
-    }
-    fclose(f);
-}
-
-/// copy the log file after a given time
-///
-void TIME_STATS::get_log_after(double t, MIOFILE& mf) {
-    if (time_stats_log) {
-        fclose(time_stats_log);     // win: can't open twice
-    }
-    send_log_after(TIME_STATS_LOG, t, mf);
-    time_stats_log = fopen(TIME_STATS_LOG, "a");
 }
 
 /// Update time statistics based on current activities.
@@ -164,7 +105,6 @@ void TIME_STATS::update(int suspend_reason) {
         active_frac = 1;
         first = false;
         last_update = gstate.now;
-        log_append("power_on", gstate.now);
     } else {
         dt = gstate.now - last_update;
         if (dt <= 10) return;
@@ -181,14 +121,6 @@ void TIME_STATS::update(int suspend_reason) {
             // the client has just started; this is the first call.
             on_frac *= w2;
             first = false;
-            log_append("power_off", last_update);
-            std::ostringstream pbuf;
-            pbuf << "platform " << gstate.get_primary_platform();
-            log_append(pbuf.str(), gstate.now);
-            std::ostringstream vbuf;
-            vbuf << "version " << SYNEC_VERSION_STRING;
-            log_append(vbuf.str(), gstate.now);
-            log_append("power_on", gstate.now);
         } else {
             on_frac = w1 + w2*on_frac;
             if (connected_frac < 0) connected_frac = 0;
@@ -204,7 +136,6 @@ void TIME_STATS::update(int suspend_reason) {
                 connected_frac = -1;
             }
             if (connected_state != previous_connected_state) {
-                log_append_net(connected_state);
                 previous_connected_state = connected_state;
             }
             active_frac *= w2;
@@ -212,11 +143,9 @@ void TIME_STATS::update(int suspend_reason) {
                 active_frac += w1;
                 if (inactive_start) {
                     inactive_start = 0;
-                    log_append("proc_start", gstate.now);
                 }
             } else if (inactive_start == 0){
                 inactive_start = gstate.now;
-                log_append("proc_stop", gstate.now);
             }
             //msg_printf(NULL, MSG_INFO, "is_active %d, active_frac %f", is_active, active_frac);
         }
@@ -310,36 +239,4 @@ int TIME_STATS::parse(MIOFILE& in) {
         }
     }
     return ERR_XML_PARSE;
-}
-
-void TIME_STATS::start() {
-    time_stats_log = fopen(TIME_STATS_LOG, "a");
-    if (time_stats_log) {
-        setbuf(time_stats_log, 0);
-    }
-}
-
-void TIME_STATS::quit() {
-    log_append("power_off", gstate.now);
-}
-
-void TIME_STATS::log_append(const std::string& msg, double t) {
-    if (!time_stats_log) {
-        return;
-    }
-    fprintf(time_stats_log, "%f %s\n", t, msg.c_str());
-}
-
-void TIME_STATS::log_append_net(int new_state) {
-    switch(new_state) {
-    case CONNECTED_STATE_NOT_CONNECTED:
-        log_append("net_not_connected", gstate.now);
-        break;
-    case CONNECTED_STATE_CONNECTED:
-        log_append("net_connected", gstate.now);
-        break;
-    case CONNECTED_STATE_UNKNOWN:
-        log_append("net_unknown", gstate.now);
-        break;
-    }
 }

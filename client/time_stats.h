@@ -49,7 +49,6 @@ public:
     /// -# other CPU-intensive apps run
     double cpu_efficiency;
 
-    FILE* time_stats_log;
     double inactive_start;
 
     void update(int suspend_reason);
@@ -58,13 +57,6 @@ public:
     TIME_STATS();
     void write(std::ostream& out, bool to_server) const;
     int parse(MIOFILE&);
-
-    void log_append(const std::string& msg, double t);
-    void log_append_net(int);
-    void trim_stats_log();
-    void get_log_after(double, MIOFILE&);
-    void start();
-    void quit();
 };
 
 #endif

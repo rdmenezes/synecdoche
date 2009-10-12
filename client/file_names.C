@@ -102,16 +102,6 @@ std::string get_master_filename(const PROJECT& project) {
     return result.str();
 }
 
-/// Get the job log file name for a project.
-///
-/// \param[in] project The project for which the file name should be returned.
-/// \return The file name of the sjob log file for the given project.
-std::string job_log_filename(const PROJECT& project) {
-    std::ostringstream result;
-    result << JOB_LOG_BASE << escape_project_url(project.get_master_url()) << ".xml";
-    return result.str();
-}
-
 /// Returns the location of a numbered slot directory.
 ///
 /// \param[in] slot The number of the slot.
