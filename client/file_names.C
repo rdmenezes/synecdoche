@@ -18,21 +18,23 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+#else
+#include "config.h"
 #endif
 
-#ifndef _WIN32
-#include "config.h"
+#include "file_names.h"
+
 #include <cctype>
 #include <cstdio>
 #include <sstream>
+
+#ifndef _WIN32
 #if HAVE_SYS_IPC_H
 #include <sys/ipc.h>
 #endif
 #include <sys/stat.h>
 #include "shmem.h"
 #endif
-
-#include "file_names.h"
 
 #include "filesys.h"
 #include "error_numbers.h"

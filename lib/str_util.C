@@ -45,7 +45,6 @@
 #include <list>
 
 #include "error_numbers.h"
-#include "filesys.h"
 
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
