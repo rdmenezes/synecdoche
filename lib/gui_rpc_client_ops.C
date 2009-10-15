@@ -2220,13 +2220,10 @@ int RPC_CLIENT::get_global_prefs_override_struct(GLOBAL_PREFS& prefs, GLOBAL_PRE
 
 int RPC_CLIENT::set_global_prefs_override_struct(GLOBAL_PREFS& prefs, GLOBAL_PREFS_MASK& mask) {
     SET_LOCALE sl;
-    char buf[64000];
-    MIOFILE mf;
+    std::ostringstream oss;
 
-    mf.init_buf_write(buf, sizeof(buf));
-    prefs.write_subset(mf, mask);
-    std::string s = buf;
-    return set_global_prefs_override(s);
+    prefs.write_subset(oss, mask);
+    return set_global_prefs_override(oss.str());
 }
 
 int RPC_CLIENT::read_cc_config() {
