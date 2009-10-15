@@ -8,11 +8,8 @@ UnitTest_SOURCES = TestRunner.cpp \
                    TestUtil.cpp \
                    Util.cpp
 UnitTest_CPPFLAGS = -I$(top_srcdir)
-UnitTest_CXXFLAGS = $(CPPUNIT_CFLAGS)
-UnitTest_LDADD = $(CPPUNIT_LIBS) ../lib/libboinc.a
-
-#TESTS = XMLParser
-#TESTS_ENVIRONMENT = ./UnitTest
+UnitTest_CXXFLAGS = $(UNITTEST_CFLAGS)
+UnitTest_LDADD = $(UNITTEST_LIBS) ../lib/libboinc.a
 
 check-local:
 	./UnitTest
