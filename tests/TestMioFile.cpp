@@ -93,7 +93,7 @@ SUITE(TestMiofileAdapter)
     }
 
     /// Does nothing. Used in testEmpty().
-    void noop(MIOFILE& out) {
+    void noop(MIOFILE&) {
         ;
     }
 
