@@ -15,123 +15,88 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
-
 #include <string>
 #include <sstream>
+
+#include <UnitTest++.h>
+
 #include "lib/xml_write.h"
 
 using std::string;
 
-/// Unit tests for the write_escaped_xml function.
-class TestXmlEscape: public CppUnit::TestFixture
-{
-    CPPUNIT_TEST_SUITE(TestXmlEscape);
-    CPPUNIT_TEST(testNothing);
-    CPPUNIT_TEST(testEmpty);
-    CPPUNIT_TEST(testAmp);
-    CPPUNIT_TEST(testTag);
-    CPPUNIT_TEST(testConsecutive);
-    CPPUNIT_TEST(testHighByte);
-    CPPUNIT_TEST_SUITE_END();
-
-  private:
+struct OssFixture {
     std::ostringstream oss;
+};
 
-  public:
-//these macros makes data-driven tests easier
-#define ADD_TEST(name, input, output) \
-void test ## name() { \
+/// Unit tests for the write_escaped_xml function.
+SUITE(TestXmlEscape)
+{
+//this macro makes data-driven tests easier
+#define XML_TEST(name, input, output) \
+TEST_FIXTURE(OssFixture, Test ## name) { \
     write_escaped_xml(oss, input); \
-    CPPUNIT_ASSERT_EQUAL(string(output), oss.str()); \
-}
-#define ADD_TEST2(name, input, output1, output2) \
-void test ## name() { \
-    write_escaped_xml(oss, input); \
-    try { \
-        CPPUNIT_ASSERT_EQUAL(string(output1), oss.str()); \
-    } catch (CppUnit::Exception) { \
-        CPPUNIT_ASSERT_EQUAL(string(output2), oss.str()); \
-    } \
+    CHECK_EQUAL(string(output), oss.str()); \
 }
 
     /// Test an input that doesn't need escaping.
     /// The output should be the same as the input.
-    ADD_TEST(Nothing, "test", "test")
+    XML_TEST(Nothing, "test", "test")
 
     /// Test an empty string as input.
-    ADD_TEST(Empty, "", "")
+    XML_TEST(Empty, "", "")
 
     /// Test escaping a string containing an ampersand.
-    ADD_TEST(Amp, "t&st", "t&amp;st")
+    XML_TEST(Amp, "t&st", "t&amp;st")
 
     /// Test escaping a typical XML tag. This test checks if the open angle
     /// bracket is escaped, but works both if the right angle bracket is
     /// escaped and if it's not.
-    ADD_TEST2(Tag, "<test>", "&lt;test&gt;", "&lt;test>")
+    TEST_FIXTURE(OssFixture, TestTag) {
+        write_escaped_xml(oss, "<test>");
+        CHECK(oss.str() == "&lt;test&gt;" || oss.str() == "&lt;test>");
+    }
 
     /// Test two consecutive ampersands.
-    ADD_TEST(Consecutive, "x&&x", "x&amp;&amp;x")
+    XML_TEST(Consecutive, "x&&x", "x&amp;&amp;x")
 
     /// Test a string with a character &gt;128.
-    ADD_TEST(HighByte, "qu\xe9?", "qu&#233;?")
-#undef ADD_TEST
-#undef ADD_TEST2
-};
+    XML_TEST(HighByte, "qu\xe9?", "qu&#233;?")
+#undef XML_TEST
+}
 
 /// Unit tests for the XmlTag_t class, and using it along with XmlString.
-class TestXmlWrite: public CppUnit::TestFixture
+SUITE(TestXmlWrite)
 {
-    CPPUNIT_TEST_SUITE(TestXmlWrite);
-    CPPUNIT_TEST(testInt);
-    CPPUNIT_TEST(testStrLiteral);
-    CPPUNIT_TEST(testCharp);
-    CPPUNIT_TEST(testStdString);
-
-    CPPUNIT_TEST(testStrLiteralEsc);
-    CPPUNIT_TEST(testCharpEsc);
-    CPPUNIT_TEST(testStdStringEsc);
-    CPPUNIT_TEST_SUITE_END();
-
-  private:
-    std::ostringstream oss;
-  public:
-    void testInt() {
+    TEST_FIXTURE(OssFixture, Int) {
         oss << XmlTag<int>("foo", 42);
-        CPPUNIT_ASSERT_EQUAL(string("<foo>42</foo>\n"), oss.str());
+        CHECK_EQUAL(string("<foo>42</foo>\n"), oss.str());
     }
-    void testStrLiteral() {
+    TEST_FIXTURE(OssFixture, StrLiteral) {
         oss << XmlTag<const char*>("foo", "bar");
-        CPPUNIT_ASSERT_EQUAL(string("<foo>bar</foo>\n"), oss.str());
+        CHECK_EQUAL(string("<foo>bar</foo>\n"), oss.str());
     }
-    void testCharp() {
+    TEST_FIXTURE(OssFixture, Charp) {
         const char* value = "bar";
         oss << XmlTag<const char*>("foo", value);
-        CPPUNIT_ASSERT_EQUAL(string("<foo>bar</foo>\n"), oss.str());
+        CHECK_EQUAL(string("<foo>bar</foo>\n"), oss.str());
     }
-    void testStdString() {
+    TEST_FIXTURE(OssFixture, StdString) {
         string value = "bar";
         oss << XmlTag<string>("foo", value);
-        CPPUNIT_ASSERT_EQUAL(string("<foo>bar</foo>\n"), oss.str());
+        CHECK_EQUAL(string("<foo>bar</foo>\n"), oss.str());
     }
-    void testStrLiteralEsc() {
+    TEST_FIXTURE(OssFixture, StrLiteralEsc) {
         oss << XmlTag<XmlString>("foo", "b&r");
-        CPPUNIT_ASSERT_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
+        CHECK_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
     }
-    void testCharpEsc() {
+    TEST_FIXTURE(OssFixture, CharpEsc) {
         const char* value = "b&r";
         oss << XmlTag<XmlString>("foo", value);
-        CPPUNIT_ASSERT_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
+        CHECK_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
     }
-    void testStdStringEsc() {
+    TEST_FIXTURE(OssFixture, StdStringEsc) {
         string value = "b&r";
         oss << XmlTag<XmlString>("foo", value);
-        CPPUNIT_ASSERT_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
+        CHECK_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
     }
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestXmlEscape);
-CPPUNIT_TEST_SUITE_REGISTRATION(TestXmlWrite);
-
+}

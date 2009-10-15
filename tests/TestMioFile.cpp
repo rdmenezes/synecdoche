@@ -23,9 +23,7 @@
 #include <sstream>
 #include <string>
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include <UnitTest++.h>
 
 #include "lib/miofile.h"
 #include "lib/mfile.h"
@@ -35,73 +33,47 @@
 
 // These tests are incomplete; but I plan to get rid of MIOFILE and MFILE anyway.
 
-/// Unit tests for MFILE.
-/// Currently there is only one test, and it doesn't do much.
-class TestMfile: public CppUnit::TestFixture
+
+TEST(MfilePrintf)
 {
-    CPPUNIT_TEST_SUITE(TestMfile);
-    CPPUNIT_TEST(testPrintf);
-    CPPUNIT_TEST_SUITE_END();
+    MFILE m;
+    m.printf("Test");
 
-  public:
-    void testPrintf() {
-        MFILE m;
-        m.printf("Test");
+    char* p;
+    int n;
+    m.get_buf(p, n);
 
-        char* p;
-        int n;
-        m.get_buf(p, n);
+    CHECK(0 != p);
+    CHECK_EQUAL(4, n);
+    CHECK(memcmp("Test", p, 4) == 0);
 
-        CPPUNIT_ASSERT(0 != p);
-        CPPUNIT_ASSERT_EQUAL(4, n);
-        CPPUNIT_ASSERT(memcmp("Test", p, 4) == 0);
+    free(p);
+}
 
-        free(p);
-    }
-};
-
-/// Unit tests for MIOFILE.
-/// Currently there is only one test, and it doesn't do much.
-class TestMioFile: public CppUnit::TestFixture
+TEST(MiofileFgetsBuf)
 {
-    CPPUNIT_TEST_SUITE(TestMioFile);
-    CPPUNIT_TEST(testFgetsBuf);
-    CPPUNIT_TEST_SUITE_END();
+    MIOFILE mf;
+    const char* data = "Hello world\n";
+    mf.init_buf_read(data);
 
-  public:
-    void testFgetsBuf()
-    {
-        MIOFILE mf;
-        const char* data = "Hello world\n";
-        mf.init_buf_read(data);
+    char buf[256];
+    const char* retval = mf.fgets(buf, 256);
 
-        char buf[256];
-        const char* retval = mf.fgets(buf, 256);
+    // check if return value is buf (comparing pointers)
+    CHECK_EQUAL((void*)buf, (void*)retval);
+    // check if data read into buf is correct
+    CHECK(strcmp(data, buf) == 0);
 
-        // check if return value is buf (comparing pointers)
-        CPPUNIT_ASSERT_EQUAL((void*)buf, (void*)retval);
-        // check if data read into buf is correct
-        CPPUNIT_ASSERT(strcmp(data, buf) == 0);
-
-        // test if it returns NULL on EOF
-        retval = mf.fgets(buf, 256);
-        CPPUNIT_ASSERT_EQUAL((void*)0, (void*)retval);
-    }
-};
+    // test if it returns NULL on EOF
+    retval = mf.fgets(buf, 256);
+    CHECK_EQUAL((void*)0, (void*)retval);
+}
 
 /// Unit tests for the Miofile-iostream adapters.
 ///
 /// Currently tests MiofileFromOstream and OstreamFromMiofile.
-class TestMioFileAdapter: public CppUnit::TestFixture
+SUITE(TestMiofileAdapter)
 {
-    CPPUNIT_TEST_SUITE(TestMioFileAdapter);
-    CPPUNIT_TEST(testMioFromOstream);
-    CPPUNIT_TEST(testMioFromOstreamEmpty);
-    CPPUNIT_TEST(testOstreamFromMio);
-    CPPUNIT_TEST(testOstreamFromMioLarge);
-    CPPUNIT_TEST_SUITE_END();
-
-  public:
     /// Writes \a str to the given MIOFILE.
     /// Helper function for the actual tests.
     void funcUsingMiofile(MIOFILE& out, const char* str) {
@@ -114,10 +86,10 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     /// Then it calls funcUsingMiofile(), giving it an adapter object created from the stream.
     /// Finally, it compares the contents of the stream's string
     /// with the text written to the MIOFILE.
-    void testMioFromOstream() {
+    TEST(TestMiofileFromOstream) {
         std::ostringstream oss;
         funcUsingMiofile(MiofileFromOstream(oss), "foobar");
-        CPPUNIT_ASSERT_EQUAL(std::string("foobar"), oss.str());
+        CHECK_EQUAL(std::string("foobar"), oss.str());
     }
 
     /// Does nothing. Used in testEmpty().
@@ -130,11 +102,11 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     /// and checks if the string is empty.
     /// It's unlikely that the string wouldn't be empty;
     /// the real test is that nothing \e crashes while running this code.
-    void testMioFromOstreamEmpty() {
+    TEST(TestMioFromOstreamEmpty) {
         std::ostringstream oss;
         noop(MiofileFromOstream(oss));
 
-        CPPUNIT_ASSERT(oss.str().empty());
+        CHECK(oss.str().empty());
     }
 
     /// Writes \a str to the given std::ostream.
@@ -151,7 +123,7 @@ class TestMioFileAdapter: public CppUnit::TestFixture
     /// giving it an OstreamFromMiofile adapter created from the MIOFILE.
     /// Finally, it compares the contents of the MFILE
     /// with the text written to the ostream.
-    void testOstreamFromMio() {
+    TEST(TestOstreamFromMio) {
         MIOFILE mf;
         MFILE m;
         mf.init_mfile(&m);
@@ -162,16 +134,16 @@ class TestMioFileAdapter: public CppUnit::TestFixture
         int n;
         m.get_buf(p, n);
 
-        CPPUNIT_ASSERT(0 != p);
-        CPPUNIT_ASSERT_EQUAL(4, n);
-        CPPUNIT_ASSERT(memcmp("test", p, 4) == 0);
+        CHECK(0 != p);
+        CHECK_EQUAL(4, n);
+        CHECK(memcmp("test", p, 4) == 0);
 
         free(p);
     }
 
     /// \test Tests OstreamFromMiofile with more data than fits
     /// in MFILE's vprintf buffer.
-    void testOstreamFromMioLarge() {
+    TEST(TestOstreamFromMioLarge) {
         MIOFILE mf;
         MFILE m;
         mf.init_mfile(&m);
@@ -183,14 +155,10 @@ class TestMioFileAdapter: public CppUnit::TestFixture
         int n;
         m.get_buf(p, n);
 
-        CPPUNIT_ASSERT(0 != p);
-        CPPUNIT_ASSERT_EQUAL(data.size(), size_t(n));
-        CPPUNIT_ASSERT(data.compare(0, data.size(), p, n) == 0);
+        CHECK(0 != p);
+        CHECK_EQUAL(data.size(), size_t(n));
+        CHECK(data.compare(0, data.size(), p, n) == 0);
 
         free(p);
     }
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestMfile);
-CPPUNIT_TEST_SUITE_REGISTRATION(TestMioFile);
-CPPUNIT_TEST_SUITE_REGISTRATION(TestMioFileAdapter);
+}

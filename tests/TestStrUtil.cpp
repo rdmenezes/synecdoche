@@ -18,107 +18,93 @@
 /// \file
 /// Unit tests for lib/str_util.h
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include <UnitTest++.h>
 
 #include "lib/str_util.h"
 
 /// Unit tests for several functions in lib/str_util.h.
-class TestStrUtil: public CppUnit::TestFixture
+SUITE(TestStrUtil)
 {
-    CPPUNIT_TEST_SUITE(TestStrUtil);
-    CPPUNIT_TEST(testStripWsStdString);
-    CPPUNIT_TEST(testStartsWith);
-    CPPUNIT_TEST(testEndsWith);
-    CPPUNIT_TEST(testCmdLineParse);
-    CPPUNIT_TEST(testCmdLineParseSingleCharLast);
-    CPPUNIT_TEST_SUITE_END();
-
-  public:
     /// \test Basic usage of strip_whitespace().
     /// \note Only the std::string overload is being tested here. However, the
     /// char* overload is implemented by calling the string overload...
-    void testStripWsStdString()
+    TEST(StripWsStdString)
     {
         std::string input;
         input = "test";
         strip_whitespace(input);
-        CPPUNIT_ASSERT_EQUAL(std::string("test"), input);
+        CHECK_EQUAL(std::string("test"), input);
 
         input = "test   ";
         strip_whitespace(input);
-        CPPUNIT_ASSERT_EQUAL(std::string("test"), input);
+        CHECK_EQUAL(std::string("test"), input);
 
         input = "   test";
         strip_whitespace(input);
-        CPPUNIT_ASSERT_EQUAL(std::string("test"), input);
+        CHECK_EQUAL(std::string("test"), input);
 
         input = "    test   ";
         strip_whitespace(input);
-        CPPUNIT_ASSERT_EQUAL(std::string("test"), input);
+        CHECK_EQUAL(std::string("test"), input);
 
         input = "\r\n  test\r\n";
         strip_whitespace(input);
-        CPPUNIT_ASSERT_EQUAL(std::string("test"), input);
+        CHECK_EQUAL(std::string("test"), input);
     }
     /// \test Tests the starts_with() function.
     /// It checks normal situations, and corner cases like empty strings.
-    void testStartsWith()
+    TEST(StartsWith)
     {
-        CPPUNIT_ASSERT_EQUAL(true, starts_with("preteststring", "pre"));
-        CPPUNIT_ASSERT_EQUAL(true, starts_with("pre", "pre"));
-        CPPUNIT_ASSERT_EQUAL(false, starts_with("teststring", "pre"));
-        CPPUNIT_ASSERT_EQUAL(false, starts_with("long", "longer"));
+        CHECK_EQUAL(true, starts_with("preteststring", "pre"));
+        CHECK_EQUAL(true, starts_with("pre", "pre"));
+        CHECK_EQUAL(false, starts_with("teststring", "pre"));
+        CHECK_EQUAL(false, starts_with("long", "longer"));
 
         // empty strings don't start with anything
-        CPPUNIT_ASSERT_EQUAL(false, starts_with("", "foo"));
+        CHECK_EQUAL(false, starts_with("", "foo"));
 
         // but everything starts with the empty string
-        CPPUNIT_ASSERT_EQUAL(true, starts_with("foo", ""));
-        CPPUNIT_ASSERT_EQUAL(true, starts_with("", ""));
+        CHECK_EQUAL(true, starts_with("foo", ""));
+        CHECK_EQUAL(true, starts_with("", ""));
     }
     /// \test Tests the ends_with() function.
     /// It checks normal situations, and corner cases like empty strings.
-    void testEndsWith()
+    TEST(EndsWith)
     {
-        CPPUNIT_ASSERT_EQUAL(true, ends_with("teststringpost", "post"));
-        CPPUNIT_ASSERT_EQUAL(true, ends_with("post", "post"));
-        CPPUNIT_ASSERT_EQUAL(false, ends_with("teststring", "post"));
+        CHECK_EQUAL(true, ends_with("teststringpost", "post"));
+        CHECK_EQUAL(true, ends_with("post", "post"));
+        CHECK_EQUAL(false, ends_with("teststring", "post"));
 
         // empty strings don't end with anything
-        CPPUNIT_ASSERT_EQUAL(false, ends_with("", "foo"));
+        CHECK_EQUAL(false, ends_with("", "foo"));
 
         // but everything ends with the empty string
-        CPPUNIT_ASSERT_EQUAL(true, ends_with("foo", ""));
-        CPPUNIT_ASSERT_EQUAL(true, ends_with("", ""));
+        CHECK_EQUAL(true, ends_with("foo", ""));
+        CHECK_EQUAL(true, ends_with("", ""));
     }
     /// \test Calls parse_command_line() in the simplest situation, passing two
     /// arguments with no quotes.
-    void testCmdLineParse()
+    TEST(CmdLineParse)
     {
         std::list<std::string> args = parse_command_line("simple test");
-        CPPUNIT_ASSERT_EQUAL(size_t(2), args.size());
+        CHECK_EQUAL(size_t(2), args.size());
 
         std::list<std::string>::iterator it = args.begin();
-        CPPUNIT_ASSERT_EQUAL(std::string("simple"), *it++);
-        CPPUNIT_ASSERT_EQUAL(std::string("test"), *it++);
+        CHECK_EQUAL(std::string("simple"), *it++);
+        CHECK_EQUAL(std::string("test"), *it++);
     }
     /// \test Calls parse_command_line() with a single character as the last
     /// argument. This functionality was broken before, crashing workunits for
     /// some BOINC projects.
     /// \sa Synecdoche \issue{59}.
-    void testCmdLineParseSingleCharLast()
+    TEST(CmdLineParseSingleCharLast)
     {
         std::list<std::string> args = parse_command_line("foo --nthreads 2");
-        CPPUNIT_ASSERT_EQUAL(size_t(3), args.size());
+        CHECK_EQUAL(size_t(3), args.size());
 
         std::list<std::string>::iterator it = args.begin();
-        CPPUNIT_ASSERT_EQUAL(std::string("foo"), *it++);
-        CPPUNIT_ASSERT_EQUAL(std::string("--nthreads"), *it++);
-        CPPUNIT_ASSERT_EQUAL(std::string("2"), *it++);
+        CHECK_EQUAL(std::string("foo"), *it++);
+        CHECK_EQUAL(std::string("--nthreads"), *it++);
+        CHECK_EQUAL(std::string("2"), *it++);
     }
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestStrUtil);
-
+}

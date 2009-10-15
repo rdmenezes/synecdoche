@@ -197,8 +197,8 @@ LIBS="${SAVELIBS}";
 
 AC_SUBST(CLIENTLIBS)
 
-dnl check for cppunit
-AM_PATH_CPPUNIT(1.12)
+# check for unittest++
+PKG_CHECK_MODULES([UNITTEST], [unittest++])
 
 # Disable OpenGL checking. It's only needed for the API, which is currently
 # disabled.

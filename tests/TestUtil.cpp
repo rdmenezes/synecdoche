@@ -20,41 +20,28 @@
 
 #include <sstream>
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include <UnitTest++.h>
 
 #include "lib/util.h"
 #include "Util.h"
 
-class TestUtil: public CppUnit::TestFixture
+SUITE(TestUtil)
 {
-    CPPUNIT_TEST_SUITE(TestUtil);
-    CPPUNIT_TEST(testCopyStream);
-    CPPUNIT_TEST(testCopyStreamLarge);
-    CPPUNIT_TEST_SUITE_END();
-
-  private:
-    //testsuite-wide variables
-
-  public:
-    void testCopyStream()
+    TEST(CopyStream)
     {
         std::istringstream iss("Hello world");
         std::ostringstream oss;
         copy_stream(iss, oss);
-        CPPUNIT_ASSERT_EQUAL(iss.str(), oss.str());
+        CHECK_EQUAL(iss.str(), oss.str());
     }
 
-    void testCopyStreamLarge()
+    TEST(CopyStreamLarge)
     {
         std::string str = rand_string(1024 + std::rand() % 1000, rand_char_null);
 
         std::istringstream iss(str);
         std::ostringstream oss;
         copy_stream(iss, oss);
-        CPPUNIT_ASSERT_EQUAL(str, oss.str());
+        CHECK_EQUAL(str, oss.str());
     }
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestUtil);
+}
