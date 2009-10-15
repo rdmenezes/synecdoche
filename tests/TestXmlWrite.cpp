@@ -61,6 +61,9 @@ TEST_FIXTURE(OssFixture, Test ## name) { \
 
     /// Test a string with a character &gt;128.
     XML_TEST(HighByte, "qu\xe9?", "qu&#233;?")
+
+    /// Test a string with a newline character.
+    XML_TEST(Newline, "hello\nworld", "hello&#10;world")
 #undef XML_TEST
 }
 
