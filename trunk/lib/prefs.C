@@ -688,6 +688,32 @@ int GLOBAL_PREFS::parse_file(
     return retval;
 }
 
+void GLOBAL_PREFS::write_day_prefs(std::ostream& out) const
+{
+    for (int i = 0; i < 7; ++i) {
+        const TIME_SPAN* cpu = cpu_times.week.get(i);
+        const TIME_SPAN* net = net_times.week.get(i);
+        //write only when needed
+        if (net || cpu) {
+            out << "<day_prefs>\n";
+            out << XmlTag<int>("day_of_week", i);
+            if (cpu) {
+                SaveIosFlags saver(out);
+                out << std::fixed << std::setprecision(2);
+                out << "<start_hour>" << (cpu->get_start() / 3600.0) << "</start_hour>\n";
+                out << "<end_hour>" << (cpu->get_end() / 3600.0) << "</end_hour>\n";
+            }
+            if (net) {
+                SaveIosFlags saver(out);
+                out << std::fixed << std::setprecision(2);
+                out << "<net_start_hour>" << (net->get_start() / 3600.0) << "</net_start_hour>\n";
+                out << "<net_end_hour>" << (net->get_end() / 3600.0) << "</net_end_hour>\n";
+            }
+            out << "</day_prefs>\n";
+        }
+    }
+}
+
 /// Write the global prefs that are actually in force
 /// (our particular venue, modified by overwrite file).
 /// This is used to write
@@ -736,158 +762,106 @@ void GLOBAL_PREFS::write(std::ostream& out) const
         << XmlTag<double>("cpu_usage_limit",            cpu_usage_limit)
     ;
 
-    for (int i=0; i < 7; ++i) {
-        const TIME_SPAN* cpu = cpu_times.week.get(i);
-        const TIME_SPAN* net = net_times.week.get(i);
+    write_day_prefs(out);
 
-        //write only when needed
-        if (net || cpu) {    
-            out << "<day_prefs>\n";
-            out << XmlTag<int>("day_of_week", i);
-            if (cpu) {
-                SaveIosFlags saver(out);
-                out << std::fixed << std::setprecision(2);
-                out << "<start_hour>" << (cpu->get_start() / 3600.0) << "</start_hour>\n";
-                out << "<end_hour>" << (cpu->get_end() / 3600.0) << "</end_hour>\n";
-            }
-            if (net) {
-                SaveIosFlags saver(out);
-                out << std::fixed << std::setprecision(2);
-                out << "<net_start_hour>" << (net->get_start() / 3600.0) << "</net_start_hour>\n";
-                out << "<net_end_hour>" << (net->get_end() / 3600.0) << "</net_end_hour>\n";
-            }
-            out << "</day_prefs>\n";
-        }
-    }
     out << "</global_preferences>\n";
 }
 
 /// Write a subset of the global preferences,
 /// as selected by the mask of bools.
-void GLOBAL_PREFS::write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask) {
+void GLOBAL_PREFS::write_subset(std::ostream& out, GLOBAL_PREFS_MASK& mask) {
     if (!mask.are_prefs_set()) return;
-    
-    f.printf("<global_preferences>\n");
+
+    out << "<global_preferences>\n";
+
     if (mask.run_on_batteries) {
-        f.printf("   <run_on_batteries>%d</run_on_batteries>\n",
-            run_on_batteries?1:0
-        );
+        out << XmlTag<int>("run_on_batteries",	run_on_batteries?1:0);
     }
     if (mask.run_if_user_active) {
-        f.printf("   <run_if_user_active>%d</run_if_user_active>\n",
-            run_if_user_active?1:0
-        );
+        out << XmlTag<int>("run_if_user_active",	run_if_user_active?1:0);
     }
     if (mask.idle_time_to_run) {
-        f.printf("   <idle_time_to_run>%f</idle_time_to_run>\n", idle_time_to_run);
+        out << XmlTag<double>("idle_time_to_run",	idle_time_to_run);
     }
     if (mask.suspend_if_no_recent_input) {
-
-        f.printf("   <suspend_if_no_recent_input>%f</suspend_if_no_recent_input>\n",
-            suspend_if_no_recent_input
-        );
+        out << XmlTag<double>("suspend_if_no_recent_input", suspend_if_no_recent_input);
     }
     if (mask.start_hour) {
-        f.printf("   <start_hour>%f</start_hour>\n", cpu_times.get_start() / 3600.0);
+        out << XmlTag<double>("start_hour",		cpu_times.get_start() / 3600.0);
     }
     if (mask.end_hour) {
-        f.printf("   <end_hour>%f</end_hour>\n", cpu_times.get_end() / 3600.0);
+        out << XmlTag<double>("end_hour",		cpu_times.get_end() / 3600.0);
     }
     if (mask.net_start_hour) {
-        f.printf("   <net_start_hour>%f</net_start_hour>\n", net_times.get_start() / 3600.0);
+        out << XmlTag<double>("net_start_hour",	net_times.get_start() / 3600.0);
     }
     if (mask.net_end_hour) {
-        f.printf("   <net_end_hour>%f</net_end_hour>\n", net_times.get_end() / 3600.0);
+        out << XmlTag<double>("net_end_hour",	net_times.get_end() / 3600.0);
     }
     if (mask.leave_apps_in_memory) {
-        f.printf("   <leave_apps_in_memory>%d</leave_apps_in_memory>\n",
-            leave_apps_in_memory?1:0
-        );
+        out << XmlTag<int>("leave_apps_in_memory", leave_apps_in_memory?1:0);
     }
     if (mask.confirm_before_connecting) {
-        f.printf("   <confirm_before_connecting>%d</confirm_before_connecting>\n",
-            confirm_before_connecting?1:0
-        );
+        out << XmlTag<int>("confirm_before_connecting", confirm_before_connecting?1:0);
     }
     if (mask.hangup_if_dialed) {
-        f.printf("   <hangup_if_dialed>%d</hangup_if_dialed>\n",
-            hangup_if_dialed?1:0
-        );
+        out << XmlTag<int>("hangup_if_dialed",	hangup_if_dialed?1:0);
     }
     if (mask.dont_verify_images) {
-        f.printf("   <dont_verify_images>%d</dont_verify_images>\n",
-            dont_verify_images?1:0
-        );
+        out << XmlTag<int>("dont_verify_images",	dont_verify_images?1:0);
     }
     if (mask.work_buf_min_days) {
-        f.printf("   <work_buf_min_days>%f</work_buf_min_days>\n", work_buf_min_days);
+        out << XmlTag<double>("work_buf_min_days",	work_buf_min_days);
     }
     if (mask.work_buf_additional_days) {
-        f.printf("   <work_buf_additional_days>%f</work_buf_additional_days>\n", work_buf_additional_days);
+        out << XmlTag<double>("work_buf_additional_days", work_buf_additional_days);
     }
     if (mask.max_cpus) {
-        f.printf("   <max_cpus>%d</max_cpus>\n", max_cpus);
+        out << XmlTag<int>("max_cpus",		max_cpus);
     }
     if (mask.max_ncpus_pct) {
-        f.printf("   <max_ncpus_pct>%f</max_ncpus_pct>\n", max_ncpus_pct);
+        out << XmlTag<double>("max_ncpus_pct",	max_ncpus_pct);
     }
     if (mask.cpu_scheduling_period_minutes) {
-        f.printf("   <cpu_scheduling_period_minutes>%f</cpu_scheduling_period_minutes>\n", cpu_scheduling_period_minutes);
+        out << XmlTag<double>("cpu_scheduling_period_minutes", cpu_scheduling_period_minutes);
     }
     if (mask.disk_interval) {
-        f.printf("   <disk_interval>%f</disk_interval>\n", disk_interval);
+        out << XmlTag<double>("disk_interval", disk_interval);
     }
     if (mask.disk_max_used_gb) {
-        f.printf("   <disk_max_used_gb>%f</disk_max_used_gb>\n", disk_max_used_gb);
+        out << XmlTag<double>("disk_max_used_gb", disk_max_used_gb);
     }
     if (mask.disk_max_used_pct) {
-        f.printf("   <disk_max_used_pct>%f</disk_max_used_pct>\n", disk_max_used_pct);
+        out << XmlTag<double>("disk_max_used_pct", disk_max_used_pct);
     }
     if (mask.disk_min_free_gb) {
-        f.printf("   <disk_min_free_gb>%f</disk_min_free_gb>\n", disk_min_free_gb);
+        out << XmlTag<double>("disk_min_free_gb", disk_min_free_gb);
     }
     if (mask.vm_max_used_frac) {
-        f.printf("   <vm_max_used_pct>%f</vm_max_used_pct>\n", vm_max_used_frac*100);
+        out << XmlTag<double>("vm_max_used_pct", vm_max_used_frac*100);
     }
     if (mask.ram_max_used_busy_frac) {
-        f.printf("   <ram_max_used_busy_pct>%f</ram_max_used_busy_pct>\n", ram_max_used_busy_frac*100);
+        out << XmlTag<double>("ram_max_used_busy_pct", ram_max_used_busy_frac*100);
     }
     if (mask.ram_max_used_idle_frac) {
-        f.printf("   <ram_max_used_idle_pct>%f</ram_max_used_idle_pct>\n", ram_max_used_idle_frac*100);
+        out << XmlTag<double>("ram_max_used_idle_pct", ram_max_used_idle_frac*100);
     }
     if (mask.max_bytes_sec_up) {
-        f.printf("   <max_bytes_sec_up>%f</max_bytes_sec_up>\n", max_bytes_sec_up);
+        out << XmlTag<double>("max_bytes_sec_up", max_bytes_sec_up);
     }
     if (mask.max_bytes_sec_down) {
-        f.printf("   <max_bytes_sec_down>%f</max_bytes_sec_down>\n", max_bytes_sec_down);
+        out << XmlTag<double>("max_bytes_sec_down", max_bytes_sec_down);
     }
     if (mask.cpu_usage_limit) {
-        f.printf("   <cpu_usage_limit>%f</cpu_usage_limit>\n", cpu_usage_limit);
+        out << XmlTag<double>("cpu_usage_limit", cpu_usage_limit);
     }
 
-    for (int i=0; i<7; i++) {
-        const TIME_SPAN* cpu = cpu_times.week.get(i);
-        const TIME_SPAN* net = net_times.week.get(i);
-        //write only when needed
-        if (net || cpu) {
-            f.printf("   <day_prefs>\n");                
-            f.printf("      <day_of_week>%d</day_of_week>\n", i);
-            if (cpu) {
-                f.printf("      <start_hour>%.02f</start_hour>\n", cpu->get_start() / 3600.0);
-                f.printf("      <end_hour>%.02f</end_hour>\n", cpu->get_end() / 3600.0);
-            }
-            if (net) {
-                f.printf("      <net_start_hour>%.02f</net_start_hour>\n", net->get_start() / 3600.0);
-                f.printf("      <net_end_hour>%.02f</net_end_hour>\n", net->get_end() / 3600.0);
-            }
-            f.printf("   </day_prefs>\n");
-        }
-    }
-    f.printf("</global_preferences>\n");
+    write_day_prefs(out);
+    out << "</global_preferences>\n";
 }
 
 
-/// The new percentage preference for CPUs is given precedence, but if that 
+/// The new percentage preference for CPUs is given precedence, but if that
 /// isn't specified then the exact limit is used. The maximum is never less
 /// than 1.
 /// \param[in] availableCPUs Total number of CPUs available (need not represent real CPUs).

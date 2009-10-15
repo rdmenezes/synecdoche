@@ -204,7 +204,8 @@ struct GLOBAL_PREFS {
     int parse_override(XML_PARSER& xp, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
     int parse_file(const char* filename, const char* venue, bool& found_venue);
     void write(std::ostream& out) const;
-    void write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask);
+    void write_subset(std::ostream& out, GLOBAL_PREFS_MASK& mask);
+    void write_day_prefs(std::ostream& out) const;
     inline double cpu_scheduling_period() {
         return cpu_scheduling_period_minutes*60;
     }
