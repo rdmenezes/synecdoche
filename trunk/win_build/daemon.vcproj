@@ -1601,10 +1601,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\client\cpp.h"
-				>
-			</File>
-			<File
 				RelativePath="..\client\cpu_benchmark.h"
 				>
 			</File>
