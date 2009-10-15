@@ -140,13 +140,14 @@ void CLIENT_STATE::parse_cmdline(int argc, const char* const* argv) {
 
         // the above options are private (i.e. not shown by -help)
         // Public options follow.
-        // NOTE: if you change or add anything, make the same chane
+        // NOTE: if you change or add anything, make the same change
         // in show_options() (above) and in doc/client.php
 
         } else if (ARG("run_cpu_benchmarks")) {
             run_cpu_benchmarks = true;
         } else if (ARG("version")) {
-            printf(BOINC_VERSION_STRING " " HOSTTYPE "\n");
+            detect_platforms();
+            printf("%s %s\n", BOINC_VERSION_STRING, get_primary_platform().c_str());
             exit(0);
         } else if (ARG("allow_remote_gui_rpc")) {
             allow_remote_gui_rpc = true;
