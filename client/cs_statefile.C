@@ -578,7 +578,6 @@ int CLIENT_STATE::write_state_file() const {
     return 0;
 }
 
-/// \todo Convert this to use iostreams!
 void CLIENT_STATE::write_state(std::ostream& out) const {
     out << "<client_state>\n";
 
