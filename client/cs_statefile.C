@@ -21,12 +21,12 @@
 #include "config.h"
 #endif
 
+#include "client_state.h"
+
 #include <cstring>
 #include <errno.h>
 
 #include <ostream>
-
-#include "client_state.h"
 
 #include "miofile.h"
 #include "miofile_wrap.h"
@@ -544,7 +544,7 @@ int CLIENT_STATE::write_state_file() const {
         }
         if (!retval) break;     // Success!
 
-         if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
+        if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
 #ifdef _WIN32
             if (retval == ERROR_ACCESS_DENIED) {
                 msg_printf(0, MSG_USER_ERROR,
