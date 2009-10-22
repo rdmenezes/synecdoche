@@ -31,6 +31,8 @@
 #include <sys/types.h>
 #endif
 
+#include <cstring>
+
 #include "client_state.h"
 #include "client_types.h"
 
