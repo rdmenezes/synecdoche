@@ -54,6 +54,8 @@ typedef void (CALLBACK* ClientLibraryShutdown)();
 #include "SetupSecurity.h"
 #endif
 
+#include <cstring>
+
 #include "main.h"
 
 #include "diagnostics.h"

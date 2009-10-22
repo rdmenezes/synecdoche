@@ -28,6 +28,8 @@
 #include <time.h>
 #endif
 
+#include <cstring>
+
 #include "error_numbers.h"
 #include "mfile.h"
 #include "miofile.h"

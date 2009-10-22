@@ -24,6 +24,7 @@
 
 #include "file_names.h"
 
+#include <cstring>
 #include <cctype>
 #include <cstdio>
 #include <sstream>

@@ -34,6 +34,8 @@
 #include <errno.h>
 #endif
 
+#include <cstring>
+
 #include "client_state.h"
 
 #include "version.h"

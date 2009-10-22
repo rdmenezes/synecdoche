@@ -26,6 +26,8 @@
 #include <unistd.h>
 #endif
 
+#include <cstring>
+
 #include "version.h"
 
 #include "main.h"
