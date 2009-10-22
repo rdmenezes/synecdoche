@@ -22,19 +22,18 @@
 #ifndef STR_UTIL_H
 #define STR_UTIL_H
 
-#include <algorithm>
+#include <algorithm> //for transform
 #include <list>
 #include <string>
 
-#include <cctype>
-#include <ctime>
+#include <cctype> //for tolower
 
 #ifndef _WIN32
 #include "config.h"
 #endif
 
 #include "attributes.h"
-#include "common_defs.h"
+#include "common_defs.h" //for rpc_reason
 
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
@@ -84,7 +83,6 @@ bool valid_master_url(const char* url);
 void canonicalize_master_url(std::string&);
 
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
-#define safe_strcat(x, y) if (strlen(x)+strlen(y)<sizeof(x)) strcat(x, y)
 
 /// Convert a timestamp into a string.
 std::string time_to_string(double t);
