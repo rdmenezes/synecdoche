@@ -18,6 +18,7 @@
 #ifndef TEST_UTIL_H
 #define TEST_UTIL_H
 
+#include <algorithm>
 #include <string>
 
 char rand_char();
