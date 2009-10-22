@@ -8,7 +8,6 @@ RSA_LIBS = -lcrypto
 
 AM_CPPFLAGS =                  \
         -I$(top_srcdir)/lib    \
-        -I$(top_srcdir)/api    \
         -I$(top_srcdir)/client
 
 # dependencies to make sure libs gets compiled before
@@ -17,7 +16,3 @@ AM_CPPFLAGS =                  \
 LIBBOINC = $(top_builddir)/lib/libboinc.a
 $(LIBBOINC):
 	cd $(top_builddir)/lib; ${MAKE} libboinc.a
-
-LIBAPI = $(top_builddir)/api/libboinc_api.a
-$(LIBAPI):
-	cd $(top_builddir)/api; ${MAKE} libboinc_api.a

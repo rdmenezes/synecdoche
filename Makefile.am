@@ -6,17 +6,13 @@ AUTOMAKE_OPTIONS = foreign
 ## make sure rebuilding uses the right aclocal-switches
 ACLOCAL_AMFLAGS = -I m4
 
-API_SUBDIRS = lib
-
-CLIENT_SUBDIRS = client # client/scripts
-
 if BUILD_CLIENTGUI
    CLIENTGUI_SUBDIRS = clientgui clientgui/res #locale/client 
 endif
 
 # ORDER MATTERS below.  One must build dependencies FIRST, then things
 # that depend on them later
-SUBDIRS = $(API_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS) tests
+SUBDIRS = lib client $(CLIENTGUI_SUBDIRS) tests
 
 # Putting a directory name recursively copies the entire contents - the
 # dist-hook below gets rid of SVN directories.
