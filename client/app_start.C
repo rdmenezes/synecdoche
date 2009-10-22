@@ -56,9 +56,9 @@
 #include <fcntl.h>
 #endif
 
+#include <cstring>
 #include <sstream>
 #include <fstream>
-#include <cstring>
 
 #include "filesys.h"
 #include "error_numbers.h"
