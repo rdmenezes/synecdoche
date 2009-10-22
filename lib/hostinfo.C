@@ -123,19 +123,22 @@ void HOST_INFO::write(std::ostream& out, bool suppress_net_info) const {
         out << XmlTag<const char*>("domain_name", domain_name);
         out << XmlTag<const char*>("ip_addr",     ip_addr);
     }
-    out << XmlTag<const char*>("host_cpid",  host_cpid)
-        << XmlTag<int>   ("p_ncpus",         p_ncpus)
-        << XmlTag<double>("p_fpops",         p_fpops)
-        << XmlTag<double>("p_iops",          p_iops)
-        << XmlTag<double>("p_membw",         p_membw)
-        << XmlTag<double>("p_calculated",    p_calculated)
-        << XmlTag<double>("m_nbytes",        m_nbytes)
-        << XmlTag<double>("m_cache",         m_cache)
-        << XmlTag<double>("m_swap",          m_swap)
-        << XmlTag<double>("d_total",         d_total)
-        << XmlTag<double>("d_free",          d_free)
-        << XmlTag<const char*>("os_name",    os_name)
-        << XmlTag<const char*>("os_version", os_version)
+    out << XmlTag<const char*>("host_cpid",       host_cpid)
+        << XmlTag<int>        ("p_ncpus",         p_ncpus)
+        << XmlTag<const char*>("p_vendor",        p_vendor)
+        << XmlTag<const char*>("p_model",         p_model)
+        << XmlTag<const char*>("p_features",      p_features)
+        << XmlTag<double>     ("p_fpops",         p_fpops)
+        << XmlTag<double>     ("p_iops",          p_iops)
+        << XmlTag<double>     ("p_membw",         p_membw)
+        << XmlTag<double>     ("p_calculated",    p_calculated)
+        << XmlTag<double>     ("m_nbytes",        m_nbytes)
+        << XmlTag<double>     ("m_cache",         m_cache)
+        << XmlTag<double>     ("m_swap",          m_swap)
+        << XmlTag<double>     ("d_total",         d_total)
+        << XmlTag<double>     ("d_free",          d_free)
+        << XmlTag<const char*>("os_name",         os_name)
+        << XmlTag<const char*>("os_version",      os_version)
         << "</host_info>\n"
     ;
 }
