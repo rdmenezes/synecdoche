@@ -27,8 +27,6 @@
 #include <string>
 
 #include <cctype>
-#include <cstdlib>
-#include <cstring>
 #include <ctime>
 
 #ifndef _WIN32
