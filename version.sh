@@ -8,7 +8,7 @@ else
 fi
 
 # Create new version string
-new_revision="extern const char* SYNEC_SVN_VERSION = $revision;";
+new_revision="const char* SYNEC_SVN_VERSION = $revision;";
 
 # Read and compare the old and the new version string.
 # If they are different replace the old one by the new string
