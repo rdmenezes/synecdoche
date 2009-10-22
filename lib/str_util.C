@@ -39,6 +39,7 @@
 
 #include "str_util.h"
 
+#include <cstdio>
 #include <string>
 #include <sstream>
 #include <iomanip>

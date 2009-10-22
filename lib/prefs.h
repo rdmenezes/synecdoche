@@ -19,6 +19,7 @@
 #define PREFS_H
 
 #include <iosfwd>
+#include <ctime>
 
 class MIOFILE;
 class XML_PARSER;
