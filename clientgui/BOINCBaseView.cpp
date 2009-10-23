@@ -82,7 +82,7 @@ const char** CBOINCBaseView::GetViewIcon() {
 /// If it has not been defined by the view, 1 second is returned.
 ///
 /// \return This base implementation always returns one.
-const int CBOINCBaseView::GetViewRefreshRate() {
+int CBOINCBaseView::GetViewRefreshRate() {
     return 1;
 }
 

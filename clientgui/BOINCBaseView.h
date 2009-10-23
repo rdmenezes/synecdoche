@@ -63,7 +63,7 @@ public:
     virtual const char**    GetViewIcon();
 
     /// The rate at which the view is refreshed.
-    virtual const int       GetViewRefreshRate();
+    virtual int             GetViewRefreshRate();
 
     bool                    FireOnSaveState( wxConfigBase* pConfig );
     bool                    FireOnRestoreState( wxConfigBase* pConfig );
