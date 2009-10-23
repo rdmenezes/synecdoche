@@ -199,14 +199,11 @@ void CTaskBarIcon::OnOpenWebsite(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CTaskBarIcon::OnOpenWebsite - Function Begin"));
 
     CMainDocument*     pDoc = wxGetApp().GetDocument();
-    CBOINCBaseFrame*   pFrame = wxGetApp().GetFrame();
     ACCT_MGR_INFO      ami;
     wxString           url;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
-    wxASSERT(pFrame);
-    wxASSERT(wxDynamicCast(pFrame, CBOINCBaseFrame));
 
     ResetTaskBar();
 
