@@ -64,7 +64,6 @@
 		DD33C6F308B5BAF500768630 /* gui_http.C in Sources */ = {isa = PBXBuildFile; fileRef = DD33C6F108B5BAF500768630 /* gui_http.C */; };
 		DD33C6F808B5BB4500768630 /* acct_setup.C in Sources */ = {isa = PBXBuildFile; fileRef = DD33C6F708B5BB4500768630 /* acct_setup.C */; };
 		DD33C70408B5BEDE00768630 /* http_curl.C in Sources */ = {isa = PBXBuildFile; fileRef = DD33C70208B5BEDE00768630 /* http_curl.C */; };
-		DD35353607E1E13F00C4718D /* boinc_api.C in Sources */ = {isa = PBXBuildFile; fileRef = F5755AD302FE063A012012A7 /* boinc_api.C */; };
 		DD3E14DB0A774397007E0084 /* synecd in Resources */ = {isa = PBXBuildFile; fileRef = DDD74D8707CF482E0065AC9D /* synecd */; };
 		DD3E14DC0A774397007E0084 /* synecdoche.icns in Resources */ = {isa = PBXBuildFile; fileRef = DDF3028907CCCE2C00701169 /* synecdoche.icns */; };
 		DD3E14DD0A774397007E0084 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F51BDF4903086C46012012A7 /* InfoPlist.strings */; };
@@ -153,9 +152,7 @@
 		DD52C81208B5D44E008D9AA4 /* gui_rpc_client_ops.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E34E08A0694000656EB1 /* gui_rpc_client_ops.C */; };
 		DD52C81308B5D44F008D9AA4 /* gui_rpc_client_print.C in Sources */ = {isa = PBXBuildFile; fileRef = DD73E34F08A0694100656EB1 /* gui_rpc_client_print.C */; };
 		DD52C81408B5D484008D9AA4 /* network.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6D0A8507E9A61B007F882B /* network.C */; };
-		DD5BF77D0D4F3D0C00EDF980 /* mac_icon.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6381450870DB78007A2F8E /* mac_icon.C */; };
 		DD616A3008150050006981C1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F51BDF4903086C46012012A7 /* InfoPlist.strings */; };
-		DD635A420D384FA500BAC1A5 /* texfont.C in Sources */ = {isa = PBXBuildFile; fileRef = DD635A410D384FA500BAC1A5 /* texfont.C */; };
 		DD63F7510B64EECE0053037F /* libwx_mac_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDA90F260B64673D008F2E87 /* libwx_mac_static.a */; };
 		DD6617880A3FFD8C00FFEBEB /* check_security.C in Sources */ = {isa = PBXBuildFile; fileRef = DD6617870A3FFD8C00FFEBEB /* check_security.C */; };
 		DD67F8140ADB9DD000B0015E /* wxPieCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD40E75D0ADB87BC00214518 /* wxPieCtrl.cpp */; };
@@ -175,15 +172,6 @@
 		DDB74A6C0D74259E00E97A40 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDFE854A0B60CFD0009B43D9 /* AppKit.framework */; };
 		DDB873990C85072500E0DE1F /* mac_saver_module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDB873960C85072500E0DE1F /* mac_saver_module.cpp */; };
 		DDB8739A0C85072500E0DE1F /* Mac_Saver_ModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = DDB873980C85072500E0DE1F /* Mac_Saver_ModuleView.m */; };
-		DDB873EE0C850BC800E0DE1F /* gutil.C in Sources */ = {isa = PBXBuildFile; fileRef = DD40825507D3076400163EF5 /* gutil.C */; };
-		DDB873EF0C850BC800E0DE1F /* macglutfix.m in Sources */ = {isa = PBXBuildFile; fileRef = DD6D82DA08131AB1008F7200 /* macglutfix.m */; };
-		DDB873F00C850BC800E0DE1F /* reduce_lib.C in Sources */ = {isa = PBXBuildFile; fileRef = DD40825707D3076400163EF5 /* reduce_lib.C */; };
-		DDB873F10C850BC800E0DE1F /* reduce_main.C in Sources */ = {isa = PBXBuildFile; fileRef = DD40825807D3076400163EF5 /* reduce_main.C */; };
-		DDB873F20C850BC800E0DE1F /* texture.C in Sources */ = {isa = PBXBuildFile; fileRef = DD4EC60F08A0A083009AA08F /* texture.C */; };
-		DDB873F40C850BC800E0DE1F /* gutil_text.C in Sources */ = {isa = PBXBuildFile; fileRef = DD64DF0409DCC5E000668B3A /* gutil_text.C */; };
-		DDB873F60C850BC800E0DE1F /* txf_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DD65020809F599B9008E8A3A /* txf_util.C */; };
-		DDB874470C850D3000E0DE1F /* graphics2_unix.C in Sources */ = {isa = PBXBuildFile; fileRef = DDB874450C850D3000E0DE1F /* graphics2_unix.C */; };
-		DDB874480C850D3000E0DE1F /* graphics2.C in Sources */ = {isa = PBXBuildFile; fileRef = DDB874460C850D3000E0DE1F /* graphics2.C */; };
 		DDBE74390C03B1C600453BB8 /* cs_platforms.C in Sources */ = {isa = PBXBuildFile; fileRef = DDBE74380C03B1C600453BB8 /* cs_platforms.C */; };
 		DDC3D55E0D507D1700BE6D23 /* BOINCClientManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDC3D55C0D507D1700BE6D23 /* BOINCClientManager.cpp */; };
 		DDD095490A3EDF2D00C95BA4 /* switcher.C in Sources */ = {isa = PBXBuildFile; fileRef = DDD095480A3EDF2D00C95BA4 /* switcher.C */; };
@@ -223,7 +211,6 @@
 		DDD74DAD07CF490E0065AC9D /* time_stats.C in Sources */ = {isa = PBXBuildFile; fileRef = F54B8FE402AC0A0C01FB7237 /* time_stats.C */; };
 		DDD74DAE07CF490F0065AC9D /* whetstone.C in Sources */ = {isa = PBXBuildFile; fileRef = DD5EF07007C5B329007CCE8D /* whetstone.C */; };
 		DDD7EF4707F0526E00BA3B90 /* SystemMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = DD40CDFE07F038990096C645 /* SystemMenu.m */; };
-		DDE41C260C1FCA8F00CA1F86 /* graphics2_util.C in Sources */ = {isa = PBXBuildFile; fileRef = DDE41C250C1FCA8F00CA1F86 /* graphics2_util.C */; };
 		DDFA60E20CB3391C0037B88C /* gfx_switcher in Resources */ = {isa = PBXBuildFile; fileRef = DDFA60D40CB337D40037B88C /* gfx_switcher */; };
 		DDFA60E40CB3396C0037B88C /* gfx_switcher.C in Sources */ = {isa = PBXBuildFile; fileRef = DDFA60E30CB3396C0037B88C /* gfx_switcher.C */; };
 		DDFE84E50B60CD66009B43D9 /* DlgAdvPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDFE84E10B60CD66009B43D9 /* DlgAdvPreferences.cpp */; };
@@ -443,7 +430,6 @@
 		DD205A190BAF596E0008D473 /* ProjectListCtrl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ProjectListCtrl.h; path = ../clientgui/ProjectListCtrl.h; sourceTree = SOURCE_ROOT; };
 		DD247AF70AEA308A0034104A /* SkinManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SkinManager.cpp; path = ../clientgui/SkinManager.cpp; sourceTree = SOURCE_ROOT; };
 		DD247AF80AEA308A0034104A /* SkinManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SkinManager.h; path = ../clientgui/SkinManager.h; sourceTree = SOURCE_ROOT; };
-		DD252F3009E3E014006454D7 /* boinc_glut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = boinc_glut.h; path = ../api/boinc_glut.h; sourceTree = SOURCE_ROOT; };
 		DD2D25CB07FAB41700151141 /* DlgSelectComputer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DlgSelectComputer.cpp; path = ../clientgui/DlgSelectComputer.cpp; sourceTree = SOURCE_ROOT; };
 		DD2D25CC07FAB41700151141 /* DlgSelectComputer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DlgSelectComputer.h; path = ../clientgui/DlgSelectComputer.h; sourceTree = SOURCE_ROOT; };
 		DD2F32EF07F2A83E00645DDC /* MacSysMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MacSysMenu.h; path = ../clientgui/mac/MacSysMenu.h; sourceTree = SOURCE_ROOT; };
@@ -502,11 +488,6 @@
 		DD407ADC07D2FDF700163EF5 /* std_fixes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = std_fixes.h; path = ../lib/std_fixes.h; sourceTree = SOURCE_ROOT; };
 		DD407AEA07D2FE6500163EF5 /* synch.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = synch.h; path = ../lib/synch.h; sourceTree = SOURCE_ROOT; };
 		DD407AED07D2FE7200163EF5 /* synch.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = synch.C; path = ../lib/synch.C; sourceTree = SOURCE_ROOT; };
-		DD40825507D3076400163EF5 /* gutil.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = gutil.C; path = ../api/gutil.C; sourceTree = SOURCE_ROOT; };
-		DD40825607D3076400163EF5 /* gutil.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = gutil.h; path = ../api/gutil.h; sourceTree = SOURCE_ROOT; };
-		DD40825707D3076400163EF5 /* reduce_lib.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = reduce_lib.C; path = ../api/reduce_lib.C; sourceTree = SOURCE_ROOT; };
-		DD40825807D3076400163EF5 /* reduce_main.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = reduce_main.C; path = ../api/reduce_main.C; sourceTree = SOURCE_ROOT; };
-		DD40825907D3076400163EF5 /* reduce.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = reduce.h; path = ../api/reduce.h; sourceTree = SOURCE_ROOT; };
 		DD40CDF907F0386A0096C645 /* SystemMenu.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SystemMenu.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD40CDFA07F0386B0096C645 /* SystemMenu-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SystemMenu-Info.plist"; sourceTree = SOURCE_ROOT; };
 		DD40CDFE07F038990096C645 /* SystemMenu.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SystemMenu.m; path = ../clientgui/mac/SystemMenu.m; sourceTree = SOURCE_ROOT; };
@@ -525,8 +506,6 @@
 		DD4C56130AD389A2009E23C6 /* sg_SGUIListControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sg_SGUIListControl.h; path = ../clientgui/sg_SGUIListControl.h; sourceTree = SOURCE_ROOT; };
 		DD4E70490BCDAC360010A522 /* browser.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = browser.C; path = ../clientgui/browser.C; sourceTree = SOURCE_ROOT; };
 		DD4E704A0BCDAC360010A522 /* browser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = browser.h; path = ../clientgui/browser.h; sourceTree = SOURCE_ROOT; };
-		DD4EC60F08A0A083009AA08F /* texture.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = texture.C; path = ../api/texture.C; sourceTree = SOURCE_ROOT; };
-		DD4EC61008A0A083009AA08F /* texture.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = texture.h; path = ../api/texture.h; sourceTree = SOURCE_ROOT; };
 		DD531BC50C193D3800742E50 /* MacInstaller.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MacInstaller.icns; path = ../clientgui/res/MacInstaller.icns; sourceTree = SOURCE_ROOT; };
 		DD531BC70C193D5200742E50 /* MacUninstaller.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MacUninstaller.icns; path = ../clientgui/res/MacUninstaller.icns; sourceTree = SOURCE_ROOT; };
 		DD58C41808F3343F00C1DF66 /* AccountInfoPage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AccountInfoPage.cpp; path = ../clientgui/AccountInfoPage.cpp; sourceTree = SOURCE_ROOT; };
@@ -573,21 +552,13 @@
 		DD5EEB6B0873DD4400963F44 /* hyperlink.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = hyperlink.h; sourceTree = "<group>"; };
 		DD5EF07007C5B329007CCE8D /* whetstone.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = whetstone.C; path = ../client/whetstone.C; sourceTree = SOURCE_ROOT; };
 		DD5EF08807C5B7C7007CCE8D /* version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = version.h; path = ../version.h; sourceTree = SOURCE_ROOT; };
-		DD635A410D384FA500BAC1A5 /* texfont.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = texfont.C; path = ../api/texfont.C; sourceTree = SOURCE_ROOT; };
-		DD6381450870DB78007A2F8E /* mac_icon.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = mac_icon.C; path = ../api/mac_icon.C; sourceTree = SOURCE_ROOT; };
-		DD6381F80870DD83007A2F8E /* make_app_icon_h.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = make_app_icon_h.C; sourceTree = "<group>"; };
-		DD64DF0409DCC5E000668B3A /* gutil_text.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = gutil_text.C; path = ../api/gutil_text.C; sourceTree = SOURCE_ROOT; };
 		DD64E7D507D89DB800B176C8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
-		DD65020709F599B9008E8A3A /* texfont.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = texfont.h; path = ../api/texfont.h; sourceTree = SOURCE_ROOT; };
-		DD65020809F599B9008E8A3A /* txf_util.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = txf_util.C; path = ../api/txf_util.C; sourceTree = SOURCE_ROOT; };
-		DD65020909F599B9008E8A3A /* txf_util.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = txf_util.h; path = ../api/txf_util.h; sourceTree = SOURCE_ROOT; };
 		DD6617870A3FFD8C00FFEBEB /* check_security.C */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = check_security.C; sourceTree = "<group>"; };
 		DD69FEE808416C1300C01361 /* boinccmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = boinccmd; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD69FEF608416C9A00C01361 /* boinc_cmd.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = boinc_cmd.C; path = ../lib/boinc_cmd.C; sourceTree = SOURCE_ROOT; };
 		DD6ABCD00BD4C5CA009AA7A1 /* browser_safari.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = browser_safari.mm; path = ../clientgui/mac/browser_safari.mm; sourceTree = SOURCE_ROOT; };
 		DD6D0A8507E9A61B007F882B /* network.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = network.C; path = ../lib/network.C; sourceTree = SOURCE_ROOT; };
 		DD6D0A8607E9A61B007F882B /* network.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = network.h; path = ../lib/network.h; sourceTree = SOURCE_ROOT; };
-		DD6D82DA08131AB1008F7200 /* macglutfix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = macglutfix.m; sourceTree = "<group>"; };
 		DD7168360AAD72040051642B /* common_defs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = common_defs.h; path = ../lib/common_defs.h; sourceTree = SOURCE_ROOT; };
 		DD73E34E08A0694000656EB1 /* gui_rpc_client_ops.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = gui_rpc_client_ops.C; path = ../lib/gui_rpc_client_ops.C; sourceTree = SOURCE_ROOT; };
 		DD73E34F08A0694100656EB1 /* gui_rpc_client_print.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = gui_rpc_client_print.C; path = ../lib/gui_rpc_client_print.C; sourceTree = SOURCE_ROOT; };
@@ -658,8 +629,6 @@
 		DDB873970C85072500E0DE1F /* Mac_Saver_ModuleView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Mac_Saver_ModuleView.h; path = ../clientscr/Mac_Saver_ModuleView.h; sourceTree = SOURCE_ROOT; };
 		DDB873980C85072500E0DE1F /* Mac_Saver_ModuleView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Mac_Saver_ModuleView.m; path = ../clientscr/Mac_Saver_ModuleView.m; sourceTree = SOURCE_ROOT; };
 		DDB874030C850BC800E0DE1F /* libboinc_graphics2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libboinc_graphics2.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		DDB874450C850D3000E0DE1F /* graphics2_unix.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = graphics2_unix.C; path = ../api/graphics2_unix.C; sourceTree = SOURCE_ROOT; };
-		DDB874460C850D3000E0DE1F /* graphics2.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = graphics2.C; path = ../api/graphics2.C; sourceTree = SOURCE_ROOT; };
 		DDBDF4A90987091800464F83 /* ValidateEmailAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ValidateEmailAddress.cpp; path = ../clientgui/ValidateEmailAddress.cpp; sourceTree = SOURCE_ROOT; };
 		DDBDF4AA0987091800464F83 /* ValidateEmailAddress.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ValidateEmailAddress.h; path = ../clientgui/ValidateEmailAddress.h; sourceTree = SOURCE_ROOT; };
 		DDBE74380C03B1C600453BB8 /* cs_platforms.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cs_platforms.C; path = ../client/cs_platforms.C; sourceTree = SOURCE_ROOT; };
@@ -693,7 +662,6 @@
 		DDD74D8707CF482E0065AC9D /* synecd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = synecd; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDDC70430C7A86A200179273 /* Uninstaller.rsrc */ = {isa = PBXFileReference; lastKnownFileType = archive.rsrc; name = Uninstaller.rsrc; path = ../mac_installer/Uninstaller.rsrc; sourceTree = SOURCE_ROOT; };
 		DDE2552B07C62F3E008E7D6E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
-		DDE41C250C1FCA8F00CA1F86 /* graphics2_util.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = graphics2_util.C; path = ../api/graphics2_util.C; sourceTree = SOURCE_ROOT; };
 		DDEF388E0802B73500E87552 /* ViewStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ViewStatistics.cpp; path = ../clientgui/ViewStatistics.cpp; sourceTree = SOURCE_ROOT; };
 		DDEF388F0802B73500E87552 /* ViewStatistics.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ViewStatistics.h; path = ../clientgui/ViewStatistics.h; sourceTree = SOURCE_ROOT; };
 		DDF1F4A409822F8A00482C89 /* GR-Branding */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = "GR-Branding"; path = "../mac_installer/GR-Branding"; sourceTree = SOURCE_ROOT; };
@@ -742,8 +710,6 @@
 		F54B8FE502AC0A0C01FB7237 /* time_stats.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = time_stats.h; path = ../client/time_stats.h; sourceTree = SOURCE_ROOT; };
 		F54B901502AC0A2201FB7237 /* parse.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = parse.h; path = ../lib/parse.h; sourceTree = SOURCE_ROOT; };
 		F54B901602AC0A2201FB7237 /* parse.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = parse.C; path = ../lib/parse.C; sourceTree = SOURCE_ROOT; };
-		F5755AD302FE063A012012A7 /* boinc_api.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = boinc_api.C; path = ../api/boinc_api.C; sourceTree = SOURCE_ROOT; };
-		F5755AD402FE063A012012A7 /* boinc_api.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = boinc_api.h; path = ../api/boinc_api.h; sourceTree = SOURCE_ROOT; };
 		F5EAD474031AEFF8018E201A /* filesys.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = filesys.h; path = ../lib/filesys.h; sourceTree = SOURCE_ROOT; };
 		F5EAD475031AEFF8018E201A /* filesys.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = filesys.C; path = ../lib/filesys.C; sourceTree = SOURCE_ROOT; };
 		F5EAD478031AF001018E201A /* util.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = util.h; path = ../lib/util.h; sourceTree = SOURCE_ROOT; };
@@ -896,7 +862,6 @@
 				DDB873950C85072500E0DE1F /* clientscr */,
 				DDF9385307E288F0004DC076 /* Documentation */,
 				F515955F029EB02001F5651B /* lib */,
-				F54FF8B6029F2FFC012012A7 /* api */,
 				20286C2CFDCF999611CA2CEA /* Resources */,
 				20286C32FDCF999611CA2CEA /* External Frameworks and Libraries */,
 				195DF8C9FE9D4F0611CA2CBB /* Products */,
@@ -1249,35 +1214,6 @@
 			);
 			name = client;
 			path = ../client;
-			sourceTree = SOURCE_ROOT;
-		};
-		F54FF8B6029F2FFC012012A7 /* api */ = {
-			isa = PBXGroup;
-			children = (
-				F5755AD302FE063A012012A7 /* boinc_api.C */,
-				F5755AD402FE063A012012A7 /* boinc_api.h */,
-				DDE41C250C1FCA8F00CA1F86 /* graphics2_util.C */,
-				DDB874450C850D3000E0DE1F /* graphics2_unix.C */,
-				DDB874460C850D3000E0DE1F /* graphics2.C */,
-				DD252F3009E3E014006454D7 /* boinc_glut.h */,
-				DD64DF0409DCC5E000668B3A /* gutil_text.C */,
-				DD40825507D3076400163EF5 /* gutil.C */,
-				DD40825607D3076400163EF5 /* gutil.h */,
-				DD6D82DA08131AB1008F7200 /* macglutfix.m */,
-				DD6381450870DB78007A2F8E /* mac_icon.C */,
-				DD6381F80870DD83007A2F8E /* make_app_icon_h.C */,
-				DD40825707D3076400163EF5 /* reduce_lib.C */,
-				DD40825807D3076400163EF5 /* reduce_main.C */,
-				DD40825907D3076400163EF5 /* reduce.h */,
-				DD635A410D384FA500BAC1A5 /* texfont.C */,
-				DD65020709F599B9008E8A3A /* texfont.h */,
-				DD4EC60F08A0A083009AA08F /* texture.C */,
-				DD4EC61008A0A083009AA08F /* texture.h */,
-				DD65020809F599B9008E8A3A /* txf_util.C */,
-				DD65020909F599B9008E8A3A /* txf_util.h */,
-			);
-			name = api;
-			path = ../api;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5C5403402BFC5C701BEDAB8 /* mac */ = {
@@ -1700,8 +1636,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD35353607E1E13F00C4718D /* boinc_api.C in Sources */,
-				DDE41C260C1FCA8F00CA1F86 /* graphics2_util.C in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1863,17 +1797,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDB874470C850D3000E0DE1F /* graphics2_unix.C in Sources */,
-				DDB874480C850D3000E0DE1F /* graphics2.C in Sources */,
-				DDB873F40C850BC800E0DE1F /* gutil_text.C in Sources */,
-				DDB873EE0C850BC800E0DE1F /* gutil.C in Sources */,
-				DDB873EF0C850BC800E0DE1F /* macglutfix.m in Sources */,
-				DDB873F00C850BC800E0DE1F /* reduce_lib.C in Sources */,
-				DDB873F10C850BC800E0DE1F /* reduce_main.C in Sources */,
-				DDB873F20C850BC800E0DE1F /* texture.C in Sources */,
-				DDB873F60C850BC800E0DE1F /* txf_util.C in Sources */,
-				DD635A420D384FA500BAC1A5 /* texfont.C in Sources */,
-				DD5BF77D0D4F3D0C00EDF980 /* mac_icon.C in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
