@@ -110,7 +110,7 @@ void CViewResources::UpdateSelection() {
 
 
 #ifdef __WXMAC__
-const int CViewResources::GetViewRefreshRate() {
+int CViewResources::GetViewRefreshRate() {
     return 10;
 }
 #endif
