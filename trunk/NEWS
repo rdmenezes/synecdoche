@@ -6,12 +6,14 @@ Synecdoche 0.2.0
 
  * The manager now supports filtering the messages tab by project.
 
+ * The API code was removed. We didn't support it anyway.
+
  * The Unix build system was cleaned up further:
-   - configure now doesn't test for OpenGL (it's only used in API).
+   - configure now doesn't test for OpenGL (it was only used in API).
    - libcurl isn't uselessly linked to the manager anymore.
 
- * Added cppunit-based unit tests for the code in lib. Client code is currently
-   not tested, because it would need significant refactoring to be "testable".
+ * Added unit tests for the code in lib. Client code is currently not tested,
+   because it would need significant refactoring to be "testable".
 
  * The Mac Xcode project has been cleaned up significantly internally.
 
