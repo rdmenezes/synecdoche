@@ -4,13 +4,18 @@ Quick start
 As in most packages available nowadays, compiling and installing Synecdoche is
 done by running the usual 'configure' and 'make' commands:
 
-$ ./configure --prefix=PREFIX
+$ ./configure --prefix=<PREFIX>
 $ make
 $ make install
 
-Replace PREFIX with the filesystem path where Synecdoche should be installed.
+Replace <PREFIX> with the filesystem path where Synecdoche should be installed.
 The default is /usr/local, in which case you will have to run 'make install' as
 root.
+
+If you got Synecdoche from SVN (instead of a release tarball), or if for some
+other reason you don't have Synecdoche's 'configure' script, you will need
+to run "autoreconf -i" before configure.
+
 
 Requirements
 ============
@@ -18,15 +23,19 @@ Requirements
 To build Synecdoche on a Unix platform, you need a relatively modern C++
 compiler, and the following libraries:
 
- * libcurl 7.17.1 or later (HTTPS support may be required for some projects)
+ * libcurl 7.17.1 or later (SSL support may be required for some projects)
  * OpenSSL 0.9.8 or later
  * wxWidgets 2.6 or later, for the graphical manager (optional)
 
-If you got Synecdoche from SVN (as opposed to a release tarball), or if for
-some other reason your package lacks the 'configure' script, you will need to
-run the following command before configure:
+To run autoreconf, you need autoconf 2.58+ and automake 1.08+ installed.
 
-$ ./_autosetup
 
-This requires autoconf 2.58+ and automake 1.08+ installed.
+Running
+=======
 
+To start the client, run 'synecd' (in <PREFIX>/bin).
+<PREFIX>/var/synecdoche/ will be used as the data directory automatically.
+
+To run the graphical manager, you must run <PREFIX>/bin/synecmgr from the data
+directory (ie. with <PREFIX>/var/synecdoche/ as the current directory), or it
+won't be able to connect to the client.
