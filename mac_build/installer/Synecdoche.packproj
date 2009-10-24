@@ -487,16 +487,20 @@
 								<key>IFInstallationScriptsPostinstall</key>
 								<dict>
 									<key>Path</key>
-									<string></string>
+									<string>scripts/postinstall</string>
+									<key>Path Type</key>
+									<integer>2</integer>
 									<key>Status</key>
-									<false/>
+									<true/>
 								</dict>
 								<key>IFInstallationScriptsPostupgrade</key>
 								<dict>
 									<key>Path</key>
-									<string></string>
+									<string>scripts/postupgrade</string>
+									<key>Path Type</key>
+									<integer>2</integer>
 									<key>Status</key>
-									<false/>
+									<true/>
 								</dict>
 								<key>IFInstallationScriptsPreflight</key>
 								<dict>
