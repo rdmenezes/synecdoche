@@ -457,12 +457,9 @@ void CViewProjects::OnProjectReset( wxCommandEvent& WXUNUSED(event) ) {
 void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectDetach - Function Begin"));
 
-    wxInt32         iAnswer        = 0; 
     wxString        strMessage     = wxEmptyString;
     CMainDocument*  pDoc           = wxGetApp().GetDocument();
     CAdvancedFrame* pFrame         = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
-    CProject*       pProject       = NULL;
-    int row;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -474,28 +471,28 @@ void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
 
     pFrame->UpdateStatusText(_("Detaching from project..."));
 
-    row = -1;
+    std::list<wxString> selectedProjects;
+    int row = -1;
     while (1) {
         // Step through all selected items
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-        if (row < 0) break;
+        if (row < 0) {
+            break;
+        }
         
-        pProject = m_ProjectCache.at(m_iSortedIndexes[row]);
+        CProject* p = m_ProjectCache.at(m_iSortedIndexes[row]);
+        selectedProjects.push_back(p->m_strProjectName);
+    }
 
-        strMessage.Printf(
-            _("Are you sure you want to detach from project '%s'?"), 
-            pProject->m_strProjectName.c_str()
-        );
+    for (std::list<wxString>::iterator p = selectedProjects.begin();
+        p != selectedProjects.end(); ++p) {
 
-        iAnswer = ::wxMessageBox(
-            strMessage,
-            _("Detach from Project"),
-            wxYES_NO | wxICON_QUESTION,
-            this
-        );
+        strMessage.Printf(_("Are you sure you want to detach from project '%s'?"), 
+                (*p).c_str());
 
-        if (wxYES == iAnswer) {
-            pDoc->ProjectDetach(m_iSortedIndexes[row]);
+        if (::wxMessageBox(strMessage, _("Detach from Project"),
+                wxYES_NO | wxICON_QUESTION, this) == wxYES) {
+            pDoc->ProjectDetach(*p);
         }
     }
 
