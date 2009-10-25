@@ -9,16 +9,31 @@
 # buildslave, or if it has to clean the source directory for some reason,
 # there will be no Makefile at all, so "make" would fail.
 
-if [ -f configure ]; then
-    if [ -f Makefile ]; then
-        echo "Nothing to do."
+if [ ! -f Makefile ]; then
+
+    if [ ! -f configure ]; then
+        echo "configure missing."
+
+        echo "Running autoreconf..."
+        autoreconf -i
     else
-        echo "Running configure"
-        ./configure "$@"
+        echo "Makefile missing."
     fi
-else
-    echo "Running autoreconf..."
-    autoreconf -i
+
+    echo "$*" > config.args;
     echo "Running configure..."
     ./configure "$@"
+
+elif [ ! -f config.args ] || [ "`cat config.args`" != "$*" ]; then
+
+    echo "configure flags changed."
+
+    echo "$*" > config.args;
+    echo "Running configure..."
+    ./configure "$@"
+
+else
+
+    echo "Nothing to do."
+
 fi
