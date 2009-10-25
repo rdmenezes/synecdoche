@@ -9,6 +9,15 @@
 # buildslave, or if it has to clean the source directory for some reason,
 # there will be no Makefile at all, so "make" would fail.
 
+set -e
+
+run_configure() {
+    rm -f config.args
+    echo "Running configure..."
+    ./configure "$@"
+    echo "$*" > config.args
+}
+
 if [ ! -f Makefile ]; then
 
     if [ ! -f configure ]; then
@@ -20,17 +29,13 @@ if [ ! -f Makefile ]; then
         echo "Makefile missing."
     fi
 
-    echo "$*" > config.args;
-    echo "Running configure..."
-    ./configure "$@"
+    run_configure "$@"
 
 elif [ ! -f config.args ] || [ "`cat config.args`" != "$*" ]; then
 
     echo "configure flags changed."
 
-    echo "$*" > config.args;
-    echo "Running configure..."
-    ./configure "$@"
+    run_configure "$@"
 
 else
 
