@@ -94,7 +94,7 @@ SUITE(TestStrUtil)
     TEST(CmdLineParse)
     {
         list<string> args = parse_command_line("simple test");
-        CHECK_EQUAL(2, args.size());
+        CHECK_EQUAL(2u, args.size());
 
         list<string>::iterator it = args.begin();
         CHECK_EQUAL("simple", *it++);
@@ -107,7 +107,7 @@ SUITE(TestStrUtil)
     TEST(CmdLineParseSingleCharLast)
     {
         list<string> args = parse_command_line("foo --nthreads 2");
-        CHECK_EQUAL(3, args.size());
+        CHECK_EQUAL(3u, args.size());
 
         list<string>::iterator it = args.begin();
         CHECK_EQUAL("foo", *it++);
