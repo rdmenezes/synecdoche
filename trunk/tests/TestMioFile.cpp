@@ -156,7 +156,7 @@ SUITE(TestMiofileAdapter)
         m.get_buf(p, n);
 
         CHECK(0 != p);
-        CHECK_EQUAL(data.size(), n);
+        CHECK_EQUAL(data.size(), size_t(n));
         CHECK(data.compare(0, data.size(), p, n) == 0);
 
         free(p);
