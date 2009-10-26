@@ -342,12 +342,14 @@ int copy_stream(std::istream& in, std::ostream& out) {
     std::streambuf* s_out= out.rdbuf();
     char buf[1024];
     std::streamsize n, m;
-    while (1) {
+    do {
         n = s_in->sgetn(buf, sizeof(buf));
         m = s_out->sputn(buf, n);
-        if (m != n) return ERR_FWRITE;
-        if (n < sizeof(buf)) break;
-    }
+        if (m != n) {
+            return ERR_FWRITE;
+        }
+    } while (n == sizeof(buf));
+
     return 0;
 }
 
