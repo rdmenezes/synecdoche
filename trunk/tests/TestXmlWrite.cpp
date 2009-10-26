@@ -35,7 +35,7 @@ SUITE(TestXmlEscape)
 #define XML_TEST(name, input, output) \
 TEST_FIXTURE(OssFixture, Test ## name) { \
     write_escaped_xml(oss, input); \
-    CHECK_EQUAL(string(output), oss.str()); \
+    CHECK_EQUAL(output, oss.str()); \
 }
 
     /// Test an input that doesn't need escaping.
@@ -72,34 +72,34 @@ SUITE(TestXmlWrite)
 {
     TEST_FIXTURE(OssFixture, Int) {
         oss << XmlTag<int>("foo", 42);
-        CHECK_EQUAL(string("<foo>42</foo>\n"), oss.str());
+        CHECK_EQUAL("<foo>42</foo>\n", oss.str());
     }
     TEST_FIXTURE(OssFixture, StrLiteral) {
         oss << XmlTag<const char*>("foo", "bar");
-        CHECK_EQUAL(string("<foo>bar</foo>\n"), oss.str());
+        CHECK_EQUAL("<foo>bar</foo>\n", oss.str());
     }
     TEST_FIXTURE(OssFixture, Charp) {
         const char* value = "bar";
         oss << XmlTag<const char*>("foo", value);
-        CHECK_EQUAL(string("<foo>bar</foo>\n"), oss.str());
+        CHECK_EQUAL("<foo>bar</foo>\n", oss.str());
     }
     TEST_FIXTURE(OssFixture, StdString) {
         string value = "bar";
         oss << XmlTag<string>("foo", value);
-        CHECK_EQUAL(string("<foo>bar</foo>\n"), oss.str());
+        CHECK_EQUAL("<foo>bar</foo>\n", oss.str());
     }
     TEST_FIXTURE(OssFixture, StrLiteralEsc) {
         oss << XmlTag<XmlString>("foo", "b&r");
-        CHECK_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
+        CHECK_EQUAL("<foo>b&amp;r</foo>\n", oss.str());
     }
     TEST_FIXTURE(OssFixture, CharpEsc) {
         const char* value = "b&r";
         oss << XmlTag<XmlString>("foo", value);
-        CHECK_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
+        CHECK_EQUAL("<foo>b&amp;r</foo>\n", oss.str());
     }
     TEST_FIXTURE(OssFixture, StdStringEsc) {
         string value = "b&r";
         oss << XmlTag<XmlString>("foo", value);
-        CHECK_EQUAL(string("<foo>b&amp;r</foo>\n"), oss.str());
+        CHECK_EQUAL("<foo>b&amp;r</foo>\n", oss.str());
     }
 }

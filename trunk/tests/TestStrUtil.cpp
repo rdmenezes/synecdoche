@@ -18,6 +18,8 @@
 /// \file
 /// Unit tests for lib/str_util.h
 
+#include <string>
+
 #include <UnitTest++.h>
 
 #include "lib/str_util.h"
@@ -33,23 +35,23 @@ SUITE(TestStrUtil)
         std::string input;
         input = "test";
         strip_whitespace(input);
-        CHECK_EQUAL(std::string("test"), input);
+        CHECK_EQUAL("test", input);
 
         input = "test   ";
         strip_whitespace(input);
-        CHECK_EQUAL(std::string("test"), input);
+        CHECK_EQUAL("test", input);
 
         input = "   test";
         strip_whitespace(input);
-        CHECK_EQUAL(std::string("test"), input);
+        CHECK_EQUAL("test", input);
 
         input = "    test   ";
         strip_whitespace(input);
-        CHECK_EQUAL(std::string("test"), input);
+        CHECK_EQUAL("test", input);
 
         input = "\r\n  test\r\n";
         strip_whitespace(input);
-        CHECK_EQUAL(std::string("test"), input);
+        CHECK_EQUAL("test", input);
     }
     /// \test Tests the starts_with() function.
     /// It checks normal situations, and corner cases like empty strings.
@@ -87,11 +89,11 @@ SUITE(TestStrUtil)
     TEST(CmdLineParse)
     {
         std::list<std::string> args = parse_command_line("simple test");
-        CHECK_EQUAL(size_t(2), args.size());
+        CHECK_EQUAL(2, args.size());
 
         std::list<std::string>::iterator it = args.begin();
-        CHECK_EQUAL(std::string("simple"), *it++);
-        CHECK_EQUAL(std::string("test"), *it++);
+        CHECK_EQUAL("simple", *it++);
+        CHECK_EQUAL("test", *it++);
     }
     /// \test Calls parse_command_line() with a single character as the last
     /// argument. This functionality was broken before, crashing workunits for
@@ -100,11 +102,11 @@ SUITE(TestStrUtil)
     TEST(CmdLineParseSingleCharLast)
     {
         std::list<std::string> args = parse_command_line("foo --nthreads 2");
-        CHECK_EQUAL(size_t(3), args.size());
+        CHECK_EQUAL(3, args.size());
 
         std::list<std::string>::iterator it = args.begin();
-        CHECK_EQUAL(std::string("foo"), *it++);
-        CHECK_EQUAL(std::string("--nthreads"), *it++);
-        CHECK_EQUAL(std::string("2"), *it++);
+        CHECK_EQUAL("foo", *it++);
+        CHECK_EQUAL("--nthreads", *it++);
+        CHECK_EQUAL("2", *it++);
     }
 }
