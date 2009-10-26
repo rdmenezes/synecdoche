@@ -85,57 +85,6 @@ int finalize();
 /// cleaning up.
 static bool boinc_cleanup_completed = false;
 
-/// Display a message to the user.
-/// Depending on the priority, the message may be more or less obtrusive
-///
-/// \param[in] p Pointer to a project to which the message belongs. May be
-///              set to 0 if the message does not belong to any project.
-/// \param[in] msg A string containing the message that should be displayed.
-/// \param[in] priority A value describing the priority of the
-///                     message. See common_defs.h for possible values.
-void show_message(const PROJECT *p, const std::string& msg, MSG_PRIORITY priority) {
-    const char* x;
-
-    time_t now = time(0);
-    std::string time_string = time_to_string((double)now);
-#if defined(WIN32) && defined(_CONSOLE)
-    char event_message[2048];
-#endif
-
-    // Cycle the log files if we need to
-    diagnostics_cycle_logs();
-
-    std::string message(msg);
-    if (priority == MSG_INTERNAL_ERROR) {
-        message.insert(0, "[error] ");
-    }
-
-    // Trim trailing \n's:
-    std::string::size_type pos = message.find_last_not_of('\n');
-    if (pos == std::string::npos) {
-        message.clear();
-    } else if (pos < message.length() - 1) {
-        message.erase(pos + 1);
-    }
-
-    if (p) {
-        x = p->get_project_name();
-    } else {
-        x = "---";
-    }
-
-    record_message(p, priority, (int)now, message.c_str());
-
-    printf("%s [%s] %s\n", time_string.c_str(), x, message.c_str());
-
-#if defined(WIN32) && defined(_CONSOLE)
-    if (gstate.executing_as_daemon) {
-        stprintf(event_message, TEXT("%s [%s] %s\n"), time_string,  x, message.c_str());
-        ::OutputDebugString(event_message);
-    }
-#endif
-}
-
 #ifdef WIN32
 // The following 3 functions are called in a separate thread,
 // so we can't do anything directly.
