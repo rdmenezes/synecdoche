@@ -19,10 +19,14 @@
 /// Unit tests for lib/str_util.h
 
 #include <string>
+#include <list>
 
 #include <UnitTest++.h>
 
 #include "lib/str_util.h"
+
+using std::string;
+using std::list;
 
 /// Unit tests for several functions in lib/str_util.h.
 SUITE(TestStrUtil)
@@ -32,7 +36,8 @@ SUITE(TestStrUtil)
     /// char* overload is implemented by calling the string overload...
     TEST(StripWsStdString)
     {
-        std::string input;
+        string input;
+
         input = "test";
         strip_whitespace(input);
         CHECK_EQUAL("test", input);
@@ -88,10 +93,10 @@ SUITE(TestStrUtil)
     /// arguments with no quotes.
     TEST(CmdLineParse)
     {
-        std::list<std::string> args = parse_command_line("simple test");
+        list<string> args = parse_command_line("simple test");
         CHECK_EQUAL(2, args.size());
 
-        std::list<std::string>::iterator it = args.begin();
+        list<string>::iterator it = args.begin();
         CHECK_EQUAL("simple", *it++);
         CHECK_EQUAL("test", *it++);
     }
@@ -101,10 +106,10 @@ SUITE(TestStrUtil)
     /// \sa Synecdoche \issue{59}.
     TEST(CmdLineParseSingleCharLast)
     {
-        std::list<std::string> args = parse_command_line("foo --nthreads 2");
+        list<string> args = parse_command_line("foo --nthreads 2");
         CHECK_EQUAL(3, args.size());
 
-        std::list<std::string>::iterator it = args.begin();
+        list<string>::iterator it = args.begin();
         CHECK_EQUAL("foo", *it++);
         CHECK_EQUAL("--nthreads", *it++);
         CHECK_EQUAL("2", *it++);
