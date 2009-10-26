@@ -15,7 +15,9 @@ lcov    -o coverage.lcov --capture -d .
 lcov -q -o coverage.lcov --extract coverage.lcov $(pwd)'/*'
 
 echo "Generating HTML report..."
+rm -rf coverage
 genhtml -q -o coverage coverage.lcov
 
 echo "Creating tarball..."
-tar cjvf coverage.tar.bz2 coverage
+tar cjf coverage.tar.bz2 coverage
+echo "Done!"
