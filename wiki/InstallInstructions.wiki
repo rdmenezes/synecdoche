@@ -35,7 +35,7 @@ however, this can be deselected.
 
 *Warning*: A certificate file to attach to projects that use SSL, 
 like World Community Grid, should have been included, but was 
-accidentally left out in 0.1.1. This will be fixed in 0.1.2.
+accidentally left out in 0.1.1. This is fixed in 0.1.2.
 
   * A temporary fix to the above is to copy the *ca-bundle.crt* file from a BOINC installation (/Library/Application Support/BOINC Data) or from Synecdoche release bundle for another platform, and place it in the Synecdoche data directory (/Library/Application Support/Synecdoche Data).
 
@@ -43,11 +43,6 @@ To start, open the Synecdoche application in the Applications folder.
 
 To make it run on boot,
 add Synecdoche.app to your Login Items in System Preferences.
-
-Note that if you run as a non-admin user,
-even if you enter the admin password while installing,
-you may not be able to run Synecdoche later.
-This issue has been worked around in 0.1.2.
 
 There is currently no uninstaller.
 Dragging the application to the Trash is not enough;
