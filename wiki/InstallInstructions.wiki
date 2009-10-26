@@ -59,7 +59,7 @@ Making a portable Linux binary is hard,
 so we only provide source code for Linux.
 Packages for specific Linux distributions may be available in future versions.
 
-See BuildingLinux for instructions on how to build from source.
+See BuildLinux for instructions on how to build from source.
 
 Unlike BOINC, the Synecdoche client on Linux will
 always use the same directory to store its data,
