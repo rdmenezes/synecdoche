@@ -89,7 +89,7 @@ SUITE(TestMiofileAdapter)
     TEST(TestMiofileFromOstream) {
         std::ostringstream oss;
         funcUsingMiofile(MiofileFromOstream(oss), "foobar");
-        CHECK_EQUAL(std::string("foobar"), oss.str());
+        CHECK_EQUAL("foobar", oss.str());
     }
 
     /// Does nothing. Used in testEmpty().
@@ -156,7 +156,7 @@ SUITE(TestMiofileAdapter)
         m.get_buf(p, n);
 
         CHECK(0 != p);
-        CHECK_EQUAL(data.size(), size_t(n));
+        CHECK_EQUAL(data.size(), n);
         CHECK(data.compare(0, data.size(), p, n) == 0);
 
         free(p);

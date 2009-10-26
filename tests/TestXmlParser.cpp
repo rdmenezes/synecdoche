@@ -49,7 +49,7 @@ SUITE(TestXmlParser)
 
         CHECK_EQUAL(false, xp.get(tag, sizeof(tag), is_tag));
         CHECK_EQUAL(true, is_tag);
-        CHECK_EQUAL(std::string("/root"), std::string(tag));
+        CHECK_EQUAL("/root", std::string(tag));
 
         CHECK_EQUAL(true, xp.get(tag, sizeof(tag), is_tag));
     }
