@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+echo "Deleting existing coverage data, if any..."
+find . -name "*.gcda" -exec rm {} \;
+
+echo "Configuring (maybe)..."
+./maybe-conf CXXFLAGS=--coverage CFLAGS=--coverage LDFLAGS=--coverage
+
+echo "Compiling..."
+make -C lib
+make -C tests check
+
+echo "Running lcov..."
+lcov    -o coverage.lcov --capture -d .
+lcov -q -o coverage.lcov --extract coverage.lcov $(pwd)'/*'
+
+echo "Generating HTML report..."
+genhtml -q -o coverage coverage.lcov
+
+echo "Creating tarball..."
+tar cjvf coverage.tar.bz2 coverage
