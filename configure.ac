@@ -10,6 +10,8 @@ AC_SUBST([SYNEC_PRERELEASE], [1])
 LIBBOINC_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\./:/g'`
 AC_SUBST([LIBBOINC_VERSION])
 
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([autotools-aux])
 
 AC_ARG_ENABLE(debug, 
     AS_HELP_STRING([--enable-debug],
