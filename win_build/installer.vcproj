@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="installer"
+	ProjectGUID="{51C6516D-BDD9-4300-A589-EBBAFDB1D3EB}"
+	RootNamespace="installer"
+	Keyword="MakeFileProj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)\$(ProjectName)\obj"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="nmake -nologo -d -p -f installer\makefile out=$(OutDir)\ int=$(IntDir)\ platform=$(PlatformName) config=$(ConfigurationName) all"
+				ReBuildCommandLine="nmake -nologo -a -d -p -f installer\makefile out=$(OutDir)\ int=$(IntDir)\ platform=$(PlatformName) config=$(ConfigurationName) all"
+				CleanCommandLine="nmake -nologo -f installer\makefile out=$(OutDir)\ int=$(IntDir)\ platform=$(PlatformName) config=$(ConfigurationName) clean"
+				Output="$(SolutionName).msi"
+				PreprocessorDefinitions="WIN32;NDEBUG"
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{06113715-AC51-4E91-8B9D-C987CABE0920}"
+			RelativePathToProject=".\synecmgr.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{C04F0FCC-BB5D-4627-8656-6173B28BD69E}"
+			RelativePathToProject=".\synecd.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{8F37E1F3-3A68-4A1D-9579-A1210BDD055E}"
+			RelativePathToProject=".\syneccmd.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{4A2C5963-6A8D-4CA1-A312-C3D749B2EA81}"
+			RelativePathToProject=".\screensaver.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{4A2C5963-6A8D-4DA1-A312-C3D749B2EA81}"
+			RelativePathToProject=".\idlemon.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{B06280CB-82A4-46DE-8956-602643078BDF}"
+			RelativePathToProject=".\dll.vcproj"
+		/>
+	</References>
+	<Files>
+		<Filter
+			Name="Wix Files"
+			Filter="wxs;wxi;wxl"
+			>
+			<File
+				RelativePath=".\installer\Components.wxs"
+				FileType="13"
+				>
+			</File>
+			<File
+				RelativePath=".\installer\Synecdoche.wxs"
+				FileType="13"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\installer\makefile"
+			FileType="8"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
