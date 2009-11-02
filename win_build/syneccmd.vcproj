@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="dll"
-	ProjectGUID="{B06280CB-82A4-46DE-8956-602643078BDF}"
-	RootNamespace="dll"
+	Name="syneccmd"
+	ProjectGUID="{8F37E1F3-3A68-4A1D-9579-A1210BDD055E}"
+	RootNamespace="syneccmd"
 	>
 	<Platforms>
 		<Platform
@@ -18,7 +18,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(OutDir)\$(ProjectName)\obj"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="2"
 			>
 			<Tool
@@ -39,8 +39,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\lib"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;_ATL_ATTRIBUTES"
+				AdditionalIncludeDirectories="../lib/,../api/,../client/win/,../client;.."
+				PreprocessorDefinitions="WIN32;_DEBUG;_MT;_DLL;_WINDOWS;_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				FloatingPointModel="2"
@@ -49,6 +49,7 @@
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				CompileAs="2"
+				ForcedIncludeFiles="boinc_win.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -64,12 +65,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sensapi.lib wininet.lib"
-				OutputFile="$(OutDir)\$(SolutionName).dll"
+				AdditionalDependencies="MSVCRTD.LIB MSVCPRTD.LIB kernel32.lib user32.lib advapi32.lib wsock32.lib wininet.lib winmm.lib oldnames.lib userenv.lib"
 				LinkIncremental="2"
+				IgnoreAllDefaultLibraries="true"
 				GenerateDebugInformation="true"
-				SubSystem="2"
-				ImportLibrary="$(OutDir)\$(ProjectName)\$(ProjectName).lib"
+				SubSystem="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -101,7 +101,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(OutDir)\$(ProjectName)\obj"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="2"
 			>
 			<Tool
@@ -122,8 +122,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\lib"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;_ATL_ATTRIBUTES"
+				AdditionalIncludeDirectories="../lib/,../api/,../client/win/,../client;.."
+				PreprocessorDefinitions="WIN32;NDEBUG;_MT;_DLL;_WINDOWS;_CONSOLE"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				FloatingPointModel="2"
@@ -131,6 +131,7 @@
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				CompileAs="2"
+				ForcedIncludeFiles="boinc_win.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -146,15 +147,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sensapi.lib wininet.lib"
-				OutputFile="$(OutDir)\$(SolutionName).dll"
+				AdditionalDependencies="kernel32.lib user32.lib advapi32.lib wsock32.lib wininet.lib winmm.lib MSVCRT.LIB MSVCPRT.LIB oldnames.lib userenv.lib"
 				LinkIncremental="1"
+				IgnoreAllDefaultLibraries="true"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				SetChecksum="true"
-				ImportLibrary="$(OutDir)\$(ProjectName)\$(ProjectName).lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -192,71 +191,28 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\clientlib\win\boinc_dll.cpp"
+				RelativePath="..\lib\boinc_cmd.C"
 				>
-			</File>
-			<File
-				RelativePath="..\clientlib\win\IdleTracker.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\clientlib\win\Service.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\clientlib\win\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\clientlib\win\boinc_dll.h"
-				>
-			</File>
-			<File
-				RelativePath="..\clientlib\win\IdleTracker.h"
-				>
-			</File>
-			<File
-				RelativePath="..\clientlib\win\Resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\clientlib\win\stdafx.h"
+				RelativePath="..\client\win\boinc_cmd.h"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath="..\clientlib\win\boinc_dll.rc"
+				RelativePath="..\client\win\boinc_cmd.rc"
 				>
 			</File>
 		</Filter>
