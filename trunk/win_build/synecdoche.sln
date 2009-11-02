@@ -18,6 +18,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "synecmgr", "synecmgr.vcproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dll", "dll.vcproj", "{B06280CB-82A4-46DE-8956-602643078BDF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "installer", "installer.vcproj", "{51C6516D-BDD9-4300-A589-EBBAFDB1D3EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -52,6 +54,9 @@ Global
 		{B06280CB-82A4-46DE-8956-602643078BDF}.Debug|Win32.Build.0 = Debug|Win32
 		{B06280CB-82A4-46DE-8956-602643078BDF}.Release|Win32.ActiveCfg = Release|Win32
 		{B06280CB-82A4-46DE-8956-602643078BDF}.Release|Win32.Build.0 = Release|Win32
+		{51C6516D-BDD9-4300-A589-EBBAFDB1D3EB}.Debug|Win32.ActiveCfg = Release|Win32
+		{51C6516D-BDD9-4300-A589-EBBAFDB1D3EB}.Release|Win32.ActiveCfg = Release|Win32
+		{51C6516D-BDD9-4300-A589-EBBAFDB1D3EB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

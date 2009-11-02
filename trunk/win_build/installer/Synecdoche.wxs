@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+  This file is part of Synecdoche.
+  http://synecdoche.googlecode.com/
+  Copyright (C) 2009 David Barnard
+
+  Synecdoche is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Synecdoche is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="C23FBE88-ED59-4CA1-B04E-96D2E76EF1A2"
+           UpgradeCode="A26E8DD1-C750-4C75-9EF0-B74355922E59"
+           Name="!(wix.ProductName)"
+           Language="1033"
+           Version="0.2.0"
+           Manufacturer="Synecdoche contributors">
+
+    <!-- Do not brand or localize the Summary information. -->
+    <Package Id="*"
+             Description="Synecdoche for Windows"
+             Comments="Provides all the infrastructure for Synecdoche to automatically download and process tasks."
+             Manufacturer="Synecdoche contributors"
+             InstallerVersion="300"
+             Platform="x86"
+             Languages="1033"
+             SummaryCodepage="1252"
+             Compressed="yes" />
+
+    <Media Id="1"
+           EmbedCab="yes"
+           Cabinet="Synecdoche.cab" />
+
+    <WixVariable Id="ProductName" Overridable="yes" Value="Synecdoche" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="StartupFolder" />
+      <Directory Id="WindowsFolder">
+        <Directory Id="ScreensaverFolder" />
+      </Directory>
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLDIR"
+                   Name="Synecdoche" ShortName="Synec"
+                   SourceName="." FileSource="SourceDir\">
+          <Directory Id="SERVICEDIRECTORY" />
+          <Directory Id="locale" Name="locale" />
+          <Directory Id="skins" Name="skins" />
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="SynecdocheStartMenu" Name="Synecdoche" ShortName="Synec" />
+      </Directory>
+      <Directory Id="CommonAppDataFolder">
+        <Directory Id="DATADIR" Name="Synecdoche" ShortName="Synec" />
+      </Directory>
+      <Merge Id="VCRedist" SourceFile="SourceDir\Microsoft_VC80_CRT_x86.msm" DiskId="1" Language="0"/>
+    </Directory>
+
+    <Feature Id="Synecdoche"
+             Title="Synecdoche"
+             Description="Complete Synecdoche client package"
+             Level="1">
+      <ComponentRef Id="synecdoche.scr" />
+      <ComponentRef Id="synecdoche.dll" />
+      <ComponentRef Id="syneccmd.exe" />
+      <Feature Id="VCRedist" Title="Visual C++ 8.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+        <MergeRef Id="VCRedist"/>
+      </Feature>
+      <Feature Id="Client"
+               Title="Daemon"
+               Description="Synecdoche daemon"
+               Level="1">
+        <ComponentRef Id="synecd.exe" />
+        <ComponentRef Id="libcurl.dll" />
+        <ComponentRef Id="libeay32.dll" />
+        <ComponentRef Id="ssleay32.dll" />
+        <ComponentRef Id="zlib1.dll" />
+        <ComponentRef Id="cabundle.crt" />
+        <ComponentRef Id="idlemon.exe" />
+      </Feature>
+      <Feature Id="Manager"
+               Title="Manager"
+               Description="Synecdoche Manager"
+               Level="1">
+        <ComponentRef Id="synecmgr.exe" />
+      </Feature>
+    </Feature>
+
+    <!-- Add or Remove Programs properties -->
+    <!-- The product icon is displayed in the ARP list. -->
+    <Property Id="ARPPRODUCTICON">synecicon.exe</Property>
+    <!-- These additional properties are shown in the "support information" dialog. -->
+    <Property Id="ARPCOMMENTS">Synecdoche is a platform for distributed computing grids.</Property>
+    <Property Id="ARPHELPLINK">http://groups.google.com/group/synecdoche</Property>
+    <Property Id="ARPURLINFOABOUT">http://synecdoche.googlecode.com/</Property>
+    <Property Id="ARPURLUPDATEINFO">http://synecdoche.googlecode.com/</Property>
+    
+
+    <Icon Id="synecicon.exe"
+          SourceFile="..\graphics\icons\synecdoche.ico"/>
+
+    <UIRef Id="WixUI_Mondo" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <!-- Replace the built-in license with our own -->
+    <WixVariable Id="WixUILicenseRtf" Value="SourceDir\LICENSE.rtf" />
+    
+  </Product>
+
+</Wix>
