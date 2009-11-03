@@ -12,6 +12,7 @@
 #include <algorithm>
 #include "wxPieCtrl.h"
 #include <wx/arrimpl.cpp>
+#include <wx/graphics.h>
 
 using namespace std;
 
