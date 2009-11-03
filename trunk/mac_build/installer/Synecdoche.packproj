@@ -135,7 +135,7 @@
 																<key>GID</key>
 																<integer>80</integer>
 																<key>Path</key>
-																<string>all_projects_list.xml</string>
+																<string>../../resources/all_projects_list.xml</string>
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
