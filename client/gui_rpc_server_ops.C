@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2008 Nicolas Alvarez
 // Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
@@ -67,7 +68,7 @@
 
 /// Maximum size of the write buffer. If this size is exceeded, the connection
 /// will be dropped.
-#define MAX_WRITE_BUFFER 16384
+const size_t MAX_WRITE_BUFFER=16384;
 
 using std::string;
 using std::vector;
