@@ -38,7 +38,7 @@ loc=$(project)Localization^\
 out=$(platform)^\$(config)^\
 int=$(out)$(project)obj^\
 source=$(out)$(project)SourceDir^\
-deps=$(out)
+deps=$(SYNEC_DEPENDS)^\
 
 
 # Default target
@@ -68,13 +68,14 @@ $(source)COPYING.txt \
 $(source)COPYING.LESSER.txt \
 $(source)COPYRIGHT.txt \
 $(source)NEWS.txt \
-$(source)LICENSE.rtf \
+$(source)License.rtf \
 $(source)synecd.exe \
 $(source)synecmgr.exe \
 $(source)syneccmd.exe \
 $(source)idlemon.exe \
 $(source)synecdoche.dll \
 $(source)synecdoche.scr \
+$(source)Microsoft_VC80_CRT_x86.msm \
 $(source)libcurl.dll \
 $(source)libeay32.dll \
 $(source)ssleay32.dll \
@@ -99,7 +100,7 @@ $(source)COPYRIGHT.txt: $(root)COPYRIGHT
 $(source)NEWS.txt: $(root)NEWS
 	$(copy)
 
-$(source)LICENSE.rtf: $(root)LICENSE.rtf
+$(source)License.rtf: $(root)resources^\License.rtf
 	$(copy)
 
 # Project output files
@@ -126,19 +127,23 @@ $(source)synecdoche.scr: $(out)synecdoche.scr
 
 # Dependencies
 
-$(source)libcurl.dll: $(deps)libcurl.dll
+$(source)Microsoft_VC80_CRT_x86.msm: $(deps)merge^\Microsoft_VC80_CRT_x86.msm
 	$(copy)
 
-$(source)libeay32.dll: $(deps)libeay32.dll
+$(source)libcurl.dll: $(deps)curl^\mswin^\$(platform)^\$(config)^\bin^\libcurl.dll
 	$(copy)
 
-$(source)ssleay32.dll: $(deps)ssleay32.dll
+$(source)libeay32.dll: $(deps)openssl^\mswin^\$(platform)^\$(config)^\bin^\libeay32.dll
 	$(copy)
 
-$(source)zlib1.dll: $(deps)zlib1.dll
+$(source)ssleay32.dll: $(deps)openssl^\mswin^\$(platform)^\$(config)^\bin^\ssleay32.dll
 	$(copy)
 
-$(source)ca-bundle.crt: $(deps)ca-bundle.crt
+$(source)zlib1.dll: $(deps)zlib^\mswin^\$(platform)^\$(config)^\bin^\zlib1.dll
+	$(copy)
+
+# The certificate file is a shared resource.
+$(source)ca-bundle.crt: $(root)resources^\ca-bundle.crt
 	$(copy)
 
 
