@@ -1163,7 +1163,7 @@
 				</dict>
 				<key>ReadMe</key>
 				<dict>
-					<key>International</key>
+					<key>English</key>
 					<dict>
 						<key>Mode</key>
 						<integer>1</integer>
@@ -1172,15 +1172,51 @@
 						<key>Path Type</key>
 						<integer>2</integer>
 					</dict>
+					<key>International</key>
+					<dict>
+						<key>Mode</key>
+						<integer>0</integer>
+						<key>Path</key>
+						<string>English/Readme.rtf</string>
+						<key>Path Type</key>
+						<integer>2</integer>
+					</dict>
+					<key>Spanish</key>
+					<dict>
+						<key>Mode</key>
+						<integer>1</integer>
+						<key>Path</key>
+						<string>Spanish/Readme.rtf</string>
+						<key>Path Type</key>
+						<integer>2</integer>
+					</dict>
 				</dict>
 				<key>Welcome</key>
 				<dict>
-					<key>International</key>
+					<key>English</key>
 					<dict>
 						<key>Mode</key>
 						<integer>1</integer>
 						<key>Path</key>
 						<string>English/Welcome.rtf</string>
+						<key>Path Type</key>
+						<integer>2</integer>
+					</dict>
+					<key>International</key>
+					<dict>
+						<key>Mode</key>
+						<integer>0</integer>
+						<key>Path</key>
+						<string>English/Welcome.rtf</string>
+						<key>Path Type</key>
+						<integer>2</integer>
+					</dict>
+					<key>Spanish</key>
+					<dict>
+						<key>Mode</key>
+						<integer>1</integer>
+						<key>Path</key>
+						<string>Spanish/Welcome.rtf</string>
 						<key>Path Type</key>
 						<integer>2</integer>
 					</dict>
