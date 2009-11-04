@@ -23,9 +23,9 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="nmake -nologo -d -p -f installer\makefile out=$(OutDir)\ int=$(IntDir)\ platform=$(PlatformName) config=$(ConfigurationName) all"
-				ReBuildCommandLine="nmake -nologo -a -d -p -f installer\makefile out=$(OutDir)\ int=$(IntDir)\ platform=$(PlatformName) config=$(ConfigurationName) all"
-				CleanCommandLine="nmake -nologo -f installer\makefile out=$(OutDir)\ int=$(IntDir)\ platform=$(PlatformName) config=$(ConfigurationName) clean"
+				BuildCommandLine="nmake -nologo -d -p -f installer\makefile out=$(OutDir) int=$(IntDir) platform=$(PlatformName) config=$(ConfigurationName) all"
+				ReBuildCommandLine="nmake -nologo -a -d -p -f installer\makefile out=$(OutDir) int=$(IntDir) platform=$(PlatformName) config=$(ConfigurationName) all"
+				CleanCommandLine="nmake -nologo -f installer\makefile out=$(OutDir) int=$(IntDir) platform=$(PlatformName) config=$(ConfigurationName) clean"
 				Output="$(SolutionName).msi"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				IncludeSearchPath=""
