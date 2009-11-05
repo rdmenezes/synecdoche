@@ -69,8 +69,11 @@
              Title="Synecdoche"
              Description="Complete Synecdoche client package"
              Level="1">
+      <ComponentRef Id="COPYING.txt" />
+      <ComponentRef Id="COPYING.LESSER.txt" />
+      <ComponentRef Id="COPYRIGHT.txt" />
+      <ComponentRef Id="NEWS.txt" />
       <ComponentRef Id="synecdoche.scr" />
-      <ComponentRef Id="synecdoche.dll" />
       <ComponentRef Id="syneccmd.exe" />
       <Feature Id="VCRedist" Title="Visual C++ 8.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
         <MergeRef Id="VCRedist"/>
@@ -86,12 +89,15 @@
         <ComponentRef Id="zlib1.dll" />
         <ComponentRef Id="cabundle.crt" />
         <ComponentRef Id="idlemon.exe" />
+        <ComponentRef Id="synecdoche.dll" />
+        <ComponentRef Id="all_projects_list.xml" />
       </Feature>
       <Feature Id="Manager"
                Title="Manager"
                Description="Synecdoche Manager"
                Level="1">
         <ComponentRef Id="synecmgr.exe" />
+        <ComponentRef Id="synecdoche.dll" />
       </Feature>
     </Feature>
 

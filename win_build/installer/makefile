@@ -81,6 +81,7 @@ SourceDir: "$(source)" \
 "$(source)\ssleay32.dll" \
 "$(source)\zlib1.dll" \
 "$(source)\ca-bundle.crt" \
+"$(source)\all_projects_list.xml" \
 
 $(source):
 	-mkdir "$(source)"
@@ -146,6 +147,8 @@ $(source):
 "$(source)\ca-bundle.crt": "$(root)\resources\ca-bundle.crt"
 	$(copy)
 
+"$(source)\all_projects_list.xml": "$(root)\resources\all_projects_list.xml"
+	$(copy)
 
 
 
