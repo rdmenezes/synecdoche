@@ -112,4 +112,48 @@
       </Component>
     </DirectoryRef>
   </Fragment>
+
+
+
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="COPYING.txt" Guid="7A36F66D-DC78-4796-8F89-9704CDE0134E">
+        <File Id="COPYING.txt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="COPYING.LESSER.txt" Guid="D73A3F03-C548-41A5-BDB0-D0AF54B0ED4C">
+        <File Id="COPYING.LESSER.txt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="COPYRIGHT.txt" Guid="15273198-F3E6-4DF8-9ADB-F895037AA576">
+        <File Id="COPYRIGHT.txt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="NEWS.txt" Guid="759E8BF3-B8CD-45C7-91C0-023CF7694B21">
+        <File Id="NEWS.txt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="all_projects_list.xml" Guid="8C6ED157-4024-447D-880A-E18EB45D8528">
+        <File Id="all_projects_list.xml" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
 </Wix>
