@@ -108,5 +108,3 @@ BOINC 6.2.
    doesn't solve the underlying problem. We removed that 'fix', and instead
    avoid the denial of service by only writing to the socket if the socket is
    actually ready to write, and queue data otherwise.
-
-# vim: set ai et tw=80 fo=tqn flp=^\\s*\\(\\d\\+\\|\\*\\)[\\]\:.\\t\ ]\\s*:
