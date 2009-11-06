@@ -424,7 +424,7 @@ int run_program(
     if (pid == 0) {
         if (dir) {
             retval = chdir(dir);
-            if (retval) return retval;
+            if (retval) exit(retval);
         }
         // Cast is ugly but necessary as execv takes a char* const* instead of
         // const char* const* in many platforms
