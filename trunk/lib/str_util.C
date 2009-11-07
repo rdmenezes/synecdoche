@@ -556,35 +556,35 @@ std::string timediff_format(double diff) {
     std::ostringstream buf;
     int tdiff = static_cast<int>(diff);
 
-    int sex = tdiff % 60;
+    int secs = tdiff % 60;
     tdiff /= 60;
     if (!tdiff) {
-        buf << sex << " sec";
+        buf << secs << " sec";
         return buf.str();
     }
 
     int min = tdiff % 60;
     tdiff /= 60;
     if (!tdiff) {
-        buf << min << " min " << sex << " sec";
+        buf << min << " min " << secs << " sec";
         return buf.str();
     }
 
     int hours = tdiff % 24;
     tdiff /= 24;
     if (!tdiff) {
-        buf << hours << " hr " << min << " min " << sex << " sec";
+        buf << hours << " hr " << min << " min " << secs << " sec";
         return buf.str();
     }
 
     int days = tdiff % 7;
     tdiff /= 7;
     if (!tdiff) {
-        buf << days << " days " << hours << " hr " << min << " min " << sex << " sec";
+        buf << days << " days " << hours << " hr " << min << " min " << secs << " sec";
         return buf.str();
     }
 
-    buf << tdiff << " weeks " << days << " days " << hours << " hr " << min << " min " << sex << " sec";
+    buf << tdiff << " weeks " << days << " days " << hours << " hr " << min << " min " << secs << " sec";
     return buf.str();
 }
 
