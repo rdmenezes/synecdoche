@@ -87,9 +87,16 @@ public:
 extern "C" {
 #endif
 #include <mach/port.h>
+#include <IOKit/hidsystem/IOHIDLib.h>
+#include <IOKit/hidsystem/IOHIDParameter.h>
+
+// Apple has removed NxIdleTime() beginning with OS 10.6, so we must use 
+// weak linking to avoid a run-time crash.  For details, please see the 
+// comments in the __APPLE__ version of HOST_INFO::users_idle() in 
+// client/hostinfo_unix.cpp.
 typedef mach_port_t NXEventHandle;
-NXEventHandle NXOpenEventStatus(void);
-double NXIdleTime(NXEventHandle handle);
+NXEventHandle NXOpenEventStatus(void) __attribute__((weak_import));
+double NXIdleTime(NXEventHandle handle) __attribute__((weak_import));
 #ifdef __cplusplus
 }   // extern "C"
 #endif
