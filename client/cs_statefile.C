@@ -30,7 +30,6 @@
 #include <ostream>
 
 #include "miofile.h"
-#include "miofile_wrap.h"
 #include "mfile.h"
 #include "parse.h"
 #include "str_util.h"
