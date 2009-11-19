@@ -26,6 +26,7 @@
 #include <cstring>
 #include <errno.h>
 
+#include <fstream>
 #include <ostream>
 
 #include "miofile.h"
@@ -445,7 +446,6 @@ int CLIENT_STATE::parse_state_file() {
 
 /// Write the client_state.xml file.
 int CLIENT_STATE::write_state_file() const {
-    MFILE mf;
     int retval, attempt;
 #ifdef _WIN32
     char win_error_msg[4096];
@@ -459,39 +459,32 @@ int CLIENT_STATE::write_state_file() const {
                 "[statefile_debug] CLIENT_STATE::write_state_file(): Writing state file"
             );
         }
-#ifdef _WIN32
-        retval = mf.open(STATE_FILE_NEXT, "wc");
-#else
-        retval = mf.open(STATE_FILE_NEXT, "w");
-#endif
-        if (retval) {
-            if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
-                msg_printf(0, MSG_INTERNAL_ERROR,
-                    "Can't open %s: %s",
-                    STATE_FILE_NEXT, boincerror(retval)
-                );
+
+        {
+            std::ofstream file(STATE_FILE_NEXT, std::ios::out);
+            if (!file.is_open()) {
+                if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
+                    msg_printf(0, MSG_INTERNAL_ERROR,
+                        "Can't open %s; errno: %s",
+                        STATE_FILE_NEXT, strerror(errno)
+                    );
+                }
+                if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
+                return ERR_FOPEN;
             }
-            if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
-            return ERR_FOPEN;
-        }
-        MIOFILE miof;
-        miof.init_mfile(&mf);
-        write_state(OstreamFromMiofile(miof));
-        retval = mf.close();
-        /*
-        if (ret1) {
-            if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "Couldn't write state file: %s", boincerror(retval)
-                );
+            file.exceptions(std::ios::badbit | std::ios::failbit);
+            try {
+                write_state(file);
+                file.close();
+            } catch (std::ios::failure& e) {
+                if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
+                    msg_printf(NULL, MSG_INTERNAL_ERROR,
+                        "Couldn't write state file: %s", strerror(errno)
+                    );
+                }
+                if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
+                return ERR_FWRITE; //somewhat appropriate...
             }
-            if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
-            return ret1;
-        }
-        */
-        if (retval) {
-            if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
-            return retval;
         }
 
         // only attempt to rename the current state file if it exists.
