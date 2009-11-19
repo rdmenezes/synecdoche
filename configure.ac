@@ -199,9 +199,6 @@ AC_SUBST(CLIENTLIBS)
 # check for unittest++
 PKG_CHECK_MODULES([UNITTEST], [unittest++])
 
-# Disable OpenGL checking. It's only needed for the API, which is currently
-# disabled.
-
 dnl --------------------------------------------------------------------------------
 dnl put double-inclusion protection into config.h
 AH_TOP([
