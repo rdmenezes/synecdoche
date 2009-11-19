@@ -189,13 +189,10 @@ CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
 CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 LIBS="$PTHREAD_LIBS $LIBS"
 
-dnl add these libraries only to CLIENTLIBS, not global LIBS
-SAVELIBS="${LIBS}";
-AC_CHECK_LIB([curl], [curl_easy_init],,, [${LIBCURL}])
-AC_CHECK_LIB([z], [gzopen])
-AC_CHECK_LIB([cups], [md5_finish])
-CLIENTLIBS="${LIBS} ${CLIENTLIBS}";
-LIBS="${SAVELIBS}";
+AC_CHECK_LIB([z], [gzopen], [CLIENTLIBS="${CLIENTLIBS} -lz"], [AC_MSG_ERROR([
+ERROR: could not find development libs for zlib.
+This library is required to build the Synecdoche client.
+])])
 
 AC_SUBST(CLIENTLIBS)
 
