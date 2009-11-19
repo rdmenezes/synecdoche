@@ -328,12 +328,13 @@ int read_file_string(const char* path, std::string& result, int max_len, bool ta
 int copy_stream(FILE* in, FILE* out) {
     char buf[1024];
     size_t n, m;
-    while (1) {
+    do {
         n = fread(buf, 1, sizeof(buf), in);
         m = fwrite(buf, 1, n, out);
-        if (m != n) return ERR_FWRITE;
-        if (n < sizeof(buf)) break;
-    }
+        if (m != n) {
+            return ERR_FWRITE;
+        }
+    } while (n == sizeof(buf));
     return 0;
 }
 
