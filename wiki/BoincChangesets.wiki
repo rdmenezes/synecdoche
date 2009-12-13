@@ -60,7 +60,7 @@
 ||17564/17565/17590/17591/17592||_Multiple fixes for the Manager._||
 ||17567||Mac MGR: Do !RestoreState() before Show() so Disk tab doesn't flash briefly on manual launch.||
 ||17617||In linux client, Added code to detect capability to run 64-bit binaries from 32-bit BOINC client, and capability to run 32-bit binaries on a 64-bit linux system. _This one might need some cleanup before applying._||
-||17637||client: initial support for detecting the CPU L2 cache size on Windows.||
+||17637/19040||client: initial support for detecting the CPU L2 cache size on Windows.||
 ||17639|| client: add --no_priority_change cmdline arg (and <no_priority_change> flag in cc_config.xml). If set, run apps at same priority as client.||
 ||17711||client: (unix): if host name lookup fails, call res_init(). This is an attempt to fix a problem on Linux where, if the client starts before a VPN is set up, it can never communicate||
 ||17765/17831/17838||client: for each app version, keep track of the largest WSS of tasks using it. In checking whether tasks fit in RAM, use this as an estimate for tasks that haven't started yet. This avoids a situation where the client starts a lot of tasks in sequence, only to find that each one doesn't fit in RAM.||
@@ -78,12 +78,19 @@
 ||18593/18601/18602/18603/18604/18662/18663/18753/18786/18790||client: restored code for project-wide backoff on file||
 ||18595||libraries: Moved crypt.o out of libboinc and into libboinc_crypt.||
 ||18605/18606/18737||client: changed file upload logic||
-||18772/18785/18798/18799/18819/18893||client: Initial swipe at automatic proxy server configuration detection on Windows. Fixes #35 _This probably needs some cleanup first._||
+||18772/18785/18798/18799/18819/18893/(18936?)/18941/18971/18972/18973/18974/18997/19090||client: Initial swipe at automatic proxy server configuration detection on Windows. Fixes #35 _This probably needs some cleanup first._||
 ||18800/18803/18805/18811/18812/18813||client: refactor the CC startup process, move majority of the windows code into sysmon_win.cpp, .h||
 ||18845||client: in the final stage of CPU scheduling, give preference to multi-threaded jobs. Avoid running N-1 1-thread jobs and 1 N-thread job on N CPUs / client: change file transfer giveup time from 14 to 90 days||
 ||18866||manager: allow 24:00 to be used in advanced prefs dialog||
 ||18915/18916||client: when writing XML, entity-encode the following fields / client: XML_PARSER::parse_str() now does xml_unescape(), same as ::parse_str().||
 ||18917/18919||MGR: on Linux, accept 2 optional args: -clientdir or -e and -datadir or -d, use when launching client||
+||18925||MGR: Bug fixes for Linux _The Async-RPC-stuff can be ignored, the other fixes are required._||
+||18959||Fixed problem that prevented stack backtrace from being printed after segfault on linux.||
+||18963/18964||Mac installer: add logic for setting BOINC as screensaver under OS 10.6||
+||18978/18981||Mac Sandbox: Security fixes for Mac OS 10.6 Snow Leopard||
+||19044||client: in startup msgs, show resource shares, don't show prefs details _Should we show both?_||
+||19050||client: add <fraction_done> to boinc_task_state.xml||
+||19051||client: change order in poll loop||
 
 
 == Changesets for the (new OpenGL) screensaver (Might be useful some day) ==
@@ -192,4 +199,4 @@ Changesets that are irrelevant to Synecdoche are not shown. Some decisions liste
 
 `*` These changesets may still be needed.
 
-Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/18924 18924]
+Reviewed up to: [http://boinc.berkeley.edu/trac/changeset/19100 19100]
