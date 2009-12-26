@@ -60,7 +60,6 @@ int ACCT_MGR_OP::do_rpc(
     const std::string& password_hash, bool _via_gui
 ) {
     int retval;
-    unsigned int i;
     std::string url(_url);
 
     error_num = ERR_IN_PROGRESS;
@@ -78,7 +77,7 @@ int ACCT_MGR_OP::do_rpc(
         boinc_delete_file(ACCT_MGR_URL_FILENAME);
         boinc_delete_file(ACCT_MGR_LOGIN_FILENAME);
         error_num = 0;
-        for (i=0; i<gstate.projects.size(); i++) {
+        for (size_t i=0; i<gstate.projects.size(); ++i) {
             PROJECT* p = gstate.projects[i];
             p->attached_via_acct_mgr = false;
             p->ams_resource_share = 0;
@@ -138,7 +137,7 @@ int ACCT_MGR_OP::do_rpc(
             fprintf(f,"   <gui_rpc_password>%s</gui_rpc_password>\n", password.c_str());
         }
     }
-    for (i=0; i<gstate.projects.size(); i++) {
+    for (size_t i=0; i<gstate.projects.size(); i++) {
         PROJECT* p = gstate.projects[i];
         fprintf(f,
             "   <project>\n"
