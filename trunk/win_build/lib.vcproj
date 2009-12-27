@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;../win_build;../lib;../api;../../synecdoche_depends_win_vs2005/openssl/include"
+				AdditionalIncludeDirectories="..;../win_build;../lib;../api;&quot;$(SYNEC_DEPENDS)/openssl/include&quot;"
 				PreprocessorDefinitions="_WIN32;WIN32;_MT;_DLL;_DEBUG;_LIB_WIN32;_WINDOWS;_CONSOLE;HAVE_STD_MAX;HAVE_STD_MIN;HAVE_STD_TRANSFORM;CLIENT;BOINC_APP_GRAPHICS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -106,7 +106,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..;../win_build;../lib;../api;../../synecdoche_depends_win_vs2005/openssl/include"
+				AdditionalIncludeDirectories="..;../win_build;../lib;../api;&quot;$(SYNEC_DEPENDS)/openssl/include&quot;"
 				PreprocessorDefinitions="_WIN32;WIN32;_MT;_DLL;NDEBUG;_LIB_WIN32;_WINDOWS;_CONSOLE;HAVE_STD_MAX;HAVE_STD_MIN;HAVE_STD_TRANSFORM;CLIENT;BOINC_APP_GRAPHICS"
 				StringPooling="true"
 				RuntimeLibrary="2"
