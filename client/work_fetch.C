@@ -748,12 +748,15 @@ double RESULT::estimated_cpu_time_remaining() const {
 ///
 double ACTIVE_TASK::est_cpu_time_to_completion() const {
     if (fraction_done >= 1) return 0;
-    double wu_est = result->estimated_cpu_time();
-    if (fraction_done <= 0) return wu_est;
-    double frac_est = (current_cpu_time / fraction_done) - current_cpu_time;
-    double fraction_left = 1-fraction_done;
-    double x = fraction_done*frac_est + fraction_left*fraction_left*wu_est;
-    return x;
+    const double wu_est_total = result->estimated_cpu_time();
+    if (fraction_done <= 0) return wu_est_total;
+
+    const double fraction_left = 1.0 - fraction_done;
+
+    const double frac_est_remain = (current_cpu_time / fraction_done) - current_cpu_time;
+    const double wu_est_remain = wu_est_total * fraction_left;
+
+    return interpolate(wu_est_remain, frac_est_remain, fraction_done);
 }
 
 /// Trigger work fetch.
