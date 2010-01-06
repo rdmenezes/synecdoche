@@ -45,6 +45,12 @@ inline double drand() {
     return (double)rand()/(double)RAND_MAX;
 }
 
+/// Interpolates \a a and \a b linearly, using factor \a f.
+/// When \a f is 0, returns \a a; when \a f is 1, returns \a b.
+inline double interpolate(double a, double b, double f) {
+    return a*(1.0-f) + b*f;
+}
+
 #ifdef _WIN32
 #include <windows.h>
 

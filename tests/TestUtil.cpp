@@ -44,4 +44,13 @@ SUITE(TestUtil)
         copy_stream(iss, oss);
         CHECK_EQUAL(str, oss.str());
     }
+
+    TEST(Interpolate)
+    {
+        CHECK_EQUAL(10.0, interpolate(10.0, 20.0, 0.0));
+        CHECK_EQUAL(20.0, interpolate(10.0, 20.0, 1.0));
+        CHECK_EQUAL(30.0, interpolate(10.0, 20.0, 2.0));
+
+        CHECK_CLOSE(15.0, interpolate(10.0, 20.0, 0.5), 1e-5);
+    }
 }
