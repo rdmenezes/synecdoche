@@ -92,9 +92,8 @@ static bool boinc_cleanup_completed = false;
 //
 void quit_client() {
     gstate.requested_exit = true;
-    while (1) {
+    while (!boinc_cleanup_completed) {
         boinc_sleep(1.0);
-        if (boinc_cleanup_completed) break;
     }
 }
 
