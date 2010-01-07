@@ -129,10 +129,7 @@ static void make_benchmark_file(int which) {
 }
 
 void benchmark_wait_to_start(int which) {
-    while (1) {
-        if (boinc_file_exists(file_names[which])) {
-            break;
-        }
+    while (!boinc_file_exists(file_names[which])) {
         boinc_sleep(0.1);
     }
 }
