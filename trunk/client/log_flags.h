@@ -24,12 +24,10 @@
 #ifndef LOGFLAGS_H
 #define LOGFLAGS_H
 
+#include <cstdio>
+
 #include <vector>
 #include <string>
-
-#ifndef _WIN32
-#include <stdio.h>
-#endif
 
 #define MAX_FILE_XFERS_PER_PROJECT      2
 #define MAX_FILE_XFERS                  8
