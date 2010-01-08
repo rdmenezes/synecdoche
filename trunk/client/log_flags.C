@@ -195,13 +195,14 @@ void CONFIG::defaults() {
     no_alt_platform = false;
     simple_gui_only = false;
     dont_contact_ref_site = false;
+    alt_platforms.clear();
     max_stdout_file_size = 0;
     max_stderr_file_size = 0;
-    alt_platforms.clear();
     report_results_immediately = false;
     start_delay = 0;
     run_apps_manually = false;
     force_auth = "default";
+    allow_multiple_clients = false;
     zero_debts = false;
 }
 
