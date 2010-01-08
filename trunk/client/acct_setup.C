@@ -121,18 +121,14 @@ void GET_PROJECT_CONFIG_OP::handle_reply(int http_op_retval) {
 int LOOKUP_ACCOUNT_OP::do_rpc(const ACCOUNT_IN& ai) {
     int retval;
     std::string url(ai.url);
-    std::string parameter(ai.email_addr);
 
     canonicalize_master_url(url);
 
     url += "lookup_account.php?email_addr=";
-    escape_url(parameter);
-    url += parameter;
+    url += escape_url(ai.email_addr);
 
     url += "&passwd_hash=";
-    parameter = ai.passwd_hash;
-    escape_url(parameter);
-    url += parameter;
+    url += escape_url(ai.passwd_hash);
 
     retval = gui_http->do_rpc(this, url, LOOKUP_ACCOUNT_FILENAME);
     if (retval) {
@@ -154,23 +150,17 @@ void LOOKUP_ACCOUNT_OP::handle_reply(int http_op_retval) {
 int CREATE_ACCOUNT_OP::do_rpc(const ACCOUNT_IN& ai) {
     int retval;
     std::string url(ai.url);
-    std::string parameter(ai.email_addr);
 
     canonicalize_master_url(url);
 
     url += "create_account.php?email_addr=";
-    escape_url(parameter);
-    url += parameter;
+    url += escape_url(ai.email_addr);
 
     url += "&passwd_hash=";
-    parameter = ai.passwd_hash;
-    escape_url(parameter);
-    url += parameter;
+    url += escape_url(ai.passwd_hash);
 
     url += "&user_name=";
-    parameter = ai.user_name;
-    escape_url(parameter);
-    url += parameter;
+    url += escape_url(ai.user_name);
 
     retval = gui_http->do_rpc(this, url, CREATE_ACCOUNT_FILENAME);
     if (retval) {

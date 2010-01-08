@@ -404,11 +404,11 @@ void unescape_url(std::string& url) {
     url = result;
 }
 
-/// Escape an URL.
+/// Escape unsafe characters in a URL.
 ///
-/// \param[in,out] url Reference to a string containing the URL that should
-///                    get escaped.
-void escape_url(std::string& url) {
+/// \param[in,out] url The URL to escape.
+/// \return The escaped version of \a url.
+std::string escape_url(const std::string& url) {
     std::string result;
     result.reserve(url.size());
     for (std::string::const_iterator c = url.begin(); c != url.end(); ++c) {
@@ -421,7 +421,7 @@ void escape_url(std::string& url) {
             result += std::string(buf, buf + 2);
         }
     }
-    url = result;
+    return result;
 }
 
 /// Escape a URL for the project directory, cutting off the "http://",

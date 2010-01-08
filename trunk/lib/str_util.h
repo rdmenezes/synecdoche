@@ -69,7 +69,7 @@ void strip_whitespace(std::string&);
 void unescape_url(std::string& url);
 
 /// Escape an URL.
-void escape_url(std::string& url);
+std::string escape_url(const std::string& url);
 
 /// Escape a URL for the project directory
 std::string escape_url_readable(const std::string& in);
