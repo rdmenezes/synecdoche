@@ -38,7 +38,9 @@ elif [ ! -f config.args ] || [ "`cat config.args`" != "$*" ]; then
     run_configure "$@"
 
 else
-
-    echo "Nothing to do."
-
+    if make -q Makefile; then
+        echo "Nothing to do."
+    else
+        make Makefile
+    fi
 fi
