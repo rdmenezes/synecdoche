@@ -90,7 +90,7 @@ void show_message(const PROJECT *p, const std::string& msg, MSG_PRIORITY priorit
 
     time_t now = time(0);
     std::string time_string = time_to_string((double)now);
-#if defined(WIN32) && defined(_CONSOLE)
+#if defined(_WIN32) && defined(_CONSOLE)
     char event_message[2048];
 #endif
 
@@ -120,7 +120,7 @@ void show_message(const PROJECT *p, const std::string& msg, MSG_PRIORITY priorit
 
     printf("%s [%s] %s\n", time_string.c_str(), x, message.c_str());
 
-#if defined(WIN32) && defined(_CONSOLE)
+#if defined(_WIN32) && defined(_CONSOLE)
     if (gstate.executing_as_daemon) {
         stprintf(event_message, TEXT("%s [%s] %s\n"), time_string,  x, message.c_str());
         ::OutputDebugString(event_message);

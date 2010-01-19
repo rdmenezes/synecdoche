@@ -799,7 +799,7 @@ bool NoCaseLess(const std::string& a, const std::string& b) {
     return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), case_insensitive_less());
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 /// Get a message for the last error.
 ///
