@@ -143,8 +143,12 @@ int dup_element_contents(FILE* in, const char* end_tag, char** pp) {
             return 0;
         }
         retval = strcatdup(p, buf);
-        if (retval) return retval;
+        if (retval) {
+            free(p);
+            return retval;
+        }
     }
+    free(p);
     return ERR_XML_PARSE;
 }
 
