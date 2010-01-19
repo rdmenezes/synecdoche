@@ -21,7 +21,7 @@
 ///
 /// This file contains no GUI-related code.
 
-#ifdef WIN32
+#ifdef _WIN32
 #define _CONSOLE 1
 #include "boinc_win.h"
 #include "win_service.h"
@@ -85,7 +85,7 @@ int finalize();
 /// cleaning up.
 static bool boinc_cleanup_completed = false;
 
-#ifdef WIN32
+#ifdef _WIN32
 // The following 3 functions are called in a separate thread,
 // so we can't do anything directly.
 // Set flags telling the main thread what to do.
