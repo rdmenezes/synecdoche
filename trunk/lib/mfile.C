@@ -29,7 +29,7 @@
 #include <string>
 #include <cerrno>
 #include <iostream>
-#if HAVE_MALLOC_H
+#ifdef HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 #include <unistd.h>

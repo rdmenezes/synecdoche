@@ -46,10 +46,11 @@
 #endif
 #ifdef HAVE_CSIGNAL
 #include <csignal>
-#elif defined(HAVE_SYS_SIGNAL_H)
-#include <sys/signal.h>
 #elif defined(HAVE_SIGNAL_H)
 #include <signal.h>
+#endif
+#ifdef HAVE_SYS_SIGNAL_H
+#include <sys/signal.h>
 #endif
 #if HAVE_SYS_WAIT_H
 #include <sys/wait.h>
