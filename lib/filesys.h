@@ -26,6 +26,8 @@
 #include "attributes.h"
 
 #if defined(_WIN32) && !defined(__CYGWIN32__)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #else
 #include <stdio.h>
 #include <dirent.h>
