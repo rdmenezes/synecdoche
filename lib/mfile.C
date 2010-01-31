@@ -28,12 +28,8 @@
 #include <cstring>
 #include <string>
 #include <cerrno>
-<<<<<<< .copia-de-trabajo
-#ifdef HAVE_MALLOC_H
-=======
 #include <iostream>
-#if HAVE_MALLOC_H
->>>>>>> .derecha-fusion.r1330
+#ifdef HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 #include <unistd.h>
