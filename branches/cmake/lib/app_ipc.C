@@ -34,6 +34,7 @@
 #include "str_util.h"
 #include "filesys.h"
 #include "miofile.h"
+#include "xml_write.h"
 
 using std::string;
 
@@ -119,97 +120,76 @@ void APP_INIT_DATA::copy(const APP_INIT_DATA& a) {
     wu_cpu_time = a.wu_cpu_time;
 }
 
-int write_init_data_file(FILE* f, APP_INIT_DATA& ai) {
-    char buf[2048];
-    fprintf(f,
-        "<app_init_data>\n"
-        "<major_version>%d</major_version>\n"
-        "<minor_version>%d</minor_version>\n"
-        "<release>%d</release>\n"
-        "<app_version>%d</app_version>\n",
-        ai.major_version,
-        ai.minor_version,
-        ai.release,
-        ai.app_version
-    );
+/// \todo Document this function -- NA
+/// \todo Add unit tests for this function, maybe parsing the result with
+/// parse_init_data_file() and comparing -- NA
+void write_init_data_file(std::ostream& out, APP_INIT_DATA& ai) {
+    out << "<app_init_data>\n"
+        << XmlTag<int>("major_version", ai.major_version)
+        << XmlTag<int>("minor_version", ai.minor_version)
+        << XmlTag<int>("release",       ai.release)
+        << XmlTag<int>("app_version",   ai.app_version)
+    ;
     if (strlen(ai.app_name)) {
-        fprintf(f, "<app_name>%s</app_name>\n", ai.app_name);
+        out << XmlTag<const char*>("app_name", ai.app_name);
     }
     if (strlen(ai.symstore)) {
-        fprintf(f, "<symstore>%s</symstore>\n", ai.symstore);
+        out << XmlTag<const char*>("symstore", ai.symstore);
     }
     if (strlen(ai.acct_mgr_url)) {
-        fprintf(f, "<acct_mgr_url>%s</acct_mgr_url>\n", ai.acct_mgr_url);
+        out << XmlTag<const char*>("acct_mgr_url", ai.acct_mgr_url);
     }
     if (ai.project_preferences && strlen(ai.project_preferences)) {
-        fprintf(f, "<project_preferences>\n%s</project_preferences>\n", ai.project_preferences);
+        // Don't replace this with XmlTag!
+        // We probably need the newline after open tag,
+        // and we definitely can't escape this (ai.project_preferences contains XML)
+        out << "<project_preferences>\n" << ai.project_preferences << "</project_preferences>\n";
     }
     if (strlen(ai.team_name)) {
-        xml_escape(ai.team_name, buf, sizeof(buf));
-        fprintf(f, "<team_name>%s</team_name>\n", buf);
+        out << XmlTag<XmlString>("team_name", ai.team_name);
     }
     if (strlen(ai.user_name)) {
-        xml_escape(ai.user_name, buf, sizeof(buf));
-        fprintf(f, "<user_name>%s</user_name>\n", buf);
+        out << XmlTag<XmlString>("user_name", ai.user_name);
     }
     if (strlen(ai.project_dir)) {
-        fprintf(f, "<project_dir>%s</project_dir>\n", ai.project_dir);
+        out << XmlTag<const char*>("project_dir", ai.project_dir);
     }
     if (strlen(ai.boinc_dir)) {
-        fprintf(f, "<boinc_dir>%s</boinc_dir>\n", ai.boinc_dir);
+        out << XmlTag<const char*>("boinc_dir", ai.boinc_dir);
     }
     if (strlen(ai.authenticator)) {
-        fprintf(f, "<authenticator>%s</authenticator>\n", ai.authenticator);
+        out << XmlTag<const char*>("authenticator", ai.authenticator);
     }
     if (strlen(ai.wu_name)) {
-        fprintf(f, "<wu_name>%s</wu_name>\n", ai.wu_name);
+        out << XmlTag<const char*>("wu_name", ai.wu_name);
     }
 #ifdef _WIN32
     if (strlen(ai.shmem_seg_name)) {
-        fprintf(f, "<comm_obj_name>%s</comm_obj_name>\n", ai.shmem_seg_name);
+        out << XmlTag<const char*>("comm_obj_name", ai.shmem_seg_name);
     }
 #else
-    fprintf(f, "<shm_key>%d</shm_key>\n", ai.shmem_seg_name);
+    out << XmlTag<int>("shm_key", ai.shmem_seg_name);
 #endif
-    fprintf(f,
-        "<slot>%d</slot>\n"
-        "<wu_cpu_time>%f</wu_cpu_time>\n"
-        "<user_total_credit>%f</user_total_credit>\n"
-        "<user_expavg_credit>%f</user_expavg_credit>\n"
-        "<host_total_credit>%f</host_total_credit>\n"
-        "<host_expavg_credit>%f</host_expavg_credit>\n"
-        "<resource_share_fraction>%f</resource_share_fraction>\n"
-        "<checkpoint_period>%f</checkpoint_period>\n"
-        "<fraction_done_start>%f</fraction_done_start>\n"
-        "<fraction_done_end>%f</fraction_done_end>\n"
-        "<rsc_fpops_est>%f</rsc_fpops_est>\n"
-        "<rsc_fpops_bound>%f</rsc_fpops_bound>\n"
-        "<rsc_memory_bound>%f</rsc_memory_bound>\n"
-        "<rsc_disk_bound>%f</rsc_disk_bound>\n"
-        "<computation_deadline>%f</computation_deadline>\n",
-        ai.slot,
-        ai.wu_cpu_time,
-        ai.user_total_credit,
-        ai.user_expavg_credit,
-        ai.host_total_credit,
-        ai.host_expavg_credit,
-        ai.resource_share_fraction,
-        ai.checkpoint_period,
-        ai.fraction_done_start,
-        ai.fraction_done_end,
-        ai.rsc_fpops_est,
-        ai.rsc_fpops_bound,
-        ai.rsc_memory_bound,
-        ai.rsc_disk_bound,
-        ai.computation_deadline
-    );
-    MIOFILE mf;
-    mf.init_file(f);
-    ai.host_info.write(mf, false);
-    ai.proxy_info.write(mf);
-    ai.global_prefs.write(mf);
-    fprintf(f, "</app_init_data>\n");
-    return 0;
+    out << XmlTag<int>   ("slot", ai.slot)
+        << XmlTag<double>("wu_cpu_time",            ai.wu_cpu_time)
+        << XmlTag<double>("user_total_credit",      ai.user_total_credit)
+        << XmlTag<double>("user_expavg_credit",     ai.user_expavg_credit)
+        << XmlTag<double>("host_total_credit",      ai.host_total_credit)
+        << XmlTag<double>("host_expavg_credit",     ai.host_expavg_credit)
+        << XmlTag<double>("resource_share_fraction",ai.resource_share_fraction)
+        << XmlTag<double>("checkpoint_period",      ai.checkpoint_period)
+        << XmlTag<double>("fraction_done_start",    ai.fraction_done_start)
+        << XmlTag<double>("fraction_done_end",      ai.fraction_done_end)
+        << XmlTag<double>("rsc_fpops_est",          ai.rsc_fpops_est)
+        << XmlTag<double>("rsc_fpops_bound",        ai.rsc_fpops_bound)
+        << XmlTag<double>("rsc_memory_bound",       ai.rsc_memory_bound)
+        << XmlTag<double>("rsc_disk_bound",         ai.rsc_disk_bound)
+        << XmlTag<double>("computation_deadline",   ai.computation_deadline)
+    ;
+    ai.host_info.write(out, false);
+    ai.proxy_info.write(out);
+    ai.global_prefs.write(out);
+    out << "</app_init_data>\n";
 }
 
 int parse_init_data_file(FILE* f, APP_INIT_DATA& ai) {

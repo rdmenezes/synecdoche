@@ -19,8 +19,7 @@
 /// \file
 /// initialization and starting of applications
 
-#include <sstream>
-#include "cpp.h"
+#include "app.h"
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -57,7 +56,9 @@
 #include <fcntl.h>
 #endif
 
-#include "app.h"
+#include <cstring>
+#include <sstream>
+#include <fstream>
 
 #include "filesys.h"
 #include "error_numbers.h"
@@ -67,7 +68,6 @@
 #include "client_msgs.h"
 #include "client_state.h"
 #include "file_names.h"
-#include "base64.h"
 #include "sandbox.h"
 
 #ifdef _WIN32
@@ -85,10 +85,10 @@ typedef BOOL (WINAPI *tDEB)(LPVOID lpEnvironment);
 
 #endif
 
+#ifndef _WIN32
 /// Goes through a list of strings, and prints each string.
 ///
 /// \param[in] argv The list of strings that should get printed.
-#ifndef _WIN32
 static void debug_print_argv(const std::list<std::string>& argv) {
     msg_printf(0, MSG_INFO, "[task_debug] Arguments:");
     int count = 0;
@@ -104,7 +104,7 @@ static void debug_print_argv(const std::list<std::string>& argv) {
 /// Make a unique key for core/app shared memory segment.
 /// Windows: also create and attach to the segment.
 ///
-/// \return 0 on success, ERR_SHMEM_NAME or ERR_SHMGET on error.
+/// \return 0 on success, #ERR_SHMEM_NAME or #ERR_SHMGET on error.
 int ACTIVE_TASK::get_shmem_seg_name() {
 #ifdef _WIN32
     int i;
@@ -145,11 +145,13 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 /// This is done before starting the app,
 /// and when project prefs have changed during app execution.
 ///
-/// \return 0 on success, ERR_FOPEN if the file could not be opened.
+/// \return 0 on success, #ERR_FOPEN if the file could not be opened.
+///
+/// \todo This function was modified to use ofstream instead of boinc_fopen().
+/// This means the error checking and retry mechanisms of boinc_fopen() aren't
+/// used now. We may need to restore them. --NA
 int ACTIVE_TASK::write_app_init_file() {
     APP_INIT_DATA aid;
-    FILE *f;
-    int retval;
 
     memset(&aid, 0, sizeof(aid));
 
@@ -206,8 +208,8 @@ int ACTIVE_TASK::write_app_init_file() {
     aid.wu_cpu_time = episode_start_cpu_time;
 
     std::string init_data_path = slot_dir + std::string("/") + std::string(INIT_DATA_FILE);
-    f = boinc_fopen(init_data_path.c_str(), "w");
-    if (!f) {
+    std::ofstream f(init_data_path.c_str(), std::ios::out);
+    if (!f.is_open()) {
         msg_printf(wup->project, MSG_INTERNAL_ERROR,
             "Failed to open init file %s",
             init_data_path.c_str()
@@ -218,9 +220,8 @@ int ACTIVE_TASK::write_app_init_file() {
     aid.host_info = gstate.host_info;
     aid.global_prefs = gstate.global_prefs;
     aid.proxy_info = gstate.proxy_info;
-    retval = write_init_data_file(f, aid);
-    fclose(f);
-    return retval;
+    write_init_data_file(f, aid);
+    return 0;
 }
 
 static int make_soft_link(const PROJECT* project, const char* link_path, const char* rel_file_path) {
@@ -332,12 +333,12 @@ int ACTIVE_TASK::copy_output_files() {
 ///
 /// Current dir is top-level Synecdoche dir.
 ///
-/// Postcondition:
+/// \post
 /// - If any error occurs
-///   - ACTIVE_TASK::task_state is PROCESS_COULDNT_START
-///   - report_result_error() is called
+///   - #task_state is #PROCESS_COULDNT_START
+///   - CLIENT_STATE::report_result_error() is called
 /// - else
-///   - ACTIVE_TASK::task_state is PROCESS_EXECUTING
+///   - #task_state is #PROCESS_EXECUTING
 ///
 /// \return 0 on success, nonzero otherwise.
 int ACTIVE_TASK::start() {
@@ -794,7 +795,8 @@ error:
 }
 
 /// Resume the task if it was previously running; otherwise start it.
-/// Postcondition: "state" is set correctly.
+///
+/// \post #task_state is set correctly.
 ///
 /// \param[in] first_time Set this to true if the app
 ///                       will be started for the first time.

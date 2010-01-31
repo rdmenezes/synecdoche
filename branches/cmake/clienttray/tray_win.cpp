@@ -139,7 +139,7 @@ DWORD WINAPI CBOINCTray::DataManagementProc() {
     while (true) {
         if (!m_bClientLibraryInitialized) {
             // On Vista systems, only elevated processes can create shared memory
-            //   area's across various user sessions. In this case we need to wait
+            //   areas across various user sessions. In this case we need to wait
             //   for BOINC to create the shared memory area and then boinctray can
             //   successfully attach to it. What a PITA.
             m_bClientLibraryInitialized = IdleTrackerStartup();

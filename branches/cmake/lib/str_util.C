@@ -39,13 +39,13 @@
 
 #include "str_util.h"
 
+#include <cstdio>
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include <list>
 
 #include "error_numbers.h"
-#include "filesys.h"
 
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
@@ -103,7 +103,7 @@ size_t strlcat(char* dst, const char* src, size_t size) {
 /// \return A pointer pointing to the start of the sequence determined
 ///         by \a s2 in the string \a s1. If \a s2 cannot be found in
 ///         \a s1 NULL is returned.
-extern char* strcasestr(const char* s1, const char* s2) {
+extern const char* strcasestr(const char* s1, const char* s2) {
   char *needle, *haystack, *p=NULL;
   // Is alloca() really less likely to fail with out of memory error 
   // than strdup?
@@ -339,7 +339,7 @@ std::list<std::string> parse_command_line(const char* p) {
     }
 
     // There may be one argument left:
-    if ((state == IN_UNQUOTED_TOKEN) && ((p - start) > 1)) {
+    if ((state == IN_UNQUOTED_TOKEN) && ((p - start) >= 1)) {
         result.push_back(std::string(start, p));
     }
     return result;
@@ -404,11 +404,11 @@ void unescape_url(std::string& url) {
     url = result;
 }
 
-/// Escape an URL.
+/// Escape unsafe characters in a URL.
 ///
-/// \param[in,out] url Reference to a string containing the URL that should
-///                    get escaped.
-void escape_url(std::string& url) {
+/// \param[in,out] url The URL to escape.
+/// \return The escaped version of \a url.
+std::string escape_url(const std::string& url) {
     std::string result;
     result.reserve(url.size());
     for (std::string::const_iterator c = url.begin(); c != url.end(); ++c) {
@@ -421,7 +421,7 @@ void escape_url(std::string& url) {
             result += std::string(buf, buf + 2);
         }
     }
-    url = result;
+    return result;
 }
 
 /// Escape a URL for the project directory, cutting off the "http://",
@@ -556,35 +556,35 @@ std::string timediff_format(double diff) {
     std::ostringstream buf;
     int tdiff = static_cast<int>(diff);
 
-    int sex = tdiff % 60;
+    int secs = tdiff % 60;
     tdiff /= 60;
     if (!tdiff) {
-        buf << sex << " sec";
+        buf << secs << " sec";
         return buf.str();
     }
 
     int min = tdiff % 60;
     tdiff /= 60;
     if (!tdiff) {
-        buf << min << " min " << sex << " sec";
+        buf << min << " min " << secs << " sec";
         return buf.str();
     }
 
     int hours = tdiff % 24;
     tdiff /= 24;
     if (!tdiff) {
-        buf << hours << " hr " << min << " min " << sex << " sec";
+        buf << hours << " hr " << min << " min " << secs << " sec";
         return buf.str();
     }
 
     int days = tdiff % 7;
     tdiff /= 7;
     if (!tdiff) {
-        buf << days << " days " << hours << " hr " << min << " min " << sex << " sec";
+        buf << days << " days " << hours << " hr " << min << " min " << secs << " sec";
         return buf.str();
     }
 
-    buf << tdiff << " weeks " << days << " days " << hours << " hr " << min << " min " << sex << " sec";
+    buf << tdiff << " weeks " << days << " days " << hours << " hr " << min << " min " << secs << " sec";
     return buf.str();
 }
 
@@ -764,7 +764,7 @@ const char* network_status_string(int n) {
 /// Return a text-string description of a given reason for a rpc request.
 /// Must be kept consistent with common_defs.h
 ///
-/// \param[in] n The rpc request reason identifier for which the string should
+/// \param[in] reason The rpc request reason identifier for which the string should
 ///              be returned.
 /// \return A string containing the rpc request reason corresponding to
 ///         the rpc request reason number in \a reason.
@@ -799,7 +799,7 @@ bool NoCaseLess(const std::string& a, const std::string& b) {
     return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), case_insensitive_less());
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 /// Get a message for the last error.
 ///

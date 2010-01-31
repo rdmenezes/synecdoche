@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -167,8 +167,6 @@ void CCompletionErrorPage::OnPageChanged(wxWizardEvent& event) {
         CWizardAccountManager* wiz = dynamic_cast<CWizardAccountManager*>(GetParent());
         if (wiz->IsUpdateWizard()) {
             m_pTitleStaticCtrl->SetLabel(_("Failed to update account manager"));
-        } else if (wiz->IsRemoveWizard()) {
-            m_pTitleStaticCtrl->SetLabel(_("Failed to remove account manager"));
         } else {
             m_pTitleStaticCtrl->SetLabel(_("Failed to attach to account manager"));
         }

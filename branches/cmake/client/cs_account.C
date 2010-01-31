@@ -21,7 +21,6 @@
 
 #ifndef _WIN32
 #include "config.h"
-#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #ifdef HAVE_SYS_STAT_H
@@ -31,8 +30,11 @@
 
 #include "client_state.h"
 
-#include <algorithm>
 #include <cstring>
+
+#include <algorithm>
+#include <fstream>
+
 #include "filesys.h"
 #include "parse.h"
 #include "str_util.h"
@@ -40,7 +42,6 @@
 #include "log_flags.h"
 #include "error_numbers.h"
 #include "file_names.h"
-#include "miofile.h"
 
 /// Write account_*.xml file.
 /// NOTE: this is called only when
@@ -71,7 +72,7 @@ int PROJECT::write_account_file() const {
         fprintf(f, "    <project_name>%s</project_name>\n", project_name);
     }
     fprintf(f, "<project_preferences>\n%s</project_preferences>\n", project_prefs.c_str());
-    fprintf(f, gui_urls.c_str());
+    fprintf(f, "%s", gui_urls.c_str());
     fprintf(f, "</account>\n");
     fclose(f);
 
@@ -345,19 +346,18 @@ int CLIENT_STATE::parse_statistics_files() {
 /// Write the statistics file.
 ///
 /// \return ERR_FOPEN or ERR_RENAME on error, zero otherwise.
+/// \todo This function was modified to use ofstream instead of boinc_fopen.
+/// This means the error checking and retry mechanisms of boinc_fopen aren't
+/// used now. We may need to restore them.
 int PROJECT::write_statistics_file() const {
-    FILE* f = boinc_fopen(TEMP_STATS_FILE_NAME, "w");
-    if (!f) {
-        return ERR_FOPEN;
-    }
-
     {
-        MIOFILE mf;
-        mf.init_file(f);
-        this->write_statistics(mf);
-    }
+        std::ofstream f(TEMP_STATS_FILE_NAME, std::ios::out);
+        if (f.fail()) {
+            return ERR_FOPEN;
+        }
 
-    fclose(f);
+        this->write_statistics(f);
+    }
 
     std::string path = get_statistics_filename(master_url);
     if (boinc_rename(TEMP_STATS_FILE_NAME, path.c_str())) {
@@ -371,9 +371,9 @@ int PROJECT::write_statistics_file() const {
 /// \param[in] master_url The master URL for the project.
 /// \param[in] _auth The account key for the project specified by \a master_url.
 /// \param[in] project_name The name of the project specified by \a master_url.
-/// \param[in] attached_via_acc_mgr Set this to true if we attach to the
-///                                 project specified by \a master_url because
-///                                 of an account manager.
+/// \param[in] attached_via_acct_mgr Set this to true if we attach to the
+///                                  project specified by \a master_url because
+///                                  of an account manager.
 /// \return Zero on success, nonzero on error.
 int CLIENT_STATE::add_project(const std::string& master_url, const char* _auth, const char* project_name, bool attached_via_acct_mgr) {
     if (config.disallow_attach) {

@@ -17,8 +17,9 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "BOINCWizards.h"
 #include "WizardAttachProject.h"
+#include "BOINCWizards.h"
+
 
 #include "stdwx.h"
 #include "hyperlink.h"
@@ -42,7 +43,6 @@
 #include "AlreadyExistsPage.h"
 #include "ProxyInfoPage.h"
 #include "ProxyPage.h"
-
 
 #ifdef __WXMSW__
 EXTERN_C BOOL DetectSetupAuthenticator(LPCSTR szProjectURL, LPSTR szAuthenticator, LPDWORD lpdwSize);
@@ -434,8 +434,6 @@ void CWizardAttachProject::_ProcessCancelEvent(wxWizardEvent& event) {
  */
 
 void CWizardAttachProject::OnFinished(wxWizardEvent& event) {
-    CBOINCBaseFrame* pFrame = wxGetApp().GetFrame();
-
     if (GetAccountCreatedSuccessfully() && GetAttachedToProjectSuccessfully()) {
         HyperLink::ExecuteLink(GetProjectURL() + wxT("account_finish.php?auth=") + GetProjectAuthenticator());
     }

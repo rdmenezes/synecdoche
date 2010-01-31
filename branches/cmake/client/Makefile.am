@@ -10,7 +10,7 @@ include $(top_srcdir)/Makefile.incl
 LIBS += @CLIENTLIBS@
 
 if OS_DARWIN
-   LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa
+   LIBS += -framework IOKit -framework Foundation -framework Carbon
 endif
 
 bin_PROGRAMS = synecd switcher
@@ -32,7 +32,6 @@ synecd_SOURCES = \
     client_state.h \
     client_types.C \
     client_types.h \
-    cpp.h \
     cpu_benchmark.h \
     cpu_sched.C \
     cs_account.C \
@@ -88,7 +87,6 @@ synecd_CPPFLAGS = $(AM_CPPFLAGS) -DHARDCODED_DIRS
 synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
 
 synecddir = $(bindir)
-dist_synecd_DATA = ../curl/ca-bundle.crt
 
 switcher_SOURCES = switcher.C
 

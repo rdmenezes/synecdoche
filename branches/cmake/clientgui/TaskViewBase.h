@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ public:
     CTaskViewBase();
     CTaskViewBase(wxNotebook* pNotebook);
 
-    ~CTaskViewBase();
+    virtual ~CTaskViewBase();
 
     bool                    FireOnSaveState( wxConfigBase* pConfig );
     bool                    FireOnRestoreState( wxConfigBase* pConfig );

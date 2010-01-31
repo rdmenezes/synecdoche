@@ -15,26 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/ui/text/TestRunner.h>
+/// \defgroup tests Unit tests
 
-int main(int argc, const char* argv[])
+/// \file
+/// Unit test runner.
+
+#include <UnitTest++.h>
+
+int main()
 {
-    // Get the top level suite from the registry
-    CppUnit::TestFactoryRegistry& registry = CppUnit::TestFactoryRegistry::getRegistry();
-    CppUnit::Test *suite = registry.makeTest();
-
-    // Adds the test to the list of test to run
-    CppUnit::TextTestRunner runner;
-    runner.addTest(suite);
-
-    // Change the default outputter to a compiler error format outputter
-    runner.setOutputter(new CppUnit::CompilerOutputter(&runner.result(), std::cerr));
-
-    // Run the tests.
-    bool wasSucessful = runner.run();
-
-    // Return error code 1 if the one of test failed.
-    return wasSucessful ? 0 : 1;
+    return UnitTest::RunAllTests();
 }

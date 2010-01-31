@@ -76,7 +76,7 @@ extern CFStringRef gPathToBundleResources;
 
 static SaverState saverState = SaverState_Idle;
 // int gQuitCounter = 0;
-static long gSystemVersion = 0;
+static SInt32 gSystemVersion = 0;
 
 
 const char * CantLaunchCCMsg = "Unable to launch BOINC application.";

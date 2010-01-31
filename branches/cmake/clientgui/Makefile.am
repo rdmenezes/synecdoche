@@ -7,16 +7,16 @@ include $(top_srcdir)/Makefile.incl
 
 
 if OS_DARWIN
-   LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa -framework Security
-   mac_sources = mac/SystemMenu.m \
-                 mac/MacSysMenu.cpp \
-                 mac/Mac_GUI.cpp\
-                 mac/browser_safari.mm
+    LIBS += -framework IOKit -framework Foundation -framework ScreenSaver -framework Cocoa -framework Security
+    mac_sources = mac/SystemMenu.m \
+                  mac/MacSysMenu.cpp \
+                  mac/Mac_GUI.cpp \
+                  mac/browser_safari.mm
 
     mac_headers = mac/MacSysMenu.h
 else
-   mac_headers =
-   mac_sources = 
+    mac_headers =
+    mac_sources = 
 endif
 
 bin_PROGRAMS = synecmgr
@@ -51,14 +51,14 @@ gui_headers = \
     DlgAdvPreferencesBase.h \
     DlgAdvPreferences.h \
     DlgGenericMessage.h \
-	DlgMsgFilter.h \
+    DlgMsgFilter.h \
     DlgOptions.h \
     DlgSelectComputer.h \
     Events.h \
     hyperlink.h \
     LogBOINC.h \
     MainDocument.h \
-	MsgFilterData.h \
+    MsgFilterData.h \
     NoInternetConnectionPage.h \
     NotDetectedPage.h \
     NotFoundPage.h \
@@ -191,13 +191,13 @@ synecmgr_SOURCES = \
     DlgAdvPreferences.cpp \
     DlgAdvPreferencesBase.cpp \
     DlgGenericMessage.cpp \
-	DlgMsgFilter.cpp \
+    DlgMsgFilter.cpp \
     DlgOptions.cpp \
     DlgSelectComputer.cpp \
     hyperlink.cpp \
     LogBOINC.cpp \
     MainDocument.cpp \
-	MsgFilterData.cpp \
+    MsgFilterData.cpp \
     NoInternetConnectionPage.cpp \
     NotDetectedPage.cpp \
     NotFoundPage.cpp \

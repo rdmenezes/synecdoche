@@ -16,8 +16,6 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #endif
@@ -197,18 +195,19 @@ void CONFIG::defaults() {
     no_alt_platform = false;
     simple_gui_only = false;
     dont_contact_ref_site = false;
+    alt_platforms.clear();
     max_stdout_file_size = 0;
     max_stderr_file_size = 0;
-    alt_platforms.clear();
     report_results_immediately = false;
     start_delay = 0;
     run_apps_manually = false;
     force_auth = "default";
+    allow_multiple_clients = false;
     zero_debts = false;
 }
 
 int CONFIG::parse_options(XML_PARSER& xp) {
-    char tag[1024], path[256];
+    char tag[1024];
     bool is_tag;
     std::string s;
 

@@ -25,8 +25,6 @@
 /// At some point (when all projects have V6 apps,
 /// and all old CPDN jobs are finished) we can remove this.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #else

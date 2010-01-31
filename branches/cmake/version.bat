@@ -7,7 +7,7 @@ if x%_revision%==xexported set _revision=0
 if x%_revision%==x set _revision=0
 
 rem Create new version string
-echo extern const char* SYNEC_SVN_VERSION = "%_revision%"; > %1.tmp
+echo const char* SYNEC_SVN_VERSION = "%_revision%"; > %1.tmp
 
 rem Read and compare the old and the new version string.
 rem If they are different replace the old one by the new string

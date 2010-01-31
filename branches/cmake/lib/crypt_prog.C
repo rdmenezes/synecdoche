@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -76,6 +77,7 @@ unsigned int random_int() {
         die("can't open /dev/random\n");
     }
     fread(&n, sizeof(n), 1, f);
+    fclose(f);
 #endif
     return n;
 }

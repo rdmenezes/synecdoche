@@ -6,17 +6,13 @@ AUTOMAKE_OPTIONS = foreign
 ## make sure rebuilding uses the right aclocal-switches
 ACLOCAL_AMFLAGS = -I m4
 
-API_SUBDIRS = lib
-
-CLIENT_SUBDIRS = client # client/scripts
-
 if BUILD_CLIENTGUI
    CLIENTGUI_SUBDIRS = clientgui clientgui/res #locale/client 
 endif
 
 # ORDER MATTERS below.  One must build dependencies FIRST, then things
 # that depend on them later
-SUBDIRS = $(API_SUBDIRS) $(CLIENT_SUBDIRS) $(CLIENTGUI_SUBDIRS) tests
+SUBDIRS = lib client $(CLIENTGUI_SUBDIRS) tests
 
 # Putting a directory name recursively copies the entire contents - the
 # dist-hook below gets rid of SVN directories.
@@ -28,7 +24,6 @@ EXTRA_DIST =   \
 
 dist-hook:
 	rm -rf `find $(distdir) -name .backup -prune -o -name '*~' -o -name .svn`
-#	cd $(distdir) && ./_autosetup
 
 svnversion.cpp: version.sh
 	$(srcdir)/version.sh svnversion.cpp $(top_srcdir)
@@ -36,5 +31,12 @@ svnversion.cpp: version.sh
 BUILT_SOURCES = svnversion.cpp
 CLEANFILES = svnversion.cpp
 
-.PHONY: svnversion.cpp
+.PHONY: svnversion.cpp docs ctags
 
+docs:
+	doxygen Doxyfile 2>&1 | grep -v 'Unsupported xml/html tag'
+
+tags: ctags
+
+ctags:
+	ctags -R --c++-kinds=+p --fields=+iaS --extra=+q $(SUBDIRS)

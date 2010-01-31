@@ -201,6 +201,7 @@ class CDlgAdvPreferencesBase : public wxDialog
     
     public:
         CDlgAdvPreferencesBase( wxWindow* parent, int id = -1, wxString title = wxT(""), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 547,526 ), int style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+        virtual ~CDlgAdvPreferencesBase();
     
 };
 

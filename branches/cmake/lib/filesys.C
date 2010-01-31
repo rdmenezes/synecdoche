@@ -240,9 +240,8 @@ DirScanner::DirScanner(const std::string& path) {
 
 /// Scan through a directory and return the next file name in it.
 ///
-/// \param[out] p Reference to a buffer that will receive the name of the
+/// \param[out] s Reference to a buffer that will receive the name of the
 ///               next file.
-/// \param[in,out] dirp Pointer retrieved from a call to dir_open.
 /// \return True on success, false if there are no files left.
 bool DirScanner::scan(std::string& s) {
 #ifdef _WIN32
@@ -864,8 +863,8 @@ std::string relative_to_absolute(const std::string& relname) {
 ///                 filesystem for which the total and free space should be
 ///                 calculated.
 /// \return Always returns Zero.
-int get_filesystem_info(double& total_space, double& free_space, const char* path) {
 #ifdef _WIN32
+int get_filesystem_info(double& total_space, double& free_space, const char* SYNEC_UNUSED(path)) {
     std::string cwd = boinc_getcwd();
     FreeFn pGetDiskFreeSpaceEx;
     pGetDiskFreeSpaceEx = (FreeFn)GetProcAddress(GetModuleHandle("kernel32.dll"), "GetDiskFreeSpaceExA");
@@ -891,6 +890,7 @@ int get_filesystem_info(double& total_space, double& free_space, const char* pat
         total_space = (double)dwTotalClusters * dwSectPerClust * dwBytesPerSect;
     }
 #else
+int get_filesystem_info(double& total_space, double& free_space, const char* path) {
 #ifdef STATFS
     struct STATFS fs_info;
 

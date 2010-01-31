@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<!--
+  This file is part of Synecdoche.
+  http://synecdoche.googlecode.com/
+  Copyright (C) 2009 David Barnard
+
+  Synecdoche is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Synecdoche is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="synecd.exe" Guid="B7A79CA7-7CEA-46B7-83E5-42BAFEE6D8B2">
+        <File Id="synecd.exe" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="synecmgr.exe" Guid="7EC5D195-4058-42E4-9810-ADDACF4C1B3E">
+        <File Id="synecmgr.exe" KeyPath="yes" >
+          <Shortcut Id="StartMenuShortcut" Directory="SynecdocheStartMenu" Name="Synecdoche Manager"
+                    ShortName="Manager"
+                    WorkingDirectory='INSTALLDIR' Icon="synecicon.exe" IconIndex="0" Advertise="yes"
+                    Description="Monitor and control Synecdoche while it runs" />
+        </File>
+        <RemoveFolder Id="RemoveStartMenuFolder" Directory="SynecdocheStartMenu" On="uninstall" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="syneccmd.exe" Guid="7FC95F4C-4DDD-48A0-82B6-1C68990DFC45">
+        <File Id="syneccmd.exe" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="idlemon.exe" Guid="F12B480F-68AA-4071-8C97-6948E297F964">
+        <File Id="idlemon.exe" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+  
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="synecdoche.dll" Guid="1C7478C8-EAB4-447E-8EA5-CF458539A948">
+        <File Id="synecdoche.dll" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="synecdoche.scr" Guid="2270EDCD-B9E8-4FCF-B2D5-42264AC687CE">
+        <File Id="synecdoche.scr" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="libcurl.dll" Guid="F700B5E2-27B1-4BA5-A08A-D8AC6934BFAA">
+        <File Id="libcurl.dll" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="libeay32.dll" Guid="54F4F7DE-6950-4A89-9B81-F4F565678255">
+        <File Id="libeay32.dll" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="ssleay32.dll" Guid="6C0E00BB-45FD-4724-8430-E7A82873A646">
+        <File Id="ssleay32.dll" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="zlib1.dll" Guid="1AC231E9-28D4-462B-9CEC-00405CAF2E75">
+        <File Id="zlib1.dll" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="cabundle.crt" Guid="6C8C2527-23DA-4F49-ADBE-DBC0DD8780A6">
+        <File Id="cabundle.crt" Name="ca-bundle.crt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+
+
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="COPYING.txt" Guid="7A36F66D-DC78-4796-8F89-9704CDE0134E">
+        <File Id="COPYING.txt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="COPYING.LESSER.txt" Guid="D73A3F03-C548-41A5-BDB0-D0AF54B0ED4C">
+        <File Id="COPYING.LESSER.txt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="COPYRIGHT.txt" Guid="15273198-F3E6-4DF8-9ADB-F895037AA576">
+        <File Id="COPYRIGHT.txt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="NEWS.txt" Guid="759E8BF3-B8CD-45C7-91C0-023CF7694B21">
+        <File Id="NEWS.txt" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR" FileSource="SourceDir">
+      <Component Id="all_projects_list.xml" Guid="8C6ED157-4024-447D-880A-E18EB45D8528">
+        <File Id="all_projects_list.xml" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+</Wix>

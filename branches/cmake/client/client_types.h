@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -113,8 +113,8 @@ public:
     void reset();
     int set_permissions();
     int parse(MIOFILE& in, bool from_server);
-    int write(MIOFILE& out, bool to_server) const;
-    int write_gui(MIOFILE& out) const;
+    void write(std::ostream& out, bool to_server) const;
+    void write_gui(std::ostream& out) const;
     int delete_file();      ///< Attempt to delete the underlying file.
     const char* get_init_url(bool is_upload);
     const char* get_next_url(bool is_upload);
@@ -154,7 +154,7 @@ public:
 
 public:
     int parse(MIOFILE& in);
-    int write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
 };
 typedef std::vector<FILE_REF> FILE_REF_VEC;
 
@@ -195,7 +195,7 @@ public:
     WORKUNIT(){}
     ~WORKUNIT(){}
     int parse(MIOFILE& in);
-    int write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
     bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string& str) const;
     void clear_errors();
@@ -318,9 +318,6 @@ public:
     /// Send the list of permanent files associated with the project
     /// in the next scheduler reply.
     bool send_file_list;
-
-    int send_time_stats_log;  ///< If nonzero, send time stats log from that point on
-    int send_job_log; ///< if nonzero, send this project's job log from that point on
     /// @}
 
     bool suspended_via_gui;
@@ -345,7 +342,7 @@ public:
     int parse_project_files(MIOFILE& in, bool delete_existing_symlinks);
 
     /// Write the XML representation of the project files into a file.
-    void write_project_files(MIOFILE& out) const;
+    void write_project_files(std::ostream& out) const;
 
     /// Install pointers from FILE_REFs to FILE_INFOs for project files.
     void link_project_files(bool recreate_symlink_files);
@@ -497,11 +494,11 @@ public:
 
     int parse_account_file();
     int parse_state(MIOFILE& in);
-    int write_state(MIOFILE& out, bool gui_rpc=false) const;
+    void write_state(std::ostream& out, bool gui_rpc=false) const;
 
     std::vector<DAILY_STATS> statistics; ///< Statistics of the last x days.
     int parse_statistics(FILE* in);
-    int write_statistics(MIOFILE& out, bool gui_rpc=false) const;
+    void write_statistics(std::ostream& out, bool gui_rpc=false) const;
 
     /// Write the statistics file.
     int write_statistics_file() const;
@@ -517,7 +514,7 @@ public:
     PROJECT* project;
 
     int parse(MIOFILE& in);
-    int write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
 };
 
 class APP_VERSION {
@@ -542,7 +539,7 @@ public:
     APP_VERSION(){}
     ~APP_VERSION(){}
     int parse(MIOFILE& in);
-    int write(MIOFILE& out) const;
+    void write(std::ostream& out) const;
     bool had_download_failure(int& failnum) const;
     void get_file_errors(std::string& str);
     void clear_errors();
@@ -595,6 +592,7 @@ public:
 
 private:
     int _state;                  ///< State of this result: see lib/common_defs.h
+    double received_time; ///< when we got this from server
 
 public:
     RESULT(){}
@@ -603,8 +601,8 @@ public:
     int parse_server(MIOFILE&);
     int parse_state(MIOFILE&);
     int parse_name(FILE* in, const char* end_tag);
-    int write(MIOFILE& out, bool to_server) const;
-    int write_gui(MIOFILE& out) const;
+    void write(std::ostream& out, bool to_server) const;
+    void write_gui(std::ostream& out) const;
     bool is_upload_done() const;    ///< files uploaded?
     void clear_uploaded_flags();
     const FILE_REF* lookup_file(const FILE_INFO* fip) const;
@@ -613,7 +611,6 @@ public:
     /// Called only for results with no active task
     /// (otherwise you need to abort the active task).
     void abort_inactive(int status);
-    void append_log_record(ACTIVE_TASK& at);
 
     inline int state() const { return _state; }
     void set_state(int val, const char* where);
@@ -644,6 +641,12 @@ public:
 
     /// Get the name of this result.
     std::string get_name() const;
+
+    /// Get the time when this result was received from the server.
+    double get_received_time() const;
+    
+    /// Set the time when this result was received from the server.
+    void set_received_time(double received_time);
 
     // temporaries used in CLIENT_STATE::rr_simulation():
     double rrsim_cpu_left;

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -49,15 +49,19 @@
 #include <fcntl.h>
 #endif
 
+#endif
+
+#include "app.h"
+
 #include <cctype>
 #include <ctime>
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
 
-#endif
+#include <ostream>
 
-#include "app.h"
+using std::string;
 
 #include "client_state.h"
 #include "client_types.h"
@@ -72,6 +76,7 @@
 #include "client_msgs.h"
 #include "procinfo.h"
 #include "sandbox.h"
+#include "xml_write.h"
 
 /// If we send app <abort> request, wait this long before killing it.
 /// This gives it time to download symbol files (which can be several MB)
@@ -300,7 +305,7 @@ bool ACTIVE_TASK_SET::poll() {
     process_control_poll();
     get_memory_usage();
     action |= check_rsc_limits_exceeded();
-    action |= get_msgs();
+    get_msgs();
     for (i=0; i<active_tasks.size(); i++) {
         ACTIVE_TASK* atp = active_tasks[i];
         if (atp->task_state() == PROCESS_ABORT_PENDING) {
@@ -325,7 +330,7 @@ bool ACTIVE_TASK_SET::poll() {
 /// Move a trickle file from the slot directory to the project directory.
 /// If moving the file files it will be deleted.
 ///
-/// \return Zero on success, ERR_RENAME on error.
+/// \return Zero on success, #ERR_RENAME on error.
 int ACTIVE_TASK::move_trickle_file() {
     std::string project_dir = get_project_dir(result->project);
 
@@ -344,7 +349,7 @@ int ACTIVE_TASK::move_trickle_file() {
     return 0;
 }
 
-/// size of output files and files in slot dir
+/// Disk used by output files and temp files of this task.
 int ACTIVE_TASK::current_disk_usage(double& size) const {
     double x;
     int retval;
@@ -414,97 +419,62 @@ bool ACTIVE_TASK_SET::slot_taken(int slot) const {
 // <active_task_state> is here for the benefit of 3rd-party software
 // that reads the client state file
 //
-int ACTIVE_TASK::write(MIOFILE& fout) const {
-    fout.printf(
-        "<active_task>\n"
-        "    <project_master_url>%s</project_master_url>\n"
-        "    <result_name>%s</result_name>\n"
-        "    <active_task_state>%d</active_task_state>\n"
-        "    <app_version_num>%d</app_version_num>\n"
-        "    <slot>%d</slot>\n"
-        "    %s\n"
-        "    <checkpoint_cpu_time>%f</checkpoint_cpu_time>\n"
-        "    <fraction_done>%f</fraction_done>\n"
-        "    <current_cpu_time>%f</current_cpu_time>\n"
-        "    <swap_size>%f</swap_size>\n"
-        "    <working_set_size>%f</working_set_size>\n"
-        "    <working_set_size_smoothed>%f</working_set_size_smoothed>\n"
-        "    <page_fault_rate>%f</page_fault_rate>\n"
-        "    <stats_mem>%f</stats_mem>\n"
-        "    <stats_page>%f</stats_page>\n"
-        "    <stats_pagefault_rate>%f</stats_pagefault_rate>\n"
-        "    <stats_disk>%f</stats_disk>\n"
-        "    <stats_checkpoint>%d</stats_checkpoint>\n",
-        result->project->get_master_url().c_str(),
-        result->name,
-        task_state(),
-        app_version->version_num,
-        slot,
-        (full_init_done) ? "<full_init_done/>" : "",
-        checkpoint_cpu_time,
-        fraction_done,
-        current_cpu_time,
-        procinfo.swap_size,
-        procinfo.working_set_size,
-        procinfo.working_set_size_smoothed,
-        procinfo.page_fault_rate,
-        stats_mem,
-        stats_page,
-        stats_pagefault_rate,
-        stats_disk,
-        stats_checkpoint
-    );
-    fout.printf("</active_task>\n");
-    return 0;
+void ACTIVE_TASK::write(std::ostream& out) const {
+    out << "<active_task>\n"
+        << XmlTag<string>("project_master_url", result->project->get_master_url())
+        << XmlTag<char*> ("result_name",        result->name)
+        << XmlTag<int>   ("active_task_state",  task_state())
+        << XmlTag<int>   ("app_version_num",    app_version->version_num)
+        << XmlTag<int>   ("slot", slot)
+    ;
+    if (full_init_done) {
+        out << "<full_init_done/>\n";
+    }
+    out << XmlTag<double>("checkpoint_cpu_time",       checkpoint_cpu_time)
+        << XmlTag<double>("fraction_done",             fraction_done)
+        << XmlTag<double>("current_cpu_time",          current_cpu_time)
+        << XmlTag<double>("swap_size",                 procinfo.swap_size)
+        << XmlTag<double>("working_set_size",          procinfo.working_set_size)
+        << XmlTag<double>("working_set_size_smoothed", procinfo.working_set_size_smoothed)
+        << XmlTag<double>("page_fault_rate",           procinfo.page_fault_rate)
+        << XmlTag<double>("stats_mem",                 stats_mem)
+        << XmlTag<double>("stats_page",                stats_page)
+        << XmlTag<double>("stats_pagefault_rate",      stats_pagefault_rate)
+        << XmlTag<double>("stats_disk",                stats_disk)
+        << XmlTag<int>   ("stats_checkpoint",          stats_checkpoint)
+    ;
+    out << "</active_task>\n";
 }
 
-int ACTIVE_TASK::write_gui(MIOFILE& fout) const {
-    fout.printf(
-        "<active_task>\n"
-        "    <active_task_state>%d</active_task_state>\n"
-        "    <app_version_num>%d</app_version_num>\n"
-        "    <slot>%d</slot>\n"
-        "    <scheduler_state>%d</scheduler_state>\n"
-        "    <checkpoint_cpu_time>%f</checkpoint_cpu_time>\n"
-        "    <fraction_done>%f</fraction_done>\n"
-        "    <current_cpu_time>%f</current_cpu_time>\n"
-        "    <swap_size>%f</swap_size>\n"
-        "    <working_set_size>%f</working_set_size>\n"
-        "    <working_set_size_smoothed>%f</working_set_size_smoothed>\n"
-        "    <page_fault_rate>%f</page_fault_rate>\n"
-        "%s"
-        "%s",
-        task_state(),
-        app_version->version_num,
-        slot,
-        scheduler_state,
-        checkpoint_cpu_time,
-        fraction_done,
-        current_cpu_time,
-        procinfo.swap_size,
-        procinfo.working_set_size,
-        procinfo.working_set_size_smoothed,
-        procinfo.page_fault_rate,
-        too_large?"   <too_large/>\n":"",
-        needs_shmem?"   <needs_shmem/>\n":""
-    );
+void ACTIVE_TASK::write_gui(std::ostream& out) const {
+    out << "<active_task>\n"
+        << XmlTag<int>   ("active_task_state",         task_state())
+        << XmlTag<int>   ("app_version_num",           app_version->version_num)
+        << XmlTag<int>   ("slot",                      slot)
+        << XmlTag<int>   ("scheduler_state",           scheduler_state)
+        << XmlTag<double>("checkpoint_cpu_time",       checkpoint_cpu_time)
+        << XmlTag<double>("fraction_done",             fraction_done)
+        << XmlTag<double>("current_cpu_time",          current_cpu_time)
+        << XmlTag<double>("swap_size",                 procinfo.swap_size)
+        << XmlTag<double>("working_set_size",          procinfo.working_set_size)
+        << XmlTag<double>("working_set_size_smoothed", procinfo.working_set_size_smoothed)
+        << XmlTag<double>("page_fault_rate",           procinfo.page_fault_rate)
+    ;
+    if (too_large) {
+        out << "   <too_large/>\n";
+    }
+    if (needs_shmem) {
+        out << "   <needs_shmem/>\n";
+    }
     if (strlen(app_version->graphics_exec_path)) {
-        fout.printf(
-            "   <graphics_exec_path>%s</graphics_exec_path>\n"
-            "   <slot_path>%s</slot_path>\n",
-            app_version->graphics_exec_path,
-            slot_path.c_str()
-        );
+        out << XmlTag<char*>("graphics_exec_path", app_version->graphics_exec_path);
+        out << XmlTag<string>("slot_path", slot_path);
     }
     if (supports_graphics() && !gstate.disable_graphics) {
-        fout.printf(
-            "   <supports_graphics/>\n"
-            "   <graphics_mode_acked>%d</graphics_mode_acked>\n",
-            graphics_mode_acked
-        );
+        out << "   <supports_graphics/>\n";
+        out << XmlTag<int>("graphics_mode_acked", graphics_mode_acked);
     }
-    fout.printf("</active_task>\n");
-    return 0;
+    out << "</active_task>\n";
 }
 
 int ACTIVE_TASK::parse(MIOFILE& fin) {
@@ -609,17 +579,12 @@ std::string ACTIVE_TASK::get_slot_dir() const {
 }
 
 /// Write XML information about this active task set
-int ACTIVE_TASK_SET::write(MIOFILE& fout) const {
-    unsigned int i;
-    int retval;
-
-    fout.printf("<active_task_set>\n");
-    for (i=0; i<active_tasks.size(); i++) {
-        retval = active_tasks[i]->write(fout);
-        if (retval) return retval;
+void ACTIVE_TASK_SET::write(std::ostream& out) const {
+    out << "<active_task_set>\n";
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        active_tasks[i]->write(out);
     }
-    fout.printf("</active_task_set>\n");
-    return 0;
+    out << "</active_task_set>\n";
 }
 
 /// Parse XML information about an active task set
@@ -839,5 +804,6 @@ void ACTIVE_TASK_SET::init() {
         ACTIVE_TASK* atp = active_tasks[i];
         atp->init(atp->result);
         atp->scheduler_state = CPU_SCHED_PREEMPTED;
+        atp->read_task_state_file();
     }
 }

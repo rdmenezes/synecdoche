@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -15,6 +16,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "browser.h"
 
 #if defined(_WIN32) && !defined(__STDWX_H__) && !defined(_BOINC_WIN_) && !defined(_AFX_STDAFX_H_)
 #include "boinc_win.h"
@@ -26,11 +28,12 @@
 #include <time.h>
 #endif
 
+#include <cstring>
+
 #include "error_numbers.h"
 #include "mfile.h"
 #include "miofile.h"
 #include "str_util.h"
-#include "browser.h"
 
 
 //
@@ -339,6 +342,7 @@ bool detect_setup_authenticator_mozilla_generic(
     // user selects a different profile at startup the default
     // profile flag is changed at startup to the new profile.
     if (mps.profiles.size() == 0) {
+        fclose(pf);
         return retval;          // something is very wrong, don't
                                 // risk a crash
     }
@@ -378,7 +382,7 @@ bool detect_setup_authenticator_mozilla_generic(
     }
 
     // cleanup
-    if (cf) fclose(pf);
+    if (cf) fclose(cf);
     if (pf) fclose(pf);
 
     return retval;

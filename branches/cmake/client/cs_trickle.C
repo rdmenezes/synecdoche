@@ -16,13 +16,15 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "cpp.h"
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
 #include "config.h"
-#include <sstream>
 #endif
+
+#include <sstream>
+
+#include "client_state.h"
 
 #include "error_numbers.h"
 #include "file_names.h"
@@ -31,7 +33,7 @@
 #include "util.h"
 #include "str_util.h"
 #include "sandbox.h"
-#include "client_state.h"
+#include "miofile.h"
 
 /// Scan project dir for file names of the form trickle_up_X_Y
 /// where X is a result name and Y is a timestamp.
@@ -39,10 +41,10 @@
 ///
 /// \param[in] project Pointer to a PROJECT instance for the project for which
 ///                    trickle files should be read.
-/// \param[in] f Pointer to a file that should receive the xml-version of the
-///              content of the trickle files.
+/// \param[in] out The output stream that should receive the XML version of the
+///                content of the trickle files.
 /// \return Always returns zero.
-int CLIENT_STATE::read_trickle_files(const PROJECT* project, FILE* f) {
+int CLIENT_STATE::read_trickle_files(const PROJECT* project, std::ostream& out) {
     std::string project_dir = get_project_dir(project);
 
     DirScanner ds(project_dir);
@@ -75,16 +77,13 @@ int CLIENT_STATE::read_trickle_files(const PROJECT* project, FILE* f) {
         if (read_file_malloc(path.c_str(), file_contents)) {
             continue;
         }
-        fprintf(f,
+        out <<
             "  <msg_from_host>\n"
-            "      <result_name>%s</result_name>\n"
-            "      <time>%d</time>\n"
-            "%s\n"
-            "  </msg_from_host>\n",
-            result_name.c_str(),
-            (int)t,
-            file_contents
-        );
+            "      <result_name>" << result_name << "</result_name>\n"
+            "      <time>" << int(t) << "</time>\n"
+            << file_contents <<
+            "  </msg_from_host>\n"
+        ;
         free(file_contents);
 
         // Append .sent to filename, so we'll know which ones to delete later.

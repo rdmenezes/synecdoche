@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -30,6 +30,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <netdb.h>
 #include <cstdio>
 #include <unistd.h>
 #include <cstdlib>
@@ -46,6 +47,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "miofile.h"
+#include "mfile.h"
 #include "md5_file.h"
 #include "network.h"
 #include "common_defs.h"
@@ -238,11 +240,14 @@ int RPC_CLIENT::authorize(const char* passwd) {
             break;
         }
     }
+    
     if (!found) {
         //fprintf(stderr, "Nonce not found\n");
         return ERR_AUTHENTICATOR;
     }
 
+    free(rpc.mbuf);
+    
     std::ostringstream input;
     input << nonce << passwd;
     std::string nonce_hash = md5_string(input.str());
@@ -321,17 +326,11 @@ int RPC::do_rpc(const char* req) {
 
     //fprintf(stderr, "RPC::do_rpc rpc_client->sock = '%d'", rpc_client->sock);
     if (rpc_client->sock == -1) return ERR_CONNECT;
-#ifdef DEBUG
-    puts(req);
-#endif
     retval = rpc_client->send_request(req);
     if (retval) return retval;
     retval = rpc_client->get_reply(mbuf);
     if (retval) return retval;
     fin.init_buf_read(mbuf);
-#ifdef DEBUG
-    puts(mbuf);
-#endif
     return 0;
 }
 

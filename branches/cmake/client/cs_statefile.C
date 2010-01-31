@@ -21,12 +21,16 @@
 #include "config.h"
 #endif
 
+#include "client_state.h"
+
 #include <cstring>
 #include <errno.h>
 
-#include "client_state.h"
+#include <fstream>
+#include <ostream>
 
 #include "miofile.h"
+#include "mfile.h"
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"
@@ -36,6 +40,7 @@
 #include "client_msgs.h"
 #include "pers_file_xfer.h"
 #include "version.h"
+#include "xml_write.h"
 
 #define MAX_STATE_FILE_WRITE_ATTEMPTS 2
 
@@ -440,8 +445,7 @@ int CLIENT_STATE::parse_state_file() {
 
 /// Write the client_state.xml file.
 int CLIENT_STATE::write_state_file() const {
-    MFILE mf;
-    int retval, ret1, ret2, attempt;
+    int retval, attempt;
 #ifdef _WIN32
     char win_error_msg[4096];
 #endif
@@ -454,37 +458,32 @@ int CLIENT_STATE::write_state_file() const {
                 "[statefile_debug] CLIENT_STATE::write_state_file(): Writing state file"
             );
         }
-#ifdef _WIN32
-        retval = mf.open(STATE_FILE_NEXT, "wc");
-#else
-        retval = mf.open(STATE_FILE_NEXT, "w");
-#endif
-        if (retval) {
-            if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
-                msg_printf(0, MSG_INTERNAL_ERROR,
-                    "Can't open %s: %s",
-                    STATE_FILE_NEXT, boincerror(retval)
-                );
+
+        {
+            std::ofstream file(STATE_FILE_NEXT, std::ios::out);
+            if (!file.is_open()) {
+                if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
+                    msg_printf(0, MSG_INTERNAL_ERROR,
+                        "Can't open %s; errno: %s",
+                        STATE_FILE_NEXT, strerror(errno)
+                    );
+                }
+                if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
+                return ERR_FOPEN;
             }
-            if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
-            return ERR_FOPEN;
-        }
-        MIOFILE miof;
-        miof.init_mfile(&mf);
-        ret1 = write_state(miof);
-        ret2 = mf.close();
-        if (ret1) {
-            if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
-                msg_printf(NULL, MSG_INTERNAL_ERROR,
-                    "Couldn't write state file: %s", boincerror(retval)
-                );
+            file.exceptions(std::ios::badbit | std::ios::failbit);
+            try {
+                write_state(file);
+                file.close();
+            } catch (std::ios::failure& e) {
+                if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
+                    msg_printf(NULL, MSG_INTERNAL_ERROR,
+                        "Couldn't write state file: %s", strerror(errno)
+                    );
+                }
+                if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
+                return ERR_FWRITE; //somewhat appropriate...
             }
-            if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
-            return ret1;
-        }
-        if (ret2) {
-            if (attempt < MAX_STATE_FILE_WRITE_ATTEMPTS) continue;
-            return ret2;
         }
 
         // only attempt to rename the current state file if it exists.
@@ -537,7 +536,7 @@ int CLIENT_STATE::write_state_file() const {
         }
         if (!retval) break;     // Success!
 
-         if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
+        if ((attempt == MAX_STATE_FILE_WRITE_ATTEMPTS) || log_flags.statefile_debug) {
 #ifdef _WIN32
             if (retval == ERROR_ACCESS_DENIED) {
                 msg_printf(0, MSG_USER_ERROR,
@@ -571,81 +570,63 @@ int CLIENT_STATE::write_state_file() const {
     return 0;
 }
 
-int CLIENT_STATE::write_state(MIOFILE& f) const {
-    unsigned int i, j;
-    int retval;
+void CLIENT_STATE::write_state(std::ostream& out) const {
+    out << "<client_state>\n";
 
-    f.printf("<client_state>\n");
-    retval = host_info.write(f, false);
-    if (retval) return retval;
-    retval = time_stats.write(f, false);
-    if (retval) return retval;
-    retval = net_stats.write(f);
-    if (retval) return retval;
-    for (j=0; j<projects.size(); j++) {
-        const PROJECT* p = projects[j];
-        retval = p->write_state(f);
-        if (retval) return retval;
+    host_info.write(out, false);
+    time_stats.write(out, false);
+    net_stats.write(out);
+    for (size_t pn=0; pn<projects.size(); pn++) {
+        const PROJECT* p = projects[pn];
+        size_t i;
+        p->write_state(out);
         for (i=0; i<apps.size(); i++) {
             if (apps[i]->project == p) {
-                retval = apps[i]->write(f);
-                if (retval) return retval;
+                apps[i]->write(out);
             }
         }
         for (i=0; i<file_infos.size(); i++) {
             if (file_infos[i]->project == p) {
-                retval = file_infos[i]->write(f, false);
-                if (retval) return retval;
+                file_infos[i]->write(out, false);
             }
         }
         for (i=0; i<app_versions.size(); i++) {
             if (app_versions[i]->project == p) {
-                app_versions[i]->write(f);
+                app_versions[i]->write(out);
             }
         }
         for (i=0; i<workunits.size(); i++) {
-            if (workunits[i]->project == p) workunits[i]->write(f);
+            if (workunits[i]->project == p) workunits[i]->write(out);
         }
         for (i=0; i<results.size(); i++) {
-            if (results[i]->project == p) results[i]->write(f, false);
+            if (results[i]->project == p) results[i]->write(out, false);
         }
-        p->write_project_files(f);
+        p->write_project_files(out);
     }
-    active_tasks.write(f);
-    f.printf(
-        "<platform_name>%s</platform_name>\n"
-        "<core_client_major_version>%d</core_client_major_version>\n"
-        "<core_client_minor_version>%d</core_client_minor_version>\n"
-        "<core_client_release>%d</core_client_release>\n"
-        "<user_run_request>%d</user_run_request>\n"
-        "<user_network_request>%d</user_network_request>\n"
-        "%s",
-        get_primary_platform().c_str(),
-        core_client_version.major,
-        core_client_version.minor,
-        core_client_version.release,
-        run_mode.get_perm(),
-        network_mode.get_perm(),
-        cpu_benchmarks_pending?"<cpu_benchmarks_pending/>\n":""
-    );
+    active_tasks.write(out);
+    out << XmlTag<std::string>("platform_name", get_primary_platform())
+        << XmlTag<int>("core_client_major_version", core_client_version.major)
+        << XmlTag<int>("core_client_minor_version", core_client_version.minor)
+        << XmlTag<int>("core_client_release", core_client_version.release)
+        << XmlTag<int>("user_run_request", run_mode.get_perm())
+        << XmlTag<int>("user_network_request", network_mode.get_perm())
+    ;
+    if (cpu_benchmarks_pending) out << "<cpu_benchmarks_pending/>\n";
+
 #ifdef ENABLE_UPDATE_CHECK
-    f.printf(
-        "<new_version_check_time>%f</new_version_check_time>\n",
-        new_version_check_time
-    );
+    out << XmlTag<double>("new_version_check_time", new_version_check_time);
     if (!newer_version.empty()) {
-        f.printf("<newer_version>%s</newer_version>\n", newer_version.c_str());
+        out << XmlTag<std::string>("newer_version", newer_version);
     }
 #endif
-    for (i=1; i<platforms.size(); i++) {
-        f.printf("<alt_platform>%s</alt_platform>\n", platforms[i].name.c_str());
+    for (size_t i=1; i<platforms.size(); i++) {
+        out << XmlTag<std::string>("alt_platform", platforms[i].name);
     }
-    proxy_info.write(f);
+    proxy_info.write(out);
     if (strlen(main_host_venue)) {
-        f.printf("<host_venue>%s</host_venue>\n", main_host_venue);
+        out << XmlTag<const char*>("host_venue", main_host_venue);
     }
-    f.printf("</client_state>\n");
-    return 0;
+    out << "</client_state>\n";
 }
 
 /// Write the client_state.xml file if necessary.
@@ -754,87 +735,71 @@ int CLIENT_STATE::parse_app_info(PROJECT* p, FILE* in) {
     return ERR_XML_PARSE;
 }
 
-int CLIENT_STATE::write_state_gui(MIOFILE& f) const {
+void CLIENT_STATE::write_state_gui(std::ostream& out) const {
     unsigned int i, j;
-    int retval;
 
-    f.printf("<client_state>\n");
+    out << "<client_state>\n";
 
-    retval = host_info.write(f, false);
-    if (retval) return retval;
-    retval = time_stats.write(f, false);
-    if (retval) return retval;
-    retval = net_stats.write(f);
-    if (retval) return retval;
+    host_info.write(out, false);
+    time_stats.write(out, false);
+    net_stats.write(out);
 
     for (j=0; j<projects.size(); j++) {
         const PROJECT* p = projects[j];
-        retval = p->write_state(f, true);
-        if (retval) return retval;
+        p->write_state(out, true);
         for (i=0; i<apps.size(); i++) {
             if (apps[i]->project == p) {
-                retval = apps[i]->write(f);
-                if (retval) return retval;
+                apps[i]->write(out);
             }
         }
         for (i=0; i<app_versions.size(); i++) {
-            if (app_versions[i]->project == p) app_versions[i]->write(f);
+            if (app_versions[i]->project == p) app_versions[i]->write(out);
         }
         for (i=0; i<workunits.size(); i++) {
-            if (workunits[i]->project == p) workunits[i]->write(f);
+            if (workunits[i]->project == p) workunits[i]->write(out);
         }
         for (i=0; i<results.size(); i++) {
-            if (results[i]->project == p) results[i]->write_gui(f);
+            if (results[i]->project == p) results[i]->write_gui(out);
         }
     }
-    f.printf(
-        "<platform_name>%s</platform_name>\n"
-        "<core_client_major_version>%d</core_client_major_version>\n"
-        "<core_client_minor_version>%d</core_client_minor_version>\n"
-        "<core_client_release>%d</core_client_release>\n"
-        "%s"
-        "%s",
-        get_primary_platform().c_str(),
-        core_client_version.major,
-        core_client_version.minor,
-        core_client_version.release,
-        executing_as_daemon?"<executing_as_daemon/>\n":"",
-        work_fetch_no_new_work?"<work_fetch_no_new_work/>\n":""
-    );
+    out << XmlTag<std::string>("platform_name",     get_primary_platform())
+        << XmlTag<int>("core_client_major_version", core_client_version.major)
+        << XmlTag<int>("core_client_minor_version", core_client_version.minor)
+        << XmlTag<int>("core_client_release",       core_client_version.release)
+    ;
+    if (executing_as_daemon) {
+        out << "<executing_as_daemon/>\n";
+    }
+    if (work_fetch_no_new_work) {
+        out << "<work_fetch_no_new_work/>\n";
+    }
 
-    global_prefs.write(f);
+    global_prefs.write(out);
 
     if (strlen(main_host_venue)) {
-        f.printf("<host_venue>%s</host_venue>\n", main_host_venue);
+        out << XmlTag<const char*>("host_venue", main_host_venue);
     }
 
-    f.printf("</client_state>\n");
-    return 0;
+    out << "</client_state>\n";
 }
 
-int CLIENT_STATE::write_tasks_gui(MIOFILE& f) const {
-    unsigned int i;
-
-    for (i=0; i<results.size(); i++) {
+void CLIENT_STATE::write_tasks_gui(std::ostream& out) const {
+    for (size_t i=0; i<results.size(); i++) {
         const RESULT* rp = results[i];
-        rp->write_gui(f);
+        rp->write_gui(out);
     }
-    return 0;
 }
 
-int CLIENT_STATE::write_file_transfers_gui(MIOFILE& f) const {
-    unsigned int i;
+void CLIENT_STATE::write_file_transfers_gui(std::ostream& out) const {
+    out << "<file_transfers>\n";
 
-    f.printf("<file_transfers>\n");
-    for (i=0; i<file_infos.size(); i++) {
+    for (size_t i=0; i<file_infos.size(); i++) {
         const FILE_INFO* fip = file_infos[i];
         if (fip->pers_file_xfer
            || (fip->upload_when_present && fip->status == FILE_PRESENT && !fip->uploaded)
         ) {
-            fip->write_gui(f);
+            fip->write_gui(out);
         }
     }
-    f.printf("</file_transfers>\n");
-
-    return 0;
+    out << "</file_transfers>\n";
 }

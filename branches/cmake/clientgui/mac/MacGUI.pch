@@ -40,7 +40,9 @@
 // To use the wxMac Deployment build even in BOINC Manager Development builds, reverse 
 // the above steps (setting USE_DEBUG_WXMAC to 0, etc.)
 
-#define USE_DEBUG_WXMAC 0
+#ifndef USE_DEBUG_WXMAC
+# define USE_DEBUG_WXMAC 0
+#endif
  
 #define WX_PRECOMP
 

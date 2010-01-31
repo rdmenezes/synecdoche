@@ -15,8 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PREFS_
-#define _PREFS_
+#ifndef PREFS_H
+#define PREFS_H
+
+#include <iosfwd>
+#include <ctime>
 
 class MIOFILE;
 class XML_PARSER;
@@ -201,8 +204,9 @@ struct GLOBAL_PREFS {
     int parse_day(XML_PARSER& xp);
     int parse_override(XML_PARSER& xp, const char* venue, bool& found_venue, GLOBAL_PREFS_MASK& mask);
     int parse_file(const char* filename, const char* venue, bool& found_venue);
-    int write(MIOFILE& f) const;
-    int write_subset(MIOFILE& f, GLOBAL_PREFS_MASK& mask);
+    void write(std::ostream& out) const;
+    void write_subset(std::ostream& out, GLOBAL_PREFS_MASK& mask);
+    void write_day_prefs(std::ostream& out) const;
     inline double cpu_scheduling_period() {
         return cpu_scheduling_period_minutes*60;
     }

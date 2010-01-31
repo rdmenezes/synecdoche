@@ -15,35 +15,42 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestXmlParser.h"
+#include <string>
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include <UnitTest++.h>
 
 #include "lib/miofile.h"
 #include "lib/parse.h"
 
-TestXmlParser::TestXmlParser():
-    mf(),
-    xp(&mf)
+SUITE(TestXmlParser)
 {
-    ;
+    struct XmlParserFixture
+    {
+      protected:
+        MIOFILE mf;
+        XML_PARSER xp;
+
+      public:
+        XmlParserFixture():
+            mf(),
+            xp(&mf)
+        {
+            ;
+        }
+    };
+    TEST_FIXTURE(XmlParserFixture, Simple)
+    {
+        mf.init_buf_read("<root></root>");
+
+        CHECK(xp.parse_start("root"));
+
+        char tag[256];
+        bool is_tag;
+
+        CHECK_EQUAL(false, xp.get(tag, sizeof(tag), is_tag));
+        CHECK_EQUAL(true, is_tag);
+        CHECK_EQUAL("/root", std::string(tag));
+
+        CHECK_EQUAL(true, xp.get(tag, sizeof(tag), is_tag));
+    }
 }
-
-void TestXmlParser::testSimple()
-{
-    mf.init_buf_read("<root></root>");
-
-    CPPUNIT_ASSERT(xp.parse_start("root"));
-
-    char tag[256];
-    bool is_tag;
-
-    CPPUNIT_ASSERT_EQUAL(false, xp.get(tag, sizeof(tag), is_tag));
-    CPPUNIT_ASSERT_EQUAL(true, is_tag);
-    CPPUNIT_ASSERT_EQUAL(std::string("/root"), std::string(tag));
-
-    CPPUNIT_ASSERT_EQUAL(true, xp.get(tag, sizeof(tag), is_tag));
-}
-CPPUNIT_TEST_SUITE_REGISTRATION(TestXmlParser);
-

@@ -97,7 +97,7 @@ public:
     wxFlatNotebookBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxT("Flat Notebook"));
 
     /// Destructor
-    ~wxFlatNotebookBase(void);
+    virtual ~wxFlatNotebookBase(void);
 
     /// Derived class should override this function to provide the
     /// appropriate PageManager 
@@ -835,7 +835,7 @@ public:
       }
 
     /// Destructor
-     ~wxFlatNotebook(void)
+    virtual ~wxFlatNotebook(void)
       {}
 };
 

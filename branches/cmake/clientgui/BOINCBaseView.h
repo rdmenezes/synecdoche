@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 David Barnard, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2008 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -51,7 +51,7 @@ public:
     CBOINCBaseView();
     CBOINCBaseView(wxNotebook* pNotebook);
 
-    ~CBOINCBaseView();
+    virtual ~CBOINCBaseView();
 
     /// Return the name of the view.
     virtual const wxString& GetViewName();
@@ -63,7 +63,7 @@ public:
     virtual const char**    GetViewIcon();
 
     /// The rate at which the view is refreshed.
-    virtual const int       GetViewRefreshRate();
+    virtual int             GetViewRefreshRate();
 
     bool                    FireOnSaveState( wxConfigBase* pConfig );
     bool                    FireOnRestoreState( wxConfigBase* pConfig );
@@ -153,6 +153,7 @@ protected:
 
     bool                    m_bForceUpdateSelection;
     bool                    m_bIgnoreUIEvents;
+    bool                    m_bNeedSort;
     
     int                     m_iProgressColumn;
 

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -15,8 +15,6 @@
 //
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
-
-#include "cpp.h"
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -68,7 +66,7 @@ bool SCHEDULER_OP::check_master_fetch_start() {
 }
 
 /// Try to get work from eligible project with biggest long term debt.
-/// PRECONDITION: \link CLIENT_STATE::compute_work_requests compute_work_requests()\endlink has been called
+/// PRECONDITION: CLIENT_STATE::compute_work_requests has been called
 /// to fill in PROJECT::work_request
 /// and CLIENT_STATE::overall_work_fetch_urgency
 int SCHEDULER_OP::init_get_work() {
@@ -156,7 +154,7 @@ int SCHEDULER_OP::init_op_project(PROJECT* p, rpc_reason r) {
 void SCHEDULER_OP::backoff(PROJECT* p, const std::string& reason_msg) {
     if (p->master_fetch_failures >= gstate.master_fetch_retry_cap) {
         std::ostringstream buf;
-        buf << p->master_fetch_failures << "consecutive failures fetching scheduler list";
+        buf << p->master_fetch_failures << " consecutive failures fetching scheduler list";
         p->master_url_fetch_pending = true;
         p->set_min_rpc_time(gstate.now + gstate.master_fetch_interval, buf.str().c_str());
         return;
@@ -349,7 +347,6 @@ bool SCHEDULER_OP::poll() {
             state = SCHEDULER_OP_STATE_IDLE;
             cur_proj->master_url_fetch_pending = false;
             http_ops->remove(&http_op);
-            gstate.set_client_state_dirty("master URL fetch done");
             if (http_op.http_op_retval == 0) {
                 if (log_flags.sched_op_debug) {
                     msg_printf(cur_proj, MSG_INFO,
@@ -382,6 +379,7 @@ bool SCHEDULER_OP::poll() {
                 cur_proj->master_fetch_failures++;
                 backoff(cur_proj, buf);
             }
+            gstate.set_client_state_dirty("Master fetch complete");
             gstate.request_work_fetch("Master fetch complete");
             cur_proj = NULL;
             return true;
@@ -434,6 +432,7 @@ bool SCHEDULER_OP::poll() {
                 cur_proj->work_request = 0;    // don't ask again right away
             }
             cur_proj = NULL;
+            gstate.set_client_state_dirty("RPC complete");
             gstate.request_work_fetch("RPC complete");
             return true;
         }
@@ -490,8 +489,6 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
     message_ack = false;
     project_is_down = false;
     send_file_list = false;
-    send_time_stats_log = 0;
-    send_job_log = 0;
     messages.clear();
     scheduler_version = 0;
 
@@ -743,10 +740,6 @@ int SCHEDULER_REPLY::parse(FILE* in, PROJECT* project) {
             continue;
         } else if (match_tag(buf, "<request_file_list/>")) {
             send_file_list = true;
-        } else if (parse_int(buf, "<send_time_stats_log>", send_time_stats_log)){
-            continue;
-        } else if (parse_int(buf, "<send_job_log>", send_job_log)) {
-            continue;
         } else if (parse_int(buf, "<scheduler_version>", scheduler_version)) {
             continue;
         } else if (match_tag(buf, "<project_files>")) {

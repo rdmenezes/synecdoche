@@ -16,8 +16,6 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
@@ -45,7 +43,6 @@
 #include "network.h"
 #include "file_names.h"
 #include "client_msgs.h"
-#include "base64.h"
 #include "http_curl.h"
 #include "client_state.h"
 
@@ -612,20 +609,8 @@ int HTTP_OP_SET::nops() {
 }
 
 
-int HTTP_OP::set_proxy(PROXY_INFO *new_pi) {
-    pi.use_http_proxy = new_pi->use_http_proxy;
-    strcpy(pi.http_user_name, new_pi->http_user_name);
-    strcpy(pi.http_user_passwd, new_pi->http_user_passwd);
-    strcpy(pi.http_server_name, new_pi->http_server_name);
-    pi.http_server_port = new_pi->http_server_port;
-    pi.use_http_auth = new_pi->use_http_auth;
-
-    pi.use_socks_proxy = new_pi->use_socks_proxy;
-    strcpy(pi.socks5_user_name, new_pi->socks5_user_name);
-    strcpy(pi.socks5_user_passwd, new_pi->socks5_user_passwd);
-    strcpy(pi.socks_server_name, new_pi->socks_server_name);
-    pi.socks_server_port = new_pi->socks_server_port;
-    pi.socks_version = new_pi->socks_version;
+int HTTP_OP::set_proxy(const PROXY_INFO *new_pi) {
+    pi = *new_pi;
 
     return 0;
 }

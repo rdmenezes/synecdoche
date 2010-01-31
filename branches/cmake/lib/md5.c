@@ -38,10 +38,6 @@
 #include "md5.h"
 #include <string.h>
 
-#ifdef _USING_FCGI_
-#include "fcgi_stdio.h"
-#endif
-
 #ifdef TEST
 /*
  * Compile with -DTEST to create a self-contained executable test program.

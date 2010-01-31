@@ -35,7 +35,7 @@ MsgFilterData::MsgFilterData(const MsgFilterData& other) {
 
 /// Assignment operator
 ///
-/// \param[in] other Object to assign from
+/// \param[in] rhs Object to assign from
 /// \return A reference to *this
 MsgFilterData& MsgFilterData::operator=(const MsgFilterData& rhs) {
     if (this == &rhs) {  // handle self assignment

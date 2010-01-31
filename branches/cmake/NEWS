@@ -1,0 +1,110 @@
+Synecdoche 0.2.0
+================
+
+ * Removed "misfeature" that silently enables network activity if a user does
+   something that needs the network, like updating a project.
+
+ * The manager now supports filtering the messages tab by project.
+
+ * The API code was removed. We didn't support it anyway.
+
+ * The Unix build system was cleaned up further:
+   - configure now doesn't test for OpenGL (it was only used in API).
+   - libcurl isn't uselessly linked to the manager anymore.
+
+ * Added unit tests for the code in lib. Client code is currently not tested,
+   because it would need significant refactoring to be "testable".
+
+ * The Mac Xcode project has been cleaned up significantly internally.
+
+ * As usual, quite a lot of code cleanup, and bug fixes ported from BOINC.
+
+
+Synecdoche 0.1.2
+================
+
+ * Fixed a bug when handling command line arguments of project apps, that
+   caused workunit failure at startup for AQUA@Home and the AP26 subproject
+   of Primegrid.
+
+ * Forced optimization switches were removed from the makefiles.
+
+ * The configure script now properly follows --with-libcurl=PATH
+
+ * The Mac installer now installs the SSL certificate bundle, needed to connect
+   to World Community Grid, which was accidentally left out in 0.1.1.
+
+ * The detach button is disabled if multiple projects are selected, as a
+   temporary workaround for a serious bug when detaching multiple projects.
+   The bug will be properly fixed in a future version.
+
+
+Synecdoche 0.1.1
+================
+
+Initial release. What follows is the list of changes done since forking
+BOINC 6.2.
+
+[General]
+
+ * Lots of code cleanup, including removal of many fixed-size buffers in favor
+   of std::string.
+
+ * Existing code documentation converted to Doxygen, and some more added.
+
+ * All server code was removed from the repository. The application API is not
+   maintained, and will also be removed eventually.
+
+ * Workarounds and special code for Win9x was removed. BOINC recently removed it
+   too (in 6.8).
+
+ * All special code for OS/2 was removed.
+
+ * The Windows installer was removed. We will make a new one in a future
+   version.
+
+ * There is a new Mac installer made with Iceberg.
+
+ * The Unix build system was improved. 'make dist' now produces a usable
+   tarball, 'make install' works with staging (it used to try installing things
+   into /etc no matter what).
+
+
+[GUI]
+
+ * Separated suspend/resume and allow new tasks / no more tasks buttons. This
+   allows using these operations on multiple selections.
+
+ * In the attach project wizard, the list of projects is sorted by name,
+   instead of using random order. BOINC recently changed this too (6.8?).
+
+ * When aborting multiple tasks at once, the confirmation dialog now has a
+   "Yes to all" button, instead of having to click "Yes" for every aborted task.
+
+ * Removed the accessible view. It was essentially the same as the advanced
+   view.
+
+
+[Core client]
+
+ * The --attach_project, --detach_project, etc. switches from the core client
+   were removed. They are supposed to be for debugging, but they confuse users
+   who think that's the correct way to attach new projects.
+
+ * A strict verification of input files is done before starting tasks.
+   NOTE: this causes problems with POEM@Home, because of a bug on *their* side.
+
+ * Don't try to get new version notifications or updated project list from BOINC
+   server.
+
+ * Unix: don't use current working directory as data directory. Instead,
+   hardcode the correct path into the binary at compile time. It can be changed
+   by running the client with --dir. This avoids problems if users start the
+   client by hand, from "wrong" places. In the future, syneccmd and synecmgr
+   will do the same.
+
+ * In BOINC, if a GUI RPC client fails to authenticate, the connection is
+   dropped. This is to avoid a possible denial of service vulnerability, but
+   doesn't solve the underlying problem. We removed that 'fix', and instead
+   avoid the denial of service by only writing to the socket if the socket is
+   actually ready to write, and queue data otherwise.
