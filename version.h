@@ -34,6 +34,7 @@ extern const char* SYNEC_SVN_VERSION;
 /* Package is a pre-release (Alpha/Beta) package */
 #define SYNEC_PRERELEASE 1
 
+#if (defined(_WIN32) || defined(__APPLE__))
 /* Name of package */
 #define PACKAGE "synecdoche"
 
@@ -52,5 +53,6 @@ extern const char* SYNEC_SVN_VERSION;
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.2.0"
 
+#endif /* #if (defined(_WIN32) || defined(__APPLE__)) */
 
 #endif /* #ifndef SYNECDOCHE_VERSION_H */
