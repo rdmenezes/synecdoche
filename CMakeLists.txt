@@ -21,7 +21,7 @@ LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 INCLUDE(AutoconfCompat)
 
-FOREACH(inc "csignal" "signal.h" "malloc.h" "unistd.h" "netdb.h" "arpa/inet.h" "netinet/in.h")
+FOREACH(inc "csignal" "signal.h" "malloc.h" "string.h" "unistd.h" "netdb.h" "arpa/inet.h" "netinet/in.h")
 	AC_CHECK_INCLUDE_FILE(${inc})
 ENDFOREACH(inc)
 FOREACH(inc "types" "ipc" "socket" "resource" "param" "mount" "statvfs" "statfs" "signal" "wait" "systeminfo" "sysctl" "utsname")
@@ -90,7 +90,7 @@ INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/config.h.cmakein ${CMAKE_BINARY_DIR}/config.h)
 
-SUBDIRS(lib api client clientgui)
+SUBDIRS(lib client clientgui)
 IF(WIN32)
 	SUBDIRS(clientlib)
 ENDIF(WIN32)
