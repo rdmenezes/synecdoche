@@ -3,6 +3,7 @@
 #cmakedefine HAVE_CSIGNAL 1
 
 #cmakedefine HAVE_MALLOC_H 1
+#cmakedefine HAVE_STRING_H 1
 #cmakedefine HAVE_SIGNAL_H 1
 #cmakedefine HAVE_UNISTD_H 1
 #cmakedefine HAVE_NETDB_H 1
