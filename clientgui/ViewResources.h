@@ -43,7 +43,7 @@ public:
     virtual const wxString& GetViewDisplayName();
     virtual const char**    GetViewIcon();
 #ifdef __WXMAC__
-    virtual const int       GetViewRefreshRate();
+    virtual int             GetViewRefreshRate();
 #endif
 
 protected:

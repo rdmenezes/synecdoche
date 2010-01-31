@@ -30,8 +30,6 @@
 /// Each thread/process checks for the relevant file before
 ///  starting or stopping each benchmark
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
@@ -131,10 +129,7 @@ static void make_benchmark_file(int which) {
 }
 
 void benchmark_wait_to_start(int which) {
-    while (1) {
-        if (boinc_file_exists(file_names[which])) {
-            break;
-        }
+    while (!boinc_file_exists(file_names[which])) {
         boinc_sleep(0.1);
     }
 }
@@ -444,7 +439,7 @@ bool CLIENT_STATE::cpu_benchmarks_poll() {
             }
             ndone++;
             if (benchmark_descs[i].error) {
-                msg_printf(0, MSG_INFO, benchmark_descs[i].error_str);
+                msg_printf(0, MSG_INFO, "%s", benchmark_descs[i].error_str);
                 had_error = true;
             }
         }

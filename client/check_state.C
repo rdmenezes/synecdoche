@@ -19,8 +19,6 @@
 /// Functions to check the integrity of core client data structures.
 /// Not currently used, but might be handy if *0 type crashes occur
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #else

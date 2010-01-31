@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -30,11 +30,11 @@ BEGIN_EVENT_TABLE(CBOINCBaseWizard, wxWizard)
     EVT_BUTTON(wxID_FORWARD, CBOINCBaseWizard::OnBackOrNext)
 END_EVENT_TABLE()
  
-CBOINCBaseWizard::CBOINCBaseWizard() : wxWizard(), m_ulDiagFlags(0ul) {
+CBOINCBaseWizard::CBOINCBaseWizard() : wxWizard() {
     close_when_completed = false;
 }
 
-CBOINCBaseWizard::CBOINCBaseWizard(wxWindow *parent, int id, const wxString& title, const wxBitmap& bitmap, const wxPoint& pos, long style) : wxWizard(parent, id, title, bitmap, pos, style), m_ulDiagFlags(0ul) {
+CBOINCBaseWizard::CBOINCBaseWizard(wxWindow *parent, int id, const wxString& title, const wxBitmap& bitmap, const wxPoint& pos, long style) : wxWizard(parent, id, title, bitmap, pos, style) {
     close_when_completed = false;
 }
 
@@ -50,21 +50,7 @@ bool CBOINCBaseWizard::Create(wxWindow *parent, wxWindowID id, const wxString& t
     return wxWizard::Create(parent, id, title, bitmap, pos);
 }
 
-void CBOINCBaseWizard::SetDiagFlags(unsigned long ulFlags) {
-    m_ulDiagFlags = ulFlags;
-}
- 
-/// Check the desired bitmask against our existing bitmask.
-///
-/// \param[in] ulFlags The flag that should be checked.
-/// \return True if the given flag is set, false otherwise.
-bool CBOINCBaseWizard::IsDiagFlagsSet(unsigned long ulFlags) {
-    return ((ulFlags & m_ulDiagFlags) != 0);
-}
-
-/*!
- * Determine if the wizard page has a previous page.
- */
+/// Determine if the wizard page has a previous page.
 wxWizardPage* CBOINCBaseWizard::PopPageTransition() {
     return _PopPageTransition();
 }
@@ -73,9 +59,7 @@ wxWizardPage* CBOINCBaseWizard::_PopPageTransition() {
     return NULL;
 }
 
-/*!
- * Remove the page transition to the stack
- */
+/// Remove the page transition to the stack
 wxWizardPage* CBOINCBaseWizard::PushPageTransition(wxWizardPage* pCurrentPage, unsigned long ulPageID) {
     return _PushPageTransition(pCurrentPage, ulPageID);
 }
@@ -84,9 +68,7 @@ wxWizardPage* CBOINCBaseWizard::_PushPageTransition(wxWizardPage* WXUNUSED(pCurr
     return NULL;
 }
 
-/*!
- * Process Cancel Event
- */
+/// Process Cancel Event
 bool CBOINCBaseWizard::IsCancelInProgress() const {
     return m_bCancelInProgress;
 }

@@ -34,68 +34,57 @@
 #include <grp.h>
 #endif // !WIN32
 
-#ifdef __cplusplus
-#include <string>
-extern "C" {
-#endif // __cplusplus
-  /// Delete a file.
-  int boinc_delete_file(const std::string& path);
+/// Delete a file.
+int boinc_delete_file(const std::string& path);
 
-  /// Create an empty file.
-  int boinc_touch_file(const char* path);
+/// Create an empty file.
+int boinc_touch_file(const char* path);
 
-  /// Open a file for reading or writing.
-  FILE* boinc_fopen(const char* path, const char* mode);
+/// Open a file for reading or writing.
+FILE* boinc_fopen(const char* path, const char* mode);
 
-  /// Copy a file.
-  int boinc_copy(const char* orig, const char* newf);
+/// Copy a file.
+int boinc_copy(const char* orig, const char* newf);
 
-  /// Rename a file.
-  int boinc_rename(const char* old, const char* newf);
+/// Rename a file.
+int boinc_rename(const char* old, const char* newf);
 
-  /// Create a directory for which the owner and the group have full access.
-  int boinc_mkdir(const char* path);
+/// Create a directory for which the owner and the group have full access.
+int boinc_mkdir(const char* path);
 
 #ifndef _WIN32
-  /// Change the group of a file or directory.
-  int boinc_chown(const char* path, gid_t gid);
+/// Change the group of a file or directory.
+int boinc_chown(const char* path, gid_t gid);
 #endif
 
-  /// Remove a directory.
-  int boinc_rmdir(const char* name);
+/// Remove a directory.
+int boinc_rmdir(const char* name);
 
-  int remove_project_owned_file_or_dir(const char* path);
+int remove_project_owned_file_or_dir(const char* path);
 
-  /// Create directories with parent directories if necessary.
-  int boinc_make_dirs(const char* dirpath, const char* filepath);
+/// Create directories with parent directories if necessary.
+int boinc_make_dirs(const char* dirpath, const char* filepath);
 
-  /// A buffer that will store a file name in case of failed operations.
-  extern char boinc_failed_file[256];
+/// A buffer that will store a file name in case of failed operations.
+extern char boinc_failed_file[256];
 
-  /// Check if the given path denotes a file.
-  int is_file(const char* path);
+/// Check if the given path denotes a file.
+int is_file(const char* path);
 
-  /// Check if the given path denotes a directory.
-  int is_dir(const char* path);
+/// Check if the given path denotes a directory.
+int is_dir(const char* path);
 
-  /// Check if the given path denotes a symbolic link.
-  int is_symlink(const char* path);
+/// Check if the given path denotes a symbolic link.
+int is_symlink(const char* path);
 
-  /// Truncate the size of a file.
-  int boinc_truncate(const char* path, double size);
+/// Truncate the size of a file.
+int boinc_truncate(const char* path, double size);
 
-  /// Check if a file exists.
-  bool boinc_file_exists(const std::string& path);
+/// Check if a file exists.
+bool boinc_file_exists(const std::string& path);
 
-  /// Check if a file exists.
-  int boinc_file_or_symlink_exists(const std::string& path);
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
-/* C++ specific prototypes/defines follow here */
-#ifdef __cplusplus
+/// Check if a file exists.
+int boinc_file_or_symlink_exists(const std::string& path);
 
 /// Return the current working directory.
 std::string boinc_getcwd();
@@ -190,8 +179,6 @@ public:
 /// Search PATH and find the directory that a program is in, if any.
 int get_file_dir(const char* filename, std::string& dir);
 #endif // _WIN32
-
-#endif // __cplusplus
 
 #endif // FILESYS_H
 

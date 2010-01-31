@@ -225,14 +225,14 @@ void CViewWork::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    AddColumn(COLUMN_PROJECT,        wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 125);
-    AddColumn(COLUMN_APPLICATION,    wxTRANSLATE("Application"), wxLIST_FORMAT_LEFT, 95);
-    AddColumn(COLUMN_NAME,           wxTRANSLATE("Name"), wxLIST_FORMAT_LEFT, 285);
-    AddColumn(COLUMN_CPUTIME,        wxTRANSLATE("CPU time"), wxLIST_FORMAT_RIGHT, 80);
-    AddColumn(COLUMN_PROGRESS,       wxTRANSLATE("Progress"), wxLIST_FORMAT_CENTER, 60);
-    AddColumn(COLUMN_TOCOMPLETION,   wxTRANSLATE("To completion"), wxLIST_FORMAT_RIGHT, 100);
-    AddColumn(COLUMN_REPORTDEADLINE, wxTRANSLATE("Report deadline"), wxLIST_FORMAT_LEFT, 150);
-    AddColumn(COLUMN_STATUS,         wxTRANSLATE("Status"), wxLIST_FORMAT_LEFT, 135);
+    AddColumn(COLUMN_PROJECT,        _T("Project"), wxLIST_FORMAT_LEFT, 125);
+    AddColumn(COLUMN_APPLICATION,    _T("Application"), wxLIST_FORMAT_LEFT, 95);
+    AddColumn(COLUMN_NAME,           _T("Name"), wxLIST_FORMAT_LEFT, 285);
+    AddColumn(COLUMN_CPUTIME,        _T("CPU time"), wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_PROGRESS,       _T("Progress"), wxLIST_FORMAT_CENTER, 60);
+    AddColumn(COLUMN_TOCOMPLETION,   _T("To completion"), wxLIST_FORMAT_RIGHT, 100);
+    AddColumn(COLUMN_REPORTDEADLINE, _T("Report deadline"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_STATUS,         _T("Status"), wxLIST_FORMAT_LEFT, 135);
 
     m_iProgressColumn = COLUMN_PROGRESS;
 

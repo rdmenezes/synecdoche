@@ -1,6 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -22,17 +23,17 @@
 /// NET_STATUS keeps track of whether we have a physical connection,
 /// and whether we need one.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
 #include "config.h"
-#include <cstring>
-#include <cmath>
 #endif
 
 #include "net_stats.h"
+
+#include <cstring>
+#include <cmath>
+#include <ostream>
 
 #include "parse.h"
 #include "miofile.h"
@@ -40,6 +41,7 @@
 #include "str_util.h"
 #include "error_numbers.h"
 #include "util.h"
+#include "xml_write.h"
 
 #include "client_msgs.h"
 #include "client_state.h"
@@ -50,24 +52,29 @@
 
 NET_STATUS net_status;
 
-NET_STATS::NET_STATS() {
-    memset(&up, 0, sizeof(up));
-    memset(&down, 0, sizeof(down));
+NET_INFO::NET_INFO() {
+    clear();
 }
 
-// called after file xfer to update rates
-//
+/// Updates the variables in this structure.
+/// Called after file xfer to update rates.
+///
+/// \param[in] nbytes Number of bytes transferred
+/// \param[in] dt Time in seconds which passed since the file xfer started.
 void NET_INFO::update(double nbytes, double dt) {
-    if (nbytes == 0 || dt==0) return;
-    double bytes_sec = nbytes/dt;
-    if (max_rate == 0) {
+    if (nbytes == 0.0 || dt == 0.0) {
+        return;
+    }
+    double bytes_sec = nbytes / dt;
+    if (max_rate == 0.0) {
         max_rate = bytes_sec;   // first time
     } else {
         // somewhat arbitrary weighting formula
-        //
-        double w = log(nbytes)/500;
-        if (w>1) w = 1;
-        max_rate = w*bytes_sec + (1-w)*max_rate;
+        double w = log(nbytes) / 500.0;
+        if (w > 1) {
+            w = 1;
+        }
+        max_rate = w * bytes_sec + (1 - w) * max_rate;
     }
     double start_time = gstate.now - dt;
     update_average(
@@ -79,30 +86,33 @@ void NET_INFO::update(double nbytes, double dt) {
     );
 }
 
-int NET_STATS::write(MIOFILE& out) const {
-    out.printf(
-        "<net_stats>\n"
-        "    <bwup>%f</bwup>\n"
-        "    <avg_up>%f</avg_up>\n"
-        "    <avg_time_up>%f</avg_time_up>\n"
-        "    <bwdown>%f</bwdown>\n"
-        "    <avg_down>%f</avg_down>\n"
-        "    <avg_time_down>%f</avg_time_down>\n"
-        "</net_stats>\n",
-        up.max_rate,
-        up.avg_rate,
-        up.avg_time,
-        down.max_rate,
-        down.avg_rate,
-        down.avg_time
-    );
-    return 0;
+/// Resets all variables to zero.
+void NET_INFO::clear() {
+    max_rate = 0.0;
+    avg_rate = 0.0;
+    avg_time = 0.0;
+}
+
+NET_STATS::NET_STATS() {
+}
+
+void NET_STATS::write(std::ostream& out) const {
+    out << "<net_stats>\n"
+        << XmlTag<double>("bwup",          up.max_rate)
+        << XmlTag<double>("avg_up",        up.avg_rate)
+        << XmlTag<double>("avg_time_up",   up.avg_time)
+        << XmlTag<double>("bwdown",        down.max_rate)
+        << XmlTag<double>("avg_down",      down.avg_rate)
+        << XmlTag<double>("avg_time_down", down.avg_time)
+        << "</net_stats>\n"
+    ;
 }
 
 int NET_STATS::parse(MIOFILE& in) {
     char buf[256];
 
-    memset(this, 0, sizeof(NET_STATS));
+    up.clear();
+    down.clear();
     while (in.fgets(buf, 256)) {
         if (match_tag(buf, "</net_stats>")) return 0;
         if (parse_double(buf, "<bwup>", up.max_rate)) continue;
@@ -134,7 +144,9 @@ int NET_STATUS::network_status() {
     if (gstate.http_ops->nops()) {
         last_comm_time = gstate.now;
     }
-    if (gstate.lookup_website_op.error_num == ERR_IN_PROGRESS) {
+    if (need_to_contact_reference_site) {
+        retval = NETWORK_STATUS_LOOKUP_PENDING;
+    } else if (gstate.lookup_website_op.error_num == ERR_IN_PROGRESS) {
         retval = NETWORK_STATUS_LOOKUP_PENDING;
     } else if (gstate.now - last_comm_time < 10) {
         retval = NETWORK_STATUS_ONLINE;
@@ -176,23 +188,21 @@ void NET_STATUS::network_available() {
 /// An HTTP operation failed;
 /// it could be because there's no physical network connection.
 /// Find out for sure by trying to contact Google.
-///
 void NET_STATUS::got_http_error() {
-    if ((gstate.lookup_website_op.error_num != ERR_IN_PROGRESS)
-        && !need_physical_connection
-        && gstate.now > gstate.last_wakeup_time + 30
-            // for 30 seconds after wakeup, the network system (DNS etc.)
-            // may still be coming up, so don't worry for now
-        && !config.dont_contact_ref_site
-    ) {
-        if (log_flags.network_status_debug) {
-            msg_printf(0, MSG_INFO,
-                "[network_status_debug] got http error and not still waking up"
-            );
-        }
-        need_to_contact_reference_site = true;
-        show_ref_message = true;
+    if (gstate.lookup_website_op.error_num == ERR_IN_PROGRESS) {
+        return;
     }
+    if (need_physical_connection) {
+        return;
+    }
+    if (config.dont_contact_ref_site) {
+        return;
+    }
+    if (log_flags.network_status_debug) {
+        msg_printf(0, MSG_INFO, "[network_status_debug] got HTTP error - checking ref site");
+    }
+    need_to_contact_reference_site = true;
+    show_ref_message = true;
 }
 
 void NET_STATUS::contact_reference_site() {
@@ -250,6 +260,12 @@ void LOOKUP_WEBSITE_OP::handle_reply(int http_op_retval) {
 }
 
 void NET_STATUS::poll() {
+    // For 30 seconds after wakeup, the network system (DNS etc.)
+    // may still be coming up, so defer the reference site check;
+    // otherwise might show spurious "need connection" message
+    if (gstate.now < gstate.last_wakeup_time + 30) {
+        return;
+    }
     if (net_status.need_to_contact_reference_site && gstate.gui_http.state==GUI_HTTP_STATE_IDLE) {
         net_status.contact_reference_site();
     }

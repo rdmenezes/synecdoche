@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2009 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -80,11 +80,8 @@ protected:
     virtual void            DemandLoadView();
 
     void                    GetDocProjectName(size_t item, wxString& strBuffer) const;
-    wxInt32                 FormatProjectName(wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocAccountName(size_t item, wxString& strBuffer) const;
-    wxInt32                 FormatAccountName(wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocTeamName(size_t item, wxString& strBuffer) const;
-    wxInt32                 FormatTeamName(wxInt32 item, wxString& strBuffer ) const;
     void                    GetDocTotalCredit(size_t item, float& fBuffer) const;
     wxInt32                 FormatTotalCredit(float fBuffer, wxString& strBuffer) const;
     void                    GetDocAVGCredit(size_t item, float& fBuffer) const;
@@ -93,7 +90,6 @@ protected:
     void                    GetDocResourcePercent(size_t item, float& fBuffer) const;
     wxInt32                 FormatResourceShare(float fBuffer, float fBufferPercent, wxString& strBuffer) const;
     void                    GetDocStatus(size_t item, wxString& strBuffer) const;
-    wxInt32                 FormatStatus(wxInt32 item, wxString& strBuffer) const;
 
     virtual double          GetProgressValue(long item);
 

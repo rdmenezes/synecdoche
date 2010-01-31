@@ -28,7 +28,6 @@
 #include "str_util.h"
 #include "mfile.h"
 #include "miofile.h"
-#include "parse.h"
 #include "BOINCGUIApp.h"
 #include "Events.h"
 #include "SkinManager.h"
@@ -215,14 +214,17 @@ CAdvancedFrame::~CAdvancedFrame() {
         m_pFrameListPanelRenderTimer = NULL;
     }
 
-    if (m_pStatusbar)
-        wxCHECK_RET(DeleteStatusbar(), _T("Failed to delete status bar."));
+    if (m_pStatusbar) {
+        DeleteStatusbar();
+    }
 
-    if (m_pNotebook)
-        wxCHECK_RET(DeleteNotebook(), _T("Failed to delete notebook."));
+    if (m_pNotebook) {
+        DeleteNotebook();
+    }
 
-    if (m_pMenubar)
-        wxCHECK_RET(DeleteMenu(), _T("Failed to delete menu bar."));
+    if (m_pMenubar) {
+        DeleteMenu();
+    }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::~CAdvancedFrame - Function End"));
 }
@@ -662,14 +664,13 @@ bool CAdvancedFrame::CreateStatusbar() {
 }
 
 
-bool CAdvancedFrame::DeleteMenu() {
+void CAdvancedFrame::DeleteMenu() {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::DeleteMenu - Function Begin"));
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::DeleteMenu - Function End"));
-    return true;
 }
 
 
-bool CAdvancedFrame::DeleteNotebook() {
+void CAdvancedFrame::DeleteNotebook() {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::DeleteNotebook - Function Begin"));
 
     wxASSERT(m_pNotebook);
@@ -684,15 +685,14 @@ bool CAdvancedFrame::DeleteNotebook() {
     }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::DeleteNotebook - Function End"));
-    return true;
 }
 
 
-bool CAdvancedFrame::DeleteStatusbar() {
+void CAdvancedFrame::DeleteStatusbar() {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::DeleteStatusbar - Function Begin"));
 
     if (!m_pStatusbar)
-        return true;
+        return;
 
     SetStatusBar(NULL);
 
@@ -700,7 +700,6 @@ bool CAdvancedFrame::DeleteStatusbar() {
     m_pStatusbar = NULL;
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::DeleteStatusbar - Function End"));
-    return true;
 }
 
 
@@ -1793,7 +1792,8 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent &event) {
                         SetStatusText(strStatusText, STATUS_CONNECTION_STATUS);
                     }
                 } else {
-                    SetStatusText(_("Disconnected"), STATUS_CONNECTION_STATUS);
+                    m_cachedStatusText = _("Disconnected");
+                    SetStatusText(m_cachedStatusText, STATUS_CONNECTION_STATUS);
 
                     if (GetTitle() != m_strBaseTitle)
                         SetTitle(m_strBaseTitle);

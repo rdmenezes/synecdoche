@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -22,16 +22,13 @@
 #ifndef GUI_RPC_CLIENT_H
 #define GUI_RPC_CLIENT_H
 
-#if !defined(_WIN32) || defined (__CYGWIN__)
-#include <stdio.h>
-#include <vector>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
 #include <locale.h>
+
+#if !defined(_WIN32) || defined (__CYGWIN__)
+#include <netinet/in.h>
 #endif
 
+#include <vector>
 #include <string>
 
 #include "miofile.h"
@@ -91,6 +88,7 @@ public:
     std::string project_name;
     std::string user_name;
     std::string team_name;
+    int hostid;
     std::vector<GUI_URL> gui_urls;
     double user_total_credit;
     double user_expavg_credit;
@@ -194,7 +192,8 @@ public:
     std::string name;
     std::string wu_name;
     std::string project_url;
-    int report_deadline;
+    double received_time;
+    double report_deadline;
     bool ready_to_report;
     bool got_server_ack;
     double final_cpu_time;
@@ -589,6 +588,7 @@ public:
     int set_proxy_settings(const GR_PROXY_INFO& pi);
     int get_proxy_settings(GR_PROXY_INFO& pi);
     int get_messages(int seqno, MESSAGES& msgs);
+    int get_message_count(int& msg_count);
     int file_transfer_op(const FILE_TRANSFER& ft, const char* op);
     int result_op(RESULT& result, const char* op);
     int get_host_info(HOST_INFO& host);

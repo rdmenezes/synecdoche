@@ -30,7 +30,6 @@
 #include "win_util.h"
 #else
 #include "config.h"
-#include <cstdio>
 #include <cstring>
 #include <unistd.h>
 #endif
@@ -48,7 +47,7 @@
 #include "hostinfo.h"
 
 void version(){
-    printf("syneccmd, built from %s\n", PACKAGE_STRING );
+    std::cout << "syneccmd, built from " << PACKAGE_STRING << std::endl;
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSACleanup();
 #endif
@@ -56,7 +55,7 @@ void version(){
 }
 
 void usage() {
-    fprintf(stderr, "\n\
+    std::cerr << "\n\
 usage: syneccmd [--host hostname] [--passwd passwd] command\n\n\
 Commands:\n\
  --lookup_account URL email passwd\n\
@@ -72,6 +71,7 @@ Commands:\n\
  --get_disk_usage                   show disk usage\n\
  --get_proxy_settings\n\
  --get_messages [seqno]             show messages > seqno\n\
+ --get_message_count                show number of messages in the queue\n\
  --get_host_info\n\
  --version, -V                      show core client version\n\
  --result url result_name op        job operation\n\
@@ -93,8 +93,7 @@ Commands:\n\
  --get_project_config_poll\n\
  --network_available\n\
  --get_cc_status\n\
-"
-);
+";
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSACleanup();
 #endif
@@ -118,12 +117,12 @@ void parse_display_args(const char** argv, int& i, DISPLAY_INFO& di) {
 }
 
 void show_error(int retval) {
-    fprintf(stderr, "Error %d: %s\n", retval, boincerror(retval));
+    std::cerr << "Error " << retval << ": " << boincerror(retval) << std::endl;
 }
 
 const char* next_arg(int argc, const char** argv, int& i) {
     if (i >= argc) {
-        fprintf(stderr, "Missing command-line argument\n");
+        std::cerr << "Missing command-line argument" << std::endl;
         usage();
     }
     return argv[i++];
@@ -157,7 +156,7 @@ int main_impl(int argc, const char** argv) {
     WSADATA wsdata;
     retval = WSAStartup( MAKEWORD( 1, 1 ), &wsdata);
     if (retval) {
-        fprintf(stderr, "WinsockInitialize: %d\n", retval);
+        std::cerr << "WinsockInitialize: " << retval << std::endl;
         exit(1);
     }
 #endif
@@ -197,7 +196,7 @@ int main_impl(int argc, const char** argv) {
 #if 1
     retval = rpc.init(hostname, port);
     if (retval) {
-        fprintf(stderr, "can't connect to %s\n", hostname?hostname:"local host");
+        std::cerr << "can't connect to " << (hostname?hostname:"local host") << std::endl;
 #if defined(_WIN32) && defined(USE_WINSOCK)
         WSACleanup();
 #endif
@@ -209,23 +208,23 @@ int main_impl(int argc, const char** argv) {
         retval = rpc.init_poll();
         if (!retval) break;
         if (retval == ERR_RETRY) {
-            printf("sleeping\n");
+            std::cout << "sleeping" << std::endl;
             sleep(1);
             continue;
         }
-        fprintf(stderr, "can't connect: %d\n", retval);
+        std::cerr << "can't connect: " << retval << std::endl;
 #if defined(_WIN32) && defined(USE_WINSOCK)
         WSACleanup();
 #endif
         exit(1);
     }
-    printf("connected\n");
+    std::cout << "connected" << std::endl;
 #endif
 
     if (!passwd.empty()) {
         retval = rpc.authorize(passwd.c_str());
         if (retval) {
-            fprintf(stderr, "Authorization failure: %d\n", retval);
+            std::cerr << "Authorization failure: " << retval << std::endl;
 #if defined(_WIN32) && defined(USE_WINSOCK)
             WSACleanup();
 #endif
@@ -280,7 +279,7 @@ int main_impl(int argc, const char** argv) {
             parse_display_args(argv, i, di);
             retval = rpc.show_graphics(project_url, name, MODE_FULLSCREEN, di);
         } else {
-            fprintf(stderr, "Unknown op %s\n", op);
+            std::cerr << "Unknown op " << op << std::endl;
         }
     } else if (!strcmp(cmd, "--project")) {
         PROJECT project;
@@ -310,7 +309,7 @@ int main_impl(int argc, const char** argv) {
         } else if (!strcmp(op, "dont_detach_when_done")) {
             retval = rpc.project_op(project, "dont_detach_when_done");
         } else {
-            fprintf(stderr, "Unknown op %s\n", op);
+            std::cerr << "Unknown op " << op << std::endl;
         }
     } else if (!strcmp(cmd, "--project_attach")) {
         std::string url(next_arg(argc, argv, i));
@@ -328,7 +327,7 @@ int main_impl(int argc, const char** argv) {
         } else if (!strcmp(op, "abort")) {
             retval = rpc.file_transfer_op(ft, "abort");
         } else {
-            fprintf(stderr, "Unknown op %s\n", op);
+            std::cerr << "Unknown op " << op << std::endl;
         }
     } else if (!strcmp(cmd, "--set_run_mode")) {
         const char* op = next_arg(argc, argv, i);
@@ -345,7 +344,7 @@ int main_impl(int argc, const char** argv) {
         } else if (!strcmp(op, "never")) {
             retval = rpc.set_run_mode(RUN_MODE_NEVER, duration);
         } else {
-            fprintf(stderr, "Unknown op %s\n", op);
+            std::cerr << "Unknown op " << op << std::endl;
         }
     } else if (!strcmp(cmd, "--set_network_mode")) {
         const char* op = next_arg(argc, argv, i);
@@ -362,7 +361,7 @@ int main_impl(int argc, const char** argv) {
         } else if (!strcmp(op, "never")) {
             retval = rpc.set_network_mode(RUN_MODE_NEVER, duration);
         } else {
-            fprintf(stderr, "Unknown op %s\n", op);
+            std::cerr << "Unknown op " << op << std::endl;
         }
     } else if (!strcmp(cmd, "--get_proxy_settings")) {
         GR_PROXY_INFO pi;
@@ -403,6 +402,12 @@ int main_impl(int argc, const char** argv) {
             }
             std::cout << std::flush;
         }
+    } else if (!strcmp(cmd, "--get_message_count")) {
+        int msg_count;
+        retval = rpc.get_message_count(msg_count);
+        if (!retval) {
+            std::cout << "Number of messages in the queue: " << msg_count << std::endl;
+        }
     } else if (!strcmp(cmd, "--get_host_info")) {
         HOST_INFO hi;
         retval = rpc.get_host_info(hi);
@@ -417,19 +422,20 @@ int main_impl(int argc, const char** argv) {
                 ACCT_MGR_RPC_REPLY amrr;
                 retval = rpc.acct_mgr_rpc_poll(amrr);
                 if (retval) {
-                    printf("poll status: %s\n", boincerror(retval));
+                    std::cout << "poll status: " << boincerror(retval) << std::endl;
                 } else {
                     if (amrr.error_num) {
-                        printf("poll status: %s\n", boincerror(amrr.error_num));
+                        std::cout << "poll status: " << boincerror(amrr.error_num) << std::endl;
                         if (amrr.error_num != ERR_IN_PROGRESS) break;
                         boinc_sleep(1);
                     } else {
                         size_t n = amrr.messages.size();
                         if (n) {
-                            printf("Messages from account manager:\n");
+                            std::cout << "Messages from account manager:\n";
                             for (size_t j=0; j<n; j++) {
-                                printf("%s\n", amrr.messages[j].c_str());
+                                std::cout << amrr.messages[j] << '\n';
                             }
+                            std::cout << std::flush;
                         }
                         break;
                     }
@@ -447,7 +453,7 @@ int main_impl(int argc, const char** argv) {
         PROJECT_CONFIG pc;
         retval = rpc.get_project_config_poll(pc);
         if (retval) {
-            printf("retval: %d\n", retval);
+            std::cout << "retval: " << retval << std::endl;
         } else {
             pc.print();
         }
@@ -457,16 +463,16 @@ int main_impl(int argc, const char** argv) {
         lai.email_addr = next_arg(argc, argv, i);
         lai.passwd = next_arg(argc, argv, i);
         retval = rpc.lookup_account(lai);
-        printf("status: %s\n", boincerror(retval));
+        std::cout << "status: " << boincerror(retval) << std::endl;
         if (!retval) {
             ACCOUNT_OUT lao;
             while (1) {
                 retval = rpc.lookup_account_poll(lao);
                 if (retval) {
-                    printf("poll status: %s\n", boincerror(retval));
+                    std::cout << "poll status: " << boincerror(retval) << std::endl;
                 } else {
                     if (lao.error_num) {
-                        printf("poll status: %s\n", boincerror(lao.error_num));
+                        std::cout << "poll status: " << boincerror(lao.error_num) << std::endl;
                         if (lao.error_num != ERR_IN_PROGRESS) break;
                         boinc_sleep(1);
                     } else {
@@ -483,16 +489,16 @@ int main_impl(int argc, const char** argv) {
         cai.passwd = next_arg(argc, argv, i);
         cai.user_name = next_arg(argc, argv, i);
         retval = rpc.create_account(cai);
-        printf("status: %s\n", boincerror(retval));
+        std::cout << "status: " << boincerror(retval) << std::endl;
         if (!retval) {
             ACCOUNT_OUT lao;
             while (1) {
                 retval = rpc.create_account_poll(lao);
                 if (retval) {
-                    printf("poll status: %s\n", boincerror(retval));
+                    std::cout << "poll status: " << boincerror(retval) << std::endl;
                 } else {
                     if (lao.error_num) {
-                        printf("poll status: %s\n", boincerror(lao.error_num));
+                        std::cout << "poll status: " << boincerror(lao.error_num) << std::endl;
                         if (lao.error_num != ERR_IN_PROGRESS) break;
                         boinc_sleep(1);
                     } else {
@@ -506,7 +512,7 @@ int main_impl(int argc, const char** argv) {
         retval = rpc.read_global_prefs_override();
     } else if (!strcmp(cmd, "--read_cc_config")) {
         retval = rpc.read_cc_config();
-        printf("retval %d\n", retval);
+        std::cout << "retval: " << retval << std::endl;
     } else if (!strcmp(cmd, "--network_available")) {
         retval = rpc.network_available();
     } else if (!strcmp(cmd, "--get_cc_status")) {
@@ -528,7 +534,7 @@ int main_impl(int argc, const char** argv) {
     } else if (!strcmp(cmd, "--quit")) {
         retval = rpc.quit();
     } else {
-        fprintf(stderr, "unrecognized command %s\n", cmd);
+        std::cerr << "unrecognized command " << cmd << std::endl;
     }
     if (retval < 0) {
         show_error(retval);

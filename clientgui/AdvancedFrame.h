@@ -113,16 +113,16 @@ private:
     wxRect          m_windowRect;
 
     bool            CreateMenu();
-    bool            DeleteMenu();
+    void            DeleteMenu();
 
     bool            CreateNotebook();
     bool            RepopulateNotebook();
 
     bool            CreateNotebookPage( CBOINCBaseView* pwndNewNotebookPage );
-    bool            DeleteNotebook();
+    void            DeleteNotebook();
 
     bool            CreateStatusbar();
-    bool            DeleteStatusbar();
+    void            DeleteStatusbar();
 
     bool            SaveState();
     bool            SaveViewState();

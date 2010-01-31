@@ -15,11 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _TIME_STATS_
-#define _TIME_STATS_
+#ifndef TIME_STATS_H
+#define TIME_STATS_H
 
 #include <cstdio>
+
 #include <vector>
+#include <iosfwd>
 
 class MIOFILE;
 
@@ -47,22 +49,14 @@ public:
     /// -# other CPU-intensive apps run
     double cpu_efficiency;
 
-    FILE* time_stats_log;
     double inactive_start;
 
     void update(int suspend_reason);
     void update_cpu_efficiency(double cpu_wall_time, double cpu_time);
 
     TIME_STATS();
-    int write(MIOFILE&, bool to_server) const;
+    void write(std::ostream& out, bool to_server) const;
     int parse(MIOFILE&);
-
-    void log_append(const std::string& msg, double t);
-    void log_append_net(int);
-    void trim_stats_log();
-    void get_log_after(double, MIOFILE&);
-    void start();
-    void quit();
 };
 
 #endif

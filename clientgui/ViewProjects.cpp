@@ -191,13 +191,13 @@ void CViewProjects::DemandLoadView() {
     m_pTaskPane->UpdateControls();
 
     // Create List Pane Items
-    AddColumn(COLUMN_PROJECT,       wxTRANSLATE("Project"), wxLIST_FORMAT_LEFT, 150);
-    AddColumn(COLUMN_ACCOUNTNAME,   wxTRANSLATE("Account"), wxLIST_FORMAT_LEFT, 80);
-    AddColumn(COLUMN_TEAMNAME,      wxTRANSLATE("Team"), wxLIST_FORMAT_LEFT, 80);
-    AddColumn(COLUMN_TOTALCREDIT,   wxTRANSLATE("Work done"), wxLIST_FORMAT_RIGHT, 80);
-    AddColumn(COLUMN_AVGCREDIT,     wxTRANSLATE("Avg. work done"), wxLIST_FORMAT_RIGHT, 80);
-    AddColumn(COLUMN_RESOURCESHARE, wxTRANSLATE("Resource share"), wxLIST_FORMAT_CENTRE, 85);
-    AddColumn(COLUMN_STATUS,        wxTRANSLATE("Status"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_PROJECT,       _T("Project"), wxLIST_FORMAT_LEFT, 150);
+    AddColumn(COLUMN_ACCOUNTNAME,   _T("Account"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TEAMNAME,      _T("Team"), wxLIST_FORMAT_LEFT, 80);
+    AddColumn(COLUMN_TOTALCREDIT,   _T("Work done"), wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_AVGCREDIT,     _T("Avg. work done"), wxLIST_FORMAT_RIGHT, 80);
+    AddColumn(COLUMN_RESOURCESHARE, _T("Resource share"), wxLIST_FORMAT_CENTRE, 85);
+    AddColumn(COLUMN_STATUS,        _T("Status"), wxLIST_FORMAT_LEFT, 150);
 
     m_iProgressColumn = COLUMN_RESOURCESHARE;
 
@@ -457,12 +457,9 @@ void CViewProjects::OnProjectReset( wxCommandEvent& WXUNUSED(event) ) {
 void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
     wxLogTrace(wxT("Function Start/End"), wxT("CViewProjects::OnProjectDetach - Function Begin"));
 
-    wxInt32         iAnswer        = 0; 
     wxString        strMessage     = wxEmptyString;
     CMainDocument*  pDoc           = wxGetApp().GetDocument();
     CAdvancedFrame* pFrame         = wxDynamicCast(GetParent()->GetParent()->GetParent(), CAdvancedFrame);
-    CProject*       pProject       = NULL;
-    int row;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
@@ -474,28 +471,28 @@ void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
 
     pFrame->UpdateStatusText(_("Detaching from project..."));
 
-    row = -1;
+    std::list<wxString> selectedProjects;
+    int row = -1;
     while (1) {
         // Step through all selected items
         row = m_pListPane->GetNextItem(row, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-        if (row < 0) break;
+        if (row < 0) {
+            break;
+        }
         
-        pProject = m_ProjectCache.at(m_iSortedIndexes[row]);
+        CProject* p = m_ProjectCache.at(m_iSortedIndexes[row]);
+        selectedProjects.push_back(p->m_strProjectName);
+    }
 
-        strMessage.Printf(
-            _("Are you sure you want to detach from project '%s'?"), 
-            pProject->m_strProjectName.c_str()
-        );
+    for (std::list<wxString>::iterator p = selectedProjects.begin();
+        p != selectedProjects.end(); ++p) {
 
-        iAnswer = ::wxMessageBox(
-            strMessage,
-            _("Detach from Project"),
-            wxYES_NO | wxICON_QUESTION,
-            this
-        );
+        strMessage.Printf(_("Are you sure you want to detach from project '%s'?"), 
+                (*p).c_str());
 
-        if (wxYES == iAnswer) {
-            pDoc->ProjectDetach(m_iSortedIndexes[row]);
+        if (::wxMessageBox(strMessage, _("Detach from Project"),
+                wxYES_NO | wxICON_QUESTION, this) == wxYES) {
+            pDoc->ProjectDetach(*p);
         }
     }
 
@@ -754,13 +751,6 @@ void CViewProjects::GetDocProjectName(size_t item, wxString& strBuffer) const {
     }
 }
 
-wxInt32 CViewProjects::FormatProjectName(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = project->m_strProjectName;
-
-    return 0;
-}
-
 void CViewProjects::GetDocAccountName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
@@ -775,13 +765,6 @@ void CViewProjects::GetDocAccountName(size_t item, wxString& strBuffer) const {
     }
 }
 
-wxInt32 CViewProjects::FormatAccountName(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = project->m_strAccountName;
-
-    return 0;
-}
-
 void CViewProjects::GetDocTeamName(size_t item, wxString& strBuffer) const {
     CMainDocument* pDoc = wxGetApp().GetDocument();
     PROJECT* project = 0;
@@ -794,13 +777,6 @@ void CViewProjects::GetDocTeamName(size_t item, wxString& strBuffer) const {
     } else {
         strBuffer = wxEmptyString;
     }
-}
-
-wxInt32 CViewProjects::FormatTeamName(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = project->m_strTeamName;
-
-    return 0;
 }
 
 void CViewProjects::GetDocTotalCredit(size_t item, float& fBuffer) const {
@@ -908,13 +884,6 @@ void CViewProjects::GetDocStatus(size_t item, wxString& strBuffer) const {
             AppendToStatus(strBuffer, _("Communication deferred ") + tsNextRPC.Format());
         }
     }
-}
-
-wxInt32 CViewProjects::FormatStatus(wxInt32 item, wxString& strBuffer) const {
-    CProject* project = m_ProjectCache.at(m_iSortedIndexes[item]);
-    strBuffer = project->m_strStatus;
-
-    return 0;
 }
 
 double CViewProjects::GetProgressValue(long item) {

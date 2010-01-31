@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -22,21 +22,18 @@
 #ifndef STR_UTIL_H
 #define STR_UTIL_H
 
-#include <algorithm>
+#include <algorithm> //for transform
 #include <list>
 #include <string>
 
-#include <cctype>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
+#include <cctype> //for tolower
 
 #ifndef _WIN32
 #include "config.h"
 #endif
 
 #include "attributes.h"
-#include "common_defs.h"
+#include "common_defs.h" //for rpc_reason
 
 #if !defined(HAVE_STRLCPY)
 /// Use this instead of strncpy().
@@ -50,7 +47,7 @@ size_t strlcat(char* dst, const char* src, size_t size);
 
 #if !defined(HAVE_STRCASESTR)
 /// Search for a substring while ignoring upper-/lowercase.
-char* strcasestr(const char* s1, const char* s2);
+const char* strcasestr(const char* s1, const char* s2);
 #endif
 
 /// Convert a double precision time into a string.
@@ -72,7 +69,7 @@ void strip_whitespace(std::string&);
 void unescape_url(std::string& url);
 
 /// Escape an URL.
-void escape_url(std::string& url);
+std::string escape_url(const std::string& url);
 
 /// Escape a URL for the project directory
 std::string escape_url_readable(const std::string& in);
@@ -86,7 +83,6 @@ bool valid_master_url(const char* url);
 void canonicalize_master_url(std::string&);
 
 #define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
-#define safe_strcat(x, y) if (strlen(x)+strlen(y)<sizeof(x)) strcat(x, y)
 
 /// Convert a timestamp into a string.
 std::string time_to_string(double t);

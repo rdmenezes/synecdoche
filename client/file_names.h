@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -67,11 +67,6 @@ std::string get_sched_reply_filename(const PROJECT& project);
 /// Get the name of the master file for a project.
 std::string get_master_filename(const PROJECT& project);
 
-/// Get the job log file name for a project.
-std::string job_log_filename(const PROJECT& project);
-
-void send_log_after(const char* filename, double t, MIOFILE& mf);
-
 #define PROJECTS_DIR                "projects"
 #define SLOTS_DIR                   "slots"
 #define SWITCHER_DIR                "switcher"
@@ -86,7 +81,6 @@ void send_log_after(const char* filename, double t, MIOFILE& mf);
 #define CONFIG_FILE                 "cc_config.xml"
 #define TEMP_FILE_NAME              "temp.xml"
 #define TEMP_STATS_FILE_NAME        "temp_stats.xml"
-#define TEMP_TIME_STATS_FILE_NAME   "temp_time_stats.xml"
 #define TEMP_ACCT_FILE_NAME         "temp_acct.xml"
 #define STDERR_FILE_NAME            "stderr.txt"
 #define STDOUT_FILE_NAME            "stdout.txt"
@@ -106,9 +100,8 @@ void send_log_after(const char* filename, double t, MIOFILE& mf);
 #define ALL_PROJECTS_LIST_FILENAME "all_projects_list.xml"
 #define SWITCHER_FILE_NAME          "switcher"
 #define SETPROJECTGRP_FILE_NAME     "setprojectgrp"
-#define TIME_STATS_LOG              "time_stats_log"
-#define JOB_LOG_BASE                "job_log_"
 #define CA_BUNDLE_FILENAME          "ca-bundle.crt"
 #define CLIENT_AUTH_FILENAME        "client_auth.xml"
+#define TASK_STATE_FILENAME         "boinc_task_state.xml"
 
 #endif // FILE_NAMES_H

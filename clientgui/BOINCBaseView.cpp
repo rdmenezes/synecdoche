@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 David Barnard, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2008 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -36,6 +36,7 @@ CBOINCBaseView::CBOINCBaseView(wxNotebook* pNotebook) : wxPanel(pNotebook, -1, w
 
     m_bForceUpdateSelection = true;
     m_bIgnoreUIEvents = false;
+    m_bNeedSort = false;
 
     m_bViewLoaded = false;
 
@@ -81,7 +82,7 @@ const char** CBOINCBaseView::GetViewIcon() {
 /// If it has not been defined by the view, 1 second is returned.
 ///
 /// \return This base implementation always returns one.
-const int CBOINCBaseView::GetViewRefreshRate() {
+int CBOINCBaseView::GetViewRefreshRate() {
     return 1;
 }
 
@@ -152,6 +153,7 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
                     }
                     wxASSERT(GetDocCount() == GetCacheCount());
                     m_pListPane->SetItemCount(iDocCount);
+                    m_bNeedSort = true;
                 } else {
                     // We can't just call SetItemCount() here because we need to
                     // let the virtual ListCtrl adjust its list of selected rows
@@ -163,6 +165,7 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
                     }
                     wxASSERT(GetDocCount() == GetCacheCount());
                     m_pListPane->RefreshItems(0, iDocCount - 1);
+                    m_bNeedSort = true;
                 }
             }
         }
@@ -289,7 +292,6 @@ int CBOINCBaseView::SynchronizeCache() {
     int         iColumnIndex     = 0;
     int         iColumnTotal     = 0;
     bool        bNeedRefreshData = false;
-    bool        bNeedSort = false;
 
     iRowTotal = GetDocCount();
     iColumnTotal = m_pListPane->GetColumnCount();
@@ -301,7 +303,7 @@ int CBOINCBaseView::SynchronizeCache() {
             if (SynchronizeCacheItem(iRowIndex, iColumnIndex)) {
                 bNeedRefreshData = true;
                 if (iColumnIndex == m_iSortColumn) {
-                    bNeedSort = true;
+                    m_bNeedSort = true;
                 }
             }
         }
@@ -311,8 +313,9 @@ int CBOINCBaseView::SynchronizeCache() {
         }
     }
 
-    if (bNeedSort) {
+    if (m_bNeedSort) {
         sortData();     // Will mark entire list as needing refresh
+        m_bNeedSort = false;
     }
     return 0;
 }

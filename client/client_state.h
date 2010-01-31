@@ -271,8 +271,8 @@ public:
     void request_enforce_schedule(const char* where);
     /// Check for reschedule CPUs ASAP.  Called when:
     /// - core client starts (CLIENT_STATE::init())
-    /// - an app exits (ACTIVE_TASK_STATE::check_app_exited())
-    /// - Tasks are killed (ACTIVE_TASK_STATE::exit_tasks())
+    /// - an app exits (ACTIVE_TASK_SET::check_app_exited())
+    /// - Tasks are killed (ACTIVE_TASK_SET::exit_tasks())
     /// - a result's input files finish downloading (CLIENT_STATE::update_results())
     /// - an app fails to start (CLIENT_STATE::schedule_cpus())
     /// - any project op is done via RPC (suspend/resume)
@@ -355,7 +355,7 @@ public:
 private:
     void add_platform(const char* platform);
     void detect_platforms();
-    void write_platforms(PROJECT* p, MIOFILE& mf);
+    void write_platforms(const PROJECT* p, std::ostream& out);
     bool is_supported_platform(const char* p);
 /// @}
 
@@ -401,20 +401,20 @@ private:
 public:
     void set_client_state_dirty(const char* source);
     int parse_state_file();
-    int write_state(MIOFILE& f) const;
+    void write_state(std::ostream& out) const;
     int write_state_file() const;
     int write_state_file_if_needed();
     void check_anonymous();
     int parse_app_info(PROJECT* p, FILE* in);
-    int write_state_gui(MIOFILE& f) const;
-    int write_file_transfers_gui(MIOFILE& f) const;
-    int write_tasks_gui(MIOFILE& f) const;
+    void write_state_gui(std::ostream& out) const;
+    void write_file_transfers_gui(std::ostream& out) const;
+    void write_tasks_gui(std::ostream& out) const;
 /// @}
 
 /// @name cs_trickle.C
 private:
     /// Scan project dir for trickle files and convert them to XML.
-    int read_trickle_files(const PROJECT* project, FILE* f);
+    int read_trickle_files(const PROJECT* project, std::ostream& out);
 
     /// Remove trickle files when ack has been received.
     int remove_trickle_files(const PROJECT* project);

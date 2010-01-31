@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 Peter Kortschack
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -285,13 +285,6 @@ void CWizardAccountManager::SetCredentialsCached(bool credentials_cached) {
 /// \return True if the wizard is in update mode, false otherwise.
 bool CWizardAccountManager::IsUpdateWizard() const {
     return m_IsUpdateWizard;
-}
-
-/// Check if the wizard is currently in remove mode.
-///
-/// \return True if the wizard is in remove mode, false otherwise.
-bool CWizardAccountManager::IsRemoveWizard() const {
-    return m_IsRemoveWizard;
 }
 
 /*!

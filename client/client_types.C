@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -16,11 +16,8 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
-#include "zlib.h"
 #else
 #include "config.h"
 // Somehow having config.h define _FILE_OFFSET_BITS or _LARGE_FILES is
@@ -34,10 +31,12 @@
 #undef _LARGEFILE64_SOURCE
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <zlib.h>
+#endif
+
 #include <cstring>
 #include <sstream>
-#endif
+
+#include <zlib.h>
 
 #include "client_types.h"
 
@@ -54,6 +53,7 @@
 #include "pers_file_xfer.h"
 #include "sandbox.h"
 #include "scheduler_op.h"
+#include "xml_write.h"
 
 using std::string;
 using std::vector;
@@ -101,8 +101,6 @@ void PROJECT::init() {
     short_term_debt = 0;
     long_term_debt = 0;
     send_file_list = false;
-    send_time_stats_log = 0;
-    send_job_log = 0;
     suspended_via_gui = false;
     dont_request_more_work = false;
     detach_when_done = false;
@@ -200,8 +198,6 @@ int PROJECT::parse_state(MIOFILE& in) {
         if (parse_double(buf, "<next_rpc_time>", next_rpc_time)) continue;
         if (parse_bool(buf, "trickle_up_pending", trickle_up_pending)) continue;
         if (parse_bool(buf, "send_file_list", send_file_list)) continue;
-        if (parse_int(buf, "<send_time_stats_log>", send_time_stats_log)) continue;
-        if (parse_int(buf, "<send_job_log>", send_job_log)) continue;
         if (parse_bool(buf, "non_cpu_intensive", non_cpu_intensive)) continue;
         if (parse_bool(buf, "suspended_via_gui", suspended_via_gui)) continue;
         if (parse_bool(buf, "dont_request_more_work", dont_request_more_work)) continue;
@@ -222,116 +218,67 @@ int PROJECT::parse_state(MIOFILE& in) {
 
 /// Write project information to client state file or GUI RPC reply.
 ///
-int PROJECT::write_state(MIOFILE& out, bool gui_rpc) const {
-    unsigned int i;
-    char un[2048], tn[2048];
-
-    out.printf("<project>\n");
-
-    xml_escape(user_name, un, sizeof(un));
-    xml_escape(team_name, tn, sizeof(tn));
-    out.printf(
-        "    <master_url>%s</master_url>\n"
-        "    <project_name>%s</project_name>\n"
-        "    <symstore>%s</symstore>\n"
-        "    <user_name>%s</user_name>\n"
-        "    <team_name>%s</team_name>\n"
-        "    <host_venue>%s</host_venue>\n"
-        "    <email_hash>%s</email_hash>\n"
-        "    <cross_project_id>%s</cross_project_id>\n"
-        "    <cpid_time>%f</cpid_time>\n"
-        "    <user_total_credit>%f</user_total_credit>\n"
-        "    <user_expavg_credit>%f</user_expavg_credit>\n"
-        "    <user_create_time>%f</user_create_time>\n"
-        "    <rpc_seqno>%d</rpc_seqno>\n"
-        "    <hostid>%d</hostid>\n"
-        "    <host_total_credit>%f</host_total_credit>\n"
-        "    <host_expavg_credit>%f</host_expavg_credit>\n"
-        "    <host_create_time>%f</host_create_time>\n"
-        "    <nrpc_failures>%d</nrpc_failures>\n"
-        "    <master_fetch_failures>%d</master_fetch_failures>\n"
-        "    <min_rpc_time>%f</min_rpc_time>\n"
-        "    <next_rpc_time>%f</next_rpc_time>\n"
-        "    <short_term_debt>%f</short_term_debt>\n"
-        "    <long_term_debt>%f</long_term_debt>\n"
-        "    <resource_share>%f</resource_share>\n"
-        "    <duration_correction_factor>%f</duration_correction_factor>\n"
-        "    <sched_rpc_pending>%d</sched_rpc_pending>\n"
-        "    <send_time_stats_log>%d</send_time_stats_log>\n"
-        "    <send_job_log>%d</send_job_log>\n"
-        "%s%s%s%s%s%s%s%s%s%s%s",
-        master_url.c_str(),
-        project_name,
-        symstore,
-        un,
-        tn,
-        host_venue,
-        email_hash,
-        cross_project_id,
-        cpid_time,
-        user_total_credit,
-        user_expavg_credit,
-        user_create_time,
-        rpc_seqno,
-        hostid,
-        host_total_credit,
-        host_expavg_credit,
-        host_create_time,
-        nrpc_failures,
-        master_fetch_failures,
-        min_rpc_time,
-        next_rpc_time,
-        short_term_debt,
-        long_term_debt,
-        resource_share,
-        duration_correction_factor,
-        sched_rpc_pending,
-        send_time_stats_log,
-        send_job_log,
-        master_url_fetch_pending?"    <master_url_fetch_pending/>\n":"",
-        trickle_up_pending?"    <trickle_up_pending/>\n":"",
-        send_file_list?"    <send_file_list/>\n":"",
-        non_cpu_intensive?"    <non_cpu_intensive/>\n":"",
-        suspended_via_gui?"    <suspended_via_gui/>\n":"",
-        dont_request_more_work?"    <dont_request_more_work/>\n":"",
-        detach_when_done?"    <detach_when_done/>\n":"",
-        ended?"    <ended/>\n":"",
-        attached_via_acct_mgr?"    <attached_via_acct_mgr/>\n":"",
-        (this == gstate.scheduler_op->cur_proj)?"   <scheduler_rpc_in_progress/>\n":"",
-        use_symlinks?"    <use_symlinks/>\n":""
-    );
+void PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
+    out << "<project>\n"
+        << XmlTag<string>("master_url",             master_url)
+        << XmlTag<string>("project_name",           project_name)
+        << XmlTag<string>("symstore",               symstore)
+        << XmlTag<XmlString>("user_name",           user_name)
+        << XmlTag<XmlString>("team_name",           team_name)
+        << XmlTag<string>("host_venue",             host_venue)
+        << XmlTag<string>("email_hash",             email_hash)
+        << XmlTag<string>("cross_project_id",       cross_project_id)
+        << XmlTag<double>("cpid_time",              cpid_time)
+        << XmlTag<double>("user_total_credit",      user_total_credit)
+        << XmlTag<double>("user_expavg_credit",     user_expavg_credit)
+        << XmlTag<double>("user_create_time",       user_create_time)
+        << XmlTag<int>   ("rpc_seqno",              rpc_seqno)
+        << XmlTag<int>   ("hostid",                 hostid)
+        << XmlTag<double>("host_total_credit",      host_total_credit)
+        << XmlTag<double>("host_expavg_credit",     host_expavg_credit)
+        << XmlTag<double>("host_create_time",       host_create_time)
+        << XmlTag<int>   ("nrpc_failures",          nrpc_failures)
+        << XmlTag<int>   ("master_fetch_failures",  master_fetch_failures)
+        << XmlTag<double>("min_rpc_time",           min_rpc_time)
+        << XmlTag<double>("next_rpc_time",          next_rpc_time)
+        << XmlTag<double>("short_term_debt",        short_term_debt)
+        << XmlTag<double>("long_term_debt",         long_term_debt)
+        << XmlTag<double>("resource_share",         resource_share)
+        << XmlTag<double>("duration_correction_factor", duration_correction_factor)
+        << XmlTag<int>   ("sched_rpc_pending",      sched_rpc_pending)
+    ;
+    if (master_url_fetch_pending)   { out << "<master_url_fetch_pending/>\n"; }
+    if (trickle_up_pending)         { out << "<trickle_up_pending/>\n"; }
+    if (send_file_list)             { out << "<send_file_list/>\n"; }
+    if (non_cpu_intensive)          { out << "<non_cpu_intensive/>\n"; }
+    if (suspended_via_gui)          { out << "<suspended_via_gui/>\n"; }
+    if (dont_request_more_work)     { out << "<dont_request_more_work/>\n"; }
+    if (detach_when_done)           { out << "<detach_when_done/>\n"; }
+    if (ended)                      { out << "<ended/>\n"; }
+    if (attached_via_acct_mgr)      { out << "<attached_via_acct_mgr/>\n"; }
+    if (this == gstate.scheduler_op->cur_proj) {
+        out << "<scheduler_rpc_in_progress/>\n";
+    }
+    if (use_symlinks) {
+        out << "<use_symlinks/>\n";
+    }
     if (ams_resource_share >= 0) {
-        out.printf("    <ams_resource_share>%f</ams_resource_share>\n",
-            ams_resource_share
-        );
+        out << XmlTag<double>("ams_resource_share", ams_resource_share);
     }
     if (gui_rpc) {
-        out.printf("%s", gui_urls.c_str());
-        out.printf(
-            "    <rr_sim_deadlines_missed>%d</rr_sim_deadlines_missed>\n"
-            "    <last_rpc_time>%f</last_rpc_time>\n"
-            "    <project_files_downloaded_time>%f</project_files_downloaded_time>\n",
-            rr_sim_status.get_deadlines_missed(),
-            last_rpc_time,
-            project_files_downloaded_time
-        );
+        out << gui_urls;
+        out << XmlTag<int>   ("rr_sim_deadlines_missed",        rr_sim_status.get_deadlines_missed())
+            << XmlTag<double>("last_rpc_time",                  last_rpc_time)
+            << XmlTag<double>("project_files_downloaded_time",  project_files_downloaded_time);
     } else {
-       for (i=0; i<scheduler_urls.size(); i++) {
-            out.printf(
-                "    <scheduler_url>%s</scheduler_url>\n",
-                scheduler_urls[i].c_str()
-            );
+       for (size_t i=0; i<scheduler_urls.size(); i++) {
+            out << XmlTag<string>("scheduler_url", scheduler_urls[i]);
         }
         if (strlen(code_sign_key)) {
-            out.printf(
-                "    <code_sign_key>\n%s</code_sign_key>\n", code_sign_key
-            );
+            out << "<code_sign_key>\n" << code_sign_key << "</code_sign_key>\n";
         }
     }
-    out.printf(
-        "</project>\n"
-    );
-    return 0;
+    out << "</project>\n";
 }
 
 /// Some project data is stored in account file, other in client_state.xml
@@ -365,8 +312,6 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
     short_term_debt = p.short_term_debt;
     long_term_debt = p.long_term_debt;
     send_file_list = p.send_file_list;
-    send_time_stats_log = p.send_time_stats_log;
-    send_job_log = p.send_job_log;
     non_cpu_intensive = p.non_cpu_intensive;
     suspended_via_gui = p.suspended_via_gui;
     dont_request_more_work = p.dont_request_more_work;
@@ -383,35 +328,23 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
 
 /// Write project statistic to project statistics file.
 ///
-int PROJECT::write_statistics(MIOFILE& out, bool /*gui_rpc*/) const {
-    out.printf(
-        "<project_statistics>\n"
-        "    <master_url>%s</master_url>\n",
-        master_url.c_str()
-    );
+void PROJECT::write_statistics(std::ostream& out, bool /*gui_rpc*/) const {
+    out << "<project_statistics>\n";
+    out << XmlTag<string>("master_url", master_url);
 
     for (std::vector<DAILY_STATS>::const_iterator i=statistics.begin();
         i!=statistics.end(); ++i
     ) {
-        out.printf(
-            "    <daily_statistics>\n"
-            "        <day>%f</day>\n"
-            "        <user_total_credit>%f</user_total_credit>\n"
-            "        <user_expavg_credit>%f</user_expavg_credit>\n"
-            "        <host_total_credit>%f</host_total_credit>\n"
-            "        <host_expavg_credit>%f</host_expavg_credit>\n"
-            "    </daily_statistics>\n",
-            i->day,
-            i->user_total_credit,
-            i->user_expavg_credit,
-            i->host_total_credit,
-            i->host_expavg_credit
-        );
+        out << "<daily_statistics>\n"
+            << XmlTag<double>("day", i->day)
+            << XmlTag<double>("user_total_credit",  i->user_total_credit)
+            << XmlTag<double>("user_expavg_credit", i->user_expavg_credit)
+            << XmlTag<double>("host_total_credit",  i->host_total_credit)
+            << XmlTag<double>("host_expavg_credit", i->host_expavg_credit)
+            << "</daily_statistics>\n"
+        ;
     }
-    out.printf(
-        "</project_statistics>\n"
-    );
-    return 0;
+    out << "</project_statistics>\n";
 }
 
 const char* PROJECT::get_project_name() const {
@@ -539,16 +472,16 @@ void PROJECT::link_project_files(bool recreate_symlink_files) {
 
 /// Write the XML representation of the project files into a file.
 ///
-/// \param[in] out Reference to a MIOFILE instance representing the target file.
-void PROJECT::write_project_files(MIOFILE& out) const {
+/// \param[in] out The output stream where the XML data will be written.
+void PROJECT::write_project_files(std::ostream& out) const {
     if (project_files.empty()) {
         return;
     }
-    out.printf("<project_files>\n");
+    out << "<project_files>\n";
     for (FILE_REF_VEC::const_iterator it = project_files.begin(); it != project_files.end(); ++it) {
         (*it).write(out);
     }
-    out.printf("</project_files>\n");
+    out << "</project_files>\n";
 }
 
 /// Write symlinks for project files.
@@ -614,15 +547,12 @@ int APP::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int APP::write(MIOFILE& out) const {
-    out.printf(
-        "<app>\n"
-        "    <name>%s</name>\n"
-        "    <user_friendly_name>%s</user_friendly_name>\n"
-        "</app>\n",
-        name, user_friendly_name
-    );
-    return 0;
+void APP::write(std::ostream& out) const {
+    out << "<app>\n"
+        << XmlTag<const char*>("name", name)
+        << XmlTag<const char*>("user_friendly_name", user_friendly_name)
+        << "</app>\n"
+    ;
 }
 
 FILE_INFO::FILE_INFO() {
@@ -805,81 +735,72 @@ int FILE_INFO::parse(MIOFILE& in, bool from_server) {
     return ERR_XML_PARSE;
 }
 
-int FILE_INFO::write(MIOFILE& out, bool to_server) const {
-    unsigned int i;
-    int retval;
-
-    out.printf(
-        "<file_info>\n"
-        "    <name>%s</name>\n"
-        "    <nbytes>%f</nbytes>\n"
-        "    <max_nbytes>%f</max_nbytes>\n",
-        name.c_str(), nbytes, max_nbytes);
-
+void FILE_INFO::write(std::ostream& out, bool to_server) const {
+    out << "<file_info>\n"
+        << XmlTag<std::string>("name", name)
+        << XmlTag<double>("nbytes", nbytes)
+        << XmlTag<double>("max_nbytes", max_nbytes)
+    ;
     if (strlen(md5_cksum)) {
-        out.printf("    <md5_cksum>%s</md5_cksum>\n", md5_cksum);
+        out << XmlTag<const char*>("md5_cksum", md5_cksum);
     }
     if (!to_server) {
-        if (generated_locally) out.printf("    <generated_locally/>\n");
-        out.printf("    <status>%d</status>\n", status);
-        if (executable) out.printf("    <executable/>\n");
-        if (uploaded) out.printf("    <uploaded/>\n");
-        if (upload_when_present) out.printf("    <upload_when_present/>\n");
-        if (sticky) out.printf("    <sticky/>\n");
-        if (marked_for_delete) out.printf("    <marked_for_delete/>\n");
-        if (report_on_rpc) out.printf("    <report_on_rpc/>\n");
-        if (gzip_when_done) out.printf("    <gzip_when_done/>\n");
-        if (signature_required) out.printf("    <signature_required/>\n");
-        if (is_user_file) out.printf("    <is_user_file/>\n");
-        if (!file_signature.empty()) out.printf("    <file_signature>\n%s</file_signature>\n", file_signature.c_str());
+        out << XmlTag<int>("status", status);
+        if (generated_locally)   out << "<generated_locally/>\n";
+        if (executable)          out << "<executable/>\n";
+        if (uploaded)            out << "<uploaded/>\n";
+        if (upload_when_present) out << "<upload_when_present/>\n";
+        if (sticky)              out << "<sticky/>\n";
+        if (marked_for_delete)   out << "<marked_for_delete/>\n";
+        if (report_on_rpc)       out << "<report_on_rpc/>\n";
+        if (gzip_when_done)      out << "<gzip_when_done/>\n";
+        if (signature_required)  out << "<signature_required/>\n";
+        if (is_user_file)        out << "<is_user_file/>\n";
+        if (!file_signature.empty()) {
+            // newline required after start tag
+            out << "<file_signature>\n" << file_signature << "</file_signature>\n";
+        }
     }
-    for (i=0; i<urls.size(); i++) {
-        out.printf("    <url>%s</url>\n", urls[i].c_str());
+    for (size_t i=0; i<urls.size(); i++) {
+        out << XmlTag<std::string>("url", urls[i]);
     }
     if (!to_server && pers_file_xfer) {
-        retval = pers_file_xfer->write(out);
-        if (retval) return retval;
+        pers_file_xfer->write(out);
     }
     if (!to_server) {
         if ((!signed_xml.empty()) && (!xml_signature.empty())) {
-            out.printf(
-                "    <signed_xml>\n%s    </signed_xml>\n"
-                "    <xml_signature>\n%s    </xml_signature>\n",
-                signed_xml.c_str(), xml_signature.c_str());
+            out << "<signed_xml>\n" << signed_xml << "</signed_xml>\n";
+            out << "<xml_signature>\n" << xml_signature << "</xml_signature>\n";
         }
     }
     if (!error_msg.empty()) {
         std::string error_msg_nows = error_msg;
         strip_whitespace(error_msg_nows);
-        out.printf("    <error_msg>\n%s\n</error_msg>\n", error_msg_nows.c_str());
+        out << "<error_msg>\n" << error_msg_nows << "\n</error_msg>\n";
     }
-    out.printf("</file_info>\n");
-    return 0;
+    out << "</file_info>\n";
 }
 
-int FILE_INFO::write_gui(MIOFILE& out) const {
-    out.printf(
+void FILE_INFO::write_gui(std::ostream& out) const {
+    out <<
         "<file_transfer>\n"
-        "    <project_url>%s</project_url>\n"
-        "    <project_name>%s</project_name>\n"
-        "    <name>%s</name>\n"
-        "    <nbytes>%f</nbytes>\n"
-        "    <max_nbytes>%f</max_nbytes>\n"
-        "    <status>%d</status>\n",
-        project->get_master_url().c_str(), project->project_name, name.c_str(),
-        nbytes, max_nbytes, status);
+        << XmlTag<string>("project_url", project->get_master_url())
+        << XmlTag<string>("project_name", project->project_name)
+        << XmlTag<string>("name", name)
+        << XmlTag<double>("nbytes", nbytes)
+        << XmlTag<double>("max_nbytes", max_nbytes)
+        << XmlTag<int>("status", status);
 
-    if (generated_locally) out.printf("    <generated_locally/>\n");
-    if (uploaded) out.printf("    <uploaded/>\n");
-    if (upload_when_present) out.printf("    <upload_when_present/>\n");
-    if (sticky) out.printf("    <sticky/>\n");
-    if (marked_for_delete) out.printf("    <marked_for_delete/>\n");
+    if (generated_locally) out << "    <generated_locally/>\n";
+    if (uploaded) out << "    <uploaded/>\n";
+    if (upload_when_present) out << "    <upload_when_present/>\n";
+    if (sticky) out << "    <sticky/>\n";
+    if (marked_for_delete) out << "    <marked_for_delete/>\n";
 
     if (pers_file_xfer) {
         pers_file_xfer->write(out);
     }
-    out.printf("</file_transfer>\n");
-    return 0;
+    out << "</file_transfer>\n";
 }
 
 /// Delete physical underlying file associated with FILE_INFO.
@@ -1019,10 +940,10 @@ bool FILE_INFO::had_failure(int& failnum) const {
 std::string FILE_INFO::failure_message() const {
     std::ostringstream buf;
     buf << "<file_xfer_error>\n"
-        << "  <file_name>" << name << "</file_name>\n"
-        << "  <error_code>" << status << "</error_code>\n";
+        << XmlTag<std::string>("file_name", name)
+        << XmlTag<int>("error_code", status);
     if (!error_msg.empty()) {
-        buf << "  <error_message>" << error_msg << "</error_message>\n";
+        buf << XmlTag<std::string>("error_message", error_msg);
     }
     buf << "</file_xfer_error>\n";
     return buf.str();
@@ -1100,43 +1021,29 @@ int APP_VERSION::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int APP_VERSION::write(MIOFILE& out) const {
-    unsigned int i;
-    int retval;
-
-    out.printf(
-        "<app_version>\n"
-        "    <app_name>%s</app_name>\n"
-        "    <version_num>%d</version_num>\n"
-        "    <platform>%s</platform>\n"
-        "    <avg_ncpus>%f</avg_ncpus>\n"
-        "    <max_ncpus>%f</max_ncpus>\n"
-        "    <flops>%f</flops>\n",
-        app_name,
-        version_num,
-        platform,
-        avg_ncpus,
-        max_ncpus,
-        flops
-    );
+void APP_VERSION::write(std::ostream& out) const {
+    out << "<app_version>\n"
+        << XmlTag<const char*>("app_name", app_name)
+        << XmlTag<int>("version_num", version_num)
+        << XmlTag<const char*>("platform", platform)
+        << XmlTag<double>("avg_ncpus", avg_ncpus)
+        << XmlTag<double>("max_ncpus", max_ncpus)
+        << XmlTag<double>("flops", flops)
+    ;
     if (strlen(plan_class)) {
-        out.printf("    <plan_class>%s</plan_class>\n", plan_class);
+        out << XmlTag<const char*>("plan_class", plan_class);
     }
     if (strlen(api_version)) {
-        out.printf("    <api_version>%s</api_version>\n", api_version);
+        out << XmlTag<const char*>("api_version", api_version);
     }
     if (strlen(cmdline)) {
-        out.printf("    <cmdline>%s</cmdline>\n", cmdline);
+        out << XmlTag<const char*>("cmdline", cmdline);
     }
-    for (i=0; i<app_files.size(); i++) {
-        retval = app_files[i].write(out);
-        if (retval) return retval;
+    for (size_t i=0; i<app_files.size(); i++) {
+        app_files[i].write(out);
     }
 
-    out.printf(
-        "</app_version>\n"
-    );
-    return 0;
+    out << "</app_version>\n";
 }
 
 bool APP_VERSION::had_download_failure(int& failnum) const {
@@ -1204,27 +1111,23 @@ int FILE_REF::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int FILE_REF::write(MIOFILE& out) const {
+void FILE_REF::write(std::ostream& out) const {
+    out << "<file_ref>\n";
+    out << XmlTag<const char*>("file_name", file_name);
 
-    out.printf(
-        "    <file_ref>\n"
-        "        <file_name>%s</file_name>\n",
-        file_name
-    );
     if (strlen(open_name)) {
-        out.printf("        <open_name>%s</open_name>\n", open_name);
+        out << XmlTag<const char*>("open_name", open_name);
     }
     if (main_program) {
-        out.printf("        <main_program/>\n");
+        out << "<main_program/>\n";
     }
     if (copy_file) {
-        out.printf("        <copy_file/>\n");
+        out << "<copy_file/>\n";
     }
     if (optional) {
-        out.printf("        <optional/>\n");
+        out << "<optional/>\n";
     }
-    out.printf("    </file_ref>\n");
-    return 0;
+    out << "</file_ref>\n";
 }
 
 int WORKUNIT::parse(MIOFILE& in) {
@@ -1290,41 +1193,27 @@ int WORKUNIT::parse(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int WORKUNIT::write(MIOFILE& out) const {
-    unsigned int i;
-
-    out.printf(
-        "<workunit>\n"
-        "    <name>%s</name>\n"
-        "    <app_name>%s</app_name>\n"
-        "    <version_num>%d</version_num>\n"
-        //"    <env_vars>%s</env_vars>\n"
-        "    <rsc_fpops_est>%f</rsc_fpops_est>\n"
-        "    <rsc_fpops_bound>%f</rsc_fpops_bound>\n"
-        "    <rsc_memory_bound>%f</rsc_memory_bound>\n"
-        "    <rsc_disk_bound>%f</rsc_disk_bound>\n",
-        name,
-        app_name,
-        version_num,
-        //env_vars,
-        rsc_fpops_est,
-        rsc_fpops_bound,
-        rsc_memory_bound,
-        rsc_disk_bound
-    );
+void WORKUNIT::write(std::ostream& out) const {
+    out << "<workunit>\n"
+        << XmlTag<const char*>("name", name)
+        << XmlTag<const char*>("app_name", app_name)
+        << XmlTag<int>("version_num", version_num)
+        //<< XmlTag<const char*>("env_vars", env_vars)
+        << XmlTag<double>("rsc_fpops_est", rsc_fpops_est)
+        << XmlTag<double>("rsc_fpops_bound", rsc_fpops_bound)
+        << XmlTag<double>("rsc_memory_bound", rsc_memory_bound)
+        << XmlTag<double>("rsc_disk_bound", rsc_disk_bound)
+    ;
     if (!command_line.empty()) {
-        out.printf(
-            "    <command_line>\n"
-            "%s\n"
-            "    </command_line>\n",
-            command_line.c_str()
-        );
+        out << "<command_line>\n"
+            << command_line
+            << "\n</command_line>\n"
+        ;
     }
-    for (i=0; i<input_files.size(); i++) {
+    for (size_t i=0; i<input_files.size(); i++) {
         input_files[i].write(out);
     }
-    out.printf("</workunit>\n");
-    return 0;
+    out << "</workunit>\n";
 }
 
 bool WORKUNIT::had_download_failure(int& failnum) const {
@@ -1381,6 +1270,7 @@ int RESULT::parse_name(FILE* in, const char* end_tag) {
 void RESULT::clear() {
     strcpy(name, "");
     strcpy(wu_name, "");
+    completed_time = 0.0;
     report_deadline = 0;
     output_files.clear();
     _state = RESULT_NEW;
@@ -1397,6 +1287,7 @@ void RESULT::clear() {
     fpops_cumulative = 0;
     intops_per_cpu_sec = 0;
     intops_cumulative = 0;
+    edf_scheduled = false;
     app = NULL;
     wup = NULL;
     project = NULL;
@@ -1455,6 +1346,7 @@ int RESULT::parse_state(MIOFILE& in) {
         }
         if (parse_str(buf, "<name>", name, sizeof(name))) continue;
         if (parse_str(buf, "<wu_name>", wu_name, sizeof(wu_name))) continue;
+        if (parse_double(buf, "<received_time>", received_time)) continue;
         if (parse_double(buf, "<report_deadline>", report_deadline)) {
             continue;
         }
@@ -1491,132 +1383,105 @@ int RESULT::parse_state(MIOFILE& in) {
     return ERR_XML_PARSE;
 }
 
-int RESULT::write(MIOFILE& out, bool to_server) const {
-    unsigned int i;
-    const FILE_INFO* fip;
-    int n, retval;
-
-    out.printf(
-        "<result>\n"
-        "    <name>%s</name>\n"
-        "    <final_cpu_time>%f</final_cpu_time>\n"
-        "    <exit_status>%d</exit_status>\n"
-        "    <state>%d</state>\n"
-        "    <platform>%s</platform>\n"
-        "    <version_num>%d</version_num>\n",
-        name,
-        final_cpu_time,
-        exit_status,
-        state(),
-        platform,
-        version_num
-    );
+void RESULT::write(std::ostream& out, bool to_server) const {
+    out << "<result>\n"
+        << XmlTag<const char*>("name",           name)
+        << XmlTag<double>     ("final_cpu_time", final_cpu_time)
+        << XmlTag<int>        ("exit_status",    exit_status)
+        << XmlTag<int>        ("state",          state())
+        << XmlTag<const char*>("platform",       platform)
+        << XmlTag<int>        ("version_num",    version_num)
+    ;
     if (strlen(plan_class)) {
-        out.printf("    <plan_class>%s</plan_class>\n", plan_class);
+        out << XmlTag<const char*>("plan_class", plan_class);
     }
     if (fpops_per_cpu_sec) {
-        out.printf("    <fpops_per_cpu_sec>%f</fpops_per_cpu_sec>\n", fpops_per_cpu_sec);
+        out << XmlTag<double>("fpops_per_cpu_sec",  fpops_per_cpu_sec);
     }
     if (fpops_cumulative) {
-        out.printf("    <fpops_cumulative>%f</fpops_cumulative>\n", fpops_cumulative);
+        out << XmlTag<double>("fpops_cumulative",   fpops_cumulative);
     }
     if (intops_per_cpu_sec) {
-        out.printf("    <intops_per_cpu_sec>%f</intops_per_cpu_sec>\n", intops_per_cpu_sec);
+        out << XmlTag<double>("intops_per_cpu_sec", intops_per_cpu_sec);
     }
     if (intops_cumulative) {
-        out.printf("    <intops_cumulative>%f</intops_cumulative>\n", intops_cumulative);
+        out << XmlTag<double>("intops_cumulative",  intops_cumulative);
     }
     if (to_server) {
-        out.printf(
-            "    <app_version_num>%d</app_version_num>\n",
-            wup->version_num
-        );
+        out << XmlTag<int>("app_version_num", wup->version_num);
     }
-    n = (int)stderr_out.length();
+    int n = (int)stderr_out.length();
     if (n || to_server) {
-        out.printf("<stderr_out>\n");
+        out << "<stderr_out>\n";
 
         // the following is here so that it gets recorded on server
         // (there's no core_client_version field of result table)
         //
         if (to_server) {
-            out.printf(
-                "<core_client_version>%d.%d.%d</core_client_version>\n",
-                gstate.core_client_version.major,
-                gstate.core_client_version.minor,
-                gstate.core_client_version.release
-            );
+            out << "<core_client_version>"
+                << gstate.core_client_version.major << '.'
+                << gstate.core_client_version.minor << '.'
+                << gstate.core_client_version.release
+                << "</core_client_version>\n";
         }
         if (n) {
-            out.printf("<![CDATA[\n");
-            out.printf("%s",stderr_out.c_str());
+            out << "<![CDATA[\n";
+            out << stderr_out;
             if (stderr_out[n-1] != '\n') {
-                out.printf("\n");
+                out << "\n";
             }
-            out.printf("]]>\n");
+            out << "]]>\n";
         }
-        out.printf("</stderr_out>\n");
+        out << "</stderr_out>\n";
     }
     if (to_server) {
-        for (i=0; i<output_files.size(); i++) {
-            fip = output_files[i].file_info;
+        for (size_t i=0; i<output_files.size(); ++i) {
+            const FILE_INFO* fip = output_files[i].file_info;
             if (fip->uploaded) {
-                retval = fip->write(out, true);
-                if (retval) return retval;
+                fip->write(out, true);
             }
         }
     } else {
-        if (got_server_ack) out.printf("    <got_server_ack/>\n");
-        if (ready_to_report) out.printf("    <ready_to_report/>\n");
-        if (completed_time) out.printf("    <completed_time>%f</completed_time>\n", completed_time);
-        if (suspended_via_gui) out.printf("    <suspended_via_gui/>\n");
-        out.printf(
-            "    <wu_name>%s</wu_name>\n"
-            "    <report_deadline>%f</report_deadline>\n",
-            wu_name,
-            report_deadline
-        );
-        for (i=0; i<output_files.size(); i++) {
-            retval = output_files[i].write(out);
-            if (retval) return retval;
+        if (got_server_ack)    out << "<got_server_ack/>\n";
+        if (ready_to_report)   out << "<ready_to_report/>\n";
+        if (completed_time)    out << XmlTag<double>("completed_time", completed_time);
+        if (suspended_via_gui) out << "<suspended_via_gui/>\n";
+        out << XmlTag<const char*>("wu_name",    wu_name)
+            << XmlTag<double>("received_time",   received_time)
+            << XmlTag<double>("report_deadline", report_deadline)
+        ;
+        for (size_t i=0; i<output_files.size(); ++i) {
+            output_files[i].write(out);
         }
     }
-    out.printf("</result>\n");
-    return 0;
+    out << "</result>\n";
 }
 
-int RESULT::write_gui(MIOFILE& out) const {
-    out.printf(
+void RESULT::write_gui(std::ostream& out) const {
+    out <<
         "<result>\n"
-        "    <name>%s</name>\n"
-        "    <wu_name>%s</wu_name>\n"
-        "    <project_url>%s</project_url>\n"
-        "    <final_cpu_time>%f</final_cpu_time>\n"
-        "    <exit_status>%d</exit_status>\n"
-        "    <state>%d</state>\n"
-        "    <report_deadline>%f</report_deadline>\n"
-        "    <estimated_cpu_time_remaining>%f</estimated_cpu_time_remaining>\n",
-        name,
-        wu_name,
-        project->get_master_url().c_str(),
-        final_cpu_time,
-        exit_status,
-        state(),
-        report_deadline,
-        estimated_cpu_time_remaining()
-    );
-    if (got_server_ack) out.printf("    <got_server_ack/>\n");
-    if (ready_to_report) out.printf("    <ready_to_report/>\n");
-    if (completed_time) out.printf("    <completed_time>%f</completed_time>\n", completed_time);
-    if (suspended_via_gui) out.printf("    <suspended_via_gui/>\n");
-    if (project->suspended_via_gui) out.printf("    <project_suspended_via_gui/>\n");
-    if (edf_scheduled) out.printf("    <edf_scheduled/>\n");
+        << XmlTag<const char*>("name",            name)
+        << XmlTag<const char*>("wu_name",         wu_name)
+        << XmlTag<string>     ("project_url",     project->get_master_url())
+        << XmlTag<double>     ("final_cpu_time",  final_cpu_time)
+        << XmlTag<int>        ("exit_status",     exit_status)
+        << XmlTag<int>        ("state",           state())
+        << XmlTag<double>     ("received_time",   received_time)
+        << XmlTag<double>     ("report_deadline", report_deadline)
+        << XmlTag<double>     ("estimated_cpu_time_remaining", estimated_cpu_time_remaining())
+    ;
+    if (got_server_ack)     out << "    <got_server_ack/>\n";
+    if (ready_to_report)    out << "    <ready_to_report/>\n";
+    if (completed_time)     out << XmlTag<double>("completed_time", completed_time);
+    if (suspended_via_gui)  out << "    <suspended_via_gui/>\n";
+    if (project->suspended_via_gui) out << "    <project_suspended_via_gui/>\n";
+    if (edf_scheduled)      out << "    <edf_scheduled/>\n";
+
     const ACTIVE_TASK* atp = gstate.active_tasks.lookup_result(this);
     if (atp) {
         atp->write_gui(out);
     }
-    out.printf("</result>\n");
-    return 0;
+    out << "</result>\n";
 }
 
 /// Returns true if the result's output files are all either
@@ -1703,6 +1568,20 @@ std::string RESULT::get_name() const {
     return name;
 }
 
+/// Get the time when this result was received from the server.
+///
+/// \return The time when this result was received from the server.
+double RESULT::get_received_time() const {
+    return received_time;
+}
+
+/// Set the time when this result was received from the server.
+///
+/// \param[in] received_time The time when this result was received from the server.
+void RESULT::set_received_time(double received_time) {
+    this->received_time = received_time;
+}
+
 const FILE_REF* RESULT::lookup_file(const FILE_INFO* fip) const {
     for (unsigned int i=0; i<output_files.size(); i++) {
         const FILE_REF& fr = output_files[i];
@@ -1719,25 +1598,6 @@ FILE_INFO* RESULT::lookup_file_logical(const char* lname) {
         }
     }
     return 0;
-}
-
-void RESULT::append_log_record(ACTIVE_TASK& at) {
-    std::string filename = job_log_filename(*project);
-    FILE* f = fopen(filename.c_str(), "ab");
-    if (!f) return;
-    fprintf(f, "%f ue %f ct %f fe %f sm %f sp %f sf %f sd %f sc %d nm %s\n",
-        gstate.now,
-        estimated_cpu_time_uncorrected(),
-        final_cpu_time,
-        wup->rsc_fpops_est,
-        at.stats_mem,
-        at.stats_page,
-        at.stats_pagefault_rate,
-        at.stats_disk,
-        at.stats_checkpoint,
-        name
-    );
-    fclose(f);
 }
 
 /// Abort a result that's not currently running.

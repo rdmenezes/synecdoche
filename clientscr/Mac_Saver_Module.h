@@ -23,7 +23,7 @@
 #define _SCREENSAVER_MAC_H
 
 #include <Carbon/Carbon.h>
-
+#include <sys/param.h>
 
 
 #ifdef __cplusplus
@@ -105,7 +105,7 @@ protected:
 // Count the number of active graphics-capable apps
     int             count_active_graphic_apps(RESULTS& results, RESULT* exclude = NULL);
 
-// Choose a ramdom graphics application from the vector that
+// Choose a random graphics application from the vector that
 //   was passed in.
 
     RESULT*         get_random_graphics_app(RESULTS& results, RESULT* exclude = NULL);

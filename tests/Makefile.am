@@ -1,13 +1,19 @@
-check_PROGRAMS = UnitTest
+check_PROGRAMS = TestLib
 
-UnitTest_SOURCES = TestRunner.cpp \
-                   TestXmlParser.cpp TestXmlParser.h \
-                   TestStrUtil.cpp TestStrUtil.h
-UnitTest_CXXFLAGS = $(CPPUNIT_CFLAGS)
-UnitTest_LDADD = $(CPPUNIT_LIBS) ../lib/libboinc.a
+TestLib_SOURCES = \
+	TestRunner.cpp \
+	TestXmlParser.cpp \
+	TestStrUtil.cpp \
+	TestMioFile.cpp \
+	TestXmlWrite.cpp \
+	TestUtil.cpp \
+	Util.cpp Util.h
 
-#TESTS = XMLParser
-#TESTS_ENVIRONMENT = ./UnitTest
+TestLib_CPPFLAGS = -I$(top_srcdir)
+TestLib_CXXFLAGS = $(UNITTEST_CFLAGS)
+TestLib_LDADD = $(UNITTEST_LIBS) ../lib/libboinc.a
 
-check-local:
-	./UnitTest
+TESTS = $(check_PROGRAMS)
+
+# this was the old name for TestLib.
+MOSTLYCLEANFILES = UnitTest UnitTest-*.o

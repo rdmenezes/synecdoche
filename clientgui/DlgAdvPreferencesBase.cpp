@@ -584,3 +584,6 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     this->SetSizer( bSizer1 );
     this->Layout();
 }
+
+CDlgAdvPreferencesBase::~CDlgAdvPreferencesBase() {
+}

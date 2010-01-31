@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -184,6 +184,7 @@ int PROJECT::parse(MIOFILE& in) {
         if (parse_str(buf, "<project_name>", project_name)) continue;
         if (parse_str(buf, "<user_name>", user_name)) continue;
         if (parse_str(buf, "<team_name>", team_name)) continue;
+        if (parse_int(buf, "<hostid>", hostid)) continue;
         if (parse_double(buf, "<user_total_credit>", user_total_credit)) continue;
         if (parse_double(buf, "<user_expavg_credit>", user_expavg_credit)) continue;
         if (parse_double(buf, "<host_total_credit>", host_total_credit)) continue;
@@ -362,7 +363,8 @@ int RESULT::parse(MIOFILE& in) {
         if (parse_str(buf, "<name>", name)) continue;
         if (parse_str(buf, "<wu_name>", wu_name)) continue;
         if (parse_str(buf, "<project_url>", project_url)) continue;
-        if (parse_int(buf, "<report_deadline>", report_deadline)) continue;
+        if (parse_double(buf, "<received_time>", received_time)) continue;
+        if (parse_double(buf, "<report_deadline>", report_deadline)) continue;
         if (parse_bool(buf, "ready_to_report", ready_to_report)) continue;
         if (parse_bool(buf, "got_server_ack", got_server_ack)) continue;
         if (parse_bool(buf, "suspended_via_gui", suspended_via_gui)) continue;
@@ -405,7 +407,8 @@ void RESULT::clear() {
     project_url.clear();
     graphics_exec_path.clear();
     slot_path.clear();
-    report_deadline = 0;
+    received_time = 0.0;
+    report_deadline = 0.;
     ready_to_report = false;
     got_server_ack = false;
     final_cpu_time = 0.0;
@@ -1771,6 +1774,24 @@ int RPC_CLIENT::get_messages(int seqno, MESSAGES& msgs) {
     return retval;
 }
 
+int RPC_CLIENT::get_message_count(int& msg_count) {
+    // Send request:
+    RPC rpc(this);
+    int retval = rpc.do_rpc("<get_message_count/>\n");
+    if (retval) {
+        return retval;
+    }
+
+    // Parse reply:
+    char buf[256];
+    while (rpc.fin.fgets(buf, sizeof(buf))) {
+        if (parse_int(buf, "<seqno>", msg_count)) {
+            return 0;
+        }
+    }
+    return ERR_XML_PARSE;
+}
+
 int RPC_CLIENT::file_transfer_op(const FILE_TRANSFER& ft, const char* op) {
     int retval;
     SET_LOCALE sl;
@@ -2199,13 +2220,10 @@ int RPC_CLIENT::get_global_prefs_override_struct(GLOBAL_PREFS& prefs, GLOBAL_PRE
 
 int RPC_CLIENT::set_global_prefs_override_struct(GLOBAL_PREFS& prefs, GLOBAL_PREFS_MASK& mask) {
     SET_LOCALE sl;
-    char buf[64000];
-    MIOFILE mf;
+    std::ostringstream oss;
 
-    mf.init_buf_write(buf, sizeof(buf));
-    prefs.write_subset(mf, mask);
-    std::string s = buf;
-    return set_global_prefs_override(s);
+    prefs.write_subset(oss, mask);
+    return set_global_prefs_override(oss.str());
 }
 
 int RPC_CLIENT::read_cc_config() {

@@ -32,7 +32,7 @@ class CSGUIListCtrl : public wxListView {
 
 public:
     CSGUIListCtrl();
-    CSGUIListCtrl(CPanelMessages* pView, wxWindowID iListWindowID, int iListWindowFlags);
+    CSGUIListCtrl(CPanelMessages* pView, wxWindowID iListWindowID, wxInt32 iListWindowFlags);
 
 private:
     

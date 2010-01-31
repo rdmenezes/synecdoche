@@ -69,18 +69,6 @@
 // Completion Error Page Multiline Text Control
 #define ID_TEXTCTRL 11002
 
-// Debug Flag Controls
-#define ID_ERRPROJECTPROPERTIES 11100
-#define ID_ERRPROJECTCOMM 11101
-#define ID_ERRPROJECTPROPERTIESURL 11102
-#define ID_ERRACCOUNTCREATIONDISABLED 11103
-#define ID_ERRCLIENTACCOUNTCREATIONDISABLED 11104
-#define ID_ERRACCOUNTALREADYEXISTS 11105
-#define ID_ERRPROJECTALREADYATTACHED 11106
-#define ID_ERRPROJECTATTACHFAILURE 11107
-#define ID_ERRGOOGLECOMM 11108
-#define ID_ERRNETDETECTION 11110
-
 // Project Info/Account Manager Info Controls
 #define ID_PROJECTSELECTIONCTRL 11200
 #define ID_PROJECTURLSTATICCTRL 11201
@@ -124,31 +112,11 @@
 #define ID_ACCTMANAGERUPDATECTRL 11602
 #define ID_ACCTMANAGERREMOVECTRL 11603
 
-// Diagnostics Tools
-//
-#define WIZDEBUG_ERRPROJECTPROPERTIES                 0x00000001
-#define WIZDEBUG_ERRPROJECTPROPERTIESURL              0x00000002
-#define WIZDEBUG_ERRGOOGLECOMM                        0x00000008
-#define WIZDEBUG_ERRNETDETECTION                      0x00000010
-#define WIZDEBUG_ERRPROJECTCOMM                       0x00000020
-#define WIZDEBUG_ERRACCOUNTNOTFOUND                   0x00000040
-#define WIZDEBUG_ERRACCOUNTALREADYEXISTS              0x00000080
-#define WIZDEBUG_ERRACCOUNTCREATIONDISABLED           0x00000100
-#define WIZDEBUG_ERRCLIENTACCOUNTCREATIONDISABLED     0x00000200
-#define WIZDEBUG_ERRPROJECTATTACH                     0x00000400
-#define WIZDEBUG_ERRPROJECTALREADYATTACHED            0x00000800
-
-#define PROCESS_DEBUG_FLAG(ulFlags) \
-    ((CBOINCBaseWizard*)GetParent())->SetDiagFlags(ulFlags)
-
-#define CHECK_DEBUG_FLAG(id) \
-    ((CBOINCBaseWizard*)GetParent())->IsDiagFlagsSet(id)
-
 /// Check to which wizard a page belongs.
 /// The header files for all existing wizards need to be included in this file
 /// because dynamic_cast needs the class to be defined.
 ///
-/// \param[in] wiz The class name of the wizard that should be checked.
+/// \tparam wiz The class name of the wizard that should be checked.
 /// \param[in] cur_page A pointer to the wizard's page for which the wizard type
 ///                     should be checked.
 /// \return True if the wizard is of the same class as specified by \a wiz,

@@ -15,9 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _PERS_FILE_XFER_H
-#define _PERS_FILE_XFER_H
+#ifndef PERS_FILE_XFER_H
+#define PERS_FILE_XFER_H
 
+#include <iosfwd>
 #include <vector>
 
 class MIOFILE;
@@ -110,7 +111,7 @@ public:
     void transient_failure(int);
     void permanent_failure(int);
     void abort();
-    int write(MIOFILE& fout) const;
+    void write(std::ostream& out) const;
     int parse(MIOFILE& fin);
     int create_xfer();
     int start_xfer();
@@ -129,4 +130,5 @@ public:
     void suspend();
 };
 
-#endif
+#endif // PERS_FILE_XFER_H
+

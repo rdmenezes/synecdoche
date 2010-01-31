@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2009 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -21,23 +22,22 @@
 ///
 /// The scheduler RPC mechanism is in scheduler_op.C
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
+#else
+#include "config.h"
 #endif
 
-#ifndef _WIN32
-#include "config.h"
 #include <stdio.h>
-#include <math.h>
-#include <time.h>
-#include <strings.h>
+#include <cmath>
+#include <ctime>
+#include <cstring>
 
 #include <limits>
 #include <map>
 #include <set>
-#endif
+#include <fstream>
+#include <ostream>
 
 #include "client_state.h"
 
@@ -48,7 +48,7 @@
 #include "parse.h"
 #include "str_util.h"
 #include "util.h"
-#include "miofile.h"
+#include "xml_write.h"
 
 #include "client_msgs.h"
 #include "scheduler_op.h"
@@ -60,19 +60,16 @@
 /// try to report results this much before their deadline
 #define REPORT_DEADLINE_CUSHION ((double)SECONDS_PER_DAY)
 
-
 /// Write a scheduler request to a disk file,
 /// to be sent to a scheduling server.
+/// \todo This function was modified to use ofstream instead of boinc_fopen().
+/// This means the error checking and retry mechanisms of boinc_fopen() aren't
+/// used now. We may need to restore them. --NA
 int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
-    MIOFILE mf;
-    unsigned int i;
-    const RESULT* rp;
-    int retval;
-    double disk_total, disk_project;
 
     std::string sr_file = get_sched_request_filename(*p);
-    FILE* f = boinc_fopen(sr_file.c_str(), "wb");
-    if (!f) return ERR_FOPEN;
+    std::ofstream out(sr_file.c_str(), std::ios::out | std::ios::binary);
+    if (!out.is_open()) return ERR_FOPEN;
 
     double trs = total_resource_share();
     double rrs = runnable_resource_share();
@@ -100,80 +97,61 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         p->rpc_seqno = 0;
     }
 
-    mf.init_file(f);
-    fprintf(f,
-        "<scheduler_request>\n"
-        "    <authenticator>%s</authenticator>\n"
-        "    <hostid>%d</hostid>\n"
-        "    <rpc_seqno>%d</rpc_seqno>\n"
-        "    <core_client_major_version>%d</core_client_major_version>\n"
-        "    <core_client_minor_version>%d</core_client_minor_version>\n"
-        "    <core_client_release>%d</core_client_release>\n"
-        "    <work_req_seconds>%f</work_req_seconds>\n"
-        "    <resource_share_fraction>%f</resource_share_fraction>\n"
-        "    <rrs_fraction>%f</rrs_fraction>\n"
-        "    <prrs_fraction>%f</prrs_fraction>\n"
-        "    <estimated_delay>%f</estimated_delay>\n"
-        "    <duration_correction_factor>%f</duration_correction_factor>\n"
-        "    <sandbox>%d</sandbox>\n",
-        p->authenticator,
-        p->hostid,
-        p->rpc_seqno,
-        boinc_compat_version.major,
-        boinc_compat_version.minor,
-        boinc_compat_version.release,
-        p->work_request,
-        resource_share_fraction,
-        rrs_fraction,
-        prrs_fraction,
-        time_until_work_done(p, proj_min_results(p, prrs)-1, prrs),
-        p->duration_correction_factor,
-        (g_use_sandbox ? 1 : 0)
-    );
+    out << "<scheduler_request>\n"
+        << XmlTag<const char*>("authenticator",         p->authenticator)
+        << XmlTag<int>   ("hostid",                     p->hostid)
+        << XmlTag<int>   ("rpc_seqno",                  p->rpc_seqno)
+        << XmlTag<int>   ("core_client_major_version",  boinc_compat_version.major)
+        << XmlTag<int>   ("core_client_minor_version",  boinc_compat_version.minor)
+        << XmlTag<int>   ("core_client_release",        boinc_compat_version.release)
+        << XmlTag<double>("work_req_seconds",           p->work_request)
+        << XmlTag<double>("resource_share_fraction",    resource_share_fraction)
+        << XmlTag<double>("rrs_fraction",               rrs_fraction)
+        << XmlTag<double>("prrs_fraction",              prrs_fraction)
+        << XmlTag<double>("estimated_delay",            time_until_work_done(p, proj_min_results(p, prrs)-1, prrs))
+        << XmlTag<double>("duration_correction_factor", p->duration_correction_factor)
+        << XmlTag<int>   ("sandbox",                    (g_use_sandbox ? 1 : 0))
+    ;
 
     // write client capabilities
     //
-    fprintf(f,
-        "    <client_cap_plan_class>1</client_cap_plan_class>\n"
-    );
+    out << "<client_cap_plan_class>1</client_cap_plan_class>\n";
 
-    write_platforms(p, mf);
+    write_platforms(p, out);
 
     // send supported app_versions for anonymous platform clients
     //
     if (p->anonymous_platform) {
-        fprintf(f, "    <app_versions>\n");
-        for (i=0; i<app_versions.size(); i++) {
+        out << "<app_versions>\n";
+        for (size_t i=0; i<app_versions.size(); ++i) {
             const APP_VERSION* avp = app_versions[i];
             if (avp->project != p) continue;
-            avp->write(mf);
+            avp->write(out);
         }
-        fprintf(f, "    </app_versions>\n");
+        out << "</app_versions>\n";
     }
     if (strlen(p->code_sign_key)) {
-        fprintf(f, "    <code_sign_key>\n%s</code_sign_key>\n", p->code_sign_key);
+        out << "<code_sign_key>\n" << p->code_sign_key << "</code_sign_key>\n";
     }
 
     // send working prefs
     //
-    fprintf(f, "<working_global_preferences>\n");
-    global_prefs.write(mf);
-    fprintf(f, "</working_global_preferences>\n");
+    out << "<working_global_preferences>\n";
+    global_prefs.write(out);
+    out << "</working_global_preferences>\n";
 
     // send master global preferences if present and not host-specific
     //
     if (!global_prefs.host_specific && boinc_file_exists(GLOBAL_PREFS_FILE_NAME)) {
-        FILE* fprefs = fopen(GLOBAL_PREFS_FILE_NAME, "r");
-        if (fprefs) {
-            copy_stream(fprefs, f);
-            fclose(fprefs);
+        {
+            std::ifstream fprefs(GLOBAL_PREFS_FILE_NAME, std::ios::in);
+            if (fprefs.is_open()) {
+                copy_stream(fprefs, out);
+            }
         }
         const PROJECT* pp = lookup_project(global_prefs.source_project);
         if (pp && strlen(pp->email_hash)) {
-            fprintf(f,
-                "<global_prefs_source_email_hash>%s</global_prefs_source_email_hash>\n",
-                pp->email_hash
-            );
+            out << XmlTag<const char*>("global_prefs_source_email_hash", pp->email_hash);
         }
     }
 
@@ -182,7 +160,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
     // Use project URL as tie-breaker.
     //
     const PROJECT* winner = p;
-    for (i=0; i<projects.size(); i++ ) {
+    for (size_t i=0; i<projects.size(); ++i) {
         const PROJECT* project = projects[i];
         if (project == p) continue;
         if (strcmp(project->email_hash, p->email_hash)) continue;
@@ -194,119 +172,87 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
             }
         }
     }
-    fprintf(f,
-        "<cross_project_id>%s</cross_project_id>\n",
-        winner->cross_project_id
-    );
+    out << XmlTag<const char*>("cross_project_id", winner->cross_project_id);
 
-    retval = time_stats.write(mf, true);
-    //if (retval) return retval;
-    // can't return without closing file
-    retval = net_stats.write(mf);
-    //if (retval) return retval;
+    time_stats.write(out, true);
+    net_stats.write(out);
 
     // update hardware info, and write host info
-    //
     host_info.get_host_info();
-    retval = host_info.write(mf, config.suppress_net_info);
-    //if (retval) return retval;
+    host_info.write(out, config.suppress_net_info);
 
     // get and write disk usage
-    //
-    total_disk_usage(disk_total);
-    project_disk_usage(p, disk_project);
-    fprintf(f,
-        "    <disk_usage>\n"
-        "        <d_boinc_used_total>%f</d_boinc_used_total>\n"
-        "        <d_boinc_used_project>%f</d_boinc_used_project>\n"
-        "    </disk_usage>\n",
-        disk_total, disk_project
-    );
+    {
+        double disk_total, disk_project;
+        total_disk_usage(disk_total);
+        project_disk_usage(p, disk_project);
+        out << "<disk_usage>\n"
+            << XmlTag<double>("d_boinc_used_total", disk_total)
+            << XmlTag<double>("d_boinc_used_project", disk_project)
+            << "</disk_usage>\n"
+        ;
+    }
 
     // report results
     //
     p->nresults_returned = 0;
-    for (i=0; i<results.size(); i++) {
-        rp = results[i];
+    for (size_t i=0; i<results.size(); ++i) {
+        const RESULT* rp = results[i];
         if (rp->project == p && rp->ready_to_report) {
             p->nresults_returned++;
-            rp->write(mf, true);
+            rp->write(out, true);
         }
     }
 
-    read_trickle_files(p, f);
+    read_trickle_files(p, out);
 
     // report sticky files as needed
     //
-    for (i=0; i<file_infos.size(); i++) {
+    for (size_t i=0; i<file_infos.size(); ++i) {
         const FILE_INFO* fip = file_infos[i];
         if (fip->project != p) continue;
         if (!fip->report_on_rpc) continue;
         if (fip->marked_for_delete) continue;
-        fprintf(f,
-            "    <file_info>\n"
-            "        <name>%s</name>\n"
-            "        <nbytes>%f</nbytes>\n"
-            "        <status>%d</status>\n"
-            "        <report_on_rpc/>\n"
-            "    </file_info>\n",
-            fip->name.c_str(), fip->nbytes, fip->status);
-    }
-
-    // NOTE: there's also a send_file_list flag, not currently used
-
-    if (p->send_time_stats_log) {
-        fprintf(f, "<time_stats_log>\n");
-        time_stats.get_log_after(p->send_time_stats_log, mf);
-        fprintf(f, "</time_stats_log>\n");
-    }
-    if (p->send_job_log) {
-        fprintf(f, "<job_log>\n");
-        std::string jl_filename = job_log_filename(*p);
-        send_log_after(jl_filename.c_str(), p->send_job_log, mf);
-        fprintf(f, "</job_log>\n");
+        out << "<file_info>\n"
+            << XmlTag<std::string>("name", fip->name)
+            << XmlTag<double>("nbytes", fip->nbytes)
+            << XmlTag<int>   ("status", fip->status)
+            << "<report_on_rpc/>\n"
+            << "</file_info>\n"
+        ;
     }
 
     // send names of results in progress for this project
-    fprintf(f, "<other_results>\n");
-    for (i=0; i<results.size(); i++) {
-        rp = results[i];
+    out << "<other_results>\n";
+    for (size_t i=0; i<results.size(); ++i) {
+        const RESULT* rp = results[i];
         if (rp->project == p && !rp->ready_to_report) {
-            fprintf(f,
-                "    <other_result>\n"
-                "        <name>%s</name>\n"
-                "        <plan_class>%s</plan_class>\n"
-                "    </other_result>\n",
-                rp->name,
-                rp->plan_class
-            );
+            out << "<other_result>\n"
+                << XmlTag<const char*>("name", rp->name)
+                << XmlTag<const char*>("plan_class", rp->plan_class)
+                << "</other_result>\n"
+            ;
         }
     }
-    fprintf(f, "</other_results>\n");
+    out << "</other_results>\n";
 
     // send summary of in-progress results
     // to give scheduler info on our CPU commitment
     //
-    fprintf(f, "<in_progress_results>\n");
-    for (i=0; i<results.size(); i++) {
-        rp = results[i];
-        double x = rp->estimated_cpu_time_remaining();
-        if (x == 0) continue;
-        fprintf(f,
-            "    <ip_result>\n"
-            "        <name>%s</name>\n"
-            "        <report_deadline>%f</report_deadline>\n"
-            "        <cpu_time_remaining>%f</cpu_time_remaining>\n"
-            "    </ip_result>\n",
-            rp->name,
-            rp->report_deadline,
-            x
-        );
+    out << "<in_progress_results>\n";
+    for (size_t i=0; i<results.size(); ++i) {
+        const RESULT* rp = results[i];
+        double est_remaining = rp->estimated_cpu_time_remaining();
+        if (est_remaining == 0) continue;
+        out << "<ip_result>\n"
+            << XmlTag<const char*>("name", rp->name)
+            << XmlTag<double>("report_deadline", rp->report_deadline)
+            << XmlTag<double>("cpu_time_remaining", est_remaining)
+            << "</ip_result>\n"
+        ;
     }
-    fprintf(f, "</in_progress_results>\n");
-    fprintf(f, "</scheduler_request>\n");
-
-    fclose(f);
+    out << "</in_progress_results>\n";
+    out << "</scheduler_request>\n";
     return 0;
 }
 
@@ -318,7 +264,6 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
     static double last_time=0;
 
     // check only every 5 sec
-    //
     if (now - last_time < 5.0) return false;
     last_time = now;
 
@@ -329,6 +274,14 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
             break;
         }
 
+        // If we haven't run benchmarks yet, don't do a scheduler RPC.
+        // We need to know CPU speed to handle app versions
+        if (!host_info.p_calculated) {
+            return false; 
+        }
+
+        // check for various reasons to contact particular projects. 
+        // If we need to contact a project, see if we should ask it for work as well.
         p = next_project_sched_rpc_pending();
         if (p) {
             scheduler_op->init_op_project(p, p->sched_rpc_pending);
@@ -344,7 +297,6 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
         }
 
         // report overdue results
-        //
         p = find_project_with_overdue_results();
         if (p) {
             scheduler_op->init_op_project(p, RPC_REASON_RESULTS_DUE);
@@ -666,6 +618,7 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
             continue;
         }
         rp->wup->version_num = rp->version_num;
+        rp->set_received_time(now);
         results.push_back(rp);
         rp->set_state(RESULT_NEW, "handle_scheduler_reply");
         nresults++;
@@ -726,8 +679,6 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
     if (sr.send_file_list) {
         project->send_file_list = true;
     }
-    project->send_time_stats_log = sr.send_time_stats_log;
-    project->send_job_log = sr.send_job_log;
     project->sched_rpc_pending = NO_RPC_REASON;
     project->trickle_up_pending = false;
 
@@ -776,6 +727,10 @@ int CLIENT_STATE::handle_scheduler_reply(PROJECT* project, const char* scheduler
         double x = now + sr.request_delay;
         project->set_min_rpc_time(x, "requested by project");
     }
+
+    // Garbage collect in case the project sent us some irrelevant FILE_INFOs;
+    // avoid starting transfers for them
+    gstate.garbage_collect_always();
 
     return 0;
 }

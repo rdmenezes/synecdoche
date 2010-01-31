@@ -283,7 +283,6 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
     wxDateTime dtCurrentExecutionTime;
     wxTimeSpan tsExecutionTime;
     bool bPostNewEvent = true;
-    bool bSuccessfulCondition = false;
     int  iReturnValue = 0;
  
     wxASSERT(pDoc);
@@ -301,22 +300,20 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
             break;
         case PROJPROP_RETRPROJECTPROPERTIES_EXECUTE:
             // Attempt to retrieve the project's account creation policies
-            pDoc->rpc.get_project_config(
-                (const char*)pWAP->GetProjectInfoPage()->GetProjectURL().mb_str()
-            );
- 
             // Wait until we are done processing the request.
             dtStartExecutionTime = wxDateTime::Now();
             dtCurrentExecutionTime = wxDateTime::Now();
             tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
             iReturnValue = 0;
             pc->clear();
-            pc->error_num = ERR_IN_PROGRESS;
-            while ((!iReturnValue && (ERR_IN_PROGRESS == pc->error_num)) &&
-                   tsExecutionTime.GetSeconds() <= 60 &&
-                   !CHECK_CLOSINGINPROGRESS()
-                  )
-            {
+            pc->error_num = ERR_RETRY;
+            while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60)
+                    && (!CHECK_CLOSINGINPROGRESS())
+                    && ((ERR_IN_PROGRESS == pc->error_num) || (ERR_RETRY == pc->error_num))) {
+                if (ERR_RETRY == pc->error_num) {
+                    pDoc->rpc.get_project_config((const char*)
+                                            pWAP->GetProjectInfoPage()->GetProjectURL().mb_str());
+                }
                 dtCurrentExecutionTime = wxDateTime::Now();
                 tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                 iReturnValue = pDoc->rpc.get_project_config_poll(*pc);
@@ -331,25 +328,12 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
             //   they do not support account creation through the wizard.  In either
             //   case we should claim success and set the correct flags to show the
             //   correct 'next' page.
-            bSuccessfulCondition = 
-                (!iReturnValue) && (!pc->error_num) ||
-                (!iReturnValue) && (ERR_ACCT_CREATION_DISABLED == pc->error_num);
-            if (bSuccessfulCondition && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIES)) {
+            if ((!iReturnValue) && ((!pc->error_num)
+                                    || (ERR_ACCT_CREATION_DISABLED == pc->error_num))) {
                 SetProjectPropertiesSucceeded(true);
 
-                bSuccessfulCondition = pc->account_creation_disabled;
-                if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTCREATIONDISABLED)) {
-                    SetProjectAccountCreationDisabled(true);
-                } else {
-                    SetProjectAccountCreationDisabled(false);
-                }
-
-                bSuccessfulCondition = pc->client_account_creation_disabled;
-                if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRCLIENTACCOUNTCREATIONDISABLED)) {
-                    SetProjectClientAccountCreationDisabled(true);
-                } else {
-                    SetProjectClientAccountCreationDisabled(false);
-                }
+                SetProjectAccountCreationDisabled(pc->account_creation_disabled);
+                SetProjectClientAccountCreationDisabled(pc->client_account_creation_disabled);
  
                 // Check if we are already attached to this project. This may happen if the user
                 // entered a different URL (e. g. primegrid.com instead of www.primegrid.com) to
@@ -371,15 +355,11 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
                 SetNextState(PROJPROP_CLEANUP);
             } else {
                 SetProjectPropertiesSucceeded(false);
-                bSuccessfulCondition = 
-                    (!iReturnValue) && (ERR_FILE_NOT_FOUND == pc->error_num) ||
-                    (!iReturnValue) && (ERR_GETHOSTBYNAME == pc->error_num) ||
-                    (!iReturnValue) && (ERR_XML_PARSE == pc->error_num);
-                if (bSuccessfulCondition || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
-                    SetProjectPropertiesURLFailure(true);
-                } else {
-                    SetProjectPropertiesURLFailure(false);
-                }
+                bool urlFailure = (!iReturnValue)
+                                    && ((ERR_FILE_NOT_FOUND == pc->error_num)
+                                        || (ERR_GETHOSTBYNAME == pc->error_num)
+                                        || (ERR_XML_PARSE == pc->error_num));
+                SetProjectPropertiesURLFailure(urlFailure);
                 SetNextState(PROJPROP_DETERMINENETWORKSTATUS_BEGIN);
             }
             break;
@@ -409,12 +389,7 @@ void CProjectPropertiesPage::OnStateChange(CProjectPropertiesPageEvent& WXUNUSED
                 ::wxSafeYield(GetParent());
             }
 
-            bSuccessfulCondition = NETWORK_STATUS_WANT_CONNECTION != status.network_status;
-            if (bSuccessfulCondition && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRNETDETECTION)) {
-                SetNetworkConnectionDetected(true);
-            } else {
-                SetNetworkConnectionDetected(false);
-            }
+            SetNetworkConnectionDetected(NETWORK_STATUS_WANT_CONNECTION != status.network_status);
             SetNextState(PROJPROP_CLEANUP);
 
             break;

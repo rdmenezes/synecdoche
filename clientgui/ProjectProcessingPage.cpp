@@ -329,20 +329,19 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                 }
 
                 if (acc_info_page->CreateNewAccount()) {
-                    pDoc->rpc.create_account(*ai);
                     creating_account = true;
 
                     // Wait until we are done processing the request.
                     dtStartExecutionTime = wxDateTime::Now();
                     dtCurrentExecutionTime = wxDateTime::Now();
                     tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
-                    ao->error_num = ERR_IN_PROGRESS;
-                    while (
-                        ERR_IN_PROGRESS == ao->error_num && !iReturnValue &&
-                        tsExecutionTime.GetSeconds() <= 60 &&
-                        !CHECK_CLOSINGINPROGRESS()
-                        )
-                    {
+                    ao->error_num = ERR_RETRY;
+                    while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60)
+                            && (!CHECK_CLOSINGINPROGRESS())
+                            && ((ERR_IN_PROGRESS == ao->error_num) || (ERR_RETRY == ao->error_num))) {
+                        if (ERR_RETRY == ao->error_num) {
+                            pDoc->rpc.create_account(*ai);
+                        }
                         dtCurrentExecutionTime = wxDateTime::Now();
                         tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                         iReturnValue = pDoc->rpc.create_account_poll(*ao);
@@ -353,23 +352,21 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                         ::wxSafeYield(GetParent());
                     }
 
-                    if ((!iReturnValue) && !ao->error_num && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTCOMM)) {
+                    if ((!iReturnValue) && (!ao->error_num)) {
                         pWAP->SetAccountCreatedSuccessfully(true);
                     }
-                } else {
-                    pDoc->rpc.lookup_account(*ai);
- 
+                } else { 
                     // Wait until we are done processing the request.
                     dtStartExecutionTime = wxDateTime::Now();
                     dtCurrentExecutionTime = wxDateTime::Now();
                     tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
-                    ao->error_num = ERR_IN_PROGRESS;
-                    while (
-                        ERR_IN_PROGRESS == ao->error_num && !iReturnValue &&
-                        tsExecutionTime.GetSeconds() <= 60 &&
-                        !CHECK_CLOSINGINPROGRESS()
-                        )
-                    {
+                    ao->error_num = ERR_RETRY;
+                    while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60)
+                            && (!CHECK_CLOSINGINPROGRESS())
+                            && ((ERR_IN_PROGRESS == ao->error_num) || (ERR_RETRY == ao->error_num))) {
+                        if (ERR_RETRY == ao->error_num) {
+                            pDoc->rpc.lookup_account(*ai);
+                        }
                         dtCurrentExecutionTime = wxDateTime::Now();
                         tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                         iReturnValue = pDoc->rpc.lookup_account_poll(*ao);
@@ -381,7 +378,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     }
                 }
  
-                if ((!iReturnValue) && !ao->error_num && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTCOMM)) {
+                if ((!iReturnValue) && (!ao->error_num)) {
                     SetProjectCommunitcationsSucceeded(true);
                 } else {
                     SetProjectCommunitcationsSucceeded(false);
@@ -389,7 +386,6 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     if ((ao->error_num == ERR_DB_NOT_UNIQUE)
                         || (ao->error_num == ERR_NONUNIQUE_EMAIL)
                         || (ao->error_num == ERR_BAD_PASSWD && creating_account)
-                        || CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTALREADYEXISTS)
                     ) {
                         SetProjectAccountAlreadyExists(true);
                     } else {
@@ -399,19 +395,18 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     if ((ERR_NOT_FOUND == ao->error_num) ||
                         (ao->error_num == ERR_DB_NOT_FOUND) ||
                         (ERR_BAD_EMAIL_ADDR == ao->error_num) ||
-                        (ERR_BAD_PASSWD == ao->error_num) ||
-                        CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTNOTFOUND)) {
+                        (ERR_BAD_PASSWD == ao->error_num)) {
                         SetProjectAccountNotFound(true);
                     } else {
                         SetProjectAccountNotFound(false);
                     }
 
                     strBuffer = pWAP->GetCompletionErrorPage()->GetErrorMessage();
-                    if ((HTTP_STATUS_NOT_FOUND == ao->error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
+                    if (HTTP_STATUS_NOT_FOUND == ao->error_num) {
                         strBuffer += 
                             _("Required wizard file(s) are missing from the target server.\n"
                               "(lookup_account.php/create_account.php)\n");
-                    } else if ((HTTP_STATUS_INTERNAL_SERVER_ERROR == ao->error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
+                    } else if (HTTP_STATUS_INTERNAL_SERVER_ERROR == ao->error_num) {
                         strBuffer += 
                             _("An internal server error has occurred.\n");
                     } else {
@@ -428,28 +423,24 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
             SetNextState(ATTACHPROJECT_ATTACHPROJECT_EXECUTE);
             break;
         case ATTACHPROJECT_ATTACHPROJECT_EXECUTE:
-            if (GetProjectCommunitcationsSucceeded()) {
-                if (pWAP->GetCredentialsCached()) {
-                    pDoc->rpc.project_attach_from_file();
-                } else {
-                    pDoc->rpc.project_attach(
-                        ai->url.c_str(),
-                        ao->authenticator.c_str(),
-                        pWAP->GetProjectConfig()->name.c_str()
-                    );
-                }
-     
+            if (GetProjectCommunitcationsSucceeded()) {     
                 // Wait until we are done processing the request.
                 dtStartExecutionTime = wxDateTime::Now();
                 dtCurrentExecutionTime = wxDateTime::Now();
                 tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                 iReturnValue = 0;
-                reply.error_num = ERR_IN_PROGRESS;
-                while ((!iReturnValue && (ERR_IN_PROGRESS == reply.error_num)) &&
-                    tsExecutionTime.GetSeconds() <= 60 &&
-                    !CHECK_CLOSINGINPROGRESS()
-                    )
-                {
+                reply.error_num = ERR_RETRY;
+                while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60) 
+                        && (!CHECK_CLOSINGINPROGRESS())
+                        && ((ERR_IN_PROGRESS == reply.error_num) || (ERR_RETRY == reply.error_num))) {
+                    if (ERR_RETRY == reply.error_num) {
+                        if (pWAP->GetCredentialsCached()) {
+                            pDoc->rpc.project_attach_from_file();
+                        } else {
+                            pDoc->rpc.project_attach(ai->url.c_str(), ao->authenticator.c_str(),
+                                                        pWAP->GetProjectConfig()->name.c_str());
+                        }
+                    }
                     dtCurrentExecutionTime = wxDateTime::Now();
                     tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                     iReturnValue = pDoc->rpc.project_attach_poll(reply);
@@ -460,7 +451,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     ::wxSafeYield(GetParent());
                 }
      
-                if (!iReturnValue && !reply.error_num && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTATTACH)) {
+                if (!iReturnValue && !reply.error_num) {
                     SetProjectAttachSucceeded(true);
                     pWAP->SetAttachedToProjectSuccessfully(true);
                     pWAP->SetProjectURL(wxString(ai->url.c_str(), wxConvUTF8));
@@ -469,7 +460,7 @@ void CProjectProcessingPage::OnStateChange(CProjectProcessingPageEvent& WXUNUSED
                     SetProjectAttachSucceeded(false);
 
                     strBuffer = pWAP->GetCompletionErrorPage()->GetErrorMessage();
-                    if ((HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
+                    if (HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) {
                         strBuffer += 
                             _("An internal server error has occurred.\n");
                     } else {

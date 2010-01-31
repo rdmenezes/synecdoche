@@ -229,24 +229,21 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
             }
             username = (const char*)pWAM->GetAccountInfoPage()->GetAccountEmailAddress().mb_str();
             password = (const char*)pWAM->GetAccountInfoPage()->GetAccountPassword().mb_str();
-            pDoc->rpc.acct_mgr_rpc(
-                url.c_str(),
-                username.c_str(),
-                password.c_str(),
-                pWAM->GetCredentialsCached()
-            );
     
             // Wait until we are done processing the request.
             dtStartExecutionTime = wxDateTime::Now();
             dtCurrentExecutionTime = wxDateTime::Now();
             tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
             iReturnValue = 0;
-            reply.error_num = ERR_IN_PROGRESS;
-            while ((!iReturnValue && (ERR_IN_PROGRESS == reply.error_num)) &&
-                tsExecutionTime.GetSeconds() <= 60 &&
-                !CHECK_CLOSINGINPROGRESS()
-                )
-            {
+            reply.error_num = ERR_RETRY;
+            while ((!iReturnValue) && (tsExecutionTime.GetSeconds() <= 60)
+                        && (!CHECK_CLOSINGINPROGRESS())
+                        && ((ERR_IN_PROGRESS == reply.error_num)
+                            || (ERR_RETRY == reply.error_num))) {
+                if (ERR_RETRY == reply.error_num) {
+                    pDoc->rpc.acct_mgr_rpc(url.c_str(), username.c_str(), password.c_str(),
+                                            pWAM->GetCredentialsCached());
+                }
                 dtCurrentExecutionTime = wxDateTime::Now();
                 tsExecutionTime = dtCurrentExecutionTime - dtStartExecutionTime;
                 iReturnValue = pDoc->rpc.acct_mgr_rpc_poll(reply);
@@ -257,7 +254,7 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
                 ::wxSafeYield(GetParent());
             }
     
-            if (!iReturnValue && !reply.error_num && !CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTATTACH)) {
+            if (!iReturnValue && !reply.error_num) {
                 SetProjectAttachSucceeded(true);
             } else {
                 SetProjectAttachSucceeded(false);
@@ -265,8 +262,7 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
                 if ((ERR_NOT_FOUND == reply.error_num) ||
                     (ERR_DB_NOT_FOUND == reply.error_num) ||
                     (ERR_BAD_EMAIL_ADDR == reply.error_num) ||
-                    (ERR_BAD_PASSWD == reply.error_num) ||
-                    CHECK_DEBUG_FLAG(WIZDEBUG_ERRACCOUNTNOTFOUND)) {
+                    (ERR_BAD_PASSWD == reply.error_num)) {
 
                     // For any logon error, make sure we do not attempt to use cached credentials
                     //   on any follow-ups.
@@ -277,7 +273,7 @@ void CAccountManagerProcessingPage::OnStateChange(CAccountManagerProcessingPageE
                 }
 
                 strBuffer = pWAM->GetCompletionErrorPage()->GetErrorMessage();
-                if ((HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) || CHECK_DEBUG_FLAG(WIZDEBUG_ERRPROJECTPROPERTIESURL)) {
+                if (HTTP_STATUS_INTERNAL_SERVER_ERROR == reply.error_num) {
                     strBuffer += _("An internal server error has occurred.\n");
                 } else {
                     for (i=0; i<reply.messages.size(); i++) {

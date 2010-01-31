@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2008 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -20,8 +20,8 @@
 /// \file
 /// Base class for manager's wizards
 
-#ifndef _WIZ_BOINCBASEWIZARD_H_
-#define _WIZ_BOINCBASEWIZARD_H_
+#ifndef WIZ_BOINCBASEWIZARD_H
+#define WIZ_BOINCBASEWIZARD_H
 
 #include <stack>
 #include <wx/wizard.h>
@@ -44,13 +44,6 @@ public:
     /// Creation
     bool Create(wxWindow* parent, wxWindowID id, const wxString& title = wxEmptyString, const wxBitmap& bitmap = wxNullBitmap, const wxPoint& pos = wxDefaultPosition);
 
-    /// Diagnostics functions
-    virtual void SetDiagFlags(unsigned long ulFlags);
-    virtual bool IsDiagFlagsSet(unsigned long ulFlags);
-private:
-    unsigned long m_ulDiagFlags;
-
-public:
     /// Track page transitions
     wxWizardPage* PopPageTransition();
     virtual wxWizardPage* _PopPageTransition();
@@ -141,4 +134,4 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-#endif // _WIZ_BOINCBASEWIZARD_H_
+#endif // WIZ_BOINCBASEWIZARD_H

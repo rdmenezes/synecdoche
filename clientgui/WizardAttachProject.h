@@ -16,10 +16,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
+
 #ifndef WIZ_ATTACHPROJECT_H
 #define WIZ_ATTACHPROJECT_H
 
 #include "BOINCBaseWizard.h"
+#include "BOINCWizards.h"
 
 /// Forward declarations of all used pages:
 class CAccountInfoPage;

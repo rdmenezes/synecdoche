@@ -38,22 +38,20 @@
 #include <signal.h>
 #include <sys/resource.h>
 #include <errno.h>
-#include <cstring>
-#include <list>
 #endif
 
+#include "util.h"
+
+#include <cstring>
+
+#include <list>
 #include <string>
 #include <sstream>
-
-#include "util.h"
 
 #include "error_numbers.h"
 #include "common_defs.h"
 #include "filesys.h"
 #include "str_util.h"
-#include "base64.h"
-#include "mfile.h"
-#include "miofile.h"
 #include "parse.h"
 
 #define EPOCHFILETIME_SEC (11644473600.)
@@ -327,6 +325,35 @@ int read_file_string(const char* path, std::string& result, int max_len, bool ta
     return 0;
 }
 
+int copy_stream(FILE* in, FILE* out) {
+    char buf[1024];
+    size_t n, m;
+    do {
+        n = fread(buf, 1, sizeof(buf), in);
+        m = fwrite(buf, 1, n, out);
+        if (m != n) {
+            return ERR_FWRITE;
+        }
+    } while (n == sizeof(buf));
+    return 0;
+}
+
+int copy_stream(std::istream& in, std::ostream& out) {
+    std::streambuf* s_in = in.rdbuf();
+    std::streambuf* s_out= out.rdbuf();
+    char buf[1024];
+    std::streamsize n, m;
+    do {
+        n = s_in->sgetn(buf, sizeof(buf));
+        m = s_out->sputn(buf, n);
+        if (m != n) {
+            return ERR_FWRITE;
+        }
+    } while (n == sizeof(buf));
+
+    return 0;
+}
+
 #ifdef _WIN32
 
 /// chdir into the given directory, and run a program there.
@@ -334,7 +361,7 @@ int read_file_string(const char* path, std::string& result, int max_len, bool ta
 ///
 /// \a argv is set up Unix-style, i.e. argv[0] is the program name
 int run_program(
-    const char* dir, const char* file, int argc, char *const argv[], double nsecs, HANDLE& id
+    const char* dir, const char* file, int argc, const char* const argv[], double nsecs, HANDLE& id
 ) {
     int retval;
     PROCESS_INFORMATION process_info;
@@ -391,16 +418,18 @@ int run_program(
 ///
 /// argv is set up Unix-style, i.e. argv[0] is the program name
 int run_program(
-    const char* dir, const char* file, int , char *const argv[], double nsecs, int& id
+    const char* dir, const char* file, int , const char *const argv[], double nsecs, int& id
 ) {
     int retval;
     int pid = fork();
     if (pid == 0) {
         if (dir) {
             retval = chdir(dir);
-            if (retval) return retval;
+            if (retval) exit(retval);
         }
-        execv(file, argv);
+        // Cast is ugly but necessary as execv takes a char* const* instead of
+        // const char* const* in many platforms
+        execv(file, const_cast<char**>(argv));
         perror("execv");
         exit(errno);
     }
@@ -495,13 +524,9 @@ int do_execv(const std::string& path, const std::list<std::string>& argv)
 ///
 /// \param[in] dir Directory containing the lockfile (not used on Windows).
 /// \return ERR_ALREADY_RUNNING if the mutex already exists, zero otherwise.
-static int get_client_mutex(const char*) {
-    std::string buf;
-
-    // Global mutex on Win2k and later
-    if (IsWindows2000Compatible()) {
-        buf = "Global\\";
-    }
+static int get_client_mutex(const char* SYNEC_UNUSED(dir)) {
+    // Global mutex
+    std::string buf = "Global\\";
     buf += RUN_MUTEX;
 
     HANDLE h = CreateMutex(NULL, true, buf.c_str());

@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -33,6 +33,11 @@
 #include "config.h"
 #include <unistd.h>
 
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+#include <vector>
+
 #if HAVE_SYS_IPC_H
 #include <sys/ipc.h>
 #endif
@@ -55,9 +60,6 @@
 
 #include "app.h"
 
-#include <vector>
-#include <sstream>
-
 #include "filesys.h"
 #include "error_numbers.h"
 #include "util.h"
@@ -69,6 +71,7 @@
 #include "file_names.h"
 #include "procinfo.h"
 #include "sandbox.h"
+#include "xml_write.h"
 
 #ifdef _WIN32
 bool ACTIVE_TASK::kill_all_children() {
@@ -98,7 +101,7 @@ bool ACTIVE_TASK::kill_all_children() {
 #endif
 
 /// Ask the process to exit gracefully,
-/// i.e. by sending a <quit> message
+/// i.e.\ by sending a <quit> message
 ///
 /// \return 1 if shared memory is not set up, 0 on success.
 int ACTIVE_TASK::request_exit() {
@@ -204,7 +207,7 @@ static void limbo_message(ACTIVE_TASK& at) {
 #endif
 }
 
-/// Handle a task that exited prematurely (i.e. the job isn't done).
+/// Handle a task that exited prematurely (i.e.\ the job isn't done).
 ///
 /// \param[out] will_restart Reference to a bool-variable that will be set
 ///                          to true if the task should get restarted.
@@ -391,11 +394,9 @@ bool ACTIVE_TASK::finish_file_present() const {
 }
 
 void ACTIVE_TASK_SET::send_trickle_downs() {
-    unsigned int i;
-    ACTIVE_TASK* atp;
     bool sent;
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (!atp->process_exists()) continue;
         if (atp->have_trickle_down) {
             if (!atp->app_client_shm.shm) continue;
@@ -411,13 +412,11 @@ void ACTIVE_TASK_SET::send_trickle_downs() {
 }
 
 void ACTIVE_TASK_SET::send_heartbeats() {
-    unsigned int i;
-    ACTIVE_TASK* atp;
     char buf[256];
     double ar = gstate.available_ram();
 
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (!atp->process_exists()) continue;
         if (!atp->app_client_shm.shm) continue;
         sprintf(buf, "<heartbeat/>"
@@ -439,11 +438,9 @@ void ACTIVE_TASK_SET::send_heartbeats() {
 }
 
 void ACTIVE_TASK_SET::process_control_poll() {
-    unsigned int i;
-    ACTIVE_TASK* atp;
 
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (!atp->process_exists()) continue;
         if (!atp->app_client_shm.shm) continue;
 
@@ -469,15 +466,13 @@ void ACTIVE_TASK_SET::process_control_poll() {
 ///
 /// \return True if at least one process has exited, false otherwise.
 bool ACTIVE_TASK_SET::check_app_exited() {
-    ACTIVE_TASK* atp;
     bool found = false;
 
 #ifdef _WIN32
     unsigned long exit_code;
-    unsigned int i;
 
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (!atp->process_exists()) continue;
         if (GetExitCodeProcess(atp->pid_handle, &exit_code)) {
             if (exit_code != STILL_ACTIVE) {
@@ -507,13 +502,13 @@ bool ACTIVE_TASK_SET::check_app_exited() {
     int pid, stat;
 
     if ((pid = waitpid(0, &stat, WNOHANG)) > 0) {
-        atp = lookup_pid(pid);
+        ACTIVE_TASK* atp = lookup_pid(pid);
         if (!atp) {
             // if we're running benchmarks, exited process
             // is probably a benchmark process; don't show error
             //
             if (!gstate.are_cpu_benchmarks_running() && log_flags.task_debug) {
-                msg_printf(atp->wup->project, MSG_INTERNAL_ERROR, "Process %d not found\n", pid);
+                msg_printf(0, MSG_INTERNAL_ERROR, "Process %d not found\n", pid);
             }
             return false;
         }
@@ -555,8 +550,6 @@ bool ACTIVE_TASK::check_max_disk_exceeded() {
 /// Check if any of the active tasks have exceeded their
 /// resource limits on disk, CPU time or memory
 bool ACTIVE_TASK_SET::check_rsc_limits_exceeded() {
-    unsigned int i;
-    ACTIVE_TASK *atp;
     static double last_disk_check_time = 0;
     bool do_disk_check = false;
     bool did_anything = false;
@@ -572,8 +565,8 @@ bool ACTIVE_TASK_SET::check_rsc_limits_exceeded() {
     if (gstate.now > last_disk_check_time + min_interval) {
         do_disk_check = true;
     }
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (atp->task_state() != PROCESS_EXECUTING) continue;
         if (atp->current_cpu_time > atp->max_cpu_time) {
             msg_printf(atp->result->project, MSG_INFO,
@@ -685,11 +678,9 @@ int ACTIVE_TASK::request_reread_app_info() {
 
 /// Tell all running apps of a project to reread prefs.
 void ACTIVE_TASK_SET::request_reread_prefs(PROJECT* project) {
-    unsigned int i;
-    ACTIVE_TASK* atp;
 
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (atp->result->project != project) continue;
         if (!atp->process_exists()) continue;
         atp->request_reread_prefs();
@@ -697,7 +688,7 @@ void ACTIVE_TASK_SET::request_reread_prefs(PROJECT* project) {
 }
 
 void ACTIVE_TASK_SET::request_reread_app_info() {
-    for (unsigned int i=0; i<active_tasks.size(); i++) {
+    for (size_t i=0; i<active_tasks.size(); i++) {
         ACTIVE_TASK* atp = active_tasks[i];
         if (!atp->process_exists()) continue;
         atp->request_reread_app_info();
@@ -787,26 +778,25 @@ void ACTIVE_TASK_SET::suspend_all(bool cpu_throttle) {
     }
 
     for (ACTIVE_TASK_PVEC::iterator it = active_tasks.begin(); it != active_tasks.end(); ++it) {
-        ACTIVE_TASK& at = **it;
-        if (at.task_state() != PROCESS_EXECUTING) {
+        ACTIVE_TASK* task = *it;
+        if (task->task_state() != PROCESS_EXECUTING) {
             continue;
         }
         if (cpu_throttle) {
             // If we're doing CPU throttling, don't bother suspending apps
             // that don't use a full CPU.
-            if ((at.result->project->non_cpu_intensive) || (at.app_version->avg_ncpus < 1.0)) {
+            if ((task->result->project->non_cpu_intensive) || (task->app_version->avg_ncpus < 1.0)) {
                 continue;
             }
         }
-        at.preempt(!leave_in_mem);
+        task->preempt(!leave_in_mem);
     }
 }
 
 /// Resume all currently scheduled tasks.
 void ACTIVE_TASK_SET::unsuspend_all() {
-    unsigned int i;
     ACTIVE_TASK* atp;
-    for (i=0; i<active_tasks.size(); i++) {
+    for (size_t i=0; i<active_tasks.size(); i++) {
         atp = active_tasks[i];
         if (atp->scheduler_state != CPU_SCHED_SCHEDULED) continue;
         if (atp->task_state() == PROCESS_UNINITIALIZED) {
@@ -823,11 +813,9 @@ void ACTIVE_TASK_SET::unsuspend_all() {
 
 /// Check to see if any tasks are running.
 /// called if benchmarking and waiting for suspends to happen
-bool ACTIVE_TASK_SET::is_task_executing() {
-    unsigned int i;
-    ACTIVE_TASK* atp;
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+bool ACTIVE_TASK_SET::is_task_executing() const {
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        const ACTIVE_TASK* atp = active_tasks[i];
         if (atp->task_state() == PROCESS_EXECUTING) {
             return true;
         }
@@ -839,10 +827,8 @@ bool ACTIVE_TASK_SET::is_task_executing() {
 /// This is called when the core client exits,
 /// or when a project is detached or reset
 void ACTIVE_TASK_SET::request_tasks_exit(PROJECT* proj) {
-    unsigned int i;
-    ACTIVE_TASK *atp;
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (proj && atp->wup->project != proj) continue;
         if (!atp->process_exists()) continue;
         atp->request_exit();
@@ -852,10 +838,8 @@ void ACTIVE_TASK_SET::request_tasks_exit(PROJECT* proj) {
 /// Send kill signal to all app processes
 /// Don't wait for them to exit
 void ACTIVE_TASK_SET::kill_tasks(PROJECT* proj) {
-    unsigned int i;
-    ACTIVE_TASK *atp;
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (proj && atp->wup->project != proj) continue;
         if (!atp->process_exists()) continue;
         atp->kill_task(false);
@@ -912,7 +896,6 @@ void ACTIVE_TASK::send_network_available() {
 /// If so parse it and return true.
 bool ACTIVE_TASK::get_app_status_msg() {
     char msg_buf[MSG_CHANNEL_SIZE];
-    double fd;
 
     if (!app_client_shm.shm) {
         msg_printf(result->project, MSG_INFO,
@@ -930,6 +913,7 @@ bool ACTIVE_TASK::get_app_status_msg() {
     }
     want_network = 0;
     current_cpu_time = checkpoint_cpu_time = 0.0;
+    double fd;
     if (parse_double(msg_buf, "<fraction_done>", fd)) {
         // fraction_done will be reported as zero
         // until the app's first call to boinc_fraction_done().
@@ -961,7 +945,6 @@ bool ACTIVE_TASK::get_app_status_msg() {
 
 bool ACTIVE_TASK::get_trickle_up_msg() {
     char msg_buf[MSG_CHANNEL_SIZE];
-    bool found = false;
     int retval;
 
     if (!app_client_shm.shm) return false;
@@ -975,30 +958,22 @@ bool ACTIVE_TASK::get_trickle_up_msg() {
         if (match_tag(msg_buf, "<have_new_upload_file/>")) {
             handle_upload_files();
         }
-        found = true;
+        return true;
     }
-    return found;
+    return false;
 }
 
 /// Check for msgs from active tasks.
-/// Return true if any of them has changed its checkpoint_cpu_time
-/// (since in that case we need to write state file)
-bool ACTIVE_TASK_SET::get_msgs() {
-    unsigned int i;
-    ACTIVE_TASK *atp;
-    double old_time;
-    bool action = false;
-
-    for (i=0; i<active_tasks.size(); i++) {
-        atp = active_tasks[i];
+void ACTIVE_TASK_SET::get_msgs() {
+    for (size_t i=0; i<active_tasks.size(); i++) {
+        ACTIVE_TASK* atp = active_tasks[i];
         if (!atp->process_exists()) continue;
-        old_time = atp->checkpoint_cpu_time;
+        double old_time = atp->checkpoint_cpu_time;
         if (atp->get_app_status_msg()) {
             if (old_time != atp->checkpoint_cpu_time) {
                 gstate.request_enforce_schedule("Checkpoint reached");
                 atp->checkpoint_wall_time = gstate.now;
                 atp->premature_exit_count = 0;
-                action = true;
                 if (log_flags.task_debug) {
                     msg_printf(atp->wup->project, MSG_INFO,
                         "[task_debug] result %s checkpointed",
@@ -1011,9 +986,57 @@ bool ACTIVE_TASK_SET::get_msgs() {
                     );
                 }
                 atp->stats_checkpoint++;
+                atp->write_task_state_file();
             }
         }
         atp->get_trickle_up_msg();
     }
-    return action;
 }
+
+/// Write checkpoint state to a file in the slot dir.
+/// This avoids rewriting the state file on each checkpoint.
+void ACTIVE_TASK::write_task_state_file() {
+    std::ostringstream path;
+    path << slot_dir << '/' << TASK_STATE_FILENAME;
+    std::ofstream ofs(path.str().c_str());
+    if (!ofs) {
+        throw std::runtime_error(std::string("Can't open file: ") + path.str());
+    }
+    ofs << "<active_task>\n"
+        << XmlTag<std::string>("project_master_url", result->project->get_master_url())
+        << XmlTag<char*> ("result_name",         result->name)
+        << XmlTag<double>("checkpoint_cpu_time", checkpoint_cpu_time)
+        << "</active_task>\n";
+}
+
+/// Read the task state file in case it's more recent then the main state file.
+/// Called on startup.
+void ACTIVE_TASK::read_task_state_file() {
+    std::ostringstream path;
+    path << slot_dir << '/' << TASK_STATE_FILENAME;
+    std::ifstream ifs(path.str().c_str());
+    if (!ifs) {
+        return;
+    }
+    std::string buf;
+    std::string master_url;
+    std::string result_name;
+    double new_checkpoint_cpu_time = -1.0;
+    while (std::getline(ifs, buf)) {
+        if (parse_str(buf.c_str(), "<project_master_url>", master_url)) {
+            continue;
+        } else if (parse_str(buf.c_str(), "<result_name>", result_name)) {
+            continue;
+        } else {
+            parse_double(buf.c_str(), "<checkpoint_cpu_time>", new_checkpoint_cpu_time);
+        }
+    }
+    
+    // sanity checks - project and result name must match 
+    if ((master_url != result->project->get_master_url()) || (result_name != result->name)) {
+        return;
+    }
+    if (new_checkpoint_cpu_time > checkpoint_cpu_time) { 
+        checkpoint_cpu_time = new_checkpoint_cpu_time; 
+    } 
+} 

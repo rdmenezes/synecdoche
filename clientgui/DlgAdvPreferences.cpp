@@ -34,7 +34,7 @@ namespace {
     /// Small helper function to trim a value to the interval [0; 100]
     ///
     /// \param[in] x The value that should be trimmed.
-    /// \retrn \a x if it lies in the interval [0; 100], otherwise 0 or 100
+    /// \return \a x if it lies in the interval [0; 100], otherwise 0 or 100
     ///        is returned, whichever is closer to \a x.
     double clamp_pct(double x) {
         if (x < 0.0) {

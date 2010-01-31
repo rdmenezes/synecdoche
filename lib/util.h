@@ -21,10 +21,12 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <cstdio>
 
 #include <string>
 #include <vector>
 #include <list>
+#include <iosfwd>
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
@@ -41,6 +43,12 @@ void push_unique(std::string s, std::vector<std::string>& v);
 
 inline double drand() {
     return (double)rand()/(double)RAND_MAX;
+}
+
+/// Interpolates \a a and \a b linearly, using factor \a f.
+/// When \a f is 0, returns \a a; when \a f is 1, returns \a b.
+inline double interpolate(double a, double b, double f) {
+    return a*(1.0-f) + b*f;
 }
 
 #ifdef _WIN32
@@ -63,11 +71,13 @@ int boinc_calling_thread_cpu_time(double& cpu);
 void boinc_crash();
 int read_file_malloc(const char* path, char*&, int max_len=0, bool tail=false);
 int read_file_string(const char* path, std::string&, int max_len=0, bool tail=false);
+int copy_stream(FILE* in, FILE* out);
+int copy_stream(std::istream& in, std::ostream& out);
 
 #ifdef _WIN32
 
 int run_program(
-    const char* path, const char* cdir, int argc, char *const argv[], double, HANDLE& id
+    const char* path, const char* cdir, int argc, const char* const argv[], double, HANDLE& id
 );
 
 void kill_program(HANDLE proc);
@@ -76,7 +86,7 @@ bool process_exists(HANDLE proc);
 
 #else
 int run_program(
-    const char* path, const char* cdir, int argc, char *const argv[], double, int&
+    const char* path, const char* cdir, int argc, const char* const argv[], double, int&
 );
 void kill_program(int pid);
 int get_exit_status(int pid);

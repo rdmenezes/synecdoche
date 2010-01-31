@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -49,6 +49,9 @@
 // Flags for testing & debugging
 #define SIMULATE_NO_GRAPHICS 0
 
+#ifndef _T
+#define _T(x) x
+#endif
 
 bool CScreensaver::is_same_task(RESULT* taska, RESULT* taskb) {
     if ((taska == NULL) || (taskb == NULL)) return false;
@@ -191,18 +194,16 @@ int CScreensaver::launch_screensaver(RESULT* rp, int& graphics_application)
 
         di.clear();
 
-        if (!m_bIs9x) {
-            // Retrieve the current window station and desktop names
-            char buffer[256];
-            if (GetUserObjectInformation(GetProcessWindowStation(), UOI_NAME, 
-                                    buffer, sizeof(buffer), NULL)) {
-                di.window_station = buffer;
-            }
+        // Retrieve the current window station and desktop names
+        char buffer[256];
+        if (GetUserObjectInformation(GetProcessWindowStation(), UOI_NAME, 
+                                buffer, sizeof(buffer), NULL)) {
+            di.window_station = buffer;
+        }
 
-            if (GetUserObjectInformation(GetThreadDesktop(GetCurrentThreadId()), 
-                                    UOI_NAME, buffer, sizeof(buffer), NULL)) {
-                di.desktop = buffer;
-            }
+        if (GetUserObjectInformation(GetThreadDesktop(GetCurrentThreadId()), 
+                                UOI_NAME, buffer, sizeof(buffer), NULL)) {
+            di.desktop = buffer;
         }
 #else
         char *p = getenv("DISPLAY");

@@ -16,8 +16,6 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #include "proc_control.h"
@@ -36,6 +34,8 @@
 #include <errno.h>
 #endif
 
+#include <cstring>
+
 #include "client_state.h"
 
 #include "version.h"
@@ -44,6 +44,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "filesys.h"
+#include "xml_write.h"
 
 #include "file_names.h"
 #include "hostinfo.h"
@@ -189,7 +190,6 @@ int CLIENT_STATE::init() {
     scheduler_op->url_random = drand();
 
     detect_platforms();
-    time_stats.start();
 
     std::ostringstream start_msg;
     start_msg << "Starting Synecdoche client version " << core_client_version.major;
@@ -202,7 +202,7 @@ int CLIENT_STATE::init() {
     start_msg << " (DEBUG)";
 #endif // _DEBUG
 
-    msg_printf(NULL, MSG_INFO, start_msg.str().c_str());
+    msg_printf(NULL, MSG_INFO, "%s", start_msg.str().c_str());
 
     if (core_client_version.prerelease) {
         msg_printf(NULL, MSG_USER_ERROR,
@@ -469,11 +469,10 @@ void CLIENT_STATE::do_io_or_sleep(double sec) {
 
 /// Poll the client's finite-state machines
 /// possibly triggering state transitions.
-/// Returns true if something happened
-/// (in which case should call this again immediately)
 /// This function never blocks.
 ///
-/// \return True if something happened, false otherwise.
+/// \return True if something happened (in which case this function should be
+/// called again immediately), false otherwise.
 bool CLIENT_STATE::poll_slow_events() {
     int actions = 0, retval;
     static int last_suspend_reason=0;
@@ -644,8 +643,8 @@ bool CLIENT_STATE::poll_slow_events() {
     }
 }
 
-/// See if the project specified by master_url already exists
-/// in the client state record.  Ignore any trailing "/" characters
+/// See if the project specified by \a master_url already exists
+/// in the client state record. Ignore any trailing "/" characters
 PROJECT* CLIENT_STATE::lookup_project(const std::string& master_url) {
     std::string mu1 = master_url;
     if (ends_with(master_url, "/")) {
@@ -1330,8 +1329,8 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
             if (cur_finfo->had_failure(failnum)) {
                 std::ostringstream buf;
                 buf << "<upload_error>\n"
-                    << "    <file_name>" << cur_finfo->name << "</file_name>\n"
-                    << "    <error_code>" << failnum << "</error_code>\n"
+                    << XmlTag<std::string>("file_name", cur_finfo->name)
+                    << XmlTag<int> ("error_code", failnum)
                     << "</upload_error>\n";
                 res.stderr_out.append(buf.str());
             }
@@ -1546,11 +1545,10 @@ int CLIENT_STATE::quit_activities() {
     write_state_file();
     gui_rpcs.close();
     abort_cpu_benchmarks();
-    time_stats.quit();
     return 0;
 }
 
-/// return a random double in the range [rmin,rmax)
+/// Return a random double in the range [rmin,rmax)
 static inline double rand_range(double rmin, double rmax) {
     if (rmin < rmax) {
         return drand() * (rmax-rmin) + rmin;
@@ -1559,7 +1557,7 @@ static inline double rand_range(double rmin, double rmax) {
     }
 }
 
-/// return a random double in the range [MIN,min(e^n,MAX))
+/// Return a random double in the range [MIN,min(e^n,MAX))
 double calculate_exponential_backoff( int n, double MIN, double MAX) {
     double rmax = std::min(MAX, exp((double)n));
     return rand_range(MIN, rmax);

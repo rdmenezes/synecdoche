@@ -20,8 +20,6 @@
 /// The "policy" part of task execution is here.
 /// The "mechanism" part is in app.C
 
-#include "cpp.h"
-
 #ifdef _WIN32
 #include "boinc_win.h"
 #endif
@@ -175,7 +173,6 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
         }
     } else {
         rp->set_state(RESULT_FILES_UPLOADING, "CS::app_finished");
-        rp->append_log_record(at);
         rp->project->update_duration_correction_factor(rp);
     }
 

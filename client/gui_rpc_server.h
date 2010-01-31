@@ -22,6 +22,7 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <iosfwd>
 
 #include "network.h"
 #include "gui_http.h"
@@ -50,17 +51,17 @@ private:
     CREATE_ACCOUNT_OP create_account_op;
 
     /// Handle an authorization request by creating and sending a nonce.
-    void handle_auth1(MIOFILE& fout);
+    void handle_auth1(std::ostream& fout);
 
     /// Check if the response to the challenge sent by handle_auth1 is correct.
-    void handle_auth2(const char* buf, MIOFILE& fout);
+    void handle_auth2(const char* buf, std::ostream& out);
 
-    void handle_get_project_config(const char* buf, MIOFILE& fout);
-    void handle_get_project_config_poll(const char*, MIOFILE& fout);
-    void handle_lookup_account(const char* buf, MIOFILE& fout);
-    void handle_lookup_account_poll(const char*, MIOFILE& fout);
-    void handle_create_account(const char* buf, MIOFILE& fout);
-    void handle_create_account_poll(const char*, MIOFILE& fout);
+    void handle_get_project_config(const char* buf, std::ostream& out);
+    void handle_get_project_config_poll(const char*, std::ostream& out);
+    void handle_lookup_account(const char* buf, std::ostream& out);
+    void handle_lookup_account_poll(const char*, std::ostream& out);
+    void handle_create_account(const char* buf, std::ostream& out);
+    void handle_create_account_poll(const char*, std::ostream& out);
 };
 
 // authentication for GUI RPCs:

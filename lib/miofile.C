@@ -27,6 +27,7 @@
 #endif
 
 #include "miofile.h"
+#include "mfile.h"
 #include "error_numbers.h"
 
 using std::string;
