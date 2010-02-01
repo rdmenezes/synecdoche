@@ -47,7 +47,7 @@
 #include "hostinfo.h"
 
 void version(){
-    std::cout << "syneccmd, built from " << PACKAGE_STRING << std::endl;
+    std::cout << "syneccmd, built from Synecdoche " << SYNEC_VERSION_STRING << std::endl;
 #if defined(_WIN32) && defined(USE_WINSOCK)
     WSACleanup();
 #endif
