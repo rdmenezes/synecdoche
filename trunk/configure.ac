@@ -5,7 +5,6 @@ AC_PREREQ(2.57)
 
 dnl Set the Synecdoche version here.
 AC_INIT(Synecdoche, 0.2.0)
-AC_SUBST([SYNEC_PRERELEASE], [1])
 
 LIBBOINC_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\./:/g'`
 AC_SUBST([LIBBOINC_VERSION])
@@ -63,27 +62,6 @@ License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 ])
 
 AC_REVISION([$Revision$])
-
-AC_DEFUN([KC_STRIP_LEADING_ZEROS],[m4_bregexp([$*],[^0*\(..*\)],\1)])
-
-AC_DEFUN([SET_VERSION_HLPR],[dnl
-AC_SUBST([$1_MAJOR_VERSION],KC_STRIP_LEADING_ZEROS([$3]))
-AC_SUBST([$1_MINOR_VERSION],KC_STRIP_LEADING_ZEROS([$4]))
-AC_SUBST([$1_RELEASE],KC_STRIP_LEADING_ZEROS([$5]))
-AC_SUBST([$1_VERSION_STRING],[$2])
-])
-AC_DEFUN([SET_VERSION],[dnl
-SET_VERSION_HLPR([$1], [$2], translit([$2], [.], [,]))
-])
-
-SET_VERSION(SYNEC, AC_PACKAGE_VERSION)
-SET_VERSION(BOINC, [6.2.18])
-
-dnl Version information moved to version.h so removed from config.h
-dnl AC_DEFINE_UNQUOTED([BOINC_VERSION_STRING], "$BOINC_VERSION_STRING", [String representation of BOINC version number])
-dnl AC_DEFINE_UNQUOTED([BOINC_MAJOR_VERSION], $BOINC_MAJOR_VERSION, [Major part of BOINC version number])
-dnl AC_DEFINE_UNQUOTED([BOINC_MINOR_VERSION], $BOINC_MINOR_VERSION, [Minor part of BOINC version number])
-dnl AC_DEFINE_UNQUOTED([BOINC_RELEASE], $BOINC_RELEASE, [Release part of BOINC version number])
 
 AC_SUBST([TOP_BUILD_DIR], [`pwd`])
 AC_SUBST([TOP_SOURCE_DIR], [`(cd \`dirname "$0"\` && pwd)`])
@@ -392,7 +370,6 @@ AC_SUBST(CLIENTGUILIBS)
 dnl ======================================================================
 
 AC_CONFIG_FILES([
-                 version.h
                  clientgui/Makefile
                  clientgui/res/Makefile
                  client/Makefile
