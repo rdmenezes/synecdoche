@@ -20,7 +20,8 @@ SUBDIRS = lib client $(CLIENTGUI_SUBDIRS) tests
 EXTRA_DIST =   \
     win_build  \
     INSTALL    \
-    version.sh
+    version.sh \
+    version.h
 
 dist-hook:
 	rm -rf `find $(distdir) -name .backup -prune -o -name '*~' -o -name .svn`
