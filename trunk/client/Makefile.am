@@ -15,7 +15,9 @@ endif
 
 bin_PROGRAMS = synecd switcher
 
-synecd_SOURCES = \
+noinst_LIBRARIES = libsynecclient.a
+
+libsynecclient_a_SOURCES = \
     acct_mgr.C \
     acct_mgr.h \
     acct_setup.C \
@@ -64,8 +66,6 @@ synecd_SOURCES = \
     http_curl.h \
     log_flags.C \
     log_flags.h \
-    main.C \
-    main.h \
     net_stats.C \
     net_stats.h \
     pers_file_xfer.C \
@@ -81,10 +81,12 @@ synecd_SOURCES = \
     whetstone.C \
     work_fetch.C
 
-nodist_synecd_SOURCES = ../svnversion.cpp dirs.cpp
+nodist_libsynecclient_a_SOURCES = ../svnversion.cpp dirs.cpp
 
-synecd_CPPFLAGS = $(AM_CPPFLAGS) -DHARDCODED_DIRS
-synecd_LDADD = $(LIBBOINC) $(PTHREAD_LIBS)
+synecd_SOURCES = main.C main.h
+
+libsynecclient_a_CPPFLAGS = $(AM_CPPFLAGS) -DHARDCODED_DIRS
+synecd_LDADD = $(PTHREAD_LIBS) libsynecclient.a $(LIBBOINC)
 
 synecddir = $(bindir)
 
