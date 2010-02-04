@@ -30,7 +30,6 @@
 
 #include "version.h"
 
-#include "main.h"
 #include "str_util.h"
 #include "util.h"
 #include "client_msgs.h"
