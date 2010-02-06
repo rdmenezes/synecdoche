@@ -82,7 +82,6 @@ void ACTIVE_TASK::request_graphics_mode(GRAPHICS_MSG& msg) {
 
 /// handle messages on the "graphics_reply" channel
 void ACTIVE_TASK::check_graphics_mode_ack() {
-    GRAPHICS_MSG gm;
     char buf[MSG_CHANNEL_SIZE];
 #if (defined (__APPLE__) && (defined(__i386__) || defined(__x86_64__)))
     // PowerPC apps emulated on i386 Macs crash if running graphics
@@ -94,6 +93,7 @@ void ACTIVE_TASK::check_graphics_mode_ack() {
 
     if (!app_client_shm.shm) return;
     if (app_client_shm.shm->graphics_reply.get_msg(buf)) {
+        GRAPHICS_MSG gm;
         app_client_shm.decode_graphics_msg(buf, gm);
         if (log_flags.scrsave_debug) {
             msg_printf(wup->project, MSG_INFO,

@@ -338,7 +338,7 @@ bool SCHEDULER_OP::update_urls(PROJECT* p, std::vector<std::string> &urls) {
 /// \return True if some action was performed.
 bool SCHEDULER_OP::poll() {
     int retval, nresults;
-    bool changed, scheduler_op_done;
+    bool changed;
 
     switch(state) {
     case SCHEDULER_OP_STATE_GET_MASTER:
@@ -386,9 +386,10 @@ bool SCHEDULER_OP::poll() {
         }
         break;
     case SCHEDULER_OP_STATE_RPC:
+    {
 
         // here we're doing a scheduler RPC
-        scheduler_op_done = false;
+        bool scheduler_op_done = false;
         if (http_op.http_op_state == HTTP_STATE_DONE) {
             state = SCHEDULER_OP_STATE_IDLE;
             http_ops->remove(&http_op);
@@ -436,7 +437,9 @@ bool SCHEDULER_OP::poll() {
             gstate.request_work_fetch("RPC complete");
             return true;
         }
-    }
+    } // case SCHEDULER_OP_STATE_RPC
+    break;
+    } // switch
     return false;
 }
 
@@ -456,10 +459,10 @@ SCHEDULER_REPLY::SCHEDULER_REPLY() {
 }
 
 SCHEDULER_REPLY::~SCHEDULER_REPLY() {
-    if (global_prefs_xml) free(global_prefs_xml);
-    if (project_prefs_xml) free(project_prefs_xml);
-    if (code_sign_key) free(code_sign_key);
-    if (code_sign_key_signature) free(code_sign_key_signature);
+    free(global_prefs_xml);
+    free(project_prefs_xml);
+    free(code_sign_key);
+    free(code_sign_key_signature);
 }
 
 /// Parse a scheduler reply.

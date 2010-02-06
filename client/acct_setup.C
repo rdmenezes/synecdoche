@@ -49,12 +49,12 @@ PROJECT_INIT::PROJECT_INIT() {
 
 int PROJECT_INIT::init() {
     char    buf[256];
-    MIOFILE mf;
     FILE*   p;
 
     clear();
     p = fopen(PROJECT_INIT_FILENAME, "r");
     if (p) {
+        MIOFILE mf;
         mf.init_file(p);
         while(mf.fgets(buf, sizeof(buf))) {
             if (match_tag(buf, "</project_init>")) break;

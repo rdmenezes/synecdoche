@@ -331,8 +331,8 @@ int CLIENT_STATE::parse_statistics_files() {
                         name.c_str()
                     );
                 } else {
-                    for (std::vector<DAILY_STATS>::const_iterator i=temp.statistics.begin();
-                        i!=temp.statistics.end(); i++
+                    for (std::vector<DAILY_STATS>::const_iterator i = temp.statistics.begin();
+                        i != temp.statistics.end(); ++i
                     ) {
                         project->statistics.push_back(*i);
                     }

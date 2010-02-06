@@ -659,7 +659,7 @@ bool CLIENT_STATE::enforce_schedule() {
 
         // See if it's already running.
         atp = NULL;
-        for (vector<ACTIVE_TASK*>::iterator it = running_tasks.begin(); it != running_tasks.end(); it++) {
+        for (vector<ACTIVE_TASK*>::iterator it = running_tasks.begin(); it != running_tasks.end(); ++it) {
             ACTIVE_TASK *atp1 = *it;
             if (atp1 && atp1->result == rp) {
                 // The task is already running; remove it from the heap
