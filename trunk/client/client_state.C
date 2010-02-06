@@ -1480,7 +1480,7 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     }
 
     // Find project and remove it from the vector:
-    for (std::vector<PROJECT*>::iterator project_iter = projects.begin(); project_iter != projects.end(); project_iter++) {
+    for (std::vector<PROJECT*>::iterator project_iter = projects.begin(); project_iter != projects.end(); ++project_iter) {
         if ((*project_iter) == project) {
             project_iter = projects.erase(project_iter);
             break;

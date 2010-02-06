@@ -92,17 +92,15 @@ bool GUI_RPC_CONN_SET::poll() {
 }
 
 int GUI_RPC_CONN_SET::get_password() {
-    FILE* f;
-    int retval;
-
     strcpy(password, "");
+
     if (boinc_file_exists(GUI_RPC_PASSWD_FILE)) {
         std::string buf = read_gui_rpc_password();
         strlcpy(password, buf.c_str(), sizeof(password));
     } else {
         // if no password file, make a random password
         //
-        retval = make_random_string(password);
+        int retval = make_random_string(password);
         if (retval) {
             if (config.os_random_only) {
                 msg_printf(
@@ -113,7 +111,7 @@ int GUI_RPC_CONN_SET::get_password() {
             }
             gstate.host_info.make_random_string("guirpc", password);
         }
-        f = fopen(GUI_RPC_PASSWD_FILE, "w");
+        FILE* f = fopen(GUI_RPC_PASSWD_FILE, "w");
         if (f) {
             fputs(password, f);
             fclose(f);

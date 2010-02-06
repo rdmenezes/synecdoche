@@ -103,7 +103,6 @@ int CLIENT_STATE::make_project_dirs() {
 /// WORKUNIT::had_download_failure())
 int FILE_INFO::verify_file(bool strict, bool show_errors) {
     char cksum[64];
-    bool verified;
     int retval;
     double size, local_nbytes;
 
@@ -141,6 +140,7 @@ int FILE_INFO::verify_file(bool strict, bool show_errors) {
             status = ERR_NO_SIGNATURE;
             return ERR_NO_SIGNATURE;
         }
+        bool verified;
         retval = verify_file2(pathname.c_str(), file_signature.c_str(), project->code_sign_key, verified);
         if (retval) {
             msg_printf(project, MSG_INTERNAL_ERROR, "Signature verification error for %s", name.c_str());

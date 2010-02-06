@@ -945,12 +945,11 @@ bool ACTIVE_TASK::get_app_status_msg() {
 
 bool ACTIVE_TASK::get_trickle_up_msg() {
     char msg_buf[MSG_CHANNEL_SIZE];
-    int retval;
 
     if (!app_client_shm.shm) return false;
     if (app_client_shm.shm->trickle_up.get_msg(msg_buf)) {
         if (match_tag(msg_buf, "<have_new_trickle_up/>")) {
-            retval = move_trickle_file();
+            int retval = move_trickle_file();
             if (!retval) {
                 wup->project->trickle_up_pending = true;
             }
