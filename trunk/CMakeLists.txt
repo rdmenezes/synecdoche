@@ -94,3 +94,5 @@ SUBDIRS(lib client clientgui)
 IF(WIN32)
 	SUBDIRS(clientlib)
 ENDIF(WIN32)
+
+SUBDIRS(tests)
