@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2010 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -385,6 +385,39 @@ void xml_unescape(const char* in, char* out, int len) {
         }
     }
     *p = 0;
+}
+
+/// Unescape XML.
+/// This function handles "&lt;", "&amp;" and "&#".
+///
+/// \param[in] in The input buffer which contains the xml that
+///               should be unescaped.
+std::string xml_unescape(const std::string& in) {
+    std::string result;
+    result.reserve(in.length());
+    const char* p = in.c_str();
+    while (*p) {
+        if (*p != '&') {
+            result += *p++;
+        } else if (!strncmp(p, "&lt;", 4)) {
+            result += '<';
+            p += 4;
+        } else if (!strncmp(p, "&amp;", 5)) {
+            result += '&';
+            p += 5;
+        } else if (!strncmp(p, "&#", 2)) {
+            p += 2;
+            char c = atoi(p);
+            result += c;
+            p = strchr(p, ';');
+            if (p) {
+                p++;
+            }
+        } else {
+            result += *p++;
+        }
+    }
+    return result;
 }
 
 /// Skip unrecognized line.
