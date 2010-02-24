@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2010 Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -519,6 +519,7 @@ int MESSAGE::parse(MIOFILE& in) {
         if (parse_str(buf, "<project>", project)) continue;
         if (match_tag(buf, "<body>" )) {
             copy_element_contents(in, "</body>", body);
+            body = xml_unescape(body);
             continue;
         }
         int itmp;

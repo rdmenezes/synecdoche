@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2009 Peter Kortschack
+// Copyright (C) 2010 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -139,6 +139,9 @@ void xml_escape(const char* in, char* out, int len);
 
 /// Unescape XML.
 void xml_unescape(const char* in, char* out, int len);
+
+/// Unescape XML.
+std::string xml_unescape(const std::string& in);
 
 void extract_venue(const char* in, const char* venue_name, char* out);
 
