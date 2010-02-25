@@ -367,6 +367,9 @@ void xml_unescape(const char* in, char* out, int len) {
         } else if (!strncmp(in, "&lt;", 4)) {
             *p++ = '<';
             in += 4;
+        } else if (!strncmp(in, "&gt;", 4)) {
+            *p++ = '>';
+            in += 4;
         } else if (!strncmp(in, "&amp;", 5)) {
             *p++ = '&';
             in += 5;
@@ -401,6 +404,9 @@ std::string xml_unescape(const std::string& in) {
             result += *p++;
         } else if (!strncmp(p, "&lt;", 4)) {
             result += '<';
+            p += 4;
+        } else if (!strncmp(p, "&gt;", 4)) {
+            result += '>';
             p += 4;
         } else if (!strncmp(p, "&amp;", 5)) {
             result += '&';
