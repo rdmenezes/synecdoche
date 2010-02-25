@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2008 David Barnard
+// Copyright (C) 2010 David Barnard, Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -138,6 +138,9 @@ private:
 
     void            StartTimers();
     void            StopTimers();
+
+    /// Enable or disable certain menu items based on the connected state.
+    void            UpdateMenuBarState(bool connected);
 
 #ifdef __WXMAC__
 protected:
