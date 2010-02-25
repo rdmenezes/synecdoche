@@ -60,5 +60,6 @@ SUITE(TestXmlParser)
         CHECK_EQUAL("&", xml_unescape("&amp;"));
         CHECK_EQUAL("a&amp;b", xml_unescape("a&amp;amp;b"));
         CHECK_EQUAL("<foo>", xml_unescape("&lt;foo&gt;"));
+        CHECK_EQUAL("foo", xml_unescape("&#102;&#111;&#111;"));
     }
 }

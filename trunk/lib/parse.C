@@ -393,11 +393,10 @@ void xml_unescape(const char* in, char* out, int len) {
     *p = 0;
 }
 
-/// Unescape XML.
-/// This function handles "&lt;", "&amp;" and "&#".
+/// Unescape XML, replacing entities with their corresponding characters.
+/// This function handles "&lt;", "&gt;", "&amp;" and decimal "&#nnn;".
 ///
-/// \param[in] in The input buffer which contains the xml that
-///               should be unescaped.
+/// \param[in] in The XML string to unescape.
 std::string xml_unescape(const std::string& in) {
     std::string result;
     result.reserve(in.length());
