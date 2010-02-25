@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2009 Nicolas Alvarez
+// Copyright (C) 2010 Nicolas Alvarez
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -52,5 +52,13 @@ SUITE(TestXmlParser)
         CHECK_EQUAL("/root", std::string(tag));
 
         CHECK_EQUAL(true, xp.get(tag, sizeof(tag), is_tag));
+    }
+    TEST(XmlUnescape) {
+        CHECK_EQUAL("<foo>", xml_unescape("&lt;foo>"));
+        CHECK_EQUAL("a&b", xml_unescape("a&amp;b"));
+        CHECK_EQUAL("a&&b", xml_unescape("a&amp;&amp;b"));
+        CHECK_EQUAL("&", xml_unescape("&amp;"));
+        CHECK_EQUAL("a&amp;b", xml_unescape("a&amp;amp;b"));
+        CHECK_EQUAL("<foo>", xml_unescape("&lt;foo&gt;"));
     }
 }
