@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2009 David Barnard, Peter Kortschack
+// Copyright (C) 2010 David Barnard, Peter Kortschack
 // Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -561,6 +561,8 @@ bool CAdvancedFrame::CreateMenu() {
     SetAcceleratorTable(*m_pAccelTable);
  #endif
 
+    UpdateMenuBarState(pDoc->IsConnected());
+
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CreateMenu - Function End"));
     return true;
 }
@@ -1015,6 +1017,8 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
     dlg.SetMRUList(aComputerNames);
 
     if (wxID_OK == dlg.ShowModal()) {
+
+        UpdateMenuBarState(false);
 
         // Make a null hostname be the same thing as localhost
         if (wxEmptyString == dlg.GetComputerName()) {
@@ -1996,4 +2000,43 @@ void CAdvancedFrame::StopTimers() {
     m_pRefreshStateTimer->Stop();
     m_pFrameRenderTimer->Stop();
     m_pFrameListPanelRenderTimer->Stop();
+}
+
+/// Enable or disable certain menu items based on the connected state.
+///
+/// \param[in] connected If true the menu items will be enabled,
+///                      otherwise disabled.
+void CAdvancedFrame::UpdateMenuBarState(bool connected) {
+    CMainDocument*  pDoc = wxGetApp().GetDocument();
+    ACCT_MGR_INFO ami;
+    pDoc->rpc.acct_mgr_info(ami);
+    bool is_acct_mgr_detected = !ami.acct_mgr_url.empty();
+
+    wxMenu* tools = m_pMenubar->GetMenu(2);
+    if (!is_acct_mgr_detected) {
+        tools->Enable(ID_PROJECTSATTACHPROJECT, connected);
+        tools->Enable(ID_PROJECTSATTACHACCOUNTMANAGER, connected);
+    } else {
+        tools->Enable(ID_TOOLSAMUPDATENOW, connected);
+    }
+
+    wxMenu* activity = m_pMenubar->GetMenu(3);
+    activity->Enable(ID_FILEACTIVITYRUNALWAYS, connected);
+    activity->Enable(ID_FILEACTIVITYRUNBASEDONPREPERENCES, connected);
+    activity->Enable(ID_FILEACTIVITYSUSPEND, connected);
+    activity->Enable(ID_FILENETWORKRUNALWAYS, connected);
+    activity->Enable(ID_FILENETWORKRUNBASEDONPREPERENCES, connected);
+    activity->Enable(ID_FILENETWORKSUSPEND, connected);
+
+    wxMenu* advanced = m_pMenubar->GetMenu(4);
+    advanced->Enable(ID_ADVPREFSDLG, connected);
+    advanced->Enable(ID_SHUTDOWNCORECLIENT, connected);
+    advanced->Enable(ID_FILERUNBENCHMARKS, connected);
+    advanced->Enable(ID_COMMANDSRETRYCOMMUNICATIONS, connected);
+    advanced->Enable(ID_READ_CONFIG, connected);
+    advanced->Enable(ID_READ_PREFS, connected);
+    if (is_acct_mgr_detected) {
+        advanced->Enable(ID_ADVANCEDAMDEFECT, connected);
+        advanced->Enable(ID_PROJECTSATTACHPROJECT, connected);
+    }
 }
