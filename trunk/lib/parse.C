@@ -375,7 +375,7 @@ void xml_unescape(const char* in, char* out, int len) {
             in += 5;
         } else if (!strncmp(in, "&#", 2)) {
             char c = atoi(in + 2);
-            char* q = strchr(in, ';');
+            const char* q = strchr(in, ';');
             if (q) {
                 in = q + 1;
                 *p++ = c;
@@ -416,7 +416,7 @@ std::string xml_unescape(const std::string& in) {
             p += 5;
         } else if (!strncmp(p, "&#", 2)) {
             char c = atoi(p + 2);
-            char* q = strchr(p, ';');
+            const char* q = strchr(p, ';');
             if (q) {
                 p = q + 1;
                 result += c;
