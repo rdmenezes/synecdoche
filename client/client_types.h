@@ -355,15 +355,6 @@ public:
     /// Update project_files_downloaded_time to the current time.
     void update_project_files_downloaded_time();
 
-    /// Multiply by this when estimating the CPU time of a result
-    /// (based on FLOPs estimated and benchmarks).
-    /// This is dynamically updated in a way that maintains an upper bound.
-    /// it goes down slowly but if a new estimate X is larger,
-    /// the factor is set to X.
-    double duration_correction_factor;
-
-    void update_duration_correction_factor(const RESULT* result);
-
     /// @name CPU scheduler and work fetch
     /// Fields used by CPU scheduler and work fetch.
     /// everything from here on applies only to CPU intensive projects.
@@ -527,6 +518,14 @@ public:
     double avg_ncpus;
     double max_ncpus;
     double flops;
+
+    /// Multiply by this when estimating the CPU time of a result
+    /// (based on FLOPs estimated and benchmarks).
+    /// This is dynamically updated in a way that maintains an upper bound.
+    /// it goes down slowly but if a new estimate X is larger,
+    /// the factor is set to X.
+    double duration_correction_factor;
+
     char cmdline[256]; ///< Additional command-line arguments.
 
     APP* app;
@@ -536,7 +535,7 @@ public:
     char graphics_exec_path[512];
 
 public:
-    APP_VERSION(){}
+    APP_VERSION();
     ~APP_VERSION(){}
     int parse(MIOFILE& in);
     void write(std::ostream& out) const;
@@ -544,6 +543,7 @@ public:
     void get_file_errors(std::string& str);
     void clear_errors();
     int api_major_version() const;
+    void update_duration_correction_factor(const RESULT* result);
 };
 
 class RESULT {

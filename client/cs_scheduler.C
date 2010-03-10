@@ -109,7 +109,6 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         << XmlTag<double>("rrs_fraction",               rrs_fraction)
         << XmlTag<double>("prrs_fraction",              prrs_fraction)
         << XmlTag<double>("estimated_delay",            time_until_work_done(p, proj_min_results(p, prrs)-1, prrs))
-        << XmlTag<double>("duration_correction_factor", p->duration_correction_factor)
         << XmlTag<int>   ("sandbox",                    (g_use_sandbox ? 1 : 0))
     ;
 

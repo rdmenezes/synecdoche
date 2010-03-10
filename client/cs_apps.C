@@ -173,7 +173,7 @@ int CLIENT_STATE::app_finished(ACTIVE_TASK& at) {
         }
     } else {
         rp->set_state(RESULT_FILES_UPLOADING, "CS::app_finished");
-        rp->project->update_duration_correction_factor(rp);
+        rp->avp->update_duration_correction_factor(rp);
     }
 
     double wall_cpu_time = now - debt_interval_start;

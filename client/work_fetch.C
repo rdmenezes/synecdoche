@@ -498,26 +498,26 @@ bool CLIENT_STATE::compute_work_requests() {
         // completion time.
         // Switch to a simpler policy: ask for 1 sec of work if
         // we don't have any.
-        //
-        if (p->duration_correction_factor < 0.02 || p->duration_correction_factor > 80.0) {
-            if (p->runnable()) {
-                if (log_flags.work_fetch_debug) {
-                    msg_printf(p, MSG_INFO,
-                        "[work_fetch_debug] project DCF %f out of range and have work; skipping",
-                        p->duration_correction_factor
-                    );
-                }
-                continue;
-            } else {
-                if (log_flags.work_fetch_debug) {
-                    msg_printf(p, MSG_INFO,
-                        "[work_fetch_debug] project DCF %f out of range: changing shortfall %f to 1.0",
-                         p->duration_correction_factor, p->rr_sim_status.get_cpu_shortfall()
-                    );
-                }
-                p->rr_sim_status.set_cpu_shortfall(1.0);
-            }
-        }
+        // TODO: Any replacement for this?
+        //if (p->duration_correction_factor < 0.02 || p->duration_correction_factor > 80.0) {
+        //    if (p->runnable()) {
+        //        if (log_flags.work_fetch_debug) {
+        //            msg_printf(p, MSG_INFO,
+        //                "[work_fetch_debug] project DCF %f out of range and have work; skipping",
+        //                p->duration_correction_factor
+        //            );
+        //        }
+        //        continue;
+        //    } else {
+        //        if (log_flags.work_fetch_debug) {
+        //            msg_printf(p, MSG_INFO,
+        //                "[work_fetch_debug] project DCF %f out of range: changing shortfall %f to 1.0",
+        //                 p->duration_correction_factor, p->rr_sim_status.get_cpu_shortfall()
+        //            );
+        //        }
+        //        p->rr_sim_status.set_cpu_shortfall(1.0);
+        //    }
+        //}
 
         // see if this project is better than our current best
         //
@@ -607,9 +607,8 @@ bool CLIENT_STATE::compute_work_requests() {
 /// Called when benchmarks change.
 void CLIENT_STATE::scale_duration_correction_factors(double factor) {
     if (factor <= 0) return;
-    for (unsigned int i=0; i<projects.size(); i++) {
-        PROJECT* p = projects[i];
-        p->duration_correction_factor *= factor;
+    for (unsigned int i = 0; i < app_versions.size(); ++i) {
+        app_versions[i]->duration_correction_factor *= factor;
     }
     if (log_flags.cpu_sched_debug) {
         msg_printf(NULL, MSG_INFO,
@@ -729,7 +728,7 @@ double RESULT::estimated_cpu_time_uncorrected() const {
 
 /// Estimate how long a result will take on this host.
 double RESULT::estimated_cpu_time() const {
-    return estimated_cpu_time_uncorrected()*project->duration_correction_factor;
+    return estimated_cpu_time_uncorrected() * avp->duration_correction_factor;
 }
 
 double RESULT::estimated_cpu_time_remaining() const {
