@@ -159,7 +159,6 @@ void PROJECT::copy(const PROJECT& p) {
     min_rpc_time = p.min_rpc_time;
     short_term_debt = p.short_term_debt;
     long_term_debt = p.long_term_debt;
-    duration_correction_factor = p.duration_correction_factor;
     master_url_fetch_pending = p.master_url_fetch_pending;
     sched_rpc_pending = p.sched_rpc_pending;
     non_cpu_intensive = p.non_cpu_intensive;
@@ -195,7 +194,6 @@ int PROJECT::parse(MIOFILE& in) {
         if (parse_double(buf, "<min_rpc_time>", min_rpc_time)) continue;
         if (parse_double(buf, "<short_term_debt>", short_term_debt)) continue;
         if (parse_double(buf, "<long_term_debt>", long_term_debt)) continue;
-        if (parse_double(buf, "<duration_correction_factor>", duration_correction_factor)) continue;
         if (parse_bool(buf, "master_url_fetch_pending", master_url_fetch_pending)) continue;
 
         int itmp;
@@ -247,7 +245,6 @@ void PROJECT::clear() {
     min_rpc_time = 0;
     short_term_debt = 0;
     long_term_debt = 0;
-    duration_correction_factor = 0;
     master_url_fetch_pending = false;
     sched_rpc_pending = NO_RPC_REASON;
     ended = false;
@@ -310,6 +307,7 @@ void APP_VERSION::clear() {
     version_num = 0;
     app = NULL;
     project = NULL;
+    duration_correction_factor = 0.0;
 }
 
 WORKUNIT::WORKUNIT() {

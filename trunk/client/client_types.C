@@ -114,7 +114,6 @@ void PROJECT::init() {
     next_runnable_result = NULL;
     work_request = 0;
     work_request_urgency = WORK_FETCH_DONT_NEED;
-    duration_correction_factor = 1;
     project_files_downloaded_time = 0;
     use_symlinks = false;
 
@@ -206,7 +205,6 @@ int PROJECT::parse_state(MIOFILE& in) {
         if (parse_double(buf, "<short_term_debt>", short_term_debt)) continue;
         if (parse_double(buf, "<long_term_debt>", long_term_debt)) continue;
         if (parse_double(buf, "<resource_share>", x)) continue;    // not authoritative
-        if (parse_double(buf, "<duration_correction_factor>", duration_correction_factor)) continue;
         if (parse_bool(buf, "attached_via_acct_mgr", attached_via_acct_mgr)) continue;
         if (parse_double(buf, "<ams_resource_share>", ams_resource_share)) continue;
         if (parse_bool(buf, "scheduler_rpc_in_progress", btemp)) continue;
@@ -244,7 +242,6 @@ void PROJECT::write_state(std::ostream& out, bool gui_rpc) const {
         << XmlTag<double>("short_term_debt",        short_term_debt)
         << XmlTag<double>("long_term_debt",         long_term_debt)
         << XmlTag<double>("resource_share",         resource_share)
-        << XmlTag<double>("duration_correction_factor", duration_correction_factor)
         << XmlTag<int>   ("sched_rpc_pending",      sched_rpc_pending)
     ;
     if (master_url_fetch_pending)   { out << "<master_url_fetch_pending/>\n"; }
@@ -318,7 +315,6 @@ void PROJECT::copy_state_fields(const PROJECT& p) {
     detach_when_done = p.detach_when_done;
     attached_via_acct_mgr = p.attached_via_acct_mgr;
     ended = p.ended;
-    duration_correction_factor = p.duration_correction_factor;
     ams_resource_share = p.ams_resource_share;
     if (ams_resource_share > 0) {
         resource_share = ams_resource_share;
@@ -985,6 +981,10 @@ int FILE_INFO::gzip() {
     return 0;
 }
 
+APP_VERSION::APP_VERSION() {
+    duration_correction_factor = 1.0;
+}
+
 int APP_VERSION::parse(MIOFILE& in) {
     char buf[256];
     FILE_REF file_ref;
@@ -1015,6 +1015,7 @@ int APP_VERSION::parse(MIOFILE& in) {
         if (parse_double(buf, "<avg_ncpus>", avg_ncpus)) continue;
         if (parse_double(buf, "<max_ncpus>", max_ncpus)) continue;
         if (parse_double(buf, "<flops>", flops)) continue;
+        if (parse_double(buf, "<duration_correction_factor>", duration_correction_factor)) continue;
         if (parse_str(buf, "<cmdline>", cmdline, sizeof(cmdline))) continue;
         handle_unparsed_xml_warning("APP_VERSION::parse", buf);
     }
@@ -1029,6 +1030,7 @@ void APP_VERSION::write(std::ostream& out) const {
         << XmlTag<double>("avg_ncpus", avg_ncpus)
         << XmlTag<double>("max_ncpus", max_ncpus)
         << XmlTag<double>("flops", flops)
+        << XmlTag<double>("duration_correction_factor", duration_correction_factor)
     ;
     if (strlen(plan_class)) {
         out << XmlTag<const char*>("plan_class", plan_class);

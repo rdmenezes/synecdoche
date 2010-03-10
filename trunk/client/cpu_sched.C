@@ -201,7 +201,8 @@ RESULT* CLIENT_STATE::earliest_deadline_result() {
         if (!rp->runnable()) continue;
         if (rp->project->non_cpu_intensive) continue;
         if (rp->already_selected) continue;
-        if (!rp->project->deadlines_missed && rp->project->duration_correction_factor < 90.0) continue;
+        // TODO: 
+        // if (!rp->project->deadlines_missed && rp->project->duration_correction_factor < 90.0) continue;
             // treat projects with DCF>90 as if they had deadline misses
 
         bool new_best = false;
@@ -1168,35 +1169,32 @@ int ACTIVE_TASK::preempt(bool quit_task) {
 /// The given result has just completed successfully;
 /// update the correction factor used to predict
 /// completion time for this project's results.
-void PROJECT::update_duration_correction_factor(const RESULT* result) {
-    double raw_ratio = result->final_cpu_time/result->estimated_cpu_time_uncorrected();
-    double adj_ratio = result->final_cpu_time/result->estimated_cpu_time();
+void APP_VERSION::update_duration_correction_factor(const RESULT* result) {
+    double raw_ratio = result->final_cpu_time / result->estimated_cpu_time_uncorrected();
+    double adj_ratio = result->final_cpu_time / result->estimated_cpu_time();
     double old_dcf = duration_correction_factor;
 
     // it's OK to overestimate completion time,
     // but bad to underestimate it.
     // So make it easy for the factor to increase,
     // but decrease it with caution
-    //
     if (adj_ratio > 1.1) {
         duration_correction_factor = raw_ratio;
     } else {
         // in particular, don't give much weight to results
         // that completed a lot earlier than expected
-        //
         if (adj_ratio < 0.1) {
-            duration_correction_factor = duration_correction_factor*0.99 + 0.01*raw_ratio;
+            duration_correction_factor = duration_correction_factor * 0.99 + 0.01 * raw_ratio;
         } else {
-            duration_correction_factor = duration_correction_factor*0.9 + 0.1*raw_ratio;
+            duration_correction_factor = duration_correction_factor * 0.9 + 0.1 * raw_ratio;
         }
     }
     // limit to [.01 .. 100]
-    //
-    if (duration_correction_factor > 100) duration_correction_factor = 100;
+    if (duration_correction_factor > 100.0) duration_correction_factor = 100.0;
     if (duration_correction_factor < 0.01) duration_correction_factor = 0.01;
 
     if (log_flags.cpu_sched_debug || log_flags.work_fetch_debug) {
-        msg_printf(this, MSG_INFO,
+        msg_printf(project, MSG_INFO,
             "[csd|wfd] DCF: %f->%f, raw_ratio %f, adj_ratio %f",
             old_dcf, duration_correction_factor, raw_ratio, adj_ratio
         );
