@@ -24,6 +24,7 @@
 # if HAVE_SYS_SELECT_H
 #  include <sys/select.h>
 # endif
+# include <string.h>
 #else
 # include "boinc_win.h"
 #endif
