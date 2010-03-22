@@ -355,6 +355,8 @@ public:
     /// Update project_files_downloaded_time to the current time.
     void update_project_files_downloaded_time();
 
+    double calculate_avg_dcf() const;
+    
     /// @name CPU scheduler and work fetch
     /// Fields used by CPU scheduler and work fetch.
     /// everything from here on applies only to CPU intensive projects.

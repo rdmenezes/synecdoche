@@ -510,6 +510,34 @@ void PROJECT::update_project_files_downloaded_time() {
     project_files_downloaded_time = gstate.now;
 }
 
+/// Calculate the average duration correction factor of the project.
+///
+/// Synecdoche supports per-app DCF, but the BOINC server expects
+/// the client to send a single DCF value. So we calculate an average
+/// over all apps in the project and send that.
+///
+/// In the future, the calculation may be improved,
+/// for example to give more weight to apps that have had work recently.
+double PROJECT::calculate_avg_dcf() const
+{
+    double total_dcf = 0.0;
+    size_t app_count = 0;
+    std::vector<APP_VERSION*>::const_iterator it;
+    
+    for (it = gstate.app_versions.begin(); it != gstate.app_versions.end(); ++it) {
+        const APP_VERSION* app = *it;
+        if (app->project == this) {
+            total_dcf += app->duration_correction_factor;
+            app_count++;
+        }
+    }
+    if (app_count == 0) {
+        return 1.0;
+    } else {
+        return total_dcf / app_count;
+    }
+}
+
 /// Get all workunits for this project.
 ///
 /// \return A vector containing all workunits of this project.
