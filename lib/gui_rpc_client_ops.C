@@ -298,6 +298,7 @@ int APP_VERSION::parse(MIOFILE& in) {
         if (parse_str(buf, "<app_name>", app_name)) continue;
         if (parse_str(buf, "<plan_class>", plan_class)) continue;
         if (parse_int(buf, "<version_num>", version_num)) continue;
+        if (parse_double(buf, "<duration_correction_factor>", duration_correction_factor)) continue;
     }
     return ERR_XML_PARSE;
 }
@@ -307,7 +308,7 @@ void APP_VERSION::clear() {
     version_num = 0;
     app = NULL;
     project = NULL;
-    duration_correction_factor = 0.0;
+    duration_correction_factor = 1.0;
 }
 
 WORKUNIT::WORKUNIT() {
