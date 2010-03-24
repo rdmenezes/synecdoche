@@ -37,7 +37,6 @@
 
 #include "parse.h"
 #include "miofile.h"
-#include "time.h"
 #include "str_util.h"
 #include "error_numbers.h"
 #include "util.h"
