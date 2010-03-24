@@ -355,8 +355,8 @@ public:
 private:
     void add_platform(const char* platform);
     void detect_platforms();
-    void write_platforms(const PROJECT* p, std::ostream& out);
-    bool is_supported_platform(const char* p);
+    void write_platforms(const PROJECT* p, std::ostream& out) const;
+    bool is_supported_platform(const char* p) const;
 /// @}
 
 /// @name cs_prefs.C
