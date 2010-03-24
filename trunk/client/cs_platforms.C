@@ -122,7 +122,7 @@ void CLIENT_STATE::detect_platforms() {
 
 
 /// Write XML list of supported platforms.
-void CLIENT_STATE::write_platforms(const PROJECT* p, std::ostream& out) {
+void CLIENT_STATE::write_platforms(const PROJECT* p, std::ostream& out) const {
     out << XmlTag<std::string>("platform_name", p->anonymous_platform ? "anonymous" : get_primary_platform());
 
     for (size_t i=1; i<platforms.size(); i++) {
@@ -135,9 +135,9 @@ void CLIENT_STATE::write_platforms(const PROJECT* p, std::ostream& out) {
     }
 }
 
-bool CLIENT_STATE::is_supported_platform(const char* p) {
+bool CLIENT_STATE::is_supported_platform(const char* p) const {
     for (unsigned int i=0; i<platforms.size(); i++) {
-        PLATFORM& platform = platforms[i];
+        const PLATFORM& platform = platforms[i];
         if (platform.name == p) {
             return true;
         }
