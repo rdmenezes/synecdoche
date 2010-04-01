@@ -1109,7 +1109,7 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 PREDEFINED             = __cplusplus _WIN32 USE_NATIVE_LISTCONTROL=1 WXUNUSED(x)=x SYNEC_UNUSED(x)=x wxCHECK_VERSION(x,y,z)=true \
-                         CPPUNIT_TEST(x)= CPPUNIT_TEST_SUITE()= CPPUNIT_TEST_SUITE_END()= CPPUNIT_TEST_SUITE_REGISTRATION()=
+                         "SUITE(x)=class x" "TEST(x)=void x()"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
