@@ -114,4 +114,15 @@ SUITE(TestStrUtil)
         CHECK_EQUAL("--nthreads", *it++);
         CHECK_EQUAL("2", *it++);
     }
+    /// Tests NoCaseLess.
+    TEST(NoCaseLess) {
+        CHECK_EQUAL(true, NoCaseLess("a", "b"));
+        CHECK_EQUAL(false, NoCaseLess("c","b"));
+        CHECK_EQUAL(true, NoCaseLess("A", "b"));
+        CHECK_EQUAL(false, NoCaseLess("c","B"));
+        CHECK_EQUAL(true, NoCaseLess("HElLO","world"));
+        CHECK_EQUAL(true, NoCaseLess("hello","WOrLD"));
+        CHECK_EQUAL(false, NoCaseLess("hello","HeLlO"));
+        CHECK_EQUAL(false, NoCaseLess("",""));
+    }
 }
