@@ -229,7 +229,6 @@ AC_CHECK_FUNCS(alloca _alloca setpriority strlcpy strlcat strcasestr sigaction g
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_SIZE_T
-AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 
 dnl utmp file location

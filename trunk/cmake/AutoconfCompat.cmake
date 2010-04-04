@@ -44,27 +44,9 @@ ENDMACRO(AC_CHECK_TYPE_SIZE)
 
 # Taken almost straight from autoconf
 MACRO(AC_STRUCT_TIMEZONE)
-	MESSAGE(STATUS "Checking whether struct tm is in sys/time.h or time.h")
-	SET(struct_tm_check "UNKNOWN")
-	CHECK_C_SOURCE_COMPILES("
-#include <sys/types.h>
-#include <time.h>
-
-int main() {
-	struct tm tm;
-	int *p = &tm.tm_sec;
-	return !p;
-}
-" struct_tm_check)
-	IF(struct_tm_check)
-		SET(struct_tm_inc "time.h")
-	ELSE(struct_tm_check)
-		SET(struct_tm_inc "sys/time.h")
-	ENDIF(struct_tm_check)
-
 	MESSAGE(STATUS "Checking for struct tm.tm_zone")
 	CHECK_C_SOURCE_COMPILES("
-#include <${struct_tm_inc}>
+#include <time.h>
 
 int main() {
 	static struct tm obj;
