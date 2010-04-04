@@ -21,19 +21,6 @@
 // this case we need to use the "small files" environment on some unix
 // systems.  That can't be done if we include "cpp.h"
 
-// copied directly from cpp.h
-#if defined(_WIN32) && !defined(__CYGWIN32__)
-
-#if defined(_WIN64) && defined(_M_X64)
-#define HOSTTYPE    "windows_x86_64"
-#define HOSTTYPEALT "windows_intelx86"
-#else
-#define HOSTTYPE "windows_intelx86"
-#endif
-
-#include "version.h"         // version numbers from autoconf
-#endif
-
 #include "config.h"
 
 #if !defined(_WIN32) || defined(__CYGWIN32__)
@@ -846,7 +833,7 @@ int HOST_INFO::get_host_info() {
     // http://developer.apple.com/documentation/Performance/Conceptual/ManagingMemory/Articles/AboutMemory.html says:
     //    Unlike most UNIX-based operating systems, Mac OS X does not use a 
     //    preallocated swap partition for virtual memory. Instead, it uses all
-    //    of the available space on the machine’s boot partition.
+    //    of the available space on the machine's boot partition.
     struct statfs fs_info;
 
     statfs(".", &fs_info);
