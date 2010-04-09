@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2010 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -51,6 +52,7 @@ BEGIN_EVENT_TABLE(CDlgOptions, wxDialog)
     EVT_UPDATE_UI( ID_ENABLEHTTPPROXYCTRL, CDlgOptions::OnEnableHTTPProxyCtrlUpdate )
     EVT_CHECKBOX( ID_ENABLESOCKSPROXYCTRL, CDlgOptions::OnEnableSOCKSProxyCtrlClick )
     EVT_UPDATE_UI( ID_ENABLESOCKSPROXYCTRL, CDlgOptions::OnEnableSOCKSProxyCtrlUpdate )
+    EVT_BUTTON(ID_RESETWARNINGDIALOGS, CDlgOptions::OnResetWarningDialogs)
 ////@end CDlgOptions event table entries
 
 END_EVENT_TABLE()
@@ -59,12 +61,13 @@ END_EVENT_TABLE()
  * CDlgOptions constructors
  */
 
-CDlgOptions::CDlgOptions()
+CDlgOptions::CDlgOptions() : m_resetWarningDialogs(false)
 {
 }
 
-CDlgOptions::CDlgOptions(wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style)
-{
+CDlgOptions::CDlgOptions(wxWindow* parent, wxWindowID id, const wxString& caption,
+                         const wxPoint& pos, const wxSize& size, long style)
+                         : m_resetWarningDialogs(false) {
     Create(parent, id, caption, pos, size, style);
 }
 
@@ -166,6 +169,9 @@ void CDlgOptions::CreateControls()
     if (ShowToolTips())
         m_ReminderFrequencyCtrl->SetToolTip(_("How often, in minutes, should the manager remind you of possible connection events."));
     itemFlexGridSizer6->Add(m_ReminderFrequencyCtrl, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5);
+
+    wxButton* btnResetWarningDialogs = new wxButton(itemPanel4, ID_RESETWARNINGDIALOGS, _("Reset warning dialogs"));
+    itemFlexGridSizer6->Add(btnResetWarningDialogs, 0, wxALIGN_CENTER | wxALL, 5);
 
     itemNotebook3->AddPage(itemPanel4, _("General"));
 
@@ -462,6 +468,14 @@ void CDlgOptions::OnEnableSOCKSProxyCtrlUpdate(wxUpdateUIEvent& event) {
     event.Skip();
 }
 
+void CDlgOptions::OnResetWarningDialogs(wxCommandEvent& /* event */) {
+    m_resetWarningDialogs = true;
+}
+
+/// Return true if the dialogs should be resetted.
+bool CDlgOptions::isResetWarningDialogs() const {
+    return m_resetWarningDialogs;
+}
 
 #if defined(__WXMSW__)
 wxString CDlgOptions::GetDefaultDialupConnection() const
