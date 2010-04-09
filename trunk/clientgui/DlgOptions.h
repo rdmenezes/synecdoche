@@ -1,5 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
+// Copyright (C) 2010 Peter Kortschack
 // Copyright (C) 2005 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
@@ -67,6 +68,7 @@ class wxTextCtrl;
 #define ID_SOCKSPORTCTRL 10014
 #define ID_SOCKSUSERNAMECTRL 10015
 #define ID_SOCKSPASSWORDCTRL 10016
+#define ID_RESETWARNINGDIALOGS 10031
 ////@end control identifiers
 
 /*!
@@ -126,6 +128,9 @@ public:
     /// wxEVT_UPDATE_UI event handler for ID_ENABLESOCKSPROXYCTRL
     void OnEnableSOCKSProxyCtrlUpdate( wxUpdateUIEvent& event );
 
+    /// wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_RESETWARNINGDIALOGS
+    void OnResetWarningDialogs(wxCommandEvent& event);
+
 ////@end CDlgOptions event handler declarations
 
     wxString GetDefaultDialupConnection() const;
@@ -138,6 +143,9 @@ public:
 
     /// Retrieves icon resources
     wxIcon GetIconResource( const wxString& name );
+
+    /// Return true if the dialogs should be resetted.
+    bool isResetWarningDialogs() const;
 ////@end CDlgOptions member function declarations
 
     /// Should we show tooltips?
@@ -162,6 +170,9 @@ public:
     wxTextCtrl* m_SOCKSPortCtrl;
     wxTextCtrl* m_SOCKSUsernameCtrl;
     wxTextCtrl* m_SOCKSPasswordCtrl;
+
+private:
+    bool m_resetWarningDialogs;
 ////@end CDlgOptions member variables
 };
 

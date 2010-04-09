@@ -1491,6 +1491,11 @@ void CAdvancedFrame::OnOptionsOptions(wxCommandEvent& WXUNUSED(event)) {
         m_iSelectedLanguage = dlg.m_LanguageSelectionCtrl->GetSelection();
         m_iReminderFrequency = dlg.m_ReminderFrequencyCtrl->GetValue();
 
+        if (dlg.isResetWarningDialogs()) {
+            m_bDisplayShutdownClientWarning = true;
+            wxGetApp().SetDisplayExitWarning(1);
+        }
+
 #ifdef __WXMSW__
         // Connection Tab
         m_strNetworkDialupConnectionName = dlg.GetDefaultDialupConnection();
