@@ -167,6 +167,10 @@ CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
 CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 LIBS="$PTHREAD_LIBS $LIBS"
 
+AC_CHECK_HEADERS([zlib.h], [], [AC_MSG_ERROR([
+ERROR: could not find development libs for zlib.
+This library is required to build the Synecdoche client.
+])])
 AC_CHECK_LIB([z], [gzopen], [CLIENTLIBS="${CLIENTLIBS} -lz"], [AC_MSG_ERROR([
 ERROR: could not find development libs for zlib.
 This library is required to build the Synecdoche client.
