@@ -2,22 +2,20 @@
 
 include $(top_srcdir)/Makefile.incl
 
-datadir = $(prefix)/share/locale 
+datadir = $(prefix)/share/locale
+catalog_name=BOINC-Manager
 
 locale_dirs = \
-        af_ZA \
 	ar \
 	be \
 	bg \
 	ca \
 	cs \
-	cs_CZ \
 	da \
 	de \
 	el \
 	en_US \
 	es \
-	eu \
 	fi \
 	fr \
 	hr \
@@ -27,7 +25,6 @@ locale_dirs = \
 	ko_KR \
 	lt \
 	lv \
-	nb \
 	nl \
 	pl \
 	pt \
@@ -35,19 +32,20 @@ locale_dirs = \
 	ro \
 	ru \
 	sk \
-	sl \
 	sv_SE \
-	tr \
-	uk \
 	zh_CN \
 	zh_TW
 
-install-exec-hook:
+# The following code needs GNU Make
+
+%.mo: %/$(catalog_name).po
+	mkdir -p `dirname $@`
+	msgfmt -v $< -o $@
+
+install-exec-hook: $(patsubst %,%.mo,$(locale_dirs))
 	mydir=$(DESTDIR)$(datadir) ;\
-	for ldir in $(locale_dirs) ; do \
-	  $(INSTALL) -d $$mydir/$$ldir ; \
-	  if [ -f $$ldir/BOINC-Manager.po ] ; then \
-	    $(INSTALL) $$ldir/BOINC-Manager.po $$mydir/$$ldir/BOINC-Manager.po ; \
-	  fi ;\
+	for lang in $(locale_dirs) ; do \
+	  $(INSTALL) -d $${mydir}/$${lang}/LC_MESSAGES ; \
+	  $(INSTALL) $${lang}.mo $${mydir}/$${lang}/LC_MESSAGES/$(catalog_name).mo; \
 	done
 

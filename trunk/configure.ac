@@ -376,6 +376,7 @@ AC_CONFIG_FILES([
                  clientgui/Makefile
                  clientgui/res/Makefile
                  client/Makefile
+                 locale/client/Makefile
                  lib/Makefile
                  tests/Makefile
                  Makefile
