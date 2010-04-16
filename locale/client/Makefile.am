@@ -38,7 +38,7 @@ locale_dirs = \
 
 # The following code needs GNU Make
 
-%.mo: $(srcdir)/%/$(catalog_name).po
+%.mo: $(srcdir)/%.po
 	msgfmt -v $< -o $@
 
 noinst_DATA = $(patsubst %,%.mo,$(locale_dirs))
