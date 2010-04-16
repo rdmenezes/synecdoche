@@ -3,7 +3,7 @@
 include $(top_srcdir)/Makefile.incl
 
 datadir = $(prefix)/share/locale
-catalog_name=BOINC-Manager
+catalog_name=synecmgr
 
 locale_dirs = \
 	ar \
