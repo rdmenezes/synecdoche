@@ -42,7 +42,9 @@ locale_dirs = \
 	mkdir -p `dirname $@`
 	msgfmt -v $< -o $@
 
-install-exec-hook: $(patsubst %,%.mo,$(locale_dirs))
+noinst_DATA = $(patsubst %,%.mo,$(locale_dirs))
+
+install-data-local:
 	mydir=$(DESTDIR)$(datadir) ;\
 	for lang in $(locale_dirs) ; do \
 	  $(INSTALL) -d $${mydir}/$${lang}/LC_MESSAGES ; \
