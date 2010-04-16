@@ -38,8 +38,7 @@ locale_dirs = \
 
 # The following code needs GNU Make
 
-%.mo: %/$(catalog_name).po
-	mkdir -p `dirname $@`
+%.mo: $(srcdir)/%/$(catalog_name).po
 	msgfmt -v $< -o $@
 
 noinst_DATA = $(patsubst %,%.mo,$(locale_dirs))
@@ -51,3 +50,10 @@ install-data-local:
 	  $(INSTALL) $${lang}.mo $${mydir}/$${lang}/LC_MESSAGES/$(catalog_name).mo; \
 	done
 
+uninstall-local:
+	mydir=$(DESTDIR)$(datadir) ;\
+	for lang in $(locale_dirs) ; do \
+	  rm $${mydir}/$${lang}/LC_MESSAGES/$(catalog_name).mo; \
+	done
+
+DISTCLEANFILES=$(patsubst %,%.mo,$(locale_dirs))
