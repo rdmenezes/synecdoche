@@ -22,39 +22,39 @@ LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 INCLUDE(AutoconfCompat)
 
 FOREACH(inc "csignal" "signal.h" "malloc.h" "string.h" "unistd.h" "netdb.h" "arpa/inet.h" "netinet/in.h")
-	AC_CHECK_INCLUDE_FILE(${inc})
+    AC_CHECK_INCLUDE_FILE(${inc})
 ENDFOREACH(inc)
 FOREACH(inc "types" "ipc" "socket" "resource" "param" "mount" "statvfs" "statfs" "signal" "wait" "systeminfo" "sysctl" "utsname")
-	AC_CHECK_INCLUDE_FILE(sys/${inc}.h)
+    AC_CHECK_INCLUDE_FILE(sys/${inc}.h)
 ENDFOREACH(inc)
 
 AC_CHECK_FUNCTION_EXISTS(strcasestr)
 
 IF(HAVE_SYS_SOCKET_H)
-	SET(CMAKE_EXTRA_INCLUDE_FILES sys/socket.h)
+    SET(CMAKE_EXTRA_INCLUDE_FILES sys/socket.h)
 ENDIF(HAVE_SYS_SOCKET_H)
 AC_CHECK_TYPE_SIZE("socklen_t")
 SET(CMAKE_EXTRA_INCLUDE_FILES)
 
 FOREACH(type "socklen_t" "size_t" "int")
-	IF (NOT DEFINED BOINC_SOCKLEN_T)
-		SET(getsockopt_type_test "UNKNOWN")
-		MESSAGE(STATUS "Testing ${type}")
-		CHECK_C_SOURCE_COMPILES("
+    IF (NOT DEFINED BOINC_SOCKLEN_T)
+        SET(getsockopt_type_test "UNKNOWN")
+        MESSAGE(STATUS "Testing ${type}")
+        CHECK_C_SOURCE_COMPILES("
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-		int main() {
-			${type} l;
-			return getsockopt(0,0,0,(void *)0,&l);
-		}" getsockopt_type_test)
-		IF(getsockopt_type_test)
-			SET(BOINC_SOCKLEN_T "${type}" CACHE INTERNAL "type pointed to by the 5th parameter of getsockopt")
-		ENDIF(getsockopt_type_test)
-	ENDIF (NOT DEFINED BOINC_SOCKLEN_T)
+        int main() {
+            ${type} l;
+            return getsockopt(0,0,0,(void *)0,&l);
+        }" getsockopt_type_test)
+        IF(getsockopt_type_test)
+            SET(BOINC_SOCKLEN_T "${type}" CACHE INTERNAL "type pointed to by the 5th parameter of getsockopt")
+        ENDIF(getsockopt_type_test)
+    ENDIF (NOT DEFINED BOINC_SOCKLEN_T)
 ENDFOREACH(type)
 
 AC_STRUCT_TIMEZONE()
@@ -94,7 +94,7 @@ ADD_SUBDIRECTORY(lib)
 ADD_SUBDIRECTORY(client)
 ADD_SUBDIRECTORY(clientgui)
 IF(WIN32)
-	ADD_SUBDIRECTORY(clientlib)
+    ADD_SUBDIRECTORY(clientlib)
 ENDIF(WIN32)
 
 ADD_SUBDIRECTORY(tests)
