@@ -21,42 +21,42 @@ INCLUDE (CheckTypeSize)
 INCLUDE (CheckCSourceCompiles)
 
 MACRO(AC_VARNAME ITEM VAR)
-	SET(l_varname ${ITEM})
-	STRING(TOUPPER ${l_varname} l_varname)
-	STRING(REGEX REPLACE "[^A-Z]" "_" l_varname ${l_varname})
-	SET(${VAR} HAVE_${l_varname})
+    SET(l_varname ${ITEM})
+    STRING(TOUPPER ${l_varname} l_varname)
+    STRING(REGEX REPLACE "[^A-Z]" "_" l_varname ${l_varname})
+    SET(${VAR} HAVE_${l_varname})
 ENDMACRO(AC_VARNAME)
 
 MACRO(AC_CHECK_INCLUDE_FILE INCLUDE)
-	AC_VARNAME(${INCLUDE} l_include_varname)
-	CHECK_INCLUDE_FILE(${INCLUDE} ${l_include_varname})
+    AC_VARNAME(${INCLUDE} l_include_varname)
+    CHECK_INCLUDE_FILE(${INCLUDE} ${l_include_varname})
 ENDMACRO(AC_CHECK_INCLUDE_FILE)
 
 MACRO(AC_CHECK_FUNCTION_EXISTS FUNC)
-	AC_VARNAME(${FUNC} l_func_varname)
-	CHECK_FUNCTION_EXISTS(${FUNC} ${l_func_varname})
+    AC_VARNAME(${FUNC} l_func_varname)
+    CHECK_FUNCTION_EXISTS(${FUNC} ${l_func_varname})
 ENDMACRO(AC_CHECK_FUNCTION_EXISTS)
 
 MACRO(AC_CHECK_TYPE_SIZE TYPE)
-	AC_VARNAME(${TYPE} l_type_varname)
-	CHECK_TYPE_SIZE(${TYPE} ${l_type_varname})
+    AC_VARNAME(${TYPE} l_type_varname)
+    CHECK_TYPE_SIZE(${TYPE} ${l_type_varname})
 ENDMACRO(AC_CHECK_TYPE_SIZE)
 
 # Taken almost straight from autoconf
 MACRO(AC_STRUCT_TIMEZONE)
-	MESSAGE(STATUS "Checking for struct tm.tm_zone")
-	CHECK_C_SOURCE_COMPILES("
+    MESSAGE(STATUS "Checking for struct tm.tm_zone")
+    CHECK_C_SOURCE_COMPILES("
 #include <time.h>
 
 int main() {
-	static struct tm obj;
-	if (obj.tm_zone) {
-		return 0;
-	}
-	return 0;
+    static struct tm obj;
+    if (obj.tm_zone) {
+        return 0;
+    }
+    return 0;
 }
 " struct_tm_check)
-	IF(struct_tm_check)
-		SET(HAVE_STRUCT_TM_TM_ZONE 1 CACHE INTERNAL "1 if 'tm_zone' is member of 'struct tm'")
-	ENDIF(struct_tm_check)
+    IF(struct_tm_check)
+        SET(HAVE_STRUCT_TM_TM_ZONE 1 CACHE INTERNAL "1 if 'tm_zone' is member of 'struct tm'")
+    ENDIF(struct_tm_check)
 ENDMACRO(AC_STRUCT_TIMEZONE)

@@ -23,101 +23,101 @@ INCLUDE(${wxWidgets_USE_FILE})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 IF(WIN32)
-	SET(PLATFORM_GUI_SOURCES msw/taskbarex.cpp)
+    SET(PLATFORM_GUI_SOURCES msw/taskbarex.cpp)
 ELSEIF(APPLE)
-	SET(PLATFORM_GUI_SOURCES
-		mac/browser_safari.mm
-		mac/Mac_GUI.cpp
-		mac/MacSysMenu.cpp
-		mac/SystemMenu.m
-	)
+    SET(PLATFORM_GUI_SOURCES
+        mac/browser_safari.mm
+        mac/Mac_GUI.cpp
+        mac/MacSysMenu.cpp
+        mac/SystemMenu.m
+    )
 ENDIF(WIN32)
 
 ADD_EXECUTABLE(synecmgr WIN32
 # {{{ source list
-	AccountInfoPage.cpp
-	AccountManagerInfoPage.cpp
-	AccountManagerProcessingPage.cpp
-	AccountManagerPropertiesPage.cpp
-	AdvancedFrame.cpp
-	AlreadyExistsPage.cpp
-	BOINCBaseFrame.cpp
-	BOINCBaseView.cpp
-	BOINCBaseWizard.cpp
-	BOINCClientManager.cpp
-	BOINCDialupManager.cpp
-	BOINCGUIApp.cpp
-	BOINCListCtrl.cpp
-	BOINCTaskBar.cpp
-	BOINCTaskCtrl.cpp
-	browser.C
-	CompletionErrorPage.cpp
-	CompletionPage.cpp
-	DlgAbout.cpp
-	DlgAdvPreferencesBase.cpp
-	DlgAdvPreferences.cpp
-	DlgGenericMessage.cpp
-	DlgMsgFilter.cpp
-	DlgOptions.cpp
-	DlgSelectComputer.cpp
-	hyperlink.cpp
-	LogBOINC.cpp
-	MainDocument.cpp
-	MsgFilterData.cpp
-	NoInternetConnectionPage.cpp
-	NotDetectedPage.cpp
-	NotFoundPage.cpp
-	ProjectInfoPage.cpp
-	ProjectListCtrl.cpp
-	ProjectProcessingPage.cpp
-	ProjectPropertiesPage.cpp
-	ProxyInfoPage.cpp
-	ProxyPage.cpp
-	sg_BoincSimpleGUI.cpp
-	sg_ClientStateIndicator.cpp
-	sg_CustomControls.cpp
-	sg_DlgMessages.cpp
-	sg_DlgPreferences.cpp
-	sg_ImageButton.cpp
-	sg_ImageLoader.cpp
-	sg_ProgressBar.cpp
-	sg_ProjectsComponent.cpp
-	sg_SGUIListControl.cpp
-	sg_StatImageLoader.cpp
-	sg_ViewTabPage.cpp
-	SkinManager.cpp
-	stdwx.cpp
-	TaskViewBase.cpp
-	UnavailablePage.cpp
-	ValidateEmailAddress.cpp
-	ValidateURL.cpp
-	ViewMessages.cpp
-	ViewProjects.cpp
-	ViewResources.cpp
-	ViewStatistics.cpp
-	ViewTransfers.cpp
-	ViewWork.cpp
-	WelcomePage.cpp
-	WizardAccountManager.cpp
-	WizardAttachProject.cpp
+    AccountInfoPage.cpp
+    AccountManagerInfoPage.cpp
+    AccountManagerProcessingPage.cpp
+    AccountManagerPropertiesPage.cpp
+    AdvancedFrame.cpp
+    AlreadyExistsPage.cpp
+    BOINCBaseFrame.cpp
+    BOINCBaseView.cpp
+    BOINCBaseWizard.cpp
+    BOINCClientManager.cpp
+    BOINCDialupManager.cpp
+    BOINCGUIApp.cpp
+    BOINCListCtrl.cpp
+    BOINCTaskBar.cpp
+    BOINCTaskCtrl.cpp
+    browser.C
+    CompletionErrorPage.cpp
+    CompletionPage.cpp
+    DlgAbout.cpp
+    DlgAdvPreferencesBase.cpp
+    DlgAdvPreferences.cpp
+    DlgGenericMessage.cpp
+    DlgMsgFilter.cpp
+    DlgOptions.cpp
+    DlgSelectComputer.cpp
+    hyperlink.cpp
+    LogBOINC.cpp
+    MainDocument.cpp
+    MsgFilterData.cpp
+    NoInternetConnectionPage.cpp
+    NotDetectedPage.cpp
+    NotFoundPage.cpp
+    ProjectInfoPage.cpp
+    ProjectListCtrl.cpp
+    ProjectProcessingPage.cpp
+    ProjectPropertiesPage.cpp
+    ProxyInfoPage.cpp
+    ProxyPage.cpp
+    sg_BoincSimpleGUI.cpp
+    sg_ClientStateIndicator.cpp
+    sg_CustomControls.cpp
+    sg_DlgMessages.cpp
+    sg_DlgPreferences.cpp
+    sg_ImageButton.cpp
+    sg_ImageLoader.cpp
+    sg_ProgressBar.cpp
+    sg_ProjectsComponent.cpp
+    sg_SGUIListControl.cpp
+    sg_StatImageLoader.cpp
+    sg_ViewTabPage.cpp
+    SkinManager.cpp
+    stdwx.cpp
+    TaskViewBase.cpp
+    UnavailablePage.cpp
+    ValidateEmailAddress.cpp
+    ValidateURL.cpp
+    ViewMessages.cpp
+    ViewProjects.cpp
+    ViewResources.cpp
+    ViewStatistics.cpp
+    ViewTransfers.cpp
+    ViewWork.cpp
+    WelcomePage.cpp
+    WizardAccountManager.cpp
+    WizardAttachProject.cpp
 
-	common/wxPieCtrl.cpp
-	common/wxFlatNotebook.cpp
+    common/wxPieCtrl.cpp
+    common/wxFlatNotebook.cpp
 
-	${PLATFORM_GUI_SOURCES}
-	${CMAKE_BINARY_DIR}/svnversion.cpp
+    ${PLATFORM_GUI_SOURCES}
+    ${CMAKE_BINARY_DIR}/svnversion.cpp
 # }}}
 )
 TARGET_LINK_LIBRARIES(synecmgr boinc)
 TARGET_LINK_LIBRARIES(synecmgr ${wxWidgets_LIBRARIES})
 
 IF(WIN32)
-	TARGET_LINK_LIBRARIES(synecmgr clientlib)
-	TARGET_LINK_LIBRARIES(synecmgr wininet.lib)
+    TARGET_LINK_LIBRARIES(synecmgr clientlib)
+    TARGET_LINK_LIBRARIES(synecmgr wininet.lib)
 ENDIF(WIN32)
 IF(APPLE)
-	FIND_LIBRARY(SECURITY_LIBRARY Security)
-	TARGET_LINK_LIBRARIES(synecmgr ${SECURITY_LIBRARY})
+    FIND_LIBRARY(SECURITY_LIBRARY Security)
+    TARGET_LINK_LIBRARIES(synecmgr ${SECURITY_LIBRARY})
 ENDIF(APPLE)
 
 ENDIF(wxWidgets_FOUND)

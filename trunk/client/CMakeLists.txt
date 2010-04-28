@@ -16,67 +16,67 @@
 # License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 IF(WIN32)
-	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/win)
-	SET(PLATFORM_CLIENT_SOURCES hostinfo_win.C win/win_service.cpp)
-	ADD_DEFINITIONS(-D_CONSOLE)
+    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/win)
+    SET(PLATFORM_CLIENT_SOURCES hostinfo_win.C win/win_service.cpp)
+    ADD_DEFINITIONS(-D_CONSOLE)
 ELSEIF(UNIX)
-	SET(PLATFORM_CLIENT_SOURCES hostinfo_unix.C)
+    SET(PLATFORM_CLIENT_SOURCES hostinfo_unix.C)
 ENDIF(WIN32)
 
 ADD_LIBRARY(synecclient STATIC
-	acct_mgr.C
-	acct_setup.C
-	app.C
-	app_control.C
-	app_graphics.C
-	app_start.C
-	check_state.C
-	client_msgs.C
-	client_state.C
-	client_types.C
-	cpu_sched.C
-	cs_account.C
-	cs_apps.C
-	cs_benchmark.C
-	cs_cmdline.C
-	cs_files.C
-	cs_platforms.C
-	cs_prefs.C
-	cs_scheduler.C
-	cs_statefile.C
-	cs_trickle.C
-	dhrystone.C
-	dhrystone2.C
-	file_names.C
-	file_xfer.C
-	gui_http.C
-	gui_rpc_server.C
-	gui_rpc_server_ops.C
-	hostinfo_network.C
-	http_curl.C
-	log_flags.C
-	net_stats.C
-	pers_file_xfer.C
-	rr_sim.cpp
-	sandbox.C
-	scheduler_op.C
-	time_stats.C
-	whetstone.C
-	work_fetch.C
-	${PLATFORM_CLIENT_SOURCES}
-	${CMAKE_BINARY_DIR}/svnversion.cpp
+    acct_mgr.C
+    acct_setup.C
+    app.C
+    app_control.C
+    app_graphics.C
+    app_start.C
+    check_state.C
+    client_msgs.C
+    client_state.C
+    client_types.C
+    cpu_sched.C
+    cs_account.C
+    cs_apps.C
+    cs_benchmark.C
+    cs_cmdline.C
+    cs_files.C
+    cs_platforms.C
+    cs_prefs.C
+    cs_scheduler.C
+    cs_statefile.C
+    cs_trickle.C
+    dhrystone.C
+    dhrystone2.C
+    file_names.C
+    file_xfer.C
+    gui_http.C
+    gui_rpc_server.C
+    gui_rpc_server_ops.C
+    hostinfo_network.C
+    http_curl.C
+    log_flags.C
+    net_stats.C
+    pers_file_xfer.C
+    rr_sim.cpp
+    sandbox.C
+    scheduler_op.C
+    time_stats.C
+    whetstone.C
+    work_fetch.C
+    ${PLATFORM_CLIENT_SOURCES}
+    ${CMAKE_BINARY_DIR}/svnversion.cpp
 )
 TARGET_LINK_LIBRARIES(synecclient boinc)
 
 TARGET_LINK_LIBRARIES(synecclient ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES})
 
 IF(WIN32)
-	TARGET_LINK_LIBRARIES(synecclient sensapi.lib)
+    TARGET_LINK_LIBRARIES(synecclient sensapi.lib)
 ELSEIF(APPLE)
-	FIND_LIBRARY(CF_LIBRARY CoreFoundation)
-	FIND_LIBRARY(COCOA_LIBRARY Cocoa)
-	FIND_LIBRARY(IOKIT_LIBRARY IOKit)
-	TARGET_LINK_LIBRARIES(synecclient ${CF_LIBRARY} ${COCOA_LIBRARY} ${IOKIT_LIBRARY})
+    FIND_LIBRARY(CF_LIBRARY CoreFoundation)
+    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
+    FIND_LIBRARY(IOKIT_LIBRARY IOKit)
+    TARGET_LINK_LIBRARIES(synecclient ${CF_LIBRARY} ${COCOA_LIBRARY} ${IOKIT_LIBRARY})
 ENDIF(WIN32)
 
 ADD_EXECUTABLE(synecd main.C)

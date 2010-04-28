@@ -16,9 +16,9 @@
 # License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
 ADD_LIBRARY(clientlib SHARED
-	win/boinc_dll.cpp
-	win/IdleTracker.cpp
-	win/Service.cpp
-	../lib/win_util.C
+    win/boinc_dll.cpp
+    win/IdleTracker.cpp
+    win/Service.cpp
+    ../lib/win_util.C
 )
 
