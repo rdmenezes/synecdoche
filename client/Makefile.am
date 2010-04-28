@@ -86,6 +86,7 @@ nodist_libsynecclient_a_SOURCES = ../svnversion.cpp dirs.cpp
 synecd_SOURCES = main.C main.h
 
 libsynecclient_a_CPPFLAGS = $(AM_CPPFLAGS) -DHARDCODED_DIRS
+synecd_CPPFLAGS = $(AM_CPPFLAGS) -DHARDCODED_DIRS
 synecd_LDADD = $(PTHREAD_LIBS) libsynecclient.a $(LIBBOINC)
 
 synecddir = $(bindir)
