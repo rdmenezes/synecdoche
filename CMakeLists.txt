@@ -33,32 +33,7 @@ ENDFOREACH(inc)
 
 AC_CHECK_FUNCTION_EXISTS(strcasestr)
 
-IF(HAVE_SYS_SOCKET_H)
-    SET(CMAKE_EXTRA_INCLUDE_FILES sys/socket.h)
-ENDIF(HAVE_SYS_SOCKET_H)
-AC_CHECK_TYPE_SIZE("socklen_t")
-SET(CMAKE_EXTRA_INCLUDE_FILES)
-
-FOREACH(type "socklen_t" "size_t" "int")
-    IF (NOT DEFINED BOINC_SOCKLEN_T)
-        SET(getsockopt_type_test "UNKNOWN")
-        MESSAGE(STATUS "Testing ${type}")
-        CHECK_C_SOURCE_COMPILES("
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-        int main() {
-            ${type} l;
-            return getsockopt(0,0,0,(void *)0,&l);
-        }" getsockopt_type_test)
-        IF(getsockopt_type_test)
-            SET(BOINC_SOCKLEN_T "${type}" CACHE INTERNAL "type pointed to by the 5th parameter of getsockopt")
-        ENDIF(getsockopt_type_test)
-    ENDIF (NOT DEFINED BOINC_SOCKLEN_T)
-ENDFOREACH(type)
+SET(BOINC_SOCKLEN_T "socklen_t")
 
 AC_STRUCT_TIMEZONE()
 
