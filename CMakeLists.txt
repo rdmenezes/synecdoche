@@ -37,6 +37,9 @@ SET(BOINC_SOCKLEN_T "socklen_t")
 
 AC_STRUCT_TIMEZONE()
 
+get_boinc_platform(BOINC_PLATFORM)
+message(STATUS "Building for platform ${BOINC_PLATFORM}")
+
 add_svnversion_target()
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
