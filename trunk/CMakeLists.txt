@@ -22,6 +22,7 @@ cmake_policy(SET CMP0003 NEW)
 LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 INCLUDE(AutoconfCompat)
+INCLUDE(SynecUtils)
 
 FOREACH(inc "csignal" "signal.h" "malloc.h" "string.h" "unistd.h" "netdb.h" "arpa/inet.h" "netinet/in.h")
     AC_CHECK_INCLUDE_FILE(${inc})
@@ -61,22 +62,7 @@ ENDFOREACH(type)
 
 AC_STRUCT_TIMEZONE()
 
-IF(WIN32)
-    STRING(REPLACE "/" "\\" VERSION_CPP_PATH ${CMAKE_BINARY_DIR}/svnversion.cpp)
-    ADD_CUSTOM_TARGET(update_svnversion ALL
-        ${CMAKE_SOURCE_DIR}/version.bat ${VERSION_CPP_PATH}
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        VERBATIM
-    )
-ELSE(WIN32)
-    ADD_CUSTOM_TARGET(update_svnversion ALL
-        ${CMAKE_SOURCE_DIR}/version.sh ${CMAKE_BINARY_DIR}/svnversion.cpp
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        VERBATIM
-    )
-ENDIF(WIN32)
-
-FILE(WRITE ${CMAKE_BINARY_DIR}/svnversion.cpp "//dummy")
+add_svnversion_target()
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib ${CMAKE_SOURCE_DIR}/client)
