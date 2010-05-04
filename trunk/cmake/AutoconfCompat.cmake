@@ -44,6 +44,7 @@ ENDMACRO(AC_CHECK_TYPE_SIZE)
 
 # Taken almost straight from autoconf
 MACRO(AC_STRUCT_TIMEZONE)
+    IF(NOT DEFINED HAVE_STRUCT_TM_TM_ZONE)
     MESSAGE(STATUS "Checking for struct tm.tm_zone")
     CHECK_C_SOURCE_COMPILES("
 #include <time.h>
@@ -59,4 +60,5 @@ int main() {
     IF(struct_tm_check)
         SET(HAVE_STRUCT_TM_TM_ZONE 1 CACHE INTERNAL "1 if 'tm_zone' is member of 'struct tm'")
     ENDIF(struct_tm_check)
+    ENDIF(NOT DEFINED HAVE_STRUCT_TM_TM_ZONE)
 ENDMACRO(AC_STRUCT_TIMEZONE)
