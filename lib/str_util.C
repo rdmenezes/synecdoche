@@ -147,7 +147,7 @@ extern const char* strcasestr(const char* s1, const char* s2) {
       p=const_cast<char *>(s1)+(p-haystack);
     }
   } 
-#if !defined(HAVE_STRDUPA) && !defined(HAVE_ALLOCA) && !defined(HAVE_ALLOC_H)
+#if !defined(HAVE_STRDUPA) && !defined(HAVE_ALLOCA) && !defined(HAVE_ALLOCA_H)
   // If we didn't allocate on the stack free our strings
   if (needle) free(needle);
   if (haystack) free(haystack);
