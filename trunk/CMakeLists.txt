@@ -15,11 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
-if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+cmake_policy(SET CMP0003 NEW)
 
 LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
