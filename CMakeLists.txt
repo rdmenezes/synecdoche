@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.6.3 FATAL_ERROR)
 
 cmake_policy(SET CMP0003 NEW)
 
