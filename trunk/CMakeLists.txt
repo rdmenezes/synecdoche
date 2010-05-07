@@ -24,6 +24,9 @@ LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 INCLUDE(AutoconfCompat)
 INCLUDE(SynecUtils)
 
+get_boinc_platform(BOINC_PLATFORM)
+message(STATUS "Building for platform ${BOINC_PLATFORM}")
+
 FOREACH(inc "csignal" "signal.h" "malloc.h" "string.h" "unistd.h" "netdb.h" "arpa/inet.h" "netinet/in.h")
     AC_CHECK_INCLUDE_FILE(${inc})
 ENDFOREACH(inc)
@@ -36,9 +39,6 @@ AC_CHECK_FUNCTION_EXISTS(strcasestr)
 SET(BOINC_SOCKLEN_T "socklen_t")
 
 AC_STRUCT_TIMEZONE()
-
-get_boinc_platform(BOINC_PLATFORM)
-message(STATUS "Building for platform ${BOINC_PLATFORM}")
 
 add_svnversion_target()
 
