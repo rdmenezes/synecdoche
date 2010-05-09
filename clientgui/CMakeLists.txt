@@ -20,6 +20,9 @@ FIND_PACKAGE(wxWidgets COMPONENTS base core adv net)
 IF(wxWidgets_FOUND)
 INCLUDE(${wxWidgets_USE_FILE})
 
+# .cpp files in common are including headers in the same directory
+# including the 'common/' prefix, so we need to add the clientgui
+# root dir to the search path
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 IF(WIN32)
@@ -119,6 +122,8 @@ IF(APPLE)
     FIND_LIBRARY(SECURITY_LIBRARY Security)
     TARGET_LINK_LIBRARIES(synecmgr ${SECURITY_LIBRARY})
 ENDIF(APPLE)
+
+install(TARGETS synecmgr RUNTIME DESTINATION bin)
 
 ENDIF(wxWidgets_FOUND)
 # vim: set fdm=marker:

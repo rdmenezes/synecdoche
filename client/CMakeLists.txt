@@ -81,3 +81,5 @@ ENDIF(WIN32)
 
 ADD_EXECUTABLE(synecd main.C)
 TARGET_LINK_LIBRARIES(synecd synecclient)
+
+install(TARGETS synecd RUNTIME DESTINATION sbin)
