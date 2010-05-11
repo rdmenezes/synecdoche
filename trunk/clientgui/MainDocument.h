@@ -168,7 +168,7 @@ private:
 
 public:
     PROJECT*                    project(size_t i);
-    PROJECT*                    project(const wxString& projectname);
+    //PROJECT*                    project(const wxString& masterUrl);
     
     /// Return a std::map containing all projects this client is attached to.
     projects_map                GetProjectsMap() const;
@@ -181,20 +181,13 @@ public:
     size_t                      GetProjectCount();
 
     int                         ProjectNoMoreWork(size_t iIndex);
-    int                         ProjectNoMoreWork(const wxString& projectname);
     int                         ProjectAllowMoreWork(size_t iIndex);
-    int                         ProjectAllowMoreWork(const wxString& projectname);
     int                         ProjectAttach(const wxString& strURL, const wxString& strAccountKey);
     int                         ProjectDetach(size_t iIndex);
-    int                         ProjectDetach(const wxString& projectname);
     int                         ProjectUpdate(size_t iIndex);
-    int                         ProjectUpdate(const wxString& projectname);
     int                         ProjectReset(size_t iIndex);
-    int                         ProjectReset(const wxString& projectname);
     int                         ProjectSuspend(size_t iIndex);
-    int                         ProjectSuspend(const wxString& projectname);
     int                         ProjectResume(size_t iIndex);
-    int                         ProjectResume(const wxString& projectname);
 
 
     //

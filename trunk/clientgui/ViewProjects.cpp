@@ -471,7 +471,7 @@ void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
 
     pFrame->UpdateStatusText(_("Detaching from project..."));
 
-    std::list<wxString> selectedProjects;
+    std::vector<size_t> selectedProjects;
     int row = -1;
     while (1) {
         // Step through all selected items
@@ -480,19 +480,18 @@ void CViewProjects::OnProjectDetach( wxCommandEvent& WXUNUSED(event) ) {
             break;
         }
         
-        CProject* p = m_ProjectCache.at(m_iSortedIndexes[row]);
-        selectedProjects.push_back(p->m_strProjectName);
+        selectedProjects.push_back(m_iSortedIndexes[row]);
     }
 
-    for (std::list<wxString>::iterator p = selectedProjects.begin();
-        p != selectedProjects.end(); ++p) {
+    for (size_t i = 0; i< selectedProjects.size(); ++i) {
+        const size_t projectIndex = selectedProjects[i];
 
         strMessage.Printf(_("Are you sure you want to detach from project '%s'?"), 
-                (*p).c_str());
+                pDoc->project(projectIndex)->project_name.c_str());
 
         if (::wxMessageBox(strMessage, _("Detach from Project"),
                 wxYES_NO | wxICON_QUESTION, this) == wxYES) {
-            pDoc->ProjectDetach(*p);
+            pDoc->ProjectDetach(projectIndex);
         }
     }
 
