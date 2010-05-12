@@ -35,13 +35,11 @@ public:
     bool is_local; ///< Connection is from local host.
     GUI_HTTP gui_http;
 
-    GUI_RPC_CONN(int);
+    GUI_RPC_CONN(int fd);
     ~GUI_RPC_CONN();
     int handle_rpc();
     int handle_write();
-    bool needs_write() const {
-        return !write_buffer.empty();
-    }
+    bool needs_write() const;
 private:
     std::string nonce;
     std::string write_buffer;

@@ -62,8 +62,8 @@
 // TODO: Clean this mess up!
 std::string read_gui_rpc_password(const std::string& file_name = GUI_RPC_PASSWD_FILE);
 
-GUI_RPC_CONN::GUI_RPC_CONN(int s):
-    sock(s),
+GUI_RPC_CONN::GUI_RPC_CONN(int fd):
+    sock(fd),
     auth_needed(false),
 
     get_project_config_op(&gui_http),
@@ -289,6 +289,9 @@ static void show_connect_error(in_addr ia) {
         );
     }
     count = 0;
+}
+bool GUI_RPC_CONN::needs_write() const {
+    return !write_buffer.empty();
 }
 
 void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg) const {
