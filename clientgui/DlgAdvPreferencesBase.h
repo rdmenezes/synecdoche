@@ -218,7 +218,11 @@ class CDlgAdvPreferencesBase : public wxDialog
     public:
         CDlgAdvPreferencesBase( wxWindow* parent, int id = -1, wxString title = wxT(""), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 547,526 ), int style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
         virtual ~CDlgAdvPreferencesBase();
-    
+
+    private:
+        wxPanel* createProcessorTab(wxWindow* parent);
+        wxPanel* createNetworkTab(wxWindow* parent);
+        wxPanel* createDiskAndMemoryTab(wxWindow* parent);
 };
 
 #endif //__DlgAdvPreferencesBase__
