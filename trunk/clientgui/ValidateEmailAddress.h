@@ -18,6 +18,7 @@
 #ifndef _VALIDATEEMAILADDRESS_H_
 #define _VALIDATEEMAILADDRESS_H_
 
+#include <wx/validate.h>
 
 class CValidateEmailAddress : public wxValidator
 {

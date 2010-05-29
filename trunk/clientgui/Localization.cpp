@@ -15,9 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "Localization.h"
+
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
-#include "Localization.h"
 
 
 CLocalization::CLocalization() {

@@ -18,11 +18,12 @@
 // or write to the Free Software Foundation, Inc.,
 // 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+#include "TaskViewBase.h"
+
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "MainDocument.h"
 #include "BOINCBaseView.h"
-#include "TaskViewBase.h"
 #include "BOINCTaskCtrl.h"
 #include "BOINCListCtrl.h"
 #include "Events.h"

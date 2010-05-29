@@ -18,6 +18,7 @@
 #ifndef _LOGBOINC_H_
 #define _LOGBOINC_H_
 
+#include <wx/log.h>
 
 class wxLogBOINC : public wxLogStderr
 {

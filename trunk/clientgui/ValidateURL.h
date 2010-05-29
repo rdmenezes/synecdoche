@@ -18,6 +18,7 @@
 #ifndef _VALIDATEURL_H_
 #define _VALIDATEURL_H_
 
+#include <wx/validate.h>
 
 class CValidateURL : public wxValidator
 {

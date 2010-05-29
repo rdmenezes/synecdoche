@@ -16,10 +16,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "hyperlink.h"
+
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
-#include "hyperlink.h"
 
 void HyperLink::ExecuteLink (const wxString &strLink) {
     if (!wxLaunchDefaultBrowser(strLink)) {

@@ -17,8 +17,9 @@
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "BOINCWizards.h"
 #include "WizardAccountManager.h"
+
+#include "BOINCWizards.h"
 
 #include "stdwx.h"
 #include "hyperlink.h"

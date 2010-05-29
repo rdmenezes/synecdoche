@@ -20,8 +20,9 @@
 #define WIZ_ACCOUNTMANAGER_H
 
 #include "BOINCBaseWizard.h"
+#include "BOINCWizards.h"
 
-/// Forward declarations of all used pages:
+// Forward declarations of all used pages:
 class CAccountInfoPage;
 class CAccountManagerInfoPage;
 class CAccountManagerPropertiesPage;
