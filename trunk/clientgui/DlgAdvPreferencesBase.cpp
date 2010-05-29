@@ -51,11 +51,9 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     this->Centre( wxBOTH );
     this->SetTitle(strCaption);
 
-    wxBoxSizer* dialogSizer;
-    dialogSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* dialogSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticBoxSizer* topControlsSizer;
-    topControlsSizer = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("") ), wxHORIZONTAL );
+    wxStaticBoxSizer* topControlsSizer = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("") ), wxHORIZONTAL );
 
     m_bmpWarning = new wxStaticBitmap( this, ID_DEFAULT, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
     m_bmpWarning->SetMinSize( wxSize( 48,48 ) );
@@ -75,8 +73,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelControls = new wxPanel( this, ID_DEFAULT, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
     m_panelControls->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
 
-    wxBoxSizer* notebookSizer;
-    notebookSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* notebookSizer = new wxBoxSizer( wxVERTICAL );
 
     m_Notebook = new wxNotebook( m_panelControls, ID_DEFAULT, wxDefaultPosition, wxDefaultSize, wxNB_FLAT|wxNB_TOP );
     m_Notebook->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
@@ -84,11 +81,9 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelProcessor = new wxPanel( m_Notebook, ID_TABPAGE_PROC, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
     m_panelProcessor->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
 
-    wxBoxSizer* processorTabSizer;
-    processorTabSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* processorTabSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticBoxSizer* computingAllowedBoxSizer;
-    computingAllowedBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelProcessor, -1, _("Computing allowed") ), wxVERTICAL );
+    wxStaticBoxSizer* computingAllowedBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelProcessor, -1, _("Computing allowed") ), wxVERTICAL );
 
     m_chkProcOnBatteries = new wxCheckBox( m_panelProcessor, ID_CHKPROCONBATTERIES, _(" While computer is on batteries"), wxDefaultPosition, wxDefaultSize, 0 );
 
@@ -124,8 +119,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 
     computingAllowedBoxSizer->Add( procIdleSizer, 0, wxEXPAND, 5 );
 
-    wxBoxSizer* cpuTimesSizer;
-    cpuTimesSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* cpuTimesSizer = new wxBoxSizer( wxHORIZONTAL );
 
     m_staticText351 = new wxStaticText( m_panelProcessor, ID_DEFAULT, _("Every day between hours of"), wxDefaultPosition, wxDefaultSize, 0 );
     cpuTimesSizer->Add( m_staticText351, 0, wxALL, 5 );
@@ -155,8 +149,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelProcSpecialTimes->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
     m_panelProcSpecialTimes->SetToolTip( _("check box to specify hours for this day of week") );
 
-    wxFlexGridSizer* procDaysSizer;
-    procDaysSizer = new wxFlexGridSizer( 4, 4, 0, 0 );
+    wxFlexGridSizer* procDaysSizer = new wxFlexGridSizer( 4, 4, 0, 0 );
     procDaysSizer->SetFlexibleDirection( wxHORIZONTAL );
     procDaysSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -216,11 +209,9 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 
     processorTabSizer->Add( computingAllowedBoxSizer, 0, wxEXPAND, 1 );
 
-    wxStaticBoxSizer* miscProcBoxSizer;
-    miscProcBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelProcessor, -1, _("Other options") ), wxVERTICAL );
+    wxStaticBoxSizer* miscProcBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelProcessor, -1, _("Other options") ), wxVERTICAL );
 
-    wxFlexGridSizer* miscProcGridSizer;
-    miscProcGridSizer = new wxFlexGridSizer( 3, 3, 0, 0 );
+    wxFlexGridSizer* miscProcGridSizer = new wxFlexGridSizer( 3, 3, 0, 0 );
     miscProcGridSizer->AddGrowableCol( 2 );
     miscProcGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     miscProcGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -265,14 +256,11 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelNetwork = new wxPanel( m_Notebook, ID_TABPAGE_NET, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
     m_panelNetwork->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
 
-    wxBoxSizer* networkTabSizer;
-    networkTabSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* networkTabSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticBoxSizer* networkGeneralBoxSizer;
-    networkGeneralBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelNetwork, -1, _("General options") ), wxVERTICAL );
+    wxStaticBoxSizer* networkGeneralBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelNetwork, -1, _("General options") ), wxVERTICAL );
 
-    wxFlexGridSizer* networkGeneralGridSizer;
-    networkGeneralGridSizer = new wxFlexGridSizer( 3, 6, 0, 0 );
+    wxFlexGridSizer* networkGeneralGridSizer = new wxFlexGridSizer( 3, 6, 0, 0 );
     networkGeneralGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     networkGeneralGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -324,8 +312,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 
     networkTabSizer->Add( networkGeneralBoxSizer, 0, wxEXPAND, 1 );
 
-    wxStaticBoxSizer* connectOptionsSizer;
-    connectOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelNetwork, -1, _("Connect options") ), wxVERTICAL );
+    wxStaticBoxSizer* connectOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelNetwork, -1, _("Connect options") ), wxVERTICAL );
 
     m_chkNetConfirmBeforeConnect = new wxCheckBox( m_panelNetwork, ID_CHKNETCONFIRMBEFORECONNECT, _("Confirm before connecting to internet"), wxDefaultPosition, wxDefaultSize, 0 );
 
@@ -341,11 +328,9 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 
     networkTabSizer->Add( connectOptionsSizer, 0, wxEXPAND, 1 );
 
-    wxStaticBoxSizer* networkTimesBoxSizer;
-    networkTimesBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelNetwork, -1, _("Network usage allowed") ), wxVERTICAL );
+    wxStaticBoxSizer* networkTimesBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelNetwork, -1, _("Network usage allowed") ), wxVERTICAL );
 
-    wxBoxSizer* networkTimesSizer;
-    networkTimesSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* networkTimesSizer = new wxBoxSizer( wxHORIZONTAL );
 
     m_staticText38 = new wxStaticText( m_panelNetwork, ID_DEFAULT, _("Every day between hours of"), wxDefaultPosition, wxDefaultSize, 0 );
     networkTimesSizer->Add( m_staticText38, 0, wxALL, 5 );
@@ -375,8 +360,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelNetSpecialTimes->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
     m_panelNetSpecialTimes->SetToolTip( _("check box to specify hours for this day of week") );
 
-    wxFlexGridSizer* netDaysGridSizer;
-    netDaysGridSizer = new wxFlexGridSizer( 4, 4, 0, 0 );
+    wxFlexGridSizer* netDaysGridSizer = new wxFlexGridSizer( 4, 4, 0, 0 );
     netDaysGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     netDaysGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -443,14 +427,11 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelDiskAndMemory = new wxPanel( m_Notebook, ID_TABPAGE_DISK, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
     m_panelDiskAndMemory->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
 
-    wxBoxSizer* diskAndMemoryBoxSizer;
-    diskAndMemoryBoxSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* diskAndMemoryBoxSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticBoxSizer* diskUsageBoxSizer;
-    diskUsageBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelDiskAndMemory, -1, _("Disk usage") ), wxVERTICAL );
+    wxStaticBoxSizer* diskUsageBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelDiskAndMemory, -1, _("Disk usage") ), wxVERTICAL );
 
-    wxFlexGridSizer* diskUsageGridSizer;
-    diskUsageGridSizer = new wxFlexGridSizer( 5, 3, 0, 0 );
+    wxFlexGridSizer* diskUsageGridSizer = new wxFlexGridSizer( 5, 3, 0, 0 );
     diskUsageGridSizer->AddGrowableCol( 2 );
     diskUsageGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     diskUsageGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -512,11 +493,9 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 
     diskAndMemoryBoxSizer->Add( diskUsageBoxSizer, 0, wxEXPAND, 1 );
 
-    wxStaticBoxSizer* memoryUsageBoxSizer;
-    memoryUsageBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelDiskAndMemory, -1, _("Memory usage") ), wxVERTICAL );
+    wxStaticBoxSizer* memoryUsageBoxSizer = new wxStaticBoxSizer( new wxStaticBox( m_panelDiskAndMemory, -1, _("Memory usage") ), wxVERTICAL );
 
-    wxFlexGridSizer* memoryUsageGridSizer;
-    memoryUsageGridSizer = new wxFlexGridSizer( 3, 3, 0, 0 );
+    wxFlexGridSizer* memoryUsageGridSizer = new wxFlexGridSizer( 3, 3, 0, 0 );
     memoryUsageGridSizer->AddGrowableCol( 2 );
     memoryUsageGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     memoryUsageGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -564,8 +543,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     dialogSizer->Add( m_panelControls, 1, wxALL|wxEXPAND, 1 );
 
     m_panelButtons = new wxPanel( this, ID_DEFAULT, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-    wxBoxSizer* buttonSizer;
-    buttonSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* buttonSizer = new wxBoxSizer( wxHORIZONTAL );
 
     m_btnOK = new wxButton( m_panelButtons, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
     m_btnOK->SetToolTip( _("save all values and close the dialog") );
