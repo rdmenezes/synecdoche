@@ -18,8 +18,8 @@
 //
 
 #include "WizardAttachProject.h"
-#include "BOINCWizards.h"
 
+#include "BOINCWizards.h"
 
 #include "stdwx.h"
 #include "hyperlink.h"

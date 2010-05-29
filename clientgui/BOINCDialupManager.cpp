@@ -17,6 +17,8 @@
 
 #ifndef __WXMAC__
 
+#include "BOINCDialupManager.h"
+
 #include "stdwx.h"
 #include "network.h"
 #include "error_numbers.h"
@@ -25,7 +27,6 @@
 #include "MainDocument.h"
 #include "BOINCTaskBar.h"
 #include "BOINCBaseFrame.h"
-#include "BOINCDialupManager.h"
 #include "DlgOptions.h"
 
 

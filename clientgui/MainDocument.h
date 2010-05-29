@@ -22,7 +22,10 @@
 #include <map>
 #include <string>
 #include <vector>
+
 #include <wx/datetime.h>
+#include <wx/object.h>
+
 #include "common_defs.h"
 #include "gui_rpc_client.h"
 #include "hostinfo.h"

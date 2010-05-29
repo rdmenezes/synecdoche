@@ -18,6 +18,13 @@
 #ifndef _BOINCDIALUPMANAGER_H_
 #define _BOINCDIALUPMANAGER_H_
 
+// I need to include defs.h first or wxUSE_DIALUP_MANAGER won't be set,
+// and dialup.h does nothing. I think this is a wx bug;
+// dialup.h should be including defs.h
+
+#include <wx/defs.h>
+#include <wx/dialup.h>
+#include <wx/datetime.h>
 
 class CBOINCDialUpManager : public wxObject
 {

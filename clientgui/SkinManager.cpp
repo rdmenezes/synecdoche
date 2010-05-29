@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public
 // License with Synecdoche.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "SkinManager.h"
+
 #include "stdwx.h"
 #include "parse.h"
 #include "error_numbers.h"
 #include "miofile.h"
 #include "BOINCGUIApp.h"
 #include "BOINCBaseFrame.h"
-#include "SkinManager.h"
 #include "version.h"
 
 #include "res/skins/default/graphic/background_image.xpm"

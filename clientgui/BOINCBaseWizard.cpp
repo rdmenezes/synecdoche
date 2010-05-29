@@ -20,8 +20,9 @@
 /// \file
 /// Base class for manager's wizards
 
-#include "stdwx.h"
 #include "BOINCBaseWizard.h"
+
+#include "stdwx.h"
 
 IMPLEMENT_DYNAMIC_CLASS(CBOINCBaseWizard, wxWizard)
 

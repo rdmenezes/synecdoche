@@ -22,6 +22,7 @@
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/icon.h>
+#include <wx/intl.h>
 
 class MIOFILE;
 
