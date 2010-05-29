@@ -155,9 +155,6 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelProcSpecialTimes->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
     m_panelProcSpecialTimes->SetToolTip( _("check box to specify hours for this day of week") );
 
-    wxBoxSizer* procDaysWrapperSizer;
-    procDaysWrapperSizer = new wxBoxSizer( wxVERTICAL );
-
     wxFlexGridSizer* procDaysSizer;
     procDaysSizer = new wxFlexGridSizer( 4, 4, 0, 0 );
     procDaysSizer->SetFlexibleDirection( wxHORIZONTAL );
@@ -212,11 +209,9 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_txtProcSunday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCSUNDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
     procDaysSizer->Add( m_txtProcSunday, 0, wxALL, 1 );
 
-    procDaysWrapperSizer->Add( procDaysSizer, 1, wxEXPAND, 1 );
-
-    m_panelProcSpecialTimes->SetSizer( procDaysWrapperSizer );
+    m_panelProcSpecialTimes->SetSizer( procDaysSizer );
     m_panelProcSpecialTimes->Layout();
-    procDaysWrapperSizer->Fit( m_panelProcSpecialTimes );
+    procDaysSizer->Fit( m_panelProcSpecialTimes );
     computingAllowedBoxSizer->Add( m_panelProcSpecialTimes, 1, wxEXPAND | wxALL, 1 );
 
     processorTabSizer->Add( computingAllowedBoxSizer, 0, wxEXPAND, 1 );
@@ -380,9 +375,6 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelNetSpecialTimes->SetExtraStyle( wxWS_EX_VALIDATE_RECURSIVELY );
     m_panelNetSpecialTimes->SetToolTip( _("check box to specify hours for this day of week") );
 
-    wxBoxSizer* netDaysWrapperSizer;
-    netDaysWrapperSizer = new wxBoxSizer( wxVERTICAL );
-
     wxFlexGridSizer* netDaysGridSizer;
     netDaysGridSizer = new wxFlexGridSizer( 4, 4, 0, 0 );
     netDaysGridSizer->SetFlexibleDirection( wxHORIZONTAL );
@@ -437,11 +429,9 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_txtNetSunday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETSUNDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
     netDaysGridSizer->Add( m_txtNetSunday, 0, wxALL, 1 );
 
-    netDaysWrapperSizer->Add( netDaysGridSizer, 0, wxEXPAND, 1 );
-
-    m_panelNetSpecialTimes->SetSizer( netDaysWrapperSizer );
+    m_panelNetSpecialTimes->SetSizer( netDaysGridSizer );
     m_panelNetSpecialTimes->Layout();
-    netDaysWrapperSizer->Fit( m_panelNetSpecialTimes );
+    netDaysGridSizer->Fit( m_panelNetSpecialTimes );
     networkTimesBoxSizer->Add( m_panelNetSpecialTimes, 0, wxEXPAND | wxALL, 1 );
 
     networkTabSizer->Add( networkTimesBoxSizer, 0, wxEXPAND, 1 );
