@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2010 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -108,7 +108,12 @@ typedef size_t socklen_t;
 
 #include <commctrl.h>
 #include <raserror.h>
+#if defined(__MINGW32__)
+#include <stdint.h>
+#include <imagehlp.h>
+#else
 #include <dbghelp.h>
+#endif
 #include <tlhelp32.h>
 
 #include <io.h>
