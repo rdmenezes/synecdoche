@@ -1521,6 +1521,10 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
     // Finally delete the project:
     delete project;
     write_state_file();
+
+    adjust_debts(); 
+    request_schedule_cpus("Detach"); 
+    request_work_fetch("Detach"); 
     return 0;
 }
 
