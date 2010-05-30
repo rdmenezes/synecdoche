@@ -427,15 +427,11 @@ bool CLIENT_STATE::possibly_schedule_cpus() {
     return true;
 }
 
-static bool schedule_if_possible(
-    RESULT* rp, double& ncpus_used, double& ram_left, double rrs, double expected_payoff
-) {
-    ACTIVE_TASK* atp;
-
-    atp = gstate.lookup_active_task_by_result(rp);
+static bool schedule_if_possible(RESULT* rp, double& ncpus_used, double& ram_left, double rrs,
+                                 double expected_payoff, const char* description) {
+    ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(rp);
     if (atp) {
         // see if it fits in available RAM
-        //
         if (atp->procinfo.working_set_size_smoothed > ram_left) {
             if (log_flags.cpu_sched_debug) {
                 msg_printf(rp->project, MSG_INFO,
@@ -459,8 +455,7 @@ static bool schedule_if_possible(
     }
     if (log_flags.cpu_sched_debug) {
         msg_printf(rp->project, MSG_INFO,
-            "[cpu_sched_debug] scheduling %s",
-            rp->name
+            "[cpu_sched_debug] scheduling %s (%s)", rp->name, description
         );
     }
     ncpus_used += rp->avp->avg_ncpus;
@@ -483,7 +478,6 @@ void CLIENT_STATE::schedule_cpus() {
     }
 
     // do round-robin simulation to find what results miss deadline
-    //
     rr_simulation();
     if (log_flags.cpu_sched_debug) {
         print_deadline_misses();
@@ -492,7 +486,6 @@ void CLIENT_STATE::schedule_cpus() {
     adjust_debts();
 
     // set temporary variables
-    //
     for (i=0; i<results.size(); i++) {
         rp = results[i];
         rp->already_selected = false;
@@ -513,13 +506,14 @@ void CLIENT_STATE::schedule_cpus() {
     double ram_left = available_ram();
 
     // First choose results from projects with P.deadlines_missed>0
-    //
     while (ncpus_used < ncpus) {
         rp = earliest_deadline_result();
         if (!rp) break;
         rp->already_selected = true;
 
-        if (!schedule_if_possible(rp, ncpus_used, ram_left, rrs, expected_payoff)) continue;
+        if (!schedule_if_possible(rp, ncpus_used, ram_left, rrs, expected_payoff, "CPU job, EDF")) {
+            continue;
+        }
 
         rp->project->deadlines_missed--;
         rp->edf_scheduled = true;
@@ -527,12 +521,13 @@ void CLIENT_STATE::schedule_cpus() {
     }
 
     // Next, choose results from projects with large debt
-    //
     while (ncpus_used < ncpus) {
         assign_results_to_projects();
         rp = largest_debt_project_best_result();
         if (!rp) break;
-        if (!schedule_if_possible(rp, ncpus_used, ram_left, rrs, expected_payoff)) continue;
+        if (!schedule_if_possible(rp, ncpus_used, ram_left, rrs, expected_payoff, "CPU job, debt order")) {
+            continue;
+        }
         ordered_scheduled_results.push_back(rp);
     }
 
