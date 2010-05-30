@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 David Barnard, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -323,7 +323,7 @@ void CViewMessages::OnListRender (wxTimerEvent& event) {
                 m_pListPane->SetItemCount(iDocCount);
         }
 
-        if ((iDocCount) && (_EnsureLastItemVisible()) && (m_iPreviousDocCount != iDocCount)) {
+        if ((iDocCount > 1) && (_EnsureLastItemVisible()) && (m_iPreviousDocCount != iDocCount)) {
             m_pListPane->EnsureVisible(iDocCount - 1);
         }
 
@@ -331,7 +331,7 @@ void CViewMessages::OnListRender (wxTimerEvent& event) {
             pDoc->GetConnectedComputerName(strNewMachineName);
             if (strLastMachineName != strNewMachineName) {
                 strLastMachineName = strNewMachineName;
-                if (iDocCount) {
+                if (iDocCount > 1) {
                     m_pListPane->EnsureVisible(iDocCount - 1);
                 }
             }
