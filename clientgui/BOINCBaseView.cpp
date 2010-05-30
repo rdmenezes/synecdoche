@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 David Barnard, Peter Kortschack
-// Copyright (C) 2008 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -173,8 +173,7 @@ void CBOINCBaseView::OnListRender(wxTimerEvent& event) {
         if (iDocCount > 0) {
             SynchronizeCache();
 
-
-            if (EnsureLastItemVisible() && (iDocCount != iCacheCount)) {
+            if ((iDocCount > 1) && (EnsureLastItemVisible()) && (iDocCount != iCacheCount)) {
                 m_pListPane->EnsureVisible(iDocCount - 1);
             }
 

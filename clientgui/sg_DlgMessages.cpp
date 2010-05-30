@@ -1,6 +1,6 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -357,7 +357,7 @@ void CPanelMessages::OnRefresh(wxTimerEvent& event) {
                 m_pList->SetItemCount(static_cast<long>(iDocCount));
         }
 
-        if ((iDocCount) && (EnsureLastItemVisible()) && (m_iPreviousDocCount != iDocCount)) {
+        if ((iDocCount > 1) && (EnsureLastItemVisible()) && (m_iPreviousDocCount != iDocCount)) {
             m_pList->EnsureVisible(static_cast<long>(iDocCount) - 1);
         }
 
