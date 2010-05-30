@@ -1,7 +1,7 @@
 // This file is part of Synecdoche.
 // http://synecdoche.googlecode.com/
 // Copyright (C) 2009 Nicolas Alvarez, Peter Kortschack
-// Copyright (C) 2005 University of California
+// Copyright (C) 2009 University of California
 //
 // Synecdoche is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published
@@ -615,15 +615,16 @@ bool CDlgAdvPreferences::IsValidFloatValue(const wxString& value) {
 
 /// Checks if the value is a valid time.
 bool CDlgAdvPreferences::IsValidTimeValue(const wxString& value) {
-    for(unsigned int i=0; i < value.Length();i++) {
-        if(!IsValidTimeChar(value[i])) {
+    for (unsigned int i = 0; i < value.Length(); ++i) {
+        if (!IsValidTimeChar(value[i])) {
             return false;
         }
     }
-    //all chars are valid, now what is with the value as a whole ?
+    // all chars are valid, now what is with the value as a whole ?
     wxDateTime dt;
     const wxChar* stopChar = dt.ParseFormat(value,wxT("%H:%M"));
-    if(stopChar==NULL) {//conversion failed
+    if ((stopChar == NULL) && (value != wxT("24:00"))) {
+        // conversion failed
         return false;
     }
     return true;
