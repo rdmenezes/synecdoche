@@ -56,7 +56,6 @@
 ||17456/17467||manager: when filtering messages by project, show messages not tagged with a project (fixes #852)||
 ||17486/17487||client: change garbage-collect logic. old: reference-count files involved in a PERS_FILE_XFER new: if a PERS_FILE_XFER refers to an unreferenced file, delete it (and the associated FILE_XFER and HTTP_OP if present) May fix #366||
 ||17507||client: if using anonymous platform, ignore (and complain about) app versions in scheduler reply client: when reporting anonymous platform apps in sched request, don't include <file_info>s (not relevant to server)||
-||17561||MGR: Fix a long standing bug where the pie control in the disk usage tab was being created but a default pie part wasn't being added to the control. This caused the control to display black circles during window initialization on slower systems. This issue has been around since we started using the pie control based disk usage tab.||
 ||17564/17565/17590/17591/17592||_Multiple fixes for the Manager._||
 ||17567||Mac MGR: Do !RestoreState() before Show() so Disk tab doesn't flash briefly on manual launch.||
 ||17617||In linux client, Added code to detect capability to run 64-bit binaries from 32-bit BOINC client, and capability to run 32-bit binaries on a 64-bit linux system. _This one might need some cleanup before applying._||
@@ -65,12 +64,9 @@
 ||17711||client: (unix): if host name lookup fails, call res_init(). This is an attempt to fix a problem on Linux where, if the client starts before a VPN is set up, it can never communicate||
 ||17765/17831/17838||client: for each app version, keep track of the largest WSS of tasks using it. In checking whether tasks fit in RAM, use this as an estimate for tasks that haven't started yet. This avoids a situation where the client starts a lot of tasks in sequence, only to find that each one doesn't fit in RAM.||
 ||17826/17846||Mac MGR: Add keyboard shortcuts command-shift-S, command-shift-A to switch views||
-||17843||client: if detach a project, adjust debts and trigger CPU sched and work fetch||
-||17847||client: improve CPU sched debug messages (say what kind of job and why we're scheduling it)||
-||17874||client: message tweak||
 ||17992/17998||client: simplify enforce_schedule(), and maybe fix bugs. _NOTE: Review this carefully before applying!_||
 ||18042||client, Mac: don't do res_init(). It causes a crash. / client (Unix): if client crashes while benchmark processes are going, make sure they detect this and exit. _NOTE: 17711 needs to be applied before this one._||
-||18054||Mac client: fix parent died test in benchmark_time_to_stop()||
+||18054||Mac client: fix parent died test in benchmark_time_to_stop() _NOTE: 18042 needs to be applied before this one._||
 ||18135||MGR: Fix bug which prevented skin change from being saved if exiting Manager while in Simple View. _16405 and 17564 need to apply before this one (because these two probably introduce the bug fixed here)._||
 ||18291||MGR: Accept Unicode input for usernames and password in the manager now that the manager is Unicode enabled. Input will show up as UTF-8 strings in the CC and project.||
 ||18340||lib: FILE_LOCK::lock() makes lockfile group-writable so both client and manager can create and write it under sandbox security||
@@ -81,11 +77,8 @@
 ||18772/18785/18798/18799/18819/18893/(18936?)/18941/18971/18972/18973/18974/18997/19090||client: Initial swipe at automatic proxy server configuration detection on Windows. Fixes #35 _This probably needs some cleanup first._||
 ||18800/18803/18805/18811/18812/18813||client: refactor the CC startup process, move majority of the windows code into sysmon_win.cpp, .h||
 ||18845||client: in the final stage of CPU scheduling, give preference to multi-threaded jobs. Avoid running N-1 1-thread jobs and 1 N-thread job on N CPUs / client: change file transfer giveup time from 14 to 90 days||
-||18866||manager: allow 24:00 to be used in advanced prefs dialog||
 ||18915/18916||client: when writing XML, entity-encode the following fields / client: XML_PARSER::parse_str() now does xml_unescape(), same as ::parse_str().||
-||18917/18919||MGR: on Linux, accept 2 optional args: -clientdir or -e and -datadir or -d, use when launching client||
-||18925||MGR: Bug fixes for Linux _The Async-RPC-stuff can be ignored, the other fixes are required._||
-||18959||Fixed problem that prevented stack backtrace from being printed after segfault on linux.||
+||18917/18919/18925||MGR: on Linux, accept 2 optional args: -clientdir or -e and -datadir or -d, use when launching client _18925 containes a bugfix for this without a note in the commit message_||
 ||18963/18964||Mac installer: add logic for setting BOINC as screensaver under OS 10.6||
 ||18978/18981||Mac Sandbox: Security fixes for Mac OS 10.6 Snow Leopard||
 ||19044||client: in startup msgs, show resource shares, don't show prefs details _Should we show both?_||
