@@ -29,7 +29,7 @@
 #include "lib/mfile.h"
 #include "lib/miofile_wrap.h"
 
-#include "Util.h"
+#include "tests/Util.h"
 
 // These tests are incomplete; but I plan to get rid of MIOFILE and MFILE anyway.
 

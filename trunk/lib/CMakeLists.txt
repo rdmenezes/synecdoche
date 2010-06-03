@@ -62,3 +62,5 @@ ENDIF(WIN32)
 
 ADD_EXECUTABLE(syneccmd boinc_cmd.C)
 TARGET_LINK_LIBRARIES(syneccmd boinc)
+
+ADD_SUBDIRECTORY(tests)

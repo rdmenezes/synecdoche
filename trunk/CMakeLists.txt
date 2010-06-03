@@ -1,6 +1,6 @@
 # This file is part of Synecdoche.
 # http://synecdoche.googlecode.com/
-# Copyright (C) 2009 Nicolas Alvarez
+# Copyright (C) 2010 Nicolas Alvarez
 #
 # Synecdoche is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
@@ -56,16 +56,17 @@ INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/config.h.cmakein ${CMAKE_BINARY_DIR}/config.h)
 
+OPTION(BUILD_TESTING "Build the tests." ON)
+
+IF(BUILD_TESTING)
+    ENABLE_TESTING()
+    find_package(UnitTestPP)
+    ADD_SUBDIRECTORY(tests)
+ENDIF(BUILD_TESTING)
+
 ADD_SUBDIRECTORY(lib)
 ADD_SUBDIRECTORY(client)
 ADD_SUBDIRECTORY(clientgui)
 IF(WIN32)
     ADD_SUBDIRECTORY(clientlib)
 ENDIF(WIN32)
-
-OPTION(BUILD_TESTING "Build the tests." ON)
-
-IF(BUILD_TESTING)
-    ENABLE_TESTING()
-    ADD_SUBDIRECTORY(tests)
-ENDIF(BUILD_TESTING)

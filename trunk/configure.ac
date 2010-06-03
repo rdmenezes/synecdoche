@@ -378,6 +378,7 @@ AC_CONFIG_FILES([
                  client/Makefile
                  locale/client/Makefile
                  lib/Makefile
+                 lib/tests/Makefile
                  tests/Makefile
                  Makefile
                  ])
