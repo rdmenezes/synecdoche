@@ -23,7 +23,7 @@
 #include <UnitTest++.h>
 
 #include "lib/util.h"
-#include "Util.h"
+#include "tests/Util.h"
 
 SUITE(TestUtil)
 {

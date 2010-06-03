@@ -73,3 +73,4 @@ libboinc_a_SOURCES = \
 crypt_prog_SOURCES = crypt_prog.C crypt.C md5.c md5_file.C
 crypt_prog_LDADD = $(RSA_LIBS) $(PTHREAD_LIBS)
 
+SUBDIRS=tests
