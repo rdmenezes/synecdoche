@@ -133,13 +133,13 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 
     wxStaticBoxSizer* computingAllowedBoxSizer = new wxStaticBoxSizer( new wxStaticBox( panel, -1, _("Computing allowed") ), wxVERTICAL );
 
-    m_chkProcOnBatteries = new wxCheckBox( panel, ID_CHKPROCONBATTERIES, _(" While computer is on batteries") );
+    m_chkProcOnBatteries = new wxCheckBox( panel, ID_CHKPROCONBATTERIES, _("While computer is on batteries") );
 
     m_chkProcOnBatteries->SetToolTip( _("check this if you want this computer to do work while it runs on batteries") );
 
     computingAllowedBoxSizer->Add( m_chkProcOnBatteries, 0, wxALL, 5 );
 
-    m_chkProcInUse = new wxCheckBox( panel, ID_CHKPROCINUSE, _(" While computer is in use") );
+    m_chkProcInUse = new wxCheckBox( panel, ID_CHKPROCINUSE, _("While computer is in use") );
 
     m_chkProcInUse->SetToolTip( _("check this if you want this computer to do work even when you're using it") );
 
@@ -347,7 +347,7 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
     m_staticText341 = new wxStaticText( panel, ID_DEFAULT, _("days (max. 10)") );
     networkGeneralGridSizer->Add( m_staticText341, 0, wxALL, 5 );
 
-    m_chkNetSkipImageVerification = new wxCheckBox( panel, ID_CHKNETSKIPIMAGEVERIFICATION, _(" Skip image file verification") );
+    m_chkNetSkipImageVerification = new wxCheckBox( panel, ID_CHKNETSKIPIMAGEVERIFICATION, _("Skip image file verification") );
 
     m_chkNetSkipImageVerification->SetToolTip( _("check this if your Internet provider modifies image files") );
 
@@ -572,7 +572,7 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
 
     memoryUsageBoxSizer->Add( memoryUsageGridSizer, 0, wxEXPAND, 1 );
 
-    m_chkMemoryWhileSuspended = new wxCheckBox( panel, ID_CHKMEMORYWHILESUSPENDED, _(" Leave applications in memory while suspended") );
+    m_chkMemoryWhileSuspended = new wxCheckBox( panel, ID_CHKMEMORYWHILESUSPENDED, _("Leave applications in memory while suspended") );
 
     m_chkMemoryWhileSuspended->SetToolTip( _("if checked, suspended work units are left in memory") );
 
