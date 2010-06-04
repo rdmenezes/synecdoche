@@ -145,11 +145,7 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 
     computingAllowedBoxSizer->Add( m_chkProcInUse, 0, wxALL, 5 );
 
-    wxFlexGridSizer* procIdleSizer;
-    procIdleSizer = new wxFlexGridSizer( 2, 4, 0, 0 );
-    procIdleSizer->AddGrowableCol( 3 );
-    procIdleSizer->SetFlexibleDirection( wxHORIZONTAL );
-    procIdleSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    wxBoxSizer* procIdleSizer = new wxBoxSizer(wxHORIZONTAL);
 
     m_staticText26 = new wxStaticText( panel, ID_DEFAULT, _("Only after computer has been idle for"), wxDefaultPosition, wxDefaultSize, 0 );
     procIdleSizer->Add( m_staticText26, 0, wxALL, 5 );
@@ -161,9 +157,6 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 
     m_staticText27 = new wxStaticText( panel, ID_DEFAULT, _("minutes"), wxDefaultPosition, wxDefaultSize, 0 );
     procIdleSizer->Add( m_staticText27, 0, wxALL, 5 );
-
-    m_staticText28 = new wxStaticText( panel, ID_DEFAULT, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
-    procIdleSizer->Add( m_staticText28, 0, wxALL, 5 );
 
     computingAllowedBoxSizer->Add( procIdleSizer, 0, wxEXPAND, 5 );
 
