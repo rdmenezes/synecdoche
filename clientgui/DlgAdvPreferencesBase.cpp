@@ -55,15 +55,15 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 
     wxStaticBoxSizer* topControlsSizer = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("") ), wxHORIZONTAL );
 
-    m_bmpWarning = new wxStaticBitmap( this, ID_DEFAULT, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+    m_bmpWarning = new wxStaticBitmap( this, ID_DEFAULT, wxNullBitmap );
     m_bmpWarning->SetMinSize( wxSize( 48,48 ) );
 
     topControlsSizer->Add( m_bmpWarning, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0 );
 
-    m_staticText321 = new wxStaticText( this, ID_DEFAULT, _("This dialog controls preferences for this computer only.\nClick OK to set preferences.\nClick Clear to restore web-based settings."), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText321 = new wxStaticText( this, ID_DEFAULT, _("This dialog controls preferences for this computer only.\nClick OK to set preferences.\nClick Clear to restore web-based settings.") );
     topControlsSizer->Add( m_staticText321, 1, wxALL, 1 );
 
-    m_btnClear = new wxButton( this, ID_BTN_CLEAR, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_btnClear = new wxButton( this, ID_BTN_CLEAR, _("Clear") );
     m_btnClear->SetToolTip( _("clear all local preferences and close the dialog") );
 
     topControlsSizer->Add( m_btnClear, 0, wxALIGN_BOTTOM|wxALL, 1 );
@@ -97,17 +97,17 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
     m_panelButtons = new wxPanel( this, ID_DEFAULT, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
     wxBoxSizer* buttonSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    m_btnOK = new wxButton( m_panelButtons, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_btnOK = new wxButton( m_panelButtons, wxID_OK, _("OK") );
     m_btnOK->SetToolTip( _("save all values and close the dialog") );
 
     buttonSizer->Add( m_btnOK, 0, wxALL, 5 );
 
-    m_btnCancel = new wxButton( m_panelButtons, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_btnCancel = new wxButton( m_panelButtons, wxID_CANCEL, _("Cancel") );
     m_btnCancel->SetToolTip( _("close the dialog without saving") );
 
     buttonSizer->Add( m_btnCancel, 0, wxALL, 5 );
 
-    m_btnHelp = new wxButton( m_panelButtons, wxID_HELP, _("Help"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_btnHelp = new wxButton( m_panelButtons, wxID_HELP, _("Help") );
     m_btnHelp->SetToolTip( _("shows the preferences web page") );
 
     buttonSizer->Add( m_btnHelp, 0, wxALL, 5 );
@@ -133,13 +133,13 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 
     wxStaticBoxSizer* computingAllowedBoxSizer = new wxStaticBoxSizer( new wxStaticBox( panel, -1, _("Computing allowed") ), wxVERTICAL );
 
-    m_chkProcOnBatteries = new wxCheckBox( panel, ID_CHKPROCONBATTERIES, _(" While computer is on batteries"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcOnBatteries = new wxCheckBox( panel, ID_CHKPROCONBATTERIES, _(" While computer is on batteries") );
 
     m_chkProcOnBatteries->SetToolTip( _("check this if you want this computer to do work while it runs on batteries") );
 
     computingAllowedBoxSizer->Add( m_chkProcOnBatteries, 0, wxALL, 5 );
 
-    m_chkProcInUse = new wxCheckBox( panel, ID_CHKPROCINUSE, _(" While computer is in use"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcInUse = new wxCheckBox( panel, ID_CHKPROCINUSE, _(" While computer is in use") );
 
     m_chkProcInUse->SetToolTip( _("check this if you want this computer to do work even when you're using it") );
 
@@ -147,7 +147,7 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 
     wxBoxSizer* procIdleSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    m_staticText26 = new wxStaticText( panel, ID_DEFAULT, _("Only after computer has been idle for"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText26 = new wxStaticText( panel, ID_DEFAULT, _("Only after computer has been idle for") );
     procIdleSizer->Add( m_staticText26, 0, wxALL, 5 );
 
     m_txtProcIdleFor = new wxTextCtrl( panel, ID_TXTPROCIDLEFOR, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
@@ -155,14 +155,14 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 
     procIdleSizer->Add( m_txtProcIdleFor, 0, wxALL, 1 );
 
-    m_staticText27 = new wxStaticText( panel, ID_DEFAULT, _("minutes"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText27 = new wxStaticText( panel, ID_DEFAULT, _("minutes") );
     procIdleSizer->Add( m_staticText27, 0, wxALL, 5 );
 
     computingAllowedBoxSizer->Add( procIdleSizer, 0, wxEXPAND, 5 );
 
     wxBoxSizer* cpuTimesSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    m_staticText351 = new wxStaticText( panel, ID_DEFAULT, _("Every day between hours of"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText351 = new wxStaticText( panel, ID_DEFAULT, _("Every day between hours of") );
     cpuTimesSizer->Add( m_staticText351, 0, wxALL, 5 );
 
     m_txtProcEveryDayStart = new wxTextCtrl( panel, ID_TXTPROCEVERYDAYSTART, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
@@ -183,7 +183,7 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 
     computingAllowedBoxSizer->Add( cpuTimesSizer, 0, wxEXPAND, 1 );
 
-    m_staticText36 = new wxStaticText( panel, ID_DEFAULT, _("Day-of-week override:"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText36 = new wxStaticText( panel, ID_DEFAULT, _("Day-of-week override:") );
     computingAllowedBoxSizer->Add( m_staticText36, 0, wxALL, 5 );
 
     m_panelProcSpecialTimes = new wxPanel( panel, ID_DEFAULT, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
@@ -194,53 +194,53 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     procDaysSizer->SetFlexibleDirection( wxHORIZONTAL );
     procDaysSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-    m_chkProcMonday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCMONDAY, _("Monday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcMonday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCMONDAY, _("Monday") );
 
     procDaysSizer->Add( m_chkProcMonday, 0, wxALL, 5 );
 
-    m_txtProcMonday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCMONDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtProcMonday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCMONDAY, wxT("") );
     procDaysSizer->Add( m_txtProcMonday, 0, wxALL, 1 );
 
-    m_chkProcTuesday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCTUESDAY, _("Tuesday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcTuesday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCTUESDAY, _("Tuesday") );
 
     procDaysSizer->Add( m_chkProcTuesday, 0, wxALL, 5 );
 
-    m_txtProcTuesday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCTUESDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtProcTuesday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCTUESDAY, wxT("") );
     procDaysSizer->Add( m_txtProcTuesday, 0, wxALL, 1 );
 
-    m_chkProcWednesday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCWEDNESDAY, _("Wednesday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcWednesday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCWEDNESDAY, _("Wednesday") );
 
     procDaysSizer->Add( m_chkProcWednesday, 0, wxALL, 5 );
 
-    m_txtProcWednesday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCWEDNESDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtProcWednesday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCWEDNESDAY, wxT("") );
     procDaysSizer->Add( m_txtProcWednesday, 0, wxALL, 1 );
 
-    m_chkProcThursday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCTHURSDAY, _("Thursday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcThursday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCTHURSDAY, _("Thursday") );
 
     procDaysSizer->Add( m_chkProcThursday, 0, wxALL, 5 );
 
-    m_txtProcThursday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCTHURSDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtProcThursday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCTHURSDAY, wxT("") );
     procDaysSizer->Add( m_txtProcThursday, 0, wxALL, 1 );
 
-    m_chkProcFriday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCFRIDAY, _("Friday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcFriday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCFRIDAY, _("Friday") );
 
     procDaysSizer->Add( m_chkProcFriday, 0, wxALL, 5 );
 
-    m_txtProcFriday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCFRIDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtProcFriday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCFRIDAY, wxT("") );
     procDaysSizer->Add( m_txtProcFriday, 0, wxALL, 1 );
 
-    m_chkProcSaturday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCSATURDAY, _("Saturday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcSaturday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCSATURDAY, _("Saturday") );
 
     procDaysSizer->Add( m_chkProcSaturday, 0, wxALL, 5 );
 
-    m_txtProcSaturday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCSATURDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtProcSaturday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCSATURDAY, wxT("") );
     procDaysSizer->Add( m_txtProcSaturday, 0, wxALL, 1 );
 
-    m_chkProcSunday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCSUNDAY, _("Sunday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkProcSunday = new wxCheckBox( m_panelProcSpecialTimes, ID_CHKPROCSUNDAY, _("Sunday") );
 
     procDaysSizer->Add( m_chkProcSunday, 0, wxALL, 5 );
 
-    m_txtProcSunday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCSUNDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtProcSunday = new wxTextCtrl( m_panelProcSpecialTimes, ID_TXTPROCSUNDAY, wxT("") );
     procDaysSizer->Add( m_txtProcSunday, 0, wxALL, 1 );
 
     m_panelProcSpecialTimes->SetSizer( procDaysSizer );
@@ -263,7 +263,7 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     m_txtProcSwitchEvery = new wxTextCtrl( panel, ID_TXTPROCSWITCHEVERY, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     miscProcGridSizer->Add( m_txtProcSwitchEvery, 0, wxALL, 1 );
 
-    m_staticText19 = new wxStaticText( panel, ID_DEFAULT, _("minutes"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText19 = new wxStaticText( panel, ID_DEFAULT, _("minutes") );
     miscProcGridSizer->Add( m_staticText19, 0, wxALL, 5 );
 
     m_staticText20 = new wxStaticText( panel, ID_DEFAULT, _("On multiprocessor systems, use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
@@ -273,7 +273,7 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     miscProcGridSizer->Add( m_txtProcUseProcessors, 0, wxALL, 1 );
 
     /*xgettext:no-c-format*/
-    m_staticText21 = new wxStaticText( panel, ID_DEFAULT, _("% of the processors"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText21 = new wxStaticText( panel, ID_DEFAULT, _("% of the processors") );
     miscProcGridSizer->Add( m_staticText21, 0, wxALL, 5 );
 
     m_staticText22 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
@@ -283,7 +283,7 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     miscProcGridSizer->Add( m_txtProcUseCPUTime, 0, wxALL, 1 );
 
     /*xgettext:no-c-format*/
-    m_staticText23 = new wxStaticText( panel, ID_DEFAULT, _("% CPU time"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText23 = new wxStaticText( panel, ID_DEFAULT, _("% CPU time") );
     miscProcGridSizer->Add( m_staticText23, 0, wxALL, 5 );
 
     miscProcBoxSizer->Add( miscProcGridSizer, 0, wxEXPAND, 1 );
@@ -309,25 +309,25 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
     networkGeneralGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     networkGeneralGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-    m_staticText32 = new wxStaticText( panel, ID_DEFAULT, _("Maximum download rate"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText32 = new wxStaticText( panel, ID_DEFAULT, _("Maximum download rate") );
     networkGeneralGridSizer->Add( m_staticText32, 0, wxALL, 5 );
 
     m_txtNetDownloadRate = new wxTextCtrl( panel, ID_TXTNETDOWNLOADRATE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     networkGeneralGridSizer->Add( m_txtNetDownloadRate, 0, wxALL, 1 );
 
-    m_staticText33 = new wxStaticText( panel, ID_DEFAULT, _("KBytes/sec."), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText33 = new wxStaticText( panel, ID_DEFAULT, _("KBytes/sec.") );
     networkGeneralGridSizer->Add( m_staticText33, 0, wxALL, 5 );
 
-    m_staticText34 = new wxStaticText( panel, ID_DEFAULT, _("Maximum upload rate"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText34 = new wxStaticText( panel, ID_DEFAULT, _("Maximum upload rate") );
     networkGeneralGridSizer->Add( m_staticText34, 0, wxALIGN_RIGHT|wxALL, 5 );
 
     m_txtNetUploadRate = new wxTextCtrl( panel, ID_TXTNETUPLOADRATE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     networkGeneralGridSizer->Add( m_txtNetUploadRate, 0, wxALL, 1 );
 
-    m_staticText35 = new wxStaticText( panel, ID_DEFAULT, _("KBytes/sec."), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText35 = new wxStaticText( panel, ID_DEFAULT, _("KBytes/sec.") );
     networkGeneralGridSizer->Add( m_staticText35, 0, wxALL, 5 );
 
-    m_staticText30 = new wxStaticText( panel, ID_DEFAULT, _("Connect about every"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText30 = new wxStaticText( panel, ID_DEFAULT, _("Connect about every") );
     networkGeneralGridSizer->Add( m_staticText30, 0, wxALL, 5 );
 
     m_txtNetConnectInterval = new wxTextCtrl( panel, ID_TXTNETCONNECTINTERVAL, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
@@ -335,19 +335,19 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
 
     networkGeneralGridSizer->Add( m_txtNetConnectInterval, 0, wxALL, 1 );
 
-    m_staticText31 = new wxStaticText( panel, ID_DEFAULT, _("days"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText31 = new wxStaticText( panel, ID_DEFAULT, _("days") );
     networkGeneralGridSizer->Add( m_staticText31, 0, wxALL, 5 );
 
-    m_staticText331 = new wxStaticText( panel, ID_DEFAULT, _("Additional work buffer"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText331 = new wxStaticText( panel, ID_DEFAULT, _("Additional work buffer") );
     networkGeneralGridSizer->Add( m_staticText331, 0, wxALIGN_RIGHT|wxALL, 5 );
 
     m_txtNetAdditionalDays = new wxTextCtrl( panel, ID_TXTNETADDITIONALDAYS, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     networkGeneralGridSizer->Add( m_txtNetAdditionalDays, 0, wxALL, 1 );
 
-    m_staticText341 = new wxStaticText( panel, ID_DEFAULT, _("days (max. 10)"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText341 = new wxStaticText( panel, ID_DEFAULT, _("days (max. 10)") );
     networkGeneralGridSizer->Add( m_staticText341, 0, wxALL, 5 );
 
-    m_chkNetSkipImageVerification = new wxCheckBox( panel, ID_CHKNETSKIPIMAGEVERIFICATION, _(" Skip image file verification"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetSkipImageVerification = new wxCheckBox( panel, ID_CHKNETSKIPIMAGEVERIFICATION, _(" Skip image file verification") );
 
     m_chkNetSkipImageVerification->SetToolTip( _("check this if your Internet provider modifies image files") );
 
@@ -359,13 +359,13 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
 
     wxStaticBoxSizer* connectOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( panel, -1, _("Connect options") ), wxVERTICAL );
 
-    m_chkNetConfirmBeforeConnect = new wxCheckBox( panel, ID_CHKNETCONFIRMBEFORECONNECT, _("Confirm before connecting to internet"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetConfirmBeforeConnect = new wxCheckBox( panel, ID_CHKNETCONFIRMBEFORECONNECT, _("Confirm before connecting to internet") );
 
     m_chkNetConfirmBeforeConnect->SetToolTip( _("if checked, a confirmation dialog will be displayed before trying to connect to the Internet") );
 
     connectOptionsSizer->Add( m_chkNetConfirmBeforeConnect, 0, wxALL, 5 );
 
-    m_chkNetDisconnectWhenDone = new wxCheckBox( panel, ID_CHKNETDISCONNECTWHENDONE, _("Disconnect when done"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetDisconnectWhenDone = new wxCheckBox( panel, ID_CHKNETDISCONNECTWHENDONE, _("Disconnect when done") );
 
     m_chkNetDisconnectWhenDone->SetToolTip( _("if checked, hang up when network usage is done\n(only relevant for dialup-connection)") );
 
@@ -377,7 +377,7 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
 
     wxBoxSizer* networkTimesSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    m_staticText38 = new wxStaticText( panel, ID_DEFAULT, _("Every day between hours of"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText38 = new wxStaticText( panel, ID_DEFAULT, _("Every day between hours of") );
     networkTimesSizer->Add( m_staticText38, 0, wxALL, 5 );
 
     m_txtNetEveryDayStart = new wxTextCtrl( panel, ID_TXTNETEVERYDAYSTART, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), 0 );
@@ -385,7 +385,7 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
 
     networkTimesSizer->Add( m_txtNetEveryDayStart, 0, wxALL, 1 );
 
-    m_staticText37 = new wxStaticText( panel, ID_DEFAULT, _("and"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText37 = new wxStaticText( panel, ID_DEFAULT, _("and") );
     networkTimesSizer->Add( m_staticText37, 0, wxALL, 5 );
 
     m_txtNetEveryDayStop = new wxTextCtrl( panel, ID_TXTNETEVERYDAYSTOP, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), 0 );
@@ -393,12 +393,12 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
 
     networkTimesSizer->Add( m_txtNetEveryDayStop, 0, wxALL, 1 );
 
-    m_staticText54 = new wxStaticText( panel, ID_DEFAULT, _("(no restriction if equal)"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText54 = new wxStaticText( panel, ID_DEFAULT, _("(no restriction if equal)") );
     networkTimesSizer->Add( m_staticText54, 0, wxALL, 5 );
 
     networkTimesBoxSizer->Add( networkTimesSizer, 0, wxEXPAND, 1 );
 
-    m_staticText39 = new wxStaticText( panel, ID_DEFAULT, _("Day-of-week override:"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText39 = new wxStaticText( panel, ID_DEFAULT, _("Day-of-week override:") );
     networkTimesBoxSizer->Add( m_staticText39, 0, wxALL, 5 );
 
     m_panelNetSpecialTimes = new wxPanel( panel, ID_DEFAULT, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
@@ -409,53 +409,53 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
     netDaysGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     netDaysGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-    m_chkNetMonday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETMONDAY, _("Monday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetMonday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETMONDAY, _("Monday") );
 
     netDaysGridSizer->Add( m_chkNetMonday, 0, wxALL, 5 );
 
-    m_txtNetMonday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETMONDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtNetMonday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETMONDAY, wxT("") );
     netDaysGridSizer->Add( m_txtNetMonday, 0, wxALL, 1 );
 
-    m_chkNetTuesday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETTUESDAY, _("Tuesday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetTuesday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETTUESDAY, _("Tuesday") );
 
     netDaysGridSizer->Add( m_chkNetTuesday, 0, wxALL, 5 );
 
-    m_txtNetTuesday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETTUESDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtNetTuesday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETTUESDAY, wxT("") );
     netDaysGridSizer->Add( m_txtNetTuesday, 0, wxALL, 1 );
 
-    m_chkNetWednesday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETWEDNESDAY, _("Wednesday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetWednesday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETWEDNESDAY, _("Wednesday") );
 
     netDaysGridSizer->Add( m_chkNetWednesday, 0, wxALL, 5 );
 
-    m_txtNetWednesday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETWEDNESDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtNetWednesday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETWEDNESDAY, wxT("") );
     netDaysGridSizer->Add( m_txtNetWednesday, 0, wxALL, 1 );
 
-    m_chkNetThursday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETTHURSDAY, _("Thursday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetThursday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETTHURSDAY, _("Thursday") );
 
     netDaysGridSizer->Add( m_chkNetThursday, 0, wxALL, 5 );
 
-    m_txtNetThursday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETTHURSDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtNetThursday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETTHURSDAY, wxT("") );
     netDaysGridSizer->Add( m_txtNetThursday, 0, wxALL, 1 );
 
-    m_chkNetFriday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETFRIDAY, _("Friday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetFriday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETFRIDAY, _("Friday") );
 
     netDaysGridSizer->Add( m_chkNetFriday, 0, wxALL, 5 );
 
-    m_txtNetFriday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETFRIDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtNetFriday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETFRIDAY, wxT("") );
     netDaysGridSizer->Add( m_txtNetFriday, 0, wxALL, 1 );
 
-    m_chkNetSaturday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETSATURDAY, _("Saturday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetSaturday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETSATURDAY, _("Saturday") );
 
     netDaysGridSizer->Add( m_chkNetSaturday, 0, wxALL, 5 );
 
-    m_txtNetSaturday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETSATURDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtNetSaturday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETSATURDAY, wxT("") );
     netDaysGridSizer->Add( m_txtNetSaturday, 0, wxALL, 1 );
 
-    m_chkNetSunday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETSUNDAY, _("Sunday"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkNetSunday = new wxCheckBox( m_panelNetSpecialTimes, ID_CHKNETSUNDAY, _("Sunday") );
 
     netDaysGridSizer->Add( m_chkNetSunday, 0, wxALL, 5 );
 
-    m_txtNetSunday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETSUNDAY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
+    m_txtNetSunday = new wxTextCtrl( m_panelNetSpecialTimes, ID_TXTNETSUNDAY, wxT("") );
     netDaysGridSizer->Add( m_txtNetSunday, 0, wxALL, 1 );
 
     m_panelNetSpecialTimes->SetSizer( netDaysGridSizer );
@@ -494,7 +494,7 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
 
     diskUsageGridSizer->Add( m_txtDiskMaxSpace, 0, wxALL, 1 );
 
-    m_staticText41 = new wxStaticText( panel, ID_DEFAULT, _("Gigabytes disk space"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText41 = new wxStaticText( panel, ID_DEFAULT, _("Gigabytes disk space") );
     diskUsageGridSizer->Add( m_staticText41, 0, wxALL, 5 );
 
     m_staticText42 = new wxStaticText( panel, ID_DEFAULT, _("Leave at least"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
@@ -505,7 +505,7 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
 
     diskUsageGridSizer->Add( m_txtDiskLeastFree, 0, wxALL, 1 );
 
-    m_staticText43 = new wxStaticText( panel, ID_DEFAULT, _("Gigabytes disk space free"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText43 = new wxStaticText( panel, ID_DEFAULT, _("Gigabytes disk space free") );
     diskUsageGridSizer->Add( m_staticText43, 0, wxALL, 5 );
 
     m_staticText44 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
@@ -517,7 +517,7 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     diskUsageGridSizer->Add( m_txtDiskMaxOfTotal, 0, wxALL, 1 );
 
     /*xgettext:no-c-format*/
-    m_staticText45 = new wxStaticText( panel, ID_DEFAULT, _("% of total disk space"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText45 = new wxStaticText( panel, ID_DEFAULT, _("% of total disk space") );
     diskUsageGridSizer->Add( m_staticText45, 0, wxALL, 5 );
 
     m_staticText46 = new wxStaticText( panel, ID_DEFAULT, _("Write to disk at most every"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
@@ -526,7 +526,7 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     m_txtDiskWriteToDisk = new wxTextCtrl( panel, ID_TXTDISKWRITETODISK, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     diskUsageGridSizer->Add( m_txtDiskWriteToDisk, 0, wxALL, 1 );
 
-    m_staticText47 = new wxStaticText( panel, ID_DEFAULT, _("seconds"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText47 = new wxStaticText( panel, ID_DEFAULT, _("seconds") );
     diskUsageGridSizer->Add( m_staticText47, 0, wxALL, 5 );
 
     m_staticText48 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
@@ -536,7 +536,7 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     diskUsageGridSizer->Add( m_txtDiskMaxSwap, 0, wxALL, 1 );
 
     /*xgettext:no-c-format*/
-    m_staticText49 = new wxStaticText( panel, ID_DEFAULT, _("% of page file (swap space)"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText49 = new wxStaticText( panel, ID_DEFAULT, _("% of page file (swap space)") );
     diskUsageGridSizer->Add( m_staticText49, 0, wxALL, 5 );
 
     diskUsageBoxSizer->Add( diskUsageGridSizer, 0, wxEXPAND, 1 );
@@ -557,7 +557,7 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     memoryUsageGridSizer->Add( m_txtMemoryMaxInUse, 0, wxALL, 1 );
 
     /*xgettext:no-c-format*/
-    m_staticText51 = new wxStaticText( panel, ID_DEFAULT, _("% when computer is in use"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText51 = new wxStaticText( panel, ID_DEFAULT, _("% when computer is in use") );
     memoryUsageGridSizer->Add( m_staticText51, 0, wxALL, 5 );
 
     m_staticText52 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
@@ -567,12 +567,12 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     memoryUsageGridSizer->Add( m_txtMemoryMaxOnIdle, 0, wxALL, 1 );
 
     /*xgettext:no-c-format*/
-    m_staticText53 = new wxStaticText( panel, ID_DEFAULT, _("% when computer is idle"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_staticText53 = new wxStaticText( panel, ID_DEFAULT, _("% when computer is idle") );
     memoryUsageGridSizer->Add( m_staticText53, 0, wxALL, 5 );
 
     memoryUsageBoxSizer->Add( memoryUsageGridSizer, 0, wxEXPAND, 1 );
 
-    m_chkMemoryWhileSuspended = new wxCheckBox( panel, ID_CHKMEMORYWHILESUSPENDED, _(" Leave applications in memory while suspended"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_chkMemoryWhileSuspended = new wxCheckBox( panel, ID_CHKMEMORYWHILESUSPENDED, _(" Leave applications in memory while suspended") );
 
     m_chkMemoryWhileSuspended->SetToolTip( _("if checked, suspended work units are left in memory") );
 
