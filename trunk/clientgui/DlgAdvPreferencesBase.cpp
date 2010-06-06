@@ -257,8 +257,8 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     miscProcGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     miscProcGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-    m_staticText18 = new wxStaticText( panel, ID_DEFAULT, _("Switch between applications between every"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    miscProcGridSizer->Add( m_staticText18, 0, wxALL|wxEXPAND, 5 );
+    m_staticText18 = new wxStaticText( panel, ID_DEFAULT, _("Switch between applications between every") );
+    miscProcGridSizer->Add( m_staticText18, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtProcSwitchEvery = new wxTextCtrl( panel, ID_TXTPROCSWITCHEVERY, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     miscProcGridSizer->Add( m_txtProcSwitchEvery, 0, wxALL, 1 );
@@ -266,8 +266,8 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     m_staticText19 = new wxStaticText( panel, ID_DEFAULT, _("minutes") );
     miscProcGridSizer->Add( m_staticText19, 0, wxALL, 5 );
 
-    m_staticText20 = new wxStaticText( panel, ID_DEFAULT, _("On multiprocessor systems, use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    miscProcGridSizer->Add( m_staticText20, 0, wxALL|wxEXPAND, 5 );
+    m_staticText20 = new wxStaticText( panel, ID_DEFAULT, _("On multiprocessor systems, use at most") );
+    miscProcGridSizer->Add( m_staticText20, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtProcUseProcessors = new wxTextCtrl( panel, ID_TXTPROCUSEPROCESSORS, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     miscProcGridSizer->Add( m_txtProcUseProcessors, 0, wxALL, 1 );
@@ -276,8 +276,8 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     m_staticText21 = new wxStaticText( panel, ID_DEFAULT, _("% of the processors") );
     miscProcGridSizer->Add( m_staticText21, 0, wxALL, 5 );
 
-    m_staticText22 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    miscProcGridSizer->Add( m_staticText22, 0, wxALL|wxEXPAND, 5 );
+    m_staticText22 = new wxStaticText( panel, ID_DEFAULT, _("Use at most") );
+    miscProcGridSizer->Add( m_staticText22, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtProcUseCPUTime = new wxTextCtrl( panel, ID_TXTPOCUSECPUTIME, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     miscProcGridSizer->Add( m_txtProcUseCPUTime, 0, wxALL, 1 );
@@ -486,8 +486,8 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     diskUsageGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     diskUsageGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-    m_staticText40 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    diskUsageGridSizer->Add( m_staticText40, 0, wxALL|wxEXPAND, 5 );
+    m_staticText40 = new wxStaticText( panel, ID_DEFAULT, _("Use at most") );
+    diskUsageGridSizer->Add( m_staticText40, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtDiskMaxSpace = new wxTextCtrl( panel, ID_TXTDISKMAXSPACE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtDiskMaxSpace->SetToolTip( _("Maximum allowed disk space (in Gigabytes)") );
@@ -497,8 +497,8 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     m_staticText41 = new wxStaticText( panel, ID_DEFAULT, _("Gigabytes disk space") );
     diskUsageGridSizer->Add( m_staticText41, 0, wxALL, 5 );
 
-    m_staticText42 = new wxStaticText( panel, ID_DEFAULT, _("Leave at least"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    diskUsageGridSizer->Add( m_staticText42, 0, wxALL|wxEXPAND, 5 );
+    m_staticText42 = new wxStaticText( panel, ID_DEFAULT, _("Leave at least") );
+    diskUsageGridSizer->Add( m_staticText42, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtDiskLeastFree = new wxTextCtrl( panel, ID_TXTDISKLEASTFREE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtDiskLeastFree->SetToolTip( _("Leave at least this much disk space free (in Gigagytes)") );
@@ -508,8 +508,8 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     m_staticText43 = new wxStaticText( panel, ID_DEFAULT, _("Gigabytes disk space free") );
     diskUsageGridSizer->Add( m_staticText43, 0, wxALL, 5 );
 
-    m_staticText44 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    diskUsageGridSizer->Add( m_staticText44, 0, wxALL|wxEXPAND, 5 );
+    m_staticText44 = new wxStaticText( panel, ID_DEFAULT, _("Use at most") );
+    diskUsageGridSizer->Add( m_staticText44, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtDiskMaxOfTotal = new wxTextCtrl( panel, ID_TXTDISKMAXOFTOTAL, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtDiskMaxOfTotal->SetToolTip( _("Use at most this percentage of total disk space") );
@@ -520,8 +520,8 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     m_staticText45 = new wxStaticText( panel, ID_DEFAULT, _("% of total disk space") );
     diskUsageGridSizer->Add( m_staticText45, 0, wxALL, 5 );
 
-    m_staticText46 = new wxStaticText( panel, ID_DEFAULT, _("Write to disk at most every"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    diskUsageGridSizer->Add( m_staticText46, 0, wxALL|wxEXPAND, 5 );
+    m_staticText46 = new wxStaticText( panel, ID_DEFAULT, _("Write to disk at most every") );
+    diskUsageGridSizer->Add( m_staticText46, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtDiskWriteToDisk = new wxTextCtrl( panel, ID_TXTDISKWRITETODISK, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     diskUsageGridSizer->Add( m_txtDiskWriteToDisk, 0, wxALL, 1 );
@@ -529,8 +529,8 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     m_staticText47 = new wxStaticText( panel, ID_DEFAULT, _("seconds") );
     diskUsageGridSizer->Add( m_staticText47, 0, wxALL, 5 );
 
-    m_staticText48 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    diskUsageGridSizer->Add( m_staticText48, 0, wxALL|wxEXPAND, 5 );
+    m_staticText48 = new wxStaticText( panel, ID_DEFAULT, _("Use at most") );
+    diskUsageGridSizer->Add( m_staticText48, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtDiskMaxSwap = new wxTextCtrl( panel, ID_TXTDISKWRITETODISK, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     diskUsageGridSizer->Add( m_txtDiskMaxSwap, 0, wxALL, 1 );
@@ -550,8 +550,8 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     memoryUsageGridSizer->SetFlexibleDirection( wxHORIZONTAL );
     memoryUsageGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-    m_staticText50 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    memoryUsageGridSizer->Add( m_staticText50, 0, wxALL|wxEXPAND, 5 );
+    m_staticText50 = new wxStaticText( panel, ID_DEFAULT, _("Use at most") );
+    memoryUsageGridSizer->Add( m_staticText50, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtMemoryMaxInUse = new wxTextCtrl( panel, ID_TXTMEMORYMAXINUSE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     memoryUsageGridSizer->Add( m_txtMemoryMaxInUse, 0, wxALL, 1 );
@@ -560,8 +560,8 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     m_staticText51 = new wxStaticText( panel, ID_DEFAULT, _("% when computer is in use") );
     memoryUsageGridSizer->Add( m_staticText51, 0, wxALL, 5 );
 
-    m_staticText52 = new wxStaticText( panel, ID_DEFAULT, _("Use at most"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    memoryUsageGridSizer->Add( m_staticText52, 0, wxALL|wxEXPAND, 5 );
+    m_staticText52 = new wxStaticText( panel, ID_DEFAULT, _("Use at most") );
+    memoryUsageGridSizer->Add( m_staticText52, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_txtMemoryMaxOnIdle = new wxTextCtrl( panel, ID_TXTMEMORYMAXONIDLE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     memoryUsageGridSizer->Add( m_txtMemoryMaxOnIdle, 0, wxALL, 1 );
