@@ -125,5 +125,7 @@ ENDIF(APPLE)
 
 install(TARGETS synecmgr RUNTIME DESTINATION bin)
 
+add_subdirectory(tests)
+
 ENDIF(wxWidgets_FOUND)
 # vim: set fdm=marker:
