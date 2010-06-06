@@ -170,16 +170,16 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 
     cpuTimesSizer->Add( m_txtProcEveryDayStart, 0, wxALL, 1 );
 
-    m_staticText25 = new wxStaticText( panel, ID_DEFAULT, _("and"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
-    cpuTimesSizer->Add( m_staticText25, 0, wxALL|wxEXPAND, 5 );
+    m_staticText25 = new wxStaticText( panel, ID_DEFAULT, _("and") );
+    cpuTimesSizer->Add( m_staticText25, 0, wxALL, 5 );
 
     m_txtProcEveryDayStop = new wxTextCtrl( panel, ID_TXTPROCEVERYDAYSTOP, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtProcEveryDayStop->SetToolTip( _("stop work at this time") );
 
     cpuTimesSizer->Add( m_txtProcEveryDayStop, 0, wxALL, 1 );
 
-    m_staticText55 = new wxStaticText( panel, ID_DEFAULT, _("(no restriction if equal)"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
-    cpuTimesSizer->Add( m_staticText55, 0, wxALL|wxEXPAND, 5 );
+    m_staticText55 = new wxStaticText( panel, ID_DEFAULT, _("(no restriction if equal)") );
+    cpuTimesSizer->Add( m_staticText55, 0, wxALL, 5 );
 
     computingAllowedBoxSizer->Add( cpuTimesSizer, 0, wxEXPAND, 1 );
 
