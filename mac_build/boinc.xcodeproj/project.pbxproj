@@ -52,6 +52,7 @@
 		0E79700E0FFFC56A0014D415 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
 		0E79718C100019B90014D415 /* DlgMsgFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E797188100019B90014D415 /* DlgMsgFilter.cpp */; };
 		0E79718D100019B90014D415 /* MsgFilterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E79718A100019B90014D415 /* MsgFilterData.cpp */; };
+		0EA6A23211BC8731003EC233 /* UiFormatString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EA6A23011BC8731003EC233 /* UiFormatString.cpp */; };
 		DD0C5A8B0816711400CEC5D7 /* screensaver.bmp in Resources */ = {isa = PBXBuildFile; fileRef = DD0C5A8A0816711400CEC5D7 /* screensaver.bmp */; };
 		DD130E740820C422001A0291 /* ScreenSaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C5E7508110AE3002FCE1E /* ScreenSaver.framework */; };
 		DD130F320820C47C001A0291 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDE2552B07C62F3E008E7D6E /* IOKit.framework */; };
@@ -413,6 +414,8 @@
 		0E797189100019B90014D415 /* DlgMsgFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgMsgFilter.h; sourceTree = "<group>"; };
 		0E79718A100019B90014D415 /* MsgFilterData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MsgFilterData.cpp; sourceTree = "<group>"; };
 		0E79718B100019B90014D415 /* MsgFilterData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MsgFilterData.h; sourceTree = "<group>"; };
+		0EA6A23011BC8731003EC233 /* UiFormatString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UiFormatString.cpp; sourceTree = "<group>"; };
+		0EA6A23111BC8731003EC233 /* UiFormatString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UiFormatString.h; sourceTree = "<group>"; };
 		0EF4306D0FB4D70100AD3E32 /* attributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = attributes.h; sourceTree = "<group>"; };
 		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		AA8B6B1B046C364400A80164 /* app_ipc.C */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = app_ipc.C; path = ../lib/app_ipc.C; sourceTree = SOURCE_ROOT; };
@@ -905,6 +908,8 @@
 		DD81C3F707C5D03B0098A04D /* clientgui */ = {
 			isa = PBXGroup;
 			children = (
+				0EA6A23011BC8731003EC233 /* UiFormatString.cpp */,
+				0EA6A23111BC8731003EC233 /* UiFormatString.h */,
 				0E797188100019B90014D415 /* DlgMsgFilter.cpp */,
 				0E797189100019B90014D415 /* DlgMsgFilter.h */,
 				0E79718A100019B90014D415 /* MsgFilterData.cpp */,
@@ -1717,6 +1722,7 @@
 				0E44E6B70F5888E40009950D /* TaskViewBase.cpp in Sources */,
 				0E79718C100019B90014D415 /* DlgMsgFilter.cpp in Sources */,
 				0E79718D100019B90014D415 /* MsgFilterData.cpp in Sources */,
+				0EA6A23211BC8731003EC233 /* UiFormatString.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2057,7 +2063,7 @@
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
-				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
+				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.11";
 			};
 			name = Dev_Universal_noSandbox;
 		};
@@ -2753,7 +2759,7 @@
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
-				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
+				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.11";
 			};
 			name = Dev_noSandbox;
 		};
@@ -2806,7 +2812,7 @@
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
-				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
+				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.11";
 			};
 			name = Deploy_noSandbox;
 		};
@@ -2972,7 +2978,7 @@
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
-				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
+				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.11";
 			};
 			name = Deployment;
 		};
@@ -3119,7 +3125,7 @@
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
-				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.9";
+				WX_DIR = "/Users/mtughan/boinc/depends/wxMac-2.8.11";
 			};
 			name = Development;
 		};
