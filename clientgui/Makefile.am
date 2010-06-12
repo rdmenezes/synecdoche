@@ -84,6 +84,7 @@ gui_headers = \
     SkinManager.h \
     TaskViewBase.h \
     UnavailablePage.h \
+    UiFormatString.h \
     ValidateEmailAddress.h \
     ValidateURL.h \
     ViewMessages.h \
@@ -222,6 +223,7 @@ synecmgr_SOURCES = \
     SkinManager.cpp \
     stdwx.cpp \
     TaskViewBase.cpp \
+    UiFormatString.cpp \
     UnavailablePage.cpp \
     ValidateEmailAddress.cpp \
     ValidateURL.cpp \
