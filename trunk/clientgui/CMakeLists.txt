@@ -92,6 +92,7 @@ ADD_EXECUTABLE(synecmgr WIN32
     stdwx.cpp
     TaskViewBase.cpp
     UnavailablePage.cpp
+    UiFormatString.cpp
     ValidateEmailAddress.cpp
     ValidateURL.cpp
     ViewMessages.cpp
