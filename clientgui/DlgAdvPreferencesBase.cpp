@@ -24,12 +24,6 @@
 #include "DlgAdvPreferencesBase.h"
 
 #include "stdwx.h"
-#include "diagnostics.h"
-#include "util.h"
-#include "mfile.h"
-#include "miofile.h"
-#include "parse.h"
-#include "LogBOINC.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
 #include "UiFormatString.h"
