@@ -271,4 +271,6 @@ version: win_config.h
 
 CLEANFILES=stdwx.h.gch
 
+SUBDIRS=tests
+
 .PHONY: version

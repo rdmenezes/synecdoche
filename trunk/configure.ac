@@ -373,12 +373,13 @@ AC_SUBST(CLIENTGUILIBS)
 dnl ======================================================================
 
 AC_CONFIG_FILES([
-                 clientgui/Makefile
-                 clientgui/res/Makefile
                  client/Makefile
                  locale/client/Makefile
                  lib/Makefile
                  lib/tests/Makefile
+                 clientgui/Makefile
+                 clientgui/res/Makefile
+                 clientgui/tests/Makefile
                  tests/Makefile
                  Makefile
                  ])
