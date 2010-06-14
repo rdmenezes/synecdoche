@@ -24,23 +24,17 @@
 #ifndef __DlgAdvPreferencesBase__
 #define __DlgAdvPreferencesBase__
 
-// Define WX_GCH in order to support precompiled headers with GCC compiler.
-// You have to create the header "wx_pch.h" and include all files needed
-// for compile your gui inside it.
-// Then, compile it and place the file "wx_pch.h.gch" into the same
-// directory that "wx_pch.h".
-#ifdef WX_GCH
-#include <wx_pch.h>
-#else
-#include <wx/wx.h>
-#endif
-
-#include <wx/button.h>
-#include <wx/notebook.h> 
-#include <wx/panel.h>
-#include <wx/statbmp.h>
-
 ///////////////////////////////////////////////////////////////////////////
+
+#include <wx/dialog.h>
+
+class wxTextCtrl;
+class wxCheckBox;
+class wxNotebook;
+class wxPanel;
+class wxButton;
+class wxStaticText;
+class wxStaticBitmap;
 
 #define ID_DEFAULT wxID_ANY // Default
 #define ID_BTN_CLEAR 20000
@@ -103,7 +97,7 @@
 /**
  * Class CDlgAdvPreferencesBase
  */
-class CDlgAdvPreferencesBase : public wxDialog 
+class CDlgAdvPreferencesBase : public wxDialog
 {
     private:
     
