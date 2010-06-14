@@ -26,7 +26,7 @@
 #include "stdwx.h"
 #include "BOINCGUIApp.h"
 #include "SkinManager.h"
-#include "UiFormatString.h"
+#include "BuildLayout.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -119,37 +119,7 @@ CDlgAdvPreferencesBase::CDlgAdvPreferencesBase( wxWindow* parent, int id, wxStri
 CDlgAdvPreferencesBase::~CDlgAdvPreferencesBase() {
 }
 
-void buildLayoutf(wxWindow* parent, wxSizer* sizer, const UiFormatString& formatString, const std::vector<wxControl*>& controls) {
-    for (size_t i=0; i<controls.size(); ++i) {
-        wxStaticText* label = new wxStaticText( parent, ID_DEFAULT, formatString.label(i) );
-        sizer->Add(label, 0, wxALL, 5);
 
-        wxControl* control = controls[formatString.placeholder(i) - 1];
-        sizer->Add(control, 0, wxALL, 1);
-    }
-    if (formatString.labels().size() > controls.size()) {
-        wxStaticText* label = new wxStaticText( parent, ID_DEFAULT, formatString.label(controls.size()) );
-        sizer->Add(label, 0, wxALL, 5);
-    }
-}
-void buildLayout(wxWindow* parent, wxSizer* sizer, const wxString& string, const std::vector<wxControl*>& controls) {
-    UiFormatString formatString(string);
-    buildLayoutf(parent, sizer, formatString, controls);
-}
-void buildLayoutv(wxWindow* parent, wxSizer* sizer, const wxString& string, ...) {
-    va_list ap;
-    va_start(ap, string);
-
-    UiFormatString formatString(string);
-    std::vector<wxControl*> controls;
-
-    for (size_t i=0; i<formatString.placeholders().size(); ++i) {
-        controls.push_back(va_arg(ap, wxControl*));
-    }
-
-    buildLayoutf(parent, sizer, formatString, controls);
-    va_end(ap);
-}
 
 wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
 {

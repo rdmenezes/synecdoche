@@ -54,6 +54,7 @@ ADD_EXECUTABLE(synecmgr WIN32
     BOINCTaskBar.cpp
     BOINCTaskCtrl.cpp
     browser.C
+    BuildLayout.cpp
     CompletionErrorPage.cpp
     CompletionPage.cpp
     DlgAbout.cpp
