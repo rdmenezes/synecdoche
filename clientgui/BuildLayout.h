@@ -27,8 +27,13 @@ class UiFormatString;
 #include <vector>
 #include <string>
 
-void buildLayoutf(wxWindow* parent, wxSizer* sizer, const UiFormatString& formatString, const std::vector<wxControl*>& controls);
-void buildLayout(wxWindow* parent, wxSizer* sizer, const wxString& string, const std::vector<wxControl*>& controls);
-void buildLayoutv(wxWindow* parent, wxSizer* sizer, const wxString& string, ...);
+// Build layout from a UiFormatString and a vector of controls.
+// buildLayout and buildLayoutv are implemented by calling this function.
+void buildLayoutFmt(wxWindow* parent, wxSizer* sizer, const UiFormatString& formatString, const std::vector<wxControl*>& controls);
+// Build layout from a wxString and a vector of controls.
+// A UiFormatString will be created from the passed string.
+void buildLayoutv(wxWindow* parent, wxSizer* sizer, const wxString& string, const std::vector<wxControl*>& controls);
+// Build layout from a wxString and list of controls, passed as extra arguments (like printf).
+void buildLayout(wxWindow* parent, wxSizer* sizer, const wxString& string, ...);
 
 #endif

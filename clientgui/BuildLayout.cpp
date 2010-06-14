@@ -24,7 +24,7 @@
 
 #include "UiFormatString.h"
 
-void buildLayoutf(wxWindow* parent, wxSizer* sizer, const UiFormatString& formatString, const std::vector<wxControl*>& controls)
+void buildLayoutFmt(wxWindow* parent, wxSizer* sizer, const UiFormatString& formatString, const std::vector<wxControl*>& controls)
 {
     for (size_t i=0; i<controls.size(); ++i) {
         wxStaticText* label = new wxStaticText( parent, wxID_ANY, formatString.label(i) );
@@ -38,12 +38,12 @@ void buildLayoutf(wxWindow* parent, wxSizer* sizer, const UiFormatString& format
         sizer->Add(label, 0, wxALL, 5);
     }
 }
-void buildLayout(wxWindow* parent, wxSizer* sizer, const wxString& string, const std::vector<wxControl*>& controls)
+void buildLayoutv(wxWindow* parent, wxSizer* sizer, const wxString& string, const std::vector<wxControl*>& controls)
 {
     UiFormatString formatString(string);
-    buildLayoutf(parent, sizer, formatString, controls);
+    buildLayoutFmt(parent, sizer, formatString, controls);
 }
-void buildLayoutv(wxWindow* parent, wxSizer* sizer, const wxString& string, ...)
+void buildLayout(wxWindow* parent, wxSizer* sizer, const wxString& string, ...)
 {
     va_list ap;
     va_start(ap, string);
@@ -55,6 +55,6 @@ void buildLayoutv(wxWindow* parent, wxSizer* sizer, const wxString& string, ...)
         controls.push_back(va_arg(ap, wxControl*));
     }
 
-    buildLayoutf(parent, sizer, formatString, controls);
+    buildLayoutFmt(parent, sizer, formatString, controls);
     va_end(ap);
 }

@@ -147,7 +147,7 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     m_txtProcIdleFor = new wxTextCtrl( panel, ID_TXTPROCIDLEFOR, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtProcIdleFor->SetToolTip( _("do work only after you haven't used the computer for this number of minutes") );
 
-    buildLayoutv(panel, procIdleSizer, _("Only after computer has been idle for %1 minutes"), m_txtProcIdleFor);
+    buildLayout(panel, procIdleSizer, _("Only after computer has been idle for %1 minutes"), m_txtProcIdleFor);
 
     computingAllowedBoxSizer->Add( procIdleSizer, 0, wxEXPAND, 5 );
 
@@ -159,7 +159,7 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     m_txtProcEveryDayStop = new wxTextCtrl( panel, ID_TXTPROCEVERYDAYSTOP, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtProcEveryDayStop->SetToolTip( _("stop work at this time") );
 
-    buildLayoutv(panel, cpuTimesSizer, _("Every day between hours of %1 and %2 (no restriction if equal)"), m_txtProcEveryDayStart, m_txtProcEveryDayStop);
+    buildLayout(panel, cpuTimesSizer, _("Every day between hours of %1 and %2 (no restriction if equal)"), m_txtProcEveryDayStart, m_txtProcEveryDayStop);
 
     computingAllowedBoxSizer->Add( cpuTimesSizer, 0, wxEXPAND, 1 );
 
@@ -238,13 +238,13 @@ wxPanel* CDlgAdvPreferencesBase::createProcessorTab(wxWindow* parent)
     miscProcGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
     m_txtProcSwitchEvery = new wxTextCtrl( panel, ID_TXTPROCSWITCHEVERY, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, miscProcGridSizer, _("Switch between applications between every %1 minutes"), m_txtProcSwitchEvery);
+    buildLayout(panel, miscProcGridSizer, _("Switch between applications between every %1 minutes"), m_txtProcSwitchEvery);
 
     m_txtProcUseProcessors = new wxTextCtrl( panel, ID_TXTPROCUSEPROCESSORS, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, miscProcGridSizer, _("On multiprocessor systems, use at most %1 % of the processors"), m_txtProcUseProcessors);
+    buildLayout(panel, miscProcGridSizer, _("On multiprocessor systems, use at most %1 % of the processors"), m_txtProcUseProcessors);
 
     m_txtProcUseCPUTime = new wxTextCtrl( panel, ID_TXTPOCUSECPUTIME, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, miscProcGridSizer, _("Use at most %1 % CPU time"), m_txtProcUseCPUTime);
+    buildLayout(panel, miscProcGridSizer, _("Use at most %1 % CPU time"), m_txtProcUseCPUTime);
 
     miscProcBoxSizer->Add( miscProcGridSizer, 0, wxEXPAND, 1 );
 
@@ -270,17 +270,17 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
     networkGeneralGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
     m_txtNetDownloadRate = new wxTextCtrl( panel, ID_TXTNETDOWNLOADRATE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, networkGeneralGridSizer, _("Maximum download rate %1 KBytes/sec."), m_txtNetDownloadRate);
+    buildLayout(panel, networkGeneralGridSizer, _("Maximum download rate %1 KBytes/sec."), m_txtNetDownloadRate);
 
     m_txtNetUploadRate = new wxTextCtrl( panel, ID_TXTNETUPLOADRATE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, networkGeneralGridSizer, _("Maximum upload rate %1 KBytes/sec."), m_txtNetUploadRate);
+    buildLayout(panel, networkGeneralGridSizer, _("Maximum upload rate %1 KBytes/sec."), m_txtNetUploadRate);
 
     m_txtNetConnectInterval = new wxTextCtrl( panel, ID_TXTNETCONNECTINTERVAL, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtNetConnectInterval->SetToolTip( _("this computer is connected to the Internet about every X days\n(0 if it's always connected)") );
-    buildLayoutv(panel, networkGeneralGridSizer, _("Connect about every %1 days"), m_txtNetConnectInterval);
+    buildLayout(panel, networkGeneralGridSizer, _("Connect about every %1 days"), m_txtNetConnectInterval);
 
     m_txtNetAdditionalDays = new wxTextCtrl( panel, ID_TXTNETADDITIONALDAYS, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, networkGeneralGridSizer, _("Additional work buffer %1 days (max. 10)"), m_txtNetAdditionalDays);
+    buildLayout(panel, networkGeneralGridSizer, _("Additional work buffer %1 days (max. 10)"), m_txtNetAdditionalDays);
 
     m_chkNetSkipImageVerification = new wxCheckBox( panel, ID_CHKNETSKIPIMAGEVERIFICATION, _("Skip image file verification") );
 
@@ -318,7 +318,7 @@ wxPanel* CDlgAdvPreferencesBase::createNetworkTab(wxWindow* parent)
     m_txtNetEveryDayStop = new wxTextCtrl( panel, ID_TXTNETEVERYDAYSTOP, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), 0 );
     m_txtNetEveryDayStop->SetToolTip( _("network usage stop hour") );
 
-    buildLayoutv(panel, networkTimesSizer, _("Every day between hours of %1 and %2 (no restriction if equal)"), m_txtNetEveryDayStart, m_txtNetEveryDayStop);
+    buildLayout(panel, networkTimesSizer, _("Every day between hours of %1 and %2 (no restriction if equal)"), m_txtNetEveryDayStart, m_txtNetEveryDayStop);
 
     networkTimesBoxSizer->Add( networkTimesSizer, 0, wxEXPAND, 1 );
 
@@ -412,21 +412,21 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
 
     m_txtDiskMaxSpace = new wxTextCtrl( panel, ID_TXTDISKMAXSPACE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtDiskMaxSpace->SetToolTip( _("Maximum allowed disk space (in Gigabytes)") );
-    buildLayoutv(panel, diskUsageGridSizer, _("Use at most %1 Gigabytes disk space"), m_txtDiskMaxSpace);
+    buildLayout(panel, diskUsageGridSizer, _("Use at most %1 Gigabytes disk space"), m_txtDiskMaxSpace);
 
     m_txtDiskLeastFree = new wxTextCtrl( panel, ID_TXTDISKLEASTFREE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtDiskLeastFree->SetToolTip( _("Leave at least this much disk space free (in Gigagytes)") );
-    buildLayoutv(panel, diskUsageGridSizer, _("Leave at least %1 Gigabytes disk space free"), m_txtDiskLeastFree);
+    buildLayout(panel, diskUsageGridSizer, _("Leave at least %1 Gigabytes disk space free"), m_txtDiskLeastFree);
 
     m_txtDiskMaxOfTotal = new wxTextCtrl( panel, ID_TXTDISKMAXOFTOTAL, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
     m_txtDiskMaxOfTotal->SetToolTip( _("Use at most this percentage of total disk space") );
-    buildLayoutv(panel, diskUsageGridSizer, _("Use at most %1 % of total disk space"), m_txtDiskMaxOfTotal);
+    buildLayout(panel, diskUsageGridSizer, _("Use at most %1 % of total disk space"), m_txtDiskMaxOfTotal);
 
     m_txtDiskWriteToDisk = new wxTextCtrl( panel, ID_TXTDISKWRITETODISK, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, diskUsageGridSizer, _("Write to disk at most every %1 seconds"), m_txtDiskWriteToDisk);
+    buildLayout(panel, diskUsageGridSizer, _("Write to disk at most every %1 seconds"), m_txtDiskWriteToDisk);
 
     m_txtDiskMaxSwap = new wxTextCtrl( panel, ID_TXTDISKWRITETODISK, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, diskUsageGridSizer, _("Use at most %1 % of page file (swap space)"), m_txtDiskMaxSwap);
+    buildLayout(panel, diskUsageGridSizer, _("Use at most %1 % of page file (swap space)"), m_txtDiskMaxSwap);
 
     diskUsageBoxSizer->Add( diskUsageGridSizer, 0, wxEXPAND, 1 );
 
@@ -440,10 +440,10 @@ wxPanel* CDlgAdvPreferencesBase::createDiskAndMemoryTab(wxWindow* parent)
     memoryUsageGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
     m_txtMemoryMaxInUse = new wxTextCtrl( panel, ID_TXTMEMORYMAXINUSE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, memoryUsageGridSizer, _("Use at most %1 % when computer is in use"), m_txtMemoryMaxInUse);
+    buildLayout(panel, memoryUsageGridSizer, _("Use at most %1 % when computer is in use"), m_txtMemoryMaxInUse);
 
     m_txtMemoryMaxOnIdle = new wxTextCtrl( panel, ID_TXTMEMORYMAXONIDLE, wxT(""), wxDefaultPosition, wxSize( 50,-1 ), wxTE_RIGHT );
-    buildLayoutv(panel, memoryUsageGridSizer, _("Use at most %1 % when computer is idle"), m_txtMemoryMaxOnIdle);
+    buildLayout(panel, memoryUsageGridSizer, _("Use at most %1 % when computer is idle"), m_txtMemoryMaxOnIdle);
 
     memoryUsageBoxSizer->Add( memoryUsageGridSizer, 0, wxEXPAND, 1 );
 
