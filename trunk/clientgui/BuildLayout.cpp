@@ -26,12 +26,21 @@
 
 void buildLayoutFmt(wxWindow* parent, wxSizer* sizer, const UiFormatString& formatString, const std::vector<wxControl*>& controls)
 {
-    for (size_t i=0; i<controls.size(); ++i) {
+    std::vector<wxControl*> controlsReordered;
+
+    for (size_t i = 0; i<formatString.placeholders().size(); ++i) {
+        controlsReordered.push_back(controls[formatString.placeholder(i) - 1]);
+    }
+
+    for (size_t i=0; i<controlsReordered.size(); ++i) {
         wxStaticText* label = new wxStaticText( parent, wxID_ANY, formatString.label(i) );
         sizer->Add(label, 0, wxALL, 5);
 
-        wxControl* control = controls[formatString.placeholder(i) - 1];
+        wxControl* control = controlsReordered[i];
         sizer->Add(control, 0, wxALL, 1);
+        if (i != 0) {
+            control->MoveAfterInTabOrder(controlsReordered[i-1]);
+        }
     }
     if (formatString.labels().size() > controls.size()) {
         wxStaticText* label = new wxStaticText( parent, wxID_ANY, formatString.label(controls.size()) );
