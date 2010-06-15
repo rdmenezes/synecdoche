@@ -86,4 +86,53 @@ SUITE(TestBuildLayout)
         CHECK(label2);
         CHECK_EQUAL("threads", (const char*)label2->GetLabel().ToAscii());
     }
+    void checkTwoControls(MainWindow& window, wxSizer* sizer,
+                          const char* labelLeftText, const wxTextCtrl* ctrl1,
+                          const char* labelMidText, const wxTextCtrl* ctrl2,
+                          const char* labelRightText)
+    {
+        const wxSizerItemList& sizerList = sizer->GetChildren();
+        CHECK_EQUAL(5, sizerList.size());
+
+        // left label
+        wxStaticText* label1 = wxDynamicCast(sizerList[0]->GetWindow(), wxStaticText);
+        CHECK(label1);
+        CHECK_EQUAL(labelLeftText, (const char*)label1->GetLabel().ToAscii());
+
+        // first field
+        CHECK_EQUAL(static_cast<const wxWindow*>(ctrl1), sizerList[1]->GetWindow());
+
+        // mid label
+        wxStaticText* label2 = wxDynamicCast(sizerList[2]->GetWindow(), wxStaticText);
+        CHECK(label2);
+        CHECK_EQUAL(labelMidText, (const char*)label2->GetLabel().ToAscii());
+        
+        // second field
+        CHECK_EQUAL(static_cast<const wxWindow*>(ctrl2), sizerList[3]->GetWindow());
+
+        // right label
+        wxStaticText* label3 = wxDynamicCast(sizerList[4]->GetWindow(), wxStaticText);
+        CHECK(label3);
+        CHECK_EQUAL(labelRightText, (const char*)label3->GetLabel().ToAscii());
+    }
+    TEST(TwoControls) {
+        MainWindow window;
+        wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+        wxTextCtrl* textMBs = new wxTextCtrl(&window, wxID_ANY);
+        wxTextCtrl* textDays = new wxTextCtrl(&window, wxID_ANY);
+
+        buildLayout(&window, sizer, wxT("At most %1 megabytes every %2 days"), textMBs, textDays);
+
+        checkTwoControls(window, sizer, "At most", textMBs, "megabytes every", textDays, "days");
+    }
+    TEST(TwoControlsSwapped) {
+        MainWindow window;
+        wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+        wxTextCtrl* textMBs = new wxTextCtrl(&window, wxID_ANY);
+        wxTextCtrl* textDays = new wxTextCtrl(&window, wxID_ANY);
+
+        buildLayout(&window, sizer, wxT("Every %2 days use at most %1 megabytes"), textMBs, textDays);
+
+        checkTwoControls(window, sizer, "Every", textDays, "days use at most", textMBs, "megabytes");
+    }
 }
