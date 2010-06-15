@@ -75,7 +75,11 @@ SUITE(TestBuildLayout)
         CHECK_EQUAL("Use up to", (const char*)label1->GetLabel().ToAscii());
 
         // text field
-        CHECK_EQUAL(sizerList[1]->GetWindow(), textBox);
+
+        // note: this cast is necessary for the assertion failure message to be correct;
+        // wxTextCtrl derives from streambuf(?!) and streams have an overload for operator<<(streambuf*),
+        // so wxTextCtrl* x; stream<<x; has unexpected behavior.
+        CHECK_EQUAL(static_cast<wxWindow*>(textBox), sizerList[1]->GetWindow());
 
         // right label
         wxStaticText* label2 = wxDynamicCast(sizerList[2]->GetWindow(), wxStaticText);
