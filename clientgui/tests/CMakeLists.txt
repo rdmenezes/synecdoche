@@ -7,4 +7,6 @@ function(synec_add_gui_test name)
 endfunction(synec_add_gui_test)
 
 synec_add_test(TestGui TestFormatString.cpp ../UiFormatString.cpp)
+synec_add_gui_test(TestBuildLayout TestBuildLayout.cpp ../UiFormatString.cpp ../BuildLayout.cpp)
+
 target_link_libraries(TestGui ${wxWidgets_LIBRARIES})
