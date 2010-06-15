@@ -44,8 +44,8 @@ SUITE(TestFormatString)
     TEST(SingleFormatSpecifier)
     {
         UiFormatString str(wxT("Connect every %1 days"));
-        CHECK_EQUAL(2, str.labels().size());
-        CHECK_EQUAL(1, str.placeholders().size());
+        CHECK_EQUAL(2u, str.labels().size());
+        CHECK_EQUAL(1u, str.placeholders().size());
         CHECK_STREQUAL(wxT("Connect every"), str.label(0));
         CHECK_STREQUAL(wxT("days"), str.label(1));
         CHECK_EQUAL(1, str.placeholder(0));
@@ -53,8 +53,8 @@ SUITE(TestFormatString)
     TEST(TwoFormats)
     {
         UiFormatString str(wxT("Maximum %1 MB every %2 days"));
-        CHECK_EQUAL(3, str.labels().size());
-        CHECK_EQUAL(2, str.placeholders().size());
+        CHECK_EQUAL(3u, str.labels().size());
+        CHECK_EQUAL(2u, str.placeholders().size());
         CHECK_STREQUAL(wxT("Maximum"), str.label(0));
         CHECK_STREQUAL(wxT("MB every"), str.label(1));
         CHECK_STREQUAL(wxT("days"), str.label(2));
@@ -64,8 +64,8 @@ SUITE(TestFormatString)
     TEST(TwoFormatsReversed)
     {
         UiFormatString str(wxT("Every %2 days, download up to %1 MB"));
-        CHECK_EQUAL(3, str.labels().size());
-        CHECK_EQUAL(2, str.placeholders().size());
+        CHECK_EQUAL(3u, str.labels().size());
+        CHECK_EQUAL(2u, str.placeholders().size());
         CHECK_STREQUAL(wxT("Every"), str.label(0));
         CHECK_STREQUAL(wxT("days, download up to"), str.label(1));
         CHECK_STREQUAL(wxT("MB"), str.label(2));

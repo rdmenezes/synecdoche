@@ -57,7 +57,6 @@ int UiFormatString::get_next_pholder(size_t& pos) {
         return -1;
     }
     wxChar pholder_idx_char = str.GetChar(pos+1);
-    int pholder_idx;
     if ('0' <= pholder_idx_char && pholder_idx_char <= '9') {
         return pholder_idx_char - '0';
     }
