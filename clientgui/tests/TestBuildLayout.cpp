@@ -135,4 +135,36 @@ SUITE(TestBuildLayout)
 
         checkTwoControls(window, sizer, "Every", textDays, "days use at most", textMBs, "megabytes");
     }
+    ssize_t tabOrder(const wxControl* control) {
+        const wxWindow* parent = control->GetParent();
+        const wxWindowList& children = parent->GetChildren();
+        ssize_t controlIndex=-1;
+        size_t i=0;
+        for (wxWindowList::const_iterator it = children.begin(); it != children.end(); ++it, ++i) {
+            if (*it == control) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    TEST(TabOrder1) {
+        MainWindow window;
+        wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+        wxTextCtrl* textMBs = new wxTextCtrl(&window, wxID_ANY);
+        wxTextCtrl* textDays = new wxTextCtrl(&window, wxID_ANY);
+
+        buildLayout(&window, sizer, wxT("At most %1 megabytes every %2 days"), textMBs, textDays);
+
+        CHECK(tabOrder(textMBs) < tabOrder(textDays));
+    }
+    TEST(TabOrder2) {
+        MainWindow window;
+        wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+        wxTextCtrl* textMBs = new wxTextCtrl(&window, wxID_ANY);
+        wxTextCtrl* textDays = new wxTextCtrl(&window, wxID_ANY);
+
+        buildLayout(&window, sizer, wxT("Every %2 days use at most %1 megabytes"), textMBs, textDays);
+
+        CHECK(tabOrder(textDays) < tabOrder(textMBs));
+    }
 }
