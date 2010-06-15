@@ -47,13 +47,13 @@ TEST(WxTabOrder)
     // controls get order changed in the list of children of the parent window
     // according to the modified tab order
     const wxWindowList& windowList = window.GetChildren();
-    CHECK_EQUAL(2, windowList.size());
+    CHECK_EQUAL(2u, windowList.size());
     CHECK_EQUAL(chkBar, windowList[0]);
     CHECK_EQUAL(chkFoo, windowList[1]);
 
     // but they keep their visual order in the sizer
     const wxSizerItemList& sizerList = dialogSizer->GetChildren();
-    CHECK_EQUAL(2, sizerList.size());
+    CHECK_EQUAL(2u, sizerList.size());
     CHECK_EQUAL(chkFoo, sizerList[0]->GetWindow());
     CHECK_EQUAL(chkBar, sizerList[1]->GetWindow());
 }
@@ -67,7 +67,7 @@ SUITE(TestBuildLayout)
         buildLayout(&window, sizer, wxT("Use up to %1 threads"), textBox);
 
         const wxSizerItemList& sizerList = sizer->GetChildren();
-        CHECK_EQUAL(3, sizerList.size());
+        CHECK_EQUAL(3u, sizerList.size());
 
         // left label
         wxStaticText* label1 = wxDynamicCast(sizerList[0]->GetWindow(), wxStaticText);
@@ -86,13 +86,13 @@ SUITE(TestBuildLayout)
         CHECK(label2);
         CHECK_EQUAL("threads", (const char*)label2->GetLabel().ToAscii());
     }
-    void checkTwoControls(MainWindow& window, wxSizer* sizer,
+    void checkTwoControls(wxSizer* sizer,
                           const char* labelLeftText, const wxTextCtrl* ctrl1,
                           const char* labelMidText, const wxTextCtrl* ctrl2,
                           const char* labelRightText)
     {
         const wxSizerItemList& sizerList = sizer->GetChildren();
-        CHECK_EQUAL(5, sizerList.size());
+        CHECK_EQUAL(5u, sizerList.size());
 
         // left label
         wxStaticText* label1 = wxDynamicCast(sizerList[0]->GetWindow(), wxStaticText);
@@ -123,7 +123,7 @@ SUITE(TestBuildLayout)
 
         buildLayout(&window, sizer, wxT("At most %1 megabytes every %2 days"), textMBs, textDays);
 
-        checkTwoControls(window, sizer, "At most", textMBs, "megabytes every", textDays, "days");
+        checkTwoControls(sizer, "At most", textMBs, "megabytes every", textDays, "days");
     }
     TEST(TwoControlsSwapped) {
         MainWindow window;
@@ -133,12 +133,11 @@ SUITE(TestBuildLayout)
 
         buildLayout(&window, sizer, wxT("Every %2 days use at most %1 megabytes"), textMBs, textDays);
 
-        checkTwoControls(window, sizer, "Every", textDays, "days use at most", textMBs, "megabytes");
+        checkTwoControls(sizer, "Every", textDays, "days use at most", textMBs, "megabytes");
     }
     ssize_t tabOrder(const wxControl* control) {
         const wxWindow* parent = control->GetParent();
         const wxWindowList& children = parent->GetChildren();
-        ssize_t controlIndex=-1;
         size_t i=0;
         for (wxWindowList::const_iterator it = children.begin(); it != children.end(); ++it, ++i) {
             if (*it == control) {
