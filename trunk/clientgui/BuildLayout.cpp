@@ -34,7 +34,11 @@ void buildLayoutFmt(wxWindow* parent, wxSizer* sizer, const UiFormatString& form
 
     for (size_t i=0; i<controlsReordered.size(); ++i) {
         wxStaticText* label = new wxStaticText( parent, wxID_ANY, formatString.label(i) );
-        sizer->Add(label, 0, wxALL, 5);
+        if (i==0) {
+            sizer->Add(label, 0, wxALL|wxALIGN_RIGHT, 5);
+        } else {
+            sizer->Add(label, 0, wxALL, 5);
+        }
 
         wxControl* control = controlsReordered[i];
         sizer->Add(control, 0, wxALL, 1);
