@@ -814,6 +814,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\clientgui\BuildLayout.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\clientgui\BuildLayout.h"
+				>
+			</File>
+			<File
 				RelativePath="..\clientgui\hyperlink.cpp"
 				>
 			</File>
