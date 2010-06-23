@@ -21,6 +21,7 @@
 #ifndef _WIN32
 # include "config.h"
 # include <unistd.h>
+# include <sys/socket.h>
 # include <sys/select.h>
 # include <string.h>
 #else
