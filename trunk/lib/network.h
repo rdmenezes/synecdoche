@@ -19,11 +19,9 @@
 #define BOINC_NETWORK_H
 
 #ifndef _WIN32
-# include <unistd.h>
 # include "config.h"
-# if HAVE_SYS_SELECT_H
-#  include <sys/select.h>
-# endif
+# include <unistd.h>
+# include <sys/select.h>
 # include <string.h>
 #else
 # include "boinc_win.h"
