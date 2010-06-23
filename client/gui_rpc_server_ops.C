@@ -20,6 +20,8 @@
 /// \file
 /// GUI RPC server side (the actual RPCs)
 
+#include "gui_rpc_server.h"
+
 #ifdef _WIN32
 #include "boinc_win.h"
 #endif
@@ -48,7 +50,6 @@
 #include <sstream>
 #include <ostream>
 
-#include "gui_rpc_server.h"
 #include "str_util.h"
 #include "client_state.h"
 #include "util.h"

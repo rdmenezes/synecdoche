@@ -49,7 +49,7 @@ private:
     CREATE_ACCOUNT_OP create_account_op;
 
     /// Handle an authorization request by creating and sending a nonce.
-    void handle_auth1(std::ostream& fout);
+    void handle_auth1(std::ostream& out);
 
     /// Check if the response to the challenge sent by handle_auth1 is correct.
     void handle_auth2(const char* buf, std::ostream& out);
@@ -71,7 +71,7 @@ class GUI_RPC_CONN_SET {
     std::set<unsigned long> allowed_remote_ip_addresses;
     int get_allowed_hosts();
     int get_password();
-    int insert(GUI_RPC_CONN*);
+    int insert(GUI_RPC_CONN* rpc_conn);
     bool check_allowed_list(unsigned long ip_addr) const;
     bool remote_hosts_file_exists;
 public:
@@ -79,8 +79,8 @@ public:
 
     GUI_RPC_CONN_SET();
     char password[256];
-    void get_fdset(FDSET_GROUP&) const;
-    void got_select(FDSET_GROUP&);
+    void get_fdset(FDSET_GROUP& fds) const;
+    void got_select(FDSET_GROUP& fds);
     int init(bool last_time);
     void close();
     void send_quits();

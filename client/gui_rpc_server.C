@@ -20,6 +20,8 @@
 /// The plumbing of GUI %RPC, server side
 /// (but not the actual RPCs)
 
+#include "gui_rpc_server.h"
+
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
@@ -38,8 +40,6 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #endif
-
-#include "gui_rpc_server.h"
 
 #include "client_msgs.h"
 #include "log_flags.h"
@@ -173,8 +173,8 @@ int GUI_RPC_CONN_SET::get_allowed_hosts() {
     return 0;
 }
 
-int GUI_RPC_CONN_SET::insert(GUI_RPC_CONN* p) {
-    gui_rpcs.push_back(p);
+int GUI_RPC_CONN_SET::insert(GUI_RPC_CONN* rpc_conn) {
+    gui_rpcs.push_back(rpc_conn);
     return 0;
 }
 
@@ -294,41 +294,38 @@ bool GUI_RPC_CONN::needs_write() const {
     return !write_buffer.empty();
 }
 
-void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fg) const {
-    unsigned int i;
+void GUI_RPC_CONN_SET::get_fdset(FDSET_GROUP& fds) const {
     const GUI_RPC_CONN* gr;
 
     if (lsock < 0) return;
-    for (i=0; i<gui_rpcs.size(); i++) {
+    for (size_t i=0; i<gui_rpcs.size(); i++) {
         gr = gui_rpcs[i];
         int s = gr->sock;
-        FD_SET(s, &fg.read_fds);
-        FD_SET(s, &fg.exc_fds);
+        FD_SET(s, &fds.read_fds);
+        FD_SET(s, &fds.exc_fds);
         if (gr->needs_write()) {
-            FD_SET(s, &fg.write_fds);
+            FD_SET(s, &fds.write_fds);
         }
-        if (s > fg.max_fd) fg.max_fd = s;
+        if (s > fds.max_fd) fds.max_fd = s;
     }
-    FD_SET(lsock, &fg.read_fds);
-    if (lsock > fg.max_fd) fg.max_fd = lsock;
+    FD_SET(lsock, &fds.read_fds);
+    if (lsock > fds.max_fd) fds.max_fd = lsock;
 }
 
-bool GUI_RPC_CONN_SET::check_allowed_list(unsigned long peer_ip) const {
-    return allowed_remote_ip_addresses.count(peer_ip) == 1;
+bool GUI_RPC_CONN_SET::check_allowed_list(unsigned long ip_addr) const {
+    return allowed_remote_ip_addresses.count(ip_addr) == 1;
 }
 
-void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
-    int sock, retval;
+void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fds) {
+    int retval;
     std::vector<GUI_RPC_CONN*>::iterator iter;
-    GUI_RPC_CONN* gr;
-    bool is_local = false;
 
     if (lsock < 0) return;
 
-    if (FD_ISSET(lsock, &fg.read_fds)) {
+    if (FD_ISSET(lsock, &fds.read_fds)) {
         struct sockaddr_in addr;
         boinc_socklen_t addr_len = sizeof(addr);
-        sock = accept(lsock, (struct sockaddr*)&addr, (boinc_socklen_t*)&addr_len);
+        int sock = accept(lsock, (struct sockaddr*)&addr, (boinc_socklen_t*)&addr_len);
         if (sock == -1) {
             return;
         }
@@ -339,7 +336,7 @@ void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
 #endif
 
         int peer_ip = (int) ntohl(addr.sin_addr.s_addr);
-        bool allowed;
+        bool allowed = false, is_local = false;
 
         // accept the connection if:
         // 1) allow_remote_gui_rpc is set or
@@ -356,13 +353,13 @@ void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
             allowed = check_allowed_list(peer_ip);
         }
 
-        if (!(gstate.allow_remote_gui_rpc) && !(allowed)) {
+        if (!(gstate.allow_remote_gui_rpc) && !allowed) {
             in_addr ia;
             ia.s_addr = htonl(peer_ip);
             show_connect_error(ia);
             boinc_close_socket(sock);
         } else {
-            gr = new GUI_RPC_CONN(sock);
+            GUI_RPC_CONN* gr = new GUI_RPC_CONN(sock);
             if (strlen(password)) {
                 gr->auth_needed = true;
             }
@@ -372,8 +369,8 @@ void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
     }
     iter = gui_rpcs.begin();
     while (iter != gui_rpcs.end()) {
-        gr = *iter;
-        if (FD_ISSET(gr->sock, &fg.exc_fds)) {
+        GUI_RPC_CONN* gr = *iter;
+        if (FD_ISSET(gr->sock, &fds.exc_fds)) {
             delete gr;
             iter = gui_rpcs.erase(iter);
             continue;
@@ -382,8 +379,8 @@ void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
     }
     iter = gui_rpcs.begin();
     while (iter != gui_rpcs.end()) {
-        gr = *iter;
-        if (FD_ISSET(gr->sock, &fg.read_fds)) {
+        GUI_RPC_CONN* gr = *iter;
+        if (FD_ISSET(gr->sock, &fds.read_fds)) {
             retval = gr->handle_rpc();
             if (retval) {
                 if (log_flags.guirpc_debug) {
@@ -401,8 +398,8 @@ void GUI_RPC_CONN_SET::got_select(FDSET_GROUP& fg) {
     }
     iter = gui_rpcs.begin();
     while (iter != gui_rpcs.end()) {
-        gr = *iter;
-        if (FD_ISSET(gr->sock, &fg.write_fds)) {
+        GUI_RPC_CONN* gr = *iter;
+        if (FD_ISSET(gr->sock, &fds.write_fds)) {
             retval = gr->handle_write();
             if (retval) {
                 if (log_flags.guirpc_debug) {
