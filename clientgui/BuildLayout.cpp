@@ -56,7 +56,9 @@ void buildLayoutv(wxWindow* parent, wxSizer* sizer, const wxString& string, cons
     UiFormatString formatString(string);
     buildLayoutFmt(parent, sizer, formatString, controls);
 }
-void buildLayout(wxWindow* parent, wxSizer* sizer, const wxString& string, ...)
+// string is passed by value, because using a reference type as last fixed argument
+// in a variadic function doesn't work on Windows
+void buildLayout(wxWindow* parent, wxSizer* sizer, wxString string, ...)
 {
     va_list ap;
     va_start(ap, string);
