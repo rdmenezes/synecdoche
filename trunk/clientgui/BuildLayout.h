@@ -34,6 +34,6 @@ void buildLayoutFmt(wxWindow* parent, wxSizer* sizer, const UiFormatString& form
 // A UiFormatString will be created from the passed string.
 void buildLayoutv(wxWindow* parent, wxSizer* sizer, const wxString& string, const std::vector<wxControl*>& controls);
 // Build layout from a wxString and list of controls, passed as extra arguments (like printf).
-void buildLayout(wxWindow* parent, wxSizer* sizer, const wxString& string, ...);
+void buildLayout(wxWindow* parent, wxSizer* sizer, wxString string, ...);
 
 #endif
