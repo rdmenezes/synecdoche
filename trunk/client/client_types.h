@@ -666,7 +666,7 @@ public:
 };
 typedef std::vector<RESULT*> RESULT_PVEC;
 
-/// Sepresents an always/auto/never value, possibly temporarily overridden.
+/// Represents an always/auto/never value, possibly temporarily overridden.
 class MODE {
 private:
     int perm_mode;
