@@ -35,6 +35,7 @@ FOREACH(inc "types" "ipc" "socket" "resource" "param" "mount" "statvfs" "statfs"
 ENDFOREACH(inc)
 
 AC_CHECK_FUNCTION_EXISTS(strcasestr)
+AC_CHECK_FUNCTION_EXISTS(setpriority)
 
 SET(BOINC_SOCKLEN_T "socklen_t")
 
