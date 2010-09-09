@@ -29,6 +29,7 @@
 
 /* XXX gotta define other stuff from str_util.h too */
 #cmakedefine HAVE_STRCASESTR
+#cmakedefine HAVE_SETPRIORITY
 
 #cmakedefine BOINC_SOCKLEN_T @BOINC_SOCKLEN_T@
 
