@@ -20,6 +20,7 @@
 #define RR_SIM_H
 
 #include <vector>
+#include <cstddef>
 
 /// assume actual CPU utilization will be this multiple
 /// of what we've actually measured recently
